@@ -88,16 +88,16 @@ class BreakingChangesTracker:
     REMOVED_OR_RENAMED_OPERATION_GROUP_MSG = \
         "Deleted or renamed client operation group '{}.{}'"
 
-    def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
+    def __init__(self, stable: Dict, current: Dict, package_name: str, **kwargs: Any) -> None:
         self.stable = stable
         self.current = current
-        self.diff = diff
+        self.diff = jsondiff.diff(stable, current)
         self.breaking_changes = []
         self.package_name = package_name
-        self.module_name = None
-        self.class_name = None
-        self.function_name = None
-        self.parameter_name = None
+        self._module_name = None
+        self._class_name = None
+        self._function_name = None
+        self._parameter_name = None
         self.ignore = kwargs.get("ignore", None)
         checkers: List[ChangesChecker] = kwargs.get("checkers", [])
         for checker in checkers:
@@ -124,8 +124,8 @@ class BreakingChangesTracker:
 
     def run_breaking_change_diff_checks(self) -> None:
         for module_name, module in self.diff.items():
-            self.module_name = module_name
-            if self.module_name not in self.stable and not isinstance(self.module_name, jsondiff.Symbol):
+            self._module_name = module_name
+            if self._module_name not in self.stable and not isinstance(self._module_name, jsondiff.Symbol):
                 continue  # this is a new module/additive change in current version so skip checks
 
             module_deleted = self.check_module_removed_or_renamed(module)
@@ -139,9 +139,9 @@ class BreakingChangesTracker:
 
     def run_class_level_diff_checks(self, module: Dict) -> None:
         for class_name, class_components in module.get("class_nodes", {}).items():
-            self.class_name = class_name
-            stable_class_nodes = self.stable[self.module_name]["class_nodes"]
-            if self.class_name not in stable_class_nodes and not isinstance(class_name, jsondiff.Symbol):
+            self._class_name = class_name
+            stable_class_nodes = self.stable[self._module_name]["class_nodes"]
+            if self._class_name not in stable_class_nodes and not isinstance(class_name, jsondiff.Symbol):
                 continue  # this is a new model/additive change in current version so skip checks
 
             class_deleted = self.check_class_removed_or_renamed(class_components)
@@ -150,11 +150,11 @@ class BreakingChangesTracker:
             self.check_class_instance_attribute_removed_or_renamed(class_components)
 
             for method_name, method_components in class_components.get("methods", {}).items():
-                self.function_name = method_name
-                stable_methods_node = stable_class_nodes[self.class_name]["methods"]
-                current_methods_node = self.current[self.module_name]["class_nodes"][self.class_name]["methods"]
-                if self.function_name not in stable_methods_node and \
-                        not isinstance(self.function_name, jsondiff.Symbol):
+                self._function_name = method_name
+                stable_methods_node = stable_class_nodes[self._class_name]["methods"]
+                current_methods_node = self.current[self._module_name]["class_nodes"][self._class_name]["methods"]
+                if self._function_name not in stable_methods_node and \
+                        not isinstance(self._function_name, jsondiff.Symbol):
                     continue  # this is a new method/additive change in current version so skip checks
 
                 method_deleted = self.check_class_method_removed_or_renamed(method_components, stable_methods_node)
@@ -163,8 +163,8 @@ class BreakingChangesTracker:
 
                 self.check_function_type_changed(method_components)
 
-                stable_parameters_node = stable_methods_node[self.function_name]["parameters"]
-                current_parameters_node = current_methods_node[self.function_name]["parameters"]
+                stable_parameters_node = stable_methods_node[self._function_name]["parameters"]
+                current_parameters_node = current_methods_node[self._function_name]["parameters"]
                 self.run_parameter_level_diff_checks(
                     method_components,
                     stable_parameters_node,
@@ -172,12 +172,12 @@ class BreakingChangesTracker:
                 )
 
     def run_function_level_diff_checks(self, module: Dict) -> None:
-        self.class_name = None
+        self._class_name = None
         for function_name, function_components in module.get("function_nodes", {}).items():
-            self.function_name = function_name
-            stable_function_nodes = self.stable[self.module_name]["function_nodes"]
-            if self.function_name not in stable_function_nodes and \
-                    not isinstance(self.function_name, jsondiff.Symbol):
+            self._function_name = function_name
+            stable_function_nodes = self.stable[self._module_name]["function_nodes"]
+            if self._function_name not in stable_function_nodes and \
+                    not isinstance(self._function_name, jsondiff.Symbol):
                 continue  # this is a new function/additive change in current version so skip checks
 
             function_deleted = self.check_module_level_function_removed_or_renamed(function_components)
@@ -186,8 +186,8 @@ class BreakingChangesTracker:
 
             self.check_function_type_changed(function_components)
 
-            stable_parameters_node = stable_function_nodes[self.function_name]["parameters"]
-            current_parameters_node = self.current[self.module_name]["function_nodes"][self.function_name]["parameters"]
+            stable_parameters_node = stable_function_nodes[self._function_name]["parameters"]
+            current_parameters_node = self.current[self._module_name]["function_nodes"][self._function_name]["parameters"]
             self.run_parameter_level_diff_checks(
                 function_components,
                 stable_parameters_node,
@@ -200,12 +200,12 @@ class BreakingChangesTracker:
         current_parameters_node: Dict
     ) -> None:
         for param_name, diff in function_components.get("parameters", {}).items():
-            self.parameter_name = param_name
+            self._parameter_name = param_name
             all_parameters_deleted = self.check_all_parameters_deleted(stable_parameters_node)
             if all_parameters_deleted:
                 continue  # all params were removed, abort other checks
             for diff_type in diff:
-                if isinstance(self.parameter_name, jsondiff.Symbol):
+                if isinstance(self._parameter_name, jsondiff.Symbol):
                     self.check_positional_parameter_removed_or_renamed(
                         stable_parameters_node[diff_type]["param_type"],
                         diff_type,
@@ -215,13 +215,13 @@ class BreakingChangesTracker:
                         stable_parameters_node[diff_type]["param_type"],
                         diff_type
                     )
-                elif self.parameter_name not in stable_parameters_node:
+                elif self._parameter_name not in stable_parameters_node:
                     self.check_positional_parameter_added(
                         current_parameters_node[param_name]
                     )
                     break
                 elif diff_type == "default":
-                    stable_default = stable_parameters_node[self.parameter_name]["default"]
+                    stable_default = stable_parameters_node[self._parameter_name]["default"]
                     self.check_parameter_default_value_changed_or_added(
                         diff[diff_type], stable_default
                     )
@@ -235,26 +235,26 @@ class BreakingChangesTracker:
 
     def check_kwargs_removed(self, param_type: str, param_name: str) -> None:
         if param_type == "var_keyword" and param_name == "kwargs":
-            if self.class_name:
+            if self._class_name:
                 bc = (
                     self.REMOVED_CLASS_FUNCTION_KWARGS_MSG,
                     BreakingChangeType.REMOVED_FUNCTION_KWARGS,
-                    self.module_name, self.class_name, self.function_name
+                    self._module_name, self._class_name, self._function_name
                 )
             else:
                 bc = (
                     self.REMOVED_FUNCTION_KWARGS_MSG,
                     BreakingChangeType.REMOVED_FUNCTION_KWARGS,
-                    self.module_name, self.function_name
+                    self._module_name, self._function_name
                 )
             self.breaking_changes.append(bc)
 
     def check_module_removed_or_renamed(self, module: Dict) -> Union[bool, None]:
-        if isinstance(self.module_name, jsondiff.Symbol):
+        if isinstance(self._module_name, jsondiff.Symbol):
             deleted_modules = []
-            if self.module_name.label == "delete":
+            if self._module_name.label == "delete":
                 deleted_modules = [module]
-            elif self.module_name.label == "replace":
+            elif self._module_name.label == "replace":
                 deleted_modules = self.stable
 
             for name in deleted_modules:
@@ -267,7 +267,7 @@ class BreakingChangesTracker:
             return True
 
     def check_all_parameters_deleted(self, stable_parameters_node: Dict) -> Union[bool, None]:
-        if isinstance(self.parameter_name, jsondiff.Symbol) and self.parameter_name.label == "replace":
+        if isinstance(self._parameter_name, jsondiff.Symbol) and self._parameter_name.label == "replace":
             self.check_positional_parameter_removed_or_renamed(
                 "positional_or_keyword",
                 None,
@@ -284,36 +284,36 @@ class BreakingChangesTracker:
             else:
                 change = "synchronous"
                 original = "asynchronous"
-            if self.class_name:
+            if self._class_name:
                 self.breaking_changes.append(
                     (
                         self.CHANGED_CLASS_FUNCTION_KIND_MSG, BreakingChangeType.CHANGED_FUNCTION_KIND,
-                        self.module_name, self.class_name, self.function_name, original, change
+                        self._module_name, self._class_name, self._function_name, original, change
                     )
                 )
             else:
                 self.breaking_changes.append(
                     (
                         self.CHANGED_FUNCTION_KIND_MSG, BreakingChangeType.CHANGED_FUNCTION_KIND,
-                        self.module_name, self.function_name, original, change
+                        self._module_name, self._function_name, original, change
                     )
                 )
 
     def check_parameter_type_changed(self, diff: Dict, stable_parameters_node: Dict) -> None:
-        if self.class_name:
+        if self._class_name:
             self.breaking_changes.append(
                 (
                     self.CHANGED_PARAMETER_KIND_MSG, BreakingChangeType.CHANGED_PARAMETER_KIND,
-                    self.module_name, self.class_name, self.function_name, self.parameter_name,
-                    stable_parameters_node[self.parameter_name]["param_type"], diff
+                    self._module_name, self._class_name, self._function_name, self._parameter_name,
+                    stable_parameters_node[self._parameter_name]["param_type"], diff
                 )
             )
         else:
             self.breaking_changes.append(
                 (
                     self.CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_KIND,
-                    self.module_name, self.function_name, self.parameter_name,
-                    stable_parameters_node[self.parameter_name]["param_type"], diff
+                    self._module_name, self._function_name, self._parameter_name,
+                    stable_parameters_node[self._parameter_name]["param_type"], diff
                 )
             )
 
@@ -371,13 +371,13 @@ class BreakingChangesTracker:
         stable_default: Union[str, None]
     ) -> None:
         if stable_default is not None and default is None:
-            if self.class_name:
+            if self._class_name:
                 self.breaking_changes.append(
                     (
                         self.REMOVED_PARAMETER_DEFAULT_VALUE_MSG,
                         BreakingChangeType.REMOVED_PARAMETER_DEFAULT_VALUE,
-                        self.module_name, self.class_name, self.function_name,
-                        default, self.parameter_name
+                        self._module_name, self._class_name, self._function_name,
+                        default, self._parameter_name
                     )
                 )
             else:
@@ -386,7 +386,7 @@ class BreakingChangesTracker:
                     (
                         self.REMOVED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG,
                         BreakingChangeType.REMOVED_PARAMETER_DEFAULT_VALUE,
-                        self.module_name, self.function_name, default, self.parameter_name
+                        self._module_name, self._function_name, default, self._parameter_name
                     )
                 )
 
@@ -399,13 +399,13 @@ class BreakingChangesTracker:
                 if stable_default is not None:  # There is a stable default
                     if stable_default == "none":  # the case in which the stable default was None
                         stable_default = None  # set back to actual None for the message
-                    if self.class_name:
+                    if self._class_name:
                         self.breaking_changes.append(
                             (
                                 self.CHANGED_PARAMETER_DEFAULT_VALUE_MSG,
                                 BreakingChangeType.CHANGED_PARAMETER_DEFAULT_VALUE,
-                                self.module_name, self.class_name, self.function_name,
-                                self.parameter_name, stable_default, default
+                                self._module_name, self._class_name, self._function_name,
+                                self._parameter_name, stable_default, default
                             )
                         )
                     else:
@@ -413,28 +413,28 @@ class BreakingChangesTracker:
                             (
                                 self.CHANGED_PARAMETER_DEFAULT_VALUE_OF_FUNCTION_MSG,
                                 BreakingChangeType.CHANGED_PARAMETER_DEFAULT_VALUE,
-                                self.module_name, self.function_name,
-                                self.parameter_name, stable_default, default
+                                self._module_name, self._function_name,
+                                self._parameter_name, stable_default, default
                             )
                         )
 
     def check_positional_parameter_added(self, current_parameters_node: Dict) -> None:
         if current_parameters_node["param_type"] == "positional_or_keyword" and \
                 current_parameters_node["default"] != "none":
-            if self.class_name:
+            if self._class_name:
                 self.breaking_changes.append(
                     (
                         self.ADDED_POSITIONAL_PARAM_TO_METHOD_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
-                        self.module_name, self.class_name, self.function_name,
-                        current_parameters_node["param_type"], self.parameter_name
+                        self._module_name, self._class_name, self._function_name,
+                        current_parameters_node["param_type"], self._parameter_name
                     )
                 )
             else:
                 self.breaking_changes.append(
                     (
                         self.ADDED_POSITIONAL_PARAM_TO_FUNCTION_MSG, BreakingChangeType.ADDED_POSITIONAL_PARAM,
-                        self.module_name, self.function_name,
-                        current_parameters_node["param_type"], self.parameter_name
+                        self._module_name, self._function_name,
+                        current_parameters_node["param_type"], self._parameter_name
                     )
                 )
 
@@ -446,9 +446,9 @@ class BreakingChangesTracker:
         if param_type != "positional_or_keyword":
             return
         deleted_params = []
-        if self.parameter_name.label == "delete":
+        if self._parameter_name.label == "delete":
             deleted_params = [deleted]
-        elif self.parameter_name.label == "replace":  # replace means all positional parameters were removed
+        elif self._parameter_name.label == "replace":  # replace means all positional parameters were removed
             deleted_params = {
                 param_name: details
                 for param_name, details
@@ -458,12 +458,12 @@ class BreakingChangesTracker:
 
         for deleted in deleted_params:
             if deleted != "self":
-                if self.class_name:
+                if self._class_name:
                     self.breaking_changes.append(
                         (
                             self.REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_METHOD_MSG,
                             BreakingChangeType.REMOVED_OR_RENAMED_POSITIONAL_PARAM,
-                            self.module_name, self.class_name, self.function_name, deleted, param_type
+                            self._module_name, self._class_name, self._function_name, deleted, param_type
                         )
                     )
                 else:
@@ -471,7 +471,7 @@ class BreakingChangesTracker:
                         (
                             self.REMOVED_OR_RENAMED_POSITIONAL_PARAM_OF_FUNCTION_MSG,
                             BreakingChangeType.REMOVED_OR_RENAMED_POSITIONAL_PARAM,
-                            self.module_name, self.function_name, deleted, param_type
+                            self._module_name, self._function_name, deleted, param_type
                         )
                     )
 
@@ -482,62 +482,62 @@ class BreakingChangesTracker:
                 if prop.label == "delete":
                     deleted_props = components["properties"][prop]
                 elif prop.label == "replace":
-                    deleted_props = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"]
+                    deleted_props = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"]
 
         for property in deleted_props:
             bc = None
-            if self.class_name.endswith("Client"):
-                property_type = self.stable[self.module_name]["class_nodes"][self.class_name]["properties"][property]["attr_type"]
+            if self._class_name.endswith("Client"):
+                property_type = self.stable[self._module_name]["class_nodes"][self._class_name]["properties"][property]["attr_type"]
                 # property_type is not always a string, such as client_side_validation which is a bool, so we need to check for strings
                 if property_type is not None and isinstance(property_type, str) and property_type.lower().endswith("operations"):
                         bc = (
                             self.REMOVED_OR_RENAMED_OPERATION_GROUP_MSG,
                             BreakingChangeType.REMOVED_OR_RENAMED_OPERATION_GROUP,
-                            self.module_name, self.class_name, property
+                            self._module_name, self._class_name, property
                         )
                 else:
                     bc = (
                         self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_CLIENT_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
-                        self.module_name, self.class_name, property
+                        self._module_name, self._class_name, property
                     )
-            elif self.stable[self.module_name]["class_nodes"][self.class_name]["type"] == "Enum":
-                if property.upper() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"] \
-                    and property.lower() not in self.current[self.module_name]["class_nodes"][self.class_name]["properties"]:
+            elif self.stable[self._module_name]["class_nodes"][self._class_name]["type"] == "Enum":
+                if property.upper() not in self.current[self._module_name]["class_nodes"][self._class_name]["properties"] \
+                    and property.lower() not in self.current[self._module_name]["class_nodes"][self._class_name]["properties"]:
                     bc = (
                         self.REMOVED_OR_RENAMED_ENUM_VALUE_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_ENUM_VALUE,
-                        self.module_name, self.class_name, property
+                        self._module_name, self._class_name, property
                     )
             else:
                 bc = (
                     self.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE_FROM_MODEL_MSG,
                     BreakingChangeType.REMOVED_OR_RENAMED_INSTANCE_ATTRIBUTE,
-                    self.module_name, self.class_name, property
+                    self._module_name, self._class_name, property
                 )
             if bc:
                 self.breaking_changes.append(bc)
 
     def check_class_removed_or_renamed(self, class_components: Dict) -> Union[bool, None]:
-        if isinstance(self.class_name, jsondiff.Symbol):
+        if isinstance(self._class_name, jsondiff.Symbol):
             deleted_classes = []
-            if self.class_name.label == "delete":
+            if self._class_name.label == "delete":
                 deleted_classes = class_components
-            elif self.class_name.label == "replace":
-                deleted_classes = self.stable[self.module_name]["class_nodes"]
+            elif self._class_name.label == "replace":
+                deleted_classes = self.stable[self._module_name]["class_nodes"]
 
             for name in deleted_classes:
                 if name.endswith("Client"):
                     bc = (
                         self.REMOVED_OR_RENAMED_CLIENT_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLIENT,
-                        self.module_name, name
+                        self._module_name, name
                     )
                 else:
                     bc = (
                         self.REMOVED_OR_RENAMED_CLASS_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLASS,
-                        self.module_name, name
+                        self._module_name, name
                     )
                 self.breaking_changes.append(bc)
             return True
@@ -546,43 +546,43 @@ class BreakingChangesTracker:
         self, method_components: Dict,
         stable_methods_node: Dict
     ) -> Union[bool, None]:
-        if isinstance(self.function_name, jsondiff.Symbol):
+        if isinstance(self._function_name, jsondiff.Symbol):
             methods_deleted = []
-            if self.function_name.label == "delete":
+            if self._function_name.label == "delete":
                 methods_deleted = method_components
-            elif self.function_name.label == "replace":
+            elif self._function_name.label == "replace":
                 methods_deleted = stable_methods_node
 
             for method in methods_deleted:
-                if self.class_name.endswith("Client"):
+                if self._class_name.endswith("Client"):
                     bc = (
                         self.REMOVED_OR_RENAMED_CLIENT_METHOD_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLIENT_METHOD,
-                        self.module_name, self.class_name, method
+                        self._module_name, self._class_name, method
                     )
                 else:
                     bc = (
                         self.REMOVED_OR_RENAMED_CLASS_METHOD_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLASS_METHOD,
-                        self.module_name, self.class_name, method
+                        self._module_name, self._class_name, method
                     )
                 self.breaking_changes.append(bc)
             return True
 
     def check_module_level_function_removed_or_renamed(self, function_components: Dict) -> Union[bool, None]:
-        if isinstance(self.function_name, jsondiff.Symbol):
+        if isinstance(self._function_name, jsondiff.Symbol):
             deleted_functions = []
-            if self.function_name.label == "delete":
+            if self._function_name.label == "delete":
                 deleted_functions = function_components
-            elif self.function_name.label == "replace":
-                deleted_functions = self.stable[self.module_name]["function_nodes"]
+            elif self._function_name.label == "replace":
+                deleted_functions = self.stable[self._module_name]["function_nodes"]
 
             for function in deleted_functions:
                 self.breaking_changes.append(
                     (
                         self.REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_MODULE_LEVEL_FUNCTION,
-                        self.module_name, function
+                        self._module_name, function
                     )
                 )
             return True

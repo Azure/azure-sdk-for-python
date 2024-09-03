@@ -7,7 +7,6 @@
 
 import os
 import json
-import jsondiff
 import pytest
 from breaking_changes_checker.changelog_tracker import ChangelogTracker, BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
@@ -18,9 +17,8 @@ def test_changelog_flag():
         stable = json.load(fd)
     with open(os.path.join(os.path.dirname(__file__), "examples", "code-reports", "content-safety", "current.json"), "r") as fd:
         current = json.load(fd)
-    diff = jsondiff.diff(stable, current)
 
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) > 0
@@ -59,8 +57,7 @@ def test_new_class_property_added():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -128,8 +125,7 @@ def test_async_cleanup_check():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-mgmt-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contentsafety")
     bc.run_checks()
 
     # Should only have 1 breaking change reported instead of 2
@@ -209,8 +205,7 @@ def test_new_class_property_added_init():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -281,8 +276,7 @@ def test_new_class_property_added_init_only():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -370,8 +364,7 @@ def test_new_class_method_parameter_added():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -429,8 +422,7 @@ def test_added_operation_group():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-contoso")
+    bc = ChangelogTracker(stable, current, "azure-contoso")
     bc.run_checks()
 
     assert len(bc.features_added) == 2
@@ -481,8 +473,7 @@ def test_ignore_changes():
     IGNORE = {
         "azure-contoso": [("AddedOperationGroup", "*", "ContosoClient", "foo")]
     }
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-contoso", ignore=IGNORE)
+    bc = ChangelogTracker(stable, current, "azure-contoso", ignore=IGNORE)
     bc.run_checks()
     bc.report_changes()
     assert len(bc.features_added) == 1
@@ -498,7 +489,7 @@ def test_async_features_added_cleanup():
     ]
 
     # create dummy BreakingChangesTracker instance
-    ct = ChangelogTracker({}, {}, {}, "azure-contoso")
+    ct = ChangelogTracker({}, {}, "azure-contoso")
     ct.features_added = features_added
 
     ct.run_async_cleanup(ct.features_added)

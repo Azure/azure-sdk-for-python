@@ -25,7 +25,7 @@ from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
 from pathlib import Path
-from checkers.method_overloads_checker import MethodOverloadsChecker
+from supported_checkers import CHECKERS
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 _LOGGER = logging.getLogger(__name__)
@@ -445,18 +445,9 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         stable = report_azure_mgmt_versioned_module(stable)
         current = report_azure_mgmt_versioned_module(current)
 
-    diff = jsondiff.diff(stable, current)
-    checker = BreakingChangesTracker(
-        stable,
-        current,
-        diff, # TODO in preparation for generic trackers, the diff can be created during init
-        package_name,
-        checkers = [
-            MethodOverloadsChecker(),
-        ]
-    )
+    checker = BreakingChangesTracker(stable, current, package_name, checkers = CHECKERS)
     if changelog:
-        checker = ChangelogTracker(stable, current, diff, package_name)
+        checker = ChangelogTracker(stable, current, package_name, checkers = CHECKERS)
     checker.run_checks()
 
     remove_json_files(pkg_dir)
