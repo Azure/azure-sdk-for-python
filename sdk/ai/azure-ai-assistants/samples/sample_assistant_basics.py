@@ -25,6 +25,7 @@ from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+import time
 
 
 def setup_console_trace_exporter():
@@ -37,7 +38,7 @@ def setup_console_trace_exporter():
     RequestsInstrumentor().instrument()
 
 
-def sample_assistant_hello_world():
+def sample_assistant_basic_operation():
     import os
     from azure.ai.assistants import AssistantsClient
     from azure.core.credentials import AzureKeyCredential
@@ -55,20 +56,36 @@ def sample_assistant_hello_world():
 
     assistant_client = AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version)
     print("Created assistant client")
+
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant2", instructions="You are helpful assistant"
+        model="gpt", name="my-assistant", instructions="You are helpful assistant"
     )
-    print("Created assistant")
+    print("Created assistant, assistant ID", assistant.id)
 
     thread = assistant_client.create_thread()
-    print("Created thread, got thread ID", thread.id)
+    print("Created thread, thread ID", thread.id)
 
-    assistant_list = assistant_client.list_assistants()
-    print("Listed assistants, got", len(assistant_list), "assistant(s)")
+    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+    print("Created message, message ID", message.id)
+
+    run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
+    print("Created run, run ID", run.id)
+
+    # poll the run as long as run status is queued or in progress
+    while run.status in ["queued", "in_progress"]:
+        # wait for a second
+        time.sleep(1)
+        run = assistant_client.get_run(thread_id=thread.id, run_id=run.id)
+        print("Run status:", run.status)
+
+    print("Run completed with status:", run.status)
+
+    messages = assistant_client.list_messages(thread_id=thread.id)
+    print("messages:", messages)
 
     assistant_client.delete_assistant(assistant.id)
     print("Deleted assistant")
 
 
 if __name__ == "__main__":
-    sample_assistant_hello_world()
+    sample_assistant_basic_operation()
