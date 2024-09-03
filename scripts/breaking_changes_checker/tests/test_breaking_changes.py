@@ -443,7 +443,7 @@ def test_async_breaking_changes_cleanup():
     ]
 
     # create dummy BreakingChangesTracker instance
-    bct = BreakingChangesTracker({}, {}, {}, "azure-contoso")
+    bct = BreakingChangesTracker({}, {}, "azure-contoso")
     bct.breaking_changes = breaking_changes
 
     bct.run_async_cleanup(bct.breaking_changes)

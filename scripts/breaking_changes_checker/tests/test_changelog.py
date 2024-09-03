@@ -125,8 +125,7 @@ def test_async_cleanup_check():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-mgmt-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contentsafety")
     bc.run_checks()
 
     # Should only have 1 breaking change reported instead of 2
@@ -474,8 +473,7 @@ def test_ignore_changes():
     IGNORE = {
         "azure-contoso": [("AddedOperationGroup", "*", "ContosoClient", "foo")]
     }
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-contoso", ignore=IGNORE)
+    bc = ChangelogTracker(stable, current, "azure-contoso", ignore=IGNORE)
     bc.run_checks()
     bc.report_changes()
     assert len(bc.features_added) == 1
@@ -491,7 +489,7 @@ def test_async_features_added_cleanup():
     ]
 
     # create dummy BreakingChangesTracker instance
-    ct = ChangelogTracker({}, {}, {}, "azure-contoso")
+    ct = ChangelogTracker({}, {}, "azure-contoso")
     ct.features_added = features_added
 
     ct.run_async_cleanup(ct.features_added)
