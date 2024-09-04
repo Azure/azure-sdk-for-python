@@ -1406,6 +1406,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         """
         if len(blobs) == 0:
             return AsyncList([])
+        if self._is_localhost:
+            kwargs['url_prepend'] = self.account_name
 
         reqs, options = _generate_delete_blobs_options(
             self._query_str,
@@ -1485,6 +1487,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         :return: An async iterator of responses, one for each blob in order
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
+        if self._is_localhost:
+            kwargs['url_prepend'] = self.account_name
         reqs, options = _generate_set_tiers_options(
             self._query_str,
             self.container_name,
@@ -1544,6 +1548,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         :return: An async iterator of responses, one for each blob in order
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
         """
+        if self._is_localhost:
+            kwargs['url_prepend'] = self.account_name
         reqs, options = _generate_set_tiers_options(
             self._query_str,
             self.container_name,

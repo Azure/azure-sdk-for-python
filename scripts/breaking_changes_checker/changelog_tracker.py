@@ -6,9 +6,10 @@
 # --------------------------------------------------------------------------------------------
 
 from enum import Enum
-from typing import Any, Dict, List, Union
+from typing import Any, Dict
 import jsondiff
 from breaking_changes_tracker import BreakingChangesTracker
+from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
 
 class ChangeType(str, Enum):
     ADDED_CLIENT = "AddedClient"
@@ -22,30 +23,31 @@ class ChangeType(str, Enum):
 
 class ChangelogTracker(BreakingChangesTracker):
     ADDED_CLIENT_MSG = \
-        "The client '{}' was added in the current version"
+        "Added client `{}`"
     ADDED_CLIENT_METHOD_MSG = \
-        "The '{}' client method '{}' was added in the current version"
+        "Client `{}` added method `{}`"
     ADDED_CLASS_MSG = \
-        "The model or publicly exposed class '{}' was added in the current version"
+        "Added model `{}`"
     ADDED_CLASS_METHOD_MSG = \
-        "The '{}' method '{}' was added in the current version"
+        "Model `{}` added method `{}`"
     ADDED_CLASS_METHOD_PARAMETER_MSG = \
-        "The model or publicly exposed class '{}' had property '{}' added in the {} method in the current version"
+        "Model `{}` added parameter `{}` in method `{}`"
     ADDED_FUNCTION_PARAMETER_MSG = \
-        "The function '{}' had parameter '{}' added in the current version"
+        "Function `{}` added parameter `{}`"
     ADDED_CLASS_PROPERTY_MSG = \
-        "The model or publicly exposed class '{}' had property '{}' added in the current version"
+        "Model `{}` added property `{}`"
     ADDED_OPERATION_GROUP_MSG = \
-        "The '{}' client had operation group '{}' added in the current version"
+        "Client `{}` added operation group `{}`"
 
 
-    def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
-        super().__init__(stable, current, diff, package_name, **kwargs)
+    def __init__(self, stable: Dict, current: Dict, package_name: str, **kwargs: Any) -> None:
+        super().__init__(stable, current, package_name, **kwargs)
         self.features_added = []
 
     def run_checks(self) -> None:
         self.run_non_breaking_change_diff_checks()
         super().run_checks()
+        self.run_async_cleanup(self.features_added)
 
     def run_non_breaking_change_diff_checks(self) -> None:
         for module_name, module in self.diff.items():
@@ -153,7 +155,11 @@ class ChangelogTracker(BreakingChangesTracker):
                     )
                 )
 
+
     def report_changes(self) -> None:
+        ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
+        self.get_reportable_changes(ignore_changes, self.breaking_changes)
+        self.get_reportable_changes(ignore_changes, self.features_added)
         # Code borrowed and modified from the previous change log tool
         def _build_md(content: list, title: str, buffer: list):
             buffer.append(title)

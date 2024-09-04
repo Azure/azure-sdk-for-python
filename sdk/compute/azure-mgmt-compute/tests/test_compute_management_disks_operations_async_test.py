@@ -13,7 +13,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
-
+@pytest.mark.live_test_only
 class TestComputeManagementDisksOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeManagementClient, is_async=True)
