@@ -32,7 +32,6 @@ async def setup():
     }
 
     yield created_db_data
-    await test_client.delete_database(config.TEST_DATABASE_ID)
     await test_client.close()
 
 @pytest.mark.cosmosEmulator
