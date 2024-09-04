@@ -14,12 +14,7 @@ from opentelemetry.trace import set_tracer_provider
 from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
-from opentelemetry.semconv.attributes.exception_attributes import (
-    EXCEPTION_ESCAPED,
-    EXCEPTION_MESSAGE,
-    EXCEPTION_STACKTRACE,
-    EXCEPTION_TYPE,
-)
+from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
@@ -1210,10 +1205,10 @@ class TestAzureTraceExporter(unittest.TestCase):
             kind=SpanKind.CLIENT,
         )
         attributes = {
-            EXCEPTION_TYPE: "ZeroDivisionError",
-            EXCEPTION_MESSAGE: "zero division error",
-            EXCEPTION_STACKTRACE: "Traceback: ZeroDivisionError, division by zero",
-            EXCEPTION_ESCAPED: "True",
+            SpanAttributes.EXCEPTION_TYPE: "ZeroDivisionError",
+            SpanAttributes.EXCEPTION_MESSAGE: "zero division error",
+            SpanAttributes.EXCEPTION_STACKTRACE: "Traceback: ZeroDivisionError, division by zero",
+            SpanAttributes.EXCEPTION_ESCAPED: "True",
         }
         span.add_event("exception", attributes, time)
         span.start()
