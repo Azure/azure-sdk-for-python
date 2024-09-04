@@ -280,16 +280,6 @@ def tenant_id() -> str:
     return decoded_token["tid"]
 
 
-@pytest.fixture(scope=package_scope_in_live_mode())
-def variable_recorder():
-    if not is_live():
-        from promptflow.recording.azure import VariableRecorder
-
-        yield VariableRecorder()
-    else:
-        yield None
-
-
 @pytest.fixture()
 def mock_token(scope=package_scope_in_live_mode()):
     expiration_time = time.time() + 3600  # 1 hour in the future
