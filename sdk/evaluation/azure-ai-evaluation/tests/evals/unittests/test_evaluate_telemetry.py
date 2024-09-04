@@ -7,8 +7,8 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 import pytest
-
 from promptflow.client import load_flow
+
 from azure.ai.evaluation.evaluate._telemetry import log_evaluate_activity
 from azure.ai.evaluation.evaluators import F1ScoreEvaluator, HateUnfairnessEvaluator
 

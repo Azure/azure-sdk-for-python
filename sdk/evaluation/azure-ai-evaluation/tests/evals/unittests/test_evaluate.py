@@ -7,11 +7,15 @@ import numpy as np
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
-
 from promptflow.client import PFClient
+
 from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME
 from azure.ai.evaluation.evaluate import evaluate
-from azure.ai.evaluation.evaluate._evaluate import _aggregate_metrics, _apply_target_to_data, _rename_columns_conditionally
+from azure.ai.evaluation.evaluate._evaluate import (
+    _aggregate_metrics,
+    _apply_target_to_data,
+    _rename_columns_conditionally,
+)
 from azure.ai.evaluation.evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
 from azure.ai.evaluation.evaluators import (
     ContentSafetyEvaluator,
@@ -411,9 +415,9 @@ class TestEvaluate:
 
         pf_client = PFClient(
             config={
-                "trace.destination": _trace_destination_from_project_scope(mock_project_scope)
-                if mock_project_scope
-                else None
+                "trace.destination": (
+                    _trace_destination_from_project_scope(mock_project_scope) if mock_project_scope else None
+                )
             }
         )
 

@@ -5,14 +5,13 @@ import pathlib
 from unittest.mock import MagicMock, patch
 
 import pytest
+from devtools_testutils import is_live
+from promptflow.tracing import _start_trace
 
 from azure.ai.evaluation.evaluate import _utils as ev_utils
 from azure.ai.evaluation.evaluate._eval_run import EvalRun
 from azure.ai.evaluation.evaluate._evaluate import evaluate
 from azure.ai.evaluation.evaluators._f1_score._f1_score import F1ScoreEvaluator
-from promptflow.tracing import _start_trace
-
-from devtools_testutils import is_live
 
 
 @pytest.fixture

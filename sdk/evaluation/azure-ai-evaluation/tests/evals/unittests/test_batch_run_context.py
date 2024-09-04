@@ -2,8 +2,8 @@ import os
 from unittest.mock import MagicMock
 
 import pytest
-
 from promptflow.client import PFClient
+
 from azure.ai.evaluation._constants import PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT
 from azure.ai.evaluation._user_agent import USER_AGENT
 from azure.ai.evaluation.evaluate._batch_run_client import BatchRunContext, CodeClient, ProxyClient

@@ -263,9 +263,7 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
 
-    @pytest.mark.skipif(
-        is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT."
-    )
+    @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_adv_protected_matierial_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator

@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import requests
+from ci_tools.variables import in_ci
 
 from azure.ai.evaluation.evaluate import evaluate
 from azure.ai.evaluation.evaluators import (
@@ -15,7 +16,6 @@ from azure.ai.evaluation.evaluators import (
     FluencyEvaluator,
     GroundednessEvaluator,
 )
-from ci_tools.variables import in_ci
 
 
 @pytest.fixture

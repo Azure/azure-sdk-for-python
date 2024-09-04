@@ -7,9 +7,9 @@ from uuid import uuid4
 
 import jwt
 import pytest
+from promptflow.azure._utils._token_cache import ArmTokenCache
 
 import azure.ai.evaluation.evaluate._utils as ev_utils
-from promptflow.azure._utils._token_cache import ArmTokenCache
 from azure.ai.evaluation.evaluate._eval_run import EvalRun, RunStatus
 
 
@@ -200,7 +200,9 @@ class TestEvalRun:
 
     def test_get_urls(self, token_mock):
         """Test getting url-s from eval run."""
-        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
+        with patch(
+            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()
+        ):
             with EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS) as run:
                 pass
         assert run.get_run_history_uri() == (
@@ -359,7 +361,8 @@ class TestEvalRun:
             pf_run_mock.name = "mock_pf_run"
             pf_run_mock._experiment_name = "mock_pf_experiment"
         with patch(
-            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse(status_code)
+            "azure.ai.evaluation._http_utils.HttpPipeline.request",
+            return_value=self._get_mock_create_resonse(status_code),
         ):
             run = EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS, promptflow_run=pf_run_mock)
             assert run.status == RunStatus.NOT_STARTED, f"Get {run.status}, expected {RunStatus.NOT_STARTED}"
