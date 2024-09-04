@@ -67,27 +67,6 @@ class AnalyzeDocumentLROPoller(LROPoller[PollingReturnType_co]):
         """
         return self.polling_method().operation_id
 
-    @classmethod
-    def from_continuation_token(  # type: ignore
-        cls, polling_method: AnalyzeDocumentLROPollingMethod, continuation_token: str, **kwargs: Any
-    ) -> "AnalyzeDocumentLROPoller":
-        """Internal use only.
-
-        :param polling_method: Polling method to use.
-        :type polling_method: AnalyzeDocumentLROPollingMethod
-        :param str continuation_token: Opaque token.
-        :return: AnalyzeDocumentLROPoller
-        :rtype: AnalyzeDocumentLROPoller
-
-        :meta private:
-        """
-        (
-            client,
-            initial_response,
-            deserialization_callback,
-        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
-        return cls(client, initial_response, deserialization_callback, polling_method)
-
 
 class AnalyzeBatchDocumentsLROPollingMethod(LROBasePolling):
     def finished(self) -> bool:
@@ -602,11 +581,13 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         else:
             polling_method = polling
         if cont_token:
-            return AnalyzeDocumentLROPoller[_models.AnalyzeResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
+            return cast(
+                AnalyzeDocumentLROPoller, LROPoller[_models.AnalyzeResult].from_continuation_token(
+                    polling_method=polling_method,
+                    continuation_token=cont_token,
+                    client=self._client,
+                    deserialization_callback=get_long_running_output,
+                )
             )
         return AnalyzeDocumentLROPoller[_models.AnalyzeResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore

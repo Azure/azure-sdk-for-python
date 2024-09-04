@@ -60,27 +60,6 @@ class AsyncAnalyzeDocumentLROPoller(AsyncLROPoller[PollingReturnType_co]):
         """
         return self.polling_method().operation_id
 
-    @classmethod
-    def from_continuation_token(  # type: ignore
-        cls, polling_method: AsyncAnalyzeDocumentLROPollingMethod, continuation_token: str, **kwargs: Any
-    ) -> "AsyncAnalyzeDocumentLROPoller":
-        """Internal use only.
-
-        :param polling_method: Polling method to use.
-        :type polling_method: AsyncAnalyzeDocumentLROPollingMethod
-        :param str continuation_token: Opaque token.
-        :return: AsyncAnalyzeDocumentLROPoller
-        :rtype: AsyncAnalyzeDocumentLROPoller
-
-        :meta private:
-        """
-        (
-            client,
-            initial_response,
-            deserialization_callback,
-        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
-        return cls(client, initial_response, deserialization_callback, polling_method)
-
 
 class AsyncAnalyzeBatchDocumentsAsyncLROPollingMethod(AsyncLROBasePolling):  # pylint: disable=name-too-long
     def finished(self) -> bool:
@@ -599,11 +578,13 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         else:
             polling_method = polling
         if cont_token:
-            return AsyncAnalyzeDocumentLROPoller[_models.AnalyzeResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
+            return cast(
+                AsyncAnalyzeDocumentLROPoller, AsyncLROPoller[_models.AnalyzeResult].from_continuation_token(
+                    polling_method=polling_method,
+                    continuation_token=cont_token,
+                    client=self._client,
+                    deserialization_callback=get_long_running_output,
+                )
             )
         return AsyncAnalyzeDocumentLROPoller[_models.AnalyzeResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
