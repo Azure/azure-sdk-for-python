@@ -260,8 +260,8 @@ class SchemaRegistryClient:
                 id=schema_id,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types are supported
-                    "Accept": """application/json; serialization=Avro, application/json; \
-                        serialization=json, text/plain; charset=utf-8"""
+                    "Accept": """application/json; serialization=Avro, application/json; """
+                        """serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
@@ -285,8 +285,8 @@ class SchemaRegistryClient:
                 schema_version=version,
                 cls=prepare_schema_result,
                 headers={  # TODO: remove when multiple content types are supported
-                    "Accept": """application/json; serialization=Avro, application/json; \
-                        serialization=json, text/plain; charset=utf-8"""
+                    "Accept": """application/json; serialization=Avro, application/json; """
+                        """serialization=json, text/plain; charset=utf-8"""
                 },
                 stream=True,
                 **http_request_kwargs,
