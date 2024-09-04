@@ -2986,8 +2986,9 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
 
                 assert len(received_msgs) == 5
 
-                # wait to make sure message completed
-                asyncio.sleep(20)
+                if uamqp_transport:
+                    # wait to make sure message completed, since uamqp is taking longer in the CI
+                    asyncio.sleep(20)
                 messages_in_queue = await receiver1.peek_messages()
 
                 assert len(messages_in_queue) == 0
