@@ -3,7 +3,7 @@ import multiprocessing
 import time
 from enum import Enum
 from pathlib import Path
-from typing import Dict
+from typing import Any, Dict
 from unittest.mock import patch
 
 import pytest
@@ -35,6 +35,13 @@ class SanitizedValues(str, Enum):
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
 
 
+
+@pytest.fixture(scope="session")
+def dev_connections() -> Dict[str, Any]:
+    with open(CONNECTION_FILE) as f:
+        return json.load(f)
+
+
 @pytest.fixture
 def mock_model_config() -> dict:
     return AzureOpenAIModelConfiguration(
@@ -55,14 +62,8 @@ def mock_project_scope() -> dict:
 
 
 @pytest.fixture
-def model_config() -> dict:
+def model_config(dev_connections: Dict[str, Any]) -> dict:
     conn_name = "azure_openai_model_config"
-
-    with open(
-        file=CONNECTION_FILE,
-        mode="r",
-    ) as f:
-        dev_connections = json.load(f)
 
     if conn_name not in dev_connections:
         raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
@@ -77,7 +78,7 @@ def model_config() -> dict:
 
 
 @pytest.fixture
-def non_azure_openai_model_config() -> dict:
+def non_azure_openai_model_config(dev_connections: Dict[str, Any]) -> dict:
     """Requires the following in your local connections.json file. If not present, ask around the team.
 
 
@@ -92,12 +93,6 @@ def non_azure_openai_model_config() -> dict:
     """
     conn_name = "openai_model_config"
 
-    with open(
-        file=CONNECTION_FILE,
-        mode="r",
-    ) as f:
-        dev_connections = json.load(f)
-
     if conn_name not in dev_connections:
         raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
 
@@ -109,7 +104,7 @@ def non_azure_openai_model_config() -> dict:
 
 
 @pytest.fixture
-def project_scope(request) -> dict:
+def project_scope(request, dev_connections: Dict[str, Any]) -> dict:
     if not is_live() and "recorded_test" in request.fixturenames:
 
         return {
@@ -119,12 +114,6 @@ def project_scope(request) -> dict:
         }
 
     conn_name = "azure_ai_project_scope"
-
-    with open(
-        file=CONNECTION_FILE,
-        mode="r",
-    ) as f:
-        dev_connections = json.load(f)
 
     if conn_name not in dev_connections:
         raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
