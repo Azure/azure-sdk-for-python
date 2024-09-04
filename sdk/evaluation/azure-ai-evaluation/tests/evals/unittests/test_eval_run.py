@@ -60,7 +60,9 @@ class TestEvalRun:
     )
     def test_end_raises(self, token_mock, status, should_raise, caplog):
         """Test that end run raises exception if incorrect status is set."""
-        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
+        with patch(
+            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()
+        ), caplog.at_level(logging.INFO):
             with EvalRun(run_name=None, **TestEvalRun._MOCK_CREDS) as run:
                 if should_raise:
                     with pytest.raises(ValueError) as cm:
@@ -72,7 +74,9 @@ class TestEvalRun:
 
     def test_run_logs_if_terminated(self, token_mock, caplog):
         """Test that run warn user if we are trying to terminate it twice."""
-        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
+        with patch(
+            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()
+        ), caplog.at_level(logging.INFO):
             logger = logging.getLogger(EvalRun.__module__)
             # All loggers, having promptflow. prefix will have "promptflow" logger
             # as a parent. This logger does not propagate the logs and cannot be
@@ -97,7 +101,7 @@ class TestEvalRun:
         with patch(
             "azure.ai.evaluation._http_utils.HttpPipeline.request",
             side_effect=[self._get_mock_create_resonse(), self._get_mock_end_response(500)],
-        ):
+        ), caplog.at_level(logging.INFO):
             logger = logging.getLogger(EvalRun.__module__)
             # All loggers, having promptflow. prefix will have "promptflow" logger
             # as a parent. This logger does not propagate the logs and cannot be
@@ -120,7 +124,9 @@ class TestEvalRun:
         mock_response_start = MagicMock()
         mock_response_start.status_code = 500
         mock_response_start.text = lambda: "Mock internal service error."
-        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=mock_response_start):
+        with patch(
+            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=mock_response_start
+        ), caplog.at_level(logging.INFO):
             logger = logging.getLogger(EvalRun.__module__)
             # All loggers, having promptflow. prefix will have "promptflow" logger
             # as a parent. This logger does not propagate the logs and cannot be
@@ -238,7 +244,7 @@ class TestEvalRun:
                 mock_response,
                 self._get_mock_end_response(),
             ],
-        ):
+        ), caplog.at_level(logging.INFO):
             logger = logging.getLogger(EvalRun.__module__)
             # All loggers, having promptflow. prefix will have "promptflow" logger
             # as a parent. This logger does not propagate the logs and cannot be
@@ -277,7 +283,9 @@ class TestEvalRun:
         expected_error,
     ):
         """Test that if artifact path is empty, or dies not exist we are logging the error."""
-        with patch("azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()):
+        with patch(
+            "azure.ai.evaluation._http_utils.HttpPipeline.request", return_value=self._get_mock_create_resonse()
+        ), caplog.at_level(logging.INFO):
             with EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS) as run:
                 logger = logging.getLogger(EvalRun.__module__)
                 # All loggers, having promptflow. prefix will have "promptflow" logger
@@ -299,13 +307,15 @@ class TestEvalRun:
         # as a parent. This logger does not propagate the logs and cannot be
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
-        ev_utils._log_metrics_and_instance_results(
-            metrics=None,
-            instance_results=None,
-            trace_destination=None,
-            run=None,
-            evaluation_name=None,
-        )
+
+        with caplog.at_level(logging.INFO):
+            ev_utils._log_metrics_and_instance_results(
+                metrics=None,
+                instance_results=None,
+                trace_destination=None,
+                run=None,
+                evaluation_name=None,
+            )
         assert len(caplog.records) == 1
         assert "Unable to log traces as trace destination was not defined." in caplog.records[0].message
 
@@ -316,7 +326,7 @@ class TestEvalRun:
         # as a parent. This logger does not propagate the logs and cannot be
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
-        with EvalRun(
+        with caplog.at_level(logging.INFO), EvalRun(
             run_name=None,
             tracking_uri=None,
             subscription_id="mock",
@@ -389,7 +399,7 @@ class TestEvalRun:
         with patch(
             "azure.ai.evaluation._http_utils.HttpPipeline.request",
             side_effect=[self._get_mock_create_resonse(), mock_write, self._get_mock_end_response()],
-        ):
+        ), caplog.at_level(logging.INFO):
             with EvalRun(run_name="test", **TestEvalRun._MOCK_CREDS) as run:
                 run.write_properties_to_run_history({"foo": "bar"})
         if status_code != 200:
@@ -406,7 +416,7 @@ class TestEvalRun:
         # as a parent. This logger does not propagate the logs and cannot be
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
-        with EvalRun(
+        with caplog.at_level(logging.INFO), EvalRun(
             run_name=None,
             tracking_uri=None,
             subscription_id="mock",
@@ -436,7 +446,8 @@ class TestEvalRun:
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
         run = EvalRun(run_name=None, **TestEvalRun._MOCK_CREDS)
-        getattr(run, function_literal)(*args)
+        with caplog.at_level(logging.INFO):
+            getattr(run, function_literal)(*args)
         assert len(caplog.records) == 1
         assert expected_action in caplog.records[0].message, caplog.records[0].message
         assert (
