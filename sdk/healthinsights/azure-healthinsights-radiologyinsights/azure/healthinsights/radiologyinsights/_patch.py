@@ -131,7 +131,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         :rtype: ~azure.core.polling.LROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
-    @distributed_trace # type: ignore[override]
+    @distributed_trace
     def begin_infer_radiology_insights(
         self,
         id: str,
