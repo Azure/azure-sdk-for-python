@@ -36,12 +36,25 @@ class SanitizedValues(str, Enum):
 
 
 @pytest.fixture(scope="session")
-def dev_connections() -> Dict[str, Any]:
+def dev_connections(mock_project_scope: dict, mock_model_config: AzureOpenAIModelConfiguration) -> Dict[str, Any]:
+    if not is_live():
+        return {
+            "azure_ai_project_scope": {"value": mock_project_scope},
+            "azure_openai_model_config": {
+                "value": {
+                    "azure_endpoint": mock_model_config.azure_endpoint,
+                    "api_key": mock_model_config.api_key,
+                    "api_version": mock_model_config.api_version,
+                    "azure_deployment": mock_model_config.azure_deployment,
+                }
+            },
+        }
+
     with open(CONNECTION_FILE) as f:
         return json.load(f)
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def mock_model_config() -> dict:
     return AzureOpenAIModelConfiguration(
         azure_endpoint="aoai-api-endpoint",
@@ -51,7 +64,7 @@ def mock_model_config() -> dict:
     )
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def mock_project_scope() -> dict:
     return {
         "subscription_id": "subscription-id",
