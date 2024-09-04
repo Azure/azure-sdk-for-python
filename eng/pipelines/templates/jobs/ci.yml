@@ -137,6 +137,7 @@ jobs:
       sdl:
         componentgovernance:
           enabled: false
+          justificationForDisabling: "We've already run CG on the previous jobs, and we're running into timeout issues due to previous outputs."
 
     timeoutInMinutes: 90
 
