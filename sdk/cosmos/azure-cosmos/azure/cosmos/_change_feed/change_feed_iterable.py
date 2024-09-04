@@ -21,13 +21,12 @@
 
 """Iterable change feed results in the Azure Cosmos database service.
 """
-from typing import Dict, Any
+from typing import Dict, Any, Tuple, List, Optional, Callable, cast, Union
 
 from azure.core.paging import PageIterator
 
-from azure.cosmos._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
-from azure.cosmos._change_feed.change_feed_state import ChangeFeedStateV1, ChangeFeedState
-from azure.cosmos._utils import is_base64_encoded, is_key_exists_and_not_none
+from azure.cosmos._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2, ChangeFeedFetcher
+from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
 
 
 class ChangeFeedIterable(PageIterator):
@@ -39,11 +38,11 @@ class ChangeFeedIterable(PageIterator):
     def __init__(
         self,
         client,
-        options,
-        fetch_function=None,
-        collection_link=None,
-        continuation_token=None,
-    ):
+        options: Dict[str, Any],
+        fetch_function=Optional[Callable[[Dict[str, Any]], Tuple[List[Dict[str, Any]], Dict[str, Any]]]],
+        collection_link=Optional[str],
+        continuation_token=Optional[str],
+    ) -> None:
         """Instantiates a ChangeFeedIterable for non-client side partitioning queries.
 
         :param CosmosClient client: Instance of document client.
@@ -58,9 +57,9 @@ class ChangeFeedIterable(PageIterator):
         self._options = options
         self._fetch_function = fetch_function
         self._collection_link = collection_link
-        self._change_feed_fetcher = None
+        self._change_feed_fetcher: Optional[Union[ChangeFeedFetcherV1, ChangeFeedFetcherV2]] = None
 
-        if not is_key_exists_and_not_none(self._options, "changeFeedStateContext"):
+        if self._options.get("changeFeedStateContext") is None:
             raise ValueError("Missing changeFeedStateContext in feed options")
 
         change_feed_state_context = self._options.pop("changeFeedStateContext")
@@ -75,18 +74,18 @@ class ChangeFeedIterable(PageIterator):
         # v2 version: the continuation token will be base64 encoded composition token
         # which includes full change feed state
         if continuation is not None:
-            if is_base64_encoded(continuation):
-                change_feed_state_context["continuationFeedRange"] = continuation
-            else:
+            if continuation.isdigit() or continuation.strip('\'"').isdigit():
                 change_feed_state_context["continuationPkRangeId"] = continuation
+            else:
+                change_feed_state_context["continuationFeedRange"] = continuation
 
         self._validate_change_feed_state_context(change_feed_state_context)
         self._options["changeFeedStateContext"] = change_feed_state_context
 
         super(ChangeFeedIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
-    def _unpack(self, block):
-        continuation = None
+    def _unpack(self, block: List[Dict[str, Any]]) -> Tuple[Optional[str], List[Dict[str, Any]]]:
+        continuation: Optional[str] = None
         if self._client.last_response_headers:
             continuation = self._client.last_response_headers.get('etag')
 
@@ -94,11 +93,8 @@ class ChangeFeedIterable(PageIterator):
             self._did_a_call_already = False
         return continuation, block
 
-    def _fetch_next(self, *args):  # pylint: disable=unused-argument
+    def _fetch_next(self, *args) -> List[Dict[str, Any]]:  # pylint: disable=unused-argument
         """Return a block of results with respecting retry policy.
-
-        This method only exists for backward compatibility reasons. (Because
-        QueryIterable has exposed fetch_next_block api).
 
         :param Any args:
         :return: List of results.
@@ -108,22 +104,23 @@ class ChangeFeedIterable(PageIterator):
         if self._change_feed_fetcher is None:
             self._initialize_change_feed_fetcher()
 
+        assert self._change_feed_fetcher is not None
         block = self._change_feed_fetcher.fetch_next_block()
         if not block:
             raise StopIteration
         return block
 
-    def _initialize_change_feed_fetcher(self):
+    def _initialize_change_feed_fetcher(self) -> None:
         change_feed_state_context = self._options.pop("changeFeedStateContext")
         change_feed_state = \
             ChangeFeedState.from_json(
                 self._collection_link,
-                self._options.get("containerRID"),
+                cast(str, self._options.get("containerRID")),
                 change_feed_state_context)
 
         self._options["changeFeedState"] = change_feed_state
 
-        if isinstance(change_feed_state, ChangeFeedStateV1):
+        if change_feed_state.version == ChangeFeedStateVersion.V1:
             self._change_feed_fetcher = ChangeFeedFetcherV1(
                 self._client,
                 self._collection_link,
@@ -140,11 +137,11 @@ class ChangeFeedIterable(PageIterator):
 
     def _validate_change_feed_state_context(self, change_feed_state_context: Dict[str, Any]) -> None:
 
-        if is_key_exists_and_not_none(change_feed_state_context, "continuationPkRangeId"):
+        if change_feed_state_context.get("continuationPkRangeId") is not None:
             # if continuation token is in v1 format, throw exception if feed_range is set
-            if is_key_exists_and_not_none(change_feed_state_context, "feedRange"):
+            if change_feed_state_context.get("feedRange") is not None:
                 raise ValueError("feed_range and continuation are incompatible")
-        elif is_key_exists_and_not_none(change_feed_state_context, "continuationFeedRange"):
+        elif change_feed_state_context.get("continuationFeedRange") is not None:
             # if continuation token is in v2 format, since the token itself contains the full change feed state
             # so we will ignore other parameters (including incompatible parameters) if they passed in
             pass

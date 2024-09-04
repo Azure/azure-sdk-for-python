@@ -42,6 +42,9 @@ class ChangeFeedStartFromInternal(ABC):
 
     type_property_name = "Type"
 
+    def __init__(self, start_from_type: ChangeFeedStartFromType) -> None:
+        self.version = start_from_type
+
     @abstractmethod
     def to_dict(self) -> Dict[str, Any]:
         pass
@@ -86,6 +89,9 @@ class ChangeFeedStartFromBeginning(ChangeFeedStartFromInternal):
     """Class for change feed start from beginning implementation in the Azure Cosmos database service.
     """
 
+    def __init__(self) -> None:
+        super().__init__(ChangeFeedStartFromType.BEGINNING)
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             self.type_property_name: ChangeFeedStartFromType.BEGINNING.value
@@ -106,12 +112,13 @@ class ChangeFeedStartFromETagAndFeedRange(ChangeFeedStartFromInternal):
     _etag_property_name = "Etag"
     _feed_range_property_name = "FeedRange"
 
-    def __init__(self, etag, feed_range):
+    def __init__(self, etag, feed_range) -> None:
         if feed_range is None:
             raise ValueError("feed_range is missing")
 
         self._etag = etag
         self._feed_range = feed_range
+        super().__init__(ChangeFeedStartFromType.LEASE)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -142,6 +149,9 @@ class ChangeFeedStartFromNow(ChangeFeedStartFromInternal):
     """Class for change feed start from etag and feed range implementation in the Azure Cosmos database service.
     """
 
+    def __init__(self) -> None:
+        super().__init__(ChangeFeedStartFromType.NOW)
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             self.type_property_name: ChangeFeedStartFromType.NOW.value
@@ -166,6 +176,7 @@ class ChangeFeedStartFromPointInTime(ChangeFeedStartFromInternal):
             raise ValueError("start_time is missing")
 
         self._start_time = start_time
+        super().__init__(ChangeFeedStartFromType.POINT_IN_TIME)
 
     def to_dict(self) -> Dict[str, Any]:
         return {

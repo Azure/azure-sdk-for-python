@@ -2814,8 +2814,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
 
-            change_feed_state = options.get("changeFeedState", None)
-            if change_feed_state and isinstance(change_feed_state, ChangeFeedState):
+            change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
+            if change_feed_state is not None:
                 await change_feed_state.populate_request_headers_async(self._routing_map_provider, headers)
 
             result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)

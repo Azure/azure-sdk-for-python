@@ -26,7 +26,6 @@ from abc import ABC, abstractmethod
 from typing import Union, List, Dict, Any
 
 from azure.cosmos._routing.routing_range import Range
-from azure.cosmos._utils import is_key_exists_and_not_none
 from azure.cosmos.partition_key import _Undefined, _Empty
 
 
@@ -46,7 +45,7 @@ class FeedRangePartitionKey(FeedRange):
     def __init__(
             self,
             pk_value: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined],
-            feed_range: Range):  # pylint: disable=line-too-long
+            feed_range: Range) -> None:  # pylint: disable=line-too-long
 
         if pk_value is None:
             raise ValueError("PartitionKey cannot be None")
@@ -71,7 +70,7 @@ class FeedRangePartitionKey(FeedRange):
 
     @classmethod
     def from_json(cls, data: Dict[str, Any], feed_range: Range) -> 'FeedRangePartitionKey':
-        if is_key_exists_and_not_none(data, cls.type_property_name):
+        if data.get(cls.type_property_name):
             pk_value = data.get(cls.type_property_name)
             if not pk_value:
                 return cls(_Empty(), feed_range)
@@ -88,7 +87,7 @@ class FeedRangePartitionKey(FeedRange):
 class FeedRangeEpk(FeedRange):
     type_property_name = "Range"
 
-    def __init__(self, feed_range: Range):
+    def __init__(self, feed_range: Range) -> None:
         if feed_range is None:
             raise ValueError("feed_range cannot be None")
 
@@ -104,7 +103,7 @@ class FeedRangeEpk(FeedRange):
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> 'FeedRangeEpk':
-        if is_key_exists_and_not_none(data, cls.type_property_name):
+        if data.get(cls.type_property_name):
             feed_range = Range.ParseFromDict(data.get(cls.type_property_name))
             return cls(feed_range)
         raise ValueError(f"Can not parse FeedRangeEPK from the json, there is no property {cls.type_property_name}")

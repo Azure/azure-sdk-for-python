@@ -25,7 +25,11 @@ database service.
 import base64
 import binascii
 import json
+from typing import Dict, Any
 
+
+def partition_key_range_to_range_string(partition_key_range: Dict[str, Any]) -> str:
+    return Range.PartitionKeyRangeToRange(partition_key_range).to_base64_encoded_string()
 
 class PartitionKeyRange(object):
     """Partition Key Range Constants"""

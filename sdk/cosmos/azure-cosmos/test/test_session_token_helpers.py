@@ -7,7 +7,7 @@ import pytest
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import DatabaseProxy
+from azure.cosmos import DatabaseProxy, ThroughputProperties
 
 
 @pytest.mark.cosmosEmulator
@@ -36,12 +36,18 @@ class TestSessionTokenMerge(unittest.TestCase):
 
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
-        cls.created_collection = cls.created_db.get_container_client(cls.TEST_COLLECTION_ID)
+        cls.created_collection = cls.created_db.get_container_client(cls.TEST_COLLECTION_ID, ThroughputProperties(11000))
 
     # have a test for split, merge, different versions, compound session tokens, hpk, and for normal case for several session tokens
     # have tests for all the scenarios in the testing plan
     def test_session_token_merge(self):
-        pass
+        for i in range(10):
+            self.created_collection.create_item(body={'id': 'doc' + str(i)})
+        self.created_collection.read_all_items()
+        session_token = self.created_collection.client_connection.last_response_headers['x-ms-session-token']
+        self.client.delete_database(self.TEST_DATABASE_ID)
+
+
 
 
 

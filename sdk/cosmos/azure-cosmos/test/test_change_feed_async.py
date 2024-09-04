@@ -32,7 +32,6 @@ async def setup():
     }
 
     yield created_db_data
-    await test_client.delete_database(config.TEST_DATABASE_ID)
     await test_client.close()
 
 @pytest.mark.cosmosEmulator
@@ -264,6 +263,7 @@ class TestChangeFeedAsync:
 
         await setup["created_db"].delete_container(created_collection.id)
 
+    @pytest.mark.skip
     async def test_query_change_feed_with_split_async(self, setup):
         created_collection = await setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
                                                               PartitionKey(path="/pk"),

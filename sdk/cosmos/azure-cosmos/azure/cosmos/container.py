@@ -39,9 +39,7 @@ from ._base import (
     _set_properties_cache
 )
 from ._cosmos_client_connection import CosmosClientConnection
-from ._routing import routing_range
-from ._routing.routing_range import Range
-from ._utils import is_key_exists_and_not_none
+from ._routing.routing_range import Range, partition_key_range_to_range_string
 from .offer import Offer, ThroughputProperties
 from .partition_key import (
     NonePartitionKeyValue,
@@ -134,7 +132,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _get_epk_range_for_partition_key(
             self,
-            partition_key_value: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]) -> Range: # pylint: disable=line-too-long
+            partition_key_value: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> Range: # pylint: disable=line-too-long
         container_properties = self._get_properties()
         partition_key_definition = container_properties["partitionKey"]
         partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
@@ -327,73 +325,70 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             *,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            partition_key: Optional[PartitionKeyType] = None,
+            partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
-        # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword Union[datetime, Literal["Now", "Beginning"]] start_time:
-            The start time to start processing chang feed items.
-                Beginning: Processing the change feed items from the beginning of the change feed.
-                Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
-                ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
-                By default, it is start from current (NOW)
-        :keyword PartitionKeyType partition_key: The partition key that is used to define the scope
+        :keyword start_time:The start time to start processing chang feed items.
+            Beginning: Processing the change feed items from the beginning of the change feed.
+            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+            By default, it is start from current ("Now")
+        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :keyword partition_key: The partition key that is used to define the scope
             (logical partition or a subset of a container)
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
-        # pylint: enable=line-too-long
         ...
 
     @overload
     def query_items_change_feed(
             self,
             *,
-            feed_range: Optional[str] = None,
+            feed_range: str,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
-        # pylint: disable=line-too-long
 
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str feed_range: The feed range that is used to define the scope.
-            By default, the scope will be the entire container.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword Union[datetime, Literal["Now", "Beginning"]]
-            start_time: The start time to start processing chang feed items.
-                Beginning: Processing the change feed items from the beginning of the change feed.
-                Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
-                ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
-                By default, it is start from current (NOW)
+        :keyword start_time: The start time to start processing chang feed items.
+            Beginning: Processing the change feed items from the beginning of the change feed.
+            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+            By default, it is start from current ("Now")
+        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
-        # pylint: enable=line-too-long
         ...
 
     @overload
     def query_items_change_feed(
             self,
             *,
-            continuation: Optional[str] = None,
+            continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
-        # pylint: disable=line-too-long
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword str continuation: The continuation token retrieved from previous response.
@@ -401,10 +396,38 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
-        # pylint: enable=line-too-long
+        ...
+
+    @overload
+    def query_items_change_feed(
+            self,
+            *,
+            max_item_count: Optional[int] = None,
+            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
+        """Get a sorted list of items that were changed in the entire container,
+         in the order in which they were modified,
+
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword start_time:The start time to start processing chang feed items.
+            Beginning: Processing the change feed items from the beginning of the change feed.
+            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+            By default, it is start from current ("Now")
+        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An Iterable of items (dicts).
+        :rtype: Iterable[Dict[str, Any]]
+        """
         ...
 
     @distributed_trace
@@ -414,13 +437,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         # pylint: disable=too-many-statements
-        if is_key_exists_and_not_none(kwargs, "priority"):
+        if kwargs.get("priority") is not None:
             kwargs['priority'] = kwargs['priority']
         feed_options = build_options(kwargs)
 
         change_feed_state_context = {}
         # Back compatibility with deprecation warnings for partition_key_range_id
-        if (args and args[0] is not None) or is_key_exists_and_not_none(kwargs, "partition_key_range_id"):
+        if (args and args[0] is not None) or kwargs.get("partition_key_range_id") is not None:
             warnings.warn(
                 "partition_key_range_id is deprecated. Please pass in feed_range instead.",
                 DeprecationWarning
@@ -432,51 +455,53 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 change_feed_state_context['partitionKeyRangeId'] = args[0]
 
         # Back compatibility with deprecation warnings for is_start_from_beginning
-        if (len(args) >= 2 and args[1] is not None) or is_key_exists_and_not_none(kwargs, "is_start_from_beginning"):
+        if (len(args) >= 2 and args[1] is not None) or kwargs.get("is_start_from_beginning") is not None:
             warnings.warn(
                 "is_start_from_beginning is deprecated. Please pass in start_time instead.",
                 DeprecationWarning
             )
+
+            if kwargs.get("start_time") is not None:
+                raise ValueError("is_start_from_beginning and start_time are exclusive, please only set one of them")
 
             try:
                 is_start_from_beginning = kwargs.pop('is_start_from_beginning')
             except KeyError:
                 is_start_from_beginning = args[1]
 
-            if is_start_from_beginning:
+            if is_start_from_beginning is True:
                 change_feed_state_context["startTime"] = "Beginning"
 
         # parse start_time
-        if is_key_exists_and_not_none(kwargs, "start_time"):
-            if change_feed_state_context.get("startTime") is not None:
-                raise ValueError("is_start_from_beginning and start_time are exclusive, please only set one of them")
+        if kwargs.get("start_time") is not None:
 
             start_time = kwargs.pop('start_time')
             if not isinstance(start_time, (datetime, str)):
                 raise TypeError(
-                    "'start_time' must be either a datetime object, or either the values 'now' or 'beginning'.")
+                    "'start_time' must be either a datetime object, or either the values 'Now' or 'Beginning'.")
             change_feed_state_context["startTime"] = start_time
 
         # parse continuation token
-        if len(args) >= 3 and args[2] is not None or is_key_exists_and_not_none(feed_options, "continuation"):
+        if len(args) >= 3 and args[2] is not None or feed_options.get("continuation") is not None:
             try:
                 continuation = feed_options.pop('continuation')
             except KeyError:
                 continuation = args[2]
             change_feed_state_context["continuation"] = continuation
 
-        if len(args) >= 4 and args[3] is not None or is_key_exists_and_not_none(kwargs, "max_item_count"):
+        if len(args) >= 4 and args[3] is not None or kwargs.get("max_item_count") is not None:
             try:
                 feed_options["maxItemCount"] = kwargs.pop('max_item_count')
             except KeyError:
                 feed_options["maxItemCount"] = args[3]
 
-        if is_key_exists_and_not_none(kwargs, "partition_key"):
-            change_feed_state_context["partitionKey"] = self._set_partition_key(kwargs.pop('partition_key'))
+        if kwargs.get("partition_key") is not None:
+            change_feed_state_context["partitionKey"] =\
+                self._set_partition_key(cast(PartitionKeyType, kwargs.get('partition_key')))
             change_feed_state_context["partitionKeyFeedRange"] =\
-                self._get_epk_range_for_partition_key(change_feed_state_context["partitionKey"])
+                self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
-        if is_key_exists_and_not_none(kwargs, "feed_range"):
+        if kwargs.get("feed_range") is not None:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
 
         container_properties = self._get_properties()
@@ -586,7 +611,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["populateIndexMetrics"] = populate_index_metrics
         if partition_key is not None:
             partition_key_value = self._set_partition_key(partition_key)
-            if self.__is_prefix_partitionkey(partition_key_value):
+            if self.__is_prefix_partitionkey(partition_key):
                 kwargs["isPrefixPartitionQuery"] = True
                 properties = self._get_properties()
                 kwargs["partitionKeyDefinition"] = properties["partitionKey"]
@@ -619,9 +644,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return items
 
     def __is_prefix_partitionkey(
-        self,
-        partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]) -> bool: # pylint: disable=line-too-long
-
+        self, partition_key: PartitionKeyType) -> bool:
         properties = self._get_properties()
         pk_properties = properties["partitionKey"]
         partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
@@ -1285,17 +1308,30 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
 
-    def read_feed_ranges(  # pylint: disable=unused-argument
+    def read_feed_ranges(
             self,
-            **kwargs: Any
-    ) -> List[str]:
+            *,
+            force_refresh: Optional[bool] = False,
+            **kwargs: Any) -> List[str]:
+
+        """ Obtains a list of feed ranges that can be used to parallelize feed operations.
+
+        :keyword bool force_refresh:
+            Flag to indicate whether obtain the list of feed ranges directly from cache or refresh the cache.
+        :returns: A list representing the feed ranges in base64 encoded string
+        :rtype: List[str]
+
+        """
+        if force_refresh is True:
+            self.client_connection.refresh_routing_map_provider()
+
         partition_key_ranges =\
             self.client_connection._routing_map_provider.get_overlapping_ranges(
                 self.container_link,
-                [Range("", "FF", True, False)]) # default to full range
+                [Range("", "FF", True, False)], # default to full range
+                **kwargs)
 
-        return [routing_range.Range.PartitionKeyRangeToRange(partitionKeyRange).to_base64_encoded_string()
-                for partitionKeyRange in partition_key_ranges]
+        return [partition_key_range_to_range_string(partitionKeyRange) for partitionKeyRange in partition_key_ranges]
 
     def merge_session_tokens(self,
                              feed_ranges_to_session_tokens: List,
