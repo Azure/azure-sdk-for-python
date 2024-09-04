@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Allow passing in of custom `TracerProvider` for `AzureMonitorTraceExporter`
+    ([#36363](https://github.com/Azure/azure-sdk-for-python/pull/36363))
+
 ### Breaking Changes
 
 ### Bugs Fixed

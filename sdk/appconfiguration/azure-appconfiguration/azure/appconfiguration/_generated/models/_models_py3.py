@@ -73,7 +73,7 @@ class Error(_serialization.Model):
 class ErrorDetail(_serialization.Model):
     """The details of an error.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: One of a server-defined set of error codes. Required.
     :vartype code: str
@@ -281,35 +281,45 @@ class KeyValue(_serialization.Model):
 
 
 class KeyValueFilter(_serialization.Model):
-    """Enables filtering of key-values.
+    """Enables filtering of key-values. Syntax reference:
+    https://aka.ms/azconfig/docs/restapisnapshots.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar key: Filters key-values by their key field. Required.
     :vartype key: str
     :ivar label: Filters key-values by their label field.
     :vartype label: str
+    :ivar tags: Filters key-values by their tags field.
+    :vartype tags: list[str]
     """
 
     _validation = {
         "key": {"required": True},
+        "tags": {"unique": True},
     }
 
     _attribute_map = {
         "key": {"key": "key", "type": "str"},
         "label": {"key": "label", "type": "str"},
+        "tags": {"key": "tags", "type": "[str]"},
     }
 
-    def __init__(self, *, key: str, label: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, key: str, label: Optional[str] = None, tags: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword key: Filters key-values by their key field. Required.
         :paramtype key: str
         :keyword label: Filters key-values by their label field.
         :paramtype label: str
+        :keyword tags: Filters key-values by their tags field.
+        :paramtype tags: list[str]
         """
         super().__init__(**kwargs)
         self.key = key
         self.label = label
+        self.tags = tags
 
 
 class KeyValueListResult(_serialization.Model):
@@ -405,14 +415,14 @@ class LabelListResult(_serialization.Model):
 class OperationDetails(_serialization.Model):
     """Details of a long running operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The unique id of the operation. Required.
     :vartype id: str
     :ivar status: The current status of the operation. Required. Known values are: "NotStarted",
      "Running", "Succeeded", "Failed", and "Canceled".
     :vartype status: str or ~azure.appconfiguration.models.State
-    :ivar error: An error, available when the status is ``Failed``\ , describing why the operation
+    :ivar error: An error, available when the status is ``Failed``\\ , describing why the operation
      failed.
     :vartype error: ~azure.appconfiguration.models.ErrorDetail
     """
@@ -442,7 +452,7 @@ class OperationDetails(_serialization.Model):
         :keyword status: The current status of the operation. Required. Known values are: "NotStarted",
          "Running", "Succeeded", "Failed", and "Canceled".
         :paramtype status: str or ~azure.appconfiguration.models.State
-        :keyword error: An error, available when the status is ``Failed``\ , describing why the
+        :keyword error: An error, available when the status is ``Failed``\\ , describing why the
          operation failed.
         :paramtype error: ~azure.appconfiguration.models.ErrorDetail
         """
@@ -457,7 +467,7 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the snapshot.
     :vartype name: str
@@ -471,7 +481,7 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
      are composed. The 'key' composition type ensures there are no two key-values containing the
      same key. The 'key_label' composition type ensures there are no two key-values containing the
      same key and label. Known values are: "key" and "key_label".
-    :vartype composition_type: str or ~azure.appconfiguration.models.CompositionType
+    :vartype composition_type: str or ~azure.appconfiguration.models.SnapshotComposition
     :ivar created: The time that the snapshot was created.
     :vartype created: ~datetime.datetime
     :ivar expires: The time that the snapshot will expire.
@@ -520,7 +530,7 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
         self,
         *,
         filters: List["_models.KeyValueFilter"],
-        composition_type: Optional[Union[str, "_models.CompositionType"]] = None,
+        composition_type: Optional[Union[str, "_models.SnapshotComposition"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs: Any
@@ -533,7 +543,7 @@ class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attri
          snapshot are composed. The 'key' composition type ensures there are no two key-values
          containing the same key. The 'key_label' composition type ensures there are no two key-values
          containing the same key and label. Known values are: "key" and "key_label".
-        :paramtype composition_type: str or ~azure.appconfiguration.models.CompositionType
+        :paramtype composition_type: str or ~azure.appconfiguration.models.SnapshotComposition
         :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
          archived state before expiring. This property is only writable during the creation of a
          snapshot. If not specified, the default lifetime of key-value revisions will be used.

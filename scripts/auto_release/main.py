@@ -392,6 +392,8 @@ class CodegenTestPR:
                     )
 
     def check_model_flatten(self):
+        if self.whole_package_name in ["azure-mgmt-mysqlflexibleservers", "azure-mgmt-postgresqlflexibleservers"]:
+            return
         if self.from_swagger:
             last_version = self.get_last_release_version()
             if last_version == "" or last_version.startswith("1.0.0b"):

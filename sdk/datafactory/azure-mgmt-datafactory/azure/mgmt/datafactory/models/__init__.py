@@ -119,11 +119,13 @@ from ._models_py3 import AzureSqlSink
 from ._models_py3 import AzureSqlSource
 from ._models_py3 import AzureSqlTableDataset
 from ._models_py3 import AzureStorageLinkedService
+from ._models_py3 import AzureStorageLinkedServiceTypeProperties
 from ._models_py3 import AzureSynapseArtifactsLinkedService
 from ._models_py3 import AzureTableDataset
 from ._models_py3 import AzureTableSink
 from ._models_py3 import AzureTableSource
 from ._models_py3 import AzureTableStorageLinkedService
+from ._models_py3 import AzureTableStorageLinkedServiceTypeProperties
 from ._models_py3 import BigDataPoolParametrizationReference
 from ._models_py3 import BinaryDataset
 from ._models_py3 import BinaryReadSettings
@@ -153,6 +155,7 @@ from ._models_py3 import ConcurLinkedService
 from ._models_py3 import ConcurObjectDataset
 from ._models_py3 import ConcurSource
 from ._models_py3 import ConnectionStateProperties
+from ._models_py3 import ContinuationSettingsReference
 from ._models_py3 import ControlActivity
 from ._models_py3 import CopyActivity
 from ._models_py3 import CopyActivityLogSettings
@@ -1037,11 +1040,13 @@ __all__ = [
     "AzureSqlSource",
     "AzureSqlTableDataset",
     "AzureStorageLinkedService",
+    "AzureStorageLinkedServiceTypeProperties",
     "AzureSynapseArtifactsLinkedService",
     "AzureTableDataset",
     "AzureTableSink",
     "AzureTableSource",
     "AzureTableStorageLinkedService",
+    "AzureTableStorageLinkedServiceTypeProperties",
     "BigDataPoolParametrizationReference",
     "BinaryDataset",
     "BinaryReadSettings",
@@ -1071,6 +1076,7 @@ __all__ = [
     "ConcurObjectDataset",
     "ConcurSource",
     "ConnectionStateProperties",
+    "ContinuationSettingsReference",
     "ControlActivity",
     "CopyActivity",
     "CopyActivityLogSettings",
