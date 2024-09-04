@@ -125,7 +125,7 @@ jobs:
       - 'Build_MacOS'
 
     templateContext:
-      sdk:
+      sdl:
         componentgovernance:
           enabled: false
 
