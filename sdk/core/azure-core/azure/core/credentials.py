@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Any, NamedTuple, Optional, TypedDict, Union
+from typing import Any, NamedTuple, Optional, TypedDict, Union, ContextManager
 from typing_extensions import Protocol, runtime_checkable
 
 
@@ -92,7 +92,7 @@ class TokenCredential(Protocol):
 
 
 @runtime_checkable
-class SupportsTokenInfo(Protocol):
+class SupportsTokenInfo(ContextManager["SupportsTokenInfo"], Protocol):
     """Protocol for classes able to provide OAuth access tokens with additional properties."""
 
     def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
