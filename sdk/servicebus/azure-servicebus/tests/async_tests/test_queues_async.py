@@ -2987,7 +2987,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 assert len(received_msgs) == 5
 
                 # wait to make sure message completed
-                asyncio.sleep(10)
+                asyncio.sleep(20)
                 messages_in_queue = await receiver1.peek_messages()
 
                 assert len(messages_in_queue) == 0
