@@ -6,10 +6,9 @@ import pytest
 from devtools_testutils import is_live
 
 
-@pytest.mark.usefixtures("recording_injection")
+@pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.azuretest
 class TestAdvSimulator:
-    @pytest.mark.usefixtures("vcr_recording")
     def test_adv_sim_init_with_prod_url(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialSimulator
@@ -23,7 +22,6 @@ class TestAdvSimulator:
         simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
         assert callable(simulator)
 
-    @pytest.mark.usefixtures("vcr_recording")
     def test_incorrect_scenario_raises_error(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialSimulator
@@ -49,7 +47,6 @@ class TestAdvSimulator:
                 )
             )
 
-    @pytest.mark.usefixtures("vcr_recording")
     def test_adv_qa_sim_responds_with_one_response(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
@@ -142,7 +139,6 @@ class TestAdvSimulator:
         assert len(outputs) == 1
         assert len(outputs[0]["messages"]) == 4
 
-    @pytest.mark.usefixtures("vcr_recording")
     def test_adv_summarization_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
@@ -184,7 +180,6 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
 
-    @pytest.mark.usefixtures("vcr_recording")
     def test_adv_summarization_jailbreak_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
@@ -227,7 +222,6 @@ class TestAdvSimulator:
         )
         assert len(outputs) == 1
 
-    @pytest.mark.usefixtures("vcr_recording")
     def test_adv_rewrite_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
@@ -272,7 +266,6 @@ class TestAdvSimulator:
     @pytest.mark.skipif(
         is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT."
     )
-    @pytest.mark.usefixtures("vcr_recording")
     def test_adv_protected_matierial_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
@@ -314,7 +307,6 @@ class TestAdvSimulator:
         assert len(outputs) == 1
 
     @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
-    @pytest.mark.usefixtures("vcr_recording")
     def test_adv_eci_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialSimulator
@@ -360,7 +352,6 @@ class TestAdvSimulator:
     @pytest.mark.skipif(
         not is_live(), reason="Test recording is polluted with telemetry data and fails in playback mode."
     )
-    @pytest.mark.usefixtures("vcr_recording")
     def test_adv_xpia_sim_responds_with_responses(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialScenario, IndirectAttackSimulator
@@ -400,7 +391,6 @@ class TestAdvSimulator:
     @pytest.mark.skipif(
         not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
     )
-    @pytest.mark.usefixtures("vcr_recording")
     def test_adv_sim_order_randomness_with_jailbreak(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
@@ -478,7 +468,6 @@ class TestAdvSimulator:
     @pytest.mark.skipif(
         not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
     )
-    @pytest.mark.usefixtures("vcr_recording")
     def test_adv_sim_order_randomness(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
@@ -553,7 +542,6 @@ class TestAdvSimulator:
     @pytest.mark.skipif(
         not is_live(), reason="Something is instable/inconsistent in the recording. Fails in playback mode."
     )
-    @pytest.mark.usefixtures("vcr_recording")
     def test_jailbreak_sim_order_randomness(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)
         from azure.ai.evaluation.synthetic import AdversarialScenario, DirectAttackSimulator

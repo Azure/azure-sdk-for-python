@@ -123,7 +123,7 @@ def non_azure_openai_model_config() -> dict:
 
 @pytest.fixture
 def project_scope(request) -> dict:
-    if not is_live() and "vcr_recording" in request.fixturenames:
+    if not is_live() and "recorded_test" in request.fixturenames:
 
         return {
             "subscription_id": SanitizedValues.SUBSCRIPTION_ID,
@@ -350,32 +350,6 @@ def variable_recorder():
         from promptflow.recording.azure import VariableRecorder
 
         yield VariableRecorder()
-    else:
-        yield None
-
-
-@pytest.fixture(scope=package_scope_in_live_mode())
-def vcr_recording(request: pytest.FixtureRequest, user_object_id: str, tenant_id: str, variable_recorder):
-    """Fixture to record or replay network traffic.
-
-    If the test mode is "live", nothing will happen.
-    If the test mode is "record" or "replay", this fixture will locate a YAML (recording) file
-    based on the test file, class and function name, write to (record) or read from (replay) the file.
-    """
-    if not is_live():
-        from promptflow.recording.azure import PFAzureIntegrationTestRecording
-
-        recording = PFAzureIntegrationTestRecording.from_test_case(
-            test_class=request.cls,
-            test_func_name=request.node.name,
-            user_object_id=user_object_id,
-            tenant_id=tenant_id,
-            variable_recorder=variable_recorder,
-            recording_dir=(RECORDINGS_TEST_CONFIGS_ROOT / "azure").resolve(),
-        )
-        recording.enter_vcr()
-        request.addfinalizer(recording.exit_vcr)
-        yield recording
     else:
         yield None
 

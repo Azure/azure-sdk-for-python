@@ -54,7 +54,7 @@ class TestMetricsUpload(object):
             assert not error_messages, "\n".join(error_messages)
 
     @pytest.mark.azuretest
-    @pytest.mark.usefixtures("vcr_recording")
+    @pytest.mark.usefixtures("recorded_test")
     def test_writing_to_run_history(self, caplog, project_scope, azure_ml_client, tracking_uri):
         """Test logging data to RunHistory service."""
         logger = logging.getLogger(EvalRun.__module__)
@@ -83,7 +83,7 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, [EvalRun.__module__])
 
     @pytest.mark.azuretest
-    @pytest.mark.usefixtures("vcr_recording")
+    @pytest.mark.usefixtures("recorded_test")
     def test_logging_metrics(self, caplog, project_scope, azure_ml_client, tracking_uri):
         """Test logging metrics."""
         logger = logging.getLogger(EvalRun.__module__)
@@ -111,7 +111,7 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, EvalRun.__module__)
 
     @pytest.mark.azuretest
-    @pytest.mark.usefixtures("vcr_recording")
+    @pytest.mark.usefixtures("recorded_test")
     @pytest.mark.skipif(not is_live(), reason="This test fails in CI and needs to be investigate. See bug: 3415807")
     def test_log_artifact(self, project_scope, azure_ml_client, tracking_uri, caplog, tmp_path):
         """Test uploading artifact to the service."""

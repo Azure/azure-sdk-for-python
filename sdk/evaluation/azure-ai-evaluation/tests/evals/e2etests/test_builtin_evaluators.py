@@ -28,7 +28,7 @@ from azure.ai.evaluation.evaluators._eci._eci import ECIEvaluator
 from devtools_testutils import is_live
 
 
-@pytest.mark.usefixtures("recording_injection", "vcr_recording")
+@pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.localtest
 class TestBuiltInEvaluators:
     def test_math_evaluator_bleu_score(self):
