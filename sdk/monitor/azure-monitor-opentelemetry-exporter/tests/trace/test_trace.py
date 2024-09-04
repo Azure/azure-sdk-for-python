@@ -10,7 +10,7 @@ import unittest
 from unittest import mock
 
 # pylint: disable=import-error
-from opentelemetry.trace import set_tracer_provider
+from opentelemetry.trace import get_tracer_provider, set_tracer_provider
 from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
@@ -51,7 +51,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"] = "true"
-        cls._exporter = AzureMonitorTraceExporter()
+        cls._exporter = AzureMonitorTraceExporter(
+            tracer_provider=trace.TracerProvider(),
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -1346,7 +1348,6 @@ class TestAzureTraceExporter(unittest.TestCase):
         del os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"]
         mock_tracer_provider = mock.Mock()
         mock_get_tracer_provider.return_value = mock_tracer_provider
-        exporter = self._exporter
         test_resource = resources.Resource(
             attributes={
                 "string_test_key": "string_value",
@@ -1367,6 +1368,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         test_span.start()
         test_span.end()
+        exporter = AzureMonitorTraceExporter(
+            _disable_offline_storage=True,
+        )
         with mock.patch(
             "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._transmit"
         ) as transmit:  # noqa: E501
