@@ -1049,7 +1049,7 @@ def _archive_or_restore(
                 body=container_resource,
             )
         else:
-            container_operation.get(
+            container_resource = container_operation.get(
                 name=name,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
