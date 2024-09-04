@@ -99,12 +99,10 @@ steps:
     # Given that we've ALREADY RUN CG on the previous jobs, we can clean up these artifacts to avoid
     # incurring an increased CG runtime. What's present within IS accurate.
   - pwsh: |
-      Get-ChildItem -R -Path "$(Build.ArtifactStagingDirectory)" | % { Write-Host $_.FullName }
       Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)" -Filter GovCompDisc* | % { Write-Host "Removing $($_.FullName)"; Remove-Item $_ }
       Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)" -Filter ScanTelemetry* | % { Write-Host "Removing $($_.FullName)"; Remove-Item $_ }
       Remove-Item -Recurse -Force -Path "$(Build.ArtifactStagingDirectory)/bcde-output"
       Remove-Item -Recurse -Force -Path "$(Build.ArtifactStagingDirectory)/_manifest"
-      Get-ChildItem -R -Path "$(Build.ArtifactStagingDirectory)" | % { Write-Host $_.FullName }
     displayName: Clean up Artifact Directory
 
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
