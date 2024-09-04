@@ -23,21 +23,21 @@ class ChangeType(str, Enum):
 
 class ChangelogTracker(BreakingChangesTracker):
     ADDED_CLIENT_MSG = \
-        "Added client '{}'"
+        "Added client `{}`"
     ADDED_CLIENT_METHOD_MSG = \
-        "Client '{}' added method '{}'"
+        "Client `{}` added method `{}`"
     ADDED_CLASS_MSG = \
-        "Added model '{}'"
+        "Added model `{}`"
     ADDED_CLASS_METHOD_MSG = \
-        "Model '{}' added method '{}'"
+        "Model `{}` added method `{}`"
     ADDED_CLASS_METHOD_PARAMETER_MSG = \
-        "Model '{}' added parameter '{}' in the '{}' method"
+        "Model `{}` added parameter `{}` in method `{}`"
     ADDED_FUNCTION_PARAMETER_MSG = \
-        "Function '{}' added parameter '{}'"
+        "Function `{}` added parameter `{}`"
     ADDED_CLASS_PROPERTY_MSG = \
-        "Model '{}' added property '{}'"
+        "Model `{}` added property `{}`"
     ADDED_OPERATION_GROUP_MSG = \
-        "Client '{}' added operation group '{}'"
+        "Client `{}` added operation group `{}`"
 
 
     def __init__(self, stable: Dict, current: Dict, package_name: str, **kwargs: Any) -> None:
