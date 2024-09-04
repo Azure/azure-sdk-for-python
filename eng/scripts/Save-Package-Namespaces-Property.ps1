@@ -41,8 +41,6 @@ if (-not $artifacts) {
     exit 0
 }
 
-
-
 # by this point, the PackageInfo folder will have a json file for each artifact
 # we simply need to read each file, get the appropriate metadata, and add the namespaces if necessary
 foreach($packageInfoFile in $artifacts) {
