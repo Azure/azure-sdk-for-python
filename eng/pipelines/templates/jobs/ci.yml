@@ -124,6 +124,15 @@ jobs:
       - 'Build_Windows'
       - 'Build_MacOS'
 
+    # Component governance collates discovered dependencies from a combination of
+    # manifest files, splatted json output from CG detections, setup.py files, and other sources.
+    # At this point in the job, we have downloadeded package artifacts from 3 previous platform-specific build jobs,
+    # so the directory that will be published as packages_extended _already contains_ a collated set of dependencies by
+    # json file. When we attempt to publish the packages_extended artifact, CG re-collates data from the current job, but ALSO
+    # includes all the data from json files left behind by the previous jobs. While this doesn't result in double counting,
+    # we've been running into some nasty timeout issues of the CG running on this job specifically.
+    #
+    # Given that we've ALREADY RUN CG on the previous jobs, we can safely disable it here.
     templateContext:
       sdl:
         componentgovernance:
