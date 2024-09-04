@@ -2878,16 +2878,17 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator='sexMismatc
 class TimePeriod(_model_base.Model):
     """A duration of time during which an event is happening.
 
-    :ivar start: Starting time with inclusive boundary. This is a FHIR element. See `FHIR element start <#fhir-element-start>`_.
+    :ivar start: Starting time with inclusive boundary.
     :vartype start: ~datetime.datetime
-    :ivar end: End time with inclusive boundary, if not ongoing. This is a FHIR element. See `FHIR element end <#fhir-element-end>`_.
+    :ivar end: End time with inclusive boundary, if not ongoing.
     :vartype end: ~datetime.datetime
     """
 
     start: Optional[datetime.datetime] = rest_field(format="rfc3339")
-    """Starting time with inclusive boundary. This is a FHIR element."""
+    """Starting time with inclusive boundary."""
     end: Optional[datetime.datetime] = rest_field(format="rfc3339")
-    """End time with inclusive boundary, if not ongoing. This is a FHIR element."""
+    """End time with inclusive boundary, if not ongoing."""
+
 
     @overload
     def __init__(
