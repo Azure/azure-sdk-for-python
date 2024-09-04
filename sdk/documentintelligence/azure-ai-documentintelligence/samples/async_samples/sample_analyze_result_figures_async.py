@@ -59,12 +59,13 @@ async def analyze_result_figures():
 
         if result.figures:
             for figure in result.figures:
-                response = await document_intelligence_client.get_analyze_result_figure(
-                    model_id=result.model_id, result_id=operation_id, figure_id=figure.id
-                )
-                with open(f"{figure.id}_async.png", "wb") as file:
-                    async for chunk in response:
-                        file.write(chunk)
+                if figure.id:
+                    response = await document_intelligence_client.get_analyze_result_figure(
+                        model_id=result.model_id, result_id=operation_id, figure_id=figure.id
+                    )
+                    with open(f"{figure.id}_async.png", "wb") as file:
+                        async for chunk in response:
+                            file.write(chunk)
 
 
 async def main():

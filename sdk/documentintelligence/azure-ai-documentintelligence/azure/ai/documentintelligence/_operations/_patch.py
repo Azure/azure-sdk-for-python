@@ -43,6 +43,10 @@ def _parse_operation_id(operation_location_header):
 class AnalyzeDocumentLROPollingMethod(LROBasePolling):
     @property
     def operation_id(self) -> str:
+        """Analyze operation result ID.
+
+        :rtype:str
+        """
         return _parse_operation_id(self._initial_response.http_response.headers["Operation-Location"])
 
 
@@ -51,13 +55,38 @@ class AnalyzeDocumentLROPoller(LROPoller[PollingReturnType_co]):
         """Return the polling method associated to this poller.
 
         :return: AnalyzeDocumentLROPollingMethod
-        :rtype: ~azure.ai.documentintelligence._operations._patch.AnalyzeDocumentLROPollingMethod
+        :rtype: AnalyzeDocumentLROPollingMethod
         """
         return self._polling_method  # type: ignore
 
     @property
     def operation_id(self) -> str:
+        """Analyze operation result ID.
+
+        :rtype:str
+        """
         return self.polling_method().operation_id
+
+    @classmethod
+    def from_continuation_token(  # type: ignore
+        cls, polling_method: AnalyzeDocumentLROPollingMethod, continuation_token: str, **kwargs: Any
+    ) -> "AnalyzeDocumentLROPoller":
+        """Internal use only.
+
+        :param polling_method: Polling method to use.
+        :type polling_method: AnalyzeDocumentLROPollingMethod
+        :param str continuation_token: Opaque token.
+        :return: AnalyzeDocumentLROPoller
+        :rtype: AnalyzeDocumentLROPoller
+
+        :meta private:
+        """
+        (
+            client,
+            initial_response,
+            deserialization_callback,
+        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
+        return cls(client, initial_response, deserialization_callback, polling_method)
 
 
 class AnalyzeBatchDocumentsLROPollingMethod(LROBasePolling):
@@ -362,7 +391,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :paramtype content_type: str
         :return: An instance of AnalyzeDocumentLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
+        :rtype: AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -414,7 +443,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :paramtype content_type: str
         :return: An instance of AnalyzeDocumentLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
+        :rtype: AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -466,7 +495,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :paramtype content_type: str
         :return: An instance of AnalyzeDocumentLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
+        :rtype: AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -516,7 +545,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
         :return: An instance of AnalyzeDocumentLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
-        :rtype: ~azure.ai.documentintelligence.AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
+        :rtype: AnalyzeDocumentLROPoller[~azure.ai.documentintelligence.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -524,11 +553,11 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
         cls: ClsType[_models.AnalyzeResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        polling: Union[bool, AnalyzeDocumentLROPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result, response_headers = self._analyze_document_initial(
+            raw_result = self._analyze_document_initial(
                 model_id=model_id,
                 analyze_request=analyze_request,
                 pages=pages,
@@ -539,13 +568,12 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
                 output_content_format=output_content_format,
                 output=output,
                 content_type=content_type,
-                cls=lambda x, y, z: (x, z),
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
-            # operation_id = _parse_operation_id(response_headers["Operation-Location"])
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -566,12 +594,11 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         }
 
         if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod,
-                AnalyzeDocumentLROPollingMethod(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            polling_method = AnalyzeDocumentLROPollingMethod(
+                lro_delay, path_format_arguments=path_format_arguments, **kwargs
             )
         elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
+            polling_method = cast(AnalyzeDocumentLROPollingMethod, NoPolling())
         else:
             polling_method = polling
         if cont_token:
@@ -600,40 +627,6 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any,
     ) -> LROPoller[_models.AnalyzeBatchResult]:
-        """Analyzes batch documents with document model.
-
-        :param model_id: Unique document model name. Required.
-        :type model_id: str
-        :param analyze_batch_request: Analyze batch request parameters. Is one of the following types:
-         AnalyzeBatchDocumentsRequest, JSON, IO[bytes] Default value is None.
-        :type analyze_batch_request: ~azure.ai.documentintelligence.models.AnalyzeBatchDocumentsRequest
-         or JSON or IO[bytes]
-        :keyword pages: Range of 1-based page numbers to analyze.  Ex. "1-3,5,7-9". Default value is
-         None.
-        :paramtype pages: str
-        :keyword locale: Locale hint for text recognition and document analysis.  Value may contain
-         only
-         the language code (ex. "en", "fr") or BCP 47 language tag (ex. "en-US"). Default value is
-         None.
-        :paramtype locale: str
-        :keyword string_index_type: Method used to compute string offset and length. Known values are:
-         "textElements", "unicodeCodePoint", and "utf16CodeUnit". Default value is None.
-        :paramtype string_index_type: str or ~azure.ai.documentintelligence.models.StringIndexType
-        :keyword features: List of optional analysis features. Default value is None.
-        :paramtype features: list[str or ~azure.ai.documentintelligence.models.DocumentAnalysisFeature]
-        :keyword query_fields: List of additional fields to extract.  Ex. "NumberOfGuests,StoreNumber".
-         Default value is None.
-        :paramtype query_fields: list[str]
-        :keyword output_content_format: Format of the analyze result top-level content. Known values
-         are: "text" and "markdown". Default value is None.
-        :paramtype output_content_format: str or ~azure.ai.documentintelligence.models.ContentFormat
-        :keyword output: Additional outputs to generate during analysis. Default value is None.
-        :paramtype output: list[str or ~azure.ai.documentintelligence.models.AnalyzeOutputOption]
-        :return: An instance of LROPoller that returns AnalyzeBatchResult. The AnalyzeBatchResult is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.documentintelligence.models.AnalyzeBatchResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 

@@ -195,8 +195,8 @@ Sample code snippets are provided to illustrate using long-running operations [b
 The following section provides several code snippets covering some of the most common Document Intelligence tasks, including:
 
 * [Extract Layout](#extract-layout "Extract Layout")
-* [Extract figures from documents](#analyze-result-figures "Extract figures from documents")
-* [Analyze document in PDF output](#analyze-result-pdf "Analyze document in PDF output")
+* [Extract Figures from Documents](#extract-figures-from-documents "Extract Figures from Documents")
+* [Analyze Documents Result in PDF](#analyze-documents-result-in-pdf "Analyze Documents Result in PDF")
 * [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
 * [Build a Custom Model](#build-a-custom-model "Build a custom model")
@@ -305,7 +305,7 @@ print("----------------------------------------")
 
 <!-- END SNIPPET -->
 
-### Extract figures from documents
+### Extract Figures from Documents
 
 Extract figures from the document as cropped images.
 
@@ -342,7 +342,7 @@ if result.figures:
 
 <!-- END SNIPPET -->
 
-### Analyze document in PDF output
+### Analyze Documents Result in PDF
 
 Convert an analog PDF into a PDF with embedded text. Such text can enable text search within the PDF or allow the PDF to be used in LLM chat scenarios.
 
