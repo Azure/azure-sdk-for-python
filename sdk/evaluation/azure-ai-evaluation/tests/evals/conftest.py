@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Dict
 from unittest.mock import patch
 
-from ci_tools.variables import in_ci
 from devtools_testutils import is_live
 import pytest
 from pytest_mock import MockerFixture
@@ -15,7 +14,6 @@ from promptflow.client import PFClient
 from promptflow.core import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from promptflow.executor._line_execution_process_pool import _process_wrapper
 from promptflow.executor._process_manager import create_spawned_fork_process_manager
-from promptflow.tracing._integrations._openai_injector import inject_openai_api
 
 try:
     from promptflow.recording.local import recording_array_reset
@@ -213,7 +211,6 @@ def recording_injection(mocker: MockerFixture):
     if "spawn" == multiprocessing.get_start_method():
         multiprocessing.Process = MockSpawnProcess
 
-    patches = setup_recording_injection_if_enabled()
 
     try:
         yield
@@ -231,53 +228,12 @@ def recording_injection(mocker: MockerFixture):
         if "spawn" == multiprocessing.get_start_method():
             multiprocessing.Process = original_process_class
 
-        for patcher in patches:
-            patcher.stop()
-
-
-def setup_recording_injection_if_enabled():
-    patches = []
-
-    def start_patches(patch_targets):
-        for target, mock_func in patch_targets.items():
-            patcher = patch(target, mock_func)
-            patches.append(patcher)
-            patcher.start()
-
-    if not is_live():
-        from promptflow.recording.local import RecordStorage, inject_async_with_recording, inject_sync_with_recording
-        from promptflow.recording.record_mode import check_pydantic_v2
-
-        check_pydantic_v2()
-        file_path = RECORDINGS_TEST_CONFIGS_ROOT / "local" / "evals.node_cache.shelve"
-        RecordStorage.get_instance(file_path)
-
-        patch_targets = {
-            "promptflow.tracing._integrations._openai_injector.inject_sync": inject_sync_with_recording,
-            "promptflow.tracing._integrations._openai_injector.inject_async": inject_async_with_recording,
-        }
-        start_patches(patch_targets)
-
-    if is_live() and in_ci():
-        from promptflow.recording.local import inject_async_with_recording, inject_sync_with_recording
-
-        patch_targets = {
-            "promptflow.tracing._integrations._openai_injector.inject_sync": inject_sync_with_recording,
-            "promptflow.tracing._integrations._openai_injector.inject_async": inject_async_with_recording,
-        }
-        start_patches(patch_targets)
-
-    inject_openai_api()
-    return patches
-
 
 def _mock_process_wrapper(*args, **kwargs):
-    setup_recording_injection_if_enabled()
     return _process_wrapper(*args, **kwargs)
 
 
 def _mock_create_spawned_fork_process_manager(*args, **kwargs):
-    setup_recording_injection_if_enabled()
     return create_spawned_fork_process_manager(*args, **kwargs)
 
 
