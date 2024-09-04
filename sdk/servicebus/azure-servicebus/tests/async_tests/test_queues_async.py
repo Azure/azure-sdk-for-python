@@ -2970,7 +2970,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             receiver1 = sb_client.get_queue_receiver(servicebus_queue.name)
             receiver2 = sb_client.get_queue_receiver(servicebus_queue.name)
-            
+
             async with sender, receiver1, receiver2:
                 await sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
                 received_msgs = []
@@ -2983,9 +2983,9 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     for msg in await receiver1.receive_messages(max_message_count=10, max_wait_time=5):
                         await receiver2.complete_message(msg)
                         received_msgs.append(msg)
-                
+
                 assert len(received_msgs) == 5
-                
+
                 messages_in_queue = await receiver1.peek_messages()
-    
+
                 assert len(messages_in_queue) == 0
