@@ -23,25 +23,25 @@ def format_breaking_changes(breaking_changes):
     return formatted
 
 EXPECTED = [
-    "(RemovedOrRenamedInstanceAttribute): 'Metrics' model deleted or renamed its instance variable 'retention_policy'",
-    "(RemovedOrRenamedInstanceAttribute): 'QueueClient' deleted or renamed client instance variable 'queue_name'",
-    "(ChangedParameterKind): 'QueueClient.from_queue_url' method changed its parameter 'credential' from 'positional_or_keyword' to 'keyword_only'",
-    "(AddedPositionalParam): 'QueueClient.get_queue_access_policy' method inserted a 'positional_or_keyword' parameter 'queue_name'",
-    "(RemovedOrRenamedPositionalParam): 'QueueClient.set_queue_access_policy' method deleted or renamed its parameter 'signed_identifiers' of kind 'positional_or_keyword'",
-    "(ChangedParameterDefaultValue): 'QueueClient.set_queue_metadata' method parameter 'metadata' changed default value from 'None' to ''",
-    "(RemovedOrRenamedClassMethod): Deleted or renamed method 'QueueSasPermissions.from_string'",
-    "(RemovedFunctionKwargs): 'QueueServiceClient.set_service_properties' method changed from accepting keyword arguments to not accepting them",
-    "(RemovedOrRenamedClientMethod): Deleted or renamed client method 'QueueServiceClient.get_service_properties'",
-    "(RemovedOrRenamedEnumValue): Deleted or renamed enum value 'StorageErrorCode.queue_not_found'",
-    "(RemovedOrRenamedClass): Deleted or renamed model 'QueueMessage'",
-    "(ChangedParameterDefaultValue): 'generate_queue_sas' function parameter 'permission' changed default value from 'None' to ''",
-    "(ChangedParameterKind): 'generate_queue_sas' function changed its parameter 'ip' from 'positional_or_keyword' to 'keyword_only'",
-    "(AddedPositionalParam): 'generate_queue_sas' function inserted a 'positional_or_keyword' parameter 'conn_str'",
-    "(RemovedOrRenamedPositionalParam): 'generate_queue_sas' function deleted or renamed its parameter 'account_name' of kind 'positional_or_keyword'",
-    "(RemovedOrRenamedModuleLevelFunction): Deleted or renamed function 'generate_account_sas'",
-    "(RemovedParameterDefaultValue): 'QueueClient.update_message' removed default method value 'None' from its parameter 'pop_receipt'",
-    "(ChangedFunctionKind): 'QueueServiceClient.get_service_stats' method changed from 'asynchronous' to 'synchronous'",
-    "(ChangedParameterOrdering): 'QueueClient.from_connection_string' method re-ordered its parameters from '['conn_str', 'queue_name', 'credential', 'kwargs']' to '['queue_name', 'conn_str', 'credential', 'kwargs']'",
+    "(RemovedOrRenamedInstanceAttribute): Model `Metrics` deleted or renamed its instance variable `retention_policy`",
+    "(RemovedOrRenamedInstanceAttribute): Client `QueueClient` deleted or renamed instance variable `queue_name`",
+    "(ChangedParameterKind): Method `QueueClient.from_queue_url` changed its parameter `credential` from `positional_or_keyword` to `keyword_only`",
+    "(AddedPositionalParam): Method `QueueClient.get_queue_access_policy` inserted a `positional_or_keyword` parameter `queue_name`",
+    "(RemovedOrRenamedPositionalParam): Method `QueueClient.set_queue_access_policy` deleted or renamed its parameter `signed_identifiers` of kind `positional_or_keyword`",
+    "(ChangedParameterDefaultValue): Method `QueueClient.set_queue_metadata` parameter `metadata` changed default value from `None` to ``",
+    "(RemovedOrRenamedClassMethod): Deleted or renamed method `QueueSasPermissions.from_string`",
+    "(RemovedFunctionKwargs): Method `QueueServiceClient.set_service_properties` changed from accepting keyword arguments to not accepting them",
+    "(RemovedOrRenamedClientMethod): Deleted or renamed client method `QueueServiceClient.get_service_properties`",
+    "(RemovedOrRenamedEnumValue): Deleted or renamed enum value `StorageErrorCode.queue_not_found`",
+    "(RemovedOrRenamedClass): Deleted or renamed model `QueueMessage`",
+    "(ChangedParameterDefaultValue): Function `generate_queue_sas` parameter `permission` changed default value from `None` to ``",
+    "(ChangedParameterKind): Function `generate_queue_sas` changed its parameter `ip` from `positional_or_keyword` to `keyword_only`",
+    "(AddedPositionalParam): Function `generate_queue_sas` inserted a `positional_or_keyword` parameter `conn_str`",
+    "(RemovedOrRenamedPositionalParam): Function `generate_queue_sas` deleted or renamed its parameter `account_name` of kind `positional_or_keyword`",
+    "(RemovedOrRenamedModuleLevelFunction): Deleted or renamed function `generate_account_sas`",
+    "(RemovedParameterDefaultValue): Method `QueueClient.update_message` removed default value `None` from its parameter `pop_receipt`",
+    "(ChangedFunctionKind): Method `QueueServiceClient.get_service_stats` changed from `asynchronous` to `synchronous`",
+    "(ChangedParameterOrdering): Method `QueueClient.from_connection_string` re-ordered its parameters from `['conn_str', 'queue_name', 'credential', 'kwargs']` to `['queue_name', 'conn_str', 'credential', 'kwargs']`",
 ]
 
 
@@ -177,10 +177,10 @@ def test_replace_all_params():
     }
 
     EXPECTED = [
-        "(RemovedOrRenamedPositionalParam): 'class_name.one' method deleted or renamed its parameter 'testing' of kind 'positional_or_keyword'",
-        "(RemovedOrRenamedPositionalParam): 'class_name.two' method deleted or renamed its parameter 'testing2' of kind 'positional_or_keyword'",
-        "(RemovedOrRenamedPositionalParam): 'my_function_name' function deleted or renamed its parameter 'testing' of kind 'positional_or_keyword'",
-        "(RemovedOrRenamedPositionalParam): 'my_function_name' function deleted or renamed its parameter 'testing2' of kind 'positional_or_keyword'"
+        "(RemovedOrRenamedPositionalParam): Method `class_name.one` deleted or renamed its parameter `testing` of kind `positional_or_keyword`",
+        "(RemovedOrRenamedPositionalParam): Method `class_name.two` deleted or renamed its parameter `testing2` of kind `positional_or_keyword`",
+        "(RemovedOrRenamedPositionalParam): Function `my_function_name` deleted or renamed its parameter `testing` of kind `positional_or_keyword`",
+        "(RemovedOrRenamedPositionalParam): Function `my_function_name` deleted or renamed its parameter `testing2` of kind `positional_or_keyword`"
     ]
 
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
@@ -264,10 +264,10 @@ def test_replace_all_functions():
     }
 
     EXPECTED = [
-        "(RemovedOrRenamedClassMethod): Deleted or renamed method 'class_name.one'",
-        "(RemovedOrRenamedClassMethod): Deleted or renamed method 'class_name.two'",
-        "(RemovedOrRenamedModuleLevelFunction): Deleted or renamed function 'my_function_name'",
-        "(RemovedOrRenamedModuleLevelFunction): Deleted or renamed function 'my_function_name2'"
+        "(RemovedOrRenamedClassMethod): Deleted or renamed method `class_name.one`",
+        "(RemovedOrRenamedClassMethod): Deleted or renamed method `class_name.two`",
+        "(RemovedOrRenamedModuleLevelFunction): Deleted or renamed function `my_function_name`",
+        "(RemovedOrRenamedModuleLevelFunction): Deleted or renamed function `my_function_name2`"
     ]
 
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
@@ -339,8 +339,8 @@ def test_replace_all_classes():
     }
 
     EXPECTED = [
-        "(RemovedOrRenamedClass): Deleted or renamed model 'class_name'",
-        "(RemovedOrRenamedClass): Deleted or renamed model 'class_name2'"
+        "(RemovedOrRenamedClass): Deleted or renamed model `class_name`",
+        "(RemovedOrRenamedClass): Deleted or renamed model `class_name2`"
     ]
 
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
@@ -366,7 +366,7 @@ def test_replace_all_modules():
     }
 
     EXPECTED = [
-        "(RemovedOrRenamedModule): Deleted or renamed module 'azure.ai.formrecognizer'",
+        "(RemovedOrRenamedModule): Deleted or renamed module `azure.ai.formrecognizer`",
     ]
 
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
@@ -422,7 +422,7 @@ def test_removed_operation_group():
     }
 
     EXPECTED = [
-        "(RemovedOrRenamedOperationGroup): Deleted or renamed client operation group 'ContosoClient.foo'"
+        "(RemovedOrRenamedOperationGroup): Deleted or renamed client operation group `ContosoClient.foo`"
     ]
 
     bc = BreakingChangesTracker(stable, current, "azure-storage-queue")
