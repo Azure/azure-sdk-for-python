@@ -14,16 +14,6 @@ from promptflow.executor._line_execution_process_pool import _process_wrapper
 from promptflow.executor._process_manager import create_spawned_fork_process_manager
 from pytest_mock import MockerFixture
 
-try:
-    from promptflow.recording.local import recording_array_reset
-except ImportError as e:
-    print(f"Failed to import promptflow-recording: {e}")
-    # Run test in empty mode if promptflow-recording is not installed
-
-    def recording_array_reset():
-        pass
-
-
 
 # Import of optional packages
 AZURE_INSTALLED = True
@@ -214,15 +204,6 @@ def recording_injection(mocker: MockerFixture):
     try:
         yield
     finally:
-        if not is_live():
-            from promptflow.recording.local import RecordStorage
-
-            RecordStorage.get_instance().delete_lock_file()
-        else:
-            from promptflow.recording.local import delete_count_lock_file
-            delete_count_lock_file()
-        recording_array_reset()
-
         multiprocessing.get_context("spawn").Process = original_process_class
         if "spawn" == multiprocessing.get_start_method():
             multiprocessing.Process = original_process_class
