@@ -1,19 +1,18 @@
-from enum import Enum
 import json
 import multiprocessing
 import time
+from enum import Enum
 from pathlib import Path
 from typing import Dict
 from unittest.mock import patch
 
-from devtools_testutils import is_live
 import pytest
-from pytest_mock import MockerFixture
-
+from devtools_testutils import is_live
 from promptflow.client import PFClient
 from promptflow.core import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from promptflow.executor._line_execution_process_pool import _process_wrapper
 from promptflow.executor._process_manager import create_spawned_fork_process_manager
+from pytest_mock import MockerFixture
 
 try:
     from promptflow.recording.local import recording_array_reset
