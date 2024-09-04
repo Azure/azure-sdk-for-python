@@ -124,6 +124,11 @@ jobs:
       - 'Build_Windows'
       - 'Build_MacOS'
 
+    templateContext:
+      sdk:
+        componentgovernance:
+          enabled: false
+
     timeoutInMinutes: 90
 
     pool:
