@@ -10,10 +10,16 @@ import unittest
 from unittest import mock
 
 # pylint: disable=import-error
+from opentelemetry.trace import get_tracer_provider, set_tracer_provider
 from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
-from opentelemetry.semconv.trace import SpanAttributes
+from opentelemetry.semconv.attributes.exception_attributes import (
+    EXCEPTION_ESCAPED,
+    EXCEPTION_MESSAGE,
+    EXCEPTION_STACKTRACE,
+    EXCEPTION_TYPE,
+)
 from opentelemetry.trace import Link, SpanContext, SpanKind
 from opentelemetry.trace.status import Status, StatusCode
 
@@ -58,8 +64,32 @@ class TestAzureTraceExporter(unittest.TestCase):
 
     def test_constructor(self):
         """Test the constructor."""
+        tp = trace.TracerProvider()
+        set_tracer_provider(tp)
         exporter = AzureMonitorTraceExporter(
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(
+            exporter._tracer_provider,
+            tp,
+        )
+        self.assertEqual(
+            exporter._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+
+    def test_constructor_tracer_provider(self):
+        """Test the constructor."""
+        tp = trace.TracerProvider()
+        tp2 = trace.TracerProvider()
+        set_tracer_provider(tp)
+        exporter = AzureMonitorTraceExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+            tracer_provider=tp2,
+        )
+        self.assertEqual(
+            exporter._tracer_provider,
+            tp2,
         )
         self.assertEqual(
             exporter._instrumentation_key,
@@ -1180,10 +1210,10 @@ class TestAzureTraceExporter(unittest.TestCase):
             kind=SpanKind.CLIENT,
         )
         attributes = {
-            SpanAttributes.EXCEPTION_TYPE: "ZeroDivisionError",
-            SpanAttributes.EXCEPTION_MESSAGE: "zero division error",
-            SpanAttributes.EXCEPTION_STACKTRACE: "Traceback: ZeroDivisionError, division by zero",
-            SpanAttributes.EXCEPTION_ESCAPED: "True",
+            EXCEPTION_TYPE: "ZeroDivisionError",
+            EXCEPTION_MESSAGE: "zero division error",
+            EXCEPTION_STACKTRACE: "Traceback: ZeroDivisionError, division by zero",
+            EXCEPTION_ESCAPED: "True",
         }
         span.add_event("exception", attributes, time)
         span.start()
