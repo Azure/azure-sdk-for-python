@@ -688,7 +688,12 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
                 uamqp_transport=uamqp_transport
             )
             async with client:
-                with pytest.raises(ServiceBusConnectionError):
+                if not uamqp_transport:
+                    error = ServiceBusConnectionError
+                else:
+                    # if uamqp, catches an "Authorization timeout" error and raises ServiceBusError
+                    error = ServiceBusError
+                with pytest.raises(error):
                     async with client.get_queue_sender(servicebus_queue.name) as sender:
                         await sender.send_messages(ServiceBusMessage("foo"))
 
