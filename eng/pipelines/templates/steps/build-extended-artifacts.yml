@@ -88,6 +88,12 @@ steps:
       workingDirectory: $(Pipeline.Workspace)
     displayName: Update package properties with namespaces
 
+  - pwsh: |
+      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)" -Filter GovCompDisc* | % { Remove-Item $_ }
+      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)" -Filter ScanTelemetry* | % { Remove-Item $_ }
+      Remove-Item -Recurse -Force -Path "$(Build.ArtifactStagingDirectory)/bcde-output"
+    displayName: Clean up Artifact Directory
+
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
