@@ -104,7 +104,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         :rtype: ~azure.core.polling.LROPoller[~azure.healthinsights.radiologyinsights.models.RadiologyInsightsInferenceResult]
         :raises ~azure.core.exceptions.HttpResponseError:"""
 
-    @overload  # type: ignore[override]
+    @overload
     def begin_infer_radiology_insights(
         self,
         id: str,
