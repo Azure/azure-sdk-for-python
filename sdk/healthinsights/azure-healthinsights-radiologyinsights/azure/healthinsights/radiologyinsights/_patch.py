@@ -50,7 +50,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         self._client = _RadiologyInsightsClient(endpoint=endpoint, credential=credential, **kwargs)
 
-    @overload  # type: ignore[override]
+    @overload
     def begin_infer_radiology_insights(
         self,
         id: str,
