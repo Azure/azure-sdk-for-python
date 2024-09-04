@@ -11,7 +11,8 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ClinicalDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the clinical document."""
+    """The type of the clinical document.
+    """
 
     CONSULTATION = "consultation"
     DISCHARGE_SUMMARY = "dischargeSummary"
@@ -21,7 +22,6 @@ class ClinicalDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROGRESS = "progress"
     LABORATORY = "laboratory"
     PATHOLOGY_REPORT = "pathologyReport"
-
 
 class ContactPointSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Contact Point System
@@ -43,7 +43,6 @@ class ContactPointSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OTHER = "other"
     """Other"""
 
-
 class ContactPointUse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Contact Point Use
     See:    http://hl7.org/fhir/ValueSet/contact-point-use.
@@ -60,7 +59,6 @@ class ContactPointUse(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MOBILE = "mobile"
     """Mobile"""
 
-
 class DocumentContentSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the content's source.
     In case the source type is 'inline', the content is given as a string (for instance, text).
@@ -72,7 +70,6 @@ class DocumentContentSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REFERENCE = "reference"
     """The content is given as a URI."""
 
-
 class DocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the patient document, such as 'note' (text document) or 'fhirBundle' (FHIR JSON
     document).
@@ -82,7 +79,6 @@ class DocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FHIR_BUNDLE = "fhirBundle"
     DICOM = "dicom"
     GENOMIC_SEQUENCING = "genomicSequencing"
-
 
 class EncounterClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Known values codes that can be used to indicate the class of encounter (TODO://Based on FHIR
@@ -112,9 +108,9 @@ class EncounterClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HEALTH_HOME = "healthHome"
     """Healthcare encounter that takes place in the residence of the patient or a designee"""
 
-
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the processing job."""
+    """The status of the processing job.
+    """
 
     NOT_STARTED = "notStarted"
     RUNNING = "running"
@@ -122,9 +118,9 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "failed"
     CANCELED = "canceled"
 
-
 class LateralityDiscrepancyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Laterality discrepancy type."""
+    """Laterality discrepancy type.
+    """
 
     ORDER_LATERALITY_MISMATCH = "orderLateralityMismatch"
     """Mismatch between order and text"""
@@ -133,9 +129,9 @@ class LateralityDiscrepancyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TEXT_LATERALITY_MISSING = "textLateralityMissing"
     """Missing laterality in text"""
 
-
 class MedicalProfessionalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Medical Professional Type."""
+    """Medical Professional Type.
+    """
 
     UNKNOWN = "unknown"
     """Unknown medical professional type"""
@@ -147,7 +143,6 @@ class MedicalProfessionalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Technician medical professional type"""
     PHYSICIAN_ASSISTANT = "physicianAssistant"
     """Technician medical professional type"""
-
 
 class ObservationStatusCodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Observation Status
@@ -176,17 +171,17 @@ class ObservationStatusCodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The observation status is unknown.  Note that "unknown" is a value of last resort and every
     attempt should be made to provide a meaningful value other than "unknown"."""
 
-
 class PatientSex(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The patient's sex."""
+    """The patient's sex.
+    """
 
     FEMALE = "female"
     MALE = "male"
     UNSPECIFIED = "unspecified"
 
-
 class RadiologyInsightsInferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A Radiology Insights inference types."""
+    """A Radiology Insights inference types.
+    """
 
     AGE_MISMATCH = "ageMismatch"
     """Age mismatch inference type"""
@@ -209,9 +204,9 @@ class RadiologyInsightsInferenceType(str, Enum, metaclass=CaseInsensitiveEnumMet
     RADIOLOGY_PROCEDURE = "radiologyProcedure"
     """Radiology Procedure inference type"""
 
-
 class RecommendationFindingStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Recommendation finding status."""
+    """Recommendation finding status.
+    """
 
     PRESENT = "present"
     """Present finding status"""
@@ -222,9 +217,9 @@ class RecommendationFindingStatusType(str, Enum, metaclass=CaseInsensitiveEnumMe
     CONDITIONAL = "conditional"
     """Conditional finding status"""
 
-
 class ResearchStudyStatusCodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """https://www.hl7.org/fhir/R4/codesystem-research-study-status.html."""
+    """https://www.hl7.org/fhir/R4/codesystem-research-study-status.html.
+    """
 
     ACTIVE = "active"
     """The study is open for accrual."""
@@ -255,9 +250,9 @@ class ResearchStudyStatusCodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WITHDRAWN = "withdrawn"
     """Protocol was withdrawn by the lead organization."""
 
-
 class SpecialtyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Known values codes that can be used to indicate the type of the Specialty."""
+    """Known values codes that can be used to indicate the type of the Specialty.
+    """
 
     PATHOLOGY = "pathology"
     """pathology"""

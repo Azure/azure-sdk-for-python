@@ -16,11 +16,12 @@ if TYPE_CHECKING:
 
     from .._serialization import Deserializer, Serializer
 
-
-class RadiologyInsightsClientMixinABC(ABC):
+class RadiologyInsightsClientMixinABC(  
+    ABC
+):
     """DO NOT use this class. It is for internal typing use only."""
-
     _client: "AsyncPipelineClient"
     _config: RadiologyInsightsClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
+

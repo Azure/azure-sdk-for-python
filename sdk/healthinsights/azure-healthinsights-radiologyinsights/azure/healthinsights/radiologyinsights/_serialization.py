@@ -144,6 +144,8 @@ class RawDeserializer:
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
                 raise DeserializationError("XML is invalid") from err
+        elif content_type.startswith("text/"):
+            return data_as_str
         raise DeserializationError("Cannot deserialize content-type: {}".format(content_type))
 
     @classmethod
@@ -349,7 +351,9 @@ class Model(object):
     def as_dict(
         self,
         keep_readonly: bool = True,
-        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = attribute_transformer,
+        key_transformer: Callable[
+            [str, Dict[str, Any], Any], Any
+        ] = attribute_transformer,
         **kwargs: Any
     ) -> JSON:
         """Return a dict that can be serialized using json.dump.
@@ -538,7 +542,7 @@ class Serializer(object):
         "multiple": lambda x, y: x % y != 0,
     }
 
-    def __init__(self, classes: Optional[Mapping[str, type]] = None):
+    def __init__(self, classes: Optional[Mapping[str, type]]=None):
         self.serialize_type = {
             "iso-8601": Serializer.serialize_iso,
             "rfc-1123": Serializer.serialize_rfc,
@@ -746,7 +750,7 @@ class Serializer(object):
             # Treat the list aside, since we don't want to encode the div separator
             if data_type.startswith("["):
                 internal_data_type = data_type[1:-1]
-                do_quote = not kwargs.get("skip_quote", False)
+                do_quote = not kwargs.get('skip_quote', False)
                 return self.serialize_iter(data, internal_data_type, do_quote=do_quote, **kwargs)
 
             # Not a list, regular serialization
@@ -905,8 +909,12 @@ class Serializer(object):
                     raise
                 serialized.append(None)
 
-        if kwargs.get("do_quote", False):
-            serialized = ["" if s is None else quote(str(s), safe="") for s in serialized]
+        if kwargs.get('do_quote', False):
+            serialized = [
+                '' if s is None else quote(str(s), safe='')
+                for s
+                in serialized
+            ]
 
         if div:
             serialized = ["" if s is None else str(s) for s in serialized]
@@ -1363,7 +1371,7 @@ class Deserializer(object):
 
     valid_date = re.compile(r"\d{4}[-]\d{2}[-]\d{2}T\d{2}:\d{2}:\d{2}" r"\.?\d*Z?[-+]?[\d{2}]?:?[\d{2}]?")
 
-    def __init__(self, classes: Optional[Mapping[str, type]] = None):
+    def __init__(self, classes: Optional[Mapping[str, type]]=None):
         self.deserialize_type = {
             "iso-8601": Deserializer.deserialize_iso,
             "rfc-1123": Deserializer.deserialize_rfc,

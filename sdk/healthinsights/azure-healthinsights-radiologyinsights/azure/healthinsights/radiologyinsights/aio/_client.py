@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING, Union
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -22,10 +23,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-
-class RadiologyInsightsClient(
-    RadiologyInsightsClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class RadiologyInsightsClient(RadiologyInsightsClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """RadiologyInsightsClient.
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
@@ -43,35 +41,28 @@ class RadiologyInsightsClient(
     """
 
     def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}/health-insights"
+        _endpoint = '{endpoint}/health-insights'
         self._config = RadiologyInsightsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        _policies = kwargs.pop("policies", None)
+        _policies = kwargs.pop('policies', None)
         if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
+            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
+
     def send_request(
-        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+        self,
+        request: HttpRequest, *, stream: bool = False,
+        **kwargs: Any
     ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
@@ -92,7 +83,7 @@ class RadiologyInsightsClient(
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -101,7 +92,7 @@ class RadiologyInsightsClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "RadiologyInsightsClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

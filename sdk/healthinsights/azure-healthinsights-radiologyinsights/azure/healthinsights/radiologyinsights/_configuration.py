@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class RadiologyInsightsClientConfiguration:    # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for RadiologyInsightsClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -36,8 +36,13 @@ class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-04-01")
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        **kwargs: Any
+    ) -> None:
+        api_version: str = kwargs.pop('api_version', "2024-04-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -47,27 +52,30 @@ class RadiologyInsightsClientConfiguration:  # pylint: disable=too-many-instance
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cognitiveservices.azure.com/.default"])
-        kwargs.setdefault("sdk_moniker", "healthinsights-radiologyinsights/{}".format(VERSION))
+        self.credential_scopes = kwargs.pop('credential_scopes', ['https://cognitiveservices.azure.com/.default'])
+        kwargs.setdefault('sdk_moniker', 'healthinsights-radiologyinsights/{}'.format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _infer_policy(self, **kwargs):
         if isinstance(self.credential, AzureKeyCredential):
             return policies.AzureKeyCredentialPolicy(self.credential, "Ocp-Apim-Subscription-Key", **kwargs)
-        if hasattr(self.credential, "get_token"):
+        if hasattr(self.credential, 'get_token'):
             return policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
         raise TypeError(f"Unsupported credential: {self.credential}")
 
-    def _configure(self, **kwargs: Any) -> None:
-        self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
-        self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
-        self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
-        self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
-        self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
-        self.authentication_policy = kwargs.get("authentication_policy")
+    def _configure(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.user_agent_policy = kwargs.get('user_agent_policy') or policies.UserAgentPolicy(**kwargs)
+        self.headers_policy = kwargs.get('headers_policy') or policies.HeadersPolicy(**kwargs)
+        self.proxy_policy = kwargs.get('proxy_policy') or policies.ProxyPolicy(**kwargs)
+        self.logging_policy = kwargs.get('logging_policy') or policies.NetworkTraceLoggingPolicy(**kwargs)
+        self.http_logging_policy = kwargs.get('http_logging_policy') or policies.HttpLoggingPolicy(**kwargs)
+        self.custom_hook_policy = kwargs.get('custom_hook_policy') or policies.CustomHookPolicy(**kwargs)
+        self.redirect_policy = kwargs.get('redirect_policy') or policies.RedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get('retry_policy') or policies.RetryPolicy(**kwargs)
+        self.authentication_policy = kwargs.get('authentication_policy')
         if self.credential and not self.authentication_policy:
             self.authentication_policy = self._infer_policy(**kwargs)
