@@ -10,7 +10,7 @@ import unittest
 from unittest import mock
 
 # pylint: disable=import-error
-from opentelemetry.trace import get_tracer_provider, set_tracer_provider
+from opentelemetry.trace import set_tracer_provider
 from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
