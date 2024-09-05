@@ -16,7 +16,7 @@ from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobServiceClient
-from .._data_lake_service_client_helper import _format_url, _parse_url
+from .._data_lake_service_client_helpers import _format_url, _parse_url
 from .._deserialize import get_datalake_service_properties
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._models import (
@@ -176,6 +176,15 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :returns: A DataLakeServiceClient.
         :rtype: ~azure.storage.filedatalake.DataLakeServiceClient
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/datalake_samples_file_system_async.py
+                :start-after: [START create_data_lake_service_client_from_conn_str]
+                :end-before: [END create_data_lake_service_client_from_conn_str]
+                :language: python
+                :dedent: 8
+                :caption: Creating the DataLakeServiceClient from a connection string.
         """
         account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
         return cls(account_url, credential=credential, **kwargs)

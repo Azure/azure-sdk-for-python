@@ -17,7 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import BlobServiceClient
 from ._data_lake_directory_client import DataLakeDirectoryClient
 from ._data_lake_file_client import DataLakeFileClient
-from ._data_lake_service_client_helper import _format_url, _parse_url
+from ._data_lake_service_client_helpers import _format_url, _parse_url
 from ._deserialize import get_datalake_service_properties
 from ._file_system_client import FileSystemClient
 from ._generated import AzureDataLakeStorageRESTAPI
