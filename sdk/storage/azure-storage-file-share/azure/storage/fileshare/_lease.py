@@ -44,7 +44,7 @@ class ShareLeaseClient(object):  # pylint: disable=client-accepts-api-version-ke
     """The last modified timestamp of the lease currently being maintained.
         This will be `None` if no lease has yet been acquired or modified."""
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
         self, client: Union["ShareFileClient", "ShareClient"],
         lease_id: Optional[str] = None
     ) -> None:

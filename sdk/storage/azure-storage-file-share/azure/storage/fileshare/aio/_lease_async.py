@@ -42,7 +42,7 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
     """
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
         self, client: Union["ShareFileClient", "ShareClient"],
         lease_id: Optional[str] = None
     ) -> None:
