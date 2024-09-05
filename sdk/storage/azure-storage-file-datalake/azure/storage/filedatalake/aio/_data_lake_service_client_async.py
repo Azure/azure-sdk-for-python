@@ -126,6 +126,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         self._loop = kwargs.get('loop', None)
 
     async def __aenter__(self) -> Self:
+        await super(DataLakeServiceClient, self).__aenter__()
         await self._blob_service_client.__aenter__()
         return self
 
