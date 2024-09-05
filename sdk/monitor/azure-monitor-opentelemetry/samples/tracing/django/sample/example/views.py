@@ -3,12 +3,14 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import logging
 from django.http import HttpResponse
 
+logger = logging.getLogger("app_logger")
 
 # Requests sent to the django application will be automatically captured
 def index(request):
+    logger.warning("index page")
     return HttpResponse("Hello, world.")
 
 
