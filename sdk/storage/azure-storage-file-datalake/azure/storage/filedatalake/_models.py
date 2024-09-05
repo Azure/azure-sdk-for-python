@@ -223,20 +223,6 @@ class AccountSasPermissions(BlobAccountSasPermissions):
         Users can create new blobs or files, but may not overwrite existing blobs or files.
     """
 
-    read: bool = False
-    """Valid for all signed resources types (Service, Container, and Object).
-        Permits read permissions to the specified resource type."""
-    write: bool = False
-    """Valid for all signed resources types (Service, Container, and Object).
-        Permits write permissions to the specified resource type."""
-    delete: bool = False
-    """Valid for Container and Object resource types, except for queue messages."""
-    list: bool = False
-    """Valid for Service and Container resource types only."""
-    create: bool = False
-    """Valid for the following Object resource types only: blobs and files.
-        Users can create new blobs or files, but may not overwrite existing blobs or files."""
-
     def __init__(
         self, read: bool = False,
         write: bool = False,
@@ -638,10 +624,6 @@ class AccessPolicy(BlobAccessPolicy):
     permission: Optional[Union[FileSystemSasPermissions, str]] = None  # type: ignore [assignment]
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]] = None
-    """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]] = None
-    """The time at which the shared access signature becomes valid."""
 
     def __init__(
         self, permission: Optional[Union[FileSystemSasPermissions, str]] = None,
@@ -655,13 +637,6 @@ class AccessPolicy(BlobAccessPolicy):
 
 class LeaseProperties(BlobLeaseProperties):
     """DataLake Lease Properties."""
-
-    status: str
-    """The lease status of the file. Possible values: locked|unlocked"""
-    state: str
-    """Lease state of the file. Possible values: available|leased|expired|breaking|broken"""
-    duration: str
-    """When a file is leased, specifies whether the lease is of infinite or fixed duration."""
 
 
 class EncryptionScopeOptions(BlobContainerEncryptionScope):
@@ -679,13 +654,6 @@ class EncryptionScopeOptions(BlobContainerEncryptionScope):
         If true, prevents any request from specifying a different encryption scope than the scope
         set on the file system. Default value is false.
     """
-
-    default_encryption_scope: str
-    """Specifies the default encryption scope to set on the file system and use for
-        all future writes."""
-    prevent_encryption_scope_override: bool
-    """If true, prevents any request from specifying a different encryption scope than the scope
-        set on the file system. Default value is false."""
 
 
 class ContentSettings(BlobContentSettings):
@@ -708,23 +676,6 @@ class ContentSettings(BlobContentSettings):
         If the content_md5 has been set for the file, this response header is stored so that the
         client can check for message content integrity.
     """
-
-    content_type: Optional[str] = None
-    """The content type specified for the file or directory. If no content type was
-        specified, the default content type is application/octet-stream."""
-    content_encoding: Optional[str] = None
-    """If the content_encoding has previously been set for the file, that value is stored."""
-    content_language: Optional[str] = None
-    """If the content_language has previously been set for the file, that value is stored."""
-    content_disposition: Optional[str] = None
-    """content_disposition conveys additional information about how to process the response payload, 
-        and also can be  used to attach additional metadata. If content_disposition has previously 
-        been set for the file, that value is stored."""
-    cache_control: Optional[str] = None
-    """If the cache_control has previously been set for the file, that value is stored."""
-    content_md5: Optional[bytearray] = None
-    """If the content_md5 has been set for the file, this response header is stored so that the 
-        client can check for message content integrity."""
 
     def __init__(self, **kwargs: Any) -> None:
         super(ContentSettings, self).__init__(**kwargs)
@@ -815,18 +766,6 @@ class FileSystemPropertiesPaged(ContainerPropertiesPaged):
     :param str continuation_token: An opaque continuation token.
     """
 
-    service_endpoint: Optional[str] = None
-    """The service URL."""
-    prefix: Optional[str] = None
-    """A file system name prefix being used to filter the list."""
-    marker: Optional[str] = None
-    """The continuation token of the current page of results."""
-    results_per_page: Optional[int] = None
-    """The maximum number of results retrieved per API call."""
-    continuation_token: Optional[str] = None
-    """The continuation token to retrieve the next page of results."""
-    location_mode: Optional[str] = None
-    """The location mode being used to list results. Options include "primary" or "secondary"."""
     current_page: List[FileSystemProperties]  # type: ignore [assignment]
     """The current page of listed results."""
 
@@ -1044,13 +983,6 @@ class ResourceTypes(BlobResourceTypes):
         Access to object-level APIs for files(e.g. Create File, etc.).
     """
 
-    service: bool = False
-    """Access to service-level APIs (e.g.List File Systems)."""
-    file_system: bool = False
-    """Access to file_system-level APIs (e.g., Create/Delete file system, List Directories/Files)."""
-    object: bool = False
-    """Access to object-level APIs for files(e.g. Create File, etc.)."""
-
     def __init__(
         self, service: bool = False,
         file_system: bool = False,
@@ -1067,21 +999,6 @@ class UserDelegationKey(BlobUserDelegationKey):
     The fields are saved as simple strings since the user does not have to interact with this object;
     to generate an identify SAS, the user can simply pass it to the right API.
     """
-
-    signed_oid: str
-    """Object ID of this token."""
-    signed_tid: str
-    """Tenant ID of the tenant that issued this token."""
-    signed_start: str
-    """The datetime this token becomes valid."""
-    signed_expiry: str
-    """The datetime this token expires."""
-    signed_service: str
-    """What service this key is valid for."""
-    signed_version: str
-    """The version identifier of the REST service that created this token."""
-    value: str
-    """The user delegation key."""
 
     @classmethod
     def _from_generated(cls, generated):
@@ -1193,13 +1110,6 @@ class CustomerProvidedEncryptionKey(BlobCustomerProvidedEncryptionKey):
     :param str key_hash:
         Base64-encoded SHA256 of the encryption key.
     """
-
-    key_value: str
-    """Base64-encoded AES-256 encryption key value."""
-    key_hash: str
-    """Base64-encoded SHA256 of the encryption key."""
-    algorithm: str
-    """Specifies the algorithm to use when encrypting data using the given key. Must be AES256."""
 
 
 class QuickQueryDialect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
