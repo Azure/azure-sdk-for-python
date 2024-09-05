@@ -6,11 +6,9 @@
 import logging
 from django.http import HttpResponse
 
-logger = logging.getLogger("app_logger")
 
 # Requests sent to the django application will be automatically captured
 def index(request):
-    logger.info("index page")
     return HttpResponse("Hello, world.")
 
 
