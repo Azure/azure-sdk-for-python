@@ -268,7 +268,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
             output=[AnalyzeOutputOption.PDF],
         )
         result = poller.result()
-        response = client.get_analyze_result_pdf(model_id=result.model_id, result_id=poller.operation_id)
+        response = client.get_analyze_result_pdf(model_id=result.model_id, result_id=poller.details["operation_id"])
         first_chunk_pdf_bytes = response.__next__()
         assert first_chunk_pdf_bytes.startswith(b"%PDF-")  # A PDF's header is expected to be: %PDF-
 
@@ -289,7 +289,7 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         assert result.figures is not None
         figure_id = result.figures[0].id
         response = client.get_analyze_result_figure(
-            model_id=result.model_id, result_id=poller.operation_id, figure_id=figure_id
+            model_id=result.model_id, result_id=poller.details["operation_id"], figure_id=figure_id
         )
         first_chunk_figure_bytes = response.__next__()
         assert first_chunk_figure_bytes.startswith(b"\x89PNG")  # A PNG's header is expected to start with: ‰PNG

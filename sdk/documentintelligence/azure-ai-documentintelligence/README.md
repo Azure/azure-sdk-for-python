@@ -18,7 +18,7 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 
 ## _Disclaimer_
 
-_The API version 2024-02-29-preview is currently only available in some Azure regions, the available regions can be found from [here][python-di-available-regions]._
+_The latest service API is currently only available in some Azure regions, the available regions can be found from [here][python-di-available-regions]._
 
 ## Getting started
 
@@ -329,7 +329,7 @@ with open(path_to_sample_documents, "rb") as f:
         content_type="application/octet-stream",
     )
 result: AnalyzeResult = poller.result()
-operation_id = poller.operation_id
+operation_id = poller.details["operation_id"]
 
 if result.figures:
      for figure in result.figures:
@@ -347,7 +347,7 @@ if result.figures:
 
 Convert an analog PDF into a PDF with embedded text. Such text can enable text search within the PDF or allow the PDF to be used in LLM chat scenarios.
 
-_Note: For now, this feature is only supported by `prebuilt-read`. All other modelIds will return error._
+_Note: For now, this feature is only supported by `prebuilt-read`. All other models will return error._
 
 <!-- SNIPPET:sample_analyze_result_pdf.analyze_result_pdf -->
 
@@ -369,7 +369,7 @@ with open(path_to_sample_documents, "rb") as f:
         content_type="application/octet-stream",
     )
 result: AnalyzeResult = poller.result()
-operation_id = poller.operation_id
+operation_id = poller.details["operation_id"]
 
 response = document_intelligence_client.get_analyze_result_pdf(
     model_id=result.model_id, result_id=operation_id

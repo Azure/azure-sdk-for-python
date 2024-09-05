@@ -53,7 +53,7 @@ def analyze_result_pdf():
             content_type="application/octet-stream",
         )
     result: AnalyzeResult = poller.result()
-    operation_id = poller.operation_id
+    operation_id = poller.details["operation_id"]
 
     response = document_intelligence_client.get_analyze_result_pdf(
         model_id=result.model_id, result_id=operation_id

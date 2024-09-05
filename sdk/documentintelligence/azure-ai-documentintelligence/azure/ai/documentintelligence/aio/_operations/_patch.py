@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, Mapping, cast, overload
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -33,42 +33,41 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class AsyncAnalyzeDocumentLROPollingMethod(AsyncLROBasePolling):
-    @property
-    def operation_id(self) -> str:
-        """Analyze operation result ID.
-
-        :rtype:str
-        """
-        return _parse_operation_id(self._initial_response.http_response.headers["Operation-Location"])
-
-
 class AsyncAnalyzeDocumentLROPoller(AsyncLROPoller[PollingReturnType_co]):
-    def polling_method(self) -> AsyncAnalyzeDocumentLROPollingMethod:
-        """Return the polling method associated to this poller.
-
-        :return: AnalyzeDocumentLROPollingMethod
-        :rtype: AsyncAnalyzeDocumentLROPollingMethod
-        """
-        return self._polling_method  # type: ignore
-
     @property
-    def operation_id(self) -> str:
-        """Analyze operation result ID.
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the long-running operation.
 
-        :rtype:str
+        :return: Returns metadata associated with the long-running operation.
+        :rtype: Mapping[str, Any]
         """
-        return self.polling_method().operation_id
+        return {
+            "operation_id": _parse_operation_id(
+                self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
+            ),
+        }
+    
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: AsyncPollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
+    ) -> "AsyncAnalyzeDocumentLROPoller":
+        (
+            client,
+            initial_response,
+            deserialization_callback,
+        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
+
+        return cls(client, initial_response, deserialization_callback, polling_method)
 
 
-class AsyncAnalyzeBatchDocumentsAsyncLROPollingMethod(AsyncLROBasePolling):  # pylint: disable=name-too-long
+class AsyncAnalyzeBatchDocumentsLROPollingMethod(AsyncLROBasePolling):  # pylint: disable=name-too-long
     def finished(self) -> bool:
         """Is this polling finished?
 
         :return: Whether the polling finished or not.
         :rtype: bool
         """
-        return AsyncAnalyzeBatchDocumentsAsyncLROPollingMethod._finished(self.status())
+        return AsyncAnalyzeBatchDocumentsLROPollingMethod._finished(self.status())
 
     @staticmethod
     def _finished(status) -> bool:
@@ -529,7 +528,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
         cls: ClsType[_models.AnalyzeResult] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncAnalyzeDocumentLROPollingMethod] = kwargs.pop("polling", True)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
@@ -570,21 +569,20 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         }
 
         if polling is True:
-            polling_method = AsyncAnalyzeDocumentLROPollingMethod(
-                lro_delay, path_format_arguments=path_format_arguments, **kwargs
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
             )
         elif polling is False:
-            polling_method = cast(AsyncAnalyzeDocumentLROPollingMethod, AsyncNoPolling())
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return cast(
-                AsyncAnalyzeDocumentLROPoller, AsyncLROPoller[_models.AnalyzeResult].from_continuation_token(
-                    polling_method=polling_method,
-                    continuation_token=cont_token,
-                    client=self._client,
-                    deserialization_callback=get_long_running_output,
-                )
+            return AsyncAnalyzeDocumentLROPoller[_models.AnalyzeBatchResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
             )
         return AsyncAnalyzeDocumentLROPoller[_models.AnalyzeResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
@@ -605,73 +603,19 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeBatchResult]:
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models.AnalyzeBatchResult] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._analyze_batch_documents_initial(
-                model_id=model_id,
-                analyze_batch_request=analyze_batch_request,
-                pages=pages,
-                locale=locale,
-                string_index_type=string_index_type,
-                features=features,
-                query_fields=query_fields,
-                output_content_format=output_content_format,
-                output=output,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-
-            deserialized = _deserialize(_models.AnalyzeBatchResult, response.json().get("result"))
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncAnalyzeBatchDocumentsAsyncLROPollingMethod(
-                    lro_delay, path_format_arguments=path_format_arguments, **kwargs
-                ),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.AnalyzeBatchResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.AnalyzeBatchResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        return await super().begin_analyze_batch_documents(
+            model_id=model_id,
+            analyze_batch_request=analyze_batch_request,
+            pages=pages,
+            locale=locale,
+            string_index_type=string_index_type,
+            features=features,
+            query_fields=query_fields,
+            output_content_format=output_content_format,
+            output=output,
+            polling=AsyncAnalyzeBatchDocumentsLROPollingMethod(timeout=self._config.polling_interval),
+            **kwargs
         )
-
 
 __all__: List[str] = [
     "DocumentIntelligenceClientOperationsMixin",

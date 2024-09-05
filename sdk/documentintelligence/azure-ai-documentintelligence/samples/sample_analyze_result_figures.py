@@ -53,7 +53,7 @@ def analyze_result_figures():
             content_type="application/octet-stream",
         )
     result: AnalyzeResult = poller.result()
-    operation_id = poller.operation_id
+    operation_id = poller.details["operation_id"]
 
     if result.figures:
          for figure in result.figures:
@@ -63,6 +63,8 @@ def analyze_result_figures():
                 )
                 with open(f"{figure.id}.png", "wb") as writer:
                     writer.writelines(response)
+    else:
+        print("No figures found.")
     # [END analyze_result_figures]
 
 

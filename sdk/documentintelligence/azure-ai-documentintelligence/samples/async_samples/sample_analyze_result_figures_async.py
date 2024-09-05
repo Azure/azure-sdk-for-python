@@ -55,7 +55,7 @@ async def analyze_result_figures():
                 content_type="application/octet-stream",
             )
         result: AnalyzeResult = await poller.result()
-        operation_id = poller.operation_id
+        operation_id = poller.details["operation_id"]
 
         if result.figures:
             for figure in result.figures:
@@ -66,6 +66,8 @@ async def analyze_result_figures():
                     with open(f"{figure.id}_async.png", "wb") as file:
                         async for chunk in response:
                             file.write(chunk)
+        else:
+            print("No figures found.")
 
 
 async def main():

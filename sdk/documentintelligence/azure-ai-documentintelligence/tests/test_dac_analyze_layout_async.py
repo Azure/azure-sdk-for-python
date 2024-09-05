@@ -286,7 +286,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
             output=[AnalyzeOutputOption.PDF],
         )
         result = await poller.result()
-        response = await client.get_analyze_result_pdf(model_id=result.model_id, result_id=poller.operation_id)
+        response = await client.get_analyze_result_pdf(model_id=result.model_id, result_id=poller.details["operation_id"])
         first_chunk_pdf_bytes = await response.__anext__()
         assert first_chunk_pdf_bytes.startswith(b"%PDF-")  # A PDF's header is expected to be: %PDF-
 
@@ -307,7 +307,7 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
         assert result.figures is not None
         figure_id = result.figures[0].id
         response = await client.get_analyze_result_figure(
-            model_id=result.model_id, result_id=poller.operation_id, figure_id=figure_id
+            model_id=result.model_id, result_id=poller.details["operation_id"], figure_id=figure_id
         )
         first_chunk_figure_bytes = await response.__anext__()
         assert first_chunk_figure_bytes.startswith(b"\x89PNG")  # A PNG's header is expected to start with: ‰PNG
