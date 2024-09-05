@@ -28,8 +28,8 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
                 vm_name="str",
                 vm_extension_name="str",
                 extension_parameters={
-                    "location": "str",
                     "autoUpgradeMinorVersion": bool,
+                    "enableAutomaticUpgrade": bool,
                     "forceUpdateTag": "str",
                     "id": "str",
                     "instanceView": {
@@ -55,16 +55,20 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
                         "type": "str",
                         "typeHandlerVersion": "str",
                     },
+                    "location": "str",
                     "name": "str",
                     "protectedSettings": {},
+                    "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
+                    "provisionAfterExtensions": ["str"],
                     "provisioningState": "str",
                     "publisher": "str",
                     "settings": {},
+                    "suppressFailures": bool,
                     "tags": {"str": "str"},
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
-                api_version="2015-06-15",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -81,15 +85,18 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
                 vm_extension_name="str",
                 extension_parameters={
                     "autoUpgradeMinorVersion": bool,
+                    "enableAutomaticUpgrade": bool,
                     "forceUpdateTag": "str",
                     "protectedSettings": {},
+                    "protectedSettingsFromKeyVault": {"secretUrl": "str", "sourceVault": {"id": "str"}},
                     "publisher": "str",
                     "settings": {},
+                    "suppressFailures": bool,
                     "tags": {"str": "str"},
                     "type": "str",
                     "typeHandlerVersion": "str",
                 },
-                api_version="2015-06-15",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -104,7 +111,7 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
                 resource_group_name=resource_group.name,
                 vm_name="str",
                 vm_extension_name="str",
-                api_version="2015-06-15",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -118,7 +125,19 @@ class TestComputeManagementVirtualMachineExtensionsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             vm_name="str",
             vm_extension_name="str",
-            api_version="2015-06-15",
+            api_version="2024-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_list(self, resource_group):
+        response = await self.client.virtual_machine_extensions.list(
+            resource_group_name=resource_group.name,
+            vm_name="str",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
