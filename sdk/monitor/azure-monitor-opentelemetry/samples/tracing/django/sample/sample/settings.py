@@ -166,7 +166,7 @@ LOGGING = {
             "propagate": False,
         },
         "app_logger": {
-            "level": "WARNING",
+            "level": "INFO",
             "handlers": ["opentelemetry"],
             "propagate": False,
         },

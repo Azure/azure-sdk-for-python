@@ -10,7 +10,7 @@ logger = logging.getLogger("app_logger")
 
 # Requests sent to the django application will be automatically captured
 def index(request):
-    logger.warning("index page")
+    logger.info("index page")
     return HttpResponse("Hello, world.")
 
 
