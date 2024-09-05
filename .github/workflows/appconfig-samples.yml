@@ -3,9 +3,11 @@ name: Test Appconfig Samples
 on:
   workflow_dispatch:
     inputs:
-      rg:
-        description: 'Test Resource Group'
+      location:
+        description: 'Test Resource Group location'
         required: true
+        default: 'eastus'
+        
 permissions: 
   id-token: write
 
@@ -31,17 +33,27 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+
+      - name: Create resource group
+        shell: bash
+        run: |
+
+          rg="rg-$(uuidgen | cut -c 1-8)"
+          echo "resource_group=$rg" >> $GITHUB_ENV
+
+          az group create --name ${{ env.resource_group }}  --location ${{ github.event.inputs.location }}
+
       - name: Prepare resource name
         shell: bash
         run: |
           rn="appconfig-$(uuidgen | cut -c 1-8)"
           echo "resource_name=$rn" >> $GITHUB_ENV
-      
+ 
       - name: Create resource
         shell: bash
         run: |
-          az appconfig create -g ${{ github.event.inputs.rg }} -n ${{ env.resource_name }} -l westus
-          connString=$(az appconfig credential list --name ${{ env.resource_name }} --resource-group ${{ github.event.inputs.rg }} --query "[?name=='Primary'].connectionString" -o tsv)
+          az appconfig create -g ${{ env.resource_group }} -n ${{ env.resource_name }} -l westus
+          connString=$(az appconfig credential list --name ${{ env.resource_name }} --resource-group ${{ env.resource_group }} --query "[?name=='Primary'].connectionString" -o tsv)
           echo "connString=$connString" >> $GITHUB_ENV
 
       - name: Set up Python
@@ -67,9 +79,13 @@ jobs:
         if: always()
         shell: bash
         run: |
-          if [ $(az appconfig list -g ${{ github.event.inputs.rg }} --query "[?name=='${{ env.resource_name }}'] | length(@)") -gt 0 ]; then
+          if [ $(az appconfig list -g ${{ env.resource_group }} --query "[?name=='${{ env.resource_name }}'] | length(@)") -gt 0 ]; then
             echo "Delete appconfig..."
-            az appconfig delete -g ${{ github.event.inputs.rg }} -n ${{ env.resource_name }} -y
+            az appconfig delete -g ${{ env.resource_group }} -n ${{ env.resource_name }} -y
             echo "Purge appconfig..."
             az appconfig purge -n ${{ env.resource_name }} -y
+
+            echo "Delete group..."
+            az group delete --name ${{ env.resource_group }} -y
+
           fi
