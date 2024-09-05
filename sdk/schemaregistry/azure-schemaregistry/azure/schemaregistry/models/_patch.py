@@ -10,8 +10,8 @@ from typing import List
 
 from enum import Enum
 
-from ._enums import SchemaContentTypeValues
 from azure.core import CaseInsensitiveEnumMeta
+from ._enums import SchemaContentTypeValues
 
 
 class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):

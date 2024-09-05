@@ -22,8 +22,8 @@ from typing import (
     overload,
     IO,
 )
-from typing_extensions import Protocol, TypedDict, Self
 from enum import Enum
+from typing_extensions import Protocol, TypedDict, Self
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.tracing.decorator import distributed_trace
 
@@ -61,7 +61,7 @@ def _parse_schema_properties_dict(response_headers: Mapping[str, Union[str, int]
 def _normalize_content_type(content_type: str) -> str:
     return content_type.replace(" ", "").lower()
 
-def _get_format(content_type: str) -> SchemaFormat:
+def _get_format(content_type: str) -> Union[SchemaFormat, str]:
     # pylint:disable=redefined-builtin
     # Exception cases may be due to forward compatibility.
     # i.e. Getting a schema with a content type from a future API version.
