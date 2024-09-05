@@ -70,6 +70,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     # Blob values
     APPEND_POSITION_CONDITION_NOT_MET = "AppendPositionConditionNotMet"
+    BLOB_ACCESS_TIER_NOT_SUPPORTED_FOR_ACCOUNT_TYPE = "BlobAccessTierNotSupportedForAccountType"
     BLOB_ALREADY_EXISTS = "BlobAlreadyExists"
     BLOB_NOT_FOUND = "BlobNotFound"
     BLOB_OVERWRITTEN = "BlobOverwritten"
