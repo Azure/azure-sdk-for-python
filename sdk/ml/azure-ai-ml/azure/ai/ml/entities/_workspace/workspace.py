@@ -339,7 +339,7 @@ class Workspace(Resource):
             try:
                 from azureml.mlflow import get_mlflow_tracking_uri_v2
 
-                mlflow_tracking_uri = get_mlflow_tracking_uri_v2(rest_obj.ml_flow_tracking_uri, v2_service_context)
+                mlflow_tracking_uri = get_mlflow_tracking_uri_v2(rest_obj, v2_service_context)
             except ImportError:
                 mlflow_tracking_uri = rest_obj.ml_flow_tracking_uri
                 error_msg = (
