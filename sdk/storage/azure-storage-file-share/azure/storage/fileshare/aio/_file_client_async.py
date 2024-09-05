@@ -290,7 +290,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/file_samples_hello_world.py
+            .. literalinclude:: ../samples/file_samples_hello_world_async.py
                 :start-after: [START create_file_client]
                 :end-before: [END create_file_client]
                 :language: python
