@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.qumulo import QumuloMgmtClient
 
 """
@@ -26,16 +27,16 @@ from azure.mgmt.qumulo import QumuloMgmtClient
 def main():
     client = QumuloMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="ulseeqylxb",
+        subscription_id="382E8C7A-AC80-4D70-8580-EFE99537B9B7",
     )
 
     response = client.file_systems.get(
         resource_group_name="rgQumulo",
-        file_system_name="nauwwbfoqehgbhdsmkewoboyxeqg",
+        file_system_name="sihbehcisdqtqqyfiewiiaphgh",
     )
     print(response)
 
 
-# x-ms-original-file: specification/liftrqumulo/resource-manager/Qumulo.Storage/stable/2022-10-12/examples/FileSystems_Get_MaximumSet_Gen.json
+# x-ms-original-file: specification/liftrqumulo/resource-manager/Qumulo.Storage/stable/2024-06-19/examples/FileSystems_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

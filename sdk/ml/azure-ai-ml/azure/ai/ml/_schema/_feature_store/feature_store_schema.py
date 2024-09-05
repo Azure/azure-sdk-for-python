@@ -11,7 +11,6 @@ from azure.ai.ml._schema.workspace.customer_managed_key import CustomerManagedKe
 from azure.ai.ml._schema.workspace.identity import IdentitySchema, UserAssignedIdentitySchema
 from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml.constants._common import PublicNetworkAccess
-from azure.ai.ml._schema import ExperimentalField
 from azure.ai.ml._schema.workspace.networking import ManagedNetworkSchema
 from .compute_runtime_schema import ComputeRuntimeSchema
 from .materialization_store_schema import MaterializationStoreSchema
@@ -41,4 +40,4 @@ class FeatureStoreSchema(PathAwareSchema):
     )
     identity = NestedField(IdentitySchema)
     primary_user_assigned_identity = fields.Str()
-    managed_network = ExperimentalField(NestedField(ManagedNetworkSchema, unknown=EXCLUDE))
+    managed_network = NestedField(ManagedNetworkSchema, unknown=EXCLUDE)

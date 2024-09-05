@@ -10,14 +10,13 @@
 # Check CondaConfiguration.py for an larger example configuration blob that showcases all supported download methodologies.
 
 import argparse
-import sys
+import fnmatch
 import os
 import shutil
 import re
 import json
 import shlex
 import subprocess
-import stat
 import urllib3
 
 from shutil import rmtree
@@ -240,6 +239,9 @@ def create_setup_files(
     with open(cfg_location, "w") as f:
         f.write(SETUP_CFG)
 
+def tolerant_match(pkg_name, input_string):
+    pattern = pkg_name.replace('-', '[-_]')
+    return fnmatch.fnmatch(input_string, f"*{pattern}*")
 
 def create_combined_sdist(
     conda_build: CondaConfiguration, config_assembly_folder: str, config_assembled_folder: str
@@ -274,7 +276,7 @@ def create_combined_sdist(
                     [
                         os.path.join(config_assembled_folder, a)
                         for a in os.listdir(config_assembled_folder)
-                        if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a
+                        if os.path.isfile(os.path.join(config_assembled_folder, a)) and tolerant_match(conda_build.name, a)
                     ]
                 )
             )

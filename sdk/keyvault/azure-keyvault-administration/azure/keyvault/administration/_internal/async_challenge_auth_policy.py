@@ -38,7 +38,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
 
     def __init__(self, credential: AsyncTokenCredential, *scopes: str, **kwargs: Any) -> None:
         super().__init__(credential, *scopes, **kwargs)
-        self._credential = credential
+        self._credential: AsyncTokenCredential = credential
         self._token: Optional[AccessToken] = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
         self._request_copy: Optional[HttpRequest] = None
