@@ -659,7 +659,7 @@ class DomainResource(Resource):
 
 class Extension(Element):  # pylint: disable=too-many-instance-attributes
     """Base for all elements
-    Based on `FHIR Element <https://www.hl7.org/fhir/datatypes.html#Element>`_.
+    Based on `FHIR Element`_.
 
 
     :ivar url: Source of the definition for the extension code - a logical name or a URL. Required.
