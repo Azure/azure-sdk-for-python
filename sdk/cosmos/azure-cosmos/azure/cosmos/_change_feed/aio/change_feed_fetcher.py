@@ -89,7 +89,7 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
             # there is any items in the response or not.
             self._change_feed_state.apply_server_response_continuation(
                 cast(str, response_headers.get(continuation_key)),
-                (True if fetched_items else False))
+                bool(fetched_items))
 
             if fetched_items:
                 break
@@ -168,7 +168,7 @@ class ChangeFeedFetcherV2(object):
 
             self._change_feed_state.apply_server_response_continuation(
                 cast(str, response_headers.get(continuation_key)),
-                (True if fetched_items else False))
+                bool(fetched_items))
 
             if fetched_items:
                 self._change_feed_state._continuation._move_to_next_token()

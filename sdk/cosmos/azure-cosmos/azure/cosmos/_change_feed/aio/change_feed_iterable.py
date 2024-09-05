@@ -85,7 +85,10 @@ class ChangeFeedIterable(AsyncPageIterator):
         self._validate_change_feed_state_context(change_feed_state_context)
         self._options["changeFeedStateContext"] = change_feed_state_context
 
-        super(ChangeFeedIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token) # type: ignore[arg-type]
+        super(ChangeFeedIterable, self).__init__(
+            self._fetch_next,
+            self._unpack, # type: ignore[arg-type]
+            continuation_token=continuation_token)
 
     async def _unpack(
             self,
