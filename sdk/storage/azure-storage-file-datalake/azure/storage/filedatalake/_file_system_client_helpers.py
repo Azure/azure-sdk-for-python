@@ -4,8 +4,23 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Union
-from urllib.parse import quote, unquote
+from typing import Union, TYPE_CHECKING
+from urllib.parse import quote, unquote, urlparse
+
+if TYPE_CHECKING:
+    from urllib.parse import ParseResult
+
+
+def _parse_url(account_url: str) -> "ParseResult":
+    try:
+        if not account_url.lower().startswith('http'):
+            account_url = "https://" + account_url
+    except AttributeError as exc:
+        raise ValueError("account URL must be a string.") from exc
+    parsed_url = urlparse(account_url.rstrip('/'))
+    if not parsed_url.netloc:
+        raise ValueError(f"Invalid URL: {account_url}")
+    return parsed_url
 
 
 def _format_url(scheme: str, hostname: str, file_system_name: Union[str, bytes], query_str: str) -> str:

@@ -19,7 +19,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import ContainerClient
 from .._deserialize import is_file_path, process_storage_error
-from .._file_system_client_helpers import _format_url, _undelete_path_options
+from .._file_system_client_helpers import _format_url, _parse_url, _undelete_path_options
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._generated.models import ListBlobsIncludeItem
 from .._models import (
@@ -30,7 +30,6 @@ from .._models import (
     LocationMode,
     PublicAccess
 )
-from .._parse import _parse_url
 from .._serialize import convert_dfs_url_to_blob_url, get_api_version
 from .._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
