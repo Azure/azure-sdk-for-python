@@ -34,24 +34,21 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
 
-      - name: Create resource group
+      - name: Prepare resource name
         shell: bash
         run: |
 
           rg="rg-$(uuidgen | cut -c 1-8)"
           echo "resource_group=$rg" >> $GITHUB_ENV
 
-          az group create --name ${{ env.resource_group }}  --location ${{ github.event.inputs.location }}
-
-      - name: Prepare resource name
-        shell: bash
-        run: |
           rn="appconfig-$(uuidgen | cut -c 1-8)"
           echo "resource_name=$rn" >> $GITHUB_ENV
  
       - name: Create resource
         shell: bash
         run: |
+          az group create --name ${{ env.resource_group }}  --location ${{ github.event.inputs.location }}
+
           az appconfig create -g ${{ env.resource_group }} -n ${{ env.resource_name }} -l westus
           connString=$(az appconfig credential list --name ${{ env.resource_name }} --resource-group ${{ env.resource_group }} --query "[?name=='Primary'].connectionString" -o tsv)
           echo "connString=$connString" >> $GITHUB_ENV
