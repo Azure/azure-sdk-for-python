@@ -159,8 +159,12 @@ class FeedRangeCompositeContinuation:
         self._continuation.append(first_composition_token)
         self._current_token = self._continuation[0]
 
-    def apply_server_response_continuation(self, etag) -> None:
+    def apply_server_response_continuation(self, etag, has_modified_response: bool) -> None:
         self._current_token.update_token(etag)
+        if has_modified_response:
+            self._initial_no_result_range = None
+        else:
+            self.apply_not_modified_response()
 
     def apply_not_modified_response(self) -> None:
         if self._initial_no_result_range is None:

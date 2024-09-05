@@ -87,7 +87,8 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
             self._change_feed_state.apply_server_response_continuation(
-                cast(str, response_headers.get(continuation_key)))
+                cast(str, response_headers.get(continuation_key)),
+                bool(fetched_items))
 
             if fetched_items:
                 break
@@ -156,9 +157,11 @@ class ChangeFeedFetcherV2(object):
 
             continuation_key = http_constants.HttpHeaders.ETag
             # In change feed queries, the continuation token is always populated.
+            self._change_feed_state.apply_server_response_continuation(
+                cast(str, response_headers.get(continuation_key)),
+                bool(fetched_items))
+
             if fetched_items:
-                self._change_feed_state.apply_server_response_continuation(
-                    cast(str, response_headers.get(continuation_key)))
                 self._change_feed_state._continuation._move_to_next_token()
                 response_headers[continuation_key] = self._get_base64_encoded_continuation()
                 break
@@ -168,10 +171,6 @@ class ChangeFeedFetcherV2(object):
             # so we will retry with the new continuation token
             # 2. if the feed range of the changeFeedState span multiple physical partitions
             # then we will read from the next feed range until we have looped through all physical partitions
-            self._change_feed_state.apply_not_modified_response()
-            self._change_feed_state.apply_server_response_continuation(
-                cast(str, response_headers.get(continuation_key)))
-
             if (self._change_feed_state._change_feed_start_from.version == ChangeFeedStartFromType.POINT_IN_TIME
                     and is_s_time_first_fetch):
                 response_headers[continuation_key] = self._get_base64_encoded_continuation()
