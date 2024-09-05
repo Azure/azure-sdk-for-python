@@ -55,9 +55,7 @@ def analyze_result_pdf():
     result: AnalyzeResult = poller.result()
     operation_id = poller.details["operation_id"]
 
-    response = document_intelligence_client.get_analyze_result_pdf(
-        model_id=result.model_id, result_id=operation_id
-    )
+    response = document_intelligence_client.get_analyze_result_pdf(model_id=result.model_id, result_id=operation_id)
     with open("analyze_result.pdf", "wb") as writer:
         writer.writelines(response)
     # [END analyze_result_pdf]

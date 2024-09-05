@@ -286,7 +286,9 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
             output=[AnalyzeOutputOption.PDF],
         )
         result = await poller.result()
-        response = await client.get_analyze_result_pdf(model_id=result.model_id, result_id=poller.details["operation_id"])
+        response = await client.get_analyze_result_pdf(
+            model_id=result.model_id, result_id=poller.details["operation_id"]
+        )
         first_chunk_pdf_bytes = await response.__anext__()
         assert first_chunk_pdf_bytes.startswith(b"%PDF-")  # A PDF's header is expected to be: %PDF-
 

@@ -22,7 +22,7 @@ from ._operations import (
 )
 from ... import models as _models
 from ..._model_base import _deserialize
-from ..._operations._patch import _FINISHED, PollingReturnType_co, _parse_operation_id
+from ..._operations._patch import PollingReturnType_co, _parse_operation_id, _finished
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -43,10 +43,10 @@ class AsyncAnalyzeDocumentLROPoller(AsyncLROPoller[PollingReturnType_co]):
         """
         return {
             "operation_id": _parse_operation_id(
-                self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
+                self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore # pylint: disable=protected-access
             ),
         }
-    
+
     @classmethod
     def from_continuation_token(
         cls, polling_method: AsyncPollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
@@ -67,13 +67,7 @@ class AsyncAnalyzeBatchDocumentsLROPollingMethod(AsyncLROBasePolling):  # pylint
         :return: Whether the polling finished or not.
         :rtype: bool
         """
-        return AsyncAnalyzeBatchDocumentsLROPollingMethod._finished(self.status())
-
-    @staticmethod
-    def _finished(status) -> bool:
-        if hasattr(status, "value"):
-            status = status.value
-        return str(status).lower() in _FINISHED
+        return _finished(self.status())
 
 
 class DocumentIntelligenceAdministrationClientOperationsMixin(
@@ -616,6 +610,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
             polling=AsyncAnalyzeBatchDocumentsLROPollingMethod(timeout=self._config.polling_interval),
             **kwargs
         )
+
 
 __all__: List[str] = [
     "DocumentIntelligenceClientOperationsMixin",

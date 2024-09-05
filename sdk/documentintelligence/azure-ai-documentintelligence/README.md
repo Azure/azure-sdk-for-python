@@ -332,13 +332,15 @@ result: AnalyzeResult = poller.result()
 operation_id = poller.details["operation_id"]
 
 if result.figures:
-     for figure in result.figures:
+    for figure in result.figures:
         if figure.id:
             response = document_intelligence_client.get_analyze_result_figure(
                 model_id=result.model_id, result_id=operation_id, figure_id=figure.id
             )
             with open(f"{figure.id}.png", "wb") as writer:
                 writer.writelines(response)
+else:
+    print("No figures found.")
 ```
 
 <!-- END SNIPPET -->
@@ -371,9 +373,7 @@ with open(path_to_sample_documents, "rb") as f:
 result: AnalyzeResult = poller.result()
 operation_id = poller.details["operation_id"]
 
-response = document_intelligence_client.get_analyze_result_pdf(
-    model_id=result.model_id, result_id=operation_id
-)
+response = document_intelligence_client.get_analyze_result_pdf(model_id=result.model_id, result_id=operation_id)
 with open("analyze_result.pdf", "wb") as writer:
     writer.writelines(response)
 ```

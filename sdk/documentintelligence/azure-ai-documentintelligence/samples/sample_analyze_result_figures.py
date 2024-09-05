@@ -56,7 +56,7 @@ def analyze_result_figures():
     operation_id = poller.details["operation_id"]
 
     if result.figures:
-         for figure in result.figures:
+        for figure in result.figures:
             if figure.id:
                 response = document_intelligence_client.get_analyze_result_figure(
                     model_id=result.model_id, result_id=operation_id, figure_id=figure.id

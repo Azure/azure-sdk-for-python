@@ -39,6 +39,11 @@ def _parse_operation_id(operation_location_header):
     regex = "[^:]+://[^/]+/documentintelligence/.+/([^?/]+)"
     return re.match(regex, operation_location_header).group(1)
 
+def _finished(status) -> bool:
+    if hasattr(status, "value"):
+        status = status.value
+    return str(status).lower() in _FINISHED
+
 
 class AnalyzeDocumentLROPoller(LROPoller[PollingReturnType_co]):
     @property
@@ -50,10 +55,10 @@ class AnalyzeDocumentLROPoller(LROPoller[PollingReturnType_co]):
         """
         return {
             "operation_id": _parse_operation_id(
-                self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore
+                self.polling_method()._initial_response.http_response.headers["Operation-Location"]  # type: ignore # pylint: disable=protected-access
             ),
         }
-    
+
     @classmethod
     def from_continuation_token(
         cls, polling_method: PollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
@@ -74,13 +79,7 @@ class AnalyzeBatchDocumentsLROPollingMethod(LROBasePolling):
         :return: Whether polling is finished or not.
         :rtype: bool
         """
-        return AnalyzeBatchDocumentsLROPollingMethod._finished(self.status())
-
-    @staticmethod
-    def _finished(status) -> bool:
-        if hasattr(status, "value"):
-            status = status.value
-        return str(status).lower() in _FINISHED
+        return _finished(self.status())
 
 
 class DocumentIntelligenceAdministrationClientOperationsMixin(
@@ -616,7 +615,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
             output_content_format=output_content_format,
             output=output,
             polling=AnalyzeBatchDocumentsLROPollingMethod(timeout=self._config.polling_interval),
-            **kwargs
+            **kwargs,
         )
 
 
