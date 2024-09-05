@@ -260,12 +260,18 @@ While the test proxy is being invoked during the start of a test run, you may se
 PermissionError: [Errno 13] Permission denied: '.../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy'
 ```
 
-This means that the test proxy tool was successfully installed at the location in the error message, but we don't have
+This can mean that the test proxy tool was successfully installed at the location in the error message, but we don't have
 sufficient permissions to run it with the tool startup script. We can set the correct permissions on the file by using
 `chmod`. Using the tool path that was provided in the `PermissionError` message, run the following command:
 ```
 chmod +x .../azure-sdk-for-python/.proxy/Azure.Sdk.Tools.TestProxy
 ```
+
+Alternatively, you can delete the installed tool and re-run your tests to automatically reinstall it correctly.
+
+- Open Task Manager, search for a process named "Azure.Sdk.Tools.TestProxy", and end the task if one is running.
+- Delete the `.proxy` folder at the root of your local `azure-sdk-for-python` clone.
+- Re-run your tests; the test proxy will be reinstalled and should correctly set file permissions.
 
 
 [custom_default_matcher]: https://github.com/Azure/azure-sdk-for-python/blob/497f5f3435162c4f2086d1429fc1bba4f31a4354/tools/azure-sdk-tools/devtools_testutils/sanitizers.py#L85

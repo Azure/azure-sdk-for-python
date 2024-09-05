@@ -54,7 +54,7 @@ class SharedTokenCacheCredential:
         """Close the credential's transport session."""
         self.__exit__()
 
-    @log_get_token("SharedTokenCacheCredential")
+    @log_get_token
     def get_token(
         self,
         *scopes: str,

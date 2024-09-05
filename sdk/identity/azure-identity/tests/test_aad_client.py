@@ -107,6 +107,9 @@ def test_request_url(authority):
     client.obtain_token_by_authorization_code("scope", "code", "uri")
     client.obtain_token_by_refresh_token("scope", "refresh token")
 
+    # obtain_token_by_refresh_token is client_secret safe
+    client.obtain_token_by_refresh_token("scope", "refresh token", client_secret="secret")
+
     # authority can be configured via environment variable
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
         client = AadClient(tenant_id=tenant_id, client_id="client id", transport=Mock(send=send))
@@ -202,8 +205,8 @@ def test_evicts_invalid_refresh_token():
     cache = TokenCache()
     cache.add({"response": build_aad_response(uid="id1", utid="tid1", access_token="*", refresh_token=invalid_token)})
     cache.add({"response": build_aad_response(uid="id2", utid="tid2", access_token="*", refresh_token="...")})
-    assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN)) == 2
-    assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token})) == 1
+    assert len(list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN))) == 2
+    assert len(list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token}))) == 1
 
     def send(request, **_):
         assert request.data["refresh_token"] == invalid_token
@@ -216,8 +219,8 @@ def test_evicts_invalid_refresh_token():
         client.obtain_token_by_refresh_token(scopes=("scope",), refresh_token=invalid_token)
 
     assert transport.send.call_count == 1
-    assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN)) == 1
-    assert len(cache.find(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token})) == 0
+    assert len(list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN))) == 1
+    assert len(list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN, query={"secret": invalid_token}))) == 0
 
 
 def test_retries_token_requests():

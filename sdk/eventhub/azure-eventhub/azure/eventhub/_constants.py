@@ -46,6 +46,7 @@ MGMT_STATUS_DESC = b"status-description"
 USER_AGENT_PREFIX = "azsdk-python-eventhubs"
 UAMQP_LIBRARY = "uamqp"
 PYAMQP_LIBRARY = "pyamqp"
+MAX_BUFFER_LENGTH = 300
 
 NO_RETRY_ERRORS = [
     b"com.microsoft:argument-out-of-range",

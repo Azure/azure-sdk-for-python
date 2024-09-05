@@ -1,0 +1,8 @@
+-e ../../../tools/azure-sdk-tools
+../../core/azure-core
+../../identity/azure-identity
+pytest
+pytest-asyncio
+pytest-cov
+pytest-mock
+pytest-xdist

@@ -32,7 +32,7 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.configurations.begin_update(
+    response = client.configurations.begin_put(
         resource_group_name="testrg",
         server_name="testserver",
         configuration_name="event_scheduler",
@@ -44,3 +44,4 @@ def main():
 # x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-12-01-preview/examples/ConfigurationUpdate.json
 if __name__ == "__main__":
     main()
+()

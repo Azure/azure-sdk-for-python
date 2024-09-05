@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, Optional, Union
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -44,7 +45,7 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
      URI. Default value is None.
     :type allow_source_trailing_dot: bool
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2024-08-04". Note that overriding this default value may result in unsupported behavior.
+     is "2024-11-04". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
      downloaded from the source url into the specified range. Default value is "update". Note that
@@ -123,7 +124,7 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "AzureFileStorage":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

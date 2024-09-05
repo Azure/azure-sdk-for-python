@@ -61,6 +61,11 @@ module_logger = logging.getLogger(__name__)
 class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     """Command job.
 
+    .. note::
+        For sweep jobs, inputs, outputs, and parameters are accessible as environment variables using the prefix
+        ``AZUREML_PARAMETER_``. For example, if you have a parameter named "input_data", you can access it as
+        ``AZUREML_PARAMETER_input_data``.
+
     :keyword services: Read-only information on services associated with the job.
     :paramtype services: Optional[dict[str, ~azure.ai.ml.entities.JobService]]
     :keyword inputs: Mapping of output data bindings used in the command.
@@ -74,6 +79,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
     :paramtype limits: Optional[~azure.ai.ml.entities.CommandJobLimits]
     :keyword kwargs: A dictionary of additional configuration parameters.
     :paramtype kwargs: dict
+
 
     .. admonition:: Example:
 

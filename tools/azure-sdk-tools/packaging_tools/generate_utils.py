@@ -1,4 +1,3 @@
-from contextlib import suppress
 import json
 import logging
 import os
@@ -7,7 +6,7 @@ from functools import wraps
 
 from ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_output, CalledProcessError, check_call, getoutput
+from subprocess import check_output, CalledProcessError, check_call, STDOUT
 from typing import Dict, Any
 from glob import glob
 import yaml
@@ -27,9 +26,9 @@ DEFAULT_DEST_FOLDER = "./dist"
 _DPG_README = "README.md"
 
 
-# input example: "../azure-rest-api-specs/specification/informatica/Informatica.DataManagement"
-def del_outdated_generated_files(readme: str):
-    tspconfig = Path(readme) / "tspconfig.yaml"
+# tsp example: "../azure-rest-api-specs/specification/informatica/Informatica.DataManagement"
+def del_outdated_generated_files(tsp: str):
+    tspconfig = Path(tsp) / "tspconfig.yaml"
     if not tspconfig.exists():
         _LOGGER.info(f"do not find tspconfig.yaml: {tspconfig}")
         return
@@ -43,26 +42,10 @@ def del_outdated_generated_files(readme: str):
         _LOGGER.info(f"do not find service-dir or package-dir in tspconfig.yaml: {tspconfig}")
         return
     generated_files_dir = Path(service_dir) / package_dir / package_dir.split("-")[0]
-    # remove outdated generate files
+    # remove outdated generated files
     if generated_files_dir.exists():
-        generated_files = [
-            file
-            for file in generated_files_dir.glob("**/*")
-            if all(
-                i not in str(file)
-                for i in (
-                    "__pycache__",
-                    "node_modules",
-                    ".tox",
-                    ".mypy_cache",
-                )
-            )
-            and file.suffix == ".py"
-        ]
-        for file in generated_files:
-            if file.stem != "_patch":
-                os.remove(file)
-        _LOGGER.info(f"delete outdated generated files except _patch.py successfully")
+        shutil.rmtree(generated_files_dir)
+        _LOGGER.info(f"delete all outdated generated SDK files successfully")
 
     # remove outdated generated samples
     for item in ["generated_samples", "generated_tests"]:
@@ -94,7 +77,11 @@ def return_origin_path(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         current_path = os.getcwd()
-        result = func(*args, **kwargs)
+        try:
+            result = func(*args, **kwargs)
+        except Exception as e:
+            os.chdir(current_path)
+            raise e
         os.chdir(current_path)
         return result
 
@@ -211,8 +198,11 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
                 f.write("".join(includes))
 
 
-def judge_tag_preview(path: str) -> bool:
-    files = [i for i in Path(path).glob("**/*.py")]
+@return_origin_path
+def judge_tag_preview(path: str, package_name: str) -> bool:
+    os.chdir(path)
+    first_level = package_name.split("-")[0]
+    files = [i for i in Path(".").glob(f"{first_level}/**/*.py")]
     default_api_version = ""  # for multi-api
     api_version = ""  # for single-api
     for file in files:
@@ -386,32 +376,35 @@ def gen_dpg(rest_readme_path: str, autorest_config: str, spec_folder: str) -> Di
     return global_config
 
 
-def format_samples(sdk_code_path) -> None:
-    generate_sample_path = Path(sdk_code_path) / "generated_samples"
-    if not generate_sample_path.exists():
-        _LOGGER.info(f"not find generated_samples")
-        return
+def format_samples_and_tests(sdk_code_path) -> None:
+    for item in ["generated_samples", "generated_tests"]:
+        generate_path = Path(sdk_code_path) / item
+        if not generate_path.exists():
+            _LOGGER.info(f"not find {generate_path}")
+            continue
 
-    try:
-        import black
-    except Exception as e:
-        check_call("pip install black", shell=True)
-        import black
+        try:
+            import black
+        except Exception as e:
+            check_call("pip install black", shell=True)
+            import black
 
-    _BLACK_MODE = black.Mode()
-    _BLACK_MODE.line_length = 120
-    files = generate_sample_path.glob("**/*.py")
-    for path in files:
-        with open(path, "r") as fr:
-            file_content = fr.read()
+        _BLACK_MODE = black.Mode()
+        _BLACK_MODE.line_length = 120
+        files = generate_path.glob("**/*.py")
+        for path in files:
+            try:
+                with open(path, "r") as fr:
+                    file_content = fr.read()
 
-        with suppress(black.NothingChanged):
-            file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
+                file_content = black.format_file_contents(file_content, fast=True, mode=_BLACK_MODE)
 
-        with open(path, "w") as fw:
-            fw.write(file_content)
+                with open(path, "w") as fw:
+                    fw.write(file_content)
+            except Exception as e:
+                _LOGGER.warning(f"Failed to format {path}: {e}")
 
-    _LOGGER.info(f"format generated_samples successfully")
+        _LOGGER.info(f"format {generate_path} successfully")
 
 
 def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
@@ -440,13 +433,25 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str, head_sha: str, r
     try:
         tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
         repo_url = rest_repo_url.replace("https://github.com/", "")
-        check_output(
-            f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug",
-            shell=True,
-        )
+        cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url} --debug"
+        _LOGGER.info(f"generation cmd: {cmd}")
+        output = check_output(cmd, stderr=STDOUT, shell=True)
     except CalledProcessError as e:
-        _LOGGER.error(f"Failed to generate sdk from typespec: {e.output.decode('utf-8')}")
+        _LOGGER.error("Error occurred when call tsp-client:")
+        for item in e.output.decode("utf-8").split("\n"):
+            if "Error: " in item:
+                _LOGGER.error(item)
+        _LOGGER.info(f"whole output when fail to call tsp-client: {e.output.decode('utf-8')}")
         raise e
+
+    decode_output = output.decode("utf-8")
+    # before https://github.com/Azure/azure-sdk-tools/issues/8815, have to check output to judge whether sdk generation succeeds
+    if " - error " in decode_output:
+        _LOGGER.error(f"Failed to generate sdk from typespec:")
+        for item in decode_output.split("\n"):
+            if " - error " in item:
+                _LOGGER.error(item)
+        raise Exception(f"Complete output when fail to generate sdk from typespec: {decode_output}")
 
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)

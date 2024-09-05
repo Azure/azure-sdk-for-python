@@ -52,11 +52,13 @@ class PrivateEndpointConnectionsOperations:
         workspace_name: str,
         **kwargs: Any
     ) -> AsyncIterable["_models.PrivateEndpointConnectionListResult"]:
-        """List all the private endpoint connections associated with the workspace.
+        """Called by end-users to get all PE connections.
+
+        Called by end-users to get all PE connections.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either PrivateEndpointConnectionListResult or the result
@@ -76,9 +78,9 @@ class PrivateEndpointConnectionsOperations:
             if not next_link:
                 
                 request = build_list_request(
+                    subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
-                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata['url'],
                 )
@@ -88,9 +90,9 @@ class PrivateEndpointConnectionsOperations:
             else:
                 
                 request = build_list_request(
+                    subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
-                    subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=next_link,
                 )
@@ -130,6 +132,67 @@ class PrivateEndpointConnectionsOperations:
     list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/privateEndpointConnections"}  # type: ignore
 
     @distributed_trace_async
+    async def delete(  # pylint: disable=inconsistent-return-statements
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs: Any
+    ) -> None:
+        """Called by end-users to delete a PE connection.
+
+        Called by end-users to delete a PE connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param workspace_name: Azure Machine Learning Workspace Name.
+        :type workspace_name: str
+        :param private_endpoint_connection_name: NRP Private Endpoint Connection Name.
+        :type private_endpoint_connection_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
+
+        
+        request = build_delete_request(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            api_version=api_version,
+            template_url=self.delete.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
+
+
+    @distributed_trace_async
     async def get(
         self,
         resource_group_name: str,
@@ -137,14 +200,15 @@ class PrivateEndpointConnectionsOperations:
         private_endpoint_connection_name: str,
         **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
-        """Gets the specified private endpoint connection associated with the workspace.
+        """Called by end-users to get a PE connection.
+
+        Called by end-users to get a PE connection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the workspace.
+        :param private_endpoint_connection_name: NRP Private Endpoint Connection Name.
         :type private_endpoint_connection_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection, or the result of cls(response)
@@ -199,20 +263,23 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         workspace_name: str,
         private_endpoint_connection_name: str,
-        properties: "_models.PrivateEndpointConnection",
+        body: "_models.PrivateEndpointConnection",
         **kwargs: Any
     ) -> "_models.PrivateEndpointConnection":
-        """Update the state of specified private endpoint connection associated with the workspace.
+        """Called by end-users to approve or reject a PE connection.
+        This method must validate and forward the call to NRP.
+
+        Called by end-users to approve or reject a PE connection.
+        This method must validate and forward the call to NRP.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the workspace.
+        :param private_endpoint_connection_name: NRP Private Endpoint Connection Name.
         :type private_endpoint_connection_name: str
-        :param properties: The private endpoint connection properties.
-        :type properties: ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection
+        :param body: PrivateEndpointConnection object.
+        :type body: ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection
@@ -227,7 +294,7 @@ class PrivateEndpointConnectionsOperations:
         api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(properties, 'PrivateEndpointConnection')
+        _json = self._serialize.body(body, 'PrivateEndpointConnection')
 
         request = build_create_or_update_request(
             subscription_id=self._config.subscription_id,
@@ -262,64 +329,4 @@ class PrivateEndpointConnectionsOperations:
         return deserialized
 
     create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
-
-
-    @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        workspace_name: str,
-        private_endpoint_connection_name: str,
-        **kwargs: Any
-    ) -> None:
-        """Deletes the specified private endpoint connection associated with the workspace.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
-        :type workspace_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection associated
-         with the workspace.
-        :type private_endpoint_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
-        api_version = kwargs.pop('api_version', "2024-07-01-preview")  # type: str
-
-        
-        request = build_delete_request(
-            subscription_id=self._config.subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
-            api_version=api_version,
-            template_url=self.delete.metadata['url'],
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/privateEndpointConnections/{privateEndpointConnectionName}"}  # type: ignore
 
