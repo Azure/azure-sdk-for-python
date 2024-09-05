@@ -30,7 +30,7 @@ from .._constants import (
     TIME_WINDOW_FILTER_KEY,
     TARGETING_FILTER_KEY,
 )
-from .._discovery import find_auto_failover_endpoints
+from ._discovery import find_auto_failover_endpoints
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -325,6 +325,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         self._args = dict(kwargs)
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
+        self._refresh_client_lock = threading.Lock()
 
         if connection_string and endpoint:
             self._replica_clients.append(
@@ -332,7 +333,6 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                     endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
-            threading.Thread(target=self._setup_failover_endpoints).start()
             return
         if endpoint and credential:
             self._replica_clients.append(
@@ -340,19 +340,24 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
-            threading.Thread(target=self._setup_failover_endpoints).start()
             return
         raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
 
-    def refresh_clients(self):
+    async def setup_initial_clients(self):
+        await self._setup_failover_endpoints()
+
+    async def refresh_clients(self):
         if not self._replica_discovery_enabled:
             return
         if self._next_update_time > time.time():
             return
-        threading.Thread(target=self._setup_failover_endpoints).start()
+        with self._refresh_client_lock:
+            await self._setup_failover_endpoints()
 
-    def _setup_failover_endpoints(self):
-        failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
+    async def _setup_failover_endpoints(self):
+        failover_endpoints = await find_auto_failover_endpoints(
+            self._original_endpoint, self._replica_discovery_enabled
+        )
 
         if failover_endpoints is None:
             # SRV record not found, so we should refresh after a longer interval

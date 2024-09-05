@@ -8,6 +8,7 @@ import unittest
 import time
 from unittest.mock import patch, call
 from azure.appconfiguration.provider.aio._client_manager import ConfigurationClientManager
+from unittest.mock import AsyncMock
 
 
 class MockClient:
@@ -21,16 +22,18 @@ class MockClient:
 
 
 @pytest.mark.usefixtures("caplog")
-class TestConfigurationClientManager(unittest.TestCase):
+class TestConfigurationClientManager:
 
+    @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._client_manager.find_auto_failover_endpoints")
     @patch("azure.appconfiguration.provider.aio._client_manager._ConfigurationClientWrapper.from_connection_string")
-    def test_create_client_manager_connection_string(self, mock_client, mock_find_auto_failover_endpoints):
+    async def test_create_client_manager_connection_string(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
 
         # No connection string or credential was provided
-        with self.assertRaises(ValueError) as ex:
+        with pytest.raises(ValueError) as ex:
             ConfigurationClientManager(None, endpoint, None, "", 0, 0, False, 0, 0)
+            await manager.setup_initial_clients()
             assert (
                 str(ex.exception) == "Please pass either endpoint and credential, or a connection string with a value."
             )
@@ -45,20 +48,25 @@ class TestConfigurationClientManager(unittest.TestCase):
         # No auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = []
         manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0)
+        await manager.setup_initial_clients()
         assert manager is not None
         assert len(manager._replica_clients) == 1
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
         mock_client.assert_called_once_with(endpoint, connection_string, "", 0, 0)
 
+    @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._client_manager.find_auto_failover_endpoints")
     @patch("azure.appconfiguration.provider.aio._client_manager._ConfigurationClientWrapper.from_connection_string")
-    def test_create_client_manager_connection_string_failover(self, mock_client, mock_find_auto_failover_endpoints):
+    async def test_failover_create_client_manager_connection_string(
+        self, mock_client, mock_find_auto_failover_endpoints
+    ):
         endpoint = "https://fake.endpoint"
         connection_string = "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret"
 
         # A single auto failover endpoint found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0)
+        await manager.setup_initial_clients()
         assert manager is not None
         int = 0
         while len(manager._replica_clients) < 2:
@@ -77,13 +85,14 @@ class TestConfigurationClientManager(unittest.TestCase):
             ]
         )
 
+    @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._client_manager.find_auto_failover_endpoints")
     @patch("azure.appconfiguration.provider.aio._client_manager._ConfigurationClientWrapper.from_credential")
-    def test_create_client_manager_endpoint(self, mock_client, mock_find_auto_failover_endpoints):
+    async def test_create_client_manager_endpoint(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
 
         # No connection string or credential was provided
-        with self.assertRaises(ValueError) as ex:
+        with pytest.raises(ValueError) as ex:
             ConfigurationClientManager(None, endpoint, None, "", 0, 0, False, 0, 0)
             assert (
                 str(ex.exception) == "Please pass either endpoint and credential, or a connection string with a value."
@@ -97,19 +106,23 @@ class TestConfigurationClientManager(unittest.TestCase):
         # No auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = []
         manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0)
+        await manager.setup_initial_clients()
         assert manager is not None
         assert len(manager._replica_clients) == 1
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
         mock_client.assert_called_once_with(endpoint, "fake-credential", "", 0, 0)
 
+    @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._client_manager.find_auto_failover_endpoints")
     @patch("azure.appconfiguration.provider.aio._client_manager._ConfigurationClientWrapper.from_credential")
-    def test_create_client_manager_endpoint_failover(self, mock_client, mock_find_auto_failover_endpoints):
+    @pytest.mark.asyncio
+    async def test_create_client_manager_endpoint_failover(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
 
         # A single auto failover endpoint found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0)
+        await manager.setup_initial_clients()
         assert manager is not None
         int = 0
         while len(manager._replica_clients) < 2:
@@ -127,22 +140,26 @@ class TestConfigurationClientManager(unittest.TestCase):
             ]
         )
 
+    @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._client_manager.find_auto_failover_endpoints")
     @patch("azure.appconfiguration.provider.aio._client_manager._ConfigurationClientWrapper.from_credential")
-    def test_refresh_clients_credential(self, mock_client, mock_find_auto_failover_endpoints):
+    @pytest.mark.asyncio
+    async def test_refresh_clients_credential(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
 
         mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
         mock_find_auto_failover_endpoints.return_value = []
         manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0)
+        await manager.setup_initial_clients()
         manager_disabled_refresh = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0)
+        await manager_disabled_refresh.setup_initial_clients()
 
         # Reset the mocks as they are called during initialization
         mock_find_auto_failover_endpoints.reset_mock()
         mock_client.reset_mock()
 
         # Refresh period not reached
-        manager.refresh_clients()
+        await manager.refresh_clients()
         mock_find_auto_failover_endpoints.assert_not_called()
         mock_client.assert_not_called()
 
@@ -150,7 +167,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.reset_mock()
         mock_client.reset_mock()
 
-        manager_disabled_refresh.refresh_clients()
+        await manager_disabled_refresh.refresh_clients()
         mock_find_auto_failover_endpoints.assert_not_called()
         mock_client.assert_not_called()
 
@@ -160,7 +177,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         # No auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = []
         manager._next_update_time = 0
-        manager._setup_failover_endpoints()
+        await manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         mock_client.assert_not_called()
 
@@ -171,7 +188,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
         mock_client.return_value = MockClient("https://fake.endpoint2", "", "fake-credential", 0, 0)
         manager._next_update_time = 0
-        manager._setup_failover_endpoints()
+        await manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_called_once_with("https://fake.endpoint2", "fake-credential", "", 0, 0)
@@ -182,7 +199,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         # No new auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager._next_update_time = 0
-        manager._setup_failover_endpoints()
+        await manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()
@@ -194,7 +211,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2", "https://fake.endpoint3"]
         mock_client.return_value = MockClient("https://fake.endpoint3", "", "fake-credential", 0, 0)
         manager._next_update_time = 0
-        manager._setup_failover_endpoints()
+        await manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 3
         mock_client.assert_called_once_with("https://fake.endpoint3", "fake-credential", "", 0, 0)
@@ -205,14 +222,16 @@ class TestConfigurationClientManager(unittest.TestCase):
         # A replica no longer exists
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint3"]
         manager._next_update_time = 0
-        manager._setup_failover_endpoints()
+        await manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()
 
+    @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._client_manager.find_auto_failover_endpoints")
     @patch("azure.appconfiguration.provider.aio._client_manager._ConfigurationClientWrapper.from_connection_string")
-    def test_refresh_clients_connection_string(self, mock_client, mock_find_auto_failover_endpoints):
+    @pytest.mark.asyncio
+    async def test_refresh_clients_connection_string(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
 
         mock_client.return_value = MockClient(
@@ -222,16 +241,18 @@ class TestConfigurationClientManager(unittest.TestCase):
         manager = ConfigurationClientManager(
             "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", endpoint, None, "", 0, 0, True, 0, 0
         )
+        await manager.setup_initial_clients()
         manager_disabled_refresh = ConfigurationClientManager(
             "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", endpoint, None, "", 0, 0, False, 0, 0
         )
+        await manager_disabled_refresh.setup_initial_clients()
 
         # Reset the mocks as they are called during initialization
         mock_find_auto_failover_endpoints.reset_mock()
         mock_client.reset_mock()
 
         # Refresh period not reached
-        manager.refresh_clients()
+        await manager.refresh_clients()
         mock_find_auto_failover_endpoints.assert_not_called()
         mock_client.assert_not_called()
 
@@ -239,7 +260,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.reset_mock()
         mock_client.reset_mock()
 
-        manager_disabled_refresh.refresh_clients()
+        await manager_disabled_refresh.refresh_clients()
         mock_find_auto_failover_endpoints.assert_not_called()
         mock_client.assert_not_called()
 
@@ -249,7 +270,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         # No auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = []
         manager._next_update_time = 0
-        manager._setup_failover_endpoints()
+        await manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         mock_client.assert_not_called()
 
@@ -262,7 +283,7 @@ class TestConfigurationClientManager(unittest.TestCase):
             "https://fake.endpoint2", "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", None, 0, 0
         )
         manager._next_update_time = 0
-        manager._setup_failover_endpoints()
+        await manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_called_once_with(
@@ -275,7 +296,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         # No new auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager._next_update_time = 0
-        manager._setup_failover_endpoints()
+        await manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()
@@ -289,7 +310,7 @@ class TestConfigurationClientManager(unittest.TestCase):
             "https://fake.endpoint3", "Endpoint=https://fake.endpoint3/;Id=fake_id;Secret=fake_secret", None, 0, 0
         )
         manager._next_update_time = 0
-        manager._setup_failover_endpoints()
+        await manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 3
         mock_client.assert_called_once_with(
@@ -302,7 +323,7 @@ class TestConfigurationClientManager(unittest.TestCase):
         # A replica no longer exists
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint3"]
         manager._next_update_time = 0
-        manager._setup_failover_endpoints()
+        await manager._setup_failover_endpoints()
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()

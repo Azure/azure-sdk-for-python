@@ -220,7 +220,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         or kwargs.get("uses_key_vault", False)
     )
 
-    provider = _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
+    provider = await _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
     headers = _get_headers(
         kwargs.pop("headers", {}),
         "Startup",
@@ -238,7 +238,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     return provider
 
 
-def _buildprovider(
+async def _buildprovider(
     connection_string: Optional[str], endpoint: Optional[str], credential: Optional["AsyncTokenCredential"], **kwargs
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
@@ -274,6 +274,7 @@ def _buildprovider(
         max_backoff,
         **kwargs
     )
+    await replica_client_manager.setup_initial_clients()
     provider = AzureAppConfigurationProvider(endpoint, replica_client_manager, **kwargs)
     return provider
 
@@ -386,7 +387,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         """
         exception: Exception = RuntimeError(error_message)
         try:
-            self._replica_client_manager.refresh_clients()
+            await self._replica_client_manager.refresh_clients()
             active_clients = self._replica_client_manager.get_active_clients()
 
             headers = _get_headers(
@@ -525,7 +526,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         Returns the value of the specified key.
         """
-        return self._dict[key]
+        with self._update_lock:
+            return self._dict[key]
 
     def __iter__(self) -> Iterator[str]:
         return self._dict.__iter__()
