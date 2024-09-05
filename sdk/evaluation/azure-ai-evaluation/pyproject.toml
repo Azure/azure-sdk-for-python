@@ -1,0 +1,6 @@
+[tool.azure-sdk-build]
+mypy = false
+pyright = false
+pylint = false
+black = false
+bandit = false

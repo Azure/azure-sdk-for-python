@@ -1,5 +1,11 @@
 # Azure Identity client library for Python (conda)
 
+## 2024.09.01
+
+### Packages included
+
+- azure-identity-1.16.0
+
 ## 2024.06.01
 
 ### Packages included
