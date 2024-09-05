@@ -147,7 +147,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Analyze'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
+    condition: and(succeeded(), ne(variables['Skip.Analyze'], 'true'))
 
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
