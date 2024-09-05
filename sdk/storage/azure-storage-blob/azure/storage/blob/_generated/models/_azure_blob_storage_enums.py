@@ -389,3 +389,4 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTHORIZATION_PERMISSION_MISMATCH = "AuthorizationPermissionMismatch"
     AUTHORIZATION_SERVICE_MISMATCH = "AuthorizationServiceMismatch"
     AUTHORIZATION_RESOURCE_TYPE_MISMATCH = "AuthorizationResourceTypeMismatch"
+    BLOB_ACCESS_TIER_NOT_SUPPORTED_FOR_ACCOUNT_TYPE = "BlobAccessTierNotSupportedForAccountType"
