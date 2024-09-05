@@ -23,21 +23,21 @@ class ChangeType(str, Enum):
 
 class ChangelogTracker(BreakingChangesTracker):
     ADDED_CLIENT_MSG = \
-        "The client '{}' was added in the current version"
+        "Added client '{}'"
     ADDED_CLIENT_METHOD_MSG = \
-        "The '{}' client method '{}' was added in the current version"
+        "Client '{}' added method '{}'"
     ADDED_CLASS_MSG = \
-        "The model or publicly exposed class '{}' was added in the current version"
+        "Added model '{}'"
     ADDED_CLASS_METHOD_MSG = \
-        "The '{}' method '{}' was added in the current version"
+        "Model '{}' added method '{}'"
     ADDED_CLASS_METHOD_PARAMETER_MSG = \
-        "The model or publicly exposed class '{}' had property '{}' added in the {} method in the current version"
+        "Model '{}' added parameter '{}' in the '{}' method"
     ADDED_FUNCTION_PARAMETER_MSG = \
-        "The function '{}' had parameter '{}' added in the current version"
+        "Function '{}' added parameter '{}'"
     ADDED_CLASS_PROPERTY_MSG = \
-        "The model or publicly exposed class '{}' had property '{}' added in the current version"
+        "Model '{}' added property '{}'"
     ADDED_OPERATION_GROUP_MSG = \
-        "The '{}' client had operation group '{}' added in the current version"
+        "Client '{}' added operation group '{}'"
 
 
     def __init__(self, stable: Dict, current: Dict, diff: Dict, package_name: str, **kwargs: Any) -> None:
@@ -47,6 +47,7 @@ class ChangelogTracker(BreakingChangesTracker):
     def run_checks(self) -> None:
         self.run_non_breaking_change_diff_checks()
         super().run_checks()
+        self.run_async_cleanup(self.features_added)
 
     def run_non_breaking_change_diff_checks(self) -> None:
         for module_name, module in self.diff.items():

@@ -25,6 +25,7 @@ from devtools_testutils import (
     remove_batch_sanitizers,
     set_bodiless_matcher,
     set_custom_default_matcher,
+    add_uri_regex_sanitizer
 )
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import is_live_and_not_recording
@@ -131,9 +132,9 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_general_regex_sanitizer(regex=feature_store_name, value="00000")
     # masks signature in SAS uri
     add_general_regex_sanitizer(value="000000000000000000000000000000000000", regex=_query_param_regex("sig"))
-    add_general_regex_sanitizer(regex="codes/[a-z|0-9|-]*", value="codes/000000000000000000000")
-    add_general_regex_sanitizer(regex="azureml_anonymous/versions/[a-z|0-9|-]*", value="azureml_anonymous/versions/000000000000000000000")
-    add_general_regex_sanitizer(regex="jobs/[a-z|0-9|-|_]*", value="jobs/000000000000000000000")
+    add_uri_regex_sanitizer(regex="codes/[a-z|0-9|-]*", value="codes/000000000000000000000")
+    add_uri_regex_sanitizer(regex="azureml_anonymous/versions/[a-z|0-9|-]*", value="azureml_anonymous/versions/000000000000000000000")
+    add_uri_regex_sanitizer(regex="jobs/[a-z|0-9|-|_]*", value="jobs/000000000000000000000")
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id

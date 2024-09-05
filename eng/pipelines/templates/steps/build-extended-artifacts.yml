@@ -80,6 +80,16 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
+  - task: Powershell@2
+    inputs:
+      filePath: $(Build.SourcesDirectory)/eng/scripts/Save-Package-Namespaces-Property.ps1
+      arguments: >
+        -ArtifactStagingDirectory "$(Build.ArtifactStagingDirectory)"
+        -ArtifactsList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json)
+      pwsh: true
+      workingDirectory: $(Pipeline.Workspace)
+    displayName: Update package properties with namespaces
+
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:
       ArtifactPath: '$(Build.ArtifactStagingDirectory)'
