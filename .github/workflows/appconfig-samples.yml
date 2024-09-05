@@ -3,9 +3,11 @@ name: Test Appconfig Samples
 on:
   workflow_dispatch:
     inputs:
-      rg:
-        description: 'Test Resource Group'
+      location:
+        description: 'Test Resource Group Location'
         required: true
+        default: 'eastus'
+        
 permissions: 
   id-token: write
 
@@ -34,14 +36,17 @@ jobs:
       - name: Prepare resource name
         shell: bash
         run: |
+          rg="rg-sdk-samples-test-$(uuidgen | cut -c 1-8)"
+          echo "resource_group=$rg" >> $GITHUB_ENV
           rn="appconfig-$(uuidgen | cut -c 1-8)"
           echo "resource_name=$rn" >> $GITHUB_ENV
-      
+ 
       - name: Create resource
         shell: bash
         run: |
-          az appconfig create -g ${{ github.event.inputs.rg }} -n ${{ env.resource_name }} -l westus
-          connString=$(az appconfig credential list --name ${{ env.resource_name }} --resource-group ${{ github.event.inputs.rg }} --query "[?name=='Primary'].connectionString" -o tsv)
+          az group create -g ${{ env.resource_group }}  -l ${{ github.event.inputs.location }}
+          az appconfig create -g ${{ env.resource_group }} -n ${{ env.resource_name }} -l ${{ github.event.inputs.location }}
+          connString=$(az appconfig credential list -g ${{ env.resource_group }} -n ${{ env.resource_name }} --query "[?name=='Primary'].connectionString" -o tsv)
           echo "connString=$connString" >> $GITHUB_ENV
 
       - name: Set up Python
@@ -52,7 +57,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install aiohttp>=3.0
-          pip install --pre --upgrade azure-appconfiguration -i https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+          pip install --pre azure-appconfiguration 
 
       - name: Run samples
         env:
@@ -67,9 +72,11 @@ jobs:
         if: always()
         shell: bash
         run: |
-          if [ $(az appconfig list -g ${{ github.event.inputs.rg }} --query "[?name=='${{ env.resource_name }}'] | length(@)") -gt 0 ]; then
+          if [ $(az appconfig list -g ${{ env.resource_group }} --query "[?name=='${{ env.resource_name }}'] | length(@)") -gt 0 ]; then
             echo "Delete appconfig..."
-            az appconfig delete -g ${{ github.event.inputs.rg }} -n ${{ env.resource_name }} -y
+            az appconfig delete -g ${{ env.resource_group }} -n ${{ env.resource_name }} -y
             echo "Purge appconfig..."
             az appconfig purge -n ${{ env.resource_name }} -y
           fi
+          echo "Delete group..."
+          az group delete -g ${{ env.resource_group }} -y
