@@ -127,18 +127,18 @@ class FileSystemClient(StorageAccountHostsMixin):
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
 
-        self._api_version = get_api_version(kwargs)
-        self._client = self._build_generated_client(self.url)
-        self._datalake_client_for_blob_operation = self._build_generated_client(self._container_client.url)
+        api_version = get_api_version(kwargs)
+        self._client = self._build_generated_client(self.url, api_version)
+        self._datalake_client_for_blob_operation = self._build_generated_client(self._container_client.url, api_version)
 
-    def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
+    def _build_generated_client(self, url: str, api_version: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
             url,
             base_url=url,
             file_system=self.file_system_name,
             pipeline=self._pipeline
         )
-        client._config.version = self._api_version  # pylint: disable=protected-access
+        client._config.version = api_version  # pylint: disable=protected-access
         return client
 
     def _format_url(self, hostname: str) -> str:
