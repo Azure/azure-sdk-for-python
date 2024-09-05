@@ -97,8 +97,11 @@ print_console = args.print_console or (os.environ.get("PRINT_CONSOLE") == "1")
 debug_level = getattr(logging, args.debug_level.upper(), logging.ERROR)
 
 
+log_filename = args.log_filename if args.log_filename else "consumer_sync.log"
+logdir = os.environ.get("DEBUG_SHARE")
+logfilepath = f"{logdir}/{log_filename}"
 LOGGER = get_logger(
-    args.log_filename,
+    logfilepath,
     "stress_receive_sync",
     level=debug_level,
     print_console=print_console

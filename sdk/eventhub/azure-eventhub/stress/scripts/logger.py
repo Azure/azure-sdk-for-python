@@ -3,11 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import os
 import sys
 import logging
 from logging.handlers import RotatingFileHandler
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
+
 
 
 def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None,
@@ -21,6 +23,12 @@ def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_consol
         if not logger.handlers:
             console_handler.setFormatter(formatter)
             logger.addHandler(console_handler)
+    else:
+        file_handler = RotatingFileHandler(log_filename, maxBytes=10000 * 1000, 
+                                    backupCount=2000)
+        if not logger.handlers:
+            file_handler.setFormatter(formatter)
+            logger.addHandler(file_handler)
 
     return logger
 
@@ -34,12 +42,14 @@ def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=Fal
     uamqp_logger = logging.getLogger("uamqp")
     uamqp_logger.setLevel(level)
 
-    formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-    console_handler = logging.FileHandler(log_filename)
-    console_handler.setFormatter(formatter)
-    eventhub_logger.addHandler(console_handler)
-    uamqp_logger.addHandler(console_handler)
-    stress_logger.addHandler(console_handler)
+    formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(funcName)s(%(lineno)d) %(message)s')
+
+    file_handler = RotatingFileHandler(log_filename, maxBytes=10000 * 1000, 
+                                backupCount=2000)
+    file_handler.setFormatter(formatter)
+    eventhub_logger.addHandler(file_handler)
+    uamqp_logger.addHandler(file_handler)
+    stress_logger.addHandler(file_handler)
 
     return stress_logger
 
