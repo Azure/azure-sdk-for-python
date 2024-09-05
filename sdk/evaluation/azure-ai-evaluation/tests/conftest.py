@@ -81,8 +81,6 @@ def model_config(dev_connections: Dict[str, Any]) -> dict:
         raise ValueError(f"Connection '{conn_name}' not found in dev connections.")
 
     model_config = AzureOpenAIModelConfiguration(**dev_connections[conn_name]["value"])
-    # Default to gpt-35-turbo for capacity reasons
-    model_config.azure_deployment = "gpt-35-turbo"
 
     AzureOpenAIModelConfiguration.__repr__ = lambda self: "<sensitive data redacted>"
 
