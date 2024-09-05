@@ -8,36 +8,36 @@ extends:
       JobName: azure_keyvault_keys
       SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
-      TestResourceDirectories: 
-        - keyvault/
+      UseFederatedAuth: true
       CloudConfig:
         Public:
+          Location: 'westus2'
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          ServiceConnection: azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
         UsGov:
           SubscriptionConfiguration: $(sub-config-gov-test-resources)
           MatrixFilters:
             - ArmTemplateParameters=^(?!.*enableHsm.*true)
+          ServiceConnection: usgov_azure-sdk-tests
         China:
+          Location: chinaeast2
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
+          ServiceConnection: china_azure-sdk-tests
           MatrixFilters:
             - ArmTemplateParameters=^(?!.*enableHsm.*true)
-          Location: chinaeast2
-      ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly') }}:
-        # Test azure-keyvault-keys on Managed HSM for weekly tests only
-        AdditionalMatrixConfigs:
-          - Name: keyvault_hsm_matrix_addons
-            Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json
-            Selection: sparse
-            GenerateVMJobs: true
+      # HSMs are expensive and restricted in number so we only test them on one platform.
+      AdditionalMatrixConfigs:
+        - Name: keyvault_hsm_matrix_addons
+          Path: sdk/keyvault/azure-keyvault-keys/platform-matrix.json
+          Selection: sparse
+          GenerateVMJobs: true
+
+      # Due to the high cost of Managed HSMs, we only want to test using them weekly.
       ${{ if not(contains(variables['Build.DefinitionName'], 'tests-weekly')) }}:
-        # For nightly tests, don't run live azure-keyvault-administration jobs since they require Managed HSM
         MatrixFilters:
-          - OSVmImage=NonexistentImage
+          - ArmTemplateParameters=^(?!.*enableHsm.*true)
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)

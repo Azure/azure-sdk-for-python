@@ -6,8 +6,7 @@
 
 import functools
 import uuid
-from devtools_testutils import set_bodiless_matcher, recorded_by_proxy
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import set_bodiless_matcher, recorded_by_proxy, get_credential
 from azure.ai.documentintelligence import DocumentIntelligenceAdministrationClient, DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     ClassifierDocumentTypeDetails,
@@ -32,13 +31,8 @@ class TestDACClassifyDocumentAsync(DocumentIntelligenceTest):
     def test_classify_document(self, documentintelligence_training_data_classifier_sas_url, **kwargs):
         set_bodiless_matcher()
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
-        di_client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
-        )
-        di_admin_client = DocumentIntelligenceAdministrationClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
-        )
+        di_client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
+        di_admin_client = DocumentIntelligenceAdministrationClient(documentintelligence_endpoint, get_credential())
 
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("classifier_id", str(uuid.uuid4()))

@@ -5,6 +5,7 @@ import os
 import re
 
 from azure.storage.blob import BlobServiceClient
+from azure.identity import AzurePowerShellCredential, ChainedTokenCredential, AzureCliCredential
 
 UPLOAD_PATTERN = "{build_id}/{filename}"
 DEFAULT_CONTAINER = os.getenv("BLOB_CONTAINER", "ml-sample-submissions")
@@ -59,6 +60,13 @@ if __name__ == "__main__":
         help=("The folder from where the the azure ml wheel will reside."),
     )
 
+    parser.add_argument(
+        "--storage-account-name",
+        dest="storage_account_name",
+        help=("The name of the storage account"),
+    )
+
+
     args = parser.parse_args()
 
     print("Input repo {}".format(args.ml_root))
@@ -66,7 +74,9 @@ if __name__ == "__main__":
 
     target_glob = os.path.join(os.path.abspath(args.wheel_folder), "*.whl")
     sdk_setup_sh = os.path.join(os.path.abspath(args.ml_root), "sdk", "python", "setup.sh")
-    blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
+    credential_chain = ChainedTokenCredential(AzureCliCredential(), AzurePowerShellCredential())
+
+    blob_service_client = BlobServiceClient(account_url=f"https://{args.storage_account_name}.blob.core.windows.net", credential=credential_chain)
     container_client = blob_service_client.get_container_client(DEFAULT_CONTAINER)
     to_be_installed = []
 

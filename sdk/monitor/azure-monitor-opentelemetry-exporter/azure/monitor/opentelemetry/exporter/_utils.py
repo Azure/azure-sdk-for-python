@@ -11,6 +11,7 @@ import time
 import warnings
 from typing import Callable, Dict, Any
 
+from opentelemetry.semconv.attributes.service_attributes import SERVICE_NAME
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util import ns_to_iso_str
@@ -120,12 +121,12 @@ azure_monitor_context = {
 
 def ns_to_duration(nanoseconds: int) -> str:
     value = (nanoseconds + 500000) // 1000000  # duration in milliseconds
-    value, microseconds = divmod(value, 1000)
+    value, milliseconds = divmod(value, 1000)
     value, seconds = divmod(value, 60)
     value, minutes = divmod(value, 60)
     days, hours = divmod(value, 24)
     return "{:d}.{:02d}:{:02d}:{:02d}.{:03d}".format(
-        days, hours, minutes, seconds, microseconds
+        days, hours, minutes, seconds, milliseconds
     )
 
 
@@ -212,7 +213,7 @@ def _create_telemetry_item(timestamp: int) -> TelemetryItem:
 def _populate_part_a_fields(resource: Resource):
     tags = {}
     if resource and resource.attributes:
-        service_name = resource.attributes.get(ResourceAttributes.SERVICE_NAME)
+        service_name = resource.attributes.get(SERVICE_NAME)
         service_namespace = resource.attributes.get(ResourceAttributes.SERVICE_NAMESPACE)
         service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
         device_id = resource.attributes.get(ResourceAttributes.DEVICE_ID)

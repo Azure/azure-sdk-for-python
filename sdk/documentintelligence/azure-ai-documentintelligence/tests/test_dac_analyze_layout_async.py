@@ -6,8 +6,8 @@
 
 import pytest
 import functools
+from devtools_testutils import get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence.aio import DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     DocumentAnalysisFeature,
@@ -16,7 +16,7 @@ from azure.ai.documentintelligence.models import (
 )
 from asynctestcase import AsyncDocumentIntelligenceTest
 from conftest import skip_flaky_test
-from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
+from preparers import DocumentIntelligencePreparer, GlobalClientPreparerAsync as _GlobalClientPreparer
 
 
 DocumentIntelligenceClientPreparer = functools.partial(_GlobalClientPreparer, DocumentIntelligenceClient)
@@ -211,6 +211,32 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
     @DocumentIntelligencePreparer()
     @DocumentIntelligenceClientPreparer()
     @recorded_by_proxy_async
+    async def test_layout_multipage_table_span_pdf_continuation_token(self, client):
+        with open(self.multipage_table_pdf, "rb") as fd:
+            document = fd.read()
+        async with client:
+            poller = await client.begin_analyze_document(
+                "prebuilt-layout",
+                document,
+                content_type="application/octet-stream",
+            )
+            continuation_token = poller.continuation_token()
+            layout = await (
+                await client.begin_analyze_document(None, None, continuation_token=continuation_token)
+            ).result()
+        assert len(layout.tables) == 3
+        assert layout.tables[0].row_count == 30
+        assert layout.tables[0].column_count == 5
+        assert layout.tables[1].row_count == 6
+        assert layout.tables[1].column_count == 5
+        assert layout.tables[2].row_count == 24
+        assert layout.tables[2].column_count == 5
+
+    @pytest.mark.live_test_only
+    @skip_flaky_test
+    @DocumentIntelligencePreparer()
+    @DocumentIntelligenceClientPreparer()
+    @recorded_by_proxy_async
     async def test_layout_url_barcodes(self, client):
         async with client:
             poller = await client.begin_analyze_document(
@@ -228,14 +254,12 @@ class TestDACAnalyzeLayoutAsync(AsyncDocumentIntelligenceTest):
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @recorded_by_proxy_async
-    async def test_polling_interval(self, documentintelligence_endpoint, documentintelligence_api_key, **kwargs):
-        client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
-        )
+    async def test_polling_interval(self, documentintelligence_endpoint, **kwargs):
+        client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         assert client._config.polling_interval == 1
 
         client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key), polling_interval=7
+            documentintelligence_endpoint, get_credential(is_async=True), polling_interval=7
         )
         assert client._config.polling_interval == 7
         async with client:

@@ -13,7 +13,7 @@ DESCRIPTION:
 USAGE:
     python classification_policy_crud_ops_async.py
     Set the environment variables with your own values before running the sample:
-    1) AZURE_COMMUNICATION_SERVICE_ENDPOINT - Communication Service endpoint url
+    1) AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING - Communication Service connection string
 """
 
 import os
@@ -21,12 +21,12 @@ import asyncio
 
 
 class ClassificationPolicySamplesAsync(object):
-    endpoint = os.environ["AZURE_COMMUNICATION_SERVICE_ENDPOINT"]
+    connection_string = os.environ["AZURE_COMMUNICATION_SERVICE_CONNECTION_STRING"]
 
     _cp_policy_id = "sample_cp_policy"
 
     async def create_classification_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._cp_policy_id
         # [START create_classification_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -92,7 +92,7 @@ class ClassificationPolicySamplesAsync(object):
         # [END create_classification_policy_async]
 
     async def update_classification_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._cp_policy_id
         # [START update_classification_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -117,7 +117,7 @@ class ClassificationPolicySamplesAsync(object):
         # [END update_classification_policy_async]
 
     async def get_classification_policy(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._cp_policy_id
         # [START get_classification_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
@@ -131,7 +131,7 @@ class ClassificationPolicySamplesAsync(object):
         # [END get_classification_policy_async]
 
     async def list_classification_policies_batched(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_classification_policies_batched_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 
@@ -151,7 +151,7 @@ class ClassificationPolicySamplesAsync(object):
         # [END list_classification_policies_batched_async]
 
     async def list_classification_policies(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         # [START list_classification_policies_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
 
@@ -167,7 +167,7 @@ class ClassificationPolicySamplesAsync(object):
         # [END list_classification_policies_async]
 
     async def clean_up(self):
-        connection_string = self.endpoint
+        connection_string = self.connection_string
         policy_id = self._cp_policy_id
 
         # [START delete_classification_policy_async]

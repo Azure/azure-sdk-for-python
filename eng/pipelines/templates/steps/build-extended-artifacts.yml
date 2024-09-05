@@ -24,11 +24,6 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      artifactName: 'packages'
-      targetPath: $(Build.ArtifactStagingDirectory)
-
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.11'
     inputs:
@@ -50,7 +45,6 @@ steps:
   - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - script: |
-      python -m pip install setuptools==58.3.0
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
@@ -84,6 +78,15 @@ steps:
       AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
 
   - ${{ parameters.BeforePublishSteps }}
+
+  - task: Powershell@2
+    inputs:
+      filePath: $(Build.SourcesDirectory)/eng/scripts/Save-Package-Namespaces-Property.ps1
+      arguments: >
+        -ArtifactStagingDirectory "$(Build.ArtifactStagingDirectory)"
+      pwsh: true
+      workingDirectory: $(Pipeline.Workspace)
+    displayName: Update package properties with namespaces
 
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:

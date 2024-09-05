@@ -2043,7 +2043,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     def get_block_list(
         self, block_list_type: str = "committed",
         **kwargs: Any
-    ) -> Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]:
+    ) -> Tuple[List[BlobBlock], List[BlobBlock]]:
         """The Get Block List operation retrieves the list of blocks that have
         been uploaded as part of a block blob.
 
@@ -2067,7 +2067,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: A tuple of two lists - committed and uncommitted blocks
-        :rtype: Tuple[List[Optional[BlobBlock]], List[Optional[BlobBlock]]]
+        :rtype: Tuple[List[BlobBlock], List[BlobBlock]]
         """
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_modify_conditions(kwargs)
@@ -2286,7 +2286,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def get_blob_tags(self, **kwargs: Any) -> Optional[Dict[str, str]]:
+    def get_blob_tags(self, **kwargs: Any) -> Dict[str, str]:
         """The Get Tags operation enables users to get tags on a blob or specific blob version, or snapshot.
 
         .. versionadded:: 12.4.0
@@ -2309,13 +2309,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
         :returns: Key value pairs of blob tags.
-        :rtype: Optional[Dict[str, str]]
+        :rtype: Dict[str, str]
         """
         version_id = get_version_id(self.version_id, kwargs)
         options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
         try:
             _, tags = self._client.blob.get_tags(**options)
-            return parse_tags(tags)
+            return cast(Dict[str, str], parse_tags(tags))
         except HttpResponseError as error:
             process_storage_error(error)
 

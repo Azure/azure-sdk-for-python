@@ -6,9 +6,8 @@
 
 import functools
 import uuid
-from devtools_testutils import set_bodiless_matcher
+from devtools_testutils import set_bodiless_matcher, get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence.aio import DocumentIntelligenceAdministrationClient, DocumentIntelligenceClient
 from azure.ai.documentintelligence.models import (
     ClassifierDocumentTypeDetails,
@@ -18,7 +17,7 @@ from azure.ai.documentintelligence.models import (
 )
 from asynctestcase import AsyncDocumentIntelligenceTest
 from conftest import skip_flaky_test
-from preparers import DocumentIntelligencePreparer, GlobalClientPreparer as _GlobalClientPreparer
+from preparers import DocumentIntelligencePreparer, GlobalClientPreparerAsync as _GlobalClientPreparer
 
 
 DocumentModelAdministrationClientPreparer = functools.partial(
@@ -33,12 +32,9 @@ class TestDACClassifyDocumentAsync(AsyncDocumentIntelligenceTest):
     async def test_classify_document(self, documentintelligence_training_data_classifier_sas_url, **kwargs):
         set_bodiless_matcher()
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        documentintelligence_api_key = kwargs.pop("documentintelligence_api_key")
-        di_client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
-        )
+        di_client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential(is_async=True))
         di_admin_client = DocumentIntelligenceAdministrationClient(
-            documentintelligence_endpoint, AzureKeyCredential(documentintelligence_api_key)
+            documentintelligence_endpoint, get_credential(is_async=True)
         )
 
         recorded_variables = kwargs.pop("variables", {})

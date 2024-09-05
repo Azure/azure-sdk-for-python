@@ -13,34 +13,67 @@ from azure.core import CaseInsensitiveEnumMeta
 class AcceptanceMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode of acceptance for an agreement."""
 
+    OTHER = "Other"
     CLICK_TO_ACCEPT = "ClickToAccept"
     E_SIGN_EMBEDDED = "ESignEmbedded"
     E_SIGN_OFFLINE = "ESignOffline"
+    IMPLICIT = "Implicit"
+    OFFLINE = "Offline"
+    PHYSICAL_SIGN = "PhysicalSign"
+
+
+class AccessDecision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access Decision, specifies access is allowed or not."""
+
+    OTHER = "Other"
+    ALLOWED = "Allowed"
+    NOT_ALLOWED = "NotAllowed"
 
 
 class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current status of the billing account."""
 
+    OTHER = "Other"
     ACTIVE = "Active"
-    DELETED = "Deleted"
+    UNDER_REVIEW = "UnderReview"
     DISABLED = "Disabled"
-    EXPIRED = "Expired"
-    TRANSFERRED = "Transferred"
+    DELETED = "Deleted"
     EXTENDED = "Extended"
+    PENDING = "Pending"
+    NEW = "New"
+    EXPIRED = "Expired"
     TERMINATED = "Terminated"
+    TRANSFERRED = "Transferred"
+
+
+class AccountSubType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The tier of the account."""
+
+    OTHER = "Other"
+    NONE = "None"
+    INDIVIDUAL = "Individual"
+    PROFESSIONAL = "Professional"
+    ENTERPRISE = "Enterprise"
 
 
 class AccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of customer."""
 
+    OTHER = "Other"
     ENTERPRISE = "Enterprise"
     INDIVIDUAL = "Individual"
     PARTNER = "Partner"
+    RESELLER = "Reseller"
+    CLASSIC_PARTNER = "ClassicPartner"
+    INTERNAL = "Internal"
+    TENANT = "Tenant"
+    BUSINESS = "Business"
 
 
 class AddressValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the address validation."""
 
+    OTHER = "Other"
     VALID = "Valid"
     INVALID = "Invalid"
 
@@ -48,10 +81,19 @@ class AddressValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AgreementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of agreement."""
 
+    OTHER = "Other"
     MICROSOFT_CUSTOMER_AGREEMENT = "MicrosoftCustomerAgreement"
     ENTERPRISE_AGREEMENT = "EnterpriseAgreement"
     MICROSOFT_ONLINE_SERVICES_PROGRAM = "MicrosoftOnlineServicesProgram"
     MICROSOFT_PARTNER_AGREEMENT = "MicrosoftPartnerAgreement"
+
+
+class AppliedScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Applied Scope."""
+
+    SINGLE = "Single"
+    SHARED = "Shared"
+    MANAGEMENT_GROUP = "ManagementGroup"
 
 
 class AutoRenew(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -61,204 +103,390 @@ class AutoRenew(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ON = "On"
 
 
-class BillingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The frequency at which the product will be billed."""
+class BillingAccountStatusReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason for the specified billing account status."""
 
-    ONE_TIME = "OneTime"
-    MONTHLY = "Monthly"
-    USAGE_BASED = "UsageBased"
+    OTHER = "Other"
+    UNUSUAL_ACTIVITY = "UnusualActivity"
+    MANUALLY_TERMINATED = "ManuallyTerminated"
+    EXPIRED = "Expired"
+    TRANSFERRED = "Transferred"
+    TERMINATE_PROCESSING = "TerminateProcessing"
 
 
-class BillingProfileSpendingLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The billing profile spending limit."""
+class BillingManagementTenantState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state determines whether users from the associated tenant can be assigned roles for
+    commerce activities like viewing and downloading invoices, managing payments, and making
+    purchases.
+    """
 
-    OFF = "Off"
-    ON = "On"
+    OTHER = "Other"
+    NOT_ALLOWED = "NotAllowed"
+    ACTIVE = "Active"
+    REVOKED = "Revoked"
+
+
+class BillingPlan(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the billing plan in ISO 8601 format. Required only for monthly purchases."""
+
+    P1_M = "P1M"
 
 
 class BillingProfileStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the billing profile."""
 
+    OTHER = "Other"
     ACTIVE = "Active"
     DISABLED = "Disabled"
     WARNED = "Warned"
+    DELETED = "Deleted"
+    UNDER_REVIEW = "UnderReview"
 
 
 class BillingProfileStatusReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reason for the specified billing profile status."""
 
+    OTHER = "Other"
     PAST_DUE = "PastDue"
+    UNUSUAL_ACTIVITY = "UnusualActivity"
     SPENDING_LIMIT_REACHED = "SpendingLimitReached"
     SPENDING_LIMIT_EXPIRED = "SpendingLimitExpired"
 
 
 class BillingRelationshipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Identifies which services and purchases are paid by a billing profile."""
+    """Identifies the billing relationships represented by a billing account or billing profile. The
+    billing relationship may be between Microsoft, the customer, and/or a third-party.
+    """
 
+    OTHER = "Other"
     DIRECT = "Direct"
     INDIRECT_CUSTOMER = "IndirectCustomer"
     INDIRECT_PARTNER = "IndirectPartner"
     CSP_PARTNER = "CSPPartner"
+    CSP_CUSTOMER = "CSPCustomer"
 
 
-class BillingSubscriptionStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current billing status of the subscription."""
+class BillingRequestStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of billing request."""
 
+    OTHER = "Other"
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    DECLINED = "Declined"
+    CANCELLED = "Cancelled"
+    COMPLETED = "Completed"
+    EXPIRED = "Expired"
+
+
+class BillingRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of billing request."""
+
+    OTHER = "Other"
+    INVOICE_ACCESS = "InvoiceAccess"
+    PROVISIONING_ACCESS = "ProvisioningAccess"
+    ROLE_ASSIGNMENT = "RoleAssignment"
+    UPDATE_BILLING_POLICY = "UpdateBillingPolicy"
+
+
+class BillingSubscriptionOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of an operation on the subscription. When None, there is no ongoing operation. When
+    LockedForUpdate, write operations will be blocked on the Billing Subscription. Other is the
+    default value and you may need to refer to the latest API version for more details.
+    """
+
+    OTHER = "Other"
+    NONE = "None"
+    LOCKED_FOR_UPDATE = "LockedForUpdate"
+
+
+class BillingSubscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The subscription status."""
+
+    OTHER = "Other"
+    UNKNOWN = "Unknown"
     ACTIVE = "Active"
-    INACTIVE = "Inactive"
-    ABANDONED = "Abandoned"
+    DISABLED = "Disabled"
     DELETED = "Deleted"
-    WARNING = "Warning"
+    WARNED = "Warned"
+    EXPIRING = "Expiring"
+    EXPIRED = "Expired"
+    AUTO_RENEW = "AutoRenew"
+    CANCELLED = "Cancelled"
+    SUSPENDED = "Suspended"
+    FAILED = "Failed"
+
+
+class Cancellation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy override for the subscription indicates whether the self-serve cancellation or seat
+    reduction is allowed.
+    """
+
+    NOT_ALLOWED = "NotAllowed"
+    ALLOWED = "Allowed"
+
+
+class CancellationReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cancellation reason."""
+
+    OTHER = "Other"
+    COMPROMISE = "Compromise"
+    DISPUTE = "Dispute"
 
 
 class Category(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The category of the agreement signed by a customer."""
+    """The category of the agreement."""
 
-    MICROSOFT_CUSTOMER_AGREEMENT = "MicrosoftCustomerAgreement"
-    AFFILIATE_PURCHASE_TERMS = "AffiliatePurchaseTerms"
     OTHER = "Other"
+    AFFILIATE_PURCHASE_TERMS = "AffiliatePurchaseTerms"
+    INDIRECT_FOR_GOVERNMENT_AGREEMENT = "IndirectForGovernmentAgreement"
+    MICROSOFT_CUSTOMER_AGREEMENT = "MicrosoftCustomerAgreement"
+    MICROSOFT_PARTNER_AGREEMENT = "MicrosoftPartnerAgreement"
+    UK_CLOUD_COMPUTE_FRAMEWORK = "UKCloudComputeFramework"
 
 
-class DocumentSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The source of the document. ENF for Brazil and DRS for rest of the world."""
+class CommitmentGrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Commitment grain."""
 
-    DRS = "DRS"
-    ENF = "ENF"
-
-
-class DocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the document."""
-
-    INVOICE = "Invoice"
-    VOID_NOTE = "VoidNote"
-    TAX_RECEIPT = "TaxReceipt"
-    CREDIT_NOTE = "CreditNote"
+    HOURLY = "Hourly"
 
 
-class InvoiceDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the document."""
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
-    INVOICE = "Invoice"
-    CREDIT_NOTE = "CreditNote"
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 
-class InvoiceSectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Identifies the state of an invoice section."""
+class CreditType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The credit type of the transaction. Applies only to credited transactions."""
 
+    OTHER = "Other"
+    AZURE_FREE_CREDIT = "AzureFreeCredit"
+    AZURE_CREDIT_OFFER = "AzureCreditOffer"
+    SERVICE_INTERRUPTION = "ServiceInterruption"
+    REFUND = "Refund"
+
+
+class CustomerStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identifies the status of an customer. This is an upcoming property that will be populated in
+    the future.
+    """
+
+    OTHER = "Other"
     ACTIVE = "Active"
-    RESTRICTED = "Restricted"
-
-
-class InvoiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current status of the invoice."""
-
-    DUE = "Due"
-    OVER_DUE = "OverDue"
-    PAID = "Paid"
-    VOID = "Void"
-
-
-class InvoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Invoice type."""
-
-    AZURE_SERVICE = "AzureService"
-    AZURE_MARKETPLACE = "AzureMarketplace"
-    AZURE_SUPPORT = "AzureSupport"
-
-
-class MarketplacePurchasesPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The policy that controls whether Azure marketplace purchases are allowed for a billing profile."""
-
-    ALL_ALLOWED = "AllAllowed"
-    ONLY_FREE_ALLOWED = "OnlyFreeAllowed"
-    NOT_ALLOWED = "NotAllowed"
-
-
-class PaymentMethodFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The family of payment method."""
-
-    CREDITS = "Credits"
-    CHECK_WIRE = "CheckWire"
-    CREDIT_CARD = "CreditCard"
-    NONE = "None"
-
-
-class ProductStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current status of the product."""
-
-    ACTIVE = "Active"
-    INACTIVE = "Inactive"
-    PAST_DUE = "PastDue"
-    EXPIRING = "Expiring"
-    EXPIRED = "Expired"
+    PENDING = "Pending"
     DISABLED = "Disabled"
-    CANCELLED = "Cancelled"
-    AUTO_RENEW = "AutoRenew"
+    WARNED = "Warned"
+    DELETED = "Deleted"
+    UNDER_REVIEW = "UnderReview"
 
 
-class ProductTransferValidationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Error code of the transfer validation response."""
+class DeleteBillingProfileEligibilityCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Code of the delete invoice section eligibility response."""
 
-    INVALID_SOURCE = "InvalidSource"
-    PRODUCT_NOT_ACTIVE = "ProductNotActive"
-    INSUFFICIENT_PERMISSION_ON_SOURCE = "InsufficientPermissionOnSource"
-    INSUFFICIENT_PERMISSION_ON_DESTINATION = "InsufficientPermissionOnDestination"
-    DESTINATION_BILLING_PROFILE_PAST_DUE = "DestinationBillingProfilePastDue"
-    PRODUCT_TYPE_NOT_SUPPORTED = "ProductTypeNotSupported"
-    CROSS_BILLING_ACCOUNT_NOT_ALLOWED = "CrossBillingAccountNotAllowed"
-    NOT_AVAILABLE_FOR_DESTINATION_MARKET = "NotAvailableForDestinationMarket"
-    ONE_TIME_PURCHASE_PRODUCT_TRANSFER_NOT_ALLOWED = "OneTimePurchaseProductTransferNotAllowed"
+    NONE = "None"
+    ACTIVE_CREDITS = "ActiveCredits"
+    ACTIVE_CREDIT_CARD = "ActiveCreditCard"
+    LAST_BILLING_PROFILE = "LastBillingProfile"
+    NOT_SUPPORTED = "NotSupported"
+    OUTSTANDING_CHARGES = "OutstandingCharges"
+    PENDING_CHARGES = "PendingCharges"
+    RESERVED_INSTANCES = "ReservedInstances"
+    ACTIVE_BILLING_SUBSCRIPTIONS = "ActiveBillingSubscriptions"
 
 
-class ReservationPurchasesPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The policy that controls whether Azure reservation purchases are allowed for a billing profile."""
+class DeleteBillingProfileEligibilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status describing if billing profile is eligible to be deleted."""
 
     ALLOWED = "Allowed"
     NOT_ALLOWED = "NotAllowed"
 
 
-class ReservationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of transaction."""
+class DeleteInvoiceSectionEligibilityCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Code for the delete invoice section validation."""
 
-    PURCHASE = "Purchase"
-    USAGE_CHARGE = "Usage Charge"
+    OTHER = "Other"
+    LAST_INVOICE_SECTION = "LastInvoiceSection"
+    ACTIVE_AZURE_PLANS = "ActiveAzurePlans"
+    RESERVED_INSTANCES = "ReservedInstances"
+    ACTIVE_BILLING_SUBSCRIPTIONS = "ActiveBillingSubscriptions"
 
 
-class SpendingLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The billing profile spending limit."""
+class DeleteInvoiceSectionEligibilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status describing if invoice section is eligible to be deleted."""
 
-    OFF = "Off"
+    ALLOWED = "Allowed"
+    NOT_ALLOWED = "NotAllowed"
+
+
+class DocumentSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The source of the document. ENF for Brazil and DRS for rest of the world."""
+
+    OTHER = "Other"
+    DRS = "DRS"
+    ENF = "ENF"
+
+
+class EligibleProductType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the products that can be transferred."""
+
+    DEV_TEST_AZURE_SUBSCRIPTION = "DevTestAzureSubscription"
+    STANDARD_AZURE_SUBSCRIPTION = "StandardAzureSubscription"
+    AZURE_RESERVATION = "AzureReservation"
+
+
+class EnrollmentAccountOwnerViewCharges(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy that controls whether account owner can view charges."""
+
+    OTHER = "Other"
+    ALLOWED = "Allowed"
+    DISABLED = "Disabled"
+    NOT_ALLOWED = "NotAllowed"
+
+
+class EnrollmentAuthLevelState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state showing the enrollment auth level."""
+
+    OTHER = "Other"
+    MICROSOFT_ACCOUNT_ONLY = "MicrosoftAccountOnly"
+    MIXED_ACCOUNT = "MixedAccount"
+    ORGANIZATIONAL_ACCOUNT_CROSS_TENANT = "OrganizationalAccountCrossTenant"
+    ORGANIZATIONAL_ACCOUNT_ONLY = "OrganizationalAccountOnly"
+
+
+class EnrollmentDepartmentAdminViewCharges(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy that controls whether department admin can view charges."""
+
+    OTHER = "Other"
+    ALLOWED = "Allowed"
+    DISABLED = "Disabled"
+    NOT_ALLOWED = "NotAllowed"
+
+
+class ExtendedTermOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The billing account extension opted by the company."""
+
+    OTHER = "Other"
+    OPTED_IN = "Opted-In"
+    OPTED_OUT = "Opted-Out"
+
+
+class FailedPaymentReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason that the payment failed."""
+
+    OTHER = "Other"
+    BANK_DECLINED = "BankDeclined"
+    CARD_EXPIRED = "CardExpired"
+    INCORRECT_CARD_DETAILS = "IncorrectCardDetails"
+
+
+class InitiatorCustomerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of customer of the transfer initiator."""
+
+    PARTNER = "Partner"
+    EA = "EA"
+
+
+class InstanceFlexibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Turning this on will apply the reservation discount to other VMs in the same VM size group.
+    Only specify for VirtualMachines reserved resource type.
+    """
+
     ON = "On"
-
-
-class SpendingLimitForBillingProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The billing profile spending limit."""
-
     OFF = "Off"
-    ON = "On"
 
 
-class StatusReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Reason for the specified billing profile status."""
+class InvoiceDocumentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the document."""
 
+    OTHER = "Other"
+    INVOICE = "Invoice"
+    VOID_NOTE = "VoidNote"
+    TAX_RECEIPT = "TaxReceipt"
+    CREDIT_NOTE = "CreditNote"
+    SUMMARY = "Summary"
+    TRANSACTIONS = "Transactions"
+
+
+class InvoiceSectionLabelManagementPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy that controls invoice section label management at invoice section scope. This is
+    allowed by default.
+    """
+
+    OTHER = "Other"
+    ALLOWED = "Allowed"
+    NOT_ALLOWED = "NotAllowed"
+
+
+class InvoiceSectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identifies the status of an invoice section."""
+
+    OTHER = "Other"
+    ACTIVE = "Active"
+    DELETED = "Deleted"
+    DISABLED = "Disabled"
+    UNDER_REVIEW = "UnderReview"
+    WARNED = "Warned"
+    RESTRICTED = "Restricted"
+
+
+class InvoiceSectionStateReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason for the specified invoice section status."""
+
+    OTHER = "Other"
     PAST_DUE = "PastDue"
+    UNUSUAL_ACTIVITY = "UnusualActivity"
     SPENDING_LIMIT_REACHED = "SpendingLimitReached"
     SPENDING_LIMIT_EXPIRED = "SpendingLimitExpired"
 
 
-class StatusReasonCodeForBillingProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Reason for the specified billing profile status."""
+class InvoiceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current status of the invoice."""
 
-    PAST_DUE = "PastDue"
-    SPENDING_LIMIT_REACHED = "SpendingLimitReached"
-    SPENDING_LIMIT_EXPIRED = "SpendingLimitExpired"
+    OTHER = "Other"
+    DUE = "Due"
+    OVER_DUE = "OverDue"
+    PAID = "Paid"
+    VOID = "Void"
+    LOCKED = "Locked"
 
 
-class SubscriptionTransferValidationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Error code of the transfer validation response."""
+class InvoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Invoice type."""
 
+    OTHER = "Other"
+    AZURE_SERVICES = "AzureServices"
+    AZURE_MARKETPLACE = "AzureMarketplace"
+    AZURE_SUPPORT = "AzureSupport"
+
+
+class MarketplacePurchasesPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy that controls whether Azure marketplace purchases are allowed."""
+
+    OTHER = "Other"
+    ALL_ALLOWED = "AllAllowed"
+    DISABLED = "Disabled"
+    NOT_ALLOWED = "NotAllowed"
+    ONLY_FREE_ALLOWED = "OnlyFreeAllowed"
+
+
+class MarkupStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Markup status of enrollment, applicable only for indirect enrollments."""
+
+    OTHER = "Other"
+    DISABLED = "Disabled"
+    PREVIEW = "Preview"
+    PUBLISHED = "Published"
+    LOCKED = "Locked"
+
+
+class MoveValidationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Error code for the product transfer validation."""
+
+    OTHER = "Other"
     BILLING_ACCOUNT_INACTIVE = "BillingAccountInactive"
-    CROSS_BILLING_ACCOUNT_NOT_ALLOWED = "CrossBillingAccountNotAllowed"
     DESTINATION_BILLING_PROFILE_INACTIVE = "DestinationBillingProfileInactive"
     DESTINATION_BILLING_PROFILE_NOT_FOUND = "DestinationBillingProfileNotFound"
     DESTINATION_BILLING_PROFILE_PAST_DUE = "DestinationBillingProfilePastDue"
@@ -269,44 +497,454 @@ class SubscriptionTransferValidationErrorCode(str, Enum, metaclass=CaseInsensiti
     INVALID_DESTINATION = "InvalidDestination"
     INVALID_SOURCE = "InvalidSource"
     MARKETPLACE_NOT_ENABLED_ON_DESTINATION = "MarketplaceNotEnabledOnDestination"
-    NOT_AVAILABLE_FOR_DESTINATION_MARKET = "NotAvailableForDestinationMarket"
     PRODUCT_INACTIVE = "ProductInactive"
     PRODUCT_NOT_FOUND = "ProductNotFound"
     PRODUCT_TYPE_NOT_SUPPORTED = "ProductTypeNotSupported"
     SOURCE_BILLING_PROFILE_PAST_DUE = "SourceBillingProfilePastDue"
     SOURCE_INVOICE_SECTION_INACTIVE = "SourceInvoiceSectionInactive"
+
+
+class PaymentMethodFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Payment on Account type."""
+
+    OTHER = "Other"
+    NONE = "None"
+    CREDIT_CARD = "CreditCard"
+    CREDITS = "Credits"
+    CHECK_WIRE = "CheckWire"
+    E_WALLET = "EWallet"
+    TASK_ORDER = "TaskOrder"
+    DIRECT_DEBIT = "DirectDebit"
+
+
+class PaymentMethodStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the payment method."""
+
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+
+
+class PaymentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes whether the payment is completed, failed, pending, cancelled or scheduled in the
+    future.
+    """
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    SCHEDULED = "Scheduled"
+    CANCELLED = "Cancelled"
+    COMPLETED = "Completed"
+    PENDING = "Pending"
+
+
+class PaymentTermsEligibilityCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the reason for the ineligibility of the payment terms."""
+
+    OTHER = "Other"
+    OVERLAPPING_PAYMENT_TERMS = "OverlappingPaymentTerms"
+    INVALID_DATE_FORMAT = "InvalidDateFormat"
+    INVALID_DATE_RANGE = "InvalidDateRange"
+    INACTIVE_BILLING_ACCOUNT = "InactiveBillingAccount"
+    INVALID_BILLING_ACCOUNT_TYPE = "InvalidBillingAccountType"
+    NULL_OR_EMPTY_PAYMENT_TERMS = "NullOrEmptyPaymentTerms"
+    BILLING_ACCOUNT_NOT_FOUND = "BillingAccountNotFound"
+    INELIGIBLE_BILLING_ACCOUNT_STATUS = "IneligibleBillingAccountStatus"
+    INVALID_TERMS = "InvalidTerms"
+
+
+class PaymentTermsEligibilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the eligibility status of the payment terms."""
+
+    OTHER = "Other"
+    VALID = "Valid"
+    INVALID = "Invalid"
+
+
+class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the policy."""
+
+    OTHER = "Other"
+    USER_CONTROLLED = "UserControlled"
+    SYSTEM_CONTROLLED = "SystemControlled"
+
+
+class PrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a role Assignment."""
+
+    UNKNOWN = "Unknown"
+    NONE = "None"
+    USER = "User"
+    GROUP = "Group"
+    DIRECTORY_ROLE = "DirectoryRole"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    EVERYONE = "Everyone"
+
+
+class ProductStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the product."""
+
+    OTHER = "Other"
+    ACTIVE = "Active"
+    DISABLED = "Disabled"
+    DELETED = "Deleted"
+    PAST_DUE = "PastDue"
+    EXPIRING = "Expiring"
+    EXPIRED = "Expired"
+    AUTO_RENEW = "AutoRenew"
+    CANCELED = "Canceled"
+    SUSPENDED = "Suspended"
+
+
+class ProductTransferStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a transfer."""
+
+    NOT_STARTED = "NotStarted"
+    IN_PROGRESS = "InProgress"
+    COMPLETED = "Completed"
+    FAILED = "Failed"
+
+
+class ProductType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of product that is transferred."""
+
+    AZURE_SUBSCRIPTION = "AzureSubscription"
+    AZURE_RESERVATION = "AzureReservation"
+    DEPARTMENT = "Department"
+    SAVINGS_PLAN = "SavingsPlan"
+    SAAS = "SAAS"
+
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the resource during a long-running operation."""
+
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+    NEW = "New"
+    PENDING = "Pending"
+    PROVISIONING = "Provisioning"
+    PENDING_BILLING = "PendingBilling"
+    CONFIRMED_BILLING = "ConfirmedBilling"
+    CREATING = "Creating"
+    CREATED = "Created"
+    EXPIRED = "Expired"
+
+
+class ProvisioningTenantState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state determines whether subscriptions and licenses can be provisioned in the associated
+    tenant. It can be set to 'Pending' to initiate a billing request.
+    """
+
+    OTHER = "Other"
+    NOT_REQUESTED = "NotRequested"
+    ACTIVE = "Active"
+    PENDING = "Pending"
+    BILLING_REQUEST_EXPIRED = "BillingRequestExpired"
+    BILLING_REQUEST_DECLINED = "BillingRequestDeclined"
+    REVOKED = "Revoked"
+
+
+class RefundReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason for refund."""
+
+    OTHER = "Other"
+    ACCIDENTAL_CONVERSION = "AccidentalConversion"
+    UNCLEAR_PRICING = "UnclearPricing"
+    ACCIDENTAL_PURCHASE = "AccidentalPurchase"
+    FORGOT_TO_CANCEL = "ForgotToCancel"
+    UNCLEAR_DOCUMENTATION = "UnclearDocumentation"
+
+
+class RefundStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of refund request."""
+
+    OTHER = "Other"
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    DECLINED = "Declined"
+    CANCELLED = "Cancelled"
+    COMPLETED = "Completed"
+    EXPIRED = "Expired"
+
+
+class ReservationBillingPlan(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represent the billing plans."""
+
+    UPFRONT = "Upfront"
+    MONTHLY = "Monthly"
+
+
+class ReservationPurchasesPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy that controls whether Azure reservation purchases are allowed."""
+
+    OTHER = "Other"
+    ALLOWED = "Allowed"
+    DISABLED = "Disabled"
+    NOT_ALLOWED = "NotAllowed"
+
+
+class ReservationStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the reservation."""
+
+    NONE = "None"
+    PENDING = "Pending"
+    PROCESSING = "Processing"
+    ACTIVE = "Active"
+    PURCHASE_ERROR = "PurchaseError"
+    PAYMENT_INSTRUMENT_ERROR = "PaymentInstrumentError"
+    SPLIT = "Split"
+    MERGED = "Merged"
+    EXPIRED = "Expired"
+    SUCCEEDED = "Succeeded"
+    CAPACITY_ERROR = "CapacityError"
+    CAPACITY_RESTRICTED = "CapacityRestricted"
+    EXCHANGED = "Exchanged"
+    UNKNOWN_ERROR = "UnknownError"
+    RISK_CHECK_FAILED = "RiskCheckFailed"
+    CREDIT_LINE_CHECK_FAILED = "CreditLineCheckFailed"
+    WARNING = "Warning"
+    NO_BENEFIT_DUE_TO_SUBSCRIPTION_TRANSFER = "NoBenefitDueToSubscriptionTransfer"
+    NO_BENEFIT_DUE_TO_SUBSCRIPTION_DELETION = "NoBenefitDueToSubscriptionDeletion"
+    NO_BENEFIT = "NoBenefit"
+
+
+class SavingsPlanPurchasesPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy that controls whether users with Azure savings plan purchase are allowed."""
+
+    OTHER = "Other"
+    ALLOWED = "Allowed"
+    DISABLED = "Disabled"
+    NOT_ALLOWED = "NotAllowed"
+
+
+class SavingsPlanTerm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the Savings plan term in ISO 8601 format."""
+
+    P1_Y = "P1Y"
+    P3_Y = "P3Y"
+    P5_Y = "P5Y"
+
+
+class ServiceDefinedResourceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ServiceDefinedResourceName."""
+
+    DEFAULT = "default"
+
+
+class SpecialTaxationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identifies the type of tax calculation used for the invoice. The field is applicable only to
+    invoices with special tax calculation logic.
+    """
+
+    SUBTOTAL_LEVEL = "SubtotalLevel"
+    INVOICE_LEVEL = "InvoiceLevel"
+
+
+class SpendingLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The billing profile spending limit."""
+
+    OFF = "Off"
+    ON = "On"
+
+
+class SpendingLimitStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of current spending limit."""
+
+    OTHER = "Other"
+    NONE = "None"
+    ACTIVE = "Active"
+    EXPIRED = "Expired"
+    LIMIT_REACHED = "LimitReached"
+    LIMIT_REMOVED = "LimitRemoved"
+
+
+class SpendingLimitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of spending limit."""
+
+    OTHER = "Other"
+    NONE = "None"
+    FREE_ACCOUNT = "FreeAccount"
+    SANDBOX = "Sandbox"
+    AZURE_FOR_STUDENTS = "AzureForStudents"
+    ACADEMIC_SPONSORSHIP = "AcademicSponsorship"
+    AZURE_CONSUMPTION_CREDIT = "AzureConsumptionCredit"
+    AZURE_PASS_SPONSORSHIP = "AzurePassSponsorship"
+    MPN_SPONSORSHIP = "MpnSponsorship"
+    MSDN = "MSDN"
+    NON_PROFIT_SPONSORSHIP = "NonProfitSponsorship"
+    SPONSORSHIP = "Sponsorship"
+    STARTUP_SPONSORSHIP = "StartupSponsorship"
+    AZURE_FOR_STUDENTS_STARTER = "AzureForStudentsStarter"
+    VISUAL_STUDIO = "VisualStudio"
+
+
+class SubscriptionBillingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of billing subscription."""
+
+    NONE = "None"
+    BENEFIT = "Benefit"
+    FREE = "Free"
+    PAID = "Paid"
+    PRE_PAID = "PrePaid"
+
+
+class SubscriptionEnrollmentAccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current enrollment account status of the subscription. This field is available only for the
+    Enterprise Agreement Type.
+    """
+
+    ACTIVE = "Active"
+    CANCELLED = "Cancelled"
+    EXPIRED = "Expired"
+    DELETED = "Deleted"
+    TRANSFERRED_OUT = "TransferredOut"
+    TRANSFERRING = "Transferring"
+    INACTIVE = "Inactive"
+
+
+class SubscriptionStatusReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The suspension reason for a subscription. This field is not available for Enterprise Agreement
+    billing accounts.
+    """
+
+    NONE = "None"
+    CANCELLED = "Cancelled"
+    PAST_DUE = "PastDue"
+    SUSPICIOUS_ACTIVITY = "SuspiciousActivity"
+    OTHER = "Other"
+    TRANSFERRED = "Transferred"
+    POLICY_VIOLATION = "PolicyViolation"
+    SPENDING_LIMIT_REACHED = "SpendingLimitReached"
+    EXPIRED = "Expired"
+
+
+class SubscriptionTransferValidationErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Error code of the transfer validation response."""
+
+    OTHER = "Other"
+    BILLING_ACCOUNT_INACTIVE = "BillingAccountInactive"
+    DESTINATION_BILLING_PROFILE_INACTIVE = "DestinationBillingProfileInactive"
+    DESTINATION_BILLING_PROFILE_NOT_FOUND = "DestinationBillingProfileNotFound"
+    DESTINATION_BILLING_PROFILE_PAST_DUE = "DestinationBillingProfilePastDue"
+    DESTINATION_INVOICE_SECTION_INACTIVE = "DestinationInvoiceSectionInactive"
+    DESTINATION_INVOICE_SECTION_NOT_FOUND = "DestinationInvoiceSectionNotFound"
+    INSUFFICIENT_PERMISSION_ON_DESTINATION = "InsufficientPermissionOnDestination"
+    INSUFFICIENT_PERMISSION_ON_SOURCE = "InsufficientPermissionOnSource"
+    INVALID_DESTINATION = "InvalidDestination"
+    INVALID_SOURCE = "InvalidSource"
+    MARKETPLACE_NOT_ENABLED_ON_DESTINATION = "MarketplaceNotEnabledOnDestination"
+    PRODUCT_INACTIVE = "ProductInactive"
+    PRODUCT_NOT_FOUND = "ProductNotFound"
+    PRODUCT_TYPE_NOT_SUPPORTED = "ProductTypeNotSupported"
+    SOURCE_BILLING_PROFILE_PAST_DUE = "SourceBillingProfilePastDue"
+    SOURCE_INVOICE_SECTION_INACTIVE = "SourceInvoiceSectionInactive"
+    ACCOUNT_IS_LOCKED = "AccountIsLocked"
+    ASSET_HAS_CAP = "AssetHasCap"
+    ASSET_NOT_ACTIVE = "AssetNotActive"
+    BILLING_PROFILE_PAST_DUE = "BillingProfilePastDue"
+    CROSS_BILLING_ACCOUNT_NOT_ALLOWED = "CrossBillingAccountNotAllowed"
+    NO_ACTIVE_AZURE_PLAN = "NoActiveAzurePlan"
+    NONE = "None"
     SUBSCRIPTION_NOT_ACTIVE = "SubscriptionNotActive"
+    SUBSCRIPTION_HAS_RESERVATIONS = "SubscriptionHasReservations"
     SUBSCRIPTION_TYPE_NOT_SUPPORTED = "SubscriptionTypeNotSupported"
+    INVOICE_SECTION_IS_RESTRICTED = "InvoiceSectionIsRestricted"
 
 
-class TargetCloud(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Possible cloud environments."""
+class SubscriptionWorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Azure workload type of the subscription."""
 
-    US_GOV = "USGov"
-    US_NAT = "USNat"
-    US_SEC = "USSec"
-
-
-class TransactionTypeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of transaction. Options are all or reservation."""
-
-    ALL = "all"
-    RESERVATION = "reservation"
+    NONE = "None"
+    PRODUCTION = "Production"
+    DEV_TEST = "DevTest"
+    INTERNAL = "Internal"
 
 
-class ViewCharges(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class SupportedAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The supported account types."""
+
+    NONE = "None"
+    PARTNER = "Partner"
+    INDIVIDUAL = "Individual"
+    ENTERPRISE = "Enterprise"
+
+
+class SupportLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The support level offer associated with an enrollment."""
+
+    OTHER = "Other"
+    STANDARD = "Standard"
+    PRO_DIRECT = "Pro-Direct"
+    DEVELOPER = "Developer"
+
+
+class TaxIdentifierStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the tax identifier."""
+
+    OTHER = "Other"
+    VALID = "Valid"
+    INVALID = "Invalid"
+
+
+class TaxIdentifierType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the tax identifier."""
+
+    OTHER = "Other"
+    BRAZIL_CCM_ID = "BrazilCcmId"
+    BRAZIL_CNPJ_ID = "BrazilCnpjId"
+    BRAZIL_CPF_ID = "BrazilCpfId"
+    CANADIAN_FEDERAL_EXEMPT = "CanadianFederalExempt"
+    CANADIAN_PROVINCE_EXEMPT = "CanadianProvinceExempt"
+    EXTERNAL_TAXATION = "ExternalTaxation"
+    INDIA_FEDERAL_TAN_ID = "IndiaFederalTanId"
+    INDIA_FEDERAL_SERVICE_TAX_ID = "IndiaFederalServiceTaxId"
+    INDIA_PAN_ID = "IndiaPanId"
+    INDIA_STATE_CST_ID = "IndiaStateCstId"
+    INDIA_STATE_GST_IN_ID = "IndiaStateGstINId"
+    INDIA_STATE_VAT_ID = "IndiaStateVatId"
+    INTL_EXEMPT = "IntlExempt"
+    US_EXEMPT = "USExempt"
+    VAT_ID = "VatId"
+    LOVE_CODE = "LoveCode"
+    MOBILE_BAR_CODE = "MobileBarCode"
+    NATIONAL_IDENTIFICATION_NUMBER = "NationalIdentificationNumber"
+    PUBLIC_SECTOR_ID = "PublicSectorId"
+
+
+class TransactionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the transaction, billed or unbilled."""
+
+    OTHER = "Other"
+    ALL = "All"
+    RESERVATION = "Reservation"
+
+
+class TransactionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TransactionType."""
+
+    OTHER = "Other"
+    BILLED = "Billed"
+    UNBILLED = "Unbilled"
+
+
+class TransferStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a transfer."""
+
+    EXPIRED = "Expired"
+    PENDING = "Pending"
+    IN_PROGRESS = "InProgress"
+    COMPLETED = "Completed"
+    COMPLETED_WITH_ERRORS = "CompletedWithErrors"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    DECLINED = "Declined"
+
+
+class ViewChargesPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy that controls whether the users in customer's organization can view charges at
     pay-as-you-go prices.
     """
 
-    ALLOWED = "Allowed"
-    NOT_ALLOWED = "NotAllowed"
-
-
-class ViewChargesPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The policy that controls whether users with Azure RBAC access to a subscription can view its
-    charges.
-    """
-
+    OTHER = "Other"
     ALLOWED = "Allowed"
     NOT_ALLOWED = "NotAllowed"
