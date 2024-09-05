@@ -467,9 +467,9 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
     async def test_get_schema_unknown_content_type(self, **kwargs):
 
         # test known content type first
-        avro_schema_id = "avroschemaid123"
-        avro_schema_name = "avroname"
-        avro_group_name = "avrogroup"
+        avro_schema_id = "avro_schema_id_123"
+        avro_schema_name = "avro_name"
+        avro_group_name = "avro_group"
         avro_schema_version = "1"
         avro_content_type = "application/json; serialization=Avro"
         transport = AsyncMockTransport(response=AsyncMockResponse(
@@ -492,9 +492,9 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert schema.properties.format == SchemaFormat.AVRO
 
             # get unknown schema with content type of format "application/json; serialization=<format>"
-            foo_schema_id = "fooschemaid123"
-            foo_schema_name = "fooname"
-            foo_group_name = "foogroup"
+            foo_schema_id = "foo_schema_id_123"
+            foo_schema_name = "foo_name"
+            foo_group_name = "foo_group"
             foo_schema_version = "1"
             foo_content_type = "application/json; serialization=Foo"
             transport._response = AsyncMockResponse(
@@ -512,9 +512,9 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
             assert schema.properties.format == foo_content_type
 
             # get unknown schema with content type of format "contenttype/<unknown>"
-            bar_schema_id = "barschemaid123"
-            bar_schema_name = "barname"
-            bar_group_name = "bargroup"
+            bar_schema_id = "bar_schema_id_123"
+            bar_schema_name = "bar_name"
+            bar_group_name = "bar_group"
             bar_schema_version = "1"
             bar_content_type = "contenttype/bar"
             transport._response = AsyncMockResponse(
