@@ -1,3 +1,5 @@
+from .__openai_patcher import TestProxyConfig, TestProxyHttpxClientBase  # isort: split
+
 import json
 import multiprocessing
 import time
@@ -8,6 +10,8 @@ from unittest.mock import patch
 
 import pytest
 from devtools_testutils import is_live
+from devtools_testutils.config import PROXY_URL
+from devtools_testutils.helpers import get_recording_id
 from promptflow.client import PFClient
 from promptflow.core import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from promptflow.executor._line_execution_process_pool import _process_wrapper
@@ -33,6 +37,22 @@ class SanitizedValues(str, Enum):
     WORKSPACE_NAME = "00000"
     TENANT_ID = "00000000-0000-0000-0000-000000000000"
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
+
+
+@pytest.fixture
+def redirect_openai_requests():
+    """Route requests from the openai package to the test proxy."""
+    config = TestProxyConfig(
+        recording_id=get_recording_id(), recording_mode="record" if is_live() else "playback", proxy_url=PROXY_URL
+    )
+
+    with TestProxyHttpxClientBase.record_with_proxy(config):
+        yield
+
+
+@pytest.fixture
+def recorded_test(recorded_test, redirect_openai_requests):
+    return recorded_test
 
 
 @pytest.fixture(scope="session")
