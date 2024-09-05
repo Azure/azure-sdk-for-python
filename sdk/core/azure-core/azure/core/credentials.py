@@ -92,7 +92,7 @@ class TokenCredential(Protocol):
 
 
 @runtime_checkable
-class SupportsTokenInfo(ContextManager["SupportsTokenInfo"], Protocol):
+class SupportsTokenInfo(Protocol, ContextManager["SupportsTokenInfo"]):
     """Protocol for classes able to provide OAuth access tokens with additional properties."""
 
     def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
@@ -109,6 +109,9 @@ class SupportsTokenInfo(ContextManager["SupportsTokenInfo"], Protocol):
         :return: An AccessTokenInfo instance containing information about the token.
         """
         ...
+
+    def close(self) -> None:
+        pass
 
 
 TokenProvider = Union[TokenCredential, SupportsTokenInfo]
