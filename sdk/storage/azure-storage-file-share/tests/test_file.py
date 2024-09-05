@@ -3827,8 +3827,8 @@ class TestStorageFile(StorageRecordedTestCase):
 
         new_file.delete_file()
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
-    @recorded_by_proxy
     def test_download_file_decompress(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

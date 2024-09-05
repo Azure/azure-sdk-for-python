@@ -1633,8 +1633,8 @@ class TestFile(StorageRecordedTestCase):
         fc.get_file_properties()
         fc.upload_data(data, overwrite=True)
 
+    @pytest.mark.live_test_only
     @DataLakePreparer()
-    @recorded_by_proxy
     def test_download_file_decompress(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
