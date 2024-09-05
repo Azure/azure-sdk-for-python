@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- All credentials now support the `SupportsTokenInfo` protocol. Each credential now has a `get_token_info` method which returns an `AccessTokenInfo` object. The `get_token_info` method is an alternative method to `get_token` that improves support support for more complex authentication scenarios. ([#36882](https://github.com/Azure/azure-sdk-for-python/pull/36882))
+    - Information on when a token should be refreshed is now saved in `AccessTokenInfo` (if available).
+
 ### Breaking Changes
 
 ### Bugs Fixed

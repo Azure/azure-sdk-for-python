@@ -6,7 +6,7 @@ import logging
 import os
 from typing import List, TYPE_CHECKING, Any, Optional, cast
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority, within_dac
 from .azure_powershell import AzurePowerShellCredential
@@ -214,7 +214,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
-          `message` attribute listing each authentication attempt and its error message.
+            `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
             token = self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
@@ -226,3 +226,32 @@ class DefaultAzureCredential(ChainedTokenCredential):
         token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
         within_dac.set(False)
         return token
+
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
+           `message` attribute listing each authentication attempt and its error message.
+        """
+        if self._successful_credential:
+            token_info = cast(SupportsTokenInfo, self._successful_credential).get_token_info(*scopes, options=options)
+            _LOGGER.info(
+                "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
+            )
+            return token_info
+
+        within_dac.set(True)
+        token_info = cast(SupportsTokenInfo, super()).get_token_info(*scopes, options=options)
+        within_dac.set(False)
+        return token_info

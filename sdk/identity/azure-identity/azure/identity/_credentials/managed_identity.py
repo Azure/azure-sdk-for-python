@@ -4,9 +4,9 @@
 # ------------------------------------
 import logging
 import os
-from typing import Optional, TYPE_CHECKING, Any, Mapping
+from typing import Optional, TYPE_CHECKING, Any, Mapping, cast
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.decorators import log_get_token
@@ -160,3 +160,28 @@ class ManagedIdentityCredential:
                 "troubleshoot this issue."
             )
         return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+
+    @log_get_token
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+        :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment.
+        """
+        if not self._credential:
+            raise CredentialUnavailableError(
+                message="No managed identity endpoint found. \n"
+                "The Target Azure platform could not be determined from environment variables. \n"
+                "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
+                "troubleshoot this issue."
+            )
+        return cast(SupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)

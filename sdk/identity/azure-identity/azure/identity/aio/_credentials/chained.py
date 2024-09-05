@@ -4,10 +4,11 @@
 # ------------------------------------
 import asyncio
 import logging
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, cast
 
 from azure.core.exceptions import ClientAuthenticationError
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
+from azure.core.credentials_async import AsyncSupportsTokenInfo
 from .._internal import AsyncContextManager
 from ... import CredentialUnavailableError
 from ..._credentials.chained import _get_error_message
@@ -42,7 +43,7 @@ class ChainedTokenCredential(AsyncContextManager):
         if not credentials:
             raise ValueError("at least one credential is required")
 
-        self._successful_credential = None  # type: Optional[AsyncTokenCredential]
+        self._successful_credential: Optional[AsyncTokenCredential] = None
         self.credentials = credentials
 
     async def close(self) -> None:
@@ -104,4 +105,65 @@ class ChainedTokenCredential(AsyncContextManager):
             + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at "
             "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
         )
+        raise ClientAuthenticationError(message=message)
+
+    async def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request a token from each chained credential, in order, returning the first token received.
+
+        If no credential provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`
+        with an error message from each credential.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+
+        :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token.
+        """
+        within_credential_chain.set(True)
+        history = []
+        for credential in self.credentials:
+            try:
+                # A custom credential in the chain may not implement get_token_info
+                if hasattr(credential, "get_token_info"):
+                    token_info = await cast(AsyncSupportsTokenInfo, credential).get_token_info(*scopes, options=options)
+                else:
+                    options = options or {}
+                    token = await credential.get_token(*scopes, **options)
+                    token_info = AccessTokenInfo(token=token.token, expires_on=token.expires_on)
+                _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
+                self._successful_credential = credential
+                within_credential_chain.set(False)
+                return token_info
+            except CredentialUnavailableError as ex:
+                # credential didn't attempt authentication because it lacks required data or state -> continue
+                history.append((credential, ex.message))
+            except Exception as ex:  # pylint: disable=broad-except
+                # credential failed to authenticate, or something unexpectedly raised -> break
+                history.append((credential, str(ex)))
+                _LOGGER.debug(
+                    '%s.get_token_info failed: %s raised unexpected error "%s"',
+                    self.__class__.__name__,
+                    credential.__class__.__name__,
+                    ex,
+                    exc_info=True,
+                )
+                break
+
+        within_credential_chain.set(False)
+        attempts = _get_error_message(history)
+        message = (
+            self.__class__.__name__
+            + " failed to retrieve a token from the included credentials."
+            + attempts
+            + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
+        )
+        _LOGGER.warning(message)
         raise ClientAuthenticationError(message=message)
