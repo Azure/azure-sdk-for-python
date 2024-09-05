@@ -25,7 +25,7 @@ from typing import Dict, Any, Tuple, List, Optional, Callable, cast, Union
 
 from azure.core.paging import PageIterator
 
-from azure.cosmos._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2, ChangeFeedFetcher
+from azure.cosmos._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
 
 
@@ -82,7 +82,7 @@ class ChangeFeedIterable(PageIterator):
         self._validate_change_feed_state_context(change_feed_state_context)
         self._options["changeFeedStateContext"] = change_feed_state_context
 
-        super(ChangeFeedIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
+        super(ChangeFeedIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token) # type: ignore[arg-type]
 
     def _unpack(self, block: List[Dict[str, Any]]) -> Tuple[Optional[str], List[Dict[str, Any]]]:
         continuation: Optional[str] = None

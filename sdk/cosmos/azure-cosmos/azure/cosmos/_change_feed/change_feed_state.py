@@ -72,7 +72,7 @@ class ChangeFeedState(ABC):
         pass
 
     @abstractmethod
-    def apply_server_response_continuation(self, continuation: str) -> None:
+    def apply_server_response_continuation(self, continuation: str, has_modified_response: bool) -> None:
         pass
 
     @staticmethod
@@ -170,7 +170,7 @@ class ChangeFeedStateV1(ChangeFeedState):
         if self._partition_key is not None:
             feed_options["partitionKey"] = self._partition_key
 
-    def apply_server_response_continuation(self, continuation: str) -> None:
+    def apply_server_response_continuation(self, continuation: str, has_modified_response) -> None:
         self._continuation = continuation
 
 class ChangeFeedStateV2(ChangeFeedState):
@@ -322,8 +322,8 @@ class ChangeFeedStateV2(ChangeFeedState):
             resource_link: str) -> None:
         await self._continuation.handle_feed_range_gone_async(routing_provider, resource_link)
 
-    def apply_server_response_continuation(self, continuation: str) -> None:
-        self._continuation.apply_server_response_continuation(continuation)
+    def apply_server_response_continuation(self, continuation: str, has_modified_response: bool) -> None:
+        self._continuation.apply_server_response_continuation(continuation, has_modified_response)
 
     def should_retry_on_not_modified_response(self) -> bool:
         return self._continuation.should_retry_on_not_modified_response()
