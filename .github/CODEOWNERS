@@ -330,7 +330,7 @@
 /sdk/openai/                                                         @kristapratico @glecaros
 
 # ServiceLabel: %Operator Nexus - Network Cloud
-# PRLabels: %Operator Nexus - Network Cloud
+# PRLabel: %Operator Nexus - Network Cloud
 /sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
 
 # ServiceLabel: %Purview
