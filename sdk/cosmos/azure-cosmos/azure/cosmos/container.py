@@ -130,9 +130,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
-    def _get_epk_range_for_partition_key(
-            self,
-            partition_key_value: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> Range: # pylint: disable=line-too-long
+    def _get_epk_range_for_partition_key( self, partition_key_value: PartitionKeyType) -> Range:
         container_properties = self._get_properties()
         partition_key_definition = container_properties["partitionKey"]
         partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
