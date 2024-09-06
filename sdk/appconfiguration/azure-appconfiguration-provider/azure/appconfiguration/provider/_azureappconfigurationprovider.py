@@ -475,7 +475,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     keys. Enables resolution of Key Vault references in configuration settings.
     """
 
-    def __init__(self, endpoint, replica_client_manager, **kwargs) -> None:
+    def __init__(self, endpoint, replica_client_manager = None, **kwargs) -> None:
         self._origin_endpoint = endpoint
         self._replica_client_manager = replica_client_manager
         self._dict: Dict[str, Any] = {}
