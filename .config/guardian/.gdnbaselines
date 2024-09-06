@@ -1,0 +1,29 @@
+{
+  "properties": {
+    "helpUri": "https://eng.ms/docs/microsoft-security/security/azure-security/cloudai-security-fundamentals-engineering/security-integration/guardian-wiki/microsoft-guardian/general/baselines"
+  },
+  "version": "1.0.0",
+  "baselines": {
+    "default": {
+      "name": "default",
+      "createdDate": "2024-09-06 17:50:27Z",
+      "lastUpdatedDate": "2024-09-06 17:50:27Z"
+    }
+  },
+  "results": {
+    "2bd5003e36b0886cffd60b850a321b327d52ccf2527d1fb0669f28b7aa367c02": {
+      "signature": "2bd5003e36b0886cffd60b850a321b327d52ccf2527d1fb0669f28b7aa367c02",
+      "alternativeSignatures": [],
+      "target": "sdk/core/azure-mgmt-core/tests/test_authentication.py",
+      "line": 50,
+      "memberOf": [
+        "default"
+      ],
+      "tool": "credscan",
+      "ruleId": "CSCAN-GENERAL0140",
+      "createdDate": "2024-09-06 17:50:27Z",
+      "expirationDate": "2025-02-23 18:28:49Z",
+      "justification": "This error is baselined with an expiration date of 180 days from 2024-09-06 18:28:49Z"
+    }
+  }
+}
