@@ -218,6 +218,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     )
 
     provider = await _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
+    await provider._replica_client_manager.setup_initial_clients()  # pylint:disable=protected-access
     headers = _get_headers(
         kwargs.pop("headers", {}),
         "Startup",
@@ -243,36 +244,11 @@ async def _buildprovider(
         endpoint = connection_string.split(";")[0].split("=")[1]
     if not endpoint:
         raise ValueError("No endpoint specified.")
-    retry_total = kwargs.pop("retry_total", 2)
-    retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
-    replica_discovery_enabled = kwargs.pop("replica_discovery_enabled", True)
 
-    if "user_agent" in kwargs:
-        user_agent = kwargs.pop("user_agent") + " " + USER_AGENT
-    else:
-        user_agent = USER_AGENT
+    kwargs["connection_string"] = connection_string
+    kwargs["credential"] = credential
 
-    interval: int = kwargs.get("refresh_interval", 30)
-    if interval < 1:
-        raise ValueError("Refresh interval must be greater than or equal to 1 second.")
-
-    min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
-    max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
-
-    replica_client_manager = AsyncConfigurationClientManager(
-        connection_string,
-        endpoint,
-        credential,
-        user_agent,
-        retry_total,
-        retry_backoff_max,
-        replica_discovery_enabled,
-        min_backoff,
-        max_backoff,
-        **kwargs
-    )
-    await replica_client_manager.setup_initial_clients()
-    provider = AzureAppConfigurationProvider(endpoint, replica_client_manager, **kwargs)
+    provider = AzureAppConfigurationProvider(endpoint, **kwargs)
     return provider
 
 
@@ -331,9 +307,33 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     keys. Enables resolution of Key Vault references in configuration settings.
     """
 
-    def __init__(self, endpoint, replica_client_manager = None, **kwargs) -> None:
+    def __init__(self, endpoint, **kwargs) -> None:
         self._origin_endpoint = endpoint
-        self._replica_client_manager = replica_client_manager
+
+        if "user_agent" in kwargs:
+            user_agent = kwargs.pop("user_agent") + " " + USER_AGENT
+        else:
+            user_agent = USER_AGENT
+
+        interval: int = kwargs.get("refresh_interval", 30)
+        if interval < 1:
+            raise ValueError("Refresh interval must be greater than or equal to 1 second.")
+
+        min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
+        max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
+
+        self._replica_client_manager = AsyncConfigurationClientManager(
+            connection_string=kwargs.pop("connection_string", None),
+            endpoint=endpoint,
+            credential=kwargs.pop("credential", None),
+            user_agent=user_agent,
+            retry_total=kwargs.pop("retry_total", 2),
+            retry_backoff_max=kwargs.pop("retry_backoff_max", 60),
+            replica_discovery_enabled=kwargs.pop("replica_discovery_enabled", True),
+            min_backoff_sec=min_backoff,
+            max_backoff_sec=max_backoff,
+            **kwargs
+        )
         self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
