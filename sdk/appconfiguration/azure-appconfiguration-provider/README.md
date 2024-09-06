@@ -170,7 +170,9 @@ config = load(endpoint=endpoint, credential=DefaultAzureCredential(), key_vault_
 
 ## Geo Replication
 
-The Azure App Configuration Provider library will automatically discover the provided configuration store's replicas at startup. If the store has any issue, the provider will automatically switch a replica if available. The provider will continue to use the replica until the store is available again.
+The Azure App Configuration Provider library will automatically discover the provided configuration store's replicas and use the replicas if any issue arrises. From more information see [Geo-Replication](https://learn.microsoft.com/azure/azure-app-configuration/howto-geo-replication).
+
+) on MS Learn.
 
 Replica discovery is enabled by default. If you want to disable it, you can set `replica_discovery_enabled` to `False`.
 
