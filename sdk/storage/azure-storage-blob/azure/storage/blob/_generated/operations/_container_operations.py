@@ -54,7 +54,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -103,7 +103,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -144,7 +144,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -190,7 +190,7 @@ def build_set_metadata_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -235,7 +235,7 @@ def build_get_access_policy_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -281,7 +281,7 @@ def build_set_access_policy_request(
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -331,7 +331,7 @@ def build_restore_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -379,7 +379,7 @@ def build_rename_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -423,7 +423,7 @@ def build_submit_batch_request(
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["batch"] = kwargs.pop("comp", _params.pop("comp", "batch"))
     multipart_content_type: Optional[str] = kwargs.pop("multipart_content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -468,7 +468,7 @@ def build_filter_blobs_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["blobs"] = kwargs.pop("comp", _params.pop("comp", "blobs"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -519,7 +519,7 @@ def build_acquire_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -570,7 +570,7 @@ def build_release_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -618,7 +618,7 @@ def build_renew_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -666,7 +666,7 @@ def build_break_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -716,7 +716,7 @@ def build_change_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -765,7 +765,7 @@ def build_list_blob_flat_segment_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -816,7 +816,7 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -859,7 +859,7 @@ def build_get_account_info_request(
 
     restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
