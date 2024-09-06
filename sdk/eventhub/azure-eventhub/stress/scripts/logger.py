@@ -33,8 +33,15 @@ def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_consol
     return logger
 
 
-def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None,
-               log_file_max_bytes=20 * 1024 * 1024, log_file_backup_count=3):
+def get_logger(
+    log_filename,
+    logger_name,
+    max_logfile_size=10000,
+    logfile_backup_count=2000,
+    level=logging.ERROR,
+    print_console=False,
+    log_format=None,
+):
     stress_logger = logging.getLogger(logger_name)
     stress_logger.setLevel(level)
     eventhub_logger = logging.getLogger("azure.eventhub")
@@ -44,8 +51,11 @@ def get_logger(log_filename, logger_name, level=logging.ERROR, print_console=Fal
 
     formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(funcName)s(%(lineno)d) %(message)s')
 
-    file_handler = RotatingFileHandler(log_filename, maxBytes=10000 * 1000, 
-                                backupCount=2000)
+    file_handler = RotatingFileHandler(
+        log_filename,
+        maxBytes=max_logfile_size * 1000,
+        backupCount=logfile_backup_count
+    )
     file_handler.setFormatter(formatter)
     eventhub_logger.addHandler(file_handler)
     uamqp_logger.addHandler(file_handler)

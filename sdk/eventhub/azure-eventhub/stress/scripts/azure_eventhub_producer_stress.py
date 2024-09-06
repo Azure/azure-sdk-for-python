@@ -168,6 +168,12 @@ class StressTestRunner:
         self.argument_parser.add_argument("--ignore_send_failure", help="ignore sending failures", action="store_true")
         self.argument_parser.add_argument("--uamqp_mode", help="Flag for uamqp or pyamqp", action="store_true")
         self.argument_parser.add_argument("--debug_level", help="Flag for setting a debug level, can be Info, Debug, Warning, Error or Critical", type=str, default="Error")
+        self.argument_parser.add_argument("--max_logfile_size", help="Maximum log file size in KB before logs are rotated. Default is 10000 KB.", type=int, default=10000)
+        self.argument_parser.add_argument("--logfile_backup_count", help="""New log files will successively be created up the backup count in reverse chronological, where *.log.1 is the most recent."""
+                                          """Logs are always written to the base log file - when it gets filled up, it is closed and renamed to <base.log>.1. Default is 2000.""",
+                                          type=int,
+                                          default=2000
+                                        )
         self.args, _ = parser.parse_known_args()
 
         if self.args.send_partition_key and self.args.send_partition_id:
@@ -275,8 +281,14 @@ class StressTestRunner:
             logdir = os.environ.get("DEBUG_SHARE")
             logfilepath = f"{logdir}/{log_filename}"
 
-            logger = get_logger(logfilepath, method_name,
-                                level=self.debug_level, print_console=self.args.print_console)
+            logger = get_logger(
+                        logfilepath,
+                        method_name,
+                        max_logfile_size=self.args.max_logfile_size,
+                        logfile_backup_count=self.args.logfile_backup_count
+                        level=self.debug_level,
+                        print_console=self.args.print_console,
+                    )
             test_method = globals()[method_name]
             self.running = True
 
@@ -381,8 +393,14 @@ class StressTestRunner:
             logdir = os.environ.get("DEBUG_SHARE")
             logfilepath = f"{logdir}/{log_filename}"
 
-            logger = get_logger(logfilepath, method_name,
-                                level=self.debug_level, print_console=self.args.print_console)
+            logger = get_logger(
+                logfilepath,
+                method_name,
+                max_logfile_size=self.args.max_logfile_size,
+                logfile_backup_count=self.args.logfile_backup_count
+                level=self.debug_level,
+                print_console=self.args.print_console
+            )
             test_method = globals()[method_name]
             self.running = True
 
