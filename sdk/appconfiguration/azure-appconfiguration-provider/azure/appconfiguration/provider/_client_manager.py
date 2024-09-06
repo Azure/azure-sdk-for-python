@@ -6,7 +6,6 @@
 from logging import getLogger
 import json
 import time
-import threading
 import random
 from dataclasses import dataclass
 from typing import Tuple, Union, Dict, List, Any, Optional, Mapping
@@ -319,7 +318,6 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
         self._args = dict(kwargs)
         self._min_backoff_sec = min_backoff_sec
         self._max_backoff_sec = max_backoff_sec
-        self._refresh_client_lock = threading.Lock()
 
         if connection_string and endpoint:
             self._replica_clients.append(
@@ -344,8 +342,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
             return
         if self._next_update_time > time.time():
             return
-        with self._refresh_client_lock:
-            self._setup_failover_endpoints()
+        self._setup_failover_endpoints()
 
     def _setup_failover_endpoints(self):
         failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
