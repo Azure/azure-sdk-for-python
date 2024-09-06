@@ -397,7 +397,7 @@ class StressTestRunner:
                 logfilepath,
                 method_name,
                 max_logfile_size=self.args.max_logfile_size,
-                logfile_backup_count=self.args.logfile_backup_count
+                logfile_backup_count=self.args.logfile_backup_count,
                 level=self.debug_level,
                 print_console=self.args.print_console
             )
