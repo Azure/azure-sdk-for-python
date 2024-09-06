@@ -15,7 +15,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._encoder import TableEntityEncoder, TableEntityEncoderABC
-from ._decoder import TableEntityDecoder, TableEntityDecoderABC
+from ._decoder import TableEntityDecoder, TableEntityDecoderABC, deserialize_iso
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
 from ._error import (
@@ -31,7 +31,6 @@ from ._serialize import (
     _parameter_filter_substitution,
     _get_match_condition,
 )
-from ._deserialize import deserialize_iso, _return_headers_and_deserialized, _trim_service_metadata
 from ._table_batch import (
     TableBatchOperations,
     EntityType,
@@ -43,6 +42,41 @@ from ._models import TableEntityPropertiesPaged, UpdateMode, TableAccessPolicy, 
 T = TypeVar("T")
 DEFAULT_ENCODER = TableEntityEncoder()
 DEFAULT_DECODER = TableEntityDecoder()
+
+
+def _get_enum_value(value):
+    if value is None or value in ["None", ""]:
+        return None
+    try:
+        return value.value
+    except AttributeError:
+        return value
+
+
+def _normalize_headers(headers):
+    normalized = {}
+    for key, value in headers.items():
+        if key.startswith("x-ms-"):
+            key = key[5:]
+        normalized[key.lower().replace("-", "_")] = _get_enum_value(value)
+    return normalized
+
+
+def _return_headers_and_deserialized(_, deserialized, response_headers):
+    return _normalize_headers(response_headers), deserialized
+
+
+def _trim_service_metadata(metadata: Dict[str, str], content: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    result: Dict[str, Any] = {
+        "date": metadata.pop("date", None),
+        "etag": metadata.pop("etag", None),
+        "version": metadata.pop("version", None),
+    }
+    preference = metadata.pop("preference_applied", None)
+    if preference:
+        result["preference_applied"] = preference
+        result["content"] = content
+    return result
 
 
 class TableClient(TablesBaseClient):

@@ -5,18 +5,34 @@
 # --------------------------------------------------------------------------
 import abc
 from typing import Any, Mapping, Union, Generic, Dict
-from datetime import timezone
+from datetime import datetime, timezone
 from urllib.parse import quote
 from uuid import UUID
 
 from ._common_conversion import _decode_base64_to_bytes
 from ._encoder import T
 from ._entity import EntityProperty, EdmType, TableEntity
-from ._deserialize import TablesEntityDatetime
+
+
+def deserialize_iso(value):
+    if not value:
+        return value
+    return _from_entity_datetime(value)
+
+
+class TablesEntityDatetime(datetime):
+    @property
+    def tables_service_value(self):
+        try:
+            return self._service_value
+        except AttributeError:
+            return ""
 
 
 def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
+    # .NET has more decimal places than Python supports in datetime objects, this truncates
+    # values after 6 decimal places.
     value_list = value.split(".")
     if len(value_list) == 2:
         ms = value_list[-1].replace("Z", "")

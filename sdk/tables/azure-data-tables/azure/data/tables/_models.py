@@ -19,13 +19,13 @@ from ._generated.models import (
     RetentionPolicy as GeneratedRetentionPolicy,
     CorsRule as GeneratedCorsRule,
 )
-from ._deserialize import (
-    _return_context_and_deserialized,
-    _extract_continuation_token,
-)
 from ._decoder import TableEntityDecoderABC
 from ._error import _process_table_error
 from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
+
+
+def _return_context_and_deserialized(response, deserialized, response_headers):
+    return response.context["location_mode"], deserialized, response_headers
 
 
 class TableAccessPolicy(GenAccessPolicy):
@@ -314,6 +314,21 @@ class TablePropertiesPaged(PageIterator):
         self._location_mode, self._response, self._headers = get_next_return
         props_list = [TableItem(t.table_name) for t in self._response.value]
         return self._headers[NEXT_TABLE_NAME] or None, props_list
+
+
+def _extract_continuation_token(continuation_token):
+    """Extract list entity continuation headers from token.
+
+    :param Dict(str,str) continuation_token: The listing continuation token.
+    :returns: The next partition key and next row key in a tuple
+    :rtype: (str,str)
+    """
+    if not continuation_token:
+        return None, None
+    try:
+        return continuation_token.get("PartitionKey"), continuation_token.get("RowKey")
+    except AttributeError as exc:
+        raise ValueError("Invalid continuation token format.") from exc
 
 
 class TableEntityPropertiesPaged(PageIterator):
