@@ -7,40 +7,25 @@
 # --------------------------------------------------------------------------
 import uuid
 from datetime import datetime, timezone
-from math import isnan
-from typing import Dict, Union
 
-from azure.data.tables import TableClient, EdmType, EntityProperty, TableEntity, TableEntityDecoderABC
+from azure.data.tables import TableClient, EdmType, EntityProperty
 from azure.data.tables._common_conversion import _to_utc_datetime
 
-from _shared.testcase import TableTestCase, _convert_to_entity
+from _shared.testcase import TableTestCase
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from preparers import tables_decorator
+from preparers import cosmos_decorator
+from test_decoder import MyDecoder, _clean
 
 
-class MyDecoder(TableEntityDecoderABC[TableEntity]):
-    def decode_entity(self, entity_json: Dict[str, Union[str, int, float, bool]]) -> TableEntity:
-        return _convert_to_entity(entity_json)
-
-
-def _clean(entity):
-    cleaned = {}
-    for key, value in entity.items():
-        if isinstance(value, float) and isnan(value):
-            value = "NaN"
-        cleaned[key] = value
-    return cleaned
-
-
-class TestTableDecoder(AzureRecordedTestCase, TableTestCase):
-    @tables_decorator
+class TestTableDecoderCosmos(AzureRecordedTestCase, TableTestCase):
+    @cosmos_decorator
     @recorded_by_proxy
-    def test_decode_entity_basic(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_decode_entity_basic(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable01")
-        url = self.account_url(tables_storage_account_name, "table")
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Test basic string, int32 and bool data
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
             created = client.create_entity(test_entity)
@@ -73,20 +58,20 @@ class TestTableDecoder(AzureRecordedTestCase, TableTestCase):
                 assert (
                     new == old
                 ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
-
+            
             client.delete_table()
-    
-    @tables_decorator
+
+    @cosmos_decorator
     @recorded_by_proxy
     def test_decode_entity_type_conversion(
-        self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
-        table_name = self.get_resource_name("uttable02")
-        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("uttable03")
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
         # All automatically detected data types
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             test_entity = {
                 "PartitionKey": "PK",
@@ -122,21 +107,21 @@ class TestTableDecoder(AzureRecordedTestCase, TableTestCase):
                 assert (
                     new == old
                 ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
-            
+
             client.delete_table()
         return recorded_variables
 
-    @tables_decorator
+    @cosmos_decorator
     @recorded_by_proxy
     def test_decode_entity_tuples(
-        self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
     ):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
-        table_name = self.get_resource_name("uttable03")
-        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("uttable04")
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Explicit datatypes using Tuple definition
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             test_entity = {
                 "PartitionKey": "PK",
@@ -200,15 +185,15 @@ class TestTableDecoder(AzureRecordedTestCase, TableTestCase):
             client.delete_table()
         return recorded_variables
 
-    @tables_decorator
+    @cosmos_decorator
     @recorded_by_proxy
-    def test_decode_entity_raw(self, tables_storage_account_name, tables_primary_storage_account_key, **kwargs):
+    def test_decode_entity_raw(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
-        table_name = self.get_resource_name("uttable04")
-        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("uttable05")
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Raw payload with existing EdmTypes
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             dt = self.get_datetime()
             guid = recorded_uuid
@@ -234,6 +219,7 @@ class TestTableDecoder(AzureRecordedTestCase, TableTestCase):
                 "Data8": "1152921504606846976",
                 "Data8@odata.type": "Edm.Int64",
             }
+            
             created = client.create_entity(test_entity)
             result = client.get_entity("PK", "RK")
             old_result = client.get_entity("PK", "RK", decoder=MyDecoder())
@@ -260,14 +246,12 @@ class TestTableDecoder(AzureRecordedTestCase, TableTestCase):
             client.delete_table()
         return recorded_variables
 
-    @tables_decorator
+    @cosmos_decorator
     @recorded_by_proxy
-    def test_decode_entity_atypical_values(
-        self, tables_storage_account_name, tables_primary_storage_account_key
-    ):
-        table_name = self.get_resource_name("uttable05")
-        url = self.account_url(tables_storage_account_name, "table")
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+    def test_decode_entity_atypical_values(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        table_name = self.get_resource_name("uttable06")
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             # Non-UTF8 characters in both keys and properties
             non_utf8_char = "你好"
@@ -279,17 +263,8 @@ class TestTableDecoder(AzureRecordedTestCase, TableTestCase):
                 result == old_result
             ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
-            # Invalid int32 and int64 values
-            max_int64 = 9223372036854775807
-            test_entity = {"PartitionKey": "PK", "RowKey": "RK1", "Data": int((max_int64 + 1) * 1000)}
-            created = client.create_entity(test_entity)
-            result = client.get_entity("PK", "RK1")
-            old_result = client.get_entity("PK", "RK1", decoder=MyDecoder())
-            assert (
-                result == old_result
-            ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
-
             # Valid int64 value with Edm
+            max_int64 = 9223372036854775807
             test_entity = {"PartitionKey": "PK", "RowKey": "RK2", "Data": (max_int64, "Edm.Int64")}
             created = client.create_entity(test_entity)
             result = client.get_entity("PK", "RK2")
