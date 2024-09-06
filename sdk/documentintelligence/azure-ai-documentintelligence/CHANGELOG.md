@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b4 (2024-09-05)
 
 ### Features Added
 - Added support for the Analyze Batch Documents API:
