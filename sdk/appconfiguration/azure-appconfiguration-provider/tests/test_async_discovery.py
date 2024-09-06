@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import pytest
 from unittest.mock import patch, call
-from azure.appconfiguration.provider.aio._discovery import (
+from azure.appconfiguration.provider.aio._async_discovery import (
     _get_known_domain,
     _request_record,
     _find_replicas,
@@ -41,7 +41,7 @@ class TestDiscovery:
         assert _get_known_domain(fake_endpoint) == APPCONFIG_IO
 
     @pytest.mark.asyncio
-    @patch("azure.appconfiguration.provider.aio._discovery.dns.asyncresolver.resolve")
+    @patch("azure.appconfiguration.provider.aio._async_discovery.dns.asyncresolver.resolve")
     async def test_request_record(self, mock_dns):
         origin_request = "_origin._tcp.fake.endpoint"
         mock_dns.return_value = []
@@ -63,7 +63,7 @@ class TestDiscovery:
         assert not await _request_record(origin_request)
 
     @pytest.mark.asyncio
-    @patch("azure.appconfiguration.provider.aio._discovery._request_record")
+    @patch("azure.appconfiguration.provider.aio._async_discovery._request_record")
     async def test_find_replicas(self, mock_request_record):
         origin = "fake.endpoint"
         mock_request_record.return_value = None
@@ -110,7 +110,7 @@ class TestDiscovery:
         )
 
     @pytest.mark.asyncio
-    @patch("azure.appconfiguration.provider.aio._discovery._request_record")
+    @patch("azure.appconfiguration.provider.aio._async_discovery._request_record")
     async def test_find_origin(self, mock_request_record):
         endpoint = "https://fake.endpoint"
         mock_request_record.return_value = None
@@ -144,8 +144,8 @@ class TestDiscovery:
         mock_request_record.assert_called_once_with("_origin._tcp.fake.endpoint")
 
     @pytest.mark.asyncio
-    @patch("azure.appconfiguration.provider.aio._discovery._find_origin")
-    @patch("azure.appconfiguration.provider.aio._discovery._find_replicas")
+    @patch("azure.appconfiguration.provider.aio._async_discovery._find_origin")
+    @patch("azure.appconfiguration.provider.aio._async_discovery._find_replicas")
     async def test_find_auto_failover_endpoints(self, mock_find_replicas, mock_find_origin):
         endpoint = "https://fake.appconfig.io"
 

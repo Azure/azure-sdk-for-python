@@ -39,7 +39,7 @@ from .._constants import (
     FEATURE_FLAG_KEY,
     EMPTY_LABEL,
 )
-from ._client_manager import ConfigurationClientManager
+from ._async_client_manager import AsyncConfigurationClientManager
 from .._azureappconfigurationprovider import (
     _get_headers,
     _RefreshTimer,
@@ -262,7 +262,7 @@ async def _buildprovider(
     min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
     max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
 
-    replica_client_manager = ConfigurationClientManager(
+    replica_client_manager = AsyncConfigurationClientManager(
         connection_string,
         endpoint,
         credential,

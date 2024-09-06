@@ -30,7 +30,7 @@ from .._constants import (
     TIME_WINDOW_FILTER_KEY,
     TARGETING_FILTER_KEY,
 )
-from ._discovery import find_auto_failover_endpoints
+from ._async_discovery import find_auto_failover_endpoints
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -40,7 +40,7 @@ MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
 
 
 @dataclass
-class _ConfigurationClientWrapper:
+class _AsyncConfigurationClientWrapper:
     endpoint: str
     _client: AzureAppConfigurationClient
     backoff_end_time: float = 0
@@ -58,16 +58,16 @@ class _ConfigurationClientWrapper:
         **kwargs
     ) -> Self:
         """
-        Creates a new instance of the _ConfigurationClientWrapper class, using the provided credential to authenticate
-        requests.
+        Creates a new instance of the _AsyncConfigurationClientWrapper class, using the provided credential to
+        authenticate requests.
 
         :param str endpoint: The endpoint of the App Configuration store
         :param AsyncTokenCredential credential: The credential to use for authentication
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
         :param int retry_backoff_max: The maximum backoff time for retries
-        :return: A new instance of the _ConfigurationClientWrapper class
-        :rtype: _ConfigurationClientWrapper
+        :return: A new instance of the _AsyncConfigurationClientWrapper class
+        :rtype: _AsyncConfigurationClientWrapper
         """
         return cls(
             endpoint,
@@ -86,7 +86,7 @@ class _ConfigurationClientWrapper:
         cls, endpoint: str, connection_string: str, user_agent: str, retry_total: int, retry_backoff_max: int, **kwargs
     ) -> Self:
         """
-        Creates a new instance of the _ConfigurationClientWrapper class, using the provided connection string to
+        Creates a new instance of the _AsyncConfigurationClientWrapper class, using the provided connection string to
         authenticate requests.
 
         :param str endpoint: The endpoint of the App Configuration store
@@ -94,8 +94,8 @@ class _ConfigurationClientWrapper:
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
         :param int retry_backoff_max: The maximum backoff time for retries
-        :return: A new instance of the _ConfigurationClientWrapper class
-        :rtype: _ConfigurationClientWrapper
+        :return: A new instance of the _AsyncConfigurationClientWrapper class
+        :rtype: _AsyncConfigurationClientWrapper
         """
         return cls(
             endpoint,
@@ -299,7 +299,7 @@ class _ConfigurationClientWrapper:
         await self._client.__aexit__(*args)
 
 
-class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
+class AsyncConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         connection_string: Optional[str],
@@ -329,14 +329,14 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
 
         if connection_string and endpoint:
             self._replica_clients.append(
-                _ConfigurationClientWrapper.from_connection_string(
+                _AsyncConfigurationClientWrapper.from_connection_string(
                     endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
             return
         if endpoint and credential:
             self._replica_clients.append(
-                _ConfigurationClientWrapper.from_credential(
+                _AsyncConfigurationClientWrapper.from_credential(
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
@@ -383,7 +383,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                         self._original_endpoint, failover_endpoint
                     )
                     new_clients.append(
-                        _ConfigurationClientWrapper.from_connection_string(
+                        _AsyncConfigurationClientWrapper.from_connection_string(
                             failover_endpoint,
                             failover_connection_string,
                             self._user_agent,
@@ -394,7 +394,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                     )
                 else:
                     new_clients.append(
-                        _ConfigurationClientWrapper.from_credential(
+                        _AsyncConfigurationClientWrapper.from_credential(
                             failover_endpoint,
                             self._credential,
                             self._user_agent,
@@ -413,7 +413,7 @@ class ConfigurationClientManager:  # pylint:disable=too-many-instance-attributes
                 active_clients.append(client)
         return active_clients
 
-    def backoff(self, client: _ConfigurationClientWrapper):
+    def backoff(self, client: _AsyncConfigurationClientWrapper):
         client.failed_attempts += 1
         backoff_time = self._calculate_backoff(client.failed_attempts)
         client.backoff_end_time = (time.time() * 1000) + backoff_time
