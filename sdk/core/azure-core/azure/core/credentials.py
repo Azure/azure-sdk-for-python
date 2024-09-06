@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Any, NamedTuple, Optional
+from typing import Any, NamedTuple, Optional, TypedDict, Union, ContextManager
 from typing_extensions import Protocol, runtime_checkable
 
 
@@ -11,13 +11,56 @@ class AccessToken(NamedTuple):
     """Represents an OAuth access token."""
 
     token: str
+    """The token string."""
     expires_on: int
-    refresh_on: Optional[int] = None
+    """The token's expiration time in Unix time."""
 
 
-AccessToken.token.__doc__ = """The token string."""
-AccessToken.expires_on.__doc__ = """The token's expiration time in Unix time."""
-AccessToken.refresh_on.__doc__ = """When the token should be refreshed in Unix time."""
+class AccessTokenInfo:
+    """Information about an OAuth access token.
+
+    This class is an alternative to `AccessToken` which provides additional information about the token.
+
+    :param str token: The token string.
+    :param int expires_on: The token's expiration time in Unix time.
+    :keyword str token_type: The type of access token. Defaults to 'Bearer'.
+    :keyword int refresh_on: Specifies the time, in Unix time, when the cached token should be proactively
+        refreshed. Optional.
+    """
+
+    token: str
+    """The token string."""
+    expires_on: int
+    """The token's expiration time in Unix time."""
+    token_type: str
+    """The type of access token."""
+    refresh_on: Optional[int]
+    """Specifies the time, in Unix time, when the cached token should be proactively refreshed. Optional."""
+
+    def __init__(
+        self, token: str, expires_on: int, *, token_type: str = "Bearer", refresh_on: Optional[int] = None
+    ) -> None:
+        self.token = token
+        self.expires_on = expires_on
+        self.token_type = token_type
+        self.refresh_on = refresh_on
+
+    def __repr__(self) -> str:
+        return "AccessTokenInfo(token='{}', expires_on={}, token_type='{}', refresh_on={})".format(
+            self.token, self.expires_on, self.token_type, self.refresh_on
+        )
+
+
+class TokenRequestOptions(TypedDict, total=False):
+    """Options to use for access token requests. All parameters are optional."""
+
+    claims: str
+    """Additional claims required in the token, such as those returned in a resource provider's claims
+    challenge following an authorization failure."""
+    tenant_id: str
+    """The tenant ID to include in the token request."""
+    enable_cae: bool
+    """Indicates whether to enable Continuous Access Evaluation (CAE) for the requested token."""
 
 
 @runtime_checkable
@@ -30,7 +73,7 @@ class TokenCredential(Protocol):
         claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         enable_cae: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -48,6 +91,32 @@ class TokenCredential(Protocol):
         ...
 
 
+@runtime_checkable
+class SupportsTokenInfo(Protocol, ContextManager["SupportsTokenInfo"]):
+    """Protocol for classes able to provide OAuth access tokens with additional properties."""
+
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token.
+
+        :param str scopes: The type of access needed.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+        """
+        ...
+
+    def close(self) -> None:
+        pass
+
+
+TokenProvider = Union[TokenCredential, SupportsTokenInfo]
+
+
 class AzureNamedKey(NamedTuple):
     """Represents a name and key pair."""
 
@@ -59,8 +128,12 @@ __all__ = [
     "AzureKeyCredential",
     "AzureSasCredential",
     "AccessToken",
+    "AccessTokenInfo",
+    "SupportsTokenInfo",
     "AzureNamedKeyCredential",
     "TokenCredential",
+    "TokenRequestOptions",
+    "TokenProvider",
 ]
 
 

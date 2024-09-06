@@ -25,6 +25,7 @@ class ManagedNetworkStatusSchema(metaclass=PatchedSchemaMeta):
 
 class FqdnOutboundRuleSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str(required=True)
+    parent_rule_names = fields.List(fields.Str(), dump_only=True)
     type = fields.Constant("fqdn")
     destination = fields.Str(required=True)
     category = StringTransformedEnum(
@@ -52,10 +53,12 @@ class ServiceTagDestinationSchema(metaclass=PatchedSchemaMeta):
     service_tag = fields.Str(required=True)
     protocol = fields.Str(required=True)
     port_ranges = fields.Str(required=True)
+    address_prefixes = fields.List(fields.Str())
 
 
 class ServiceTagOutboundRuleSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str(required=True)
+    parent_rule_names = fields.List(fields.Str(), dump_only=True)
     type = fields.Constant("service_tag")
     destination = NestedField(ServiceTagDestinationSchema, required=True)
     category = StringTransformedEnum(
@@ -72,7 +75,9 @@ class ServiceTagOutboundRuleSchema(metaclass=PatchedSchemaMeta):
 
     @pre_dump
     def predump(self, data, **kwargs):
-        data.destination = self.service_tag_dest2dict(data.service_tag, data.protocol, data.port_ranges)
+        data.destination = self.service_tag_dest2dict(
+            data.service_tag, data.protocol, data.port_ranges, data.address_prefixes
+        )
         return data
 
     @post_load
@@ -86,15 +91,17 @@ class ServiceTagOutboundRuleSchema(metaclass=PatchedSchemaMeta):
             service_tag=dest["service_tag"],
             protocol=dest["protocol"],
             port_ranges=dest["port_ranges"],
+            address_prefixes=dest.get("address_prefixes", None),
             category=_snake_to_camel(category),
             status=status,
         )
 
-    def service_tag_dest2dict(self, service_tag, protocol, port_ranges):
+    def service_tag_dest2dict(self, service_tag, protocol, port_ranges, address_prefixes):
         service_tag_dest = {}
         service_tag_dest["service_tag"] = service_tag
         service_tag_dest["protocol"] = protocol
         service_tag_dest["port_ranges"] = port_ranges
+        service_tag_dest["address_prefixes"] = address_prefixes
         return service_tag_dest
 
 
@@ -106,8 +113,10 @@ class PrivateEndpointDestinationSchema(metaclass=PatchedSchemaMeta):
 
 class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str(required=True)
+    parent_rule_names = fields.List(fields.Str(), dump_only=True)
     type = fields.Constant("private_endpoint")
     destination = NestedField(PrivateEndpointDestinationSchema, required=True)
+    fqdns = fields.List(fields.Str())
     category = StringTransformedEnum(
         allowed_values=[
             OutboundRuleCategory.REQUIRED,
@@ -132,6 +141,7 @@ class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         category = data.get("category", OutboundRuleCategory.USER_DEFINED)
         name = data.get("name")
         status = data.get("status", None)
+        fqdns = data.get("fqdns", None)
         return PrivateEndpointDestination(
             name=name,
             service_resource_id=dest["service_resource_id"],
@@ -139,6 +149,7 @@ class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
             spark_enabled=dest["spark_enabled"],
             category=_snake_to_camel(category),
             status=status,
+            fqdns=fqdns,
         )
 
     def pe_dest2dict(self, service_resource_id, subresource_target, spark_enabled):
