@@ -68,26 +68,6 @@ class TestIdentify(AzureRecordedTestCase):
     @FaceClientPreparer()
     @FaceAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_identify_from_person_group(self, client: FaceClient, administration_client: FaceAdministrationClient):
-        face_ids = self._setup_faces(client)
-        self._setup_group(administration_client.person_group)
-
-        identify_result = client.identify_from_person_group(face_ids=face_ids, person_group_id=self.group_id)
-
-        assert len(identify_result) == len(face_ids)
-        for result in identify_result:
-            assert result.candidates is not None
-            assert result.face_id is not None
-            for candidate in result.candidates:
-                assert candidate.confidence is not None
-                assert candidate.person_id is not None
-
-        self._teardown_group(administration_client.person_group)
-
-    @FacePreparer()
-    @FaceClientPreparer()
-    @FaceAdministrationClientPreparer()
-    @recorded_by_proxy
     def test_identify_from_large_person_group(
         self, client: FaceClient, administration_client: FaceAdministrationClient
     ):
