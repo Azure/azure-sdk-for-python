@@ -11,6 +11,7 @@ from unittest.mock import patch
 import pytest
 from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, is_live
 from devtools_testutils.config import PROXY_URL
+from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.proxy_testcase import transform_request
 from promptflow.client import PFClient
@@ -330,6 +331,9 @@ def get_cred():
 
     """get credential for azure tests"""
     # resolve requests
+    if not is_live():
+        return FakeTokenCredential()
+
     try:
         credential = AzureCliCredential()
         token = credential.get_token("https://management.azure.com/.default")
