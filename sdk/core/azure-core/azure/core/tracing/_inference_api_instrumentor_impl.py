@@ -7,18 +7,21 @@ import functools
 import importlib
 import json
 import logging
+from urllib.parse import urlparse
 from enum import Enum
-from typing import Any, Iterator, Callable, Optional, List
+from typing import Any, Iterator, Callable, Optional, List, Tuple, Dict
 from azure.ai.inference.aio import ChatCompletionsClient
 from azure.ai.inference import models as _models
 from azure.core.tracing import AbstractSpan
 from azure.core.tracing import SpanKind
 from azure.core.settings import settings
 from .common import get_function_and_class_name
+from opentelemetry.trace import Status, StatusCode, Span
 
 _inference_traces_enabled: bool = False
 _trace_inference_content: bool = False
-INFERENCE_GEN_AI_SYSTEM_NAME = "azure.ai.inference"
+INFERENCE_GEN_AI_SYSTEM_NAME = "az.ai.inference"
+
 
 class TraceType(str, Enum):
     """An enumeration class to represent different types of traces."""
@@ -26,7 +29,7 @@ class TraceType(str, Enum):
     INFERENCE = "Inference"
 
 
-def _set_attributes(span: AbstractSpan, *attrs: tuple[str, Any]) -> None:
+def _set_attributes(span: AbstractSpan, *attrs: Tuple[str, Any]) -> None:
     for attr in attrs:
         key, value = attr
         if value is not None:
@@ -45,67 +48,87 @@ def _add_request_chat_message_event(span: AbstractSpan, **kwargs: Any) -> None:
             span.span_instance.add_event(
                 name=name,
                 attributes={
-                    "get_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                    "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
                     "gen_ai.event.content": json.dumps(message)
                 }
             )
 
 
-def _add_request_chat_attributes(span: AbstractSpan, **kwargs: Any) -> None:
+def parse_url(url):  
+    parsed = urlparse(url)  
+    server_address = parsed.hostname  
+    port = parsed.port  
+    return server_address, port 
+
+
+def _add_request_chat_attributes(span: AbstractSpan, *args: Any, **kwargs: Any) -> None:
+    client = args[0]
+    endpoint = client._config.endpoint
+    server_address, port = parse_url(endpoint)
     _set_attributes(
         span,
+        ("gen_ai.operation.name", "chat"),
         ("gen_ai.system", INFERENCE_GEN_AI_SYSTEM_NAME),
         ("gen_ai.request.model", kwargs.get("model")),
         ("gen_ai.request.max_tokens", kwargs.get("max_tokens")),
         ("gen_ai.request.temperature", kwargs.get("temperature")),
         ("gen_ai.request.top_p", kwargs.get("top_p")),
+        ("server.address", server_address),
     )
+    if port is not None and port != 443:
+        span.add_attribute("server.port", port)
 
 
 def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCompletions) -> None:
-    global _trace_inference_content
     for choice in result.choices:
         if _trace_inference_content:
-            response: dict[str, Any] = {
+            response: Dict[str, Any] = {
                 "message": {"content": choice.message.content},
                 "finish_reason": str(choice.finish_reason),
                 "index": choice.index,
             }
             attributes={
-                "get_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
                 "gen_ai.event.content": json.dumps(response)
             }
         else:
-            response: dict[str, Any] = {
+            response: Dict[str, Any] = {
                 "finish_reason": str(choice.finish_reason),
                 "index": choice.index,
             }
             attributes={
-                "get_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
             }
         if choice.message.tool_calls:
             response["message"]["tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
         span.span_instance.add_event(name="gen_ai.choice", attributes=attributes)
 
 
+def get_finish_reasons(result):
+    if hasattr(result, "choices") and result.choices:
+        return [getattr(choice, "finish_reason", None).value if getattr(choice, "finish_reason", None) is not None else "none" for choice in result.choices] 
+    else:
+        return None
+
+
 def _add_response_chat_attributes(span: AbstractSpan, result: _models.ChatCompletions | _models.StreamingChatCompletionsUpdate) -> None:
+
     _set_attributes(
         span,
         ("gen_ai.response.id", result.id),
         ("gen_ai.response.model", result.model),
-        ("gen_ai.response.finish_reason", str(result.choices[-1].finish_reason)),
-        ("gen_ai.usage.completion_tokens", result.usage.completion_tokens if hasattr(result, "usage") and result.usage else None),
-        ("gen_ai.usage.prompt_tokens", result.usage.prompt_tokens if hasattr(result, "usage") and result.usage else None),
+        ("gen_ai.usage.input_tokens", result.usage.prompt_tokens if hasattr(result, "usage") and result.usage else None),
+        ("gen_ai.usage.output_tokens", result.usage.completion_tokens if hasattr(result, "usage") and result.usage else None),
     )
+    finish_reasons = get_finish_reasons(result)
+    span.add_attribute("gen_ai.response.finish_reasons", finish_reasons)
 
 
-def _add_request_span_attributes(span: AbstractSpan, span_name: str, kwargs: Any) -> None:
+def _add_request_span_attributes(span: AbstractSpan, span_name: str, args: Any, kwargs: Any) -> None:
     global _trace_inference_content
-    if span_name.startswith("ChatCompletionsClient.complete"):
-        _add_request_chat_attributes(span, **kwargs)
-        if _trace_inference_content:
-            _add_request_chat_message_event(span, **kwargs)
-    # TODO add more models here
+    _add_request_chat_attributes(span, *args, **kwargs)
+    if _trace_inference_content:
+        _add_request_chat_message_event(span, **kwargs)
 
 
 def _add_response_span_attributes(span: AbstractSpan, result: object) -> None:
@@ -115,7 +138,7 @@ def _add_response_span_attributes(span: AbstractSpan, result: object) -> None:
     # TODO add more models here
 
 
-def _accumulate_response(item, accumulate: dict[str, Any]) -> None:
+def _accumulate_response(item, accumulate: Dict[str, Any]) -> None:
     if item.finish_reason:
         accumulate["finish_reason"] = item.finish_reason
     if item.index:
@@ -146,7 +169,7 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
         def __iter__(self) -> Iterator[_models.StreamingChatCompletionsUpdate]:
             global _trace_inference_content
             try:
-                accumulate: dict[str, Any] = {}
+                accumulate: Dict[str, Any] = {}
                 for chunk in stream_obj:
                     for item in chunk.choices:
                         _accumulate_response(item, accumulate)
@@ -156,14 +179,19 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
                     span.span_instance.add_event(
                         name="gen_ai.choice",
                         attributes={
-                            "get_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                            "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
                             "gen_ai.event.content": json.dumps(accumulate)
                         }
                     )
                 _add_response_chat_attributes(span, chunk)
 
             except Exception as exc:
-                _set_attributes(span, ("error.type", exc.__class__.__name__))
+                # Set the span status to error
+                if isinstance(span.span_instance, Span):
+                    span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
+                module = exc.__module__ if exc.__module__ != "builtins" else ""
+                error_type = f"{module}.{exc.__qualname__}" if module else exc.__qualname__
+                _set_attributes(span, ("error.type", error_type))
                 raise
 
             finally:
@@ -174,7 +202,7 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
                         span.span_instance.add_event(
                             name="gen_ai.choice",
                             attributes={
-                                "get_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                                "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
                                 "gen_ai.event.content": json.dumps(accumulate)
                             }
                         )
@@ -212,25 +240,34 @@ def _trace_sync_function(
         if span_impl_type is None:
             return function(*args, **kwargs)
 
-        span_name = get_function_and_class_name(function, *args)
-        span = span_impl_type(name=span_name, kind=SpanKind.INTERNAL)
-        try:
-            # tracing events not supported in azure-core-tracing-opentelemetry
-            # so need to access the span instance directly
-            with span_impl_type.change_context(span.span_instance):
-                _add_request_span_attributes(span, span_name, kwargs)
-                result = function(*args, **kwargs)
-                if kwargs.get("stream") is True:
-                    return _wrapped_stream(result, span)
-                _add_response_span_attributes(span, result)
+        class_function_name = get_function_and_class_name(function, *args)
 
-        except Exception as exc:
-            _set_attributes(span, ("error.type", exc.__class__.__name__))
+        if class_function_name.startswith("ChatCompletionsClient.complete"):
+            # span_name = {gen_ai.operation.name} {gen_ai.request.model}
+            span_name = f"chat {kwargs.get('model')}"
+            span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
+            try:
+                # tracing events not supported in azure-core-tracing-opentelemetry
+                # so need to access the span instance directly
+                with span_impl_type.change_context(span.span_instance):
+                    _add_request_span_attributes(span, span_name, args, kwargs)
+                    result = function(*args, **kwargs)
+                    if kwargs.get("stream") is True:
+                        return _wrapped_stream(result, span)
+                    _add_response_span_attributes(span, result)
+
+            except Exception as exc:
+                # Set the span status to error
+                if isinstance(span.span_instance, Span):
+                    span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
+                module = exc.__module__ if exc.__module__ != "builtins" else ""
+                error_type = f"{module}.{exc.__qualname__}" if module else exc.__qualname__
+                _set_attributes(span, ("error.type", error_type))
+                span.finish()
+                raise
+
             span.finish()
-            raise
-
-        span.finish()
-        return result
+            return result
 
     return inner
 
@@ -264,25 +301,34 @@ def _trace_async_function(
         if span_impl_type is None:
             return function(*args, **kwargs)
 
-        span_name = get_function_and_class_name(function, *args)
-        span = span_impl_type(name=span_name, kind=SpanKind.INTERNAL)
-        try:
-            # tracing events not supported in azure-core-tracing-opentelemetry
-            # so need to access the span instance directly
-            with span_impl_type.change_context(span.span_instance):
-                _add_request_span_attributes(span, span_name, kwargs)
-                result = await function(*args, **kwargs)
-                if kwargs.get("stream") is True:
-                    return _wrapped_stream(result, span)
-                _add_response_span_attributes(span, result)
+        class_function_name = get_function_and_class_name(function, *args)
 
-        except Exception as exc:
-            _set_attributes(span, ("error.type", exc.__class__.__name__))
+        if class_function_name.startswith("ChatCompletionsClient.complete"):
+            # span_name = {gen_ai.operation.name} {gen_ai.request.model}
+            span_name = f"chat {kwargs.get('model')}"
+            span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
+            try:
+                # tracing events not supported in azure-core-tracing-opentelemetry
+                # so need to access the span instance directly
+                with span_impl_type.change_context(span.span_instance):
+                    _add_request_span_attributes(span, span_name, kwargs)
+                    result = await function(*args, **kwargs)
+                    if kwargs.get("stream") is True:
+                        return _wrapped_stream(result, span)
+                    _add_response_span_attributes(span, result)
+
+            except Exception as exc:
+                # Set the span status to error
+                if isinstance(span.span_instance, Span):
+                    span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
+                module = exc.__module__ if exc.__module__ != "builtins" else ""
+                error_type = f"{module}.{exc.__qualname__}" if module else exc.__qualname__
+                _set_attributes(span, ("error.type", error_type))
+                span.finish()
+                raise
+
             span.finish()
-            raise
-
-        span.finish()
-        return result
+            return result
 
     return inner
 

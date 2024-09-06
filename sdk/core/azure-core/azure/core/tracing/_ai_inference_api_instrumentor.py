@@ -3,7 +3,8 @@
 # ---------------------------------------------------------
 import os
 from .azure_telemetry_instrumentor import AzureTelemetryInstrumentor
- 
+
+
 class AiInferenceApiInstrumentor(AzureTelemetryInstrumentor):
     def __init__(self):
         super().__init__()
@@ -17,7 +18,7 @@ class AiInferenceApiInstrumentor(AzureTelemetryInstrumentor):
         if self.is_instrumented():
             raise RuntimeError("Already instrumented")
         
-        var_value = os.environ.get("AZUREAI_INFERENCE_API_ENABLE_CONTENT_TRACING")
+        var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
         enable_content_tracing = self.str_to_bool(var_value)
         from ._inference_api_instrumentor_impl import _inject_inference_api
         _inject_inference_api(enable_content_tracing)
