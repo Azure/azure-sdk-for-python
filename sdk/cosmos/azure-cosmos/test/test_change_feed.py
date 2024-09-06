@@ -1,7 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-import time
 import unittest
 import uuid
 from datetime import datetime, timedelta, timezone
@@ -13,21 +12,21 @@ from _pytest.outcomes import fail
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
 
 @pytest.fixture(scope="class")
 def setup():
-    if (TestChangeFeed.masterKey == '[YOUR_KEY_HERE]' or
-            TestChangeFeed.host == '[YOUR_ENDPOINT_HERE]'):
+    config = test_config.TestConfig()
+    if (config.masterKey == '[YOUR_KEY_HERE]' or
+            config.host == '[YOUR_ENDPOINT_HERE]'):
         raise Exception(
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(test_config.TestConfig.host, test_config.TestConfig.masterKey),
+    test_client = cosmos_client.CosmosClient(config.host, config.masterKey),
     return {
-        "created_db": test_client[0].get_database_client(TestChangeFeed.TEST_DATABASE_ID)
+        "created_db": test_client[0].get_database_client(config.TEST_DATABASE_ID)
     }
 
 @pytest.mark.cosmosEmulator
@@ -35,14 +34,6 @@ def setup():
 @pytest.mark.usefixtures("setup")
 class TestChangeFeed:
     """Test to ensure escaping of non-ascii characters from partition key"""
-
-    created_db: DatabaseProxy = None
-    client: cosmos_client.CosmosClient = None
-    config = test_config.TestConfig
-    host = config.host
-    masterKey = config.masterKey
-    connectionPolicy = config.connectionPolicy
-    TEST_DATABASE_ID = config.TEST_DATABASE_ID
 
     def test_get_feed_ranges(self, setup):
         created_collection = setup["created_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),
