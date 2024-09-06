@@ -61,6 +61,14 @@ class TokenRequestOptions(TypedDict, total=False):
     """The tenant ID to include in the token request."""
     enable_cae: bool
     """Indicates whether to enable Continuous Access Evaluation (CAE) for the requested token."""
+    enable_pop: bool
+    """Indicates whether to enable Proof of Possession (PoP) for the requested token."""
+    pop_nonce: str
+    """The nonce value required for PoP token requests."""
+    resource_request_url: str
+    """The resource request URL to be authorized with a PoP token."""
+    resource_request_method: str
+    """The HTTP request method name of the resource request (e.g. GET, POST, etc.)."""
 
 
 @runtime_checkable
