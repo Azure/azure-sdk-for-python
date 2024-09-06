@@ -37,36 +37,28 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             created = await client.create_entity(test_entity)
             result = await client.get_entity("PK", "RK")
             old_result = await client.get_entity("PK", "RK", decoder=MyDecoder())
-            assert (
-                result == old_result
-            ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
+            assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             test_entity = {"PartitionKey": "PK", "RowKey": "RK'@*$!%"}
             created = await client.create_entity(test_entity)
             result = await client.get_entity("PK", "RK'@*$!%")
             old_result = await client.get_entity("PK", "RK'@*$!%", decoder=MyDecoder())
-            assert (
-                result == old_result
-            ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
+            assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             result = await self._convert_to_list(client.query_entities("PartitionKey eq 'PK'"))
             old_result = await self._convert_to_list(client.query_entities("PartitionKey eq 'PK'", decoder=MyDecoder()))
             assert len(result) == len(old_result)
-            for (new, old) in zip(result, old_result):
-                assert (
-                    new == old
-                ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+            for new, old in zip(result, old_result):
+                assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             result = await self._convert_to_list(client.list_entities())
             old_result = await self._convert_to_list(client.list_entities(decoder=MyDecoder()))
             assert len(result) == len(old_result)
-            for (new, old) in zip(result, old_result):
-                assert (
-                    new == old
-                ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+            for new, old in zip(result, old_result):
+                assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             await client.delete_table()
-    
+
     @cosmos_decorator_async
     @recorded_by_proxy_async
     async def test_decode_entity_type_conversion(
@@ -94,34 +86,26 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             created = await client.create_entity(test_entity)
             result = await client.get_entity("PK", "RK")
             old_result = await client.get_entity("PK", "RK", decoder=MyDecoder())
-            assert (
-                result == old_result
-            ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
+            assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             result = await self._convert_to_list(client.query_entities("PartitionKey eq 'PK'"))
             old_result = await self._convert_to_list(client.query_entities("PartitionKey eq 'PK'", decoder=MyDecoder()))
             assert len(result) == len(old_result)
-            for (new, old) in zip(result, old_result):
-                assert (
-                    new == old
-                ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+            for new, old in zip(result, old_result):
+                assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             result = await self._convert_to_list(client.list_entities())
             old_result = await self._convert_to_list(client.list_entities(decoder=MyDecoder()))
             assert len(result) == len(old_result)
-            for (new, old) in zip(result, old_result):
-                assert (
-                    new == old
-                ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
-            
+            for new, old in zip(result, old_result):
+                assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+
             await client.delete_table()
         return recorded_variables
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_decode_entity_tuples(
-        self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs
-    ):
+    async def test_decode_entity_tuples(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable03")
@@ -147,9 +131,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             created = await client.create_entity(test_entity)
             result = await client.get_entity("PK", "RK1")
             old_result = await client.get_entity("PK", "RK1", decoder=MyDecoder())
-            assert (
-                result == old_result
-            ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
+            assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             test_entity = {
                 "PartitionKey": "PK",
@@ -168,25 +150,19 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             created = await client.create_entity(test_entity)
             result = await client.get_entity("PK", "RK2")
             old_result = await client.get_entity("PK", "RK2", decoder=MyDecoder())
-            assert (
-                result == old_result
-            ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
+            assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             result = await self._convert_to_list(client.query_entities("PartitionKey eq 'PK'"))
             old_result = await self._convert_to_list(client.query_entities("PartitionKey eq 'PK'", decoder=MyDecoder()))
             assert len(result) == len(old_result)
-            for (new, old) in zip(result, old_result):
-                assert (
-                    new == old
-                ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+            for new, old in zip(result, old_result):
+                assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             result = await self._convert_to_list(client.list_entities())
             old_result = await self._convert_to_list(client.list_entities(decoder=MyDecoder()))
             assert len(result) == len(old_result)
-            for (new, old) in zip(result, old_result):
-                assert (
-                    new == old
-                ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+            for new, old in zip(result, old_result):
+                assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             await client.delete_table()
         return recorded_variables
@@ -228,34 +204,26 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             created = await client.create_entity(test_entity)
             result = await client.get_entity("PK", "RK")
             old_result = await client.get_entity("PK", "RK", decoder=MyDecoder())
-            assert (
-                result == old_result
-            ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
+            assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             result = await self._convert_to_list(client.query_entities("PartitionKey eq 'PK'"))
             old_result = await self._convert_to_list(client.query_entities("PartitionKey eq 'PK'", decoder=MyDecoder()))
             assert len(result) == len(old_result)
-            for (new, old) in zip(result, old_result):
-                assert (
-                    new == old
-                ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+            for new, old in zip(result, old_result):
+                assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             result = await self._convert_to_list(client.list_entities())
             old_result = await self._convert_to_list(client.list_entities(decoder=MyDecoder()))
             assert len(result) == len(old_result)
-            for (new, old) in zip(result, old_result):
-                assert (
-                    new == old
-                ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+            for new, old in zip(result, old_result):
+                assert new == old, f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             await client.delete_table()
         return recorded_variables
 
     @cosmos_decorator_async
     @recorded_by_proxy_async
-    async def test_decode_entity_atypical_values(
-        self, tables_cosmos_account_name, tables_primary_cosmos_account_key
-    ):
+    async def test_decode_entity_atypical_values(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable05")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         async with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
@@ -266,9 +234,7 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             created = await client.create_entity(test_entity)
             result = await client.get_entity("PK", non_utf8_char)
             old_result = await client.get_entity("PK", non_utf8_char, decoder=MyDecoder())
-            assert (
-                result == old_result
-            ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
+            assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             # Valid int64 value with Edm
             max_int64 = 9223372036854775807
@@ -276,18 +242,14 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             created = await client.create_entity(test_entity)
             result = await client.get_entity("PK", "RK2")
             old_result = await client.get_entity("PK", "RK2", decoder=MyDecoder())
-            assert (
-                result == old_result
-            ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
+            assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             # Valid int64 value without Edm
             test_entity = {"PartitionKey": "PK", "RowKey": "RK3", "Data": max_int64}
             created = await client.create_entity(test_entity)
             result = await client.get_entity("PK", "RK3")
             old_result = await client.get_entity("PK", "RK3", decoder=MyDecoder())
-            assert (
-                result == old_result
-            ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
+            assert result == old_result, f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             # Infinite float values
             test_entity = {
@@ -300,24 +262,18 @@ class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             created = await client.create_entity(test_entity)
             result = await client.get_entity("PK", "RK4")
             old_result = await client.get_entity("PK", "RK4", decoder=MyDecoder())
-            assert (
-                _clean(result) == _clean(old_result)
-            ), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
+            assert _clean(result) == _clean(old_result), f"Old:\n'{old_result}'\ndoes not match new:\n'{result}'."
 
             result = await self._convert_to_list(client.query_entities("PartitionKey eq 'PK'"))
             old_result = await self._convert_to_list(client.query_entities("PartitionKey eq 'PK'", decoder=MyDecoder()))
             assert len(result) == len(old_result)
-            for (new, old) in zip(result, old_result):
-                assert (
-                    _clean(new) == _clean(old)
-                ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+            for new, old in zip(result, old_result):
+                assert _clean(new) == _clean(old), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             result = await self._convert_to_list(client.list_entities())
             old_result = await self._convert_to_list(client.list_entities(decoder=MyDecoder()))
             assert len(result) == len(old_result)
-            for (new, old) in zip(result, old_result):
-                assert (
-                    _clean(new) == _clean(old)
-                ), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
+            for new, old in zip(result, old_result):
+                assert _clean(new) == _clean(old), f"Old:\n'{old}'\ndoes not match new:\n'{new}'."
 
             await client.delete_table()

@@ -624,6 +624,7 @@ _EDM_TO_ENTITY_CONVERSIONS: Dict[EdmType, Callable[[Any], Tuple[Optional[EdmType
     EdmType.STRING: _to_entity_str,
 }
 
+
 class TablesEntityDatetime(datetime):
     @property
     def tables_service_value(self):
@@ -632,13 +633,16 @@ class TablesEntityDatetime(datetime):
         except AttributeError:
             return ""
 
+
 def _from_entity_guid(value):
     return UUID(value)
+
 
 def _from_entity_str(value: Union[str, bytes]) -> str:
     if isinstance(value, bytes):
         return value.decode("utf-8")
     return value
+
 
 def _from_entity_binary(value: str) -> bytes:
     return _decode_base64_to_bytes(value)
@@ -650,6 +654,7 @@ def _from_entity_int32(value: str) -> int:
 
 def _from_entity_int64(value: str) -> EntityProperty:
     return EntityProperty(int(value), EdmType.INT64)
+
 
 def _clean_up_dotnet_timestamps(value):
     # .NET has more decimal places than Python supports in datetime objects, this truncates
@@ -665,6 +670,7 @@ def _clean_up_dotnet_timestamps(value):
 
     return value[0]
 
+
 def _from_entity_datetime(value):
     # Cosmos returns this with a decimal point that throws an error on deserialization
     cleaned_value = _clean_up_dotnet_timestamps(value)
@@ -674,6 +680,7 @@ def _from_entity_datetime(value):
         dt_obj = TablesEntityDatetime.strptime(cleaned_value, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
     dt_obj._service_value = value  # pylint:disable=protected-access,assigning-non-slot
     return dt_obj
+
 
 _ENTITY_TO_PYTHON_CONVERSIONS = {
     EdmType.BINARY: _from_entity_binary,
@@ -745,6 +752,7 @@ def _add_entity_properties(source: Union[TableEntity, Mapping[str, Any]]) -> Dic
 
     # generate the entity_body
     return properties
+
 
 # The old decoder
 def _convert_to_entity(entry_element):
@@ -833,4 +841,3 @@ def _convert_to_entity(entry_element):
     odata.update({"etag": etag, "timestamp": timestamp})
     entity._metadata = odata  # pylint: disable=protected-access
     return entity
-

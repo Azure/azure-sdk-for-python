@@ -660,11 +660,11 @@ class TableClient(AsyncTablesBaseClient):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-    
+
     @distributed_trace
     def list_entities(self, **kwargs) -> AsyncItemPaged[Union[EntityType, T]]:
-        results_per_page=kwargs.pop("results_per_page", None)
-        decoder=kwargs.pop("decoder", DEFAULT_DECODER)
+        results_per_page = kwargs.pop("results_per_page", None)
+        decoder = kwargs.pop("decoder", DEFAULT_DECODER)
         select = kwargs.pop("select", None)
         if select and not isinstance(select, str):
             select = ",".join(select)
@@ -746,7 +746,7 @@ class TableClient(AsyncTablesBaseClient):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.data.tables.TableEntity]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-    
+
     @distributed_trace
     def query_entities(self, *args: str, **kwargs: Any) -> AsyncItemPaged[Union[EntityType, T]]:
         query_filter = kwargs.pop("query_filter", None)
@@ -838,7 +838,7 @@ class TableClient(AsyncTablesBaseClient):
         :rtype: ~azure.data.tables.TableEntity
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-    
+
     @distributed_trace_async
     async def get_entity(self, *args: str, **kwargs: Any) -> Union[EntityType, T]:
         partition_key = kwargs.pop("partition_key", None)

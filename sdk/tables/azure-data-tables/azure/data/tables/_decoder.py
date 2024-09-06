@@ -64,7 +64,9 @@ class TableEntityDecoderABC(abc.ABC, Generic[T]):
 
 
 class TableEntityDecoder(TableEntityDecoderABC[Union[TableEntity, Mapping[str, Any]]]):
-    def decode_entity(self, entity_json: Dict[str, Union[str, int, float, bool]]) -> Union[TableEntity, Mapping[str, Any]]:
+    def decode_entity(
+        self, entity_json: Dict[str, Union[str, int, float, bool]]
+    ) -> Union[TableEntity, Mapping[str, Any]]:
         """Decode the entity in response in JSON format to TableEntity type.
         The entity format is:
 
@@ -118,11 +120,11 @@ class TableEntityDecoder(TableEntityDecoderABC[Union[TableEntity, Mapping[str, A
             if name in ["PartitionKey", "RowKey"]:
                 decoded[name] = value
                 continue
-            
+
             edm_type = edmtypes.get(name)
 
             if not edm_type:
-                decoded[name] = value # no type info, property should parse automatically
+                decoded[name] = value  # no type info, property should parse automatically
             elif edm_type == EdmType.BINARY:
                 decoded[name] = _decode_base64_to_bytes(value)
             elif edm_type == EdmType.DOUBLE:

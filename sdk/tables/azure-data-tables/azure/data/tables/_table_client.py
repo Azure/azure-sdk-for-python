@@ -690,8 +690,8 @@ class TableClient(TablesBaseClient):
 
     @distributed_trace
     def list_entities(self, **kwargs: Any) -> ItemPaged[Union[EntityType, T]]:
-        results_per_page=kwargs.pop("results_per_page", None)
-        decoder=kwargs.pop("decoder", DEFAULT_DECODER)
+        results_per_page = kwargs.pop("results_per_page", None)
+        decoder = kwargs.pop("decoder", DEFAULT_DECODER)
         select = kwargs.pop("select", None)
         if select and not isinstance(select, str):
             select = ",".join(select)
@@ -857,7 +857,7 @@ class TableClient(TablesBaseClient):
         :type row_key: str
         :keyword select: Specify desired properties of an entity to return.
         :paramtype select: str or list[str] or None
-        :keyword encoder: The encoder used to serialize the outgoing Tables entities. 
+        :keyword encoder: The encoder used to serialize the outgoing Tables entities.
         :paramtype encoder: ~azure.data.Tables.TableEntityEncoderABC
         :keyword decoder: The decoder used to deserialize the incoming Tables entities.
         :paramtype decoder: ~azure.data.Tables.TableEntityDecoderABC
