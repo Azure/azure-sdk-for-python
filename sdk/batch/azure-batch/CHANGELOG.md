@@ -2,7 +2,7 @@
 
 ## 15.0.0b1 (2024-09-01)
 
-- This is the intiial release of the Microsoft Azure Batch client library for Python.
+- Version (15.0.0b1) is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Batch. For more information about this, and preview releases of other Azure SDK libraries, please visit https://azure.github.io/azure-sdk/releases/latest/python.html.
 
 ### Breaking Changes
 
