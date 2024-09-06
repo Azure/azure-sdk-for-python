@@ -57,7 +57,7 @@ setup(
     include_package_data=True,
     packages=find_packages(
         exclude=[
-            "tests",
+            "tests*",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.ai",
