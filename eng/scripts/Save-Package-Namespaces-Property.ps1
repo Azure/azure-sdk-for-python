@@ -14,16 +14,28 @@ The root directory of the staged artifacts. The PackageInfo files will be in the
 PackageInfo subdirectory. The whl files are going to be in the subdirectory which
 is the same as the artifact's name but artifact name in the file's name will have
  underscores instead of dashes.
+
+.PARAMETER ArtifactsList
+The list of artifacts to gather namespaces for, this is only done for libraries that are
+producing docs.
+-ArtifactsList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json)
 #>
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory = $True)]
-    [string] $ArtifactStagingDirectory
+    [string] $ArtifactStagingDirectory,
+    [Parameter(Mandatory=$true)]
+    [array] $ArtifactsList
 )
 
 $ArtifactsList = $ArtifactsList | Where-Object -Not "skipPublishDocMs"
 
 . (Join-Path $PSScriptRoot ".." common scripts common.ps1)
+
+if (-not $ArtifactsList) {
+    Write-Host "ArtifactsList is empty, nothing to process. This can happen if skipPublishDocMs is set to true for all libraries being built."
+    exit 0
+}
 
 Write-Host "ArtifactStagingDirectory=$ArtifactStagingDirectory"
 if (-not (Test-Path -Path $ArtifactStagingDirectory)) {
@@ -31,20 +43,19 @@ if (-not (Test-Path -Path $ArtifactStagingDirectory)) {
     exit 1
 }
 
+Write-Host ""
+Write-Host "ArtifactsList:"
+$ArtifactsList | Format-Table -Property Name | Out-String | Write-Host
+
 $packageInfoDirectory = Join-Path $ArtifactStagingDirectory "PackageInfo"
+
 $foundError = $false
-$artifacts = Get-ChildItem -Path $packageInfoDirectory -File -Filter "*.json"
-$artifacts | Format-Table -Property Name | Out-String | Write-Host
-
-if (-not $artifacts) {
-    Write-Host "Zero artifacts were discovered, nothing to process. This can happen if skipPublishDocMs is set to true for all libraries being built."
-    exit 0
-}
-
-# by this point, the PackageInfo folder will have a json file for each artifact
-# we simply need to read each file, get the appropriate metadata, and add the namespaces if necessary
-foreach($packageInfoFile in $artifacts) {
+# At this point the packageInfo files should have been already been created.
+# The only thing being done here is adding or updating namespaces for libraries
+# that will be producing docs.
+foreach($artifact in $ArtifactsList) {
     # Get the version from the packageInfo file
+    $packageInfoFile = Join-Path $packageInfoDirectory "$($artifact.Name).json"
     Write-Host "processing $($packageInfoFile.FullName)"
     $packageInfo = ConvertFrom-Json (Get-Content $packageInfoFile -Raw)
     $version = $packageInfo.Version
@@ -58,7 +69,8 @@ foreach($packageInfoFile in $artifacts) {
     $WhlFile = Get-ChildItem -Path $WhlDir -File -Filter "$whlName-$version*.whl"
 
     if (!(Test-Path $WhlFile -PathType Leaf)) {
-        Write-Host "Whl file for, $($packageInfo.Name), was not found in $WhlDir. Unable to update package namespaces."
+        LogError "Whl file for, $($packageInfo.Name), was not found in $WhlDir. Please ensure that a .whl file is being produced for the library."
+        $foundError = $true
         continue
     }
     $namespaces = Get-NamespacesFromWhlFile $packageInfo.Name $version -PythonWhlFile $WhlFile
