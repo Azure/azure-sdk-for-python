@@ -182,7 +182,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :param inputs: A StartTranslationDetails including translation inputs. Each individual input has a single
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
-        :type inputs: List[~azure.ai.translation.document.models.StartTranslationDetails]
+        :type inputs: ~azure.ai.translation.document.models.StartTranslationDetails
         :return: An instance of a AsyncDocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
@@ -382,7 +382,11 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
     # pylint: disable=arguments-renamed
     @distributed_trace_async
-    async def get_translation_status(self, translation_id: str, **kwargs: Any) -> TranslationStatus:  # type: ignore
+    async def get_translation_status(  # type: ignore[override]
+        self,
+        translation_id: str,
+        **kwargs: Any
+    ) -> TranslationStatus:
         """Gets the status of the translation operation.
 
         Includes the overall status, as well as a summary of
@@ -398,7 +402,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
     # pylint: disable=arguments-renamed
     @distributed_trace_async
-    async def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:  # type: ignore
+    async def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:  # type: ignore[override]
         """Cancel a currently processing or queued translation operation.
 
         A translation will not be canceled if it is already completed, failed, or canceling.
@@ -479,7 +483,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
     # pylint: disable=arguments-renamed
     @distributed_trace
-    def list_document_statuses(  # type: ignore
+    def list_document_statuses(  # type: ignore[override]
         self,
         translation_id: str,
         *,
@@ -547,7 +551,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
 
     # pylint: disable=arguments-renamed
     @distributed_trace_async
-    async def get_document_status(  # type: ignore
+    async def get_document_status(  # type: ignore[override]
         self, translation_id: str, document_id: str, **kwargs: Any
     ) -> DocumentStatus:
         """Get the status of an individual document within a translation operation.
