@@ -661,7 +661,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         Returns the value of the specified key.
         """
-        return self._dict[key]
+        with self._update_lock:
+            return self._dict[key]
 
     def __iter__(self) -> Iterator[str]:
         return self._dict.__iter__()
