@@ -185,14 +185,6 @@ def non_azure_openai_model_config(dev_connections: Dict[str, Any]) -> dict:
 
 @pytest.fixture
 def project_scope(request, dev_connections: Dict[str, Any]) -> dict:
-    if not is_live() and "recorded_test" in request.fixturenames:
-
-        return {
-            "subscription_id": SanitizedValues.SUBSCRIPTION_ID,
-            "resource_group_name": SanitizedValues.RESOURCE_GROUP_NAME,
-            "project_name": SanitizedValues.WORKSPACE_NAME,
-        }
-
     conn_name = "azure_ai_project_scope"
 
     if conn_name not in dev_connections:
