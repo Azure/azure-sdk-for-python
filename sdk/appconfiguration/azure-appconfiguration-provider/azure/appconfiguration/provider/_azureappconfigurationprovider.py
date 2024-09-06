@@ -339,7 +339,7 @@ def _buildprovider(
         replica_discovery_enabled,
         min_backoff,
         max_backoff,
-        **kwargs
+        **kwargs,
     )
     provider = AzureAppConfigurationProvider(endpoint, replica_client_manager, **kwargs)
     return provider

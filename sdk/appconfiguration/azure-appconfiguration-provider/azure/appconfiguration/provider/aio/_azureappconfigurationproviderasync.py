@@ -4,8 +4,6 @@
 # license information.
 # -------------------------------------------------------------------------
 import json
-import hashlib
-import base64
 import datetime
 from threading import Lock
 import logging
@@ -40,18 +38,6 @@ from .._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
     EMPTY_LABEL,
-    TELEMETRY_KEY,
-    METADATA_KEY,
-    ETAG_KEY,
-    FEATURE_FLAG_REFERENCE_KEY,
-    FEATURE_FLAG_ID_KEY,
-    PERCENTAGE_FILTER_NAMES,
-    TIME_WINDOW_FILTER_NAMES,
-    TARGETING_FILTER_NAMES,
-    CUSTOM_FILTER_KEY,
-    PERCENTAGE_FILTER_KEY,
-    TIME_WINDOW_FILTER_KEY,
-    TARGETING_FILTER_KEY,
 )
 from ._async_client_manager import AsyncConfigurationClientManager
 from .._azureappconfigurationprovider import (
@@ -292,7 +278,7 @@ async def _buildprovider(
         replica_discovery_enabled,
         min_backoff,
         max_backoff,
-        **kwargs
+        **kwargs,
     )
     await replica_client_manager.setup_initial_clients()
     provider = AzureAppConfigurationProvider(endpoint, replica_client_manager, **kwargs)
