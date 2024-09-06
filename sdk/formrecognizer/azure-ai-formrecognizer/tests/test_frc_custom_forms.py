@@ -19,7 +19,7 @@ get_ft_client = functools.partial(get_sync_client, FormTrainingClient)
 
 class TestCustomForms(FormRecognizerTest):
 
-    @skip_flaky_test
+    @pytest.mark.skip("Flaky test")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_custom_form_unlabeled(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
