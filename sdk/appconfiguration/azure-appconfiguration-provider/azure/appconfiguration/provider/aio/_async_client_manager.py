@@ -7,30 +7,32 @@ from logging import getLogger
 import json
 import time
 from dataclasses import dataclass
-from typing import Tuple, Union, Dict, List, Any, Optional, Mapping
+from typing import Tuple, Union, Dict, List, Any, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
-from azure.core.credentials import TokenCredential
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
-    AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
 )
-from ._client_manager_base import (
+from azure.appconfiguration.aio import AzureAppConfigurationClient
+from .._client_manager_base import (
     _ConfigurationClientWrapperBase,
     ConfigurationClientManagerBase,
     FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL,
     MINIMAL_CLIENT_REFRESH_INTERVAL,
 )
-from ._models import SettingSelector
-from ._constants import FEATURE_FLAG_PREFIX
-from ._discovery import find_auto_failover_endpoints
+from .._models import SettingSelector
+from .._constants import FEATURE_FLAG_PREFIX
+from ._async_discovery import find_auto_failover_endpoints
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 @dataclass
-class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
+class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     _client: AzureAppConfigurationClient
     backoff_end_time: float = 0
     failed_attempts: int = 0
@@ -40,23 +42,23 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     def from_credential(
         cls,
         endpoint: str,
-        credential: TokenCredential,
+        credential: "AsyncTokenCredential",
         user_agent: str,
         retry_total: int,
         retry_backoff_max: int,
         **kwargs
     ) -> Self:
         """
-        Creates a new instance of the _ConfigurationClientWrapper class, using the provided credential to authenticate
-        requests.
+        Creates a new instance of the _AsyncConfigurationClientWrapper class, using the provided credential to
+        authenticate requests.
 
         :param str endpoint: The endpoint of the App Configuration store
-        :param TokenCredential credential: The credential to use for authentication
+        :param AsyncTokenCredential credential: The credential to use for authentication
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
         :param int retry_backoff_max: The maximum backoff time for retries
-        :return: A new instance of the _ConfigurationClientWrapper class
-        :rtype: _ConfigurationClientWrapper
+        :return: A new instance of the _AsyncConfigurationClientWrapper class
+        :rtype: _AsyncConfigurationClientWrapper
         """
         return cls(
             endpoint,
@@ -75,7 +77,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         cls, endpoint: str, connection_string: str, user_agent: str, retry_total: int, retry_backoff_max: int, **kwargs
     ) -> Self:
         """
-        Creates a new instance of the _ConfigurationClientWrapper class, using the provided connection string to
+        Creates a new instance of the _AsyncConfigurationClientWrapper class, using the provided connection string to
         authenticate requests.
 
         :param str endpoint: The endpoint of the App Configuration store
@@ -83,8 +85,8 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
         :param int retry_backoff_max: The maximum backoff time for retries
-        :return: A new instance of the _ConfigurationClientWrapper class
-        :rtype: _ConfigurationClientWrapper
+        :return: A new instance of the _AsyncConfigurationClientWrapper class
+        :rtype: _AsyncConfigurationClientWrapper
         """
         return cls(
             endpoint,
@@ -97,7 +99,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             ),
         )
 
-    def _check_configuration_setting(
+    async def _check_configuration_setting(
         self, key: str, label: str, etag: Optional[str], headers: Dict[str, str], **kwargs
     ) -> Tuple[bool, Union[ConfigurationSetting, None]]:
         """
@@ -112,7 +114,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
         """
         try:
-            updated_sentinel = self._client.get_configuration_setting(  # type: ignore
+            updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
                 key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, headers=headers, **kwargs
             )
             if updated_sentinel is not None:
@@ -133,7 +135,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         return False, None
 
     @distributed_trace
-    def load_configuration_settings(
+    async def load_configuration_settings(
         self, selects: List[SettingSelector], refresh_on: Dict[Tuple[str, str], str], **kwargs
     ) -> Tuple[List[ConfigurationSetting], Dict[Tuple[str, str], str]]:
         configuration_settings = []
@@ -142,7 +144,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             configurations = self._client.list_configuration_settings(
                 key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
             )
-            for config in configurations:
+            async for config in configurations:
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     # Feature flags are ignored when loaded by Selects, as they are selected from
                     # `feature_flag_selectors`
@@ -156,7 +158,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         return configuration_settings, sentinel_keys
 
     @distributed_trace
-    def load_feature_flags(
+    async def load_feature_flags(
         self, feature_flag_selectors: List[SettingSelector], feature_flag_refresh_enabled: bool, **kwargs
     ) -> Tuple[List[FeatureFlagConfigurationSetting], Dict[Tuple[str, str], str], Dict[str, bool]]:
         feature_flag_sentinel_keys = {}
@@ -168,7 +170,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
             )
-            for feature_flag in feature_flags:
+            async for feature_flag in feature_flags:
                 loaded_feature_flags.append(json.loads(feature_flag.value))
                 if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
                     # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
@@ -181,7 +183,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         return loaded_feature_flags, feature_flag_sentinel_keys, filters_used
 
     @distributed_trace
-    def refresh_configuration_settings(
+    async def refresh_configuration_settings(
         self, selects: List[SettingSelector], refresh_on: Dict[Tuple[str, str], str], headers: Dict[str, str], **kwargs
     ) -> Tuple[bool, Dict[Tuple[str, str], str], List[Any]]:
         """
@@ -198,7 +200,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         need_refresh = False
         updated_sentinel_keys = dict(refresh_on)
         for (key, label), etag in updated_sentinel_keys.items():
-            changed, updated_sentinel = self._check_configuration_setting(
+            changed, updated_sentinel = await self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
             )
             if changed:
@@ -207,12 +209,14 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 updated_sentinel_keys[(key, label)] = updated_sentinel.etag
         # Need to only update once, no matter how many sentinels are updated
         if need_refresh:
-            configuration_settings, sentinel_keys = self.load_configuration_settings(selects, refresh_on, **kwargs)
+            configuration_settings, sentinel_keys = await self.load_configuration_settings(
+                selects, refresh_on, **kwargs
+            )
             return True, sentinel_keys, configuration_settings
         return False, refresh_on, []
 
     @distributed_trace
-    def refresh_feature_flags(
+    async def refresh_feature_flags(
         self,
         refresh_on: Mapping[Tuple[str, str], Optional[str]],
         feature_flag_selectors: List[SettingSelector],
@@ -232,16 +236,18 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         feature_flag_sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = dict(refresh_on)
         for (key, label), etag in feature_flag_sentinel_keys.items():
-            changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
+            changed = await self._check_configuration_setting(
+                key=key, label=label, etag=etag, headers=headers, **kwargs
+            )
             if changed:
-                feature_flags, feature_flag_sentinel_keys, filters_used = self.load_feature_flags(
+                feature_flags, feature_flag_sentinel_keys, filters_used = await self.load_feature_flags(
                     feature_flag_selectors, True, headers=headers, **kwargs
                 )
                 return True, feature_flag_sentinel_keys, feature_flags, filters_used
         return False, None, None, {}
 
     @distributed_trace
-    def get_configuration_setting(self, key: str, label: str, **kwargs) -> ConfigurationSetting:
+    async def get_configuration_setting(self, key: str, label: str, **kwargs) -> ConfigurationSetting:
         """
         Gets a configuration setting from the replica client.
 
@@ -250,7 +256,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :return: The configuration setting
         :rtype: ConfigurationSetting
         """
-        return self._client.get_configuration_setting(key=key, label=label, **kwargs)
+        return await self._client.get_configuration_setting(key=key, label=label, **kwargs)
 
     def is_active(self) -> bool:
         """
@@ -261,26 +267,26 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         return self.backoff_end_time <= (time.time() * 1000)
 
-    def close(self) -> None:
+    async def close(self) -> None:
         """
         Closes the connection to Azure App Configuration.
         """
-        self._client.close()
+        await self._client.close()
 
-    def __enter__(self):
-        self._client.__enter__()
+    async def __aenter__(self):
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
+    async def __aexit__(self, *args):
+        await self._client.__aexit__(*args)
 
 
-class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disable=too-many-instance-attributes
+class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         connection_string: Optional[str],
         endpoint: str,
-        credential: Optional["TokenCredential"],
+        credential: Optional["AsyncTokenCredential"],
         user_agent: str,
         retry_total,
         retry_backoff_max,
@@ -289,7 +295,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         max_backoff_sec,
         **kwargs
     ):
-        super(ConfigurationClientManager, self).__init__(
+        super(AsyncConfigurationClientManager, self).__init__(
             endpoint,
             user_agent,
             retry_total,
@@ -304,31 +310,34 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
 
         if connection_string and endpoint:
             self._replica_clients.append(
-                _ConfigurationClientWrapper.from_connection_string(
+                _AsyncConfigurationClientWrapper.from_connection_string(
                     endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
-            self._setup_failover_endpoints()
             return
         if endpoint and credential:
             self._replica_clients.append(
-                _ConfigurationClientWrapper.from_credential(
+                _AsyncConfigurationClientWrapper.from_credential(
                     endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
                 )
             )
-            self._setup_failover_endpoints()
             return
         raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
 
-    def refresh_clients(self):
+    async def setup_initial_clients(self):
+        await self._setup_failover_endpoints()
+
+    async def refresh_clients(self):
         if not self._replica_discovery_enabled:
             return
         if self._next_update_time > time.time():
             return
-        self._setup_failover_endpoints()
+        await self._setup_failover_endpoints()
 
-    def _setup_failover_endpoints(self):
-        failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
+    async def _setup_failover_endpoints(self):
+        failover_endpoints = await find_auto_failover_endpoints(
+            self._original_endpoint, self._replica_discovery_enabled
+        )
 
         if failover_endpoints is None:
             # SRV record not found, so we should refresh after a longer interval
@@ -354,7 +363,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                         self._original_endpoint, failover_endpoint
                     )
                     new_clients.append(
-                        _ConfigurationClientWrapper.from_connection_string(
+                        _AsyncConfigurationClientWrapper.from_connection_string(
                             failover_endpoint,
                             failover_connection_string,
                             self._user_agent,
@@ -365,7 +374,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                     )
                 else:
                     new_clients.append(
-                        _ConfigurationClientWrapper.from_credential(
+                        _AsyncConfigurationClientWrapper.from_credential(
                             failover_endpoint,
                             self._credential,
                             self._user_agent,
@@ -377,7 +386,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         self._replica_clients = new_clients
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
 
-    def backoff(self, client: _ConfigurationClientWrapper):
+    def backoff(self, client: _AsyncConfigurationClientWrapper):
         client.failed_attempts += 1
         backoff_time = self._calculate_backoff(client.failed_attempts)
         client.backoff_end_time = (time.time() * 1000) + backoff_time
@@ -390,15 +399,15 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                 return False
         return True
 
-    def close(self):
+    async def close(self):
         for client in self._replica_clients:
-            client.close()
+            await client.close()
 
-    def __enter__(self):
+    async def __aenter__(self):
         for client in self._replica_clients:
-            client.__enter__()
+            await client.__aenter__()
         return self
 
-    def __exit__(self, *args):
+    async def __aexit__(self, *args):
         for client in self._replica_clients:
-            client.__exit__(*args)
+            await client.__aexit__(*args)
