@@ -37,7 +37,7 @@ def tracking_uri(azure_ml_client, project_scope):
     return azure_ml_client.workspaces.get(project_scope["project_name"]).mlflow_tracking_uri
 
 
-@pytest.mark.usefixtures("model_config", "recording_injection", "project_scope")
+@pytest.mark.usefixtures("model_config", "recording_injection", "project_scope", "recorded_test")
 class TestMetricsUpload(object):
     """End to end tests to check how the metrics were uploaded to cloud."""
 
@@ -53,7 +53,6 @@ class TestMetricsUpload(object):
             assert not error_messages, "\n".join(error_messages)
 
     @pytest.mark.azuretest
-    @pytest.mark.usefixtures("recorded_test")
     def test_writing_to_run_history(self, caplog, project_scope, azure_ml_client, tracking_uri):
         """Test logging data to RunHistory service."""
         logger = logging.getLogger(EvalRun.__module__)
@@ -82,7 +81,6 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, [EvalRun.__module__])
 
     @pytest.mark.azuretest
-    @pytest.mark.usefixtures("recorded_test")
     def test_logging_metrics(self, caplog, project_scope, azure_ml_client, tracking_uri):
         """Test logging metrics."""
         logger = logging.getLogger(EvalRun.__module__)
@@ -110,7 +108,6 @@ class TestMetricsUpload(object):
         self._assert_no_errors_for_module(caplog.records, EvalRun.__module__)
 
     @pytest.mark.azuretest
-    @pytest.mark.usefixtures("recorded_test")
     @pytest.mark.skipif(not is_live(), reason="This test fails in CI and needs to be investigate. See bug: 3415807")
     def test_log_artifact(self, project_scope, azure_ml_client, tracking_uri, caplog, tmp_path):
         """Test uploading artifact to the service."""

@@ -87,7 +87,7 @@ def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
         raise Exception(f"Failed to get run from service. Code: {response.status_code}, text: {response.text}")
 
 
-@pytest.mark.usefixtures("recording_injection")
+@pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.localtest
 class TestEvaluate:
     def test_evaluate_with_groundedness_evaluator(self, model_config, data_file):
