@@ -21,11 +21,17 @@ async def main():
     config = await load(endpoint=endpoint, credential=credential, **kwargs)
     print(config["message"])
 
+    await credential.close()
+    await config.close()
+
     # Connecting to Azure App Configuration using AAD and trim key prefixes
     trimmed = ["test."]
     config = await load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed, **kwargs)
 
     print(config["message"])
+
+    await credential.close()
+    await config.close()
 
     # Connection to Azure App Configuration using SettingSelector
     selects = [SettingSelector(key_filter="message*")]

@@ -50,6 +50,12 @@
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @achauhan-scc @kingernupur @paulshealy1 @singankit
 
+# ServiceOwners: @luigiw @needuv @singankit
+# ServiceLabel: %Evaluation
+
+# PRLabel: %Evaluation
+/sdk/evaluation/                                                     @Azure/azure-sdk-write-evaluation
+
 # ServiceLabel: %AgriFood
 # PRLabel: %AgriFood
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
@@ -322,6 +328,10 @@
 
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
+
+# ServiceLabel: %Operator Nexus - Network Cloud
+# PRLabel: %Operator Nexus - Network Cloud
+/sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
 
 # ServiceLabel: %Purview
 # PRLabel: %Purview
@@ -839,7 +849,11 @@
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312 @kristapratico
 /eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
+
+# Add approvers for typespec-python emitter version updates
+/eng/emitter-package.json                                            @mccoyp @catalinaperalta @kristapratico @iscai-msft
+/eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @kristapratico @iscai-msft
 
 /pylintrc                                                            @l0lawrence

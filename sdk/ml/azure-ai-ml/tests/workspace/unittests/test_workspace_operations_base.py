@@ -5,12 +5,9 @@ from uuid import UUID, uuid4
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_07_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
-    ManagedNetworkSettings,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -25,7 +22,6 @@ from azure.ai.ml.entities import (
     IsolationMode,
     ManagedIdentityConfiguration,
     ManagedNetwork,
-    MaterializationStore,
     PrivateEndpointDestination,
     ServerlessComputeSettings,
     ServiceTagDestination,
@@ -55,21 +51,6 @@ def mock_workspace_operation_base(
         credentials=mock_credential,
         dataplane_client=mock_aml_services_workspace_dataplane,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
-    )
-
-
-@pytest.fixture
-def mock_workspace_operation_base_aug_2023_preview(
-    mock_workspace_scope: OperationScope,
-    mock_aml_services_2023_08_01_preview: Mock,
-    mock_machinelearning_client: Mock,
-    mock_credential: Mock,
-) -> WorkspaceOperationsBase:
-    yield WorkspaceOperationsBase(
-        operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2023_08_01_preview,
-        all_operations=mock_machinelearning_client._operation_container,
-        credentials=mock_credential,
     )
 
 
@@ -248,7 +229,7 @@ class TestWorkspaceOperation:
             )
             assert params.managed_network.isolation_mode == "Disabled"
             assert params.system_datastores_auth_mode == "identity"
-            assert params.allow_roleassignment_on_rg == True
+            assert params.allow_role_assignment_on_rg == True  # diff due to swagger restclient casing diff
             assert params.managed_network.outbound_rules == {}
             assert polling is True
             assert callable(cls)
@@ -578,15 +559,15 @@ class TestWorkspaceOperation:
     def test_create_workspace_with_serverless_custom_vnet(
         self,
         serverless_compute_settings: ServerlessComputeSettings,
-        mock_workspace_operation_base_aug_2023_preview: WorkspaceOperationsBase,
+        mock_workspace_operation_base: WorkspaceOperationsBase,
         mocker: MockFixture,
     ) -> None:
         ws = Workspace(name="name", location="test", serverless_compute=serverless_compute_settings)
         spy = mocker.spy(WorkspaceOperationsBase, "_populate_arm_parameters")
 
-        mock_workspace_operation_base_aug_2023_preview._operation.get = MagicMock(return_value=None)
+        mock_workspace_operation_base._operation.get = MagicMock(return_value=None)
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
-        mock_workspace_operation_base_aug_2023_preview.begin_create(ws)
+        mock_workspace_operation_base.begin_create(ws)
         (_, param, _) = spy.spy_return
         settings = param["serverless_compute_settings"]["value"]
         if serverless_compute_settings is None:
@@ -606,12 +587,12 @@ class TestWorkspaceOperation:
     def test_update_workspace_with_serverless_custom_vnet(
         self,
         serverless_compute_settings: ServerlessComputeSettings,
-        mock_workspace_operation_base_aug_2023_preview: WorkspaceOperationsBase,
+        mock_workspace_operation_base: WorkspaceOperationsBase,
         mocker: MockFixture,
     ) -> None:
         ws = Workspace(name="name", location="test", serverless_compute=serverless_compute_settings)
-        spy = mocker.spy(mock_workspace_operation_base_aug_2023_preview._operation, "begin_update")
-        mock_workspace_operation_base_aug_2023_preview.begin_update(ws)
+        spy = mocker.spy(mock_workspace_operation_base._operation, "begin_update")
+        mock_workspace_operation_base.begin_update(ws)
         if serverless_compute_settings is None:
             assert spy.call_args[0][2].serverless_compute_settings is None
         else:
@@ -630,7 +611,7 @@ class TestWorkspaceOperation:
     def test_can_perform_partial_update_of_serverless_compute_settings(
         self,
         new_settings: ServerlessComputeSettings,
-        mock_workspace_operation_base_aug_2023_preview: WorkspaceOperationsBase,
+        mock_workspace_operation_base: WorkspaceOperationsBase,
         mocker: MockFixture,
     ) -> None:
         original_settings = ServerlessComputeSettings(
@@ -647,9 +628,9 @@ class TestWorkspaceOperation:
             customer_managed_key=key,
         )
         rest_workspace: RestWorkspace = original_workspace._to_rest_object()  # pylint: disable=protected-access
-        mock_workspace_operation_base_aug_2023_preview._operation.get = MagicMock(return_value=rest_workspace)
-        spy = mocker.spy(mock_workspace_operation_base_aug_2023_preview._operation, "begin_update")
-        mock_workspace_operation_base_aug_2023_preview.begin_update(ws)
+        mock_workspace_operation_base._operation.get = MagicMock(return_value=rest_workspace)
+        spy = mocker.spy(mock_workspace_operation_base._operation, "begin_update")
+        mock_workspace_operation_base.begin_update(ws)
         assert (
             ServerlessComputeSettings._from_rest_object(spy.call_args[0][2].serverless_compute_settings) == new_settings
         )
