@@ -1,51 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from enum import Enum
-
-
-class CommonConstants:
-    """Define common constants."""
-
-    DEFAULT_HTTP_TIMEOUT = 60
-
-
-class RAIService:
-    """Define constants related to RAI service"""
-
-    TIMEOUT = 1800
-    SLEEP_TIME = 2
-    HARM_SEVERITY_THRESHOLD = 4
-
-
-class HarmSeverityLevel(Enum):
-    """Harm severity levels."""
-
-    VeryLow = "Very low"
-    Low = "Low"
-    Medium = "Medium"
-    High = "High"
-
-
-class Tasks:
-    """Defines types of annotation tasks supported by RAI Service."""
-
-    CONTENT_HARM = "content harm"
-    PROTECTED_MATERIAL = "protected material"
-
-
-class _InternalAnnotationTasks:
-    """Defines types of annotation tasks that are supported for internal use. Such tasks are
-    experimental and subject to potential change or migration to the main Evaluation Metrics
-    enum over time."""
-
-    ECI = "eci"
 
 
 class EvaluationMetrics:
-    """Evaluation metrics to aid the RAI service in determining what
-    metrics to request, and how to present them back to the user."""
+    """Metrics for model evaluation."""
 
+    GPT_GROUNDEDNESS = "gpt_groundedness"
+    GPT_RELEVANCE = "gpt_relevance"
+    GPT_COHERENCE = "gpt_coherence"
+    GPT_FLUENCY = "gpt_fluency"
+    GPT_SIMILARITY = "gpt_similarity"
+    F1_SCORE = "f1_score"
+    GPT_RETRIEVAL_SCORE = "gpt_retrieval_score"
     HATE_FAIRNESS = "hate_fairness"
     HATE_UNFAIRNESS = "hate_unfairness"
     VIOLENCE = "violence"
@@ -61,3 +28,22 @@ class _InternalEvaluationMetrics:
     """
 
     ECI = "eci"
+
+
+class Prefixes:
+    """Column prefixes for inputs and outputs."""
+
+    INPUTS = "inputs."
+    OUTPUTS = "outputs."
+    TSG_OUTPUTS = "__outputs."
+
+
+DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"
+
+CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT = 4
+
+PF_BATCH_TIMEOUT_SEC_DEFAULT = 3600
+PF_BATCH_TIMEOUT_SEC = "PF_BATCH_TIMEOUT_SEC"
+
+OTEL_EXPORTER_OTLP_TRACES_TIMEOUT = "OTEL_EXPORTER_OTLP_TRACES_TIMEOUT"
+OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT = 60
