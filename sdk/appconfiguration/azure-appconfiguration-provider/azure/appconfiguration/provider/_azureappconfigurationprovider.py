@@ -231,9 +231,9 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         kwargs.pop("headers", {}),
         "Startup",
         provider._replica_client_manager.get_client_count() - 1,  # pylint:disable=protected-access
-        kwargs.pop("uses_feature_flags", False),
-        kwargs.pop("feature_filters_used", {}),
-        uses_key_vault,
+        provider._feature_flag_enabled,  # pylint:disable=protected-access
+        provider._feature_filter_usage,  # pylint:disable=protected-access
+        provider._uses_key_vault,  # pylint:disable=protected-access
     )
 
     try:
@@ -522,25 +522,24 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         success = False
         need_refresh = False
         error_message = """
-                        Failed to refresh configuration settings. No Azure App Configuration stores successfully
-                        refreshed.
+                        Failed to refresh configuration settings from Azure App Configuration.
                         """
         exception: Exception = RuntimeError(error_message)
         try:
             self._replica_client_manager.refresh_clients()
             active_clients = self._replica_client_manager.get_active_clients()
 
+            headers = _get_headers(
+                kwargs.pop("headers", {}),
+                "Watch",
+                self._replica_client_manager.get_client_count() - 1,
+                self._feature_flag_enabled,
+                self._feature_filter_usage,
+                self._uses_key_vault,
+            )
             for client in active_clients:
                 try:
                     if self._refresh_on:
-                        headers = _get_headers(
-                            kwargs.pop("headers", {}),
-                            "Watch",
-                            self._replica_client_manager.get_client_count() - 1,
-                            self._feature_flag_enabled,
-                            self._feature_filter_usage,
-                            self._uses_key_vault,
-                        )
                         need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
                             self._selects, self._refresh_on, headers, **kwargs
                         )
@@ -556,14 +555,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         if need_refresh:
                             self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
-                        headers = _get_headers(
-                            kwargs.pop("headers", {}),
-                            "Watch",
-                            self._replica_client_manager.get_client_count() - 1,
-                            self._feature_flag_enabled,
-                            self._feature_filter_usage,
-                            self._uses_key_vault,
-                        )
                         need_ff_refresh, self._refresh_on_feature_flags, feature_flags, filters_used = (
                             client.refresh_feature_flags(
                                 self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
@@ -670,7 +661,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         Returns the value of the specified key.
         """
-        return self._dict[key]
+        with self._update_lock:
+            return self._dict[key]
 
     def __iter__(self) -> Iterator[str]:
         return self._dict.__iter__()
