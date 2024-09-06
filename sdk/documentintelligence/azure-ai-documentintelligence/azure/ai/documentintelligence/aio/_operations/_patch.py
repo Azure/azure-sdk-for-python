@@ -597,6 +597,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
         output: Optional[List[Union[str, _models.AnalyzeOutputOption]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeBatchResult]:
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         return await super().begin_analyze_batch_documents(
             model_id=model_id,
             analyze_batch_request=analyze_batch_request,
@@ -607,7 +608,7 @@ class DocumentIntelligenceClientOperationsMixin(GeneratedDIClientOps):  # pylint
             query_fields=query_fields,
             output_content_format=output_content_format,
             output=output,
-            polling=AsyncAnalyzeBatchDocumentsLROPollingMethod(timeout=self._config.polling_interval),
+            polling=AsyncAnalyzeBatchDocumentsLROPollingMethod(timeout=lro_delay),
             **kwargs
         )
 
