@@ -12,6 +12,7 @@ import pytest
 from devtools_testutils import is_live
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.helpers import get_recording_id
+from devtools_testutils.proxy_testcase import transform_request
 from promptflow.client import PFClient
 from promptflow.core import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from promptflow.executor._line_execution_process_pool import _process_wrapper
@@ -40,6 +41,55 @@ class SanitizedValues(str, Enum):
 
 
 @pytest.fixture
+def redirect_asyncio_requests_traffic() -> None:
+    """Redirects requests sent through AsyncioRequestsTransport to the test proxy.
+
+    .. note::
+
+    This implementation is taken verbatim from devtools_testutils/proxy_fixtures.py
+
+    It's necessary for two reasons:
+        * The only async transport that gets patched is AioHttpTransport
+        * The test infra selectively patches the Sync/Async implementations based on whether the test is sync/async
+    """
+    import urllib.parse as url_parse
+
+    from azure.core.pipeline.transport import AsyncioRequestsTransport
+
+    original_transport_func = AsyncioRequestsTransport.send
+    recording_id = get_recording_id()
+
+    def transform_args(*args, **kwargs):
+        copied_positional_args = list(args)
+        request = copied_positional_args[1]
+
+        transform_request(request, recording_id)
+
+        return tuple(copied_positional_args), kwargs
+
+    async def combined_call(*args, **kwargs):
+        adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+        result = await original_transport_func(*adjusted_args, **adjusted_kwargs)
+
+        # make the x-recording-upstream-base-uri the URL of the request
+        # this makes the request look like it was made to the original endpoint instead of to the proxy
+        # without this, things like LROPollers can get broken by polling the wrong endpoint
+        parsed_result = url_parse.urlparse(result.request.url)
+        upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+        upstream_uri_dict = {"scheme": upstream_uri.scheme, "netloc": upstream_uri.netloc}
+        original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+
+        result.request.url = original_target
+        return result
+
+    AsyncioRequestsTransport.send = combined_call
+
+    yield
+
+    AsyncioRequestsTransport.send = original_transport_func
+
+
+@pytest.fixture
 def redirect_openai_requests():
     """Route requests from the openai package to the test proxy."""
     config = TestProxyConfig(
@@ -51,7 +101,7 @@ def redirect_openai_requests():
 
 
 @pytest.fixture
-def recorded_test(recorded_test, redirect_openai_requests):
+def recorded_test(recorded_test, redirect_openai_requests, redirect_asyncio_requests_traffic):
     return recorded_test
 
 
