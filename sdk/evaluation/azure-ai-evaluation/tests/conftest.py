@@ -9,7 +9,7 @@ from typing import Any, Dict
 from unittest.mock import patch
 
 import pytest
-from devtools_testutils import is_live
+from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, is_live
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.proxy_testcase import transform_request
@@ -38,6 +38,39 @@ class SanitizedValues(str, Enum):
     WORKSPACE_NAME = "00000"
     TENANT_ID = "00000000-0000-0000-0000-000000000000"
     USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
+
+
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(
+    test_proxy, mock_model_config: AzureOpenAIModelConfiguration, mock_project_scope: Dict[str, str]
+) -> None:
+    def azureopenai_connection_sanitizer():
+        """Sanitize the openai deployment name."""
+        mock_deployment = mock_model_config.azure_deployment
+
+        add_general_regex_sanitizer(
+            regex=r"/openai/deployments/([^\/&#\"]+)", value=mock_deployment, group_for_replace="1"
+        )
+        add_body_key_sanitizer(json_path="$.model", value=mock_deployment)
+
+    def azure_workspace_triad_sanitizer():
+        """Sanitize subscription, resource group, and workspace."""
+        add_general_regex_sanitizer(
+            regex=r"/subscriptions/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+            value=mock_project_scope["subscription_id"],
+            group_for_replace="1",
+        )
+        add_general_regex_sanitizer(
+            regex=r"/resource[gG]roups/([-\w\._\(\)]+)",
+            value=mock_project_scope["resource_group_name"],
+            group_for_replace="1",
+        )
+        add_general_regex_sanitizer(
+            regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
+        )
+
+    azure_workspace_triad_sanitizer()
+    azureopenai_connection_sanitizer()
 
 
 @pytest.fixture
