@@ -4,7 +4,7 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to use basic assistants operations from
+    This sample demonstrates how to use assistants operations with user function call from
     the Azure Assistants service using a synchronous client.
 
     See package documentation:
@@ -29,6 +29,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from azure.ai.assistants import AssistantsClient
 from azure.ai.assistants.models._models import SubmitToolOutputsDetails
 from azure.core.credentials import AzureKeyCredential
+from user_functions import user_functions
 
 import os, time, json
 
@@ -43,7 +44,64 @@ def setup_console_trace_exporter():
     RequestsInstrumentor().instrument()
 
 
-def sample_assistant_basic_operation():
+def process_tool_calls(tool_calls):
+    print("Processing tool calls")
+    tool_outputs = []
+    for tool_call in tool_calls:
+        function_response = str(handle_function_call(tool_call.function.name, tool_call.function.arguments))
+        print(f"Function response: {function_response}")       
+        tool_output = {
+            "tool_call_id": tool_call.id,
+            "output": function_response,
+        }
+        tool_outputs.append(tool_output)
+
+    return tool_outputs
+
+
+def handle_function_call(function_name, arguments):
+    print(f"Handling function call: {function_name}, arguments: {arguments}")
+
+    if function_name in user_functions:
+        function = user_functions[function_name]
+        
+        try:
+            # Parse arguments from JSON string to dictionary
+            parsed_arguments = json.loads(arguments)
+        except json.JSONDecodeError:
+            print("Error decoding JSON arguments.")
+            parsed_arguments = {}
+
+        # Ensure parsed_arguments is a dictionary
+        if isinstance(parsed_arguments, dict):
+            if not parsed_arguments:
+                return function()
+            else:
+                return function(**parsed_arguments)
+        else:
+            print("Parsed arguments are not a valid dictionary.")
+            return None
+
+    else:
+        print(f"Function {function_name} not found in user defined functions")
+        return None
+
+
+user_tools = [{
+    "type": "function",
+    "function": {
+        "name": "fetch_current_datetime",
+        "description": "Get the current time as a JSON string.",
+        "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+    }
+}]
+
+
+def sample_assistant_operation_with_functions():
 
     setup_console_trace_exporter()
 
@@ -60,14 +118,14 @@ def sample_assistant_basic_operation():
     print("Created assistant client")
 
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="You are helpful assistant"
+        model="gpt", name="my-assistant", instructions="You are helpful assistant", tools=user_tools
     )
     print("Created assistant, assistant ID", assistant.id)
 
     thread = assistant_client.create_thread()
     print("Created thread, thread ID", thread.id)
 
-    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
     print("Created message, message ID", message.id)
 
     run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
@@ -78,6 +136,19 @@ def sample_assistant_basic_operation():
         # wait for a second
         time.sleep(1)
         run = assistant_client.get_run(thread_id=thread.id, run_id=run.id)
+
+        if run.status == "requires_action":
+
+            submit_tool_outputs_action : SubmitToolOutputsDetails = run.required_action.submit_tool_outputs
+            tool_calls = submit_tool_outputs_action.tool_calls
+            if tool_calls is None:
+                print("Processing run requires tool call action but no tool calls provided, cancel the run")
+                assistant_client.cancel_run(thread_id=thread.id, run_id=run.id)
+
+            tool_outputs = process_tool_calls(tool_calls)
+            if tool_outputs:
+                print("Submitting tool outputs")
+                assistant_client.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
 
         print("Run status:", run.status)
 
@@ -91,4 +162,4 @@ def sample_assistant_basic_operation():
 
 
 if __name__ == "__main__":
-    sample_assistant_basic_operation()
+    sample_assistant_operation_with_functions()
