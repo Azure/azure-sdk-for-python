@@ -26,9 +26,6 @@ from ._models import FaceGroupingResult
 from ._models import FaceIdentificationCandidate
 from ._models import FaceIdentificationResult
 from ._models import FaceLandmarks
-from ._models import FaceList
-from ._models import FaceListFace
-from ._models import FaceListItem
 from ._models import FaceRectangle
 from ._models import FaceTrainingResult
 from ._models import FaceVerificationResult
@@ -53,9 +50,6 @@ from ._models import LivenessWithVerifySession
 from ._models import MaskProperties
 from ._models import NoiseProperties
 from ._models import OcclusionProperties
-from ._models import PersonGroup
-from ._models import PersonGroupPerson
-from ._models import PersonGroupPersonFace
 
 from ._enums import AccessoryType
 from ._enums import BlurLevel
@@ -108,9 +102,6 @@ __all__ = [
     "FaceIdentificationCandidate",
     "FaceIdentificationResult",
     "FaceLandmarks",
-    "FaceList",
-    "FaceListFace",
-    "FaceListItem",
     "FaceRectangle",
     "FaceTrainingResult",
     "FaceVerificationResult",
@@ -135,9 +126,6 @@ __all__ = [
     "MaskProperties",
     "NoiseProperties",
     "OcclusionProperties",
-    "PersonGroup",
-    "PersonGroupPerson",
-    "PersonGroupPersonFace",
     "AccessoryType",
     "BlurLevel",
     "ExposureLevel",

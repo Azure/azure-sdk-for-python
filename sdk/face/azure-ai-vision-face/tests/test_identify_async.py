@@ -18,6 +18,7 @@ from preparers import AsyncFaceClientPreparer, FacePreparer, AsyncFaceAdministra
 from _shared.constants import TestImages
 from _shared import helpers
 
+
 class TestIdentify(AzureRecordedTestCase):
     test_images = [
         TestImages.IMAGE_FAMILY_1_DAD_1,
@@ -26,6 +27,7 @@ class TestIdentify(AzureRecordedTestCase):
         TestImages.IMAGE_FAMILY_1_SON_1,
     ]
     group_id = "identify"
+
     async def _setup_faces(self, client: FaceClient):
         face_ids = []
         image_path = helpers.get_image_path(TestImages.IMAGE_IDENTIFICATION1)
@@ -33,14 +35,16 @@ class TestIdentify(AzureRecordedTestCase):
             helpers.read_file_content(image_path),
             detection_model=FaceDetectionModel.DETECTION_03,
             recognition_model=FaceRecognitionModel.RECOGNITION_04,
-            return_face_id=True
+            return_face_id=True,
         )
         for face in result:
             face_ids.append(face.face_id)
         return face_ids
 
     async def _setup_group(self, operations):
-        await operations.create(self.group_id, name=self.group_id, recognition_model=FaceRecognitionModel.RECOGNITION_04)
+        await operations.create(
+            self.group_id, name=self.group_id, recognition_model=FaceRecognitionModel.RECOGNITION_04
+        )
 
         person_ids = []
         for image in self.test_images:
@@ -52,7 +56,7 @@ class TestIdentify(AzureRecordedTestCase):
                 self.group_id,
                 result.person_id,
                 helpers.read_file_content(image_path),
-                detection_model=FaceDetectionModel.DETECTION_03
+                detection_model=FaceDetectionModel.DETECTION_03,
             )
 
         poller = await operations.begin_train(self.group_id)
@@ -67,32 +71,16 @@ class TestIdentify(AzureRecordedTestCase):
     @AsyncFaceClientPreparer()
     @AsyncFaceAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_identify_from_person_group(self, client: FaceClient, administration_client: FaceAdministrationClient):
-        face_ids = await self._setup_faces(client)
-        await self._setup_group(administration_client.person_group)
-
-        identify_result = await client.identify_from_person_group(face_ids=face_ids, person_group_id=self.group_id)
-        
-        assert len(identify_result) == len(face_ids)
-        for result in identify_result:
-            assert result.candidates is not None
-            assert result.face_id is not None
-            for candidate in result.candidates:
-                assert candidate.confidence is not None
-                assert candidate.person_id is not None
-
-        await self._teardown_group(administration_client.person_group)
-
-    @FacePreparer()
-    @AsyncFaceClientPreparer()
-    @AsyncFaceAdministrationClientPreparer()
-    @recorded_by_proxy_async
-    async def test_identify_from_large_person_group(self, client: FaceClient, administration_client: FaceAdministrationClient):
+    async def test_identify_from_large_person_group(
+        self, client: FaceClient, administration_client: FaceAdministrationClient
+    ):
         face_ids = await self._setup_faces(client)
         await self._setup_group(administration_client.large_person_group)
 
-        identify_result = await client.identify_from_large_person_group(face_ids=face_ids, large_person_group_id=self.group_id)
-        
+        identify_result = await client.identify_from_large_person_group(
+            face_ids=face_ids, large_person_group_id=self.group_id
+        )
+
         assert len(identify_result) == len(face_ids)
         for result in identify_result:
             assert result.candidates is not None

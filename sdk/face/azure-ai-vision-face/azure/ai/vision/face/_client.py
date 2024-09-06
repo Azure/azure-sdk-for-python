@@ -23,11 +23,9 @@ from ._configuration import (
 from ._serialization import Deserializer, Serializer
 from .operations import (
     FaceClientOperationsMixin,
-    FaceListOperations,
     FaceSessionClientOperationsMixin,
     LargeFaceListOperations,
     LargePersonGroupOperations,
-    PersonGroupOperations,
 )
 
 if TYPE_CHECKING:
@@ -38,12 +36,8 @@ if TYPE_CHECKING:
 class FaceAdministrationClient:  # pylint: disable=client-accepts-api-version-keyword
     """FaceAdministrationClient.
 
-    :ivar face_list: FaceListOperations operations
-    :vartype face_list: azure.ai.vision.face.operations.FaceListOperations
     :ivar large_face_list: LargeFaceListOperations operations
     :vartype large_face_list: azure.ai.vision.face.operations.LargeFaceListOperations
-    :ivar person_group: PersonGroupOperations operations
-    :vartype person_group: azure.ai.vision.face.operations.PersonGroupOperations
     :ivar large_person_group: LargePersonGroupOperations operations
     :vartype large_person_group: azure.ai.vision.face.operations.LargePersonGroupOperations
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
@@ -85,9 +79,7 @@ class FaceAdministrationClient:  # pylint: disable=client-accepts-api-version-ke
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.face_list = FaceListOperations(self._client, self._config, self._serialize, self._deserialize)
         self.large_face_list = LargeFaceListOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.person_group = PersonGroupOperations(self._client, self._config, self._serialize, self._deserialize)
         self.large_person_group = LargePersonGroupOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

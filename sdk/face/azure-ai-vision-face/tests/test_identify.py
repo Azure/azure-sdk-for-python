@@ -17,6 +17,7 @@ from preparers import FaceClientPreparer, FacePreparer, FaceAdministrationClient
 from _shared.constants import TestImages
 from _shared import helpers
 
+
 class TestIdentify(AzureRecordedTestCase):
     test_images = [
         TestImages.IMAGE_FAMILY_1_DAD_1,
@@ -33,7 +34,7 @@ class TestIdentify(AzureRecordedTestCase):
             helpers.read_file_content(image_path),
             detection_model=FaceDetectionModel.DETECTION_03,
             recognition_model=FaceRecognitionModel.RECOGNITION_04,
-            return_face_id=True
+            return_face_id=True,
         )
         for face in result:
             face_ids.append(face.face_id)
@@ -52,7 +53,7 @@ class TestIdentify(AzureRecordedTestCase):
                 self.group_id,
                 result.person_id,
                 helpers.read_file_content(image_path),
-                detection_model=FaceDetectionModel.DETECTION_03
+                detection_model=FaceDetectionModel.DETECTION_03,
             )
 
         poller = operations.begin_train(self.group_id)
@@ -72,7 +73,7 @@ class TestIdentify(AzureRecordedTestCase):
         self._setup_group(administration_client.person_group)
 
         identify_result = client.identify_from_person_group(face_ids=face_ids, person_group_id=self.group_id)
-        
+
         assert len(identify_result) == len(face_ids)
         for result in identify_result:
             assert result.candidates is not None
@@ -87,12 +88,16 @@ class TestIdentify(AzureRecordedTestCase):
     @FaceClientPreparer()
     @FaceAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_identify_from_large_person_group(self, client: FaceClient, administration_client: FaceAdministrationClient):
+    def test_identify_from_large_person_group(
+        self, client: FaceClient, administration_client: FaceAdministrationClient
+    ):
         face_ids = self._setup_faces(client)
         self._setup_group(administration_client.large_person_group)
 
-        identify_result = client.identify_from_large_person_group(face_ids=face_ids, large_person_group_id=self.group_id)
-        
+        identify_result = client.identify_from_large_person_group(
+            face_ids=face_ids, large_person_group_id=self.group_id
+        )
+
         assert len(identify_result) == len(face_ids)
         for result in identify_result:
             assert result.candidates is not None
