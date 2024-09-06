@@ -508,7 +508,6 @@ def test_async_features_added_cleanup():
 
 
 def test_new_enum_added():
-    # Testing reporting on class level property added
     current = {
         "azure.contoso.widgetmanager": {
             "class_nodes": {
