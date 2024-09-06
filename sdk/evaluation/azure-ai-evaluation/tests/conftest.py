@@ -127,19 +127,19 @@ def dev_connections(mock_project_scope: dict, mock_model_config: AzureOpenAIMode
 @pytest.fixture(scope="session")
 def mock_model_config() -> dict:
     return AzureOpenAIModelConfiguration(
-        azure_endpoint="aoai-api-endpoint",
+        azure_endpoint="https://Sanitized.openai.azure.com",
         api_key="aoai-api-key",
-        api_version="2023-07-01-preview",
+        api_version="2024-04-01-preview",
         azure_deployment="aoai-deployment",
     )
 
 
 @pytest.fixture(scope="session")
-def mock_project_scope() -> dict:
+def mock_project_scope() -> Dict[str, str]:
     return {
-        "subscription_id": "subscription-id",
-        "resource_group_name": "resource-group-name",
-        "project_name": "project-name",
+        "subscription_id": SanitizedValues.SUBSCRIPTION_ID,
+        "resource_group_name": SanitizedValues.RESOURCE_GROUP_NAME,
+        "project_name": SanitizedValues.WORKSPACE_NAME,
     }
 
 
