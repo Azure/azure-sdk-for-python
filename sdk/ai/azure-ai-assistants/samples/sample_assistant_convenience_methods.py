@@ -77,11 +77,11 @@ def sample_assistant_functions():
     thread = assistant_client.create_thread()
     logging.info("Created thread, ID: %s", thread.id)
     
-    # Create and send message
+    # Create message to thread
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
     logging.info("Created message, ID: %s", message.id)
     
-    # Create and run assistant task
+    # Create and process assistant run in thread with functions
     run_status = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, functions=functions)
     logging.info("Run finished with status: %s", run_status)
 
