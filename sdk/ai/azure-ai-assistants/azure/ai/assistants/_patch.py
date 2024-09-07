@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import sys, io
+import sys, io, logging, time
 from typing import Any, Dict, List, overload, IO, Union, Optional, TYPE_CHECKING
 from azure.core.tracing.decorator import distributed_trace
 
@@ -21,6 +21,7 @@ if TYPE_CHECKING:
 
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
+_LOGGER = logging.getLogger(__name__)
 
 from ._client import AssistantsClient as AssistantsClientGenerated
 from . import models as _models
@@ -303,6 +304,49 @@ class AssistantsClient(AssistantsClientGenerated):
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
+
+    @distributed_trace
+    def create_and_process_run(
+        self, 
+        thread_id: str, 
+        assistant_id: str, 
+        functions : _models.AssistantFunctions,
+        sleep_interval: int = 1, 
+        **kwargs: Any
+    ) -> str:
+        """
+        Create a run with optional parameters and process it, including monitoring status and handling tool outputs.
+
+        :param thread_id: The ID of the thread.
+        :param assistant_id: The ID of the assistant.
+        :param functions: An instance of AssistantFunctions to handle tool calls.
+        :param sleep_interval: Time in seconds to wait between status checks.
+        :param kwargs: Additional parameters passed to the create_run method.
+        :return: Final status of the run.
+        """
+        # Create and initiate the run with additional parameters
+        run = self.create_run(thread_id=thread_id, assistant_id=assistant_id, **kwargs)
+
+        # Monitor and process the run status
+        while run.status in ["queued", "in_progress", "requires_action"]:
+            time.sleep(sleep_interval)
+            run = self.get_run(thread_id=thread_id, run_id=run.id)
+            
+            if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                if not tool_calls:
+                    _LOGGER.warning("No tool calls provided - cancelling run")
+                    self.cancel_run(thread_id=thread_id, run_id=run.id)
+                    break
+
+                tool_outputs = functions.invoke_functions(tool_calls)
+                _LOGGER.info("Tool outputs: %s", tool_outputs)
+                if tool_outputs:
+                    self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+
+            _LOGGER.info("Current run status: %s", run.status)
+
+        return run.status
 
 
 __all__: List[str] = [
