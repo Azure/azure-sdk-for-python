@@ -27,7 +27,6 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants import AssistantsClient
-from azure.ai.assistants.models._models import SubmitToolOutputsDetails
 from azure.core.credentials import AzureKeyCredential
 
 import os, time, json

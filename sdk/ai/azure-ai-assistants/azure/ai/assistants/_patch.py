@@ -23,7 +23,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 
 from ._client import AssistantsClient as AssistantsClientGenerated
-import models as _models
+from . import models as _models
 
 
 class AssistantsClient(AssistantsClientGenerated):

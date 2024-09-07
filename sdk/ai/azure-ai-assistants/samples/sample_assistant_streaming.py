@@ -104,7 +104,7 @@ def sample_assistant_streaming():
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     print("Created message, message ID", message.id)
 
-    run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id, stream=True, stream_parameter=True)
+    run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id, stream=True)
 
     if hasattr(run, '__iter__'):
         print_streamed_events(run)
