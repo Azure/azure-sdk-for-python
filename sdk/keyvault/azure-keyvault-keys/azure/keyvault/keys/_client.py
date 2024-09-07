@@ -16,7 +16,7 @@ from ._generated.models import KeyAttributes
 from ._models import JsonWebKey, KeyRotationLifetimeAction
 from ._shared import KeyVaultClientBase
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
-from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyRotationPolicy, ReleaseKeyResult
+from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyReleasePolicy, KeyRotationPolicy, ReleaseKeyResult
 
 
 def _get_key_id(vault_url, key_name, version=None):
@@ -117,7 +117,7 @@ class KeyClient(KeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires_on: Optional[datetime] = None,
         exportable: Optional[bool] = None,
-        release_policy: Optional[KeyRotationPolicy] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
         **kwargs: Any,
     ) -> KeyVaultKey:
         """Create a key or, if ``name`` is already in use, create a new version of the key.
@@ -201,7 +201,7 @@ class KeyClient(KeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires_on: Optional[datetime] = None,
         exportable: Optional[bool] = None,
-        release_policy: Optional[KeyRotationPolicy] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
         **kwargs: Any,
     ) -> KeyVaultKey:
         """Create a new RSA key or, if ``name`` is already in use, create a new version of the key
@@ -273,7 +273,7 @@ class KeyClient(KeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires_on: Optional[datetime] = None,
         exportable: Optional[bool] = None,
-        release_policy: Optional[KeyRotationPolicy] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
         **kwargs: Any,
     ) -> KeyVaultKey:
         """Create a new elliptic curve key or, if ``name`` is already in use, create a new version of the key.
@@ -342,7 +342,7 @@ class KeyClient(KeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires_on: Optional[datetime] = None,
         exportable: Optional[bool] = None,
-        release_policy: Optional[KeyRotationPolicy] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
         **kwargs: Any,
     ) -> KeyVaultKey:
         """Create a new octet sequence (symmetric) key or, if ``name`` is in use, create a new version of the key.
@@ -662,7 +662,7 @@ class KeyClient(KeyVaultClientBase):
         tags: Optional[Dict[str, str]] = None,
         not_before: Optional[datetime] = None,
         expires_on: Optional[datetime] = None,
-        release_policy: Optional[KeyRotationPolicy] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
         **kwargs: Any,
     ) -> KeyVaultKey:
         """Change a key's properties (not its cryptographic material).
@@ -793,7 +793,7 @@ class KeyClient(KeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires_on: Optional[datetime] = None,
         exportable: Optional[bool] = None,
-        release_policy: Optional[KeyRotationPolicy] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
         **kwargs: Any,
     ) -> KeyVaultKey:
         """Import a key created externally.
