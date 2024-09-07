@@ -5,7 +5,7 @@
 # pylint:disable=too-many-lines
 from datetime import datetime
 from functools import partial
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -116,7 +116,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         size: Optional[int] = None,
         curve: Optional[Union[str, KeyCurveName]] = None,
         public_exponent: Optional[int] = None,
-        key_operations: Optional[list[Union[str, KeyOperation]]] = None,
+        key_operations: Optional[List[Union[str, KeyOperation]]] = None,
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
         not_before: Optional[datetime] = None,
@@ -142,7 +142,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
         :paramtype public_exponent: int or None
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :paramtype key_operations: List[~azure.keyvault.keys.KeyOperation or str] or None
         :keyword enabled: Whether the key is enabled for use.
         :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
@@ -205,7 +205,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         size: Optional[int] = None,
         public_exponent: Optional[int] = None,
         hardware_protected: Optional[bool] = False,
-        key_operations: Optional[list[Union[str, KeyOperation]]] = None,
+        key_operations: Optional[List[Union[str, KeyOperation]]] = None,
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
         not_before: Optional[datetime] = None,
@@ -228,7 +228,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             Defaults to ``False``.
         :paramtype hardware_protected: bool or None
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :paramtype key_operations: List[~azure.keyvault.keys.KeyOperation or str] or None
         :keyword enabled: Whether the key is enabled for use.
         :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
@@ -276,7 +276,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         name: str,
         *,
         curve: Optional[Union[str, KeyCurveName]] = None,
-        key_operations: Optional[list[Union[str, KeyOperation]]] = None,
+        key_operations: Optional[List[Union[str, KeyOperation]]] = None,
         hardware_protected: Optional[bool] = False,
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -295,7 +295,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword curve: Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
         :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str or None
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :paramtype key_operations: List[~azure.keyvault.keys.KeyOperation or str] or None
         :keyword hardware_protected: Whether the key should be created in a hardware security module.
             Defaults to ``False``.
         :paramtype hardware_protected: bool or None
@@ -345,7 +345,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         name: str,
         *,
         size: Optional[int] = None,
-        key_operations: Optional[list[Union[str, KeyOperation]]] = None,
+        key_operations: Optional[List[Union[str, KeyOperation]]] = None,
         hardware_protected: Optional[bool] = False,
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -364,7 +364,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword size: Key size in bits, for example 128, 192, or 256.
         :paramtype size: int or None
         :keyword key_operations: Allowed key operations.
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :paramtype key_operations: List[~azure.keyvault.keys.KeyOperation or str] or None
         :keyword hardware_protected: Whether the key should be created in a hardware security module.
             Defaults to ``False``.
         :paramtype hardware_protected: bool or None
@@ -664,7 +664,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         name: str,
         version: Optional[str] = None,
         *,
-        key_operations: Optional[list[Union[str, KeyOperation]]] = None,
+        key_operations: Optional[List[Union[str, KeyOperation]]] = None,
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
         not_before: Optional[datetime] = None,
@@ -681,7 +681,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :type version: str or None
 
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :paramtype key_operations: List[~azure.keyvault.keys.KeyOperation or str] or None
         :keyword enabled: Whether the key is enabled for use.
         :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
@@ -959,7 +959,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         key_name: str,
         policy: KeyRotationPolicy,
         *,
-        lifetime_actions: Optional[list[KeyRotationLifetimeAction]] = None,
+        lifetime_actions: Optional[List[KeyRotationLifetimeAction]] = None,
         expires_in: Optional[str] = None,
         **kwargs: Any,
     ) -> KeyRotationPolicy:
@@ -973,7 +973,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key. This will
             override the lifetime actions of the provided ``policy``.
-        :paramtype lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
+        :paramtype lifetime_actions: List[~azure.keyvault.keys.KeyRotationLifetimeAction]
         :keyword str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an
             ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H". See
             `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more information on ISO 8601 durations.
