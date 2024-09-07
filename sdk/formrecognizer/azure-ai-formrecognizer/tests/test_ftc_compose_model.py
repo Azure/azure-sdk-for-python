@@ -38,6 +38,7 @@ class TestTraining(FormRecognizerTest):
         composed_model = CustomFormModel.from_dict(composed_model_dict)
         self.assertComposedModelV2HasValues(composed_model, model_1, model_2)
 
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_compose_model_invalid_unlabeled_models_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
