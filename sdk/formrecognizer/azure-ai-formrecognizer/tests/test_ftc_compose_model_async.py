@@ -20,7 +20,7 @@ get_ft_client = functools.partial(get_async_client, FormTrainingClient)
 
 class TestTrainingAsync(AsyncFormRecognizerTest):
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_compose_model_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):

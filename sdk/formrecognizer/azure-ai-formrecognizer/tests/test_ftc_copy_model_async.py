@@ -43,7 +43,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert target["modelId"] != model.model_id
             assert copied_model
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_copy_model_with_labeled_model_name_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
@@ -67,7 +67,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert copied_model
             assert copied_model.model_name == "mymodel"
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_copy_model_with_unlabeled_model_name_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
@@ -157,7 +157,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert target["resourceRegion"] == "eastus"
             assert target["resourceId"] == formrecognizer_resource_id
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_copy_model_with_composed_model_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):

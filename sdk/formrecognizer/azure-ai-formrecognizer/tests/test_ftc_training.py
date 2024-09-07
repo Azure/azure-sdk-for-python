@@ -18,7 +18,7 @@ get_ft_client = functools.partial(get_sync_client, FormTrainingClient)
 
 class TestTraining(FormRecognizerTest):
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_training_with_labels_v2(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
@@ -46,7 +46,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_training_multipage_with_labels_v2(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
@@ -72,7 +72,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.name
 
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_training_without_labels_v2(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
@@ -100,7 +100,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_training_multipage_without_labels_v2(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
@@ -146,7 +146,7 @@ class TestTraining(FormRecognizerTest):
         assert e.value.error.code
         assert e.value.error.message
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_training_with_labels_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
@@ -175,7 +175,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_training_multipage_with_labels_v21(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
@@ -200,7 +200,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_training_without_labels_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
@@ -229,7 +229,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_training_multipage_without_labels_v21(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):

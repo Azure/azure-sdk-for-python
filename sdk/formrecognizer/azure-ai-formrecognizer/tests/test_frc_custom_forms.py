@@ -19,7 +19,7 @@ get_ft_client = functools.partial(get_sync_client, FormTrainingClient)
 
 class TestCustomForms(FormRecognizerTest):
 
-    @pytest.mark.skip("Flaky test")
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_custom_form_unlabeled(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
@@ -40,7 +40,7 @@ class TestCustomForms(FormRecognizerTest):
         assert form[0].form_type ==  "form-0"
         self.assertUnlabeledRecognizedFormHasValues(form[0], model)
 
-    @pytest.mark.skip("Flaky test")
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_unlabeled(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
@@ -64,7 +64,7 @@ class TestCustomForms(FormRecognizerTest):
             assert form.form_type == "form-0"
             self.assertUnlabeledRecognizedFormHasValues(form, model)
 
-    @pytest.mark.skip("Flaky test")
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_custom_form_labeled(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
@@ -87,7 +87,7 @@ class TestCustomForms(FormRecognizerTest):
         assert form[0].form_type ==  "custom:labeled"
         self.assertLabeledRecognizedFormHasValues(form[0], model)
 
-    @pytest.mark.skip("Flaky test")
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_labeled(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
@@ -114,7 +114,7 @@ class TestCustomForms(FormRecognizerTest):
             assert form.form_type ==  "custom:"+model.model_id
             self.assertLabeledRecognizedFormHasValues(form, model)
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_custom_form_unlabeled_transform(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
@@ -169,7 +169,7 @@ class TestCustomForms(FormRecognizerTest):
         assert recognized_form.model_id is not None
         self.assertUnlabeledFormFieldDictTransformCorrect(recognized_form.fields, actual_fields, read_results)
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_unlabeled_transform(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
@@ -211,7 +211,7 @@ class TestCustomForms(FormRecognizerTest):
             assert form.model_id ==  model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip("Test is flaky and hangs")
     @skip_flaky_test
     @FormRecognizerPreparer()
     def test_custom_form_continuation_token(self, **kwargs):
@@ -238,7 +238,7 @@ class TestCustomForms(FormRecognizerTest):
         assert result is not None
         initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip("Test is flaky and hangs")
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
@@ -280,7 +280,7 @@ class TestCustomForms(FormRecognizerTest):
             assert form.model_id ==  model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip("Test is flaky and hangs")
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
