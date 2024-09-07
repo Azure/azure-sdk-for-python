@@ -11,7 +11,7 @@ DESCRIPTION:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
-    python sample_assistant_basics.py
+    python sample_assistant_functions.py
 
     Set these two environment variables before running the sample:
     1) AZUREAI_ENDPOINT_URL - Your endpoint URL, in the form 
@@ -101,7 +101,7 @@ user_tools = [{
 }]
 
 
-def sample_assistant_operation_with_functions():
+def sample_assistant_functions():
 
     setup_console_trace_exporter()
 
@@ -162,4 +162,4 @@ def sample_assistant_operation_with_functions():
 
 
 if __name__ == "__main__":
-    sample_assistant_operation_with_functions()
+    sample_assistant_functions()
