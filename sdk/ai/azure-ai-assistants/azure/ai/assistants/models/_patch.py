@@ -12,14 +12,17 @@ import json
 
 
 class AssistantFunctions:
+    """
+    A class to manage a set of user-defined functions for an assistant.
+    """
     def __init__(self, functions: Dict[str, Any]):
         """
         Initialize AssistantFunctions with a dictionary of functions.
 
         :param functions: A dictionary where keys are function names and values are the function objects.
         """
-        self.functions = functions
-        self.definitions = self._build_function_definitions(functions)
+        self._functions = functions
+        self._definitions = self._build_function_definitions(functions)
 
     def _build_function_definitions(self, functions: Dict[str, Any]) -> List[Dict[str, Any]]:
         """
@@ -95,8 +98,8 @@ class AssistantFunctions:
         :return: The result of the function call.
         """
 
-        if function_name in self.functions:
-            function = self.functions[function_name]
+        if function_name in self._functions:
+            function = self._functions[function_name]
             
             try:
                 parsed_arguments = json.loads(arguments)
@@ -116,6 +119,13 @@ class AssistantFunctions:
 
         else:
             return None
+
+    @property
+    def definitions(self):
+        """
+        Get the function definitions for the assistant.
+        """
+        return self._definitions
 
 
 __all__: List[str] = [
