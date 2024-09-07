@@ -27,11 +27,11 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants import AssistantsClient
-from azure.ai.assistants.models._models import SubmitToolOutputsDetails
+from azure.ai.assistants.models import AssistantFunctions
 from azure.core.credentials import AzureKeyCredential
 from user_functions import user_functions
 
-import os, time, json
+import os, time, logging
 
 
 def setup_console_trace_exporter():
@@ -44,121 +44,75 @@ def setup_console_trace_exporter():
     RequestsInstrumentor().instrument()
 
 
-def process_tool_calls(tool_calls):
-    print("Processing tool calls")
-    tool_outputs = []
-    for tool_call in tool_calls:
-        function_response = str(handle_function_call(tool_call.function.name, tool_call.function.arguments))
-        print(f"Function response: {function_response}")       
-        tool_output = {
-            "tool_call_id": tool_call.id,
-            "output": function_response,
-        }
-        tool_outputs.append(tool_output)
-
-    return tool_outputs
-
-
-def handle_function_call(function_name, arguments):
-    print(f"Handling function call: {function_name}, arguments: {arguments}")
-
-    if function_name in user_functions:
-        function = user_functions[function_name]
-        
-        try:
-            # Parse arguments from JSON string to dictionary
-            parsed_arguments = json.loads(arguments)
-        except json.JSONDecodeError:
-            print("Error decoding JSON arguments.")
-            parsed_arguments = {}
-
-        # Ensure parsed_arguments is a dictionary
-        if isinstance(parsed_arguments, dict):
-            if not parsed_arguments:
-                return function()
-            else:
-                return function(**parsed_arguments)
-        else:
-            print("Parsed arguments are not a valid dictionary.")
-            return None
-
-    else:
-        print(f"Function {function_name} not found in user defined functions")
-        return None
-
-
-user_tools = [{
-    "type": "function",
-    "function": {
-        "name": "fetch_current_datetime",
-        "description": "Get the current time as a JSON string.",
-        "parameters": {
-            "type": "object",
-            "properties": {},
-            "required": []
-        }
-    }
-}]
-
-
 def sample_assistant_functions():
-
+    # Setup logging
+    logging.basicConfig(level=logging.INFO)
+    
+    # Setup console trace exporter
     setup_console_trace_exporter()
-
+    
+    # Check for environment variables
     try:
         endpoint = os.environ["AZUREAI_ENDPOINT_URL"]
         key = os.environ["AZUREAI_ENDPOINT_KEY"]
         api_version = os.environ.get("AZUREAI_API_VERSION", "2024-07-01-preview")
-    except KeyError:
-        print("Missing environment variable 'AZUREAI_ENDPOINT_URL' or 'AZUREAI_ENDPOINT_KEY'")
-        print("Set them before running this sample.")
+    except KeyError as e:
+        logging.error("Missing environment variable: %s", e)
         exit()
-
+    
+    # Initialize assistant client
     assistant_client = AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version)
-    print("Created assistant client")
-
+    logging.info("Created assistant client")
+    
+    # Initialize assistant functions
+    functions = AssistantFunctions(functions=user_functions)
+    
+    # Create assistant
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="You are helpful assistant", tools=user_tools
+        model="gpt", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
     )
-    print("Created assistant, assistant ID", assistant.id)
-
+    logging.info("Created assistant, ID: %s", assistant.id)
+    
+    # Create thread for communication
     thread = assistant_client.create_thread()
-    print("Created thread, thread ID", thread.id)
-
+    logging.info("Created thread, ID: %s", thread.id)
+    
+    # Create and send message
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
-    print("Created message, message ID", message.id)
-
+    logging.info("Created message, ID: %s", message.id)
+    
+    # Create and run assistant task
     run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
-    print("Created run, run ID", run.id)
-
-    # poll the run as long as run status is queued or in progress
+    logging.info("Created run, ID: %s", run.id)
+    
+    # Polling loop for run status
     while run.status in ["queued", "in_progress", "requires_action"]:
-        # wait for a second
         time.sleep(1)
         run = assistant_client.get_run(thread_id=thread.id, run_id=run.id)
 
-        if run.status == "requires_action":
-
-            submit_tool_outputs_action : SubmitToolOutputsDetails = run.required_action.submit_tool_outputs
-            tool_calls = submit_tool_outputs_action.tool_calls
-            if tool_calls is None:
-                print("Processing run requires tool call action but no tool calls provided, cancel the run")
+        if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+            tool_calls = run.required_action.submit_tool_outputs.tool_calls
+            if not tool_calls:
+                logging.warning("No tool calls provided - cancelling run")
                 assistant_client.cancel_run(thread_id=thread.id, run_id=run.id)
+                break
 
-            tool_outputs = process_tool_calls(tool_calls)
+            tool_outputs = functions.invoke_functions(tool_calls)
+            logging.info("Tool outputs: %s", tool_outputs)
             if tool_outputs:
-                print("Submitting tool outputs")
                 assistant_client.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
 
-        print("Run status:", run.status)
+        logging.info("Current run status: %s", run.status)
+    
+    logging.info("Run completed with status: %s", run.status)
 
-    print("Run completed with status:", run.status)
-
+    # Fetch and log all messages
     messages = assistant_client.list_messages(thread_id=thread.id)
-    print("messages:", messages)
+    logging.info("Messages: %s", messages)
 
+    # Delete the assistant when done
     assistant_client.delete_assistant(assistant.id)
-    print("Deleted assistant")
+    logging.info("Deleted assistant")
 
 
 if __name__ == "__main__":
