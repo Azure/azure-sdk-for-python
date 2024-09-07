@@ -171,8 +171,8 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         algorithm: EncryptionAlgorithm,
         plaintext: bytes,
         *,
-        iv: Optional[bytes],
-        additional_authenticated_data: Optional[bytes],
+        iv: Optional[bytes] = None,
+        additional_authenticated_data: Optional[bytes] = None,
         **kwargs: Any,
     ) -> EncryptResult:
         """Encrypt bytes using the client's key.
@@ -257,9 +257,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         algorithm: EncryptionAlgorithm,
         ciphertext: bytes,
         *,
-        iv: Optional[bytes],
-        authentication_tag: Optional[bytes],
-        additional_authenticated_data: Optional[bytes],
+        iv: Optional[bytes] = None,
+        authentication_tag: Optional[bytes] = None,
+        additional_authenticated_data: Optional[bytes] = None,
         **kwargs: Any,
     ) -> DecryptResult:
         """Decrypt a single block of encrypted data using the client's key.
