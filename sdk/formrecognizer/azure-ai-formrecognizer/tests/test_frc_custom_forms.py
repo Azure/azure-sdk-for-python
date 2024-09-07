@@ -40,7 +40,7 @@ class TestCustomForms(FormRecognizerTest):
         assert form[0].form_type ==  "form-0"
         self.assertUnlabeledRecognizedFormHasValues(form[0], model)
 
-    @skip_flaky_test
+    @pytest.mark.skip("Flaky test")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_unlabeled(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
@@ -64,7 +64,7 @@ class TestCustomForms(FormRecognizerTest):
             assert form.form_type == "form-0"
             self.assertUnlabeledRecognizedFormHasValues(form, model)
 
-    @skip_flaky_test
+    @pytest.mark.skip("Flaky test")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_custom_form_labeled(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
@@ -87,7 +87,7 @@ class TestCustomForms(FormRecognizerTest):
         assert form[0].form_type ==  "custom:labeled"
         self.assertLabeledRecognizedFormHasValues(form[0], model)
 
-    @skip_flaky_test
+    @pytest.mark.skip("Flaky test")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_custom_form_multipage_labeled(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
