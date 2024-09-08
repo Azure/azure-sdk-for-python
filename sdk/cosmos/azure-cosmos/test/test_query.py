@@ -27,20 +27,14 @@ class TestQuery(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = config.host
-    masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
+    is_emulator = config.is_emulator
+    credential = config.credential
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         if cls.host == "https://localhost:8081/":
             os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
