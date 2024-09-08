@@ -6,7 +6,8 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from ._models import MessageDeltaChunk
+from ._enums import AssistantStreamEvent
+from ._models import MessageDeltaChunk, ThreadRun, RunStep, ThreadMessage
 
 from typing import List, Dict, Any
 import inspect, json
@@ -158,12 +159,26 @@ class AssistantRunStream:
             elif line.startswith("data:"):
                 event_data = line.split(":", 1)[1].strip()
 
-        if event_type == "thread.message.delta":
-            # Parse into structured message delta
-            parsed_data = json.loads(event_data)
+        parsed_data = json.loads(event_data)
+
+        # Map event type to the appropriate class
+        if event_type == AssistantStreamEvent.THREAD_MESSAGE_DELTA:
             return event_type, MessageDeltaChunk(**parsed_data)
-        
-        return event_type, event_data
+        elif event_type in (AssistantStreamEvent.THREAD_RUN_CREATED,
+                            AssistantStreamEvent.THREAD_RUN_QUEUED,
+                            AssistantStreamEvent.THREAD_RUN_IN_PROGRESS,
+                            AssistantStreamEvent.THREAD_RUN_COMPLETED):
+            return event_type, ThreadRun(**parsed_data)
+        elif event_type in (AssistantStreamEvent.THREAD_RUN_STEP_CREATED,
+                            AssistantStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
+                            AssistantStreamEvent.THREAD_RUN_STEP_COMPLETED):
+            return event_type, RunStep(**parsed_data)
+        elif event_type in (AssistantStreamEvent.THREAD_MESSAGE_CREATED,
+                            AssistantStreamEvent.THREAD_MESSAGE_COMPLETED):
+            return event_type, ThreadMessage(**parsed_data)
+
+        # Add other event types and corresponding classes as needed
+        return event_type, parsed_data
 
 
 __all__: List[str] = [

@@ -27,7 +27,7 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants import AssistantsClient
-from azure.ai.assistants.models import AssistantStreamEvent, MessageDeltaTextContent
+from azure.ai.assistants.models import AssistantStreamEvent, MessageDeltaTextContent, MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep
 from azure.core.credentials import AzureKeyCredential
 
 import os, logging
@@ -70,29 +70,24 @@ def sample_assistant_stream():
     logging.info(f"Created message, message ID {message.id}")
 
     with assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id, stream=True) as stream:
+        
         for event_type, event_data in stream:
             logging.info(f"Event Type: {event_type}")
 
-            if event_type == AssistantStreamEvent.THREAD_MESSAGE_CREATED:
-                logging.info(f"A new message is created. Data: {event_data}")
-
-            elif event_type == AssistantStreamEvent.THREAD_MESSAGE_DELTA:
-                delta_content = event_data.delta.content
-                for content_part in delta_content:
+            if isinstance(event_data, MessageDeltaChunk):
+                for content_part in event_data.delta.content:
                     if isinstance(content_part, MessageDeltaTextContent):
-                        logging.info(f"Text delta received: {content_part.text.value}")
+                        text_value = content_part.text.value if content_part.text else "No text"
+                        logging.info(f"Text delta received: {text_value}")
 
-            elif event_type == AssistantStreamEvent.THREAD_MESSAGE_IN_PROGRESS:
-                logging.info("Message processing is in progress.")
+            elif isinstance(event_data, ThreadMessage):
+                logging.info(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
 
-            elif event_type == AssistantStreamEvent.THREAD_MESSAGE_COMPLETED:
-                logging.info(f"Message processing is completed. Data: {event_data}")
+            elif isinstance(event_data, ThreadRun):
+                logging.info(f"ThreadRun status: {event_data.status}, Model: {event_data.model}")
 
-            elif event_type == AssistantStreamEvent.THREAD_RUN_STEP_COMPLETED:
-                logging.info(f"Run step completed. Data: {event_data}")
-
-            elif event_type == AssistantStreamEvent.THREAD_RUN_COMPLETED:
-                logging.info(f"Run processing completed. Data: {event_data}")
+            elif isinstance(event_data, RunStep):
+                logging.info(f"RunStep type: {event_data.type}, Status: {event_data.status}")
 
             elif event_type == AssistantStreamEvent.ERROR:
                 logging.error(f"An error occurred. Data: {event_data}")
