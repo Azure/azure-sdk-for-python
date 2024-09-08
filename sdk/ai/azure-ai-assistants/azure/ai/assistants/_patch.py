@@ -32,7 +32,7 @@ class AssistantsClient(AssistantsClientGenerated):
     @overload
     def create_run(
         self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
+    ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
         """Creates a new run for an assistant thread.
 
         :param thread_id: Required.
@@ -69,7 +69,7 @@ class AssistantsClient(AssistantsClientGenerated):
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.ThreadRun:
+    ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
         """Creates a new run for an assistant thread.
 
         :param thread_id: Required.
@@ -154,7 +154,7 @@ class AssistantsClient(AssistantsClientGenerated):
     @overload
     def create_run(
         self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ThreadRun:
+    ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
         """Creates a new run for an assistant thread.
 
         :param thread_id: Required.
@@ -191,7 +191,7 @@ class AssistantsClient(AssistantsClientGenerated):
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.ThreadRun:
+    ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
         """Creates a new run for an assistant thread.
 
         :param thread_id: Required.
@@ -274,10 +274,10 @@ class AssistantsClient(AssistantsClientGenerated):
 
         if isinstance(body, dict):  # Handle overload with JSON body.
             content_type = kwargs.get('content_type', 'application/json')
-            return super().create_run(thread_id, body, content_type=content_type, **kwargs)
+            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
         
         elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
-            return super().create_run(
+            response = super().create_run(
                 thread_id,
                 assistant_id=assistant_id,
                 model=model,
@@ -300,10 +300,16 @@ class AssistantsClient(AssistantsClientGenerated):
 
         elif isinstance(body, io.IOBase):  # Handle overload with binary body.
             content_type = kwargs.get('content_type', 'application/json')
-            return super().create_run(thread_id, body, content_type=content_type, **kwargs)
+            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
+
+        # If streaming is enabled, return the custom stream object
+        if stream:
+            return _models.AssistantRunStream(response)
+        else:
+            return response
 
     @distributed_trace
     def create_and_process_run(

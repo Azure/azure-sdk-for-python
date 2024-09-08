@@ -11,7 +11,7 @@ DESCRIPTION:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
-    python sample_assistant_streaming.py
+    python sample_assistant_stream_iterator.py
 
     Set these two environment variables before running the sample:
     1) AZUREAI_ENDPOINT_URL - Your endpoint URL, in the form 
@@ -27,10 +27,10 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants import AssistantsClient
-from azure.ai.assistants.models._models import SubmitToolOutputsDetails
+from azure.ai.assistants.models import AssistantStreamEvent
 from azure.core.credentials import AzureKeyCredential
 
-import os, time, json
+import os, logging
 
 
 def setup_console_trace_exporter():
@@ -43,42 +43,7 @@ def setup_console_trace_exporter():
     RequestsInstrumentor().instrument()
 
 
-def print_streamed_events(response_iterator):
-    """Print the events from the streamed response."""
-    buffer = ''
-    for chunk in response_iterator:
-        buffer += chunk.decode('utf-8')
-        while '\n\n' in buffer:
-            event_data_str, buffer = buffer.split('\n\n', 1)
-            print_event_details(event_data_str)
-
-
-def print_event_details(event_data_str: str):
-    """Parse and print the event details."""
-    event_lines = event_data_str.strip().split('\n')
-    event_type = None
-    event_data = ''
-    for line in event_lines:
-        if line.startswith('event:'):
-            event_type = line.split(':', 1)[1].strip()
-        elif line.startswith('data:'):
-            event_data = line.split(':', 1)[1].strip()
-
-    if event_type:
-        print(f"Event: {event_type}")
-        try:
-            # Attempt to parse the event data as JSON
-            parsed_data = json.loads(event_data)
-            print("Data:", json.dumps(parsed_data, indent=2))
-        except json.JSONDecodeError:
-            # If data is not in JSON format, print raw data
-            print("Data:", event_data)
-    else:
-        print("Received a message without event type", event_data_str)
-
-
-def sample_assistant_streaming():
-
+def sample_assistant_stream():
     setup_console_trace_exporter()
 
     try:
@@ -91,30 +56,56 @@ def sample_assistant_streaming():
         exit()
 
     assistant_client = AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version)
-    print("Created assistant client")
+    logging.info("Created assistant client")
 
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="You are helpful assistant"
+        model="gpt", name="my-assistant", instructions="You are a helpful assistant"
     )
-    print("Created assistant, assistant ID", assistant.id)
+    logging.info(f"Created assistant, assistant ID {assistant.id}")
 
     thread = assistant_client.create_thread()
-    print("Created thread, thread ID", thread.id)
+    logging.info(f"Created thread, thread ID {thread.id}")
 
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-    print("Created message, message ID", message.id)
+    logging.info(f"Created message, message ID {message.id}")
 
-    run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id, stream=True)
+    with assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id, stream=True) as stream:
+        for event_type, event_data in stream:
+            logging.info(f"Event Type: {event_type}")
 
-    if hasattr(run, '__iter__'):
-        print_streamed_events(run)
+            if event_type == AssistantStreamEvent.THREAD_MESSAGE_CREATED:
+                logging.info(f"A new message is created. Data: {event_data}")
+
+            elif event_type == AssistantStreamEvent.THREAD_MESSAGE_IN_PROGRESS:
+                logging.info("Message processing is in progress.")
+
+            elif event_type == AssistantStreamEvent.THREAD_MESSAGE_COMPLETED:
+                logging.info(f"Message processing is completed. Data: {event_data}")
+
+            elif event_type == AssistantStreamEvent.THREAD_RUN_STEP_COMPLETED:
+                logging.info(f"Run step completed. Data: {event_data}")
+
+            elif event_type == AssistantStreamEvent.THREAD_RUN_COMPLETED:
+                logging.info(f"Run processing completed. Data: {event_data}")
+
+            elif event_type == AssistantStreamEvent.ERROR:
+                logging.error(f"An error occurred. Data: {event_data}")
+
+            elif event_type == AssistantStreamEvent.DONE:
+                logging.info("Stream completed.")
+                break
+
+            else:
+                logging.warning(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
     messages = assistant_client.list_messages(thread_id=thread.id)
-    print("messages:", messages)
+    logging.info(f"Messages: {messages}")
 
     assistant_client.delete_assistant(assistant.id)
-    print("Deleted assistant")
+    logging.info("Deleted assistant")
 
 
 if __name__ == "__main__":
-    sample_assistant_streaming()
+    # Set logging level
+    logging.basicConfig(level=logging.INFO)
+    sample_assistant_stream()

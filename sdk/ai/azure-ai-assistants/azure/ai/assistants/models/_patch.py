@@ -128,8 +128,49 @@ class AssistantFunctions:
         return self._definitions
 
 
+class AssistantRunStream:
+    def __init__(self, response_iterator):
+        self.response_iterator = response_iterator
+        self.buffer = ''
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # Any cleanup actions can be performed here
+        pass
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        while True:
+            chunk = next(self.response_iterator, None)
+            if chunk is None:
+                raise StopIteration
+
+            self.buffer += chunk.decode('utf-8')
+            if '\n\n' in self.buffer:
+                event_data_str, self.buffer = self.buffer.split('\n\n', 1)
+                return self.process_event(event_data_str)
+
+    def process_event(self, event_data_str: str):
+        """Parse and return the event details."""
+        event_lines = event_data_str.strip().split('\n')
+        event_type = None
+        event_data = ''
+        for line in event_lines:
+            if line.startswith('event:'):
+                event_type = line.split(':', 1)[1].strip()
+            elif line.startswith('data:'):
+                event_data = line.split(':', 1)[1].strip()
+
+        return event_type, event_data
+
+
 __all__: List[str] = [
-    "AssistantFunctions"
+    "AssistantFunctions",
+    "AssistantRunStream",
 
 ]  # Add all objects you want publicly available to users at this package level
 
