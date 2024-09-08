@@ -27,12 +27,18 @@ from ._models import FunctionName
 from ._models import FunctionToolDefinition
 from ._models import MessageAttachment
 from ._models import MessageContent
+from ._models import MessageDelta
 from ._models import MessageDeltaChunk
 from ._models import MessageDeltaContent
 from ._models import MessageDeltaImageFileContent
+from ._models import MessageDeltaImageFileContentObject
+from ._models import MessageDeltaTextAnnotation
 from ._models import MessageDeltaTextContent
+from ._models import MessageDeltaTextContentObject
 from ._models import MessageDeltaTextFileCitationAnnotation
+from ._models import MessageDeltaTextFileCitationAnnotationObject
 from ._models import MessageDeltaTextFilePathAnnotation
+from ._models import MessageDeltaTextFilePathAnnotationObject
 from ._models import MessageImageFileContent
 from ._models import MessageIncompleteDetails
 from ._models import MessageTextAnnotation
@@ -161,12 +167,18 @@ __all__ = [
     "FunctionToolDefinition",
     "MessageAttachment",
     "MessageContent",
+    "MessageDelta",
     "MessageDeltaChunk",
     "MessageDeltaContent",
     "MessageDeltaImageFileContent",
+    "MessageDeltaImageFileContentObject",
+    "MessageDeltaTextAnnotation",
     "MessageDeltaTextContent",
+    "MessageDeltaTextContentObject",
     "MessageDeltaTextFileCitationAnnotation",
+    "MessageDeltaTextFileCitationAnnotationObject",
     "MessageDeltaTextFilePathAnnotation",
+    "MessageDeltaTextFilePathAnnotationObject",
     "MessageImageFileContent",
     "MessageIncompleteDetails",
     "MessageTextAnnotation",

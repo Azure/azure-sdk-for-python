@@ -15,6 +15,4 @@ def fetch_current_datetime():
 
 
 # Statically defined user functions for fast reference
-user_functions = {
-    "fetch_current_datetime": fetch_current_datetime
-}
+user_functions = {"fetch_current_datetime": fetch_current_datetime}

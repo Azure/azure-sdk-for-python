@@ -47,10 +47,10 @@ def setup_console_trace_exporter():
 def sample_assistant_functions():
     # Setup logging
     logging.basicConfig(level=logging.INFO)
-    
+
     # Setup console trace exporter
     setup_console_trace_exporter()
-    
+
     # Check for environment variables
     try:
         endpoint = os.environ["AZUREAI_ENDPOINT_URL"]
@@ -59,32 +59,32 @@ def sample_assistant_functions():
     except KeyError as e:
         logging.error("Missing environment variable: %s", e)
         exit()
-    
+
     # Initialize assistant client
     assistant_client = AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version)
     logging.info("Created assistant client")
-    
+
     # Initialize assistant functions
     functions = AssistantFunctions(functions=user_functions)
-    
+
     # Create assistant
     assistant = assistant_client.create_assistant(
         model="gpt", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
     )
     logging.info("Created assistant, ID: %s", assistant.id)
-    
+
     # Create thread for communication
     thread = assistant_client.create_thread()
     logging.info("Created thread, ID: %s", thread.id)
-    
+
     # Create and send message
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
     logging.info("Created message, ID: %s", message.id)
-    
+
     # Create and run assistant task
     run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
     logging.info("Created run, ID: %s", run.id)
-    
+
     # Polling loop for run status
     while run.status in ["queued", "in_progress", "requires_action"]:
         time.sleep(1)
@@ -100,10 +100,12 @@ def sample_assistant_functions():
             tool_outputs = functions.invoke_functions(tool_calls)
             logging.info("Tool outputs: %s", tool_outputs)
             if tool_outputs:
-                assistant_client.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
+                assistant_client.submit_tool_outputs_to_run(
+                    thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
+                )
 
         logging.info("Current run status: %s", run.status)
-    
+
     logging.info("Run completed with status: %s", run.status)
 
     # Fetch and log all messages

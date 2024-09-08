@@ -940,6 +940,41 @@ class MessageContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class MessageDelta(_model_base.Model):
+    """Represents the typed 'delta' payload within a streaming message delta chunk.
+
+
+    :ivar role: The entity that produced the message. Required. Known values are: "user" and
+     "assistant".
+    :vartype role: str or ~azure.ai.assistants.models.MessageRole
+    :ivar content: The content of the message as an array of text and/or images. Required.
+    :vartype content: list[~azure.ai.assistants.models.MessageDeltaContent]
+    """
+
+    role: Union[str, "_models.MessageRole"] = rest_field()
+    """The entity that produced the message. Required. Known values are: \"user\" and \"assistant\"."""
+    content: List["_models.MessageDeltaContent"] = rest_field()
+    """The content of the message as an array of text and/or images. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role: Union[str, "_models.MessageRole"],
+        content: List["_models.MessageDeltaContent"],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class MessageDeltaChunk(_model_base.Model):
     """Represents a message delta i.e. any changed fields on a message during streaming.
 
@@ -987,9 +1022,8 @@ class MessageDeltaContent(_model_base.Model):
     """The abstract base representation of a partial streamed message content payload.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    MessageDeltaImageFileContent, MessageDeltaTextContentObject
+    MessageDeltaImageFileContent, MessageDeltaTextContent
 
-    All required parameters must be populated in order to send to server.
 
     :ivar index: The index of the content part of the message. Required.
     :vartype index: int
@@ -1060,7 +1094,73 @@ class MessageDeltaImageFileContent(MessageDeltaContent, discriminator="image_fil
         super().__init__(*args, type="image_file", **kwargs)
 
 
-class MessageDeltaTextContent(_model_base.Model):
+class MessageDeltaImageFileContentObject(_model_base.Model):
+    """Represents the 'image_file' payload within streaming image file content.
+
+    :ivar file_id: The file ID of the image in the message content.
+    :vartype file_id: str
+    """
+
+    file_id: Optional[str] = rest_field()
+    """The file ID of the image in the message content."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_id: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class MessageDeltaTextContent(MessageDeltaContent, discriminator="text"):
+    """Represents a streamed text content part within a streaming message delta chunk.
+
+
+    :ivar index: The index of the content part of the message. Required.
+    :vartype index: int
+    :ivar type: The type of content for this content part, which is always "text.". Required.
+     Default value is "text".
+    :vartype type: str
+    :ivar text: The text content details.
+    :vartype text: ~azure.ai.assistants.models.MessageDeltaTextContentObject
+    """
+
+    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    """The type of content for this content part, which is always \"text.\". Required. Default value
+     is \"text\"."""
+    text: Optional["_models.MessageDeltaTextContentObject"] = rest_field()
+    """The text content details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        text: Optional["_models.MessageDeltaTextContentObject"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="text", **kwargs)
+
+
+class MessageDeltaTextContentObject(_model_base.Model):
     """Represents the data of a streamed text content part within a streaming message delta chunk.
 
     :ivar value: The data that makes up the text.
@@ -1093,7 +1193,100 @@ class MessageDeltaTextContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageDeltaTextFileCitationAnnotation(_model_base.Model):
+class MessageDeltaTextAnnotation(_model_base.Model):
+    """The abstract base representation of a streamed text content part's text annotation.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    MessageDeltaTextFileCitationAnnotation, MessageDeltaTextFilePathAnnotation
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar index: The index of the annotation within a text content part. Required.
+    :vartype index: int
+    :ivar type: The type of the text content annotation. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    index: int = rest_field()
+    """The index of the annotation within a text content part. Required."""
+    type: str = rest_discriminator(name="type")
+    """The type of the text content annotation. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        type: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class MessageDeltaTextFileCitationAnnotation(MessageDeltaTextAnnotation, discriminator="file_citation"):
+    """Represents a streamed file citation applied to a streaming text content part.
+
+
+    :ivar index: The index of the annotation within a text content part. Required.
+    :vartype index: int
+    :ivar type: The type of the text content annotation, which is always "file_citation.".
+     Required. Default value is "file_citation".
+    :vartype type: str
+    :ivar file_citation: The file citation information.
+    :vartype file_citation:
+     ~azure.ai.assistants.models.MessageDeltaTextFileCitationAnnotationObject
+    :ivar text: The text in the message content that needs to be replaced.
+    :vartype text: str
+    :ivar start_index: The start index of this annotation in the content text.
+    :vartype start_index: int
+    :ivar end_index: The end index of this annotation in the content text.
+    :vartype end_index: int
+    """
+
+    type: Literal["file_citation"] = rest_discriminator(name="type")  # type: ignore
+    """The type of the text content annotation, which is always \"file_citation.\". Required. Default
+     value is \"file_citation\"."""
+    file_citation: Optional["_models.MessageDeltaTextFileCitationAnnotationObject"] = rest_field()
+    """The file citation information."""
+    text: Optional[str] = rest_field()
+    """The text in the message content that needs to be replaced."""
+    start_index: Optional[int] = rest_field()
+    """The start index of this annotation in the content text."""
+    end_index: Optional[int] = rest_field()
+    """The end index of this annotation in the content text."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        file_citation: Optional["_models.MessageDeltaTextFileCitationAnnotationObject"] = None,
+        text: Optional[str] = None,
+        start_index: Optional[int] = None,
+        end_index: Optional[int] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="file_citation", **kwargs)
+
+
+class MessageDeltaTextFileCitationAnnotationObject(_model_base.Model):  # pylint: disable=name-too-long
     """Represents the data of a streamed file citation as applied to a streaming text content part.
 
     :ivar file_id: The ID of the specific file the citation is from.
@@ -1126,7 +1319,60 @@ class MessageDeltaTextFileCitationAnnotation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageDeltaTextFilePathAnnotation(_model_base.Model):
+class MessageDeltaTextFilePathAnnotation(MessageDeltaTextAnnotation, discriminator="file_path"):
+    """Represents a streamed file path annotation applied to a streaming text content part.
+
+
+    :ivar index: The index of the annotation within a text content part. Required.
+    :vartype index: int
+    :ivar type: The type of the text content annotation, which is always "file_path.". Required.
+     Default value is "file_path".
+    :vartype type: str
+    :ivar file_path: The file path information.
+    :vartype file_path: ~azure.ai.assistants.models.MessageDeltaTextFilePathAnnotationObject
+    :ivar start_index: The start index of this annotation in the content text.
+    :vartype start_index: int
+    :ivar end_index: The end index of this annotation in the content text.
+    :vartype end_index: int
+    :ivar text: The text in the message content that needs to be replaced.
+    :vartype text: str
+    """
+
+    type: Literal["file_path"] = rest_discriminator(name="type")  # type: ignore
+    """The type of the text content annotation, which is always \"file_path.\". Required. Default
+     value is \"file_path\"."""
+    file_path: Optional["_models.MessageDeltaTextFilePathAnnotationObject"] = rest_field()
+    """The file path information."""
+    start_index: Optional[int] = rest_field()
+    """The start index of this annotation in the content text."""
+    end_index: Optional[int] = rest_field()
+    """The end index of this annotation in the content text."""
+    text: Optional[str] = rest_field()
+    """The text in the message content that needs to be replaced."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index: int,
+        file_path: Optional["_models.MessageDeltaTextFilePathAnnotationObject"] = None,
+        start_index: Optional[int] = None,
+        end_index: Optional[int] = None,
+        text: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="file_path", **kwargs)
+
+
+class MessageDeltaTextFilePathAnnotationObject(_model_base.Model):
     """Represents the data of a streamed file path annotation as applied to a streaming text content
     part.
 

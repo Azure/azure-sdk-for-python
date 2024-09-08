@@ -273,9 +273,9 @@ class AssistantsClient(AssistantsClientGenerated):
         """
 
         if isinstance(body, dict):  # Handle overload with JSON body.
-            content_type = kwargs.get('content_type', 'application/json')
+            content_type = kwargs.get("content_type", "application/json")
             response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
-        
+
         elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
                 thread_id,
@@ -299,7 +299,7 @@ class AssistantsClient(AssistantsClientGenerated):
             )
 
         elif isinstance(body, io.IOBase):  # Handle overload with binary body.
-            content_type = kwargs.get('content_type', 'application/json')
+            content_type = kwargs.get("content_type", "application/json")
             response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
 
         else:
@@ -313,11 +313,11 @@ class AssistantsClient(AssistantsClientGenerated):
 
     @distributed_trace
     def create_and_process_run(
-        self, 
-        thread_id: str, 
-        assistant_id: str, 
-        functions : _models.AssistantFunctions,
-        sleep_interval: int = 1, 
+        self,
+        thread_id: str,
+        assistant_id: str,
+        functions: _models.AssistantFunctions,
+        sleep_interval: int = 1,
         **kwargs: Any
     ) -> str:
         """
@@ -337,7 +337,7 @@ class AssistantsClient(AssistantsClientGenerated):
         while run.status in ["queued", "in_progress", "requires_action"]:
             time.sleep(sleep_interval)
             run = self.get_run(thread_id=thread_id, run_id=run.id)
-            
+
             if run.status == "requires_action" and run.required_action.submit_tool_outputs:
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
@@ -355,9 +355,7 @@ class AssistantsClient(AssistantsClientGenerated):
         return run.status
 
 
-__all__: List[str] = [
-    "AssistantsClient"
-]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["AssistantsClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

@@ -27,7 +27,7 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants import AssistantsClient
-from azure.ai.assistants.models import AssistantStreamEvent
+from azure.ai.assistants.models import AssistantStreamEvent, MessageDeltaTextContent
 from azure.core.credentials import AzureKeyCredential
 
 import os, logging
@@ -75,6 +75,12 @@ def sample_assistant_stream():
 
             if event_type == AssistantStreamEvent.THREAD_MESSAGE_CREATED:
                 logging.info(f"A new message is created. Data: {event_data}")
+
+            elif event_type == AssistantStreamEvent.THREAD_MESSAGE_DELTA:
+                delta_content = event_data.delta.content
+                for content_part in delta_content:
+                    if isinstance(content_part, MessageDeltaTextContent):
+                        logging.info(f"Text delta received: {content_part.text.value}")
 
             elif event_type == AssistantStreamEvent.THREAD_MESSAGE_IN_PROGRESS:
                 logging.info("Message processing is in progress.")

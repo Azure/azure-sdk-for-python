@@ -6,15 +6,17 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from ._models import MessageDeltaChunk
+
 from typing import List, Dict, Any
-import inspect
-import json
+import inspect, json
 
 
 class AssistantFunctions:
     """
     A class to manage a set of user-defined functions for an assistant.
     """
+
     def __init__(self, functions: Dict[str, Any]):
         """
         Initialize AssistantFunctions with a dictionary of functions.
@@ -32,42 +34,34 @@ class AssistantFunctions:
         :return: A list of specifications for each function.
         """
         specs = []
-        type_map = {
-            'str': 'string',
-            'int': 'integer',
-            'float': 'number',
-            'bool': 'boolean',
-            'default': 'string'
-        }
-        
+        type_map = {"str": "string", "int": "integer", "float": "number", "bool": "boolean", "default": "string"}
+
         for name, func in functions.items():
             sig = inspect.signature(func)
             params = sig.parameters
             docstring = inspect.getdoc(func)
-            description = docstring.split('\n')[0] if docstring else 'No description'
-            
+            description = docstring.split("\n")[0] if docstring else "No description"
+
             properties = {
-                param_name: {
-                    'type': type_map.get(param.annotation.__name__, type_map['default'])
-                }
+                param_name: {"type": type_map.get(param.annotation.__name__, type_map["default"])}
                 for param_name, param in params.items()
                 if param.annotation != inspect._empty
             }
-            
+
             spec = {
-                'type': 'function',
-                'function': {
-                    'name': name,
-                    'description': description,
-                    'parameters': {
-                        'type': 'object',
-                        'properties': properties,
-                        'required': list(params.keys()),
+                "type": "function",
+                "function": {
+                    "name": name,
+                    "description": description,
+                    "parameters": {
+                        "type": "object",
+                        "properties": properties,
+                        "required": list(params.keys()),
                     },
-                }
+                },
             }
             specs.append(spec)
-        
+
         return specs
 
     def invoke_functions(self, tool_calls):
@@ -100,7 +94,7 @@ class AssistantFunctions:
 
         if function_name in self._functions:
             function = self._functions[function_name]
-            
+
             try:
                 parsed_arguments = json.loads(arguments)
             except json.JSONDecodeError:
@@ -131,13 +125,12 @@ class AssistantFunctions:
 class AssistantRunStream:
     def __init__(self, response_iterator):
         self.response_iterator = response_iterator
-        self.buffer = ''
+        self.buffer = ""
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        # Any cleanup actions can be performed here
         pass
 
     def __iter__(self):
@@ -148,30 +141,34 @@ class AssistantRunStream:
             chunk = next(self.response_iterator, None)
             if chunk is None:
                 raise StopIteration
-
-            self.buffer += chunk.decode('utf-8')
-            if '\n\n' in self.buffer:
-                event_data_str, self.buffer = self.buffer.split('\n\n', 1)
+            
+            self.buffer += chunk.decode("utf-8")
+            if "\n\n" in self.buffer:
+                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return self.process_event(event_data_str)
 
     def process_event(self, event_data_str: str):
-        """Parse and return the event details."""
-        event_lines = event_data_str.strip().split('\n')
+        event_lines = event_data_str.strip().split("\n")
         event_type = None
-        event_data = ''
-        for line in event_lines:
-            if line.startswith('event:'):
-                event_type = line.split(':', 1)[1].strip()
-            elif line.startswith('data:'):
-                event_data = line.split(':', 1)[1].strip()
+        event_data = ""
 
+        for line in event_lines:
+            if line.startswith("event:"):
+                event_type = line.split(":", 1)[1].strip()
+            elif line.startswith("data:"):
+                event_data = line.split(":", 1)[1].strip()
+
+        if event_type == "thread.message.delta":
+            # Parse into structured message delta
+            parsed_data = json.loads(event_data)
+            return event_type, MessageDeltaChunk(**parsed_data)
+        
         return event_type, event_data
 
 
 __all__: List[str] = [
     "AssistantFunctions",
     "AssistantRunStream",
-
 ]  # Add all objects you want publicly available to users at this package level
 
 
