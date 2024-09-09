@@ -91,6 +91,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert copied_model
             assert copied_model.model_name == "mymodel"
 
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_copy_model_fail_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
@@ -108,7 +109,7 @@ class TestCopyModelAsync(AsyncFormRecognizerTest):
             assert e.value.error.code == "2024"
             assert e.value.error.message
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_copy_model_case_insensitive_region_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):

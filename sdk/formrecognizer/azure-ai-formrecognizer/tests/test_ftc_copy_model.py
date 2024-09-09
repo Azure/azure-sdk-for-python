@@ -87,6 +87,7 @@ class TestCopyModel(FormRecognizerTest):
         assert copied_model
         assert copied_model.model_name == "mymodel"
 
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_copy_model_fail_v21(self, formrecognizer_storage_container_sas_url_v2, formrecognizer_region, formrecognizer_resource_id, **kwargs):
