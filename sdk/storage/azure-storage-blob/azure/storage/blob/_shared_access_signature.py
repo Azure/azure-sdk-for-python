@@ -281,7 +281,6 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         return return_value + '\n'
 
     def add_resource_signature(self, account_name, account_key, path, user_delegation_key=None):
-        # pylint: disable = no-member
         if path[0] != '/':
             path = '/' + path
 

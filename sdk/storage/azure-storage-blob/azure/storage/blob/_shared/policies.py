@@ -72,7 +72,7 @@ def retry_hook(settings, **kwargs):
 # respect the Retry-After header, whether this header is present, and
 # whether the returned status code is on the list of status codes to
 # be retried upon on the presence of the aforementioned header)
-def is_retry(response, mode):   # pylint: disable=too-many-return-statements
+def is_retry(response, mode):
     status = response.http_response.status_code
     if 300 <= status < 500:
         # An exception occurred, but in most cases it was expected. Examples could
@@ -267,7 +267,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
 class StorageRequestHook(SansIOHTTPPolicy):
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self._request_callback = kwargs.get('raw_request_hook')
         super(StorageRequestHook, self).__init__()
 
@@ -279,7 +279,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
 
 class StorageResponseHook(HTTPPolicy):
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self._response_callback = kwargs.get('raw_response_hook')
         super(StorageResponseHook, self).__init__()
 
