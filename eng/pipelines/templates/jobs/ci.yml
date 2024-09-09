@@ -130,6 +130,9 @@ jobs:
       name: $(LINUXPOOL)
       image: $(LINUXVMIMAGE)
       os: linux
+    
+    variables:
+      ComponentDetection.SourcePath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
 
     steps:
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
