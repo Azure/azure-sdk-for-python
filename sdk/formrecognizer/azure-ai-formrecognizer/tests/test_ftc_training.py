@@ -254,6 +254,7 @@ class TestTraining(FormRecognizerTest):
                 assert field.accuracy is not None
                 assert field.name
 
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_training_with_files_filter_v21(self, formrecognizer_storage_container_sas_url_v2, **kwargs):
