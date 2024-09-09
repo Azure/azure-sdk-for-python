@@ -110,7 +110,7 @@ LOGGER = get_logger(
     logfilepath,
     "stress_receive_sync",
     max_logfile_size=args.max_logfile_size,
-    logfile_backup_count=args.logfile_backup_count
+    logfile_backup_count=args.logfile_backup_count,
     level=debug_level,
     print_console=print_console
 )
