@@ -3,8 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-few-public-methods, too-many-instance-attributes
-# pylint: disable=super-init-not-called
+# pylint: disable=too-few-public-methods, super-init-not-called
 
 import sys
 from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
@@ -19,9 +18,9 @@ from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 
 if sys.version_info >= (3, 11):
-    from typing import Self # pylint: disable=no-name-in-module, ungrouped-imports
+    from typing import Self
 else:
-    from typing_extensions import Self # pylint: disable=ungrouped-imports
+    from typing_extensions import Self
 
 if TYPE_CHECKING:
     from datetime import datetime

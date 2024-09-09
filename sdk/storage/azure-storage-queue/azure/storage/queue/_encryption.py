@@ -491,6 +491,7 @@ def _generate_encryption_data_dict(
     :rtype: Dict[str, Any]
     """
     # Encrypt the cek.
+    wrapped_cek = bytes()
     if version == _ENCRYPTION_PROTOCOL_V1:
         wrapped_cek = kek.wrap_key(cek)
     # For V2, we include the encryption version in the wrapped key.

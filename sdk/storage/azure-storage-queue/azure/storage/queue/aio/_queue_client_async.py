@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 import warnings
@@ -42,7 +42,11 @@ if TYPE_CHECKING:
     from .._models import QueueProperties
 
 
-class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]  # pylint: disable=line-too-long
+class QueueClient(  # type: ignore [misc]
+    AsyncStorageAccountHostsMixin,
+    StorageAccountHostsMixin,
+    StorageEncryptionMixin
+):
     """A client to interact with a specific Queue.
 
     :param str account_url:
@@ -112,7 +116,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         self._message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
         self._message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
         self._loop = loop
         self._configure_encryption(kwargs)
 

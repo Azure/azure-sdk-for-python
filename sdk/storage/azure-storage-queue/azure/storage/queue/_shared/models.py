@@ -311,7 +311,7 @@ class ResourceTypes(object):
         res_object = 'o' in string
 
         parsed = cls(res_service, res_container, res_object)
-        parsed._str = string  # pylint: disable = protected-access
+        parsed._str = string
         return parsed
 
 
@@ -495,7 +495,7 @@ class Services(object):
         res_file = 'f' in string
 
         parsed = cls(blob=res_blob, queue=res_queue, fileshare=res_file)
-        parsed._str = string  # pylint: disable = protected-access
+        parsed._str = string
         return parsed
 
 

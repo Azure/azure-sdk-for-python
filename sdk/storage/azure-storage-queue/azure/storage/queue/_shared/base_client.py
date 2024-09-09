@@ -64,7 +64,7 @@ _SERVICE_PARAMS = {
 }
 
 
-class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
+class StorageAccountHostsMixin(object):
     _client: Any
     def __init__(
         self,
@@ -358,7 +358,7 @@ class TransportWrapper(HttpTransport):
     def __enter__(self):
         pass
 
-    def __exit__(self, *args):  # pylint: disable=arguments-differ
+    def __exit__(self, *args):
         pass
 
 
@@ -383,7 +383,7 @@ def _format_shared_key_credential(
 
 def parse_connection_str(
     conn_str: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]], # pylint: disable=line-too-long
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
     service: str
 ) -> Tuple[str, Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]]]: # pylint: disable=line-too-long
     conn_str = conn_str.rstrip(";")
