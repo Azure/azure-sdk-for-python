@@ -33,13 +33,14 @@ from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
+
 def radiology_insights_sync() -> None:
     credential = DefaultAzureCredential()
     ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
     job_id = str(uuid.uuid4())
 
-    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
+    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
 
     doc_content1 = """CLINICAL HISTORY:   
     20-year-old female presenting with abdominal pain. Surgical history significant for appendectomy.
@@ -118,6 +119,7 @@ def radiology_insights_sync() -> None:
     except Exception as ex:
         raise ex
 
+
 def display_age_mismatch(radiology_insights_result, doc_content1):
     for patient_result in radiology_insights_result.patient_results:
         for ri_inference in patient_result.inferences:
@@ -144,6 +146,7 @@ def display_age_mismatch(radiology_insights_result, doc_content1):
                                         if not evidence in Tokens:
                                             Tokens = Tokens + " " + evidence
                 print(f"Age Mismatch: Evidence: {Tokens}")
+
 
 if __name__ == "__main__":
     radiology_insights_sync()

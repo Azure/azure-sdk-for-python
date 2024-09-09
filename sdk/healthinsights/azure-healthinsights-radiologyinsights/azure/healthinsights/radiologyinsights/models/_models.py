@@ -10,6 +10,8 @@
 import datetime
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
+from azure.core.exceptions import HttpResponseError
+
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
 from ._enums import RadiologyInsightsInferenceType
@@ -21,8 +23,8 @@ if TYPE_CHECKING:
 
 class RadiologyInsightsInference(_model_base.Model):
     """An inference made by the Radiology Insights model regarding a patient.
-    
-    
+
+
     * AgeMismatch
     * SexMismatch
     * LateralityDiscrepancy
@@ -60,15 +62,13 @@ class RadiologyInsightsInference(_model_base.Model):
     extension: Optional[List["_models.Extension"]] = rest_field()
     """Additional Content defined by implementations."""
 
-
     @overload
     def __init__(
         self,
         *,
         kind: str,
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -77,11 +77,11 @@ class RadiologyInsightsInference(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class AgeMismatchInference(RadiologyInsightsInference, discriminator='ageMismatch'):
+class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatch"):
     """A notification for age mismatch is displayed when the age mentioned in a document for a
     specific patient does not match the age specified in the patient information.
 
@@ -95,14 +95,12 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator='ageMismatc
     kind: Literal[RadiologyInsightsInferenceType.AGE_MISMATCH] = rest_discriminator(name="kind")  # type: ignore
     """Inference type. Required. Age mismatch inference type"""
 
-
     @overload
     def __init__(
         self,
         *,
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -111,7 +109,7 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator='ageMismatc
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=RadiologyInsightsInferenceType.AGE_MISMATCH, **kwargs)
 
 
@@ -130,15 +128,13 @@ class Element(_model_base.Model):
     extension: Optional[List["_models.Extension"]] = rest_field()
     """Additional Content defined by implementations."""
 
-
     @overload
     def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -147,7 +143,7 @@ class Element(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -175,7 +171,6 @@ class Annotation(Element):
     text: str = rest_field()
     """The annotation - text content (as markdown). Required."""
 
-
     @overload
     def __init__(
         self,
@@ -185,8 +180,7 @@ class Annotation(Element):
         extension: Optional[List["_models.Extension"]] = None,
         author_string: Optional[str] = None,
         time: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -195,7 +189,7 @@ class Annotation(Element):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -214,15 +208,13 @@ class CodeableConcept(Element):
     text: Optional[str] = rest_field()
     """Plain text representation of the concept."""
 
-
     @overload
     def __init__(
         self,
         *,
         coding: Optional[List["_models.Coding"]] = None,
         text: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -231,7 +223,7 @@ class CodeableConcept(Element):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -262,7 +254,6 @@ class Coding(Element):
     display: Optional[str] = rest_field()
     """Representation defined by the system."""
 
-
     @overload
     def __init__(
         self,
@@ -273,8 +264,7 @@ class Coding(Element):
         version: Optional[str] = None,
         code: Optional[str] = None,
         display: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -283,11 +273,11 @@ class Coding(Element):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminator='completeOrderDiscrepancy'):
+class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminator="completeOrderDiscrepancy"):
     """A complete order discrepancy is shown when one or more body parts and/or measurements that
     should be in the document (because there is a complete order) are not present.
 
@@ -316,9 +306,10 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
      Required."""
     missing_body_parts: Optional[List["_models.CodeableConcept"]] = rest_field(name="missingBodyParts")
     """List of missing body parts required by a complete order : SNOMED CT codes."""
-    missing_body_part_measurements: Optional[List["_models.CodeableConcept"]] = rest_field(name="missingBodyPartMeasurements")
+    missing_body_part_measurements: Optional[List["_models.CodeableConcept"]] = rest_field(
+        name="missingBodyPartMeasurements"
+    )
     """List of missing body parts that require measurement by a complete order : SNOMED CT codes."""
-
 
     @overload
     def __init__(
@@ -328,8 +319,7 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
         extension: Optional[List["_models.Extension"]] = None,
         missing_body_parts: Optional[List["_models.CodeableConcept"]] = None,
         missing_body_part_measurements: Optional[List["_models.CodeableConcept"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -338,7 +328,7 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY, **kwargs)
 
 
@@ -357,15 +347,13 @@ class CriticalResult(_model_base.Model):
     finding: Optional["_models.Observation"] = rest_field()
     """Finding linked to the critical result."""
 
-
     @overload
     def __init__(
         self,
         *,
         description: str,
         finding: Optional["_models.Observation"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -374,11 +362,11 @@ class CriticalResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class CriticalResultInference(RadiologyInsightsInference, discriminator='criticalResult'):
+class CriticalResultInference(RadiologyInsightsInference, discriminator="criticalResult"):
     """Critical results refer to findings of utmost importance that may require timely attention due
     to their potential impact on patient care.
 
@@ -398,15 +386,13 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator='critica
     """The complete Critical Result, as outlined below, will be reused for the recommendation.
      Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         result: "_models.CriticalResult",
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -415,7 +401,7 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator='critica
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=RadiologyInsightsInferenceType.CRITICAL_RESULT, **kwargs)
 
 
@@ -434,15 +420,13 @@ class DocumentAdministrativeMetadata(_model_base.Model):
     encounter_id: Optional[str] = rest_field(name="encounterId")
     """Reference to the encounter associated with the document."""
 
-
     @overload
     def __init__(
         self,
         *,
         ordered_procedures: Optional[List["_models.OrderedProcedure"]] = None,
         encounter_id: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -451,7 +435,7 @@ class DocumentAdministrativeMetadata(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -469,15 +453,13 @@ class DocumentAuthor(_model_base.Model):
     full_name: Optional[str] = rest_field(name="fullName")
     """Text representation of the full name."""
 
-
     @overload
     def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         full_name: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -486,7 +468,7 @@ class DocumentAuthor(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -514,15 +496,13 @@ class DocumentContent(_model_base.Model):
     """The content of the document, given either inline (as a string) or as a reference (URI).
      Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         source_type: Union[str, "_models.DocumentContentSourceType"],
         value: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -531,7 +511,7 @@ class DocumentContent(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -564,7 +544,6 @@ class Resource(_model_base.Model):
     language: Optional[str] = rest_field()
     """Language of the resource content."""
 
-
     @overload
     def __init__(
         self,
@@ -574,8 +553,7 @@ class Resource(_model_base.Model):
         meta: Optional["_models.Meta"] = None,
         implicit_rules: Optional[str] = None,
         language: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -584,7 +562,7 @@ class Resource(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -629,7 +607,6 @@ class DomainResource(Resource):
     modifier_extension: Optional[List["_models.Extension"]] = rest_field(name="modifierExtension")
     """Extensions that cannot be ignored."""
 
-
     @overload
     def __init__(
         self,
@@ -643,8 +620,7 @@ class DomainResource(Resource):
         contained: Optional[List["_models.Resource"]] = None,
         extension: Optional[List["_models.Extension"]] = None,
         modifier_extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -653,13 +629,13 @@ class DomainResource(Resource):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
 class Extension(Element):  # pylint: disable=too-many-instance-attributes
     """Base for all elements
-    Based on `FHIR Element`_.
+    Based on `FHIR Element <https://www.hl7.org/fhir/datatypes.html#Element>`_.
 
 
     :ivar url: Source of the definition for the extension code - a logical name or a URL. Required.
@@ -717,7 +693,6 @@ class Extension(Element):  # pylint: disable=too-many-instance-attributes
     value_reference: Optional["_models.Reference"] = rest_field(name="valueReference")
     """Value as reference."""
 
-
     @overload
     def __init__(
         self,
@@ -735,8 +710,7 @@ class Extension(Element):  # pylint: disable=too-many-instance-attributes
         value_date_time: Optional[str] = None,
         value_period: Optional["_models.Period"] = None,
         value_reference: Optional["_models.Reference"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -745,11 +719,11 @@ class Extension(Element):  # pylint: disable=too-many-instance-attributes
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class FindingInference(RadiologyInsightsInference, discriminator='finding'):
+class FindingInference(RadiologyInsightsInference, discriminator="finding"):
     """Findings in a radiology report typically describe abnormalities, lesions, or other notable
     observations related to the anatomy or pathology of the imaged area.
 
@@ -768,15 +742,13 @@ class FindingInference(RadiologyInsightsInference, discriminator='finding'):
     finding: "_models.Observation" = rest_field()
     """Finding data : contains extensions, fields and components linked with the finding. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         finding: "_models.Observation",
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -785,7 +757,7 @@ class FindingInference(RadiologyInsightsInference, discriminator='finding'):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=RadiologyInsightsInferenceType.FINDING, **kwargs)
 
 
@@ -804,14 +776,12 @@ class FindingOptions(_model_base.Model):
      indicator (i.e. the medical problem), if there is one. This sentence is provided as an
      extension with url 'ci_sentence', next to the token evidence. Default is false."""
 
-
     @overload
     def __init__(
         self,
         *,
         provide_focused_sentence_evidence: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -820,11 +790,11 @@ class FindingOptions(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class FollowupCommunicationInference(RadiologyInsightsInference, discriminator='followupCommunication'):
+class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="followupCommunication"):
     """Follow-up communication involves the exchange of important information, recommendations, or
     updates between radiologists and other healthcare professionals involved in a patient's care.
 
@@ -851,7 +821,6 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator='
     was_acknowledged: bool = rest_field(name="wasAcknowledged")
     """Communication was acknowledged. Required."""
 
-
     @overload
     def __init__(
         self,
@@ -860,8 +829,7 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator='
         extension: Optional[List["_models.Extension"]] = None,
         communicated_at: Optional[List[datetime.datetime]] = None,
         recipient: Optional[List[Union[str, "_models.MedicalProfessionalType"]]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -870,11 +838,11 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator='
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION, **kwargs)
 
 
-class FollowupRecommendationInference(RadiologyInsightsInference, discriminator='followupRecommendation'):
+class FollowupRecommendationInference(RadiologyInsightsInference, discriminator="followupRecommendation"):
     """Follow-up recommendations offer guidance to healthcare providers on managing and monitoring
     patients based on the findings of imaging studies.
 
@@ -937,7 +905,6 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
     recommended_procedure: "_models.ProcedureRecommendation" = rest_field(name="recommendedProcedure")
     """The procedure recommendation can be a generic procedure or an imaging procedure. Required."""
 
-
     @overload
     def __init__(
         self,
@@ -951,8 +918,7 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
         effective_at: Optional[str] = None,
         effective_period: Optional["_models.Period"] = None,
         findings: Optional[List["_models.RecommendationFinding"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -961,7 +927,7 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION, **kwargs)
 
 
@@ -980,7 +946,9 @@ class FollowupRecommendationOptions(_model_base.Model):
     :vartype provide_focused_sentence_evidence: bool
     """
 
-    include_recommendations_with_no_specified_modality: Optional[bool] = rest_field(name="includeRecommendationsWithNoSpecifiedModality")
+    include_recommendations_with_no_specified_modality: Optional[bool] = rest_field(
+        name="includeRecommendationsWithNoSpecifiedModality"
+    )
     """Include/Exclude follow-up recommendations without a specific radiology procedure. Default is
      false."""
     include_recommendations_in_references: Optional[bool] = rest_field(name="includeRecommendationsInReferences")
@@ -991,7 +959,6 @@ class FollowupRecommendationOptions(_model_base.Model):
      token evidence. The start and end positions of these sentences will be put in an extension with
      url 'modality_sentences'. Default is false."""
 
-
     @overload
     def __init__(
         self,
@@ -999,8 +966,7 @@ class FollowupRecommendationOptions(_model_base.Model):
         include_recommendations_with_no_specified_modality: Optional[bool] = None,
         include_recommendations_in_references: Optional[bool] = None,
         provide_focused_sentence_evidence: Optional[bool] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1009,7 +975,7 @@ class FollowupRecommendationOptions(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -1033,15 +999,13 @@ class ProcedureRecommendation(_model_base.Model):
     extension: Optional[List["_models.Extension"]] = rest_field()
     """Additional Content defined by implementations."""
 
-
     @overload
     def __init__(
         self,
         *,
         kind: str,
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1050,11 +1014,11 @@ class ProcedureRecommendation(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class GenericProcedureRecommendation(ProcedureRecommendation, discriminator='genericProcedureRecommendation'):
+class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="genericProcedureRecommendation"):
     """Generic procedure information.
 
 
@@ -1078,7 +1042,6 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator='gen
     """Procedure description : MANAGEMENT PROCEDURE (PROCEDURE) or CONSULTATION (PROCEDURE) based on
      SNOMED CT."""
 
-
     @overload
     def __init__(
         self,
@@ -1086,8 +1049,7 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator='gen
         code: "_models.CodeableConcept",
         extension: Optional[List["_models.Extension"]] = None,
         description: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1096,7 +1058,7 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator='gen
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind="genericProcedureRecommendation", **kwargs)
 
 
@@ -1105,20 +1067,18 @@ class HealthInsightsErrorResponse(_model_base.Model):
 
 
     :ivar error: The error object. Required.
-    :vartype error: ~azure.healthinsights.radiologyinsights.models.Error
+    :vartype error: ~azure.core.HttpResponseError
     """
 
-    error: "_models.Error" = rest_field()
+    error: HttpResponseError = rest_field()
     """The error object. Required."""
-
 
     @overload
     def __init__(
         self,
         *,
-        error: "_models.Error",
-    ):
-        ...
+        error: HttpResponseError,
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1127,7 +1087,7 @@ class HealthInsightsErrorResponse(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -1162,7 +1122,6 @@ class Identifier(Element):
     assigner: Optional["_models.Reference"] = rest_field()
     """Organization that issued id (may be just text)."""
 
-
     @overload
     def __init__(
         self,
@@ -1173,8 +1132,7 @@ class Identifier(Element):
         value: Optional[str] = None,
         period: Optional["_models.Period"] = None,
         assigner: Optional["_models.Reference"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1183,7 +1141,7 @@ class Identifier(Element):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -1214,7 +1172,6 @@ class ImagingProcedure(_model_base.Model):
     view: Optional["_models.RadiologyCodeWithTypes"] = rest_field()
     """View : see RadiologyCodeWithTypes (below)."""
 
-
     @overload
     def __init__(
         self,
@@ -1224,8 +1181,7 @@ class ImagingProcedure(_model_base.Model):
         laterality: Optional["_models.CodeableConcept"] = None,
         contrast: Optional["_models.RadiologyCodeWithTypes"] = None,
         view: Optional["_models.RadiologyCodeWithTypes"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1234,11 +1190,11 @@ class ImagingProcedure(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator='imagingProcedureRecommendation'):
+class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="imagingProcedureRecommendation"):
     """Imaging procedures.
 
 
@@ -1261,7 +1217,6 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator='ima
     imaging_procedures: List["_models.ImagingProcedure"] = rest_field(name="imagingProcedures")
     """Imaging procedures. Required."""
 
-
     @overload
     def __init__(
         self,
@@ -1269,8 +1224,7 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator='ima
         imaging_procedures: List["_models.ImagingProcedure"],
         extension: Optional[List["_models.Extension"]] = None,
         procedure_codes: Optional[List["_models.CodeableConcept"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1279,11 +1233,11 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator='ima
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind="imagingProcedureRecommendation", **kwargs)
 
 
-class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator='lateralityDiscrepancy'):
+class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="lateralityDiscrepancy"):
     """A laterality mismatch occurs when there is a discrepancy between the clinical documentation and
     the ordered procedure (orderLateralityMismatch), a contradiction within the clinical document
     (textLateralityContradiction), or when no laterality is mentioned (textLateralityMissing).
@@ -1312,7 +1266,6 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator='
      Required. Known values are: \"orderLateralityMismatch\", \"textLateralityContradiction\", and
      \"textLateralityMissing\"."""
 
-
     @overload
     def __init__(
         self,
@@ -1320,8 +1273,7 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator='
         discrepancy_type: Union[str, "_models.LateralityDiscrepancyType"],
         extension: Optional[List["_models.Extension"]] = None,
         laterality_indication: Optional["_models.CodeableConcept"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1330,11 +1282,11 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator='
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY, **kwargs)
 
 
-class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator='limitedOrderDiscrepancy'):
+class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator="limitedOrderDiscrepancy"):
     """A limited order discrepancy occurs when there is a limited order, but all body parts and
     measurements that are needed for a complete order are present in the document.
 
@@ -1362,9 +1314,10 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
      Required."""
     present_body_parts: Optional[List["_models.CodeableConcept"]] = rest_field(name="presentBodyParts")
     """List of body parts found in the document : SNOMED CT codes."""
-    present_body_part_measurements: Optional[List["_models.CodeableConcept"]] = rest_field(name="presentBodyPartMeasurements")
+    present_body_part_measurements: Optional[List["_models.CodeableConcept"]] = rest_field(
+        name="presentBodyPartMeasurements"
+    )
     """List of body parts that are measured according to the document : SNOMED CT codes."""
-
 
     @overload
     def __init__(
@@ -1374,8 +1327,7 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
         extension: Optional[List["_models.Extension"]] = None,
         present_body_parts: Optional[List["_models.CodeableConcept"]] = None,
         present_body_part_measurements: Optional[List["_models.CodeableConcept"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1384,7 +1336,7 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=RadiologyInsightsInferenceType.LIMITED_ORDER_DISCREPANCY, **kwargs)
 
 
@@ -1438,7 +1390,6 @@ class Meta(_model_base.Model):
      process and workflow, and applications are not required to consider the tags when interpreting
      the meaning of a resource."""
 
-
     @overload
     def __init__(
         self,
@@ -1449,8 +1400,7 @@ class Meta(_model_base.Model):
         profile: Optional[List[str]] = None,
         security: Optional[List["_models.Coding"]] = None,
         tag: Optional[List["_models.Coding"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1459,7 +1409,7 @@ class Meta(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -1485,7 +1435,6 @@ class Narrative(Element):
     div: str = rest_field()
     """xhtml. Required."""
 
-
     @overload
     def __init__(
         self,
@@ -1494,8 +1443,7 @@ class Narrative(Element):
         div: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1504,11 +1452,11 @@ class Narrative(Element):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class Observation(DomainResource, discriminator='Observation'):  # pylint: disable=too-many-instance-attributes
+class Observation(DomainResource, discriminator="Observation"):  # pylint: disable=too-many-instance-attributes
     """Detailed information about observations
     Based on `FHIR Observation <https://www.hl7.org/fhir/R4/observation.html>`_.
 
@@ -1662,7 +1610,6 @@ class Observation(DomainResource, discriminator='Observation'):  # pylint: disab
     component: Optional[List["_models.ObservationComponent"]] = rest_field()
     """Component results."""
 
-
     @overload
     def __init__(
         self,
@@ -1705,8 +1652,7 @@ class Observation(DomainResource, discriminator='Observation'):  # pylint: disab
         has_member: Optional[List["_models.Reference"]] = None,
         derived_from: Optional[List["_models.Reference"]] = None,
         component: Optional[List["_models.ObservationComponent"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1715,7 +1661,7 @@ class Observation(DomainResource, discriminator='Observation'):  # pylint: disab
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, resource_type="Observation", **kwargs)
 
 
@@ -1796,7 +1742,6 @@ class ObservationComponent(Element):  # pylint: disable=too-many-instance-attrib
     reference_range: Optional[List["_models.ObservationReferenceRange"]] = rest_field(name="referenceRange")
     """Provides guide for interpretation of component result."""
 
-
     @overload
     def __init__(
         self,
@@ -1819,8 +1764,7 @@ class ObservationComponent(Element):  # pylint: disable=too-many-instance-attrib
         data_absent_reason: Optional["_models.CodeableConcept"] = None,
         interpretation: Optional[List["_models.CodeableConcept"]] = None,
         reference_range: Optional[List["_models.ObservationReferenceRange"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1829,7 +1773,7 @@ class ObservationComponent(Element):  # pylint: disable=too-many-instance-attrib
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -1864,7 +1808,6 @@ class ObservationReferenceRange(_model_base.Model):
     text: Optional[str] = rest_field()
     """Text based reference range in an observation."""
 
-
     @overload
     def __init__(
         self,
@@ -1875,8 +1818,7 @@ class ObservationReferenceRange(_model_base.Model):
         applies_to: Optional[List["_models.CodeableConcept"]] = None,
         age: Optional["_models.Range"] = None,
         text: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1885,7 +1827,7 @@ class ObservationReferenceRange(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -1907,7 +1849,6 @@ class OrderedProcedure(_model_base.Model):
     extension: Optional[List["_models.Extension"]] = rest_field()
     """Additional Content defined by implementations."""
 
-
     @overload
     def __init__(
         self,
@@ -1915,8 +1856,7 @@ class OrderedProcedure(_model_base.Model):
         code: Optional["_models.CodeableConcept"] = None,
         description: Optional[str] = None,
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1925,7 +1865,7 @@ class OrderedProcedure(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -1948,7 +1888,6 @@ class PatientDetails(_model_base.Model):
     clinical_info: Optional[List["_models.Resource"]] = rest_field(name="clinicalInfo")
     """Known clinical information for the patient, structured."""
 
-
     @overload
     def __init__(
         self,
@@ -1956,8 +1895,7 @@ class PatientDetails(_model_base.Model):
         sex: Optional[Union[str, "_models.PatientSex"]] = None,
         birth_date: Optional[datetime.date] = None,
         clinical_info: Optional[List["_models.Resource"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -1966,7 +1904,7 @@ class PatientDetails(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2022,11 +1960,12 @@ class PatientDocument(_model_base.Model):
     """Document author(s)."""
     specialty_type: Optional[Union[str, "_models.SpecialtyType"]] = rest_field(name="specialtyType")
     """specialty type the document. Known values are: \"pathology\" and \"radiology\"."""
-    administrative_metadata: Optional["_models.DocumentAdministrativeMetadata"] = rest_field(name="administrativeMetadata")
+    administrative_metadata: Optional["_models.DocumentAdministrativeMetadata"] = rest_field(
+        name="administrativeMetadata"
+    )
     """Administrative metadata for the document."""
     content: "_models.DocumentContent" = rest_field()
     """The content of the patient document. Required."""
-
 
     @overload
     def __init__(
@@ -2041,8 +1980,7 @@ class PatientDocument(_model_base.Model):
         authors: Optional[List["_models.DocumentAuthor"]] = None,
         specialty_type: Optional[Union[str, "_models.SpecialtyType"]] = None,
         administrative_metadata: Optional["_models.DocumentAdministrativeMetadata"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2051,7 +1989,7 @@ class PatientDocument(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2080,7 +2018,6 @@ class PatientEncounter(_model_base.Model):
     """The class of the encounter. Known values are: \"inpatient\", \"ambulatory\", \"observation\",
      \"emergency\", \"virtual\", and \"healthHome\"."""
 
-
     @overload
     def __init__(
         self,
@@ -2088,8 +2025,7 @@ class PatientEncounter(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         period: Optional["_models.TimePeriod"] = None,
         class_property: Optional[Union[str, "_models.EncounterClass"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2098,7 +2034,7 @@ class PatientEncounter(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2130,7 +2066,6 @@ class PatientRecord(_model_base.Model):
     patient_documents: Optional[List["_models.PatientDocument"]] = rest_field(name="patientDocuments")
     """Patient unstructured clinical data, given as documents."""
 
-
     @overload
     def __init__(
         self,
@@ -2139,8 +2074,7 @@ class PatientRecord(_model_base.Model):
         details: Optional["_models.PatientDetails"] = None,
         encounters: Optional[List["_models.PatientEncounter"]] = None,
         patient_documents: Optional[List["_models.PatientDocument"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2149,7 +2083,7 @@ class PatientRecord(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2168,15 +2102,13 @@ class Period(Element):
     end: Optional[str] = rest_field()
     """End time with inclusive boundary, if not ongoing."""
 
-
     @overload
     def __init__(
         self,
         *,
         start: Optional[str] = None,
         end: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2185,7 +2117,7 @@ class Period(Element):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2216,7 +2148,6 @@ class Quantity(Element):
     code: Optional[str] = rest_field()
     """Coded form of the unit."""
 
-
     @overload
     def __init__(
         self,
@@ -2226,8 +2157,7 @@ class Quantity(Element):
         unit: Optional[str] = None,
         system: Optional[str] = None,
         code: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2236,7 +2166,7 @@ class Quantity(Element):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2261,15 +2191,13 @@ class RadiologyCodeWithTypes(_model_base.Model):
      in the case of views, it will specify the types of views, such as lateral and frontal, etc.
      Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         code: "_models.CodeableConcept",
         types: List["_models.CodeableConcept"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2278,7 +2206,7 @@ class RadiologyCodeWithTypes(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2298,15 +2226,13 @@ class RadiologyInsightsData(_model_base.Model):
     configuration: Optional["_models.RadiologyInsightsModelConfiguration"] = rest_field()
     """Configuration affecting the Radiology Insights model's inference."""
 
-
     @overload
     def __init__(
         self,
         *,
         patients: List["_models.PatientRecord"],
         configuration: Optional["_models.RadiologyInsightsModelConfiguration"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2315,7 +2241,7 @@ class RadiologyInsightsData(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2329,11 +2255,12 @@ class RadiologyInsightsInferenceOptions(_model_base.Model):
     :vartype finding_options: ~azure.healthinsights.radiologyinsights.models.FindingOptions
     """
 
-    followup_recommendation_options: Optional["_models.FollowupRecommendationOptions"] = rest_field(name="followupRecommendationOptions")
+    followup_recommendation_options: Optional["_models.FollowupRecommendationOptions"] = rest_field(
+        name="followupRecommendationOptions"
+    )
     """Follow-up recommendation options."""
     finding_options: Optional["_models.FindingOptions"] = rest_field(name="findingOptions")
     """Finding options."""
-
 
     @overload
     def __init__(
@@ -2341,8 +2268,7 @@ class RadiologyInsightsInferenceOptions(_model_base.Model):
         *,
         followup_recommendation_options: Optional["_models.FollowupRecommendationOptions"] = None,
         finding_options: Optional["_models.FindingOptions"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2351,7 +2277,7 @@ class RadiologyInsightsInferenceOptions(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2373,15 +2299,13 @@ class RadiologyInsightsInferenceResult(_model_base.Model):
     model_version: str = rest_field(name="modelVersion")
     """The version of the model used for inference, expressed as the model date. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         patient_results: List["_models.RadiologyInsightsPatientResult"],
         model_version: str,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2390,7 +2314,7 @@ class RadiologyInsightsInferenceResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2417,7 +2341,7 @@ class RadiologyInsightsJob(_model_base.Model):
     :ivar updated_at: The date and time when the processing job was last updated.
     :vartype updated_at: ~datetime.datetime
     :ivar error: Error object that describes the error when status is "Failed".
-    :vartype error: ~azure.healthinsights.radiologyinsights.models.Error
+    :vartype error: ~azure.core.HttpResponseError
     """
 
     job_data: Optional["_models.RadiologyInsightsData"] = rest_field(name="jobData", visibility=["read", "create"])
@@ -2435,17 +2359,15 @@ class RadiologyInsightsJob(_model_base.Model):
     """The date and time when the processing job is set to expire."""
     updated_at: Optional[datetime.datetime] = rest_field(name="updatedAt", visibility=["read"], format="rfc3339")
     """The date and time when the processing job was last updated."""
-    error: Optional["_models.Error"] = rest_field(visibility=["read"])
+    error: Optional[HttpResponseError] = rest_field(visibility=["read"])
     """Error object that describes the error when status is \"Failed\"."""
-
 
     @overload
     def __init__(
         self,
         *,
         job_data: Optional["_models.RadiologyInsightsData"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2454,7 +2376,7 @@ class RadiologyInsightsJob(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2484,7 +2406,9 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
     """An indication whether the model should produce verbose output."""
     include_evidence: Optional[bool] = rest_field(name="includeEvidence")
     """An indication whether the model's output should include evidence for the inferences."""
-    inference_types: Optional[List[Union[str, "_models.RadiologyInsightsInferenceType"]]] = rest_field(name="inferenceTypes")
+    inference_types: Optional[List[Union[str, "_models.RadiologyInsightsInferenceType"]]] = rest_field(
+        name="inferenceTypes"
+    )
     """This is a list of inference types to be inferred for the current request. It could be used if
      only part of the Radiology Insights inferences are required. If this list is omitted or empty,
      the model will return all the inference types."""
@@ -2492,7 +2416,6 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
     """Options regarding follow up recommendation inferences and finding inferences."""
     locale: Optional[str] = rest_field()
     """Local for the model to use. If not specified, the model will use the default locale."""
-
 
     @overload
     def __init__(
@@ -2503,8 +2426,7 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
         inference_types: Optional[List[Union[str, "_models.RadiologyInsightsInferenceType"]]] = None,
         inference_options: Optional["_models.RadiologyInsightsInferenceOptions"] = None,
         locale: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2513,7 +2435,7 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2533,15 +2455,13 @@ class RadiologyInsightsPatientResult(_model_base.Model):
     inferences: List["_models.RadiologyInsightsInference"] = rest_field()
     """The model's inferences for the given patient. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         patient_id: str,
         inferences: List["_models.RadiologyInsightsInference"],
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2550,11 +2470,11 @@ class RadiologyInsightsPatientResult(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class RadiologyProcedureInference(RadiologyInsightsInference, discriminator='radiologyProcedure'):
+class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="radiologyProcedure"):
     """Radiology procedures are the specific imaging studies or examinations ordered for the patient,
     extracted from the document information and text.
 
@@ -2582,7 +2502,6 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator='rad
     ordered_procedure: "_models.OrderedProcedure" = rest_field(name="orderedProcedure")
     """Ordered procedure information from the document information or text. Required."""
 
-
     @overload
     def __init__(
         self,
@@ -2591,8 +2510,7 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator='rad
         ordered_procedure: "_models.OrderedProcedure",
         extension: Optional[List["_models.Extension"]] = None,
         procedure_codes: Optional[List["_models.CodeableConcept"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2601,7 +2519,7 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator='rad
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=RadiologyInsightsInferenceType.RADIOLOGY_PROCEDURE, **kwargs)
 
 
@@ -2620,15 +2538,13 @@ class Range(Element):
     high: Optional["_models.Quantity"] = rest_field()
     """High limit."""
 
-
     @overload
     def __init__(
         self,
         *,
         low: Optional["_models.Quantity"] = None,
         high: Optional["_models.Quantity"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2637,7 +2553,7 @@ class Range(Element):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2656,15 +2572,13 @@ class Ratio(Element):
     denominator: Optional["_models.Quantity"] = rest_field()
     """Denominator value."""
 
-
     @overload
     def __init__(
         self,
         *,
         numerator: Optional["_models.Quantity"] = None,
         denominator: Optional["_models.Quantity"] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2673,7 +2587,7 @@ class Ratio(Element):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2697,12 +2611,13 @@ class RecommendationFinding(_model_base.Model):
     """Finding linked to a recommendation."""
     critical_finding: Optional["_models.CriticalResult"] = rest_field(name="criticalFinding")
     """Critical result linked to a recommendation."""
-    recommendation_finding_status: Union[str, "_models.RecommendationFindingStatusType"] = rest_field(name="recommendationFindingStatus")
+    recommendation_finding_status: Union[str, "_models.RecommendationFindingStatusType"] = rest_field(
+        name="recommendationFindingStatus"
+    )
     """Recommendation finding status. Required. Known values are: \"present\", \"differential\",
      \"ruleOut\", and \"conditional\"."""
     extension: Optional[List["_models.Extension"]] = rest_field()
     """Additional Content defined by implementations."""
-
 
     @overload
     def __init__(
@@ -2712,8 +2627,7 @@ class RecommendationFinding(_model_base.Model):
         finding: Optional["_models.Observation"] = None,
         critical_finding: Optional["_models.CriticalResult"] = None,
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2722,7 +2636,7 @@ class RecommendationFinding(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2749,7 +2663,6 @@ class Reference(Element):
     display: Optional[str] = rest_field()
     """Text alternative for the resource."""
 
-
     @overload
     def __init__(
         self,
@@ -2758,8 +2671,7 @@ class Reference(Element):
         type: Optional[str] = None,
         identifier: Optional["_models.Identifier"] = None,
         display: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2768,7 +2680,7 @@ class Reference(Element):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -2808,7 +2720,6 @@ class SampledData(Element):
     data: Optional[str] = rest_field()
     """Decimal values with spaces, or \"E\" | \"U\" | \"L\"."""
 
-
     @overload
     def __init__(
         self,
@@ -2820,8 +2731,7 @@ class SampledData(Element):
         lower_limit: Optional[float] = None,
         upper_limit: Optional[float] = None,
         data: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2830,11 +2740,11 @@ class SampledData(Element):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
-class SexMismatchInference(RadiologyInsightsInference, discriminator='sexMismatch'):
+class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatch"):
     """A notification for a sex mismatch is displayed when the gender, personal pronouns,
     gender-related body parts, or gender-related procedures mentioned in a patient's clinical
     document are either inconsistent or do not match the gender specified in the patient
@@ -2854,15 +2764,13 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator='sexMismatc
     sex_indication: "_models.CodeableConcept" = rest_field(name="sexIndication")
     """Sex indication : SNOMED CT code for gender finding. Required."""
 
-
     @overload
     def __init__(
         self,
         *,
         sex_indication: "_models.CodeableConcept",
         extension: Optional[List["_models.Extension"]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2871,7 +2779,7 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator='sexMismatc
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, kind=RadiologyInsightsInferenceType.SEX_MISMATCH, **kwargs)
 
 
@@ -2889,15 +2797,13 @@ class TimePeriod(_model_base.Model):
     end: Optional[datetime.datetime] = rest_field(format="rfc3339")
     """End time with inclusive boundary, if not ongoing."""
 
-
     @overload
     def __init__(
         self,
         *,
         start: Optional[datetime.datetime] = None,
         end: Optional[datetime.datetime] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -2906,5 +2812,5 @@ class TimePeriod(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)

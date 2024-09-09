@@ -6,7 +6,20 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, IO, Optional, Dict, Union, cast, overload, List, MutableMapping, TypeVar, Callable, TYPE_CHECKING # pylint: disable=line-too-long
+from typing import (
+    Any,
+    IO,
+    Optional,
+    Dict,
+    Union,
+    cast,
+    overload,
+    List,
+    MutableMapping,
+    TypeVar,
+    Callable,
+    TYPE_CHECKING,
+)  # pylint: disable=line-too-long
 from copy import deepcopy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
@@ -161,10 +174,12 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RadiologyInsightsJob] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._client._config.polling_interval)# pylint: disable=protected-access
+        lro_delay = kwargs.pop(
+            "polling_interval", self._client._config.polling_interval
+        )  # pylint: disable=protected-access
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._client._infer_radiology_insights_initial(# pylint: disable=protected-access
+            raw_result = self._client._infer_radiology_insights_initial(  # pylint: disable=protected-access
                 id=id,
                 resource=resource,
                 expand=expand,
@@ -174,24 +189,27 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
                 params=_params,
                 **kwargs
             )
-            raw_result.http_response.read() # type: ignore
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers['x-ms-request-id']=self._client._deserialize('str', response.headers.get('x-ms-request-id'))# pylint: disable=protected-access
-            response_headers['Operation-Location']=self._client._deserialize('str', response.headers.get('Operation-Location'))# pylint: disable=protected-access
-            deserialized = _deserialize(
-                _models.RadiologyInsightsInferenceResult,
-                response.json().get("result")
-            )
+            response_headers["x-ms-request-id"] = self._client._deserialize(
+                "str", response.headers.get("x-ms-request-id")
+            )  # pylint: disable=protected-access
+            response_headers["Operation-Location"] = self._client._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )  # pylint: disable=protected-access
+            deserialized = _deserialize(_models.RadiologyInsightsInferenceResult, response.json().get("result"))
             if cls:
-                return cls(pipeline_response, deserialized, response_headers) # type: ignore
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._client._serialize.url("self._client._config.endpoint", self._client._config.endpoint, 'str', skip_quote=True),# pylint: disable=protected-access
+            "endpoint": self._client._serialize.url(
+                "self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True
+            ),  # pylint: disable=protected-access
         }
 
         if polling is True:
@@ -206,8 +224,8 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
             return LROPoller[_models.RadiologyInsightsInferenceResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
-                client=self._client._client,# pylint: disable=protected-access
-                deserialization_callback=get_long_running_output
+                client=self._client._client,  # pylint: disable=protected-access
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller[_models.RadiologyInsightsInferenceResult](
             self._client._client, raw_result, get_long_running_output, polling_method  # type: ignore # pylint: disable=protected-access
@@ -233,10 +251,14 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._client._serialize.url("self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True), # pylint: disable=line-too-long, protected-access
+            "endpoint": self._client._serialize.url(
+                "self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True
+            ),  # pylint: disable=line-too-long, protected-access
         }
 
-        request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments) # pylint: disable=protected-access
+        request_copy.url = self._client._client.format_url(
+            request_copy.url, **path_format_arguments
+        )  # pylint: disable=protected-access
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
@@ -250,7 +272,9 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         self._client.__exit__(*exc_details)
 
 
-__all__: List[str] = ["RadiologyInsightsClient"]  # Add all objects you want publicly available to users at this package level # pylint: disable=line-too-long
+__all__: List[str] = [
+    "RadiologyInsightsClient"
+]  # Add all objects you want publicly available to users at this package level # pylint: disable=line-too-long
 
 
 def patch_sdk():
