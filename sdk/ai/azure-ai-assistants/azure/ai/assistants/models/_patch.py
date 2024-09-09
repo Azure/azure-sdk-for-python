@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from ._enums import AssistantStreamEvent
-from ._models import MessageDeltaChunk, ThreadRun, RunStep, ThreadMessage
+from ._models import MessageDeltaChunk, ThreadRun, RunStep, ThreadMessage, RunStepDeltaChunk
 
 from typing import List, Dict, Any
 import inspect, json
@@ -142,7 +142,7 @@ class AssistantRunStream:
             chunk = next(self.response_iterator, None)
             if chunk is None:
                 raise StopIteration
-            
+
             self.buffer += chunk.decode("utf-8")
             if "\n\n" in self.buffer:
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
@@ -159,25 +159,50 @@ class AssistantRunStream:
             elif line.startswith("data:"):
                 event_data = line.split(":", 1)[1].strip()
 
-        parsed_data = json.loads(event_data)
+        try:
+            parsed_data = json.loads(event_data)
+        except json.JSONDecodeError:
+            # Return the raw data if it's not valid JSON
+            return event_type, event_data
 
-        # Map event type to the appropriate class
-        if event_type == AssistantStreamEvent.THREAD_MESSAGE_DELTA:
-            return event_type, MessageDeltaChunk(**parsed_data)
-        elif event_type in (AssistantStreamEvent.THREAD_RUN_CREATED,
-                            AssistantStreamEvent.THREAD_RUN_QUEUED,
-                            AssistantStreamEvent.THREAD_RUN_IN_PROGRESS,
-                            AssistantStreamEvent.THREAD_RUN_COMPLETED):
+        # TODO: Workaround for service bug: Rename 'expires_at' to 'expired_at'
+        if event_type.startswith("thread.run.step") and "expires_at" in parsed_data:
+            parsed_data["expired_at"] = parsed_data.pop("expires_at")
+
+        # Map to the appropriate class instance
+        if event_type in {
+            AssistantStreamEvent.THREAD_RUN_CREATED,
+            AssistantStreamEvent.THREAD_RUN_QUEUED,
+            AssistantStreamEvent.THREAD_RUN_IN_PROGRESS,
+            AssistantStreamEvent.THREAD_RUN_REQUIRES_ACTION,
+            AssistantStreamEvent.THREAD_RUN_COMPLETED,
+            AssistantStreamEvent.THREAD_RUN_FAILED,
+            AssistantStreamEvent.THREAD_RUN_CANCELLING,
+            AssistantStreamEvent.THREAD_RUN_CANCELLED,
+            AssistantStreamEvent.THREAD_RUN_EXPIRED
+        }:
             return event_type, ThreadRun(**parsed_data)
-        elif event_type in (AssistantStreamEvent.THREAD_RUN_STEP_CREATED,
-                            AssistantStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
-                            AssistantStreamEvent.THREAD_RUN_STEP_COMPLETED):
+        elif event_type in {
+            AssistantStreamEvent.THREAD_RUN_STEP_CREATED,
+            AssistantStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
+            AssistantStreamEvent.THREAD_RUN_STEP_COMPLETED,
+            AssistantStreamEvent.THREAD_RUN_STEP_FAILED,
+            AssistantStreamEvent.THREAD_RUN_STEP_CANCELLED,
+            AssistantStreamEvent.THREAD_RUN_STEP_EXPIRED
+        }:
             return event_type, RunStep(**parsed_data)
-        elif event_type in (AssistantStreamEvent.THREAD_MESSAGE_CREATED,
-                            AssistantStreamEvent.THREAD_MESSAGE_COMPLETED):
+        elif event_type in {
+            AssistantStreamEvent.THREAD_MESSAGE_CREATED,
+            AssistantStreamEvent.THREAD_MESSAGE_IN_PROGRESS,
+            AssistantStreamEvent.THREAD_MESSAGE_COMPLETED,
+            AssistantStreamEvent.THREAD_MESSAGE_INCOMPLETE
+        }:
             return event_type, ThreadMessage(**parsed_data)
+        elif event_type == AssistantStreamEvent.THREAD_MESSAGE_DELTA:
+            return event_type, MessageDeltaChunk(**parsed_data)
+        elif event_type == AssistantStreamEvent.THREAD_RUN_STEP_DELTA:
+            return event_type, RunStepDeltaChunk(**parsed_data)
 
-        # Add other event types and corresponding classes as needed
         return event_type, parsed_data
 
 

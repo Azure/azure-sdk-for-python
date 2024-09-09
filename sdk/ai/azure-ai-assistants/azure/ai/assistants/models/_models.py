@@ -3540,6 +3540,10 @@ class ThreadRun(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
     :vartype metadata: dict[str, str]
+    :ivar tool_resources:
+    :vartype tool_resources: ~azure.ai.assistants.models.UpdateToolResourcesOptions
+    :ivar parallel_tool_calls: Determines if tools can be executed in parallel within the run.
+    :vartype parallel_tool_calls: bool
     """
 
     id: str = rest_field()
@@ -3606,6 +3610,9 @@ class ThreadRun(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     """A set of up to 16 key/value pairs that can be attached to an object, used for storing
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
+    tool_resources: Optional["_models.UpdateToolResourcesOptions"] = rest_field()
+    parallel_tool_calls: Optional[bool] = rest_field(name="parallelToolCalls")
+    """Determines if tools can be executed in parallel within the run."""
 
     @overload
     def __init__(
@@ -3636,6 +3643,8 @@ class ThreadRun(_model_base.Model):  # pylint: disable=too-many-instance-attribu
         required_action: Optional["_models.RequiredAction"] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
+        tool_resources: Optional["_models.UpdateToolResourcesOptions"] = None,
+        parallel_tool_calls: Optional[bool] = None,
     ): ...
 
     @overload

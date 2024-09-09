@@ -11,7 +11,7 @@ DESCRIPTION:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
-    python sample_assistant_stream_iterator.py
+    python sample_assistant_stream_iteration.py
 
     Set these two environment variables before running the sample:
     1) AZUREAI_ENDPOINT_URL - Your endpoint URL, in the form 
@@ -27,7 +27,14 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants import AssistantsClient
-from azure.ai.assistants.models import AssistantStreamEvent, MessageDeltaTextContent, MessageDeltaChunk, ThreadMessage, ThreadRun, RunStep
+from azure.ai.assistants.models import (
+    AssistantStreamEvent,
+    MessageDeltaTextContent,
+    MessageDeltaChunk,
+    ThreadMessage,
+    ThreadRun,
+    RunStep,
+)
 from azure.core.credentials import AzureKeyCredential
 
 import os, logging
@@ -43,7 +50,7 @@ def setup_console_trace_exporter():
     RequestsInstrumentor().instrument()
 
 
-def sample_assistant_stream():
+def sample_assistant_stream_iteration():
     setup_console_trace_exporter()
 
     try:
@@ -70,9 +77,8 @@ def sample_assistant_stream():
     logging.info(f"Created message, message ID {message.id}")
 
     with assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id, stream=True) as stream:
-        
+
         for event_type, event_data in stream:
-            logging.info(f"Event Type: {event_type}")
 
             if isinstance(event_data, MessageDeltaChunk):
                 for content_part in event_data.delta.content:
@@ -84,7 +90,7 @@ def sample_assistant_stream():
                 logging.info(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
 
             elif isinstance(event_data, ThreadRun):
-                logging.info(f"ThreadRun status: {event_data.status}, Model: {event_data.model}")
+                logging.info(f"ThreadRun status: {event_data.status}")
 
             elif isinstance(event_data, RunStep):
                 logging.info(f"RunStep type: {event_data.type}, Status: {event_data.status}")
@@ -109,4 +115,4 @@ def sample_assistant_stream():
 if __name__ == "__main__":
     # Set logging level
     logging.basicConfig(level=logging.INFO)
-    sample_assistant_stream()
+    sample_assistant_stream_iteration()
