@@ -9,7 +9,7 @@ from typing import Any, Dict
 from unittest.mock import patch
 
 import pytest
-from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, is_live
+from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, add_header_regex_sanitizer, is_live
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
@@ -70,8 +70,41 @@ def add_sanitizers(
             regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
         )
 
+    def openai_stainless_default_headers():
+        """Sanitize the default headers added by the stainless SDK generator to every request.
+
+        The headers are meant as telemetry, so their values shouldn't matter
+
+          .. note::
+
+              The openai SDK is generated with Stainless
+
+          .. see-also::
+
+              https://app.stainlessapi.com/docs/guides/configure#default-headers
+        """
+
+        replacements = [
+            ("Package-Version", "vX.X.X"),
+            ("OS", "Other:XXX"),
+            ("Arch", "x64"),
+            ("Runtime", "CPython"),
+            ("Runtime-Version", "3.X.X"),
+            ("Async", "async:asyncio"),
+        ]
+
+        for header_suffix, value in replacements:
+            add_header_regex_sanitizer(key=f"X-Stainless-{header_suffix}", regex="^.*$", value=value)
+
+    def azure_ai_generative_sanitizer():
+        """Sanitize header values from azure-ai-generative"""
+        add_header_regex_sanitizer(key="X-CV", regex="^.*$", value="00000000-0000-0000-0000-000000000000")
+        add_body_key_sanitizer(json_path="$.headers.X-CV", value="00000000-0000-0000-0000-000000000000")
+
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
+    openai_stainless_default_headers()
+    azure_ai_generative_sanitizer()
 
 
 @pytest.fixture
