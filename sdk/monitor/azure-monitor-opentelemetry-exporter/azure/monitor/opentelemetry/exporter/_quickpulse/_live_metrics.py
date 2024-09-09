@@ -85,8 +85,9 @@ class _QuickpulseManager(metaclass=Singleton):
         self._exporter = _QuickpulseExporter(**kwargs)
         part_a_fields = {}
         resource = kwargs.get('resource')
-        if resource:
-            part_a_fields = _populate_part_a_fields(resource)
+        if not resource:
+            resource = Resource.create({})
+        part_a_fields = _populate_part_a_fields(resource)
         id_generator = RandomIdGenerator()
         self._base_monitoring_data_point = MonitoringDataPoint(
             version=_get_sdk_version(),
@@ -99,7 +100,10 @@ class _QuickpulseManager(metaclass=Singleton):
             performance_collection_supported=True,
         )
         self._reader = _QuickpulseMetricReader(self._exporter, self._base_monitoring_data_point)
-        self._meter_provider = MeterProvider([self._reader])
+        self._meter_provider = MeterProvider(
+            metric_readers=[self._reader],
+            resource=resource,
+        )
         self._meter = self._meter_provider.get_meter("azure_monitor_live_metrics")
 
         self._request_duration = self._meter.create_histogram(

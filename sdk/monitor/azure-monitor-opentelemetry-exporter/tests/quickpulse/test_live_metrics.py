@@ -121,6 +121,7 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertEqual(qpm._reader._base_monitoring_data_point, qpm._base_monitoring_data_point)
         self.assertTrue(isinstance(qpm._meter_provider, MeterProvider))
         self.assertEqual(qpm._meter_provider._sdk_config.metric_readers, [qpm._reader])
+        self.assertEqual(qpm._meter_provider._sdk_config.resource, resource)
         self.assertTrue(isinstance(qpm._meter, Meter))
         self.assertEqual(qpm._meter.name, "azure_monitor_live_metrics")
         self.assertTrue(isinstance(qpm._request_duration, Histogram))
