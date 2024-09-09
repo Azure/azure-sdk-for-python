@@ -1,14 +1,11 @@
 # Release History
 
-## 1.3.0b1 (Unreleased)
+## 1.3.0 (2024-09-09)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+* Added support for auto failover between replicas.
+* Added support for auto discovery of replicas.
 
 ## 1.2.0 (2024-05-24)
 
