@@ -246,11 +246,11 @@ async def _buildprovider(
     if not endpoint:
         raise ValueError("No endpoint specified.")
 
+    kwargs["endpoint"] = endpoint
     kwargs["connection_string"] = connection_string
     kwargs["credential"] = credential
 
-    provider = AzureAppConfigurationProvider(endpoint, **kwargs)
-    return provider
+    return AzureAppConfigurationProvider(**kwargs)
 
 
 async def _resolve_keyvault_reference(
@@ -308,7 +308,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     keys. Enables resolution of Key Vault references in configuration settings.
     """
 
-    def __init__(self, endpoint, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
+        endpoint = kwargs.pop("endpoint", None)
         self._origin_endpoint = endpoint
 
         if "user_agent" in kwargs:
