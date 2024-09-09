@@ -13,7 +13,7 @@ from ._models import AuditRequestInfo
 from ._models import BlurProperties
 from ._models import CreateLivenessSessionContent
 from ._models import CreateLivenessSessionResult
-from ._models import CreateLivenessWithVerifySessionJsonContent
+from ._models import CreateLivenessWithVerifySessionContent
 from ._models import CreateLivenessWithVerifySessionResult
 from ._models import CreatePersonResult
 from ._models import ExposureProperties
@@ -89,7 +89,7 @@ __all__ = [
     "BlurProperties",
     "CreateLivenessSessionContent",
     "CreateLivenessSessionResult",
-    "CreateLivenessWithVerifySessionJsonContent",
+    "CreateLivenessWithVerifySessionContent",
     "CreateLivenessWithVerifySessionResult",
     "CreatePersonResult",
     "ExposureProperties",

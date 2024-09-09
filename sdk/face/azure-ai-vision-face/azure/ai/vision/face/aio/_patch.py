@@ -276,7 +276,7 @@ class FaceSessionClient(FaceSessionClientGenerated):
     @distributed_trace_async
     async def create_liveness_with_verify_session(
         self,
-        body: Union[_models.CreateLivenessWithVerifySessionJsonContent, JSON, IO[bytes]],
+        body: Union[_models.CreateLivenessWithVerifySessionContent, JSON, IO[bytes]],
         *,
         verify_image: Union[bytes, None],
         **kwargs: Any,
@@ -289,8 +289,8 @@ class FaceSessionClient(FaceSessionClientGenerated):
         for more details.
 
         :param body: Body parameter. Is one of the following types:
-         CreateLivenessWithVerifySessionJsonContent, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionJsonContent or JSON or
+         CreateLivenessWithVerifySessionContent, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionContent or JSON or
          IO[bytes]
         :return: CreateLivenessWithVerifySessionResult. The CreateLivenessWithVerifySessionResult is
          compatible with MutableMapping

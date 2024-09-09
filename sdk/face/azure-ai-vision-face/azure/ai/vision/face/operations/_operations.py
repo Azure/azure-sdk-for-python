@@ -6416,7 +6416,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
     @overload
     def _create_liveness_with_verify_session(
         self,
-        body: _models.CreateLivenessWithVerifySessionJsonContent,
+        body: _models.CreateLivenessWithVerifySessionContent,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -6432,7 +6432,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
 
     @distributed_trace
     def _create_liveness_with_verify_session(
-        self, body: Union[_models.CreateLivenessWithVerifySessionJsonContent, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.CreateLivenessWithVerifySessionContent, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CreateLivenessWithVerifySessionResult:
         """Create a new liveness session with verify. Client device submits VerifyImage during the
         /detectLivenessWithVerify/singleModal call.
@@ -6442,8 +6442,8 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         for more details.
 
         :param body: Body parameter. Is one of the following types:
-         CreateLivenessWithVerifySessionJsonContent, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionJsonContent or JSON or
+         CreateLivenessWithVerifySessionContent, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionContent or JSON or
          IO[bytes]
         :return: CreateLivenessWithVerifySessionResult. The CreateLivenessWithVerifySessionResult is
          compatible with MutableMapping

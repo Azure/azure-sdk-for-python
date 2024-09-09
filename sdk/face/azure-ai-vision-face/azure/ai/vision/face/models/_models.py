@@ -337,7 +337,7 @@ class CreateLivenessSessionResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateLivenessWithVerifySessionJsonContent(_model_base.Model):  # pylint: disable=name-too-long
+class CreateLivenessWithVerifySessionContent(_model_base.Model):
     """Request for creating liveness with verify session.
 
     All required parameters must be populated in order to send to server.
@@ -435,13 +435,13 @@ class CreateLivenessWithVerifySessionMultipartContent(_model_base.Model):  # pyl
     All required parameters must be populated in order to send to server.
 
     :ivar parameters: The parameters for creating session. Required.
-    :vartype parameters: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionJsonContent
+    :vartype parameters: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionContent
     :ivar verify_image: The image stream for verify. Content-Disposition header field for this part
      must have filename. Required.
     :vartype verify_image: ~azure.ai.vision.face._vendor.FileType
     """
 
-    parameters: "_models.CreateLivenessWithVerifySessionJsonContent" = rest_field(name="Parameters")
+    parameters: "_models.CreateLivenessWithVerifySessionContent" = rest_field(name="Parameters")
     """The parameters for creating session. Required."""
     verify_image: FileType = rest_field(name="VerifyImage", is_multipart_file_input=True)
     """The image stream for verify. Content-Disposition header field for this part must have filename.
