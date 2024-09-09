@@ -1,5 +1,5 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, line-too-long, too-many-locals
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -299,7 +299,7 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
      list[~azure.healthinsights.radiologyinsights.models.CodeableConcept]
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.COMPLETE_ORDER_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore  # pylint : disable=line-too-long
     """Inference type. Required. Complete order discrepancy inference type"""
     order_type: "_models.CodeableConcept" = rest_field(name="orderType")
     """Order type : CPT ultrasound complete code for abdomen, retroperitoneal, pelvis or breast.
@@ -812,7 +812,7 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
     :vartype was_acknowledged: bool
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION] = rest_discriminator(name="kind")  # type: ignore # pylint : disable=line-too-long
     """Inference type. Required. Followup Communication inference type"""
     communicated_at: Optional[List[datetime.datetime]] = rest_field(name="communicatedAt", format="rfc3339")
     """Communication date and time."""
@@ -879,7 +879,7 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
      ~azure.healthinsights.radiologyinsights.models.ProcedureRecommendation
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION] = rest_discriminator(name="kind")  # type: ignore  # pylint : disable=line-too-long
     """Inference type. Required. Recommendation inference type"""
     effective_at: Optional[str] = rest_field(name="effectiveAt")
     """Date and time are displayed when the procedure is recommended to be done at a specific point in
@@ -1257,7 +1257,7 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
      ~azure.healthinsights.radiologyinsights.models.LateralityDiscrepancyType
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore  # pylint : disable=line-too-long
     """Inference type. Required. Laterality discrepancy inference type"""
     laterality_indication: Optional["_models.CodeableConcept"] = rest_field(name="lateralityIndication")
     """Laterality indication : SNOMED CT code for laterality qualifier value."""
@@ -1611,7 +1611,7 @@ class Observation(DomainResource, discriminator="Observation"):  # pylint: disab
     """Component results."""
 
     @overload
-    def __init__(
+    def __init__(  # pylint : disable=too-many-locals
         self,
         *,
         status: Union[str, "_models.ObservationStatusCodeType"],

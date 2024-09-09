@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines, protected-access
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.

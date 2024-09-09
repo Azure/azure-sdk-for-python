@@ -1,3 +1,4 @@
+# pylint: disable=protected-access
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -175,8 +176,8 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         cls: ClsType[_models.RadiologyInsightsJob] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval
-        )  # pylint: disable=protected-access
+            "polling_interval", self._client._config.polling_interval # pylint: disable=protected-access
+        )
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._client._infer_radiology_insights_initial(  # pylint: disable=protected-access
@@ -195,21 +196,21 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         def get_long_running_output(pipeline_response):
             response_headers = {}
             response = pipeline_response.http_response
-            response_headers["x-ms-request-id"] = self._client._deserialize(
+            response_headers["x-ms-request-id"] = self._client._deserialize(  # pylint: disable=protected-access
                 "str", response.headers.get("x-ms-request-id")
-            )  # pylint: disable=protected-access
-            response_headers["Operation-Location"] = self._client._deserialize(
+            )
+            response_headers["Operation-Location"] = self._client._deserialize(  # pylint: disable=protected-access
                 "str", response.headers.get("Operation-Location")
-            )  # pylint: disable=protected-access
+            )
             deserialized = _deserialize(_models.RadiologyInsightsInferenceResult, response.json().get("result"))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
         path_format_arguments = {
-            "endpoint": self._client._serialize.url(
+            "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
                 "self._client._config.endpoint", self._client._config.endpoint, "str", skip_quote=True
-            ),  # pylint: disable=protected-access
+            ),
         }
 
         if polling is True:
@@ -251,9 +252,9 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._client._serialize.url(
-                "self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True
-            ),  # pylint: disable=line-too-long, protected-access
+            "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
+                "self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True  # pylint: disable=line-too-long
+            ),
         }
 
         request_copy.url = self._client._client.format_url(
