@@ -1326,7 +1326,11 @@
         "tparam",
         "tqdm",
         "ncols",
-        "datas"
+        "datas",
+        "punkt",
+        "gleu",
+        "fmeasure",
+        "upia"
       ]
     },
     {
