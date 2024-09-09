@@ -43,7 +43,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     DecodeError,
 )
-from . import HttpRequest  # pylint: disable=unused-import
+from . import HttpRequest
 
 from ._base import HttpTransport, HttpResponse, _HttpResponseBase
 from ._bigger_block_size_http_adapters import BiggerBlockSizeHTTPAdapter
@@ -257,7 +257,7 @@ class RequestsTransport(HttpTransport):
         self.open()
         return self
 
-    def __exit__(self, *args):  # pylint: disable=arguments-differ
+    def __exit__(self, *args):
         self.close()
 
     def _init_session(self, session: requests.Session) -> None:

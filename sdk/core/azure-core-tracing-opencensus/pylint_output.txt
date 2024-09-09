@@ -1,0 +1,16 @@
+************* Module azure.core.tracing.ext.opencensus_span
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-tracing-opencensus/azure/core/tracing/ext/opencensus_span/__init__.py:9: [E0401(import-error), ] Unable to import 'opencensus.trace'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-tracing-opencensus/azure/core/tracing/ext/opencensus_span/__init__.py:10: [E0401(import-error), ] Unable to import 'opencensus.trace.tracer'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-tracing-opencensus/azure/core/tracing/ext/opencensus_span/__init__.py:11: [E0401(import-error), ] Unable to import 'opencensus.trace.span'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-tracing-opencensus/azure/core/tracing/ext/opencensus_span/__init__.py:12: [E0401(import-error), ] Unable to import 'opencensus.trace.link'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-tracing-opencensus/azure/core/tracing/ext/opencensus_span/__init__.py:13: [E0401(import-error), ] Unable to import 'opencensus.trace.propagation'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-tracing-opencensus/azure/core/tracing/ext/opencensus_span/__init__.py:14: [E0401(import-error), ] Unable to import 'opencensus.trace'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-tracing-opencensus/azure/core/tracing/ext/opencensus_span/__init__.py:109: [C4758(docstring-keyword-should-match-keyword-only), OpenCensusSpan.span] "links, kind" missing in docstring or in method signature. There should be a direct correlation between :keyword: arguments in the docstring and keyword-only arguments in method signature. See details: https://azure.github.io/azure-sdk/python_documentation.html#docstrings
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-tracing-opencensus/azure/core/tracing/ext/opencensus_span/__init__.py:261: [C4741(docstring-missing-return), OpenCensusSpan.set_current_span] A return doc is missing in the docstring. See details: https://azure.github.io/azure-sdk/python_documentation.html#docstrings
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-tracing-opencensus/azure/core/tracing/ext/opencensus_span/__init__.py:261: [C4742(docstring-missing-rtype), OpenCensusSpan.set_current_span] A return type is missing in the docstring. See details: https://azure.github.io/azure-sdk/python_documentation.html#docstrings
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-tracing-opencensus/azure/core/tracing/ext/opencensus_span/__init__.py:288: [C4741(docstring-missing-return), OpenCensusSpan.set_current_tracer] A return doc is missing in the docstring. See details: https://azure.github.io/azure-sdk/python_documentation.html#docstrings
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-tracing-opencensus/azure/core/tracing/ext/opencensus_span/__init__.py:288: [C4742(docstring-missing-rtype), OpenCensusSpan.set_current_tracer] A return type is missing in the docstring. See details: https://azure.github.io/azure-sdk/python_documentation.html#docstrings
+
+------------------------------------------------------------------
+Your code has been rated at 6.50/10 (previous run: 7.41/10, -0.91)
+

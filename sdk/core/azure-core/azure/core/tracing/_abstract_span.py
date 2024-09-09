@@ -56,7 +56,7 @@ class AbstractSpan(Protocol, Generic[SpanType]):
     :type name: str
     """
 
-    def __init__(  # pylint: disable=super-init-not-called
+    def __init__(
         self, span: Optional[SpanType] = None, name: Optional[str] = None, **kwargs: Any
     ) -> None:
         pass

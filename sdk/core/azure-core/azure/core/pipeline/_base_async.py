@@ -39,7 +39,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 
 class _SansIOAsyncHTTPPolicyRunner(
     AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):  # pylint: disable=unsubscriptable-object
+):
     """Async implementation of the SansIO policy.
 
     Modifies the request and sends to the next policy in the chain.
@@ -75,7 +75,7 @@ class _SansIOAsyncHTTPPolicyRunner(
 
 class _AsyncTransportRunner(
     AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):  # pylint: disable=unsubscriptable-object
+):
     """Async Transport runner.
 
     Uses specified HTTP transport type to send request and returns response.
@@ -126,7 +126,7 @@ class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestTyp
             :caption: Builds the async pipeline for asynchronous transport.
     """
 
-    def __init__(  # pylint: disable=super-init-not-called
+    def __init__(
         self,
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
         policies: Optional[

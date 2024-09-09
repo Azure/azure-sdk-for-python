@@ -52,7 +52,7 @@ class PipelineContext(Dict[str, Any]):
 
     def __init__(
         self, transport: Optional["TransportType"], **kwargs: Any
-    ) -> None:  # pylint: disable=super-init-not-called
+    ) -> None:
         self.transport: Optional["TransportType"] = transport
         self.options = kwargs
         self._protected = ["transport", "options"]

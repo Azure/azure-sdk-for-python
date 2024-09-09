@@ -263,7 +263,7 @@ class AsyncPipelineClient(
 
     async def _make_pipeline_call(self, request: HTTPRequestType, **kwargs) -> AsyncHTTPResponseType:
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = await self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
+        pipeline_response = await self._pipeline.run(request, **kwargs)
         if return_pipeline_response:
             return pipeline_response  # type: ignore  # This is a private API we don't want to type in signature
         return pipeline_response.http_response

@@ -176,7 +176,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
             options: TokenRequestOptions = {}
             # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
             for key in list(kwargs.keys()):
-                if key in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
+                if key in TokenRequestOptions.__annotations__:
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
             self._token = await await_result(

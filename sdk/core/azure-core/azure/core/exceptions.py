@@ -97,7 +97,7 @@ def raise_with_traceback(exception: Callable, *args: Any, message: str = "", **k
     exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)
     error = exception(exc_msg, *args, **kwargs)
     try:
-        raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+        raise error.with_traceback(exc_traceback)
     except AttributeError:  # Python 2
         error.__traceback__ = exc_traceback
         raise error  # pylint: disable=raise-missing-from
@@ -309,7 +309,7 @@ class AzureError(Exception):
            This method is deprecated as we don't support Python 2 anymore. Use raise/from instead.
         """
         try:
-            raise super(AzureError, self).with_traceback(self.exc_traceback)  # pylint: disable=raise-missing-from
+            raise super(AzureError, self).with_traceback(self.exc_traceback)
         except AttributeError:
             self.__traceback__: Optional[TracebackType] = self.exc_traceback
             raise self  # pylint: disable=raise-missing-from

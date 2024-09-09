@@ -1,0 +1,71 @@
+************* Module azure.core.experimental.transport._urllib3
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:35: [E0401(import-error), ] Unable to import 'azure.core.pipeline'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:35: [E0611(no-name-in-module), ] No name 'pipeline' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:36: [E0401(import-error), ] Unable to import 'azure.core.exceptions'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:36: [E0611(no-name-in-module), ] No name 'exceptions' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:37: [E0401(import-error), ] Unable to import 'azure.core.configuration'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:37: [E0611(no-name-in-module), ] No name 'configuration' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:38: [E0401(import-error), ] Unable to import 'azure.core.pipeline.transport'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:38: [E0611(no-name-in-module), ] No name 'pipeline' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:39: [E0401(import-error), ] Unable to import 'azure.core.rest'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:39: [E0611(no-name-in-module), ] No name 'rest' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:40: [E0401(import-error), ] Unable to import 'azure.core.rest._http_response_impl'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_urllib3.py:40: [E0611(no-name-in-module), ] No name 'rest' in module 'azure.core'
+************* Module azure.core.experimental.transport._httpx
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:28: [E0401(import-error), ] Unable to import 'httpx'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:29: [E0401(import-error), ] Unable to import 'azure.core.configuration'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:29: [E0611(no-name-in-module), ] No name 'configuration' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:30: [E0401(import-error), ] Unable to import 'azure.core.exceptions'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:30: [E0611(no-name-in-module), ] No name 'exceptions' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:31: [E0401(import-error), ] Unable to import 'azure.core.pipeline'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:31: [E0611(no-name-in-module), ] No name 'pipeline' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:32: [E0401(import-error), ] Unable to import 'azure.core.pipeline.transport'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:32: [E0611(no-name-in-module), ] No name 'pipeline' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:33: [E0401(import-error), ] Unable to import 'azure.core.rest'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:33: [E0611(no-name-in-module), ] No name 'rest' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:34: [E0401(import-error), ] Unable to import 'azure.core.rest._http_response_impl'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:34: [E0611(no-name-in-module), ] No name 'rest' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:35: [E0401(import-error), ] Unable to import 'azure.core.pipeline.transport'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:35: [E0611(no-name-in-module), ] No name 'pipeline' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:81: [C4758(docstring-keyword-should-match-keyword-only), HttpXTransportResponse.stream_download] "decompress" missing in docstring or in method signature. There should be a direct correlation between :keyword: arguments in the docstring and keyword-only arguments in method signature. See details: https://azure.github.io/azure-sdk/python_documentation.html#docstrings
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:69: [E0203(access-member-before-definition), HttpXTransportResponse.read] Access to member '_content' before its definition line 70
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:70: [W0201(attribute-defined-outside-init), HttpXTransportResponse.read] Attribute '_content' defined outside __init__
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:179: [C4758(docstring-keyword-should-match-keyword-only), HttpXTransport.send] "stream" missing in docstring or in method signature. There should be a direct correlation between :keyword: arguments in the docstring and keyword-only arguments in method signature. See details: https://azure.github.io/azure-sdk/python_documentation.html#docstrings
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx.py:222: [E0601(used-before-assignment), HttpXTransport.send] Using variable 'response' before assignment
+************* Module azure.core.experimental.transport._httpx_async
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:28: [E0401(import-error), ] Unable to import 'httpx'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:29: [E0401(import-error), ] Unable to import 'azure.core.configuration'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:29: [E0611(no-name-in-module), ] No name 'configuration' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:30: [E0401(import-error), ] Unable to import 'azure.core.exceptions'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:30: [E0611(no-name-in-module), ] No name 'exceptions' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:31: [E0401(import-error), ] Unable to import 'azure.core.pipeline'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:31: [E0611(no-name-in-module), ] No name 'pipeline' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:32: [E0401(import-error), ] Unable to import 'azure.core.pipeline.transport'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:32: [E0611(no-name-in-module), ] No name 'pipeline' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:33: [E0401(import-error), ] Unable to import 'azure.core.pipeline.transport'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:33: [E0611(no-name-in-module), ] No name 'pipeline' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:34: [E0401(import-error), ] Unable to import 'azure.core.rest'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:34: [E0611(no-name-in-module), ] No name 'rest' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:35: [E0401(import-error), ] Unable to import 'azure.core.rest._http_response_impl_async'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:35: [E0611(no-name-in-module), ] No name 'rest' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:71: [C4758(docstring-keyword-should-match-keyword-only), AsyncHttpXTransportResponse.stream_download] "decompress" missing in docstring or in method signature. There should be a direct correlation between :keyword: arguments in the docstring and keyword-only arguments in method signature. See details: https://azure.github.io/azure-sdk/python_documentation.html#docstrings
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:84: [W0201(attribute-defined-outside-init), AsyncHttpXTransportResponse.load_body] Attribute '_content' defined outside __init__
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:170: [C4758(docstring-keyword-should-match-keyword-only), AsyncHttpXTransport.send] "stream" missing in docstring or in method signature. There should be a direct correlation between :keyword: arguments in the docstring and keyword-only arguments in method signature. See details: https://azure.github.io/azure-sdk/python_documentation.html#docstrings
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_httpx_async.py:207: [E0606(possibly-used-before-assignment), AsyncHttpXTransport.send] Possibly using variable 'response' before assignment
+************* Module azure.core.experimental.transport._pyodide
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:34: [E0401(import-error), ] Unable to import 'azure.core.exceptions'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:34: [E0611(no-name-in-module), ] No name 'exceptions' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:35: [E0401(import-error), ] Unable to import 'azure.core.pipeline'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:35: [E0611(no-name-in-module), ] No name 'pipeline' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:36: [E0401(import-error), ] Unable to import 'azure.core.utils'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:36: [E0611(no-name-in-module), ] No name 'utils' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:38: [E0401(import-error), ] Unable to import 'azure.core.rest._http_response_impl_async'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:38: [E0611(no-name-in-module), ] No name 'rest' in module 'azure.core'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:39: [E0401(import-error), ] Unable to import 'azure.core.pipeline.transport'
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:75: [E0203(access-member-before-definition), PyodideTransportResponse.load_body] Access to member '_content' before its definition line 76
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:63: [W0201(attribute-defined-outside-init), PyodideTransportResponse.close] Attribute '_is_closed' defined outside __init__
+/home/llawrence/repos/azure-sdk-for-python/sdk/core/azure-core-experimental/azure/core/experimental/transport/_pyodide.py:76: [W0201(attribute-defined-outside-init), PyodideTransportResponse.load_body] Attribute '_content' defined outside __init__
+
+------------------------------------------------------------------
+Your code has been rated at 3.61/10 (previous run: 9.98/10, -6.37)
+

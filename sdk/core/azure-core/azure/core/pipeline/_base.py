@@ -168,7 +168,7 @@ class Pipeline(ContextManager["Pipeline"], Generic[HTTPRequestType, HTTPResponse
         self._transport.__enter__()
         return self
 
-    def __exit__(self, *exc_details: Any) -> None:  # pylint: disable=arguments-differ
+    def __exit__(self, *exc_details: Any) -> None:
         self._transport.__exit__(*exc_details)
 
     @staticmethod
