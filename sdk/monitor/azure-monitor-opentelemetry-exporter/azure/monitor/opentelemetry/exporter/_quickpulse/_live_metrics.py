@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 # cSpell:disable
 from datetime import datetime
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable
 
 import platform
 import psutil
@@ -70,19 +70,21 @@ def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
 
     :keyword str connection_string: The connection string used for your Application Insights resource.
     :keyword Resource resource: The OpenTelemetry Resource used for this Python application.
+    :keyword ManagedIdentityCredential/ClientSecretCredential credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
     :rtype: None
     """
-    _QuickpulseManager(kwargs.get('connection_string'), kwargs.get('resource'))
+    _QuickpulseManager(**kwargs)
     set_statsbeat_live_metrics_feature_set()
 
 
 # pylint: disable=protected-access,too-many-instance-attributes
 class _QuickpulseManager(metaclass=Singleton):
 
-    def __init__(self, connection_string: Optional[str], resource: Optional[Resource]) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
-        self._exporter = _QuickpulseExporter(connection_string)
+        self._exporter = _QuickpulseExporter(**kwargs)
         part_a_fields = {}
+        resource = kwargs.get('resource')
         if resource:
             part_a_fields = _populate_part_a_fields(resource)
         id_generator = RandomIdGenerator()

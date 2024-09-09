@@ -64,7 +64,10 @@ class TestLiveMetrics(unittest.TestCase):
             connection_string="test_cs",
             resource=mock_resource,
         )
-        manager_mock.assert_called_with("test_cs", mock_resource)
+        manager_mock.assert_called_with(
+            connection_string="test_cs",
+            resource=mock_resource
+        )
 
 
 class TestQuickpulseManager(unittest.TestCase):
