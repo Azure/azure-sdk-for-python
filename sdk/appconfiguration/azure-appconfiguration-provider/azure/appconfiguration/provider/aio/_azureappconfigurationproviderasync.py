@@ -218,6 +218,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     )
 
     provider = await _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
+    # Discovering replicas outside of init as it's async
     await provider._replica_client_manager.setup_initial_clients()  # pylint:disable=protected-access
     headers = _get_headers(
         kwargs.pop("headers", {}),
