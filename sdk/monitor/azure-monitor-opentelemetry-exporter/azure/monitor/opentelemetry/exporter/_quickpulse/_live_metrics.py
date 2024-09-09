@@ -70,7 +70,8 @@ def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
 
     :keyword str connection_string: The connection string used for your Application Insights resource.
     :keyword Resource resource: The OpenTelemetry Resource used for this Python application.
-    :keyword TokenCredential credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
+    :keyword TokenCredential credential: Token credential, such as ManagedIdentityCredential or
+        ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
     :rtype: None
     """
     _QuickpulseManager(**kwargs)
