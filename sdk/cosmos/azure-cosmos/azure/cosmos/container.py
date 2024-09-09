@@ -38,6 +38,7 @@ from ._base import (
     GenerateGuidId,
     _set_properties_cache
 )
+from ._change_feed.feed_range import FeedRange, FeedRangeEpk
 from ._cosmos_client_connection import CosmosClientConnection
 from ._routing.routing_range import Range, partition_key_range_to_range_string
 from .offer import Offer, ThroughputProperties
@@ -1333,19 +1334,43 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         return [partition_key_range_to_range_string(partitionKeyRange) for partitionKeyRange in partition_key_ranges]
 
-    def merge_session_tokens(self,
+    def get_updated_session_token(self,
                              feed_ranges_to_session_tokens: List,
                              target_feed_range: Range
                              ) -> "Session Token":
-        """Merge session tokens from different clients to figure out which is the most up to date for a specific
-        feed range. The feed range can be obtained from the response from crud operations.
+        """Gets the best session token from the list of session token and feed range tuples
+        to figure out which is the most up to date for a specific
+        feed range. The feed range can be obtained from a response from any crud operation.
         This should only be used if maintaining own session token or else the sdk will keep track of
         session token.
-        :param feed_ranges_to_session_tokens: list of partition key and session token tuples.
+        :param feed_ranges_to_session_tokens: List of partition key and session token tuples.
         :type feed_ranges_to_session_tokens: List[Tuple(str, Range)]
         :param target_feed_range: feed range to get most up to date session token.
         :type target_feed_range: Range
         :returns: a session token
         :rtype: str
         """
-        self.client_connection.MergeSessionTokens(feed_ranges_to_session_tokens, target_feed_range)
+        self.client_connection._get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range)
+
+    def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> FeedRange:
+        """Gets the feed range for a given partition key.
+        :param partition_key: partition key to get feed range.
+        :type partition_key: PartitionKey
+        :returns: a feed range
+        :rtype: Range
+        """
+        return FeedRangeEpk(self._get_epk_range_for_partition_key(partition_key))
+
+    def is_feed_range_subset(self, parent_feed_range: FeedRange, child_feed_range: FeedRange) -> bool:
+        """Checks if child feed range is a subset of parent feed range.
+        :param parent_feed_range: left feed range
+        :type parent_feed_range: Range
+        :param child_feed_range: right feed range
+        :type child_feed_range: Range
+        :returns: a boolean indicating if child feed range is a subset of parent feed range
+        :rtype: bool
+        """
+        normalized_parent_range = parent_feed_range.get_normalized_range()
+        normalized_child_range = child_feed_range.get_normalized_range()
+        return normalized_parent_range.contains(normalized_child_range.min) and \
+            (normalized_parent_range.contains(normalized_child_range.max) or normalized_parent_range.max == normalized_child_range.max)

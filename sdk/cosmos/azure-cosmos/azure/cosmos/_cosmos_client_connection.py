@@ -46,7 +46,7 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import HttpRequest, \
     HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 
-from . import _base as base
+from . import _base as base, _request_context
 from . import _global_endpoint_manager as global_endpoint_manager
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
@@ -2620,6 +2620,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
+        self.last_response_headers = _request_context.add_request_context(last_response_headers, options)
         if response_hook:
             response_hook(last_response_headers, result)
         return result
@@ -3328,7 +3329,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.__container_properties_cache[collection_link] = _set_properties_cache(container)
         return partition_key_definition
 
-    def MergeSessionTokens(self, feed_ranges_to_session_tokens, target_feed_range):
+    def _get_updated_session_token(self, feed_ranges_to_session_tokens, target_feed_range):
         comparison_session_token = ''
         comparison_pk_range_id = ''
         for (pk, session_token) in feed_ranges_to_session_tokens:
