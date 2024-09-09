@@ -75,13 +75,14 @@ class _UnsuccessfulQuickPulsePostError(Exception):
 
 class _QuickpulseExporter(MetricExporter):
 
-    def __init__(self, connection_string: Optional[str]) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """Metric exporter for Quickpulse.
 
         :param str connection_string: The connection string used for your Application Insights resource.
+        :keyword ManagedIdentityCredential/ClientSecretCredential credential: Token credential, such as ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
         :rtype: None
         """
-        parsed_connection_string = ConnectionStringParser(connection_string)
+        parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
 
         self._live_endpoint = parsed_connection_string.live_endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
