@@ -14,7 +14,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .. import models as _models
 from ._client import FaceClient as FaceClientGenerated
 from ._client import FaceSessionClient as FaceSessionClientGenerated
-from ._operations._operations import JSON, _Unset
+from .operations._operations import JSON, _Unset
 
 
 class FaceClient(FaceClientGenerated):
