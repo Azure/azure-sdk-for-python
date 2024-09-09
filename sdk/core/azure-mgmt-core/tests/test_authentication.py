@@ -42,22 +42,27 @@ import pytest
 from unittest.mock import Mock
 
 
+CLAIM_TOKEN = base64.b64encode(b'{"access_token": {"foo": "bar"}}').decode()
+CLAIM_NBF = base64.b64encode(b'{"access_token":{"nbf":{"essential":true, "value":"1603742800"}}}').decode()
+CLAIM_IP = base64.b64encode(b'{"access_token":{"nbf":{"essential":true,"value":"1610563006"},"xms_rp_ipaddr":{"value":"1.2.3.4"}}}').decode()[:-2]  # Trim off padding = characters
+
+
 @pytest.mark.parametrize(
     "challenge,expected_claims",
     (
         # CAE - insufficient claims
         (
-            'Bearer realm="", authorization_uri="https://login.microsoftonline.com/common/oauth2/authorize", client_id="00000003-0000-0000-c000-000000000000", error="insufficient_claims", claims="eyJhY2Nlc3NfdG9rZW4iOiB7ImZvbyI6ICJiYXIifX0="',
+            f'Bearer realm="", authorization_uri="https://login.microsoftonline.com/common/oauth2/authorize", client_id="00000003-0000-0000-c000-000000000000", error="insufficient_claims", claims="{CLAIM_TOKEN}"',
             '{"access_token": {"foo": "bar"}}',
         ),
         # CAE - sessions revoked
         (
-            'Bearer authorization_uri="https://login.windows-ppe.net/", error="invalid_token", error_description="User session has been revoked", claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwgInZhbHVlIjoiMTYwMzc0MjgwMCJ9fX0="',
+            f'Bearer authorization_uri="https://login.windows-ppe.net/", error="invalid_token", error_description="User session has been revoked", claims={CLAIM_NBF}',
             '{"access_token":{"nbf":{"essential":true, "value":"1603742800"}}}',
         ),
         # CAE - IP policy
         (
-            'Bearer authorization_uri="https://login.windows.net/", error="invalid_token", error_description="Tenant IP Policy validate failed.", claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwidmFsdWUiOiIxNjEwNTYzMDA2In0sInhtc19ycF9pcGFkZHIiOnsidmFsdWUiOiIxLjIuMy40In19fQ"',
+            f'Bearer authorization_uri="https://login.windows.net/", error="invalid_token", error_description="Tenant IP Policy validate failed.", claims={CLAIM_IP}',
             '{"access_token":{"nbf":{"essential":true,"value":"1610563006"},"xms_rp_ipaddr":{"value":"1.2.3.4"}}}',
         ),
         # ARM
