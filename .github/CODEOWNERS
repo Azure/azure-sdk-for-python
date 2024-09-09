@@ -230,7 +230,7 @@
 /sdk/cosmos/                                                         @annatisch @Azure/azure-cosmos-python-sdk
 
 # ServiceLabel: %Cosmos %Service Attention
-#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @bambriz @pilchie
+#/<NotInRepo>/                                                       @pjohari-ms @simorenoh @AbhinavTrips @pilchie
 
 # ServiceLabel: %Data Factory
 # PRLabel: %Data Factory
