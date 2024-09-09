@@ -8,8 +8,6 @@
  - Fixed a bug where using TokenCredential to create a subscription with forwarding caused a `ResourceNotFoundError` ([36545](https://github.com/Azure/azure-sdk-for-python/pull/36545))
  - Fixed a bug where messages received on one receiver could not be settled on another receiver over mgmt link ([35304](https://github.com/Azure/azure-sdk-for-python/issues/35304))
 
-### Other Changes
-
 ## 7.12.2 (2024-05-08)
 
 ### Bugs Fixed
