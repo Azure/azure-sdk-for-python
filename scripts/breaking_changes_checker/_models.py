@@ -25,6 +25,8 @@ class Suppression(NamedTuple):
 @runtime_checkable
 class ChangesChecker(Protocol):
     name: str
+    # additional properties can be left up to the user and the ChangesReporter class simply will not have a report method and folks can print the changes_list and parse that way?
+    is_breaking: bool
     message: Union[str, dict]
 
     def run_check(self, diff: dict, stable_nodes: dict, current_nodes: dict) -> List[BreakingChange]:
