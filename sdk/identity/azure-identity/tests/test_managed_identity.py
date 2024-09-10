@@ -314,7 +314,6 @@ def test_cloud_shell_user_assigned_identity():
 
     expected_token = "****"
     expires_on = 42
-    client_id = "some-guid"
     endpoint = "http://localhost:42/token"
     scope = "scope"
     param_name, param_value = "foo", "bar"
@@ -325,7 +324,7 @@ def test_cloud_shell_user_assigned_identity():
                 base_url=endpoint,
                 method="POST",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
-                required_data={"client_id": client_id, "resource": scope},
+                required_data={"resource": scope},
             ),
             Request(
                 base_url=endpoint,
@@ -350,7 +349,7 @@ def test_cloud_shell_user_assigned_identity():
     )
 
     with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: endpoint}, clear=True):
-        token = ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
+        token = ManagedIdentityCredential(transport=transport).get_token(scope)
         assert token.token == expected_token
         assert token.expires_on == expires_on
 
