@@ -115,7 +115,7 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
 
 class Element(_model_base.Model):
     """The base definition for all elements contained inside a resource.
-    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
+    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`__.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
