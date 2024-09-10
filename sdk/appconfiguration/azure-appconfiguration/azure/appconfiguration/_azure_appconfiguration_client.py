@@ -109,7 +109,7 @@ class AzureAppConfigurationClient:
 
         .. code-block:: python
 
-            from azure.appconfiguration import 
+            from azure.appconfiguration import
 
             connection_str = "<my connection string>"
             client = AzureAppConfigurationClient.from_connection_string(connection_str)
@@ -309,7 +309,9 @@ class AzureAppConfigurationClient:
             return None
 
     @distributed_trace
-    def add_configuration_setting(self, configuration_setting: ConfigurationSetting, **kwargs: Any) -> ConfigurationSetting:
+    def add_configuration_setting(
+        self, configuration_setting: ConfigurationSetting, **kwargs: Any
+    ) -> ConfigurationSetting:
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
         :param configuration_setting: The ConfigurationSetting object to be added
