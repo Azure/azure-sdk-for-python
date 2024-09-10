@@ -48,13 +48,15 @@ def monitor_adversarial_scenario(func) -> Callable:
 class IndirectAttackSimulator:
     """
     Initializes the XPIA (cross domain prompt injected attack) jailbreak adversarial simulator with a project scope.
+
     :param azure_ai_project: Dictionary defining the scope of the project. It must include the following keys:
+
         * "subscription_id": Azure subscription ID.
         * "resource_group_name": Name of the Azure resource group.
         * "project_name": Name of the Azure Machine Learning workspace.
+    :type azure_ai_project: Dict[str, Any]
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
-    :type azure_ai_project: Dict[str, Any]
     """
 
     def __init__(self, *, azure_ai_project: Dict[str, Any], credential=None):
