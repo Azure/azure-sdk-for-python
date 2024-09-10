@@ -46,7 +46,7 @@ steps:
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: ../steps/auth-dev-feed.yml
+    - template: auth-dev-feed.yml
       parameters:
         DevFeedName: ${{ parameters.DevFeedName }}
 
