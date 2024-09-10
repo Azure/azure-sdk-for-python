@@ -845,7 +845,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
 
     @distributed_trace
-    def update_repository_properties(self, *args: Union[str, RepositoryProperties], **kwargs: Any) -> RepositoryProperties:
+    def update_repository_properties(
+        self, *args: Union[str, RepositoryProperties], **kwargs: Any
+    ) -> RepositoryProperties:
         repository = str(args[0])
         properties = None
         if len(args) == 2:
