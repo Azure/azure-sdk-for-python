@@ -9,6 +9,7 @@ import jsondiff
 
 class MethodOverloadsChecker:
     name = "RemovedMethodOverload"
+    is_breaking = True
     message = {
         "default": "{}.{} had an overload `{}` removed",
         "all": "{}.{} had all overloads removed"

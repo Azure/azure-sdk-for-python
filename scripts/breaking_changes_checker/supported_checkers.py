@@ -6,7 +6,9 @@
 # --------------------------------------------------------------------------------------------
 
 from checkers.method_overloads_checker import MethodOverloadsChecker
+from checkers.changelog_method_overloads_checker import ChangelogMethodOverloadsChecker
 
 CHECKERS = [
     MethodOverloadsChecker(),
+    ChangelogMethodOverloadsChecker(),
 ]

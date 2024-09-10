@@ -92,6 +92,7 @@ class BreakingChangesTracker:
         self.stable = stable
         self.current = current
         self.diff = jsondiff.diff(stable, current)
+        self.features_added = []
         self.breaking_changes = []
         self.package_name = package_name
         self._module_name = None
@@ -134,7 +135,11 @@ class BreakingChangesTracker:
 
             self.run_class_level_diff_checks(module)
             self.run_function_level_diff_checks(module)
+        # Run custom checkers in the base class, in the future we will only need 1 ChangeReporter class in the tool
         for checker in self.checkers:
+            if not checker.is_breaking:
+                self.features_added.extend(checker.run_check(self.diff, self.stable, self.current))
+                continue
             self.breaking_changes.extend(checker.run_check(self.diff, self.stable, self.current))
 
     def run_class_level_diff_checks(self, module: Dict) -> None:
