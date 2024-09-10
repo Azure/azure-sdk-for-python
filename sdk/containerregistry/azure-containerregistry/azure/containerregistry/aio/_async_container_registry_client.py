@@ -126,7 +126,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: The repository to delete
         :returns: None
         :rtype: None
-        :raises: :class:`azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -147,7 +147,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype results_per_page: int
         :returns: An iterable of strings
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
-        :raises: :class:`azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -252,7 +252,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: Name of the repository
         :return: The properties of a repository.
         :rtype: ~azure.containerregistry.RepositoryProperties
-        :raises: :class:`azure.core.exceptions.ResourceNotFoundError`
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
         """
         return RepositoryProperties._from_generated(  # pylint: disable=protected-access
             await self._client.container_registry.get_properties(repository, **kwargs)
@@ -276,7 +276,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype results_per_page: int
         :returns: An iterable of :class:`~azure.containerregistry.ArtifactManifestProperties`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.containerregistry.ArtifactManifestProperties]
-        :raises: :class:`azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         name = repository
         last = kwargs.pop("last", None)
@@ -390,7 +390,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str tag: The tag to be deleted
         :returns: None
         :rtype: None
-        :raises: :class:`azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example
 
@@ -415,7 +415,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str tag_or_digest: The tag or digest of the manifest
         :return: The properties of a registry artifact
         :rtype: ~azure.containerregistry.ArtifactManifestProperties
-        :raises: :class:`azure.core.exceptions.ResourceNotFoundError`
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
 
         Example
 
@@ -449,7 +449,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :type tag: str
         :return: The properties for a tag.
         :rtype: ~azure.containerregistry.ArtifactTagProperties
-        :raises: :class:`azure.core.exceptions.ResourceNotFoundError`
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
 
         Example
 
@@ -486,7 +486,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype results_per_page: int
         :returns: An iterable of :class:`~azure.containerregistry.ArtifactTagProperties`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.containerregistry.ArtifactTagProperties]
-        :raises: :class:`azure.core.exceptions.ResourceNotFoundError`
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
 
         Example
 
@@ -616,7 +616,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.RepositoryProperties
         :rtype: ~azure.containerregistry.RepositoryProperties
-        :raises: :class:`azure.core.exceptions.ResourceNotFoundError`
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
         """
 
     @overload
@@ -640,7 +640,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a repository.
         :keyword bool can_write: Write permissions for a repository.
         :rtype: ~azure.containerregistry.RepositoryProperties
-        :raises: :class:`azure.core.exceptions.ResourceNotFoundError`
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
         """
 
     @distributed_trace_async
@@ -679,7 +679,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.ArtifactManifestProperties
         :rtype: ~azure.containerregistry.ArtifactManifestProperties
-        :raises: :class:`azure.core.exceptions.ResourceNotFoundError`
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
 
         Example
 
@@ -724,7 +724,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a manifest.
         :keyword bool can_write: Write permissions for a manifest.
         :rtype: ~azure.containerregistry.ArtifactManifestProperties
-        :raises: :class:`azure.core.exceptions.ResourceNotFoundError`
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
 
         Example
 
@@ -788,7 +788,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.ArtifactTagProperties
         :rtype: ~azure.containerregistry.ArtifactTagProperties
-        :raises: :class:`azure.core.exceptions.ResourceNotFoundError`
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
 
         Example
 
@@ -830,7 +830,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a tag.
         :keyword bool can_write: Write permissions for a tag.
         :rtype: ~azure.containerregistry.ArtifactTagProperties
-        :raises: :class:`azure.core.exceptions.ResourceNotFoundError`
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
 
         Example
 
@@ -1076,7 +1076,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str tag_or_digest: Tag or digest of the manifest to be deleted.
         :returns: None
         :rtype: None
-        :raises: :class:`azure.core.exceptions.HttpResponseError`
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example
 
