@@ -35,8 +35,6 @@ jobs:
 
     steps:
       - template: ../steps/release-candidate-steps.yml
-        targetList:
-
 
   - ${{ if eq(parameters.RunNightlyTests, true) }}:
     - job: Validate_Nightly_Python_Build
