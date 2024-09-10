@@ -176,7 +176,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         cls: ClsType[_models.RadiologyInsightsJob] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop(
-            "polling_interval", self._client._config.polling_interval # pylint: disable=protected-access
+            "polling_interval", self._client._config.polling_interval  # pylint: disable=protected-access
         )
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
@@ -253,7 +253,10 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         request_copy = deepcopy(request)
         path_format_arguments = {
             "endpoint": self._client._serialize.url(  # pylint: disable=protected-access
-                "self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True  # pylint: disable=line-too-long
+                "self._config.endpoint",
+                self._client._config.endpoint,
+                "str",
+                skip_quote=True,  # pylint: disable=line-too-long
             ),
         }
 
