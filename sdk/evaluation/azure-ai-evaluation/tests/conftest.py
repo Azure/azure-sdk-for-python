@@ -9,6 +9,7 @@ from typing import Any, Dict, Optional
 from unittest.mock import patch
 
 import pytest
+from azure.core.credentials import TokenCredential
 from devtools_testutils import add_body_key_sanitizer, add_general_regex_sanitizer, add_header_regex_sanitizer, is_live
 from devtools_testutils.config import PROXY_URL
 from devtools_testutils.fake_credentials import FakeTokenCredential
@@ -393,7 +394,7 @@ def package_scope_in_live_mode() -> str:
     return "package" if is_live() else "function"
 
 
-def get_cred():
+def get_cred() -> TokenCredential:
     from azure.identity import AzureCliCredential, DefaultAzureCredential
 
     """get credential for azure tests"""
@@ -414,7 +415,7 @@ def get_cred():
 
 
 @pytest.fixture
-def azure_cred():
+def azure_cred() -> TokenCredential:
     return get_cred()
 
 
