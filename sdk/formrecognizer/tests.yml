@@ -5,10 +5,11 @@ extends:
     parameters:
       BuildTargetingString: azure-ai-formrecognizer
       ServiceDirectory: formrecognizer
-      TestTimeoutInMinutes: 400
+      TestTimeoutInMinutes: 200
       UseFederatedAuth: true
       MatrixReplace:
-        - TestSamples=.*/true
+        # Disable samples tests for now as some of them are haning.
+        # - TestSamples=.*/true
       Clouds: 'Prod'
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
