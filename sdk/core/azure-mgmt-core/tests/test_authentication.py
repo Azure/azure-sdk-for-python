@@ -44,7 +44,8 @@ from unittest.mock import Mock
 
 CLAIM_TOKEN = base64.b64encode(b'{"access_token": {"foo": "bar"}}').decode()
 CLAIM_NBF = base64.b64encode(b'{"access_token":{"nbf":{"essential":true, "value":"1603742800"}}}').decode()
-CLAIM_IP = base64.b64encode(b'{"access_token":{"nbf":{"essential":true,"value":"1610563006"},"xms_rp_ipaddr":{"value":"1.2.3.4"}}}').decode()[:-2]  # Trim off padding = characters
+ip_claim = b'{"access_token":{"nbf":{"essential":true,"value":"1610563006"},"xms_rp_ipaddr":{"value":"1.2.3.4"}}}'
+CLAIM_IP = base64.b64encode(ip_claim).decode()[:-2]  # Trim off padding = characters
 
 
 @pytest.mark.parametrize(
