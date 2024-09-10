@@ -170,9 +170,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                 url = f"https://{self._url_base}/mlflow/v2.0" f"{self._get_scope()}/api/2.0/mlflow/runs/create"
                 body = {
                     "experiment_id": "0",
-                    "user_id": "promptflow-evals",
+                    "user_id": "azure-ai-evaluation",
                     "start_time": int(time.time() * 1000),
-                    "tags": [{"key": "mlflow.user", "value": "promptflow-evals"}],
+                    "tags": [{"key": "mlflow.user", "value": "azure-ai-evaluation"}],
                 }
                 if self._run_name:
                     body["run_name"] = self._run_name
