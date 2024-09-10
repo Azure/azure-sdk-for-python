@@ -72,8 +72,8 @@ The following sections provide several code snippets covering some of the most c
 - Blob and manifest operations:
   - [Upload images](#upload-images "Upload images")
   - [Download images](#download-images "Download images")
-  - [Delete manifest](#delete-manifest "Delete manifest")
-  - [Delete blob](#delete-blob "Delete blob")
+  - [Delete manifests](#delete-manifest "Delete manifests")
+  - [Delete blobs](#delete-blob "Delete blobs")
 
 Please note that each sample assumes there is a `CONTAINERREGISTRY_ENDPOINT` environment variable set to a string containing the `https://` prefix and the name of the login server, for example "https://myregistry.azurecr.io". Anonymous access samples are getting endpoint value from environment variable`CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT`.
 
@@ -238,7 +238,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
 
 <!-- END SNIPPET -->
 
-### Delete manifest
+### Delete manifests
 
 <!-- SNIPPET:sample_set_get_image.delete_manifest -->
 
@@ -251,7 +251,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
 
 <!-- END SNIPPET -->
 
-### Delete blob
+### Delete blobs
 
 <!-- SNIPPET:sample_set_get_image.delete_blob -->
 
