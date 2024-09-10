@@ -5,7 +5,7 @@ import multiprocessing
 import time
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from unittest.mock import patch
 
 import pytest
@@ -29,7 +29,7 @@ except ImportError:
     AZURE_INSTALLED = False
 
 PROMPTFLOW_ROOT = Path(__file__, "..", "..", "..").resolve()
-CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation/connections.json").resolve().absolute().as_posix()
+CONNECTION_FILE = (PROMPTFLOW_ROOT / "azure-ai-evaluation" / "connections.json").resolve()
 RECORDINGS_TEST_CONFIGS_ROOT = Path(PROMPTFLOW_ROOT / "azure-ai-evaluation/tests/test_configs").resolve()
 
 
@@ -43,7 +43,10 @@ class SanitizedValues(str, Enum):
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(
-    test_proxy, mock_model_config: AzureOpenAIModelConfiguration, mock_project_scope: Dict[str, str]
+    test_proxy,
+    mock_model_config: AzureOpenAIModelConfiguration,
+    mock_project_scope: Dict[str, str],
+    connection_file: Optional[Dict[str, Any]],
 ) -> None:
     def azureopenai_connection_sanitizer():
         """Sanitize the openai deployment name."""
@@ -101,10 +104,27 @@ def add_sanitizers(
         add_header_regex_sanitizer(key="X-CV", regex="^.*$", value="00000000-0000-0000-0000-000000000000")
         add_body_key_sanitizer(json_path="$.headers.X-CV", value="00000000-0000-0000-0000-000000000000")
 
+    def live_connection_file_values():
+        """Sanitize the live values from connections.json"""
+
+        if connection_file is None:
+            return
+
+        project_scope = connection_file["azure_ai_project_scope"]["value"]
+        model_config = connection_file["azure_openai_model_config"]["value"]
+
+        add_general_regex_sanitizer(regex=project_scope["subscription_id"], value=SanitizedValues.SUBSCRIPTION_ID)
+        add_general_regex_sanitizer(
+            regex=project_scope["resource_group_name"], value=SanitizedValues.RESOURCE_GROUP_NAME
+        )
+        add_general_regex_sanitizer(regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME)
+        add_general_regex_sanitizer(regex=model_config["azure_endpoint"], value=mock_model_config.azure_endpoint)
+
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
     openai_stainless_default_headers()
     azure_ai_generative_sanitizer()
+    live_connection_file_values()
 
 
 @pytest.fixture
@@ -173,7 +193,20 @@ def recorded_test(recorded_test, redirect_openai_requests, redirect_asyncio_requ
 
 
 @pytest.fixture(scope="session")
-def dev_connections(mock_project_scope: dict, mock_model_config: AzureOpenAIModelConfiguration) -> Dict[str, Any]:
+def connection_file() -> Optional[Dict[str, Any]]:
+    if not CONNECTION_FILE.exists():
+        return None
+
+    with open(CONNECTION_FILE) as f:
+        return json.load(f)
+
+
+@pytest.fixture(scope="session")
+def dev_connections(
+    mock_project_scope: dict,
+    mock_model_config: AzureOpenAIModelConfiguration,
+    connection_file: Optional[Dict[str, Any]],
+) -> Dict[str, Any]:
     if not is_live():
         return {
             "azure_ai_project_scope": {"value": mock_project_scope},
@@ -187,8 +220,9 @@ def dev_connections(mock_project_scope: dict, mock_model_config: AzureOpenAIMode
             },
         }
 
-    with open(CONNECTION_FILE) as f:
-        return json.load(f)
+    assert connection_file is not None, f"Connections file was not found at {CONNECTION_FILE}"
+
+    return connection_file
 
 
 @pytest.fixture(scope="session")
