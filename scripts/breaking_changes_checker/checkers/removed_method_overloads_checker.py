@@ -7,7 +7,7 @@
 
 import jsondiff
 
-class MethodOverloadsChecker:
+class RemovedMethodOverloadChecker:
     name = "RemovedMethodOverload"
     is_breaking = True
     message = {
