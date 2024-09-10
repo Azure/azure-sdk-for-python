@@ -93,7 +93,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
         try:
             response = await self.next.send(request)
-        except Exception:  # pylint:disable=broad-except
+        except Exception:
             await await_result(self.on_exception, request)
             raise
         await await_result(self.on_response, request, response)
@@ -109,7 +109,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                     request.context.options.pop("insecure_domain_change", False)
                     try:
                         response = await self.next.send(request)
-                    except Exception:  # pylint:disable=broad-except
+                    except Exception:
                         await await_result(self.on_exception, request)
                         raise
                     await await_result(self.on_response, request, response)
