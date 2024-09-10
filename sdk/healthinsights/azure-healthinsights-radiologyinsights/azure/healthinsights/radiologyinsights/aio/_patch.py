@@ -261,17 +261,7 @@ class RadiologyInsightsClient:  # pylint: disable=client-accepts-api-version-key
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
-        request_copy = deepcopy(request)
-        path_format_arguments = {
-            "endpoint": self._client._serialize.url(
-                "self._config.endpoint", self._client._config.endpoint, "str", skip_quote=True
-            ),  # pylint: disable=line-too-long, protected-access
-        }
-
-        request_copy.url = self._client._client.format_url(
-            request_copy.url, **path_format_arguments
-        )  # pylint: disable=protected-access
-        return self.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
+        return self._client.send_request(request, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
         await self._client.close()
