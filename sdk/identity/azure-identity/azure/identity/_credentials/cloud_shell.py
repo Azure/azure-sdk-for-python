@@ -15,7 +15,6 @@ from .._internal.managed_identity_base import ManagedIdentityBase
 
 
 def validate_client_id_and_config(client_id: Optional[str], identity_config: Optional[Mapping[str, str]]) -> None:
-    dac = within_dac.get()
     if within_dac.get():
         return
     if client_id:
