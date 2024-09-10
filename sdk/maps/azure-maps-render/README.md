@@ -13,7 +13,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 ### Prerequisites
 
-- Python 3.7 or later is required to use this package.
+- Python 3.8 or later is required to use this package.
 - An [Azure subscription][azure_subscription] and an [Azure Maps account](https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys).
 - A deployed Maps Services resource. You can create the resource via [Azure Portal][azure_portal] or [Azure CLI][azure_cli].
 
@@ -92,7 +92,7 @@ Once you initialized a `MapsRenderClient` class, you can explore the methods on 
 
 ### Async Clients
 
-This library includes a complete async API supported on Python 3.5+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+This library includes a complete async API supported on Python 3.8+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport) for more information.
 
 Async clients and credentials should be closed when they're no longer needed. These
@@ -244,14 +244,14 @@ set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 pip install azure-maps-render --pre
 
 python samples/sample_authentication.py
-python sample/sample_get_copyright_caption.py
-python sample/sample_get_copyright_for_tile.py
-python sample/sample_get_copyright_for_world.py
-python sample/sample_get_copyright_from_bounding_box.py
-python sample/sample_get_map_attribution.py
-python sample/sample_get_map_static_image.py
-python sample/sample_get_map_tile.py
-python sample/sample_get_map_tileset.py
+python samples/sample_get_copyright_caption.py
+python samples/sample_get_copyright_for_tile.py
+python samples/sample_get_copyright_for_world.py
+python samples/sample_get_copyright_from_bounding_box.py
+python samples/sample_get_map_attribution.py
+python samples/sample_get_map_static_image.py
+python samples/sample_get_map_tile.py
+python samples/sample_get_map_tileset.py
 ```
 
 > Notes: `--pre` flag can be optionally added, it is to include pre-release and development versions for `pip install`. By default, `pip` only finds stable versions.

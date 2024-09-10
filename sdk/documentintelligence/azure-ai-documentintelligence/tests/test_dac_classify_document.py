@@ -31,12 +31,8 @@ class TestDACClassifyDocumentAsync(DocumentIntelligenceTest):
     def test_classify_document(self, documentintelligence_training_data_classifier_sas_url, **kwargs):
         set_bodiless_matcher()
         documentintelligence_endpoint = kwargs.pop("documentintelligence_endpoint")
-        di_client = DocumentIntelligenceClient(
-            documentintelligence_endpoint, get_credential()
-        )
-        di_admin_client = DocumentIntelligenceAdministrationClient(
-            documentintelligence_endpoint, get_credential()
-        )
+        di_client = DocumentIntelligenceClient(documentintelligence_endpoint, get_credential())
+        di_admin_client = DocumentIntelligenceAdministrationClient(documentintelligence_endpoint, get_credential())
 
         recorded_variables = kwargs.pop("variables", {})
         recorded_variables.setdefault("classifier_id", str(uuid.uuid4()))
