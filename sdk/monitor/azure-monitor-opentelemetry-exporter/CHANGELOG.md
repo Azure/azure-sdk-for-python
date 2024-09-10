@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b29 (Unreleased)
+## 1.0.0b29 (2024-09-10)
 
 ### Features Added
 
@@ -8,10 +8,6 @@
     ([#36363](https://github.com/Azure/azure-sdk-for-python/pull/36363))
 - Support AAD Auth for live metrics
     ([#37258](https://github.com/Azure/azure-sdk-for-python/pull/37258))
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
