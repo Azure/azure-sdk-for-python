@@ -65,11 +65,21 @@ def sample_assistant_run():
     logging.info("Created assistant client")
 
     # Initialize assistant functions
-    functions = AssistantFunctions(functions=user_functions)
+    functions = FunctionTool(user_functions)
+    # functions.add_function(...)
+    code_interpreter = CodeInterpreterTool(...)
+    code_interpreter.add_file(...)
+    file_search = FileSearchTool(...)
+    file_search.add_vector_store(...)
+
+    tool_set = ToolSet()
+    tool_set.add(functions)
+    tool_set.add(code_interpreter)
+    tool_set.add(file_search)
 
     # Create assistant
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
+        model="gpt", name="my-assistant", instructions="You are a helpful assistant", tool_set==tool_set
     )
     logging.info("Created assistant, ID: %s", assistant.id)
 
@@ -83,7 +93,7 @@ def sample_assistant_run():
 
     # Create and process assistant run in thread with functions
     run_status = assistant_client.create_and_process_run(
-        thread_id=thread.id, assistant_id=assistant.id, functions=functions
+        thread_id=thread.id, assistant_id=assistant.id
     )
     logging.info("Run finished with status: %s", run_status)
 
