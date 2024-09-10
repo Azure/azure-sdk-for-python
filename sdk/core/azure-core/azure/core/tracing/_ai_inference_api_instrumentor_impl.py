@@ -190,7 +190,7 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
                 if isinstance(span.span_instance, Span):
                     span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
                 module = exc.__module__ if exc.__module__ != "builtins" else ""
-                error_type = f"{module}.{exc.__qualname__}" if module else exc.__qualname__
+                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 _set_attributes(span, ("error.type", error_type))
                 raise
 
@@ -261,7 +261,7 @@ def _trace_sync_function(
                 if isinstance(span.span_instance, Span):
                     span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
                 module = exc.__module__ if exc.__module__ != "builtins" else ""
-                error_type = f"{module}.{exc.__qualname__}" if module else exc.__qualname__
+                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 _set_attributes(span, ("error.type", error_type))
                 span.finish()
                 raise
@@ -322,7 +322,7 @@ def _trace_async_function(
                 if isinstance(span.span_instance, Span):
                     span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
                 module = exc.__module__ if exc.__module__ != "builtins" else ""
-                error_type = f"{module}.{exc.__qualname__}" if module else exc.__qualname__
+                error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 _set_attributes(span, ("error.type", error_type))
                 span.finish()
                 raise
