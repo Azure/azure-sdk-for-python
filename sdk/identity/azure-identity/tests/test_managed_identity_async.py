@@ -1234,3 +1234,18 @@ def test_validate_identity_config():
         ManagedIdentityCredential(identity_config={"object_id": "bar", "resource_id": "foo"})
     with pytest.raises(ValueError):
         ManagedIdentityCredential(identity_config={"object_id": "bar", "client_id": "foo"})
+
+
+def test_validate_cloud_shell_credential():
+    with mock.patch.dict(
+        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
+    ):
+        ManagedIdentityCredential()
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(client_id="foo")
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(identity_config={"client_id": "foo"})
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(identity_config={"object_id": "foo"})
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(identity_config={"resource_id": "foo"})

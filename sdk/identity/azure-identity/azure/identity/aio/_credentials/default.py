@@ -135,6 +135,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
         credentials = []  # type: List[AsyncTokenCredential]
+        within_dac.set(True)
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
         if not exclude_workload_identity_credential:
@@ -173,7 +174,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
         if not exclude_developer_cli_credential:
             credentials.append(AzureDeveloperCliCredential(process_timeout=process_timeout))
-
+        within_dac.set(False)
         super().__init__(*credentials)
 
     async def get_token(
