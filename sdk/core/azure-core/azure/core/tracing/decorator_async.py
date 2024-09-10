@@ -67,10 +67,10 @@ def distributed_trace_async(
     pass
 
 
-def distributed_trace_async(
+def distributed_trace_async( # pylint: disable=unused-argument
     __func: Optional[
         Callable[P, Awaitable[T]]
-    ] = None,  # pylint: disable=unused-argument
+    ] = None,
     *,
     name_of_span: Optional[str] = None,
     kind: Optional["SpanKind"] = None,

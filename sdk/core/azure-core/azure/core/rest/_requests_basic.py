@@ -24,9 +24,9 @@
 #
 # --------------------------------------------------------------------------
 import collections.abc as collections
-from requests.structures import (
+from requests.structures import ( # pylint: disable=networking-import-outside-azure-core-transport
     CaseInsensitiveDict,
-)  # pylint: disable=networking-import-outside-azure-core-transport
+)
 
 from ._http_response_impl import (
     _HttpResponseBaseImpl,

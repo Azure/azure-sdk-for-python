@@ -434,8 +434,8 @@ class HttpRequestBackcompatMixin:
         :param HttpRequest request: The request to copy from
         :param dict memo: The memo dict used by deepcopy
         """
-        request._multipart_mixed_info = (
-            copy.deepcopy(  # pylint: disable=protected-access
+        request._multipart_mixed_info = ( # pylint: disable=protected-access
+            copy.deepcopy(
                 self._multipart_mixed_info, memo
             )
         )

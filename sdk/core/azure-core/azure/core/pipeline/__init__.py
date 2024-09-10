@@ -37,12 +37,12 @@ from typing import (
     Union,
 )
 
-HTTPResponseType = TypeVar(
+HTTPResponseType = TypeVar(  # pylint: disable=typevar-name-incorrect-variance
     "HTTPResponseType", covariant=True
-)  # pylint: disable=typevar-name-incorrect-variance
-HTTPRequestType = TypeVar(
+)
+HTTPRequestType = TypeVar(   # pylint: disable=typevar-name-incorrect-variance
     "HTTPRequestType", covariant=True
-)  # pylint: disable=typevar-name-incorrect-variance
+)
 
 if TYPE_CHECKING:
     from .transport import HttpTransport, AsyncHttpTransport
@@ -108,9 +108,9 @@ class PipelineContext(Dict[str, Any]):
             raise ValueError("Context value {} cannot be deleted.".format(key))
         return super(PipelineContext, self).__delitem__(key)
 
-    def clear(
+    def clear(   # pylint: disable=docstring-missing-return, docstring-missing-rtype
         self,
-    ) -> None:  # pylint: disable=docstring-missing-return, docstring-missing-rtype
+    ) -> None:
         """Context objects cannot be cleared.
 
         :raises: TypeError
