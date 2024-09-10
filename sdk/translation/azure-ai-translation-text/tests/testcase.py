@@ -22,13 +22,17 @@ class TextTranslationTest(AzureRecordedTestCase):
         client = TextTranslationClient(endpoint=endpoint, credential=credential, region=region)
         return client
 
-    def create_client_token(self, endpoint, apikey, region):
+    def create_client_token(self, endpoint, apikey, region, audience):
         credential = StaticAccessTokenCredential(apikey, region)
-        client = TextTranslationClient(endpoint=endpoint, credential=credential)
+        client = TextTranslationClient(endpoint=endpoint, credential=credential, audience=audience)
         return client
 
     def create_text_translation_client_with_aad(self, innerCredential, aadRegion, aadResourceId):
         text_translator = TextTranslationClient(credential=innerCredential, resource_id=aadResourceId, region=aadRegion)
+        return text_translator
+
+    def create_text_translation_client_custom_with_aad(self, innerCredential, endpoint):
+        text_translator = TextTranslationClient(credential=innerCredential, endpoint=endpoint)
         return text_translator
 
     def create_async_getlanguage_client(self, endpoint):
@@ -44,11 +48,11 @@ class TextTranslationTest(AzureRecordedTestCase):
         client = TextTranslationClientAsync(endpoint=endpoint, credential=credential, region=region)
         return client
 
-    def create_async_client_token(self, endpoint, apikey, region):
+    def create_async_client_token(self, endpoint, apikey, region, audience):
         credential = StaticAccessTokenCredential(apikey, region)
         from azure.ai.translation.text.aio import TextTranslationClient as TextTranslationClientAsync
 
-        client = TextTranslationClientAsync(endpoint=endpoint, credential=credential)
+        client = TextTranslationClientAsync(endpoint=endpoint, credential=credential, audience=audience)
         return client
 
     def create_async_text_translation_client_with_aad(self, innerCredential, aadRegion, aadResourceId):

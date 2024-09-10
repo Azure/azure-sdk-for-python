@@ -14,7 +14,6 @@ from unittest import mock
 import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobServiceClient, BlobType
-from azure.storage.blob._blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
@@ -175,7 +174,7 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = self._create_small_blob(BlobType.BlockBlob)
+        blob = self._create_small_blob(BlobType.BLOCKBLOB)
 
         # Act
         blob.key_encryption_key = KeyWrapper('key1')
@@ -251,7 +250,7 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = self._create_small_blob(BlobType.BlockBlob)
+        blob = self._create_small_blob(BlobType.BLOCKBLOB)
 
         # Act
         self.bsc.key_encryption_key.kid = 'Invalid'

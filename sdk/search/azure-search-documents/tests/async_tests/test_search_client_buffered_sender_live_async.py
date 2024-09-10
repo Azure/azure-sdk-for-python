@@ -9,7 +9,7 @@ import time
 from azure.core.exceptions import HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchIndexingBufferedSender, SearchClient
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, get_credential
 from devtools_testutils.aio import recorded_by_proxy_async
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
@@ -20,9 +20,11 @@ class TestSearchIndexingBufferedSenderAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
-    async def test_search_client_index_buffered_sender(self, endpoint, api_key, index_name):
-        client = SearchClient(endpoint, index_name, api_key, retry_backoff_factor=60)
-        batch_client = SearchIndexingBufferedSender(endpoint, index_name, api_key, retry_backoff_factor=60)
+    async def test_search_client_index_buffered_sender(self, endpoint, index_name):
+        client = SearchClient(endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60)
+        batch_client = SearchIndexingBufferedSender(
+            endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60
+        )
         try:
             async with client:
                 async with batch_client:

@@ -29,6 +29,9 @@
     "keyVaultResourceGroupName": {
         "value": ""
     },
+    "associatedResourcePNA": {
+        "value": "Enabled"
+    },
     "storageAccountOption": {
         "value": "new"
     },
@@ -39,7 +42,7 @@
         "value": ""
     },
     "applicationInsightsOption": {
-        "value": "none"
+        "value": "new"
     },
     "applicationInsightsName": {
         "value": ""

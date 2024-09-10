@@ -20,7 +20,6 @@ from azure.ai.ml._restclient.v2024_04_01_preview.models import (
 )
 
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
@@ -72,7 +71,6 @@ CONNECTION_ALTERNATE_TARGET_NAMES = ["target", "api_base", "url", "azure_endpoin
 # Dev note: The acceptable strings for the type field are all snake_cased versions of the string constants defined
 # In the rest client enum defined at _azure_machine_learning_services_enums.ConnectionCategory.
 # We avoid directly referencing it in the docs to avoid restclient references.
-@experimental
 class WorkspaceConnection(Resource):
     """Azure ML connection provides a secure way to store authentication and configuration information needed
     to connect and interact with the external resources.
@@ -84,8 +82,8 @@ class WorkspaceConnection(Resource):
     :type name: str
     :param target: The URL or ARM resource ID of the external resource.
     :type target: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict
+    :param metadata: Metadata dictionary.
+    :type metadata: Optional[Dict[str, Any]]
     :param type: The category of external resource for this connection.
     :type type: The type of connection, possible values are: "git", "python_feed", "container_registry",
         "feature_store", "s3", "snowflake", "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db",
@@ -128,6 +126,7 @@ class WorkspaceConnection(Resource):
             AadCredentialConfiguration,
         ],
         is_shared: bool = True,
+        metadata: Optional[Dict[str, Any]] = None,
         **kwargs: Any,
     ):
 
@@ -157,12 +156,27 @@ class WorkspaceConnection(Resource):
         if target is None and type not in {ConnectionCategory.SERP, ConnectionCategory.Open_AI}:
             raise ValueError("target is a required field for Connection.")
 
+        tags = kwargs.pop("tags", None)
+        if tags is not None:
+            if metadata is not None:
+                # Update tags updated with metadata to make sure metadata values are preserved in case of conflicts.
+                tags.update(metadata)
+                metadata = tags
+                warnings.warn(
+                    "Tags are a deprecated field for connections, use metadata instead. Since both "
+                    + "metadata and tags are assigned, metadata values will take precedence in the event of conflicts."
+                )
+            else:
+                metadata = tags
+                warnings.warn("Tags are a deprecated field for connections, use metadata instead.")
+
         super().__init__(**kwargs)
 
         self.type = type
         self._target = target
         self._credentials = credentials
         self._is_shared = is_shared
+        self._metadata = metadata
         self._validate_cred_for_conn_cat()
 
     def _validate_cred_for_conn_cat(self) -> None:
@@ -299,23 +313,45 @@ class WorkspaceConnection(Resource):
         return self._credentials
 
     @property
-    def metadata(self) -> Dict[str, Any]:
-        """Deprecated. Use tags.
-        :return: This connection's tags.
-        :rtype: Dict[str, Any]
+    def metadata(self) -> Optional[Dict[str, Any]]:
+        """The connection's metadata dictionary.
+        :return: This connection's metadata.
+        :rtype: Optional[Dict[str, Any]]
         """
-        return self.tags if self.tags is not None else {}
+        return self._metadata if self._metadata is not None else {}
 
     @metadata.setter
-    def metadata(self, value: Dict[str, Any]) -> None:
-        """Deprecated. Use tags.
+    def metadata(self, value: Optional[Dict[str, Any]]) -> None:
+        """Set the metadata for the connection. Be warned that setting this will override
+        ALL metadata values, including those implicitly set by certain connection types to manage their
+        extra data. Usually, you should probably access the metadata dictionary, then add or remove values
+        individually as needed.
         :param value: The new metadata for connection.
-            This completely overwrites the existing tags/metadata dictionary.
-        :type value: Dict[str, Any]
+            This completely overwrites the existing metadata dictionary.
+        :type value: Optional[Dict[str, Any]]
         """
         if not value:
             return
-        self.tags = value
+        self._metadata = value
+
+    @property
+    def tags(self) -> Optional[Dict[str, Any]]:
+        """Deprecated. Use metadata instead.
+        :return: This connection's metadata.
+        :rtype: Optional[Dict[str, Any]]
+        """
+        return self._metadata if self._metadata is not None else {}
+
+    @tags.setter
+    def tags(self, value: Optional[Dict[str, Any]]) -> None:
+        """Deprecated use metadata instead
+        :param value: The new metadata for connection.
+            This completely overwrites the existing metadata dictionary.
+        :type value: Optional[Dict[str, Any]]
+        """
+        if not value:
+            return
+        self._metadata = value
 
     @property
     def is_shared(self) -> bool:
@@ -386,15 +422,12 @@ class WorkspaceConnection(Resource):
         return res
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> Optional["WorkspaceConnection"]:
-        if not rest_obj:
-            return None
-
+    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
         conn_class = cls._get_entity_class_from_rest_obj(rest_obj)
 
-        popped_tags = conn_class._get_required_metadata_fields()
+        popped_metadata = conn_class._get_required_metadata_fields()
 
-        rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_tags=popped_tags)
+        rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_metadata=popped_metadata)
         # Check for alternative name for custom connection type (added for client clarity).
         if rest_kwargs["type"].lower() == camel_to_snake(ConnectionCategory.CUSTOM_KEYS).lower():
             rest_kwargs["type"] = ConnectionTypes.CUSTOM
@@ -420,7 +453,7 @@ class WorkspaceConnection(Resource):
             # No default in pop, this should fail if we somehow don't get a resource ID
             rest_kwargs["ai_services_resource_id"] = rest_kwargs.pop(camel_to_snake(CONNECTION_RESOURCE_ID_KEY))
         connection = conn_class(**rest_kwargs)
-        return cast(Optional["WorkspaceConnection"], connection)
+        return cast(WorkspaceConnection, connection)
 
     def _validate(self) -> str:
         return str(self.name)
@@ -452,7 +485,7 @@ class WorkspaceConnection(Resource):
         }:
             properties = connection_properties_class(
                 target=self.target,
-                metadata=self.tags,
+                metadata=self.metadata,
                 category=_snake_to_camel(conn_type),
                 is_shared_to_all=self.is_shared,
             )
@@ -460,7 +493,7 @@ class WorkspaceConnection(Resource):
             properties = connection_properties_class(
                 target=self.target,
                 credentials=self.credentials._to_workspace_connection_rest_object() if self._credentials else None,
-                metadata=self.tags,
+                metadata=self.metadata,
                 category=_snake_to_camel(conn_type),
                 is_shared_to_all=self.is_shared,
             )
@@ -468,17 +501,20 @@ class WorkspaceConnection(Resource):
         return RestWorkspaceConnection(properties=properties)
 
     @classmethod
-    def _extract_kwargs_from_rest_obj(cls, rest_obj: RestWorkspaceConnection, popped_tags: List[str]) -> Dict[str, str]:
+    def _extract_kwargs_from_rest_obj(
+        cls, rest_obj: RestWorkspaceConnection, popped_metadata: List[str]
+    ) -> Dict[str, str]:
         """Internal helper function with extracts all the fields needed to initialize a connection object
-        from its associated restful object. Pulls extra fields based on the supplied popped_tags. Returns all the
-        fields as a dictionary, which is expected to then be supplied to a connection initializer as kwargs.
+        from its associated restful object. Pulls extra fields based on the supplied `popped_metadata` input.
+        Returns all the fields as a dictionary, which is expected to then be supplied to a
+        connection initializer as kwargs.
 
         :param rest_obj: The rest object representation of a connection
         :type rest_obj: RestWorkspaceConnection
-        :param popped_tags: Tags that should be pulled from the rest object's metadata and injected as top-level
-            fields into the connection's initializer. Needed for subclasses that require extra inputs compared
-            to the base Connection class.
-        :type popped_tags: List[str]
+        :param popped_metadata: Key names that should be pulled from the rest object's metadata and
+            injected as top-level fields into the client connection's initializer.
+            This is needed for subclasses that require extra inputs compared to the base Connection class.
+        :type popped_metadata: List[str]
 
         :return: A dictionary containing all kwargs needed to construct a connection.
         :rtype: Dict[str, str]
@@ -495,7 +531,7 @@ class WorkspaceConnection(Resource):
         elif credentials_class is not NoneCredentialConfiguration:
             credentials = credentials_class._from_workspace_connection_rest_object(properties.credentials)
 
-        tags = properties.metadata if hasattr(properties, "metadata") else None
+        metadata = properties.metadata if hasattr(properties, "metadata") else {}
         rest_kwargs = {
             "id": rest_obj.id,
             "name": rest_obj.name,
@@ -503,13 +539,13 @@ class WorkspaceConnection(Resource):
             "creation_context": SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
             "type": camel_to_snake(properties.category),
             "credentials": credentials,
-            "tags": tags,
+            "metadata": metadata,
             "is_shared": properties.is_shared_to_all if hasattr(properties, "is_shared_to_all") else True,
         }
 
-        for name in popped_tags:
-            if name in tags:
-                rest_kwargs[camel_to_snake(name)] = tags[name]
+        for name in popped_metadata:
+            if name in metadata:
+                rest_kwargs[camel_to_snake(name)] = metadata[name]
         return rest_kwargs
 
     @classmethod

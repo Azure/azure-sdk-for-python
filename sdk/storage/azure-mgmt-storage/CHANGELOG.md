@@ -1,5 +1,13 @@
 # Release History
 
+## 21.2.1 (2024-06-27)
+
+### Bugs Fixed
+
+  - Fix signature `maxpagesize` type of Operation StorageTaskAssignmentInstancesReportOperations.list from str to int
+  - Fix signature `maxpagesize` type of Operation StorageTaskAssignmentsInstancesReportOperations.list from str to int
+  - Fix signature `maxpagesize` type of Operation StorageTaskAssignmentsOperations.list from str to int
+
 ## 21.2.0 (2024-06-17)
 
 ### Features Added

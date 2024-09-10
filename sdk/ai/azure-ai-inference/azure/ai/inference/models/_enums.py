@@ -10,21 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ChatCompletionsResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """An representation of a response format configuration usable by Chat Completions. Can be used to
-    enable JSON
-    mode.
-    """
-
-    TEXT = "text"
-    """The standard Chat Completions response format that can freely generate text and is not
-    guaranteed to produce response
-    content that adheres to a specific schema."""
-    JSON_OBJECT = "json_object"
-    """A response format for Chat Completions that restricts responses to emitting valid JSON objects."""
-
-
-class ChatCompletionsToolSelectionPreset(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ChatCompletionsToolChoicePreset(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a generic policy for how a chat completions tool may be selected."""
 
     AUTO = "auto"
@@ -38,24 +24,6 @@ class ChatCompletionsToolSelectionPreset(str, Enum, metaclass=CaseInsensitiveEnu
     definitions."""
     REQUIRED = "required"
     """Specifies that the model should respond with a call to one or more tools."""
-
-
-class ImageDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A representation of the possible image detail levels for image-based chat completions message
-    content.
-    """
-
-    AUTO = "auto"
-    """Specifies that the model should determine which detail level to apply using heuristics like
-    image size."""
-    LOW = "low"
-    """Specifies that image evaluation should be constrained to the 'low-res' model that may be faster
-    and consume fewer
-    tokens but may also be less accurate for highly detailed images."""
-    HIGH = "high"
-    """Specifies that image evaluation should enable the 'high-res' model that may be more accurate
-    for highly detailed
-    images but may also be slower and consume more tokens."""
 
 
 class ChatRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -108,11 +76,45 @@ class EmbeddingInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents the input types used for embedding search."""
 
     TEXT = "text"
-    """to do"""
+    """Indicates the input is a general text input."""
     QUERY = "query"
-    """to do"""
+    """Indicates the input represents a search query to find the most relevant documents in your
+    vector database."""
     DOCUMENT = "document"
-    """to do"""
+    """Indicates the input represents a document that is stored in a vector database."""
+
+
+class ExtraParameters(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls what happens if extra parameters, undefined by the REST API, are passed in the JSON
+    request payload.
+    """
+
+    ERROR = "error"
+    """The service will error if it detected extra parameters in the request payload. This is the
+    service default."""
+    DROP = "drop"
+    """The service will ignore (drop) extra parameters in the request payload. It will only pass the
+    known parameters to the back-end AI model."""
+    PASS_THROUGH = "pass-through"
+    """The service will pass extra parameters to the back-end AI model."""
+
+
+class ImageDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A representation of the possible image detail levels for image-based chat completions message
+    content.
+    """
+
+    AUTO = "auto"
+    """Specifies that the model should determine which detail level to apply using heuristics like
+    image size."""
+    LOW = "low"
+    """Specifies that image evaluation should be constrained to the 'low-res' model that may be faster
+    and consume fewer
+    tokens but may also be less accurate for highly detailed images."""
+    HIGH = "high"
+    """Specifies that image evaluation should enable the 'high-res' model that may be more accurate
+    for highly detailed
+    images but may also be slower and consume more tokens."""
 
 
 class ModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -130,16 +132,3 @@ class ModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Audio generation"""
     CHAT = "chat"
     """Chat completions"""
-
-
-class UnknownParams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Controls what happens if unknown parameters are passed in the JSON request payload."""
-
-    ERROR = "error"
-    """The service will error if it detected unknown parameters in the request payload. This is the
-    service default."""
-    DROP = "drop"
-    """The service will ignore (drop) unknown parameters in the request payload. It will only pass the
-    known parameters to the back-end AI model."""
-    PASS_THROUGH = "pass_through"
-    """The service will pass unknown parameters to the back-end AI model."""

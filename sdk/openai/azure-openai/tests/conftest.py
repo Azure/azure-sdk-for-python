@@ -11,17 +11,17 @@ import importlib
 import contextlib
 import functools
 import openai
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from azure.identity import get_bearer_token_provider
 from azure.identity.aio import (
-    DefaultAzureCredential as AsyncDefaultAzureCredential,
     get_bearer_token_provider as get_bearer_token_provider_async,
 )
 from ci_tools.variables import in_ci
+from devtools_testutils import get_credential
 
 
 # for pytest.parametrize
-GA = "2024-02-01"
-PREVIEW = "2024-05-01-preview"
+GA = "2024-06-01"
+PREVIEW = "2024-07-01-preview"
 LATEST = PREVIEW
 
 AZURE = "azure"
@@ -40,12 +40,7 @@ ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
 ENV_AZURE_OPENAI_KEY = "AZURE_OPENAI_KEY"
 ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT = "AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT"
 ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT = "AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT"
-ENV_SUBSCRIPTION_ID = "AZURE_SUBSCRIPTION_ID"
-ENV_TENANT_ID = "AZURE_TENANT_ID"
-ENV_CLIENT_ID = "AZURE_CLIENT_ID"
-ENV_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
 ENV_AZURE_OPENAI_SEARCH_ENDPOINT = "AZURE_OPENAI_SEARCH_ENDPOINT"
-ENV_AZURE_OPENAI_SEARCH_KEY = "AZURE_OPENAI_SEARCH_KEY"
 ENV_AZURE_OPENAI_SEARCH_INDEX = "AZURE_OPENAI_SEARCH_INDEX"
 
 ENV_AZURE_OPENAI_COMPLETIONS_NAME = "gpt-35-turbo-instruct"
@@ -78,7 +73,7 @@ def client(api_type, api_version):
     if api_type == "azure":
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
     elif api_type == "azure_key":
@@ -94,13 +89,13 @@ def client(api_type, api_version):
     elif api_type in ["whisper_azure", "tts_azure"]:
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
     elif api_type in ["dalle_azure", "gpt_4_azure", "asst_azure"]:
         client = openai.AzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(get_credential(), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
     return client
@@ -114,7 +109,7 @@ def client_async(api_type, api_version):
     if api_type == "azure":
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
     elif api_type == "azure_key":
@@ -130,13 +125,13 @@ def client_async(api_type, api_version):
     elif api_type in ["whisper_azure", "tts_azure"]:
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_NORTHCENTRALUS_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
     elif api_type in ["dalle_azure", "gpt_4_azure", "asst_azure"]:
         client = openai.AsyncAzureOpenAI(
             azure_endpoint=os.getenv(ENV_AZURE_OPENAI_SWEDENCENTRAL_ENDPOINT),
-            azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider_async(get_credential(is_async=True), "https://cognitiveservices.azure.com/.default"),
             api_version=api_version,
         )
     return client
@@ -199,6 +194,10 @@ def configure_async(f):
             return await f(*args, client_async=client_async, api_type=api_type, api_version=api_version, **kwargs)
         except openai.RateLimitError:
             pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
+        except openai.BadRequestError as e:
+            if e.body.get("code") == "content_policy_violation":
+                pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Triggered content filter.")
+            raise
 
     return wrapper
 
@@ -214,6 +213,10 @@ def configure(f):
             return f(*args, client=client, api_type=api_type, api_version=api_version, **kwargs)
         except openai.RateLimitError:
             pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
+        except openai.BadRequestError as e:
+            if e.body.get("code") == "content_policy_violation":
+                pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Triggered content filter.")
+            raise
 
     return wrapper
 

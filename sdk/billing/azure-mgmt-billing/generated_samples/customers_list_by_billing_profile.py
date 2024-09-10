@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.billing import BillingManagementClient
 
 """
@@ -30,13 +31,13 @@ def main():
     )
 
     response = client.customers.list_by_billing_profile(
-        billing_account_name="{billingAccountName}",
-        billing_profile_name="{billingProfileName}",
+        billing_account_name="00000000-0000-0000-0000-000000000000:00000000-0000-0000-0000-000000000000_2019-05-31",
+        billing_profile_name="xxxx-xxxx-xxx-xxx",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/billing/resource-manager/Microsoft.Billing/stable/2020-05-01/examples/CustomersListByBillingProfile.json
+# x-ms-original-file: specification/billing/resource-manager/Microsoft.Billing/stable/2024-04-01/examples/customersListByBillingProfile.json
 if __name__ == "__main__":
     main()

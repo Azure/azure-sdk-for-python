@@ -87,12 +87,11 @@ class AadClientBase(abc.ABC):
         )
 
         cache = self._get_cache(**kwargs)
-        tokens = cache.find(
+        for token in cache.search(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
             query={"client_id": self._client_id, "realm": tenant},
-        )
-        for token in tokens:
+        ):
             expires_on = int(token["expires_on"])
             if expires_on > int(time.time()):
                 return AccessToken(token["secret"], expires_on)
@@ -101,7 +100,7 @@ class AadClientBase(abc.ABC):
     def get_cached_refresh_tokens(self, scopes: Iterable[str], **kwargs) -> List[Dict]:
         # Assumes all cached refresh tokens belong to the same user
         cache = self._get_cache(**kwargs)
-        return cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
+        return list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes)))
 
     @abc.abstractmethod
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
@@ -140,17 +139,21 @@ class AadClientBase(abc.ABC):
         if response.http_request.body.get("grant_type") == "refresh_token":
             if content.get("error") == "invalid_grant":
                 # the request's refresh token is invalid -> evict it from the cache
-                cache_entries = cache.find(
-                    TokenCache.CredentialType.REFRESH_TOKEN,
-                    query={"secret": response.http_request.body["refresh_token"]},
+                cache_entries = list(
+                    cache.search(
+                        TokenCache.CredentialType.REFRESH_TOKEN,
+                        query={"secret": response.http_request.body["refresh_token"]},
+                    )
                 )
                 for invalid_token in cache_entries:
                     cache.remove_rt(invalid_token)
             if "refresh_token" in content:
                 # Microsoft Entra ID returned a new refresh token -> update the cache entry
-                cache_entries = cache.find(
-                    TokenCache.CredentialType.REFRESH_TOKEN,
-                    query={"secret": response.http_request.body["refresh_token"]},
+                cache_entries = list(
+                    cache.search(
+                        TokenCache.CredentialType.REFRESH_TOKEN,
+                        query={"secret": response.http_request.body["refresh_token"]},
+                    )
                 )
                 # If the old token is in multiple cache entries, the cache is in a state we don't
                 # expect or know how to reason about, so we update nothing.

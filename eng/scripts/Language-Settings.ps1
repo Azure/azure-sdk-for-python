@@ -92,7 +92,9 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $pkg.Basename -match $SDIST_PACKAGE_REGEX | Out-Null
 
   $pkgId = $matches["package"]
+  $pkgId = $pkgId.Replace("_","-")
   $docsReadMeName = $pkgId -replace "^azure-" , ""
+
   $pkgVersion = $matches["versionstring"]
 
   $workFolder = "$workingDirectory$($pkg.Basename)"
@@ -647,7 +649,7 @@ function Import-Dev-Cert-python
   Write-Host "Python Trust Methodology"
 
   $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
-  python -m python -m pip install requests
+  python -m pip install requests
   python $pathToScript
 }
 

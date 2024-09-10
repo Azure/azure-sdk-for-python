@@ -5,17 +5,23 @@
 """
 DESCRIPTION:
     This sample demonstrates how to get text embeddings for a list of sentences
-    using a synchronous client.
+    using a synchronous client. Here we use the service default of returning
+    embeddings as a list of floating point values.
+
+    This sample assumes the AI model is hosted on a Serverless API or
+    Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
+    the client constructor needs to be modified. See package documentation:
+    https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#key-concepts
 
 USAGE:
     python sample_embeddings.py
 
     Set these two environment variables before running the sample:
-    1) EMBEDDINGS_ENDPOINT - Your endpoint URL, in the form 
-        https://<your-deployment-name>.<your-azure-region>.inference.ai.azure.com
+    1) AZURE_AI_EMBEDDINGS_ENDPOINT - Your endpoint URL, in the form 
+        https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
-    2) EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret.
+    2) AZURE_AI_EMBEDDINGS_KEY - Your model key (a 32-character string). Keep it secret.
 """
 
 
@@ -23,10 +29,10 @@ def sample_embeddings():
     import os
 
     try:
-        endpoint = os.environ["EMBEDDINGS_ENDPOINT"]
-        key = os.environ["EMBEDDINGS_KEY"]
+        endpoint = os.environ["AZURE_AI_EMBEDDINGS_ENDPOINT"]
+        key = os.environ["AZURE_AI_EMBEDDINGS_KEY"]
     except KeyError:
-        print("Missing environment variable 'EMBEDDINGS_ENDPOINT' or 'EMBEDDINGS_KEY'")
+        print("Missing environment variable 'AZURE_AI_EMBEDDINGS_ENDPOINT' or 'AZURE_AI_EMBEDDINGS_KEY'")
         print("Set them before running this sample.")
         exit()
 

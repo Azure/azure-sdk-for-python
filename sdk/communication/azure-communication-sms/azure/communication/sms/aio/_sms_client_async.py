@@ -27,7 +27,7 @@ class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
     This client provides operations to send an SMS via a phone number.
 
-   :param str endpoint:
+    :param str endpoint:
         The endpoint url for Azure Communication Service resource.
     :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
@@ -64,13 +64,13 @@ class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :returns: Instance of SmsClient.
-        :rtype: ~azure.communication.SmsClient
+        :rtype: ~azure.communication.sms.aio.SmsClient
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sms_sample.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
+            .. literalinclude:: ../samples/send_sms_to_single_recipient_sample_async.py
+                :start-after: [START auth_from_connection_string_async]
+                :end-before: [END auth_from_connection_string_async]
                 :language: python
                 :dedent: 8
                 :caption: Creating the SmsClient from a connection string.

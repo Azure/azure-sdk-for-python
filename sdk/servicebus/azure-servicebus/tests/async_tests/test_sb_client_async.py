@@ -12,6 +12,7 @@ import pytest
 import hmac
 import hashlib
 import base64
+import certifi
 from urllib.parse import quote as url_parse_quote
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, AccessToken
@@ -25,7 +26,7 @@ from azure.servicebus.exceptions import (
     ServiceBusAuthorizationError,
     ServiceBusConnectionError
 )
-from devtools_testutils import AzureMgmtRecordedTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase, get_credential
 from tests.servicebus_preparer import (
     CachedServiceBusNamespacePreparer, 
     ServiceBusTopicPreparer, 
@@ -87,8 +88,10 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_sb_client_bad_entity_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, **kwargs):
-        client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string, uamqp_transport=uamqp_transport)
+    async def test_sb_client_bad_entity_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_namespace=None, **kwargs):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential(is_async=True)
+        client = ServiceBusClient(fully_qualified_namespace, credential, uamqp_transport=uamqp_transport)
 
         async with client:
             with pytest.raises(ServiceBusAuthenticationError):
@@ -177,8 +180,10 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasserAsync()
-    async def test_async_sb_client_close_spawned_handlers(self, uamqp_transport, *, servicebus_namespace_connection_string, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
-        client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string, uamqp_transport=uamqp_transport)
+    async def test_async_sb_client_close_spawned_handlers(self, uamqp_transport, *, servicebus_namespace_connection_string, servicebus_namespace, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        credential = get_credential(is_async=True)
+        client = ServiceBusClient(fully_qualified_namespace, credential, uamqp_transport=uamqp_transport)
 
         await client.close()
 
@@ -499,8 +504,9 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
             async with client.get_queue_sender(servicebus_queue.name) as sender:
                 await sender.send_messages(ServiceBusMessage("foo"))
 
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    def test_backoff_fixed_retry(self, uamqp_transport):
+    async def test_backoff_fixed_retry(self, uamqp_transport):
         client = ServiceBusClient(
             'fake.host.com',
             'fake_eh',
@@ -511,7 +517,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         sender = client.get_queue_sender('fake_name')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
-        sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        await sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
         sleep_time_fixed = time.time() - start_time
         # exp = 0.8 * (2 ** 1) = 1.6
         # time.sleep() in _backoff will take AT LEAST time 'exp' for retry_mode='exponential'
@@ -522,7 +528,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         sender = client.get_topic_sender('fake_name')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
-        sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        await sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
         sleep_time_fixed = time.time() - start_time
         assert sleep_time_fixed < backoff * (2 ** 1)
 
@@ -530,7 +536,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         receiver = client.get_queue_receiver('fake_name')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
-        receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        await receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
         sleep_time_fixed = time.time() - start_time
         assert sleep_time_fixed < backoff * (2 ** 1)
 
@@ -538,7 +544,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         receiver = client.get_subscription_receiver('fake_topic', 'fake_sub')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
-        receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
+        await receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
         sleep_time_fixed = time.time() - start_time
         assert sleep_time_fixed < backoff * (2 ** 1)
 
@@ -656,7 +662,15 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         hostname = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
 
-        client = ServiceBusClient(hostname, credential, connection_verify="cacert.pem", uamqp_transport=uamqp_transport)
+        # ensure regular connection_verify works
+        certfile = certifi.where()
+        client = ServiceBusClient(hostname, credential, connection_verify=certfile, uamqp_transport=uamqp_transport)
+        async with client:
+            async with client.get_queue_sender(servicebus_queue.name) as sender:
+                await sender.send_messages(ServiceBusMessage("foo"))
+
+        # invalid cert file to connection_verify should fail
+        client = ServiceBusClient(hostname, credential, connection_verify="fakecertfile.pem", uamqp_transport=uamqp_transport)
         async with client:
             with pytest.raises(ServiceBusError):
                 async with client.get_queue_sender(servicebus_queue.name) as sender:
@@ -664,6 +678,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
 
         # Skipping on OSX uamqp - it's raising an Authentication/TimeoutError
         if not uamqp_transport or not sys.platform.startswith('darwin'):
+            # invalid custom endpoint should fail
             fake_addr = "fakeaddress.com:1111"
             client = ServiceBusClient(
                 hostname,
@@ -673,7 +688,12 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
                 uamqp_transport=uamqp_transport
             )
             async with client:
-                with pytest.raises(ServiceBusConnectionError):
+                if not uamqp_transport:
+                    error = ServiceBusConnectionError
+                else:
+                    # if uamqp, catches an "Authorization timeout" error and raises ServiceBusError
+                    error = ServiceBusError
+                with pytest.raises(error):
                     async with client.get_queue_sender(servicebus_queue.name) as sender:
                         await sender.send_messages(ServiceBusMessage("foo"))
 
@@ -681,7 +701,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
                 hostname,
                 credential,
                 custom_endpoint_address=fake_addr,
-                connection_verify="cacert.pem",
+                connection_verify=certfile,
                 retry_total=0,
                 uamqp_transport=uamqp_transport,
             )

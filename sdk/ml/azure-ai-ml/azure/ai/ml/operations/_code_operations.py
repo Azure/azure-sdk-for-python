@@ -263,27 +263,12 @@ class CodeOperations(_ScopeDependentOperations):
         if not m:
             raise ValueError(f"Invalid code path: {code.path}")
 
-        # 1. different content now saved in different container, so we need to override the container name
-        # 2. get credentials from datastore requires authorization to perform action
-        #    'Microsoft.MachineLearningServices/workspaces/datastores/listSecrets/action' over target datastore,
-        #    so we use local credential instead if so.
-        # check more information here:
-        # https://github.com/Azure/azureml_run_specification/blob/master/specs/create_workspace_asset_from_local_upload.md
-        try:
-            datastore_info = get_datastore_info(
-                self._datastore_operation,
-                # always use WORKSPACE_BLOB_STORE
-                name=_get_datastore_name(),
-                container_name=m.group("container_name"),
-            )
-        except HttpResponseError:
-            datastore_info = get_datastore_info(
-                self._datastore_operation,
-                # always use WORKSPACE_BLOB_STORE
-                name=_get_datastore_name(),
-                credential=self._service_client._config.credential,
-                container_name=m.group("container_name"),
-            )
+        datastore_info = get_datastore_info(
+            self._datastore_operation,
+            # always use WORKSPACE_BLOB_STORE
+            name=_get_datastore_name(),
+            container_name=m.group("container_name"),
+        )
         storage_client = get_storage_client(**datastore_info)
         storage_client.download(
             starts_with=m.group("blob_name"),

@@ -709,7 +709,7 @@ class StorageTaskAssignmentsOperations:
 
     @distributed_trace
     def list(
-        self, resource_group_name: str, account_name: str, maxpagesize: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, account_name: str, maxpagesize: Optional[int] = None, **kwargs: Any
     ) -> AsyncIterable["_models.StorageTaskAssignment"]:
         """List all the storage task assignments in an account.
 
@@ -722,7 +722,7 @@ class StorageTaskAssignmentsOperations:
         :type account_name: str
         :param maxpagesize: Optional, specifies the maximum number of storage task assignment Ids to be
          included in the list response. Default value is None.
-        :type maxpagesize: str
+        :type maxpagesize: int
         :return: An iterator like instance of either StorageTaskAssignment or the result of
          cls(response)
         :rtype:

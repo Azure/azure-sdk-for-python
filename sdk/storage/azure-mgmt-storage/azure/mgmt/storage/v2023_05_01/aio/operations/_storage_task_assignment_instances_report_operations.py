@@ -64,7 +64,7 @@ class StorageTaskAssignmentInstancesReportOperations:  # pylint: disable=name-to
         resource_group_name: str,
         account_name: str,
         storage_task_assignment_name: str,
-        maxpagesize: Optional[str] = None,
+        maxpagesize: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.StorageTaskReportInstance"]:
@@ -83,7 +83,7 @@ class StorageTaskAssignmentInstancesReportOperations:  # pylint: disable=name-to
         :type storage_task_assignment_name: str
         :param maxpagesize: Optional, specifies the maximum number of storage task assignment instances
          to be included in the list response. Default value is None.
-        :type maxpagesize: str
+        :type maxpagesize: int
         :param filter: Optional. When specified, it can be used to query using reporting properties.
          See `Constructing Filter Strings
          <https://learn.microsoft.com/en-us/rest/api/storageservices/querying-tables-and-entities#constructing-filter-strings>`_

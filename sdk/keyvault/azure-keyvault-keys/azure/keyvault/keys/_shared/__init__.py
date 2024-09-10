@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Optional
 from urllib import parse
 
 from .challenge_auth_policy import ChallengeAuthPolicy
@@ -11,10 +11,6 @@ from .http_challenge import HttpChallenge
 from . import http_challenge_cache
 
 HttpChallengeCache = http_challenge_cache  # to avoid aliasing pylint error (C4745)
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import
-    from typing import Optional
 
 
 __all__ = [
@@ -49,7 +45,7 @@ class KeyVaultResourceId():
 def parse_key_vault_id(source_id: str) -> KeyVaultResourceId:
     try:
         parsed_uri = parse.urlparse(source_id)
-    except Exception as exc:  # pylint: disable=broad-except
+    except Exception as exc:
         raise ValueError(f"'{source_id}' is not a valid ID") from exc
     if not (parsed_uri.scheme and parsed_uri.hostname):
         raise ValueError(f"'{source_id}' is not a valid ID")

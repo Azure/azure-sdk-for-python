@@ -11,8 +11,8 @@ from typing import Any, Callable, Dict, MutableMapping, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
+from azure.ai.ml._restclient.v2024_07_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -33,7 +33,13 @@ from azure.ai.ml._utils._workspace_utils import (
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceKind, WorkspaceResourceConstants
+from azure.ai.ml.constants._common import (
+    ArmConstants,
+    LROConfigurations,
+    WorkspaceKind,
+    WorkspaceResourceConstants,
+    WORKSPACE_PATCH_REJECTED_KEYS,
+)
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Hub, Project, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
@@ -53,7 +59,7 @@ class WorkspaceOperationsBase(ABC):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient082023Preview,
+        service_client: ServiceClient072024Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -223,7 +229,7 @@ class WorkspaceOperationsBase(ABC):
             CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, real_callback),
         )
 
-    # pylint: disable=too-many-statements
+    # pylint: disable=too-many-statements,too-many-locals
     def begin_update(
         self,
         workspace: Workspace,
@@ -339,7 +345,9 @@ class WorkspaceOperationsBase(ABC):
             system_datastores_auth_mode=kwargs.get(
                 "system_datastores_auth_mode", workspace.system_datastores_auth_mode
             ),
-            allow_roleassignment_on_rg=kwargs.get("allow_roleassignment_on_rg", workspace.allow_roleassignment_on_rg),
+            allow_role_assignment_on_rg=kwargs.get(
+                "allow_roleassignment_on_rg", workspace.allow_roleassignment_on_rg
+            ),  # diff due to swagger restclient casing diff
             image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
             identity=identity,
             primary_user_assigned_identity=kwargs.get(
@@ -369,6 +377,11 @@ class WorkspaceOperationsBase(ABC):
             or kwargs.get("update_online_store_role_assignment", None)
         )
         grant_materialization_permissions = kwargs.get("grant_materialization_permissions", None)
+
+        # Remove deprecated keys from older workspaces that might still have them before we try to update.
+        if workspace.tags is not None:
+            for bad_key in WORKSPACE_PATCH_REJECTED_KEYS:
+                _ = workspace.tags.pop(bad_key, None)
 
         # pylint: disable=unused-argument, docstring-missing-param
         def callback(_: Any, deserialized: Any, args: Any) -> Workspace:
@@ -589,6 +602,14 @@ class WorkspaceOperationsBase(ABC):
                 param["applicationInsightsResourceGroupName"],
                 group_name,
             )
+        elif workspace._kind and workspace._kind.lower() in {WorkspaceKind.HUB, WorkspaceKind.PROJECT}:
+            _set_val(param["applicationInsightsOption"], "none")
+            # Set empty values because arm templates whine over unset values.
+            _set_val(param["applicationInsightsName"], "ignoredButCantBeEmpty")
+            _set_val(
+                param["applicationInsightsResourceGroupName"],
+                "ignoredButCantBeEmpty",
+            )
         else:
             log_analytics = _generate_log_analytics(workspace.name, resources_being_deployed)
             _set_val(param["logAnalyticsName"], log_analytics)
@@ -635,6 +656,7 @@ class WorkspaceOperationsBase(ABC):
 
         if workspace.public_network_access:
             _set_val(param["publicNetworkAccess"], workspace.public_network_access)
+            _set_val(param["associatedResourcePNA"], workspace.public_network_access)
 
         if workspace.system_datastores_auth_mode:
             _set_val(param["systemDatastoresAuthMode"], workspace.system_datastores_auth_mode)
@@ -737,6 +759,11 @@ class WorkspaceOperationsBase(ABC):
         managed_network = None
         if workspace.managed_network:
             managed_network = workspace.managed_network._to_rest_object()
+            if workspace.managed_network.isolation_mode in [
+                IsolationMode.ALLOW_INTERNET_OUTBOUND,
+                IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND,
+            ]:
+                _set_val(param["associatedResourcePNA"], "Disabled")
         else:
             managed_network = ManagedNetwork(isolation_mode=IsolationMode.DISABLED)._to_rest_object()
         _set_obj_val(param["managedNetwork"], managed_network)

@@ -31,7 +31,7 @@ USAGE:
 import asyncio
 
 
-async def sample_ocr_image_file_async():
+async def sample_ocr_image_url_async():
     import os
     from azure.ai.vision.imageanalysis.aio import ImageAnalysisClient
     from azure.ai.vision.imageanalysis.models import VisualFeatures
@@ -74,7 +74,7 @@ async def sample_ocr_image_file_async():
 
 
 async def main():
-    await sample_ocr_image_file_async()
+    await sample_ocr_image_url_async()
 
 
 if __name__ == "__main__":

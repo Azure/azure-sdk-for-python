@@ -35,6 +35,8 @@ from azure.mgmt.core.policies._authentication import (
 )
 
 from azure.core.pipeline.transport import HttpRequest
+from devtools_testutils.fake_credentials import FakeTokenCredential
+
 
 import pytest
 from unittest.mock import Mock
@@ -81,8 +83,8 @@ def test_auxiliary_authentication_policy():
         )
         return Mock()
 
-    fake_credential1 = Mock(get_token=Mock(return_value=first_token))
-    fake_credential2 = Mock(get_token=Mock(return_value=second_token))
+    fake_credential1 = Mock(spec_set=["get_token"], get_token=Mock(return_value=first_token))
+    fake_credential2 = Mock(spec_set=["get_token"], get_token=Mock(return_value=second_token))
     policies = [
         AuxiliaryAuthenticationPolicy([fake_credential1, fake_credential2], "scope"),
         Mock(send=verify_authorization_header),
@@ -136,7 +138,7 @@ def test_claims_challenge():
         assert scopes == (expected_scope,)
         return next(tokens)
 
-    credential = Mock(get_token=Mock(wraps=get_token))
+    credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
     transport = Mock(send=Mock(wraps=send))
     policies = [ARMChallengeAuthenticationPolicy(credential, expected_scope)]
     pipeline = Pipeline(transport=transport, policies=policies)
@@ -171,14 +173,14 @@ def test_multiple_claims_challenges():
         return Mock(status_code=401, headers={"WWW-Authenticate": expected_header})
 
     transport = Mock(send=Mock(wraps=send))
-    credential = Mock()
+    credential = FakeTokenCredential()
     policies = [ARMChallengeAuthenticationPolicy(credential, "scope")]
     pipeline = Pipeline(transport=transport, policies=policies)
 
     response = pipeline.run(HttpRequest("GET", "https://localhost"))
 
     assert transport.send.call_count == 1
-    assert credential.get_token.call_count == 1
+    assert credential.get_token_count == 1
 
     # the policy should have returned the error response because it was unable to handle the challenge
     assert response.http_response.status_code == 401

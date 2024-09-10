@@ -244,7 +244,7 @@ class AMQPClientAsync(AMQPClientSync):
             self._external_connection = True
         if not self._connection:
             self._connection = Connection(
-                "amqps://" + self._hostname,
+                "amqps://" + self._hostname if self._use_tls else "amqp://" + self._hostname,
                 sasl_credential=self._auth.sasl,
                 ssl_opts={'ca_certs': self._connection_verify or certifi.where()},
                 container_id=self._name,
@@ -257,6 +257,7 @@ class AMQPClientAsync(AMQPClientSync):
                 http_proxy=self._http_proxy,
                 custom_endpoint_address=self._custom_endpoint_address,
                 socket_timeout=self._socket_timeout,
+                use_tls=self._use_tls,
             )
             await self._connection.open()
         if not self._session:
@@ -387,6 +388,9 @@ class AMQPClientAsync(AMQPClientSync):
                 mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
                 self._mgmt_links[node] = mgmt_link
                 await mgmt_link.open()
+
+        while not await self.client_ready_async():
+            await asyncio.sleep(0.05)
 
         while not await mgmt_link.ready():
             await self._connection.listen(wait=False)
@@ -930,6 +934,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["accepted"],
         *,
         batchable: Optional[bool] = None
@@ -940,6 +945,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["released"],
         *,
         batchable: Optional[bool] = None
@@ -950,6 +956,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["rejected"],
         *,
         error: Optional[AMQPError] = None,
@@ -961,6 +968,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["modified"],
         *,
         delivery_failed: Optional[bool] = None,
@@ -974,6 +982,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def settle_messages_async(
         self,
         delivery_id: Union[int, Tuple[int, int]],
+        delivery_tag: bytes,
         outcome: Literal["received"],
         *,
         section_number: int,
@@ -982,7 +991,13 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     ):
         ...
 
-    async def settle_messages_async(self, delivery_id: Union[int, Tuple[int, int]], outcome: str, **kwargs):
+    async def settle_messages_async(
+            self,
+            delivery_id: Union[int, Tuple[int, int]],
+            delivery_tag: bytes,
+            outcome: str,
+            **kwargs
+    ):
         batchable = kwargs.pop('batchable', None)
         if outcome.lower() == 'accepted':
             state: Outcomes = Accepted()
@@ -1004,6 +1019,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         await self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
+            delivery_tag=delivery_tag,
             settled=True,
             delivery_state=state,
             batchable=batchable,

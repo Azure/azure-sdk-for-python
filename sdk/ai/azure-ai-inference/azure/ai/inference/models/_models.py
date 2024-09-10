@@ -8,22 +8,15 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
 from ._enums import ChatRole
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class ChatRequestMessage(_model_base.Model):
@@ -114,7 +107,6 @@ class ChatChoice(_model_base.Model):
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
     Token limits and other settings may limit the number of choices generated.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
@@ -127,7 +119,7 @@ class ChatChoice(_model_base.Model):
 
     index: int = rest_field()
     """The ordered index associated with this chat completions choice. Required."""
-    finish_reason: Union[str, "_models._enums.CompletionsFinishReason"] = rest_field()
+    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
     """The reason that this chat completions choice completed its generated. Required. Known values
      are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
     message: "_models.ChatResponseMessage" = rest_field()
@@ -138,7 +130,7 @@ class ChatChoice(_model_base.Model):
         self,
         *,
         index: int,
-        finish_reason: Union[str, "_models._enums.CompletionsFinishReason"],
+        finish_reason: Union[str, "_models.CompletionsFinishReason"],
         message: "_models.ChatResponseMessage",
     ): ...
 
@@ -159,7 +151,6 @@ class ChatCompletions(_model_base.Model):
     "completes"
     provided prompt data.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
@@ -215,34 +206,32 @@ class ChatCompletions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatCompletionsToolCall(_model_base.Model):
-    """An abstract representation of a tool call that must be resolved in a subsequent request to
-    perform the requested
-    chat completion.
+class ChatCompletionsNamedToolChoice(_model_base.Model):
+    """A tool selection of a specific, named function tool that will limit chat completions to using
+    the named function.
 
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ChatCompletionsFunctionToolCall
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar type: The object type. Required. Default value is None.
+    :ivar type: The type of the tool. Currently, only ``function`` is supported. Required. Default
+     value is "function".
     :vartype type: str
-    :ivar id: The ID of the tool call. Required.
-    :vartype id: str
+    :ivar function: The function that should be called. Required.
+    :vartype function: ~azure.ai.inference.models.ChatCompletionsNamedToolChoiceFunction
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
-    """The object type. Required. Default value is None."""
-    id: str = rest_field()
-    """The ID of the tool call. Required."""
+    type: Literal["function"] = rest_field()
+    """The type of the tool. Currently, only ``function`` is supported. Required. Default value is
+     \"function\"."""
+    function: "_models.ChatCompletionsNamedToolChoiceFunction" = rest_field()
+    """The function that should be called. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        type: str,
-        id: str,  # pylint: disable=redefined-builtin
+        function: "_models.ChatCompletionsNamedToolChoiceFunction",
     ): ...
 
     @overload
@@ -252,121 +241,12 @@ class ChatCompletionsToolCall(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.type: Literal["function"] = "function"
 
 
-class ChatCompletionsFunctionToolCall(ChatCompletionsToolCall, discriminator="function"):
-    """A tool call to a function tool, issued by the model in evaluation of a configured function
-    tool, that represents
-    a function invocation needed for a subsequent chat completions request to resolve.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: The ID of the tool call. Required.
-    :vartype id: str
-    :ivar type: The type of tool call, in this case always 'function'. Required. Default value is
-     "function".
-    :vartype type: str
-    :ivar function: The details of the function invocation requested by the tool call. Required.
-    :vartype function: ~azure.ai.inference.models.FunctionCall
-    """
-
-    type: Literal["function"] = rest_discriminator(name="type")  # type: ignore
-    """The type of tool call, in this case always 'function'. Required. Default value is \"function\"."""
-    function: "_models.FunctionCall" = rest_field()
-    """The details of the function invocation requested by the tool call. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        function: "_models.FunctionCall",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, type="function", **kwargs)
-
-
-class ChatCompletionsToolDefinition(_model_base.Model):
-    """An abstract representation of a tool that can be used by the model to improve a chat
-    completions response.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ChatCompletionsFunctionToolDefinition
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: The object type. Required. Default value is None.
-    :vartype type: str
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
-    """The object type. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ChatCompletionsFunctionToolDefinition(ChatCompletionsToolDefinition, discriminator="function"):
-    """The definition information for a chat completions function tool that can call a function in
-    response to a tool call.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: The object name, which is always 'function'. Required. Default value is "function".
-    :vartype type: str
-    :ivar function: The function definition details for the function tool. Required.
-    :vartype function: ~azure.ai.inference.models.FunctionDefinition
-    """
-
-    type: Literal["function"] = rest_discriminator(name="type")  # type: ignore
-    """The object name, which is always 'function'. Required. Default value is \"function\"."""
-    function: "_models.FunctionDefinition" = rest_field()
-    """The function definition details for the function tool. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        function: "_models.FunctionDefinition",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, type="function", **kwargs)
-
-
-class ChatCompletionsFunctionToolSelection(_model_base.Model):
+class ChatCompletionsNamedToolChoiceFunction(_model_base.Model):
     """A tool selection of a specific, named function tool that will limit chat completions to using
     the named function.
 
@@ -397,22 +277,26 @@ class ChatCompletionsFunctionToolSelection(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatCompletionsNamedToolSelection(_model_base.Model):
-    """An abstract representation of an explicit, named tool selection to use for a chat completions
-    request.
+class ChatCompletionsResponseFormat(_model_base.Model):
+    """Represents the format that the model must output. Use this to enable JSON mode instead of the
+    default text mode.
+    Note that to enable JSON mode, some AI models may also require you to instruct the model to
+    produce JSON
+    via a system or user message.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ChatCompletionsNamedFunctionToolSelection
+    ChatCompletionsResponseFormatJSON, ChatCompletionsResponseFormatText
 
     All required parameters must be populated in order to send to server.
 
-    :ivar type: The object type. Required. Default value is None.
+    :ivar type: The response format type to use for chat completions. Required. Default value is
+     None.
     :vartype type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     type: str = rest_discriminator(name="type")
-    """The object type. Required. Default value is None."""
+    """The response format type to use for chat completions. Required. Default value is None."""
 
     @overload
     def __init__(
@@ -432,30 +316,26 @@ class ChatCompletionsNamedToolSelection(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ChatCompletionsNamedFunctionToolSelection(
-    ChatCompletionsNamedToolSelection, discriminator="function"
-):  # pylint: disable=name-too-long
-    """A tool selection of a specific, named function tool that will limit chat completions to using
-    the named function.
+class ChatCompletionsResponseFormatJSON(ChatCompletionsResponseFormat, discriminator="json_object"):
+    """A response format for Chat Completions that restricts responses to emitting valid JSON objects.
+    Note that to enable JSON mode, some AI models may also require you to instruct the model to
+    produce JSON
+    via a system or user message.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar type: The object type, which is always 'function'. Required. Default value is "function".
+    :ivar type: Response format type: always 'json_object' for this object. Required. Default value
+     is "json_object".
     :vartype type: str
-    :ivar function: The function that should be called. Required.
-    :vartype function: ~azure.ai.inference.models.ChatCompletionsFunctionToolSelection
     """
 
-    type: Literal["function"] = rest_discriminator(name="type")  # type: ignore
-    """The object type, which is always 'function'. Required. Default value is \"function\"."""
-    function: "_models.ChatCompletionsFunctionToolSelection" = rest_field()
-    """The function that should be called. Required."""
+    type: Literal["json_object"] = rest_discriminator(name="type")  # type: ignore
+    """Response format type: always 'json_object' for this object. Required. Default value is
+     \"json_object\"."""
 
     @overload
     def __init__(
         self,
-        *,
-        function: "_models.ChatCompletionsFunctionToolSelection",
     ): ...
 
     @overload
@@ -466,7 +346,208 @@ class ChatCompletionsNamedFunctionToolSelection(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, type="function", **kwargs)
+        super().__init__(*args, type="json_object", **kwargs)
+
+
+class ChatCompletionsResponseFormatText(ChatCompletionsResponseFormat, discriminator="text"):
+    """A response format for Chat Completions that emits text responses. This is the default response
+    format.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: Response format type: always 'text' for this object. Required. Default value is
+     "text".
+    :vartype type: str
+    """
+
+    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    """Response format type: always 'text' for this object. Required. Default value is \"text\"."""
+
+    @overload
+    def __init__(
+        self,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="text", **kwargs)
+
+
+class ChatCompletionsToolCall(_model_base.Model):
+    """A function tool call requested by the AI model.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar id: The ID of the tool call. Required.
+    :vartype id: str
+    :ivar type: The type of tool call. Currently, only ``function`` is supported. Required. Default
+     value is "function".
+    :vartype type: str
+    :ivar function: The details of the function call requested by the AI model. Required.
+    :vartype function: ~azure.ai.inference.models.FunctionCall
+    """
+
+    id: str = rest_field()
+    """The ID of the tool call. Required."""
+    type: Literal["function"] = rest_field()
+    """The type of tool call. Currently, only ``function`` is supported. Required. Default value is
+     \"function\"."""
+    function: "_models.FunctionCall" = rest_field()
+    """The details of the function call requested by the AI model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        function: "_models.FunctionCall",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["function"] = "function"
+
+
+class ChatCompletionsToolDefinition(_model_base.Model):
+    """The definition of a chat completions tool that can call a function.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The type of the tool. Currently, only ``function`` is supported. Required. Default
+     value is "function".
+    :vartype type: str
+    :ivar function: The function definition details for the function tool. Required.
+    :vartype function: ~azure.ai.inference.models.FunctionDefinition
+    """
+
+    type: Literal["function"] = rest_field()
+    """The type of the tool. Currently, only ``function`` is supported. Required. Default value is
+     \"function\"."""
+    function: "_models.FunctionDefinition" = rest_field()
+    """The function definition details for the function tool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        function: "_models.FunctionDefinition",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["function"] = "function"
+
+
+class ChatResponseMessage(_model_base.Model):
+    """A representation of a chat message as received in a response.
+
+
+    :ivar role: The chat role associated with the message. Required. Known values are: "system",
+     "user", "assistant", and "tool".
+    :vartype role: str or ~azure.ai.inference.models.ChatRole
+    :ivar content: The content of the message. Required.
+    :vartype content: str
+    :ivar tool_calls: The tool calls that must be resolved and have their outputs appended to
+     subsequent input messages for the chat
+     completions request to resolve as configured.
+    :vartype tool_calls: list[~azure.ai.inference.models.ChatCompletionsToolCall]
+    """
+
+    role: Union[str, "_models.ChatRole"] = rest_field()
+    """The chat role associated with the message. Required. Known values are: \"system\", \"user\",
+     \"assistant\", and \"tool\"."""
+    content: str = rest_field()
+    """The content of the message. Required."""
+    tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = rest_field()
+    """The tool calls that must be resolved and have their outputs appended to subsequent input
+     messages for the chat
+     completions request to resolve as configured."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role: Union[str, "_models.ChatRole"],
+        content: str,
+        tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class CompletionsUsage(_model_base.Model):
+    """Representation of the token counts processed for a completions request.
+    Counts consider all tokens across prompts, choices, choice alternates, best_of generations, and
+    other consumers.
+
+
+    :ivar completion_tokens: The number of tokens generated across all completions emissions.
+     Required.
+    :vartype completion_tokens: int
+    :ivar prompt_tokens: The number of tokens in the provided prompts for the completions request.
+     Required.
+    :vartype prompt_tokens: int
+    :ivar total_tokens: The total number of tokens processed for the completions request and
+     response. Required.
+    :vartype total_tokens: int
+    """
+
+    completion_tokens: int = rest_field()
+    """The number of tokens generated across all completions emissions. Required."""
+    prompt_tokens: int = rest_field()
+    """The number of tokens in the provided prompts for the completions request. Required."""
+    total_tokens: int = rest_field()
+    """The total number of tokens processed for the completions request and response. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        completion_tokens: int,
+        prompt_tokens: int,
+        total_tokens: int,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class ContentItem(_model_base.Model):
@@ -490,6 +571,252 @@ class ContentItem(_model_base.Model):
         self,
         *,
         type: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class EmbeddingInput(_model_base.Model):
+    """Represents an image with optional text.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar image: The input image, in PNG format. Required.
+    :vartype image: str
+    :ivar text: Optional. The text input to feed into the model (like DINO, CLIP).
+     Returns a 422 error if the model doesn't support the value or parameter.
+    :vartype text: str
+    """
+
+    image: str = rest_field()
+    """The input image, in PNG format. Required."""
+    text: Optional[str] = rest_field()
+    """Optional. The text input to feed into the model (like DINO, CLIP).
+     Returns a 422 error if the model doesn't support the value or parameter."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        image: str,
+        text: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class EmbeddingItem(_model_base.Model):
+    """Representation of a single embeddings relatedness comparison.
+
+
+    :ivar embedding: List of embedding values for the input prompt. These represent a measurement
+     of the
+     vector-based relatedness of the provided input. Or a base64 encoded string of the embedding
+     vector. Required. Is either a str type or a [float] type.
+    :vartype embedding: str or list[float]
+    :ivar index: Index of the prompt to which the EmbeddingItem corresponds. Required.
+    :vartype index: int
+    """
+
+    embedding: Union["str", List[float]] = rest_field()
+    """List of embedding values for the input prompt. These represent a measurement of the
+     vector-based relatedness of the provided input. Or a base64 encoded string of the embedding
+     vector. Required. Is either a str type or a [float] type."""
+    index: int = rest_field()
+    """Index of the prompt to which the EmbeddingItem corresponds. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        embedding: Union[str, List[float]],
+        index: int,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class EmbeddingsResult(_model_base.Model):
+    """Representation of the response data from an embeddings request.
+    Embeddings measure the relatedness of text strings and are commonly used for search,
+    clustering,
+    recommendations, and other similar scenarios.
+
+
+    :ivar id: Unique identifier for the embeddings result. Required.
+    :vartype id: str
+    :ivar data: Embedding values for the prompts submitted in the request. Required.
+    :vartype data: list[~azure.ai.inference.models.EmbeddingItem]
+    :ivar usage: Usage counts for tokens input using the embeddings API. Required.
+    :vartype usage: ~azure.ai.inference.models.EmbeddingsUsage
+    :ivar model: The model ID used to generate this result. Required.
+    :vartype model: str
+    """
+
+    id: str = rest_field()
+    """Unique identifier for the embeddings result. Required."""
+    data: List["_models.EmbeddingItem"] = rest_field()
+    """Embedding values for the prompts submitted in the request. Required."""
+    usage: "_models.EmbeddingsUsage" = rest_field()
+    """Usage counts for tokens input using the embeddings API. Required."""
+    model: str = rest_field()
+    """The model ID used to generate this result. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        data: List["_models.EmbeddingItem"],
+        usage: "_models.EmbeddingsUsage",
+        model: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class EmbeddingsUsage(_model_base.Model):
+    """Measurement of the amount of tokens used in this request and response.
+
+
+    :ivar prompt_tokens: Number of tokens in the request. Required.
+    :vartype prompt_tokens: int
+    :ivar total_tokens: Total number of tokens transacted in this request/response. Should equal
+     the
+     number of tokens in the request. Required.
+    :vartype total_tokens: int
+    """
+
+    prompt_tokens: int = rest_field()
+    """Number of tokens in the request. Required."""
+    total_tokens: int = rest_field()
+    """Total number of tokens transacted in this request/response. Should equal the
+     number of tokens in the request. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        prompt_tokens: int,
+        total_tokens: int,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class FunctionCall(_model_base.Model):
+    """The name and arguments of a function that should be called, as generated by the model.
+
+
+    :ivar name: The name of the function to call. Required.
+    :vartype name: str
+    :ivar arguments: The arguments to call the function with, as generated by the model in JSON
+     format.
+     Note that the model does not always generate valid JSON, and may hallucinate parameters
+     not defined by your function schema. Validate the arguments in your code before calling
+     your function. Required.
+    :vartype arguments: str
+    """
+
+    name: str = rest_field()
+    """The name of the function to call. Required."""
+    arguments: str = rest_field()
+    """The arguments to call the function with, as generated by the model in JSON format.
+     Note that the model does not always generate valid JSON, and may hallucinate parameters
+     not defined by your function schema. Validate the arguments in your code before calling
+     your function. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        arguments: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class FunctionDefinition(_model_base.Model):
+    """The definition of a caller-specified function that chat completions may invoke in response to
+    matching user input.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the function to be called. Required.
+    :vartype name: str
+    :ivar description: A description of what the function does. The model will use this description
+     when selecting the function and
+     interpreting its parameters.
+    :vartype description: str
+    :ivar parameters: The parameters the function accepts, described as a JSON Schema object.
+    :vartype parameters: any
+    """
+
+    name: str = rest_field()
+    """The name of the function to be called. Required."""
+    description: Optional[str] = rest_field()
+    """A description of what the function does. The model will use this description when selecting the
+     function and
+     interpreting its parameters."""
+    parameters: Optional[Any] = rest_field()
+    """The parameters the function accepts, described as a JSON Schema object."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: Optional[str] = None,
+        parameters: Optional[Any] = None,
     ): ...
 
     @overload
@@ -580,393 +907,9 @@ class ImageUrl(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TextContentItem(ContentItem, discriminator="text"):
-    """A structured chat content item containing plain text.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar type: The discriminated object type: always 'text' for this type. Required. Default value
-     is "text".
-    :vartype type: str
-    :ivar text: The content of the message. Required.
-    :vartype text: str
-    """
-
-    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
-    """The discriminated object type: always 'text' for this type. Required. Default value is
-     \"text\"."""
-    text: str = rest_field()
-    """The content of the message. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        text: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, type="text", **kwargs)
-
-
-class ChatResponseMessage(_model_base.Model):
-    """A representation of a chat message as received in a response.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar role: The chat role associated with the message. Required. Known values are: "system",
-     "user", "assistant", and "tool".
-    :vartype role: str or ~azure.ai.inference.models.ChatRole
-    :ivar content: The content of the message. Required.
-    :vartype content: str
-    :ivar tool_calls: The tool calls that must be resolved and have their outputs appended to
-     subsequent input messages for the chat
-     completions request to resolve as configured.
-    :vartype tool_calls: list[~azure.ai.inference.models.ChatCompletionsToolCall]
-    """
-
-    role: Union[str, "_models.ChatRole"] = rest_field()
-    """The chat role associated with the message. Required. Known values are: \"system\", \"user\",
-     \"assistant\", and \"tool\"."""
-    content: str = rest_field()
-    """The content of the message. Required."""
-    tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = rest_field()
-    """The tool calls that must be resolved and have their outputs appended to subsequent input
-     messages for the chat
-     completions request to resolve as configured."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        role: Union[str, "_models.ChatRole"],
-        content: str,
-        tool_calls: Optional[List["_models.ChatCompletionsToolCall"]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class CompletionsUsage(_model_base.Model):
-    """Representation of the token counts processed for a completions request.
-    Counts consider all tokens across prompts, choices, choice alternates, best_of generations, and
-    other consumers.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar completion_tokens: The number of tokens generated across all completions emissions.
-     Required.
-    :vartype completion_tokens: int
-    :ivar prompt_tokens: The number of tokens in the provided prompts for the completions request.
-     Required.
-    :vartype prompt_tokens: int
-    :ivar total_tokens: The total number of tokens processed for the completions request and
-     response. Required.
-    :vartype total_tokens: int
-    """
-
-    completion_tokens: int = rest_field()
-    """The number of tokens generated across all completions emissions. Required."""
-    prompt_tokens: int = rest_field()
-    """The number of tokens in the provided prompts for the completions request. Required."""
-    total_tokens: int = rest_field()
-    """The total number of tokens processed for the completions request and response. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        completion_tokens: int,
-        prompt_tokens: int,
-        total_tokens: int,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class EmbeddingInput(_model_base.Model):
-    """Represents an image with optional text.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar image: The input image, in PNG format. Required.
-    :vartype image: str
-    :ivar text: Optional. The text input to feed into the model (like DINO, CLIP).
-     Returns a 422 error if the model doesn't support the value or parameter.
-    :vartype text: str
-    """
-
-    image: str = rest_field()
-    """The input image, in PNG format. Required."""
-    text: Optional[str] = rest_field()
-    """Optional. The text input to feed into the model (like DINO, CLIP).
-     Returns a 422 error if the model doesn't support the value or parameter."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        image: str,
-        text: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class EmbeddingItem(_model_base.Model):
-    """Representation of a single embeddings relatedness comparison.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar embedding: List of embeddings value for the input prompt. These represent a measurement
-     of the
-     vector-based relatedness of the provided input. Required.
-    :vartype embedding: list[float]
-    :ivar index: Index of the prompt to which the EmbeddingItem corresponds. Required.
-    :vartype index: int
-    """
-
-    embedding: List[float] = rest_field()
-    """List of embeddings value for the input prompt. These represent a measurement of the
-     vector-based relatedness of the provided input. Required."""
-    index: int = rest_field()
-    """Index of the prompt to which the EmbeddingItem corresponds. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        embedding: List[float],
-        index: int,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class EmbeddingsResult(_model_base.Model):
-    """Representation of the response data from an embeddings request.
-    Embeddings measure the relatedness of text strings and are commonly used for search,
-    clustering,
-    recommendations, and other similar scenarios.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Unique identifier for the embeddings result. Required.
-    :vartype id: str
-    :ivar data: Embedding values for the prompts submitted in the request. Required.
-    :vartype data: list[~azure.ai.inference.models.EmbeddingItem]
-    :ivar usage: Usage counts for tokens input using the embeddings API. Required.
-    :vartype usage: ~azure.ai.inference.models.EmbeddingsUsage
-    :ivar model: The model ID used to generate this result. Required.
-    :vartype model: str
-    """
-
-    id: str = rest_field()
-    """Unique identifier for the embeddings result. Required."""
-    data: List["_models.EmbeddingItem"] = rest_field()
-    """Embedding values for the prompts submitted in the request. Required."""
-    usage: "_models.EmbeddingsUsage" = rest_field()
-    """Usage counts for tokens input using the embeddings API. Required."""
-    model: str = rest_field()
-    """The model ID used to generate this result. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        data: List["_models.EmbeddingItem"],
-        usage: "_models.EmbeddingsUsage",
-        model: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class EmbeddingsUsage(_model_base.Model):
-    """Measurement of the amount of tokens used in this request and response.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar input_tokens: Number of tokens in the request prompt. Required.
-    :vartype input_tokens: int
-    :ivar prompt_tokens: Number of tokens used for the prompt sent to the AI model. Typically
-     identical to ``input_tokens``.
-     However, certain AI models may add extra tokens to the input hence the number can be higher.
-     (for example when input_type="query"). Required.
-    :vartype prompt_tokens: int
-    :ivar total_tokens: Total number of tokens transacted in this request/response. Required.
-    :vartype total_tokens: int
-    """
-
-    input_tokens: int = rest_field()
-    """Number of tokens in the request prompt. Required."""
-    prompt_tokens: int = rest_field()
-    """Number of tokens used for the prompt sent to the AI model. Typically identical to
-     ``input_tokens``.
-     However, certain AI models may add extra tokens to the input hence the number can be higher.
-     (for example when input_type=\"query\"). Required."""
-    total_tokens: int = rest_field()
-    """Total number of tokens transacted in this request/response. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        input_tokens: int,
-        prompt_tokens: int,
-        total_tokens: int,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class FunctionCall(_model_base.Model):
-    """The name and arguments of a function that should be called, as generated by the model.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: The name of the function to call. Required.
-    :vartype name: str
-    :ivar arguments: The arguments to call the function with, as generated by the model in JSON
-     format.
-     Note that the model does not always generate valid JSON, and may hallucinate parameters
-     not defined by your function schema. Validate the arguments in your code before calling
-     your function. Required.
-    :vartype arguments: str
-    """
-
-    name: str = rest_field()
-    """The name of the function to call. Required."""
-    arguments: str = rest_field()
-    """The arguments to call the function with, as generated by the model in JSON format.
-     Note that the model does not always generate valid JSON, and may hallucinate parameters
-     not defined by your function schema. Validate the arguments in your code before calling
-     your function. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        arguments: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class FunctionDefinition(_model_base.Model):
-    """The definition of a caller-specified function that chat completions may invoke in response to
-    matching user input.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: The name of the function to be called. Required.
-    :vartype name: str
-    :ivar description: A description of what the function does. The model will use this description
-     when selecting the function and
-     interpreting its parameters.
-    :vartype description: str
-    :ivar parameters: The parameters the function accepts, described as a JSON Schema object.
-    :vartype parameters: any
-    """
-
-    name: str = rest_field()
-    """The name of the function to be called. Required."""
-    description: Optional[str] = rest_field()
-    """A description of what the function does. The model will use this description when selecting the
-     function and
-     interpreting its parameters."""
-    parameters: Optional[Any] = rest_field()
-    """The parameters the function accepts, described as a JSON Schema object."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        description: Optional[str] = None,
-        parameters: Optional[Any] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class ModelInfo(_model_base.Model):
     """Represents some basic information about the AI model.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar model_name: The name of the AI model. For example: ``Phi21``. Required.
     :vartype model_name: str
@@ -1014,7 +957,6 @@ class StreamingChatChoiceUpdate(_model_base.Model):
     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
     Token limits and other settings may limit the number of choices generated.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar index: The ordered index associated with this chat completions choice. Required.
     :vartype index: int
@@ -1022,15 +964,15 @@ class StreamingChatChoiceUpdate(_model_base.Model):
      Required. Known values are: "stop", "length", "content_filter", and "tool_calls".
     :vartype finish_reason: str or ~azure.ai.inference.models.CompletionsFinishReason
     :ivar delta: An update to the chat message for a given chat completions prompt. Required.
-    :vartype delta: ~azure.ai.inference.models.ChatResponseMessage
+    :vartype delta: ~azure.ai.inference.models.StreamingChatResponseMessageUpdate
     """
 
     index: int = rest_field()
     """The ordered index associated with this chat completions choice. Required."""
-    finish_reason: Union[str, "_models._enums.CompletionsFinishReason"] = rest_field()
+    finish_reason: Union[str, "_models.CompletionsFinishReason"] = rest_field()
     """The reason that this chat completions choice completed its generated. Required. Known values
      are: \"stop\", \"length\", \"content_filter\", and \"tool_calls\"."""
-    delta: "_models.ChatResponseMessage" = rest_field()
+    delta: "_models.StreamingChatResponseMessageUpdate" = rest_field()
     """An update to the chat message for a given chat completions prompt. Required."""
 
     @overload
@@ -1038,8 +980,8 @@ class StreamingChatChoiceUpdate(_model_base.Model):
         self,
         *,
         index: int,
-        finish_reason: Union[str, "_models._enums.CompletionsFinishReason"],
-        delta: "_models.ChatResponseMessage",
+        finish_reason: Union[str, "_models.CompletionsFinishReason"],
+        delta: "_models.StreamingChatResponseMessageUpdate",
     ): ...
 
     @overload
@@ -1061,7 +1003,6 @@ class StreamingChatCompletionsUpdate(_model_base.Model):
     "completes"
     provided prompt data.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: A unique identifier associated with this chat completions response. Required.
     :vartype id: str
@@ -1118,6 +1059,84 @@ class StreamingChatCompletionsUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class StreamingChatResponseMessageUpdate(_model_base.Model):
+    """A representation of a chat message update as received in a streaming response.
+
+    :ivar role: The chat role associated with the message. If present, should always be
+     'assistant'. Known values are: "system", "user", "assistant", and "tool".
+    :vartype role: str or ~azure.ai.inference.models.ChatRole
+    :ivar content: The content of the message.
+    :vartype content: str
+    :ivar tool_calls: The tool calls that must be resolved and have their outputs appended to
+     subsequent input messages for the chat
+     completions request to resolve as configured.
+    :vartype tool_calls: list[~azure.ai.inference.models.StreamingChatResponseToolCallUpdate]
+    """
+
+    role: Optional[Union[str, "_models.ChatRole"]] = rest_field()
+    """The chat role associated with the message. If present, should always be 'assistant'. Known
+     values are: \"system\", \"user\", \"assistant\", and \"tool\"."""
+    content: Optional[str] = rest_field()
+    """The content of the message."""
+    tool_calls: Optional[List["_models.StreamingChatResponseToolCallUpdate"]] = rest_field()
+    """The tool calls that must be resolved and have their outputs appended to subsequent input
+     messages for the chat
+     completions request to resolve as configured."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role: Optional[Union[str, "_models.ChatRole"]] = None,
+        content: Optional[str] = None,
+        tool_calls: Optional[List["_models.StreamingChatResponseToolCallUpdate"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class StreamingChatResponseToolCallUpdate(_model_base.Model):
+    """An update to the function tool call information requested by the AI model.
+
+
+    :ivar id: The ID of the tool call. Required.
+    :vartype id: str
+    :ivar function: Updates to the function call requested by the AI model. Required.
+    :vartype function: ~azure.ai.inference.models.FunctionCall
+    """
+
+    id: str = rest_field()
+    """The ID of the tool call. Required."""
+    function: "_models.FunctionCall" = rest_field()
+    """Updates to the function call requested by the AI model. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        function: "_models.FunctionCall",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class SystemMessage(ChatRequestMessage, discriminator="system"):
     """A request chat message containing system instructions that influence how the model will
     generate a chat completions
@@ -1154,6 +1173,42 @@ class SystemMessage(ChatRequestMessage, discriminator="system"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, role=ChatRole.SYSTEM, **kwargs)
+
+
+class TextContentItem(ContentItem, discriminator="text"):
+    """A structured chat content item containing plain text.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The discriminated object type: always 'text' for this type. Required. Default value
+     is "text".
+    :vartype type: str
+    :ivar text: The content of the message. Required.
+    :vartype text: str
+    """
+
+    type: Literal["text"] = rest_discriminator(name="type")  # type: ignore
+    """The discriminated object type: always 'text' for this type. Required. Default value is
+     \"text\"."""
+    text: str = rest_field()
+    """The content of the message. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="text", **kwargs)
 
 
 class ToolMessage(ChatRequestMessage, discriminator="tool"):

@@ -11,7 +11,7 @@ from azure.servicebus.management import ServiceBusAdministrationClient, Subscrip
 from tests.utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 
-from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy, get_credential
 from tests.sb_env_loader import (
     ServiceBusPreparer
 )
@@ -27,8 +27,12 @@ _logger = get_logger(logging.DEBUG)
 class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_create_by_name(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_subscription_create_by_name(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "topic_testaddf"
         subscription_name = "sub_testkkk"
@@ -46,8 +50,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_sub_create_w_sub_desc(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_sub_create_w_sub_desc(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "iweidk"
         subscription_name = "kdosako"
@@ -102,8 +110,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_sub_create_w_fwd_to(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_sub_create_w_fwd_to(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "iweidkforward"
         subscription_name = "kdosakoforward"
@@ -131,8 +143,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_create_duplicate(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_subscription_create_duplicate(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "dqkodq"
         subscription_name = 'kkaqo'
@@ -147,8 +163,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_update_success(self, servicebus_connection_str, servicebus_fully_qualified_namespace, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_subscription_update_success(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "fjrui"
         subscription_name = "eqkovc"
@@ -251,8 +271,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_update_invalid(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_subscription_update_invalid(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "dfjfj"
         subscription_name = "kwqxc"
@@ -291,8 +315,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_delete(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_subscription_delete(self, servicebus_fully_qualified_namespace):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = 'test_topicgda'
         subscription_name_1 = 'test_sub1da'
@@ -321,8 +349,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_list(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_subscription_list(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = 'lkoqxc'
         subscription_name_1 = 'testsub1'
@@ -345,8 +377,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_sub_list_runtime_props(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_sub_list_runtime_props(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = 'dkoamv'
         subscription_name = 'cxqplc'
@@ -384,8 +420,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_sub_get_runtime_props_basic(self, servicebus_connection_str):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_sub_get_runtime_props_basic(self, servicebus_fully_qualified_namespace):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = 'dcvxqa'
         subscription_name = 'xvazzag'
@@ -415,9 +455,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
     @ServiceBusPreparer()
     @recorded_by_proxy
     def test_mgmt_sub_update_dict_success(self, **kwargs):
-        servicebus_connection_str = kwargs.pop('servicebus_connection_str')
         servicebus_fully_qualified_namespace = kwargs.pop('servicebus_fully_qualified_namespace')
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "fjruid"
         subscription_name = "eqkovcd"
@@ -494,8 +537,12 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
     @ServiceBusPreparer()
     @recorded_by_proxy
-    def test_mgmt_subscription_update_dict_error(self, servicebus_connection_str, **kwargs):
-        mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
+    def test_mgmt_subscription_update_dict_error(self, servicebus_fully_qualified_namespace, **kwargs):
+        credential = get_credential()
+        mgmt_service = ServiceBusAdministrationClient(
+            fully_qualified_namespace=servicebus_fully_qualified_namespace,
+            credential=credential
+        )
         clear_topics(mgmt_service)
         topic_name = "dfjdfj"
         subscription_name = "kwqxd"

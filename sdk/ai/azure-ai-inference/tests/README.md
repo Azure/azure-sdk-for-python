@@ -4,11 +4,15 @@ The instructions below are for running tests locally, on a Windows machine, agai
 
 ## Prerequisites
 
-The live tests were written against the AI models mentioned below. You will need to deploy them in [Azure AI Studio](https://ai.azure.com/) and have the endpoint and key for each one of them.
+The live tests were written against the AI models mentioned below. You will need to deploy these two in [Azure AI Studio](https://ai.azure.com/) and have the endpoint and key for each one of them.
 
-- `Mistral-Large` for chat completion tests
+- `Mistral-Large` for chat completion tests, including tool tests
 - `Cohere-embed-v3-english` for embedding tests
 <!-- - `TBD` for image generation tests -->
+
+In addition, you will need to deploy a gpt-4o model in the Azure OpenAI Studio, and have the endpoint and key for it:
+
+- `gpt-4o` on Azure OpenAI (AOAI), for chat completions tests with image input
 
 ## Setup
 
@@ -23,16 +27,30 @@ The live tests were written against the AI models mentioned below. You will need
         ```bash
         pip install wheel
         pip install -r dev_requirements.txt
-        python setup.py bdist_wheel
+        python setup.py bdist_whee
         ```
-    - Then install the resulting local wheel (update version `1.0.0b1` to the current one):
+    - Then install the resulting local wheel (update version `1.0.0b2` to the current one):
         ```bash
-        pip install dist\azure_ai_inference-1.0.0b1-py3-none-any.whl --user --force-reinstall
+        pip install dist\azure_ai_inference-1.0.0b2-py3-none-any.whl --user --force-reinstall
         ```
 
 ## Set environment variables
 
-The tests read endpoints and keys from environemt variables. See the [Set environment variables](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/README.md#set-environment-variables) section in the samples README.md file for the full list of environment variables that need to be set for all tests to pass.
+Here is the list of environment variables used by the tests:
+
+```bash
+# For chat completions test, including tools
+set AZURE_AI_CHAT_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
+set AZURE_AI_CHAT_KEY=<32-char-api-key>
+
+# For chat completions tests using image input
+set AZURE_OPENAI_CHAT_ENDPOINT=https://<endpont-name>.openai.azure.com/openai/deployments/gpt-4o
+set AZURE_OPENAI_CHAT_KEY=<32-char-api-key>
+
+# For text embedding tests
+set AZURE_AI_EMBEDDINGS_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
+set AZURE_AI_EMBEDDINGS_KEY=<32-char-api-key>
+```
 
 In addition, the following environment values **must be** defined, although not used. Assign any value to them:
 

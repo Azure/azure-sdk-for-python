@@ -1,13 +1,38 @@
 # Release History
 
-## 1.0.0b27 (Unreleased)
+## 1.0.0b29 (Unreleased)
+
+### Features Added
+
+- Allow passing in of custom `TracerProvider` for `AzureMonitorTraceExporter`
+    ([#36363](https://github.com/Azure/azure-sdk-for-python/pull/36363))
+- Support AAD Auth for live metrics
+    ([#37258](https://github.com/Azure/azure-sdk-for-python/pull/37258))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Update instrumentation constants info
+    ([#36696](https://github.com/Azure/azure-sdk-for-python/pull/36696))
+- Refactor statsbeat utils functions
+    ([#36824](https://github.com/Azure/azure-sdk-for-python/pull/36824))
+
+## 1.0.0b28 (2024-07-29)
+
+### Other Changes
+
+- Support for Python 3.12
+    ([#36481](https://github.com/Azure/azure-sdk-for-python/pull/36481))
+
+## 1.0.0b27 (2024-06-21)
 
 ### Features Added
 
 - Implement redirect for live metrics
     ([#35910](https://github.com/Azure/azure-sdk-for-python/pull/35910))
-
-### Breaking Changes
 
 ### Bugs Fixed
 
@@ -15,8 +40,6 @@
     success criteria to `False` for those invalid cases, change success criteria to status_code < 400 for
     both client and server standard metrics
     ([#36079](https://github.com/Azure/azure-sdk-for-python/pull/36079))
-
-### Other Changes
 
 ## 1.0.0b26 (2024-05-29)
 
