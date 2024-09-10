@@ -21,7 +21,6 @@ from typing import (
     Callable,
     TYPE_CHECKING,
 )  # pylint: disable=line-too-long
-from copy import deepcopy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.pipeline import PipelineResponse
