@@ -38,7 +38,12 @@ class AccessTokenInfo:
     """Specifies the time, in Unix time, when the cached token should be proactively refreshed. Optional."""
 
     def __init__(
-        self, token: str, expires_on: int, *, token_type: str = "Bearer", refresh_on: Optional[int] = None
+        self,
+        token: str,
+        expires_on: int,
+        *,
+        token_type: str = "Bearer",
+        refresh_on: Optional[int] = None,
     ) -> None:
         self.token = token
         self.expires_on = expires_on
@@ -95,7 +100,9 @@ class TokenCredential(Protocol):
 class SupportsTokenInfo(Protocol, ContextManager["SupportsTokenInfo"]):
     """Protocol for classes able to provide OAuth access tokens with additional properties."""
 
-    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+    def get_token_info(
+        self, *scopes: str, options: Optional[TokenRequestOptions] = None
+    ) -> AccessTokenInfo:
         """Request an access token for `scopes`.
 
         This is an alternative to `get_token` to enable certain scenarios that require additional properties

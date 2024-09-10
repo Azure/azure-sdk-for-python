@@ -43,7 +43,10 @@ class PollingMethod(Generic[PollingReturnType_co]):
     """ABC class for polling method."""
 
     def initialize(
-        self, client: Any, initial_response: Any, deserialization_callback: DeserializationCallbackType
+        self,
+        client: Any,
+        initial_response: Any,
+        deserialization_callback: DeserializationCallbackType,
     ) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
@@ -60,13 +63,21 @@ class PollingMethod(Generic[PollingReturnType_co]):
         raise NotImplementedError("This method needs to be implemented")
 
     def get_continuation_token(self) -> str:
-        raise TypeError("Polling method '{}' doesn't support get_continuation_token".format(self.__class__.__name__))
+        raise TypeError(
+            "Polling method '{}' doesn't support get_continuation_token".format(
+                self.__class__.__name__
+            )
+        )
 
     @classmethod
     def from_continuation_token(
         cls, continuation_token: str, **kwargs: Any
     ) -> Tuple[Any, Any, DeserializationCallbackType]:
-        raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
+        raise TypeError(
+            "Polling method '{}' doesn't support from_continuation_token".format(
+                cls.__name__
+            )
+        )
 
 
 class _SansIONoPolling(Generic[PollingReturnType_co]):
@@ -116,14 +127,18 @@ class _SansIONoPolling(Generic[PollingReturnType_co]):
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
-            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token") from None
+            raise ValueError(
+                "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
+            ) from None
         import pickle
 
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         return None, initial_response, deserialization_callback
 
 
-class NoPolling(_SansIONoPolling[PollingReturnType_co], PollingMethod[PollingReturnType_co]):
+class NoPolling(
+    _SansIONoPolling[PollingReturnType_co], PollingMethod[PollingReturnType_co]
+):
     """An empty poller that returns the deserialized initial response."""
 
     def run(self) -> None:
@@ -161,7 +176,9 @@ class LROPoller(Generic[PollingReturnType_co]):
             pass
 
         # Might raise a CloudError
-        self._polling_method.initialize(client, initial_response, deserialization_callback)
+        self._polling_method.initialize(
+            client, initial_response, deserialization_callback
+        )
 
         # Prepare thread execution
         self._thread = None
@@ -222,7 +239,10 @@ class LROPoller(Generic[PollingReturnType_co]):
 
     @classmethod
     def from_continuation_token(
-        cls, polling_method: PollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
+        cls,
+        polling_method: PollingMethod[PollingReturnType_co],
+        continuation_token: str,
+        **kwargs: Any
     ) -> "LROPoller[PollingReturnType_co]":
         (
             client,

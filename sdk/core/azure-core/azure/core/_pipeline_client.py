@@ -82,7 +82,9 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
         **kwargs: Any,
     ):
         super(PipelineClient, self).__init__(base_url)
-        self._config: Configuration[HTTPRequestType, HTTPResponseType] = config or Configuration(**kwargs)
+        self._config: Configuration[HTTPRequestType, HTTPResponseType] = (
+            config or Configuration(**kwargs)
+        )
         self._base_url = base_url
 
         self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
@@ -140,7 +142,11 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
                 [
                     config.logging_policy,
                     DistributedTracingPolicy(**kwargs),
-                    SensitiveHeaderCleanupPolicy(**kwargs) if config.redirect_policy else None,
+                    (
+                        SensitiveHeaderCleanupPolicy(**kwargs)
+                        if config.redirect_policy
+                        else None
+                    ),
                     config.http_logging_policy or HttpLoggingPolicy(**kwargs),
                 ]
             )
@@ -179,7 +185,9 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
 
         return Pipeline(transport, policies)
 
-    def send_request(self, request: HTTPRequestType, *, stream: bool = False, **kwargs: Any) -> HTTPResponseType:
+    def send_request(
+        self, request: HTTPRequestType, *, stream: bool = False, **kwargs: Any
+    ) -> HTTPResponseType:
         """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

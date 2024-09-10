@@ -24,7 +24,15 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, Union, TypeVar, overload, TYPE_CHECKING, MutableMapping
+from typing import (
+    Iterator,
+    Optional,
+    Union,
+    TypeVar,
+    overload,
+    TYPE_CHECKING,
+    MutableMapping,
+)
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
@@ -101,7 +109,9 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
     """
 
     def __init__(self, request, requests_response, block_size=None):
-        super(_RequestsTransportResponseBase, self).__init__(request, requests_response, block_size=block_size)
+        super(_RequestsTransportResponseBase, self).__init__(
+            request, requests_response, block_size=block_size
+        )
         self.status_code = requests_response.status_code
         self.headers = requests_response.headers
         self.reason = requests_response.reason
@@ -157,12 +167,16 @@ class StreamDownloadGenerator:
         self.block_size = response.block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
-            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+            raise TypeError(
+                "Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0])
+            )
         internal_response = response.internal_response
         if decompress:
             self.iter_content_func = internal_response.iter_content(self.block_size)
         else:
-            self.iter_content_func = _read_raw_stream(internal_response, self.block_size)
+            self.iter_content_func = _read_raw_stream(
+                internal_response, self.block_size
+            )
         self.content_length = int(response.headers.get("Content-Length", 0))
 
     def __len__(self):
@@ -285,7 +299,9 @@ class RequestsTransport(HttpTransport):
                 self.session = requests.Session()
                 self._init_session(self.session)
             else:
-                raise ValueError("session_owner cannot be False and no session is available")
+                raise ValueError(
+                    "session_owner cannot be False and no session is available"
+                )
         self._has_been_opened = True
 
     def close(self):
@@ -295,7 +311,11 @@ class RequestsTransport(HttpTransport):
 
     @overload
     def send(
-        self, request: HttpRequest, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs
+        self,
+        request: HttpRequest,
+        *,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **kwargs
     ) -> HttpResponse:
         """Send a rest request and get back a rest response.
 
@@ -309,7 +329,11 @@ class RequestsTransport(HttpTransport):
 
     @overload
     def send(
-        self, request: "RestHttpRequest", *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs
+        self,
+        request: "RestHttpRequest",
+        *,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **kwargs
     ) -> "RestHttpResponse":
         """Send an `azure.core.rest` request and get back a rest response.
 
@@ -342,15 +366,21 @@ class RequestsTransport(HttpTransport):
         error: Optional[AzureErrorUnion] = None
 
         try:
-            connection_timeout = kwargs.pop("connection_timeout", self.connection_config.timeout)
+            connection_timeout = kwargs.pop(
+                "connection_timeout", self.connection_config.timeout
+            )
 
             if isinstance(connection_timeout, tuple):
                 if "read_timeout" in kwargs:
-                    raise ValueError("Cannot set tuple connection_timeout and read_timeout together")
+                    raise ValueError(
+                        "Cannot set tuple connection_timeout and read_timeout together"
+                    )
                 _LOGGER.warning("Tuple timeout setting is deprecated")
                 timeout = connection_timeout
             else:
-                read_timeout = kwargs.pop("read_timeout", self.connection_config.read_timeout)
+                read_timeout = kwargs.pop(
+                    "read_timeout", self.connection_config.read_timeout
+                )
                 timeout = (connection_timeout, read_timeout)
             response = self.session.request(  # type: ignore
                 request.method,
@@ -410,4 +440,6 @@ class RequestsTransport(HttpTransport):
             if not kwargs.get("stream"):
                 _handle_non_stream_rest_response(retval)
             return retval
-        return RequestsTransportResponse(request, response, self.connection_config.data_block_size)
+        return RequestsTransportResponse(
+            request, response, self.connection_config.data_block_size
+        )

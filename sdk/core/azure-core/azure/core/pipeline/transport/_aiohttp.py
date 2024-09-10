@@ -56,7 +56,10 @@ from azure.core.pipeline import AsyncPipeline
 
 from ._base import HttpRequest
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse, _ResponseStopIteration
-from ...utils._pipeline_transport_rest_shared import _aiohttp_body_helper, get_file_items
+from ...utils._pipeline_transport_rest_shared import (
+    _aiohttp_body_helper,
+    get_file_items,
+)
 from .._tools import is_rest as _is_rest
 from .._tools_async import (
     handle_no_stream_rest_response as _handle_no_stream_rest_response,
@@ -104,7 +107,9 @@ class AioHttpTransport(AsyncHttpTransport):
         **kwargs,
     ):
         if loop and sys.version_info >= (3, 10):
-            raise ValueError("Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore")
+            raise ValueError(
+                "Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore"
+            )
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
@@ -146,7 +151,9 @@ class AioHttpTransport(AsyncHttpTransport):
                     clientsession_kwargs["loop"] = self._loop
                 self.session = aiohttp.ClientSession(**clientsession_kwargs)
             else:
-                raise ValueError("session_owner cannot be False and no session is available")
+                raise ValueError(
+                    "session_owner cannot be False and no session is available"
+                )
 
         self._has_been_opened = True
         await self.session.__aenter__()
@@ -192,9 +199,13 @@ class AioHttpTransport(AsyncHttpTransport):
             for form_file, data in get_file_items(request.files):
                 content_type = data[2] if len(data) > 2 else None
                 try:
-                    form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)
+                    form_data.add_field(
+                        form_file, data[1], filename=data[0], content_type=content_type
+                    )
                 except IndexError as err:
-                    raise ValueError("Invalid formdata formatting: {}".format(data)) from err
+                    raise ValueError(
+                        "Invalid formdata formatting: {}".format(data)
+                    ) from err
             return form_data
         return request.data
 
@@ -298,8 +309,12 @@ class AioHttpTransport(AsyncHttpTransport):
         try:
             stream_response = stream
             timeout = config.pop("connection_timeout", self.connection_config.timeout)
-            read_timeout = config.pop("read_timeout", self.connection_config.read_timeout)
-            socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
+            read_timeout = config.pop(
+                "read_timeout", self.connection_config.read_timeout
+            )
+            socket_timeout = aiohttp.ClientTimeout(
+                sock_connect=timeout, sock_read=read_timeout
+            )
             result = await self.session.request(  # type: ignore
                 request.method,
                 request.url,
@@ -413,7 +428,9 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 if not self._decompressor:
                     import zlib
 
-                    zlib_mode = (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
+                    zlib_mode = (
+                        (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
+                    )
                     self._decompressor = zlib.decompressobj(wbits=zlib_mode)
                 chunk = self._decompressor.decompress(chunk)
             return chunk
@@ -459,7 +476,9 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         *,
         decompress: bool = True,
     ) -> None:
-        super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
+        super(AioHttpTransportResponse, self).__init__(
+            request, aiohttp_response, block_size=block_size
+        )
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status
         self.headers = CIMultiDict(aiohttp_response.headers)
@@ -540,7 +559,11 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             raise ServiceRequestError(err, error=err) from err
 
     def stream_download(
-        self, pipeline: AsyncPipeline[HttpRequest, AsyncHttpResponse], *, decompress: bool = True, **kwargs
+        self,
+        pipeline: AsyncPipeline[HttpRequest, AsyncHttpResponse],
+        *,
+        decompress: bool = True,
+        **kwargs,
     ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
@@ -551,7 +574,9 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         :rtype: AsyncIterator[bytes]
         :return: An iterator of bytes chunks.
         """
-        return AioHttpStreamDownloadGenerator(pipeline, self, decompress=decompress, **kwargs)
+        return AioHttpStreamDownloadGenerator(
+            pipeline, self, decompress=decompress, **kwargs
+        )
 
     def __getstate__(self):
         # Be sure body is loaded in memory, otherwise not pickable and let it throw
@@ -559,6 +584,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        state["internal_response"] = None  # aiohttp response are not pickable (see headers comments)
+        state["internal_response"] = (
+            None  # aiohttp response are not pickable (see headers comments)
+        )
         state["headers"] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state

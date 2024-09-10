@@ -82,7 +82,6 @@ def _get_running_loop():
     return asyncio.get_running_loop()
 
 
-
 class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the built-in asyncio event loop.
@@ -106,14 +105,20 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         exc_value: Optional[BaseException] = None,
         traceback: Optional[TracebackType] = None,
     ) -> None:
-        return super(AsyncioRequestsTransport, self).__exit__(exc_type, exc_value, traceback)
+        return super(AsyncioRequestsTransport, self).__exit__(
+            exc_type, exc_value, traceback
+        )
 
     async def sleep(self, duration):  # pylint:disable=invalid-overridden-method
         await asyncio.sleep(duration)
 
     @overload  # type: ignore
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: HttpRequest, *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
+        self,
+        request: HttpRequest,
+        *,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **kwargs: Any
     ) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
@@ -127,7 +132,11 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
 
     @overload
     async def send(  # pylint:disable=invalid-overridden-method
-        self, request: "RestHttpRequest", *, proxies: Optional[MutableMapping[str, str]] = None, **kwargs: Any
+        self,
+        request: "RestHttpRequest",
+        *,
+        proxies: Optional[MutableMapping[str, str]] = None,
+        **kwargs: Any
     ) -> "RestAsyncHttpResponse":
         """Send a `azure.core.rest` request using this HTTP sender.
 
@@ -170,8 +179,12 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                     headers=request.headers,
                     data=data_to_send,
                     files=request.files,
-                    verify=kwargs.pop("connection_verify", self.connection_config.verify),
-                    timeout=kwargs.pop("connection_timeout", self.connection_config.timeout),
+                    verify=kwargs.pop(
+                        "connection_verify", self.connection_config.verify
+                    ),
+                    timeout=kwargs.pop(
+                        "connection_timeout", self.connection_config.timeout
+                    ),
                     cert=kwargs.pop("connection_cert", self.connection_config.cert),
                     allow_redirects=False,
                     proxies=proxies,
@@ -219,7 +232,9 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
                 await _handle_no_stream_rest_response(retval)
             return retval
 
-        return AsyncioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
+        return AsyncioRequestsTransportResponse(
+            request, response, self.connection_config.data_block_size
+        )
 
 
 class AsyncioStreamDownloadGenerator(AsyncIterator):
@@ -233,19 +248,25 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
             on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs) -> None:
+    def __init__(
+        self, pipeline: Pipeline, response: AsyncHttpResponse, **kwargs
+    ) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
         self.block_size = response.block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
-            raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
+            raise TypeError(
+                "Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0])
+            )
         internal_response = response.internal_response
         if decompress:
             self.iter_content_func = internal_response.iter_content(self.block_size)
         else:
-            self.iter_content_func = _read_raw_stream(internal_response, self.block_size)
+            self.iter_content_func = _read_raw_stream(
+                internal_response, self.block_size
+            )
         self.content_length = int(response.headers.get("Content-Length", 0))
 
     def __len__(self):

@@ -7,7 +7,17 @@ from __future__ import annotations
 from enum import Enum
 from urllib.parse import urlparse
 
-from typing import Any, Sequence, Optional, Union, Callable, Dict, Type, Generic, TypeVar
+from typing import (
+    Any,
+    Sequence,
+    Optional,
+    Union,
+    Callable,
+    Dict,
+    Type,
+    Generic,
+    TypeVar,
+)
 from types import TracebackType
 from typing_extensions import Protocol, ContextManager, runtime_checkable
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
@@ -17,7 +27,9 @@ from azure.core.rest import (
     HttpRequest as RestHttpRequest,
 )
 
-HttpResponseType = Union[HttpResponse, AsyncHttpResponse, RestHttpResponse, AsyncRestHttpResponse]
+HttpResponseType = Union[
+    HttpResponse, AsyncHttpResponse, RestHttpResponse, AsyncRestHttpResponse
+]
 HttpRequestType = Union[HttpRequest, RestHttpRequest]
 
 AttributeValue = Union[
@@ -139,7 +151,9 @@ class AbstractSpan(Protocol, Generic[SpanType]):
         """
         ...
 
-    def set_http_attributes(self, request: HttpRequestType, response: Optional[HttpResponseType] = None) -> None:
+    def set_http_attributes(
+        self, request: HttpRequestType, response: Optional[HttpResponseType] = None
+    ) -> None:
         """
         Add correct attributes for a http client span.
 
@@ -178,7 +192,9 @@ class AbstractSpan(Protocol, Generic[SpanType]):
         ...
 
     @classmethod
-    def link_from_headers(cls, headers: Dict[str, str], attributes: Optional[Attributes] = None) -> None:
+    def link_from_headers(
+        cls, headers: Dict[str, str], attributes: Optional[Attributes] = None
+    ) -> None:
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
 
@@ -263,7 +279,9 @@ class HttpSpanMixin:
     _ERROR_TYPE = "error.type"
 
     def set_http_attributes(
-        self: AbstractSpan, request: HttpRequestType, response: Optional[HttpResponseType] = None
+        self: AbstractSpan,
+        request: HttpRequestType,
+        response: Optional[HttpResponseType] = None,
     ) -> None:
         """
         Add correct attributes for a http client span.
@@ -306,6 +324,8 @@ class Link:
     :type attributes: dict
     """
 
-    def __init__(self, headers: Dict[str, str], attributes: Optional[Attributes] = None) -> None:
+    def __init__(
+        self, headers: Dict[str, str], attributes: Optional[Attributes] = None
+    ) -> None:
         self.headers = headers
         self.attributes = attributes

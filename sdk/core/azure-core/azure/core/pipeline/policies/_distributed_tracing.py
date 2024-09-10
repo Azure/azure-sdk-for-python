@@ -32,7 +32,10 @@ from types import TracebackType
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.pipeline.transport import (
+    HttpResponse as LegacyHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+)
 from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
@@ -79,7 +82,9 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     _HTTP_RESEND_COUNT = "http.request.resend_count"
 
     def __init__(self, **kwargs: Any):
-        self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
+        self._network_span_namer = kwargs.get(
+            "network_span_namer", _default_network_span_namer
+        )
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
@@ -127,19 +132,25 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         if span is not None:
             span.set_http_attributes(http_request, response=response)
             if request.context.get("retry_count"):
-                span.add_attribute(self._HTTP_RESEND_COUNT, request.context["retry_count"])
+                span.add_attribute(
+                    self._HTTP_RESEND_COUNT, request.context["retry_count"]
+                )
             request_id = http_request.headers.get(self._REQUEST_ID)
             if request_id is not None:
                 span.add_attribute(self._REQUEST_ID, request_id)
             if response and self._RESPONSE_ID in response.headers:
-                span.add_attribute(self._RESPONSE_ID, response.headers[self._RESPONSE_ID])
+                span.add_attribute(
+                    self._RESPONSE_ID, response.headers[self._RESPONSE_ID]
+                )
             if exc_info:
                 span.__exit__(*exc_info)
             else:
                 span.finish()
 
     def on_response(
-        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> None:
         self.end_span(request, response=response.http_response)
 

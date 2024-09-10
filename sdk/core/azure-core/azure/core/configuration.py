@@ -39,7 +39,9 @@ if TYPE_CHECKING:
     ]
 
 
-class Configuration(Generic[HTTPRequestType, HTTPResponseType]):  # pylint: disable=too-many-instance-attributes
+class Configuration(
+    Generic[HTTPRequestType, HTTPResponseType]
+):  # pylint: disable=too-many-instance-attributes
     """Provides the home for all of the configurable policies in the pipeline.
 
     A new Configuration object provides no default policies and does not specify in what
@@ -73,34 +75,50 @@ class Configuration(Generic[HTTPRequestType, HTTPResponseType]):  # pylint: disa
 
     def __init__(self, **kwargs: Any) -> None:
         # Headers (sent with every request)
-        self.headers_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
+        self.headers_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = (
+            None
+        )
 
         # Proxy settings (Currently used to configure transport, could be pipeline policy instead)
         self.proxy_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Redirect configuration
-        self.redirect_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
+        self.redirect_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = (
+            None
+        )
 
         # Retry configuration
         self.retry_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Custom hook configuration
-        self.custom_hook_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
+        self.custom_hook_policy: Optional[
+            AnyPolicy[HTTPRequestType, HTTPResponseType]
+        ] = None
 
         # Logger configuration
-        self.logging_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
+        self.logging_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = (
+            None
+        )
 
         # Http logger configuration
-        self.http_logging_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
+        self.http_logging_policy: Optional[
+            AnyPolicy[HTTPRequestType, HTTPResponseType]
+        ] = None
 
         # User Agent configuration
-        self.user_agent_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
+        self.user_agent_policy: Optional[
+            AnyPolicy[HTTPRequestType, HTTPResponseType]
+        ] = None
 
         # Authentication configuration
-        self.authentication_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
+        self.authentication_policy: Optional[
+            AnyPolicy[HTTPRequestType, HTTPResponseType]
+        ] = None
 
         # Request ID policy
-        self.request_id_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
+        self.request_id_policy: Optional[
+            AnyPolicy[HTTPRequestType, HTTPResponseType]
+        ] = None
 
         # Polling interval if no retry-after in polling calls results
         self.polling_interval: float = kwargs.get("polling_interval", 30)

@@ -27,7 +27,16 @@
 
 import functools
 
-from typing import Awaitable, Callable, Any, TypeVar, overload, Optional, Mapping, TYPE_CHECKING
+from typing import (
+    Awaitable,
+    Callable,
+    Any,
+    TypeVar,
+    overload,
+    Optional,
+    Mapping,
+    TYPE_CHECKING,
+)
 from typing_extensions import ParamSpec
 from .common import change_context, get_function_and_class_name
 from . import SpanKind as _SpanKind
@@ -41,7 +50,9 @@ T = TypeVar("T")
 
 
 @overload
-def distributed_trace_async(__func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
+def distributed_trace_async(
+    __func: Callable[P, Awaitable[T]]
+) -> Callable[P, Awaitable[T]]:
     pass
 
 
@@ -57,7 +68,9 @@ def distributed_trace_async(
 
 
 def distributed_trace_async(
-    __func: Optional[Callable[P, Awaitable[T]]] = None,  # pylint: disable=unused-argument
+    __func: Optional[
+        Callable[P, Awaitable[T]]
+    ] = None,  # pylint: disable=unused-argument
     *,
     name_of_span: Optional[str] = None,
     kind: Optional["SpanKind"] = None,

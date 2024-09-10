@@ -47,7 +47,9 @@ from ..rest import HttpRequest, AsyncHttpResponse
 HttpRequestType = Union[LegacyHttpRequest, HttpRequest]
 AsyncHttpResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
 HttpRequestTypeVar = TypeVar("HttpRequestTypeVar", bound=HttpRequestType)
-AsyncHttpResponseTypeVar = TypeVar("AsyncHttpResponseTypeVar", bound=AsyncHttpResponseType)
+AsyncHttpResponseTypeVar = TypeVar(
+    "AsyncHttpResponseTypeVar", bound=AsyncHttpResponseType
+)
 
 
 PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
@@ -81,7 +83,9 @@ class AsyncLROBasePolling(
     """Store the latest received HTTP response, initialized by the first answer."""
 
     @property
-    def _transport(self) -> AsyncHttpTransport[HttpRequestTypeVar, AsyncHttpResponseTypeVar]:
+    def _transport(
+        self,
+    ) -> AsyncHttpTransport[HttpRequestTypeVar, AsyncHttpResponseTypeVar]:
         return self._client._pipeline._transport  # pylint: disable=protected-access
 
     async def run(self) -> None:
@@ -90,7 +94,9 @@ class AsyncLROBasePolling(
 
         except BadStatus as err:
             self._status = "Failed"
-            raise HttpResponseError(response=self._pipeline_response.http_response, error=err) from err
+            raise HttpResponseError(
+                response=self._pipeline_response.http_response, error=err
+            ) from err
 
         except BadResponse as err:
             self._status = "Failed"
@@ -101,7 +107,9 @@ class AsyncLROBasePolling(
             ) from err
 
         except OperationFailed as err:
-            raise HttpResponseError(response=self._pipeline_response.http_response, error=err) from err
+            raise HttpResponseError(
+                response=self._pipeline_response.http_response, error=err
+            ) from err
 
     async def _poll(self) -> None:
         """Poll status of operation so long as operation is incomplete and
@@ -137,11 +145,15 @@ class AsyncLROBasePolling(
 
     async def update_status(self) -> None:
         """Update the current status of the LRO."""
-        self._pipeline_response = await self.request_status(self._operation.get_polling_url())
+        self._pipeline_response = await self.request_status(
+            self._operation.get_polling_url()
+        )
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    async def request_status(self, status_link: str) -> PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar]:
+    async def request_status(
+        self, status_link: str
+    ) -> PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar]:
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.
@@ -151,7 +163,9 @@ class AsyncLROBasePolling(
         :return: The response of the status request.
         """
         if self._path_format_arguments:
-            status_link = self._client.format_url(status_link, **self._path_format_arguments)
+            status_link = self._client.format_url(
+                status_link, **self._path_format_arguments
+            )
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
@@ -162,7 +176,11 @@ class AsyncLROBasePolling(
             # declared in the typing of "send_request"
             return cast(
                 PipelineResponse[HttpRequestTypeVar, AsyncHttpResponseTypeVar],
-                await self._client.send_request(rest_request, _return_pipeline_response=True, **self._operation_config),
+                await self._client.send_request(
+                    rest_request,
+                    _return_pipeline_response=True,
+                    **self._operation_config
+                ),
             )
 
         # Legacy HttpRequest and AsyncHttpResponse from azure.core.pipeline.transport

@@ -25,7 +25,10 @@
 # --------------------------------------------------------------------------
 from typing import List, Optional, Any, TypeVar
 from azure.core.pipeline import PipelineRequest
-from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest, HttpResponse as LegacyHttpResponse
+from azure.core.pipeline.transport import (
+    HttpRequest as LegacyHttpRequest,
+    HttpResponse as LegacyHttpResponse,
+)
 from azure.core.rest import HttpRequest, HttpResponse
 from ._base import SansIOHTTPPolicy
 
@@ -71,7 +74,9 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPRespons
         # has occurred to a different domain. This tells the SensitiveHeaderCleanupPolicy
         # to clean up sensitive headers. We need to remove it before sending the request
         # to the transport layer.
-        insecure_domain_change = request.context.options.pop("insecure_domain_change", False)
+        insecure_domain_change = request.context.options.pop(
+            "insecure_domain_change", False
+        )
         if not self._disable_redirect_cleanup and insecure_domain_change:
             for header in self._blocked_redirect_headers:
                 request.http_request.headers.pop(header, None)

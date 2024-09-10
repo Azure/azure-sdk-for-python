@@ -44,13 +44,17 @@ from azure.core.exceptions import (
 from ._base_async import AsyncHTTPPolicy
 from ._retry import RetryPolicyBase
 
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
+AsyncHTTPResponseType = TypeVar(
+    "AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse
+)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
+class AsyncRetryPolicy(
+    RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
+):
     """Async flavor of the retry policy.
 
     The async retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
@@ -107,7 +111,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
         return False
 
     async def _sleep_backoff(
-        self, settings: Dict[str, Any], transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]
+        self,
+        settings: Dict[str, Any],
+        transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
     ) -> None:
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
 
@@ -124,7 +130,9 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
         self,
         settings: Dict[str, Any],
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
-        response: Optional[PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]] = None,
+        response: Optional[
+            PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
+        ] = None,
     ) -> None:
         """Sleep between retry attempts.
 
@@ -171,8 +179,11 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
             # here we know that this is an AsyncHttpTransport.
             # The correct fix is to make PipelineContext generic, but that's a breaking change and a lot of
             # generic to update in Pipeline, PipelineClient, PipelineRequest, PipelineResponse, etc.
-            transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType] = cast(
-                AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType], request.context.transport
+            transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType] = (
+                cast(
+                    AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
+                    request.context.transport,
+                )
             )
             try:
                 self._configure_timeout(request, absolute_timeout, is_response_error)
@@ -194,8 +205,12 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
             except AzureError as err:
-                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
-                    retry_active = self.increment(retry_settings, response=request, error=err)
+                if absolute_timeout > 0 and self._is_method_retryable(
+                    retry_settings, request.http_request
+                ):
+                    retry_active = self.increment(
+                        retry_settings, response=request, error=err
+                    )
                     if retry_active:
                         await self.sleep(retry_settings, transport)
                         if isinstance(err, ServiceRequestError):
