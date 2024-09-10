@@ -103,6 +103,9 @@ def generate_payload(normalized_user_text: str, metric: str) -> Dict:
     elif metric == _InternalEvaluationMetrics.ECI:
         task = _InternalAnnotationTasks.ECI
         include_metric = False
+    elif metric == EvaluationMetrics.XPIA:
+        task = Tasks.XPIA
+        include_metric = False
     return (
         {
             "UserTextList": [normalized_user_text],
@@ -207,8 +210,8 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     :return: The parsed annotation result.
     :rtype: List[List[Dict]]
     """
-
-    if metric_name in {EvaluationMetrics.PROTECTED_MATERIAL, _InternalEvaluationMetrics.ECI}:
+    # non-numeric metrics
+    if metric_name in {EvaluationMetrics.PROTECTED_MATERIAL, _InternalEvaluationMetrics.ECI, EvaluationMetrics.XPIA}:
         if not batch_response or len(batch_response[0]) == 0 or metric_name not in batch_response[0]:
             return {}
         response = batch_response[0][metric_name]
@@ -216,10 +219,39 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         response = response.replace("true", "True")
         parsed_response = literal_eval(response)
         result = {}
-        result["label"] = parsed_response["label"] if "label" in parsed_response else np.nan
-        result["reasoning"] = parsed_response["reasoning"] if "reasoning" in parsed_response else ""
+        metric_prefix = _get_metric_prefix(metric_name)
+        # Use label instead of score since these are assumed to be boolean results.
+        # Use np.nan as null value since it's ignored by aggregations rather than treated as 0.
+        result[metric_prefix + "_label"] = parsed_response["label"] if "label" in parsed_response else np.nan
+        result[metric_prefix + "_reason"] = parsed_response["reasoning"] if "reasoning" in parsed_response else ""
+
+        if metric_name == EvaluationMetrics.XPIA:
+            # Add "manipulated_content", "intrusion" and "information_gathering" to the result
+            # if present else set them to np.nan
+            result[metric_prefix + "_manipulated_content"] = (
+                parsed_response["manipulated_content"] if "manipulated_content" in parsed_response else np.nan
+            )
+            result[metric_prefix + "_intrusion"] = (
+                parsed_response["intrusion"] if "intrusion" in parsed_response else np.nan
+            )
+            result[metric_prefix + "_information_gathering"] = (
+                parsed_response["information_gathering"] if "information_gathering" in parsed_response else np.nan
+            )
         return result
     return _parse_content_harm_response(batch_response, metric_name)
+
+
+def _get_metric_prefix(metric_name: str) -> str:
+    """Get the prefix for the evaluation metric. This is usually the metric name.
+
+    :param metric_name: The evaluation metric to use.
+    :type metric_name: str
+    :return: The prefix for the evaluation metric.
+    :rtype: str
+    """
+    if metric_name == _InternalEvaluationMetrics.ECI:
+        return "ECI"
+    return metric_name
 
 
 def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -> Dict:

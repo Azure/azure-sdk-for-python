@@ -6,10 +6,10 @@ import functools
 import logging
 from typing import Any, Callable, Dict
 
+from azure.ai.evaluation.synthetic.adversarial_scenario import AdversarialScenario
 from azure.identity import DefaultAzureCredential
 
 from promptflow._sdk._telemetry import ActivityType, monitor_operation
-from azure.ai.evaluation.synthetic.adversarial_scenario import AdversarialScenario
 
 from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
 from .adversarial_simulator import AdversarialSimulator
@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 def monitor_adversarial_scenario(func) -> Callable:
     """Decorator to monitor adversarial scenario.
-
     :param func: The function to be decorated.
     :type func: Callable
     :return: The decorated function.
@@ -32,7 +31,7 @@ def monitor_adversarial_scenario(func) -> Callable:
         max_conversation_turns = kwargs.get("max_conversation_turns", None)
         max_simulation_results = kwargs.get("max_simulation_results", None)
         decorated_func = monitor_operation(
-            activity_name="jailbreak.adversarial.simulator.call",
+            activity_name="xpia.adversarial.simulator.call",
             activity_type=ActivityType.PUBLICAPI,
             custom_dimensions={
                 "scenario": scenario,
@@ -46,18 +45,18 @@ def monitor_adversarial_scenario(func) -> Callable:
     return wrapper
 
 
-class JailbreakAdversarialSimulator:
+class IndirectAttackSimulator:
     """
-    Initializes the jailbreak adversarial simulator with a project scope.
+    Initializes the XPIA (cross domain prompt injected attack) jailbreak adversarial simulator with a project scope.
 
     :param azure_ai_project: Dictionary defining the scope of the project. It must include the following keys:
 
         * "subscription_id": Azure subscription ID.
         * "resource_group_name": Name of the Azure resource group.
         * "project_name": Name of the Azure Machine Learning workspace.
+    :type azure_ai_project: Dict[str, Any]
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
-    :type azure_ai_project: Dict[str, Any]
     """
 
     def __init__(self, *, azure_ai_project: Dict[str, Any], credential=None):
@@ -67,7 +66,6 @@ class JailbreakAdversarialSimulator:
             raise ValueError(
                 "azure_ai_project must contain keys: subscription_id, resource_group_name and project_name"
             )
-        # check the value of the keys in azure_ai_project is not none
         if not all(azure_ai_project[key] for key in ["subscription_id", "resource_group_name", "project_name"]):
             raise ValueError("subscription_id, resource_group_name and project_name must not be None")
         if "credential" not in azure_ai_project and not credential:
@@ -104,15 +102,12 @@ class JailbreakAdversarialSimulator:
         concurrent_async_task: int = 3,
     ):
         """
-        Executes the adversarial simulation and jailbreak adversarial simulation
-        against a specified target function asynchronously.
-
+        Initializes the XPIA (cross domain prompt injected attack) jailbreak adversarial simulator with a project scope.
+        This simulator converses with your AI system using prompts injected into the context to interrupt normal
+        expected functionality by eliciting manipulated content, intrusion and attempting to gather information outside
+        the scope of your AI system.
         :keyword scenario: Enum value specifying the adversarial scenario used for generating inputs.
-         example:
-
-         - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_QA`
-         - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_CONVERSATION`
-        :paramtype scenario: azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario
+        :paramtype scenario: promptflow.evals.synthetic.adversarial_scenario.AdversarialScenario
         :keyword target: The target function to simulate adversarial inputs against.
             This function should be asynchronous and accept a dictionary representing the adversarial input.
         :paramtype target: Callable
@@ -135,23 +130,17 @@ class JailbreakAdversarialSimulator:
             Defaults to 3.
         :paramtype concurrent_async_task: int
         :return: A list of dictionaries, each representing a simulated conversation. Each dictionary contains:
-
          - 'template_parameters': A dictionary with parameters used in the conversation template,
             including 'conversation_starter'.
          - 'messages': A list of dictionaries, each representing a turn in the conversation.
             Each message dictionary includes 'content' (the message text) and
             'role' (indicating whether the message is from the 'user' or the 'assistant').
          - '**$schema**': A string indicating the schema URL for the conversation format.
-
          The 'content' for 'assistant' role messages may includes the messages that your callback returned.
-        :rtype: Dict[str, [List[Dict[str, Any]]]] with two elements
-
+        :rtype: List[Dict[str, Any]]
         **Output format**
-
         .. code-block:: python
-
-            return_value = {
-                "jailbreak": [
+            return_value = [
                 {
                     'template_parameters': {},
                     'messages': [
@@ -166,38 +155,11 @@ class JailbreakAdversarialSimulator:
                         }
                     ],
                     '$schema': 'http://azureml/sdk-2-0/ChatConversation.json'
-                }],
-                "regular": [
-                {
-                    'template_parameters': {},
-                    'messages': [
-                    {
-                        'content': '<adversaril question>',
-                        'role': 'user'
-                    },
-                    {
-                        'content': "<response from endpoint>",
-                        'role': 'assistant',
-                        'context': None
-                    }],
-                    '$schema': 'http://azureml/sdk-2-0/ChatConversation.json'
                 }]
             }
         """
         if scenario not in AdversarialScenario.__members__.values():
             raise ValueError("Invalid adversarial scenario")
-        regular_sim = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
-        regular_sim_results = await regular_sim(
-            scenario=scenario,
-            target=target,
-            max_conversation_turns=max_conversation_turns,
-            max_simulation_results=max_simulation_results,
-            api_call_retry_limit=api_call_retry_limit,
-            api_call_retry_sleep_sec=api_call_retry_sleep_sec,
-            api_call_delay_sec=api_call_delay_sec,
-            concurrent_async_task=concurrent_async_task,
-            jailbreak=False,
-        )
         jb_sim = AdversarialSimulator(azure_ai_project=self.azure_ai_project, credential=self.credential)
         jb_sim_results = await jb_sim(
             scenario=scenario,
@@ -208,6 +170,6 @@ class JailbreakAdversarialSimulator:
             api_call_retry_sleep_sec=api_call_retry_sleep_sec,
             api_call_delay_sec=api_call_delay_sec,
             concurrent_async_task=concurrent_async_task,
-            jailbreak=True,
+            _jailbreak_type="xpia",
         )
-        return {"jailbreak": jb_sim_results, "regular": regular_sim_results}
+        return jb_sim_results

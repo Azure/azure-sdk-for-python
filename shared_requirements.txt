@@ -72,3 +72,5 @@ promptflow-core
 promptflow-devkit
 numpy
 jsonpath-ng
+nltk
+rouge-score
