@@ -109,7 +109,7 @@ class AzureAppConfigurationClient:
 
         .. code-block:: python
 
-            from azure.appconfiguration import
+            from azure.appconfiguration import AzureAppConfigurationClient
 
             connection_str = "<my connection string>"
             client = AzureAppConfigurationClient.from_connection_string(connection_str)
