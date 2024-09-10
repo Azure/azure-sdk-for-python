@@ -4,7 +4,7 @@
 # ------------------------------------
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
-from typing import Any, Optional, List, Union
+from typing import Any, Dict, List, Optional, Union
 from functools import partial
 
 from azure.core.polling import AsyncLROPoller
@@ -13,6 +13,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 
 from .. import (
+    AdministratorContact,
     KeyVaultCertificate,
     CertificateOperation,
     CertificatePolicy,
@@ -55,7 +56,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
     @distributed_trace_async
     async def create_certificate(
-        self, certificate_name: str, policy: CertificatePolicy, **kwargs: Any
+        self,
+        certificate_name: str,
+        policy: CertificatePolicy,
+        *,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
     ) -> Union[KeyVaultCertificate, CertificateOperation]:
         """Creates a new certificate.
 
@@ -93,7 +100,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        enabled = kwargs.pop("enabled", None)
 
         if enabled is not None:
             attributes = self._models.CertificateAttributes(enabled=enabled)
@@ -103,7 +109,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         parameters = self._models.CertificateCreateParameters(
             certificate_policy=policy._to_certificate_policy_bundle(),
             certificate_attributes=attributes,
-            tags=kwargs.pop("tags", None),
+            tags=tags,
         )
 
         pipeline_response, cert_bundle = await self._client.create_certificate(
@@ -336,7 +342,15 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def import_certificate(
-        self, certificate_name: str, certificate_bytes: bytes, **kwargs: Any
+        self,
+        certificate_name: str,
+        certificate_bytes: bytes,
+        *,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        password: Optional[str] = None,
+        policy: Optional[CertificatePolicy] = None,
+        **kwargs: Any,
     ) -> KeyVaultCertificate:
         """Import a certificate created externally. Requires certificates/import permission.
 
@@ -366,9 +380,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        enabled = kwargs.pop("enabled", None)
-        policy = kwargs.pop("policy", None)
-
         if enabled is not None:
             attributes = self._models.CertificateAttributes(enabled=enabled)
         else:
@@ -377,10 +388,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         parameters = self._models.CertificateImportParameters(
             base64_encoded_certificate=base64_encoded_certificate,
-            password=kwargs.pop("password", None),
+            password=password,
             certificate_policy=policy._to_certificate_policy_bundle() if policy else None,
             certificate_attributes=attributes,
-            tags=kwargs.pop("tags", None),
+            tags=tags,
         )
 
         bundle = await self._client.import_certificate(
@@ -436,7 +447,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def update_certificate_properties(
-        self, certificate_name: str, version: Optional[str] = None, **kwargs: Any
+        self,
+        certificate_name: str,
+        version: Optional[str] = None,
+        *,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
     ) -> KeyVaultCertificate:
         """Change a certificate's properties. Requires certificates/update permission.
 
@@ -461,15 +478,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :dedent: 8
         """
 
-        enabled = kwargs.pop("enabled", None)
-
         if enabled is not None:
             attributes = self._models.CertificateAttributes(enabled=enabled)
         else:
             attributes = None
 
         parameters = self._models.CertificateUpdateParameters(
-            certificate_attributes=attributes, tags=kwargs.pop("tags", None)
+            certificate_attributes=attributes, tags=tags
         )
 
         bundle = await self._client.update_certificate(
@@ -791,7 +806,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def merge_certificate(
-        self, certificate_name: str, x509_certificates: List[bytes], **kwargs: Any
+        self,
+        certificate_name: str,
+        x509_certificates: List[bytes],
+        *,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
     ) -> KeyVaultCertificate:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
@@ -814,15 +835,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        enabled = kwargs.pop("enabled", None)
-
         if enabled is not None:
             attributes = self._models.CertificateAttributes(enabled=enabled)
         else:
             attributes = None
 
         parameters = self._models.CertificateMergeParameters(
-            x509_certificates=x509_certificates, certificate_attributes=attributes, tags=kwargs.pop("tags", None)
+            x509_certificates=x509_certificates, certificate_attributes=attributes, tags=tags
         )
 
         bundle = await self._client.merge_certificate(
@@ -859,7 +878,18 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace_async
-    async def create_issuer(self, issuer_name: str, provider: str, **kwargs: Any) -> CertificateIssuer:
+    async def create_issuer(
+        self,
+        issuer_name: str,
+        provider: str,
+        *,
+        enabled: Optional[bool] = None,
+        account_id: Optional[str] = None,
+        password: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        admin_contacts: Optional[List[AdministratorContact]] = None,
+        **kwargs: Any,
+    ) -> CertificateIssuer:
         """Sets the specified certificate issuer. Requires certificates/setissuers permission.
 
         :param str issuer_name: The name of the issuer.
@@ -886,12 +916,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Create an issuer
                 :dedent: 8
         """
-
-        enabled = kwargs.pop("enabled", None)
-        account_id = kwargs.pop("account_id", None)
-        password = kwargs.pop("password", None)
-        organization_id = kwargs.pop("organization_id", None)
-        admin_contacts = kwargs.pop("admin_contacts", None)
 
         if account_id or password:
             issuer_credentials = self._models.IssuerCredentials(account_id=account_id, password=password)
@@ -931,7 +955,18 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateIssuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace_async
-    async def update_issuer(self, issuer_name: str, **kwargs: Any) -> CertificateIssuer:
+    async def update_issuer(
+        self,
+        issuer_name: str,
+        *,
+        enabled: Optional[bool] = None,
+        provider: Optional[str] = None,
+        account_id: Optional[str] = None,
+        password: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        admin_contacts: Optional[List[AdministratorContact]] = None,
+        **kwargs: Any,
+    ) -> CertificateIssuer:
         """Updates the specified certificate issuer. Requires certificates/setissuers permission.
 
         :param str issuer_name: The name of the issuer.
@@ -950,12 +985,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        enabled = kwargs.pop("enabled", None)
-        account_id = kwargs.pop("account_id", None)
-        password = kwargs.pop("password", None)
-        organization_id = kwargs.pop("organization_id", None)
-        admin_contacts = kwargs.pop("admin_contacts", None)
 
         if account_id or password:
             issuer_credentials = self._models.IssuerCredentials(account_id=account_id, password=password)
@@ -983,7 +1012,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             issuer_attributes = None
 
         parameters = self._models.CertificateIssuerUpdateParameters(
-            provider=kwargs.pop("provider", None),
+            provider=provider,
             credentials=issuer_credentials,
             organization_details=organization_details,
             attributes=issuer_attributes,

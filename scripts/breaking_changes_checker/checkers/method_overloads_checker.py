@@ -27,6 +27,9 @@ class MethodOverloadsChecker:
                         continue
                     # Check if all of the overloads were deleted for an existing stable method
                     if len(method_components.get("overloads", [])) == 0:
+                        if class_name not in stable_nodes[module_name]["class_nodes"]:
+                            # This is a new class, so we don't need to check for removed overloads
+                            continue
                         if method_name in stable_nodes[module_name]["class_nodes"][class_name]["methods"] and \
                                 "overloads" in stable_nodes[module_name]["class_nodes"][class_name]["methods"][method_name]:
                             if len(stable_nodes[module_name]["class_nodes"][class_name]["methods"][method_name]["overloads"]) > 0:
