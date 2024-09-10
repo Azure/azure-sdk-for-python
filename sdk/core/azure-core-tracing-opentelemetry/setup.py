@@ -55,6 +55,7 @@ setup(
     zip_safe=False,
     packages=[
         "azure.core.tracing.ext.opentelemetry_span",
+        "azure.core.tracing.ai.inference",
     ],
     include_package_data=True,
     package_data={

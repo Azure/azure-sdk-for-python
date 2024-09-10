@@ -15,7 +15,7 @@ from azure.ai.inference import models as _models
 from azure.core.tracing import AbstractSpan
 from azure.core.tracing import SpanKind
 from azure.core.settings import settings
-from .common import get_function_and_class_name
+from azure.core.tracing.common import get_function_and_class_name
 from opentelemetry.trace import Status, StatusCode, Span
 
 _inference_traces_enabled: bool = False
