@@ -354,7 +354,7 @@ async def test_cloud_shell_user_assigned_identity():
     )
 
     with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: endpoint}, clear=True):
-        credential = ManagedIdentityCredential(client_id=client_id, transport=transport)
+        credential = ManagedIdentityCredential(transport=transport)
         token = await credential.get_token(scope)
         assert token.token == expected_token
         assert token.expires_on == expires_on
