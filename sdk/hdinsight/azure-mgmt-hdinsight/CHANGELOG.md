@@ -1,5 +1,45 @@
 # Release History
 
+## 10.0.0b1 (2024-09-10)
+
+### Features Added
+
+  - Model `ClusterPatchParameters` added property `identity`
+  - Model `NetworkProperties` added property `outbound_dependencies_managed_type`
+  - Model `NetworkProperties` added property `public_ip_tag`
+  - Model `StorageAccount` added property `enable_secure_channel`
+  - Added model `IpTag`
+  - Added enum `OutboundDependenciesManagedType`
+  - Model `ApplicationsOperations` added parameter `args` in method `__init__`
+  - Model `ApplicationsOperations` added parameter `kwargs` in method `__init__`
+  - Model `ClustersOperations` added parameter `args` in method `__init__`
+  - Model `ClustersOperations` added parameter `kwargs` in method `__init__`
+  - Model `ConfigurationsOperations` added parameter `args` in method `__init__`
+  - Model `ConfigurationsOperations` added parameter `kwargs` in method `__init__`
+  - Model `ExtensionsOperations` added parameter `args` in method `__init__`
+  - Model `ExtensionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `ExtensionsOperations` added method `begin_disable_azure_monitor_agent`
+  - Model `ExtensionsOperations` added method `begin_enable_azure_monitor_agent`
+  - Model `ExtensionsOperations` added method `get_azure_monitor_agent_status`
+  - Model `LocationsOperations` added parameter `args` in method `__init__`
+  - Model `LocationsOperations` added parameter `kwargs` in method `__init__`
+  - Model `Operations` added parameter `args` in method `__init__`
+  - Model `Operations` added parameter `kwargs` in method `__init__`
+  - Model `PrivateEndpointConnectionsOperations` added parameter `args` in method `__init__`
+  - Model `PrivateEndpointConnectionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `PrivateLinkResourcesOperations` added parameter `args` in method `__init__`
+  - Model `PrivateLinkResourcesOperations` added parameter `kwargs` in method `__init__`
+  - Model `ScriptActionsOperations` added parameter `args` in method `__init__`
+  - Model `ScriptActionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `ScriptExecutionHistoryOperations` added parameter `args` in method `__init__`
+  - Model `ScriptExecutionHistoryOperations` added parameter `kwargs` in method `__init__`
+  - Model `VirtualMachinesOperations` added parameter `args` in method `__init__`
+  - Model `VirtualMachinesOperations` added parameter `kwargs` in method `__init__`
+
+### Breaking Changes
+
+  - Method `HDInsightManagementClient.__init__` parameter `base_url` changed default value from `None` to `str`
+
 ## 9.0.0b3 (2024-08-21)
 
 ### Features Added
