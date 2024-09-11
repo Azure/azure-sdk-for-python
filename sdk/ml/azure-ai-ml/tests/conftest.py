@@ -106,7 +106,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.repoURL']", value="fake_git_url")
     add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.branch']", value="fake_git_branch")
     add_body_key_sanitizer(json_path="$.properties.properties.['mlflow.source.git.commit']", value="fake_git_commit")
-    add_body_key_sanitizer(json_path="$.properties.displayName", value="000000000000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.hash_sha256", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.hash_version", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
@@ -132,10 +131,7 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_general_regex_sanitizer(regex=feature_store_name, value="00000")
     # masks signature in SAS uri
     add_general_regex_sanitizer(value="000000000000000000000000000000000000", regex=_query_param_regex("sig"))
-    add_uri_regex_sanitizer(regex="codes/[a-z|0-9|-]*", value="codes/000000000000000000000")
-    add_uri_regex_sanitizer(regex="azureml_anonymous/versions/[a-z|0-9|-]*", value="azureml_anonymous/versions/000000000000000000000")
-    add_uri_regex_sanitizer(regex="jobs/[a-z|0-9|-|_]*", value="jobs/000000000000000000000")
-
+    
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
     #  - AZSDK3436: $..resourceGroup
@@ -624,6 +620,14 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
             return_value="00000000000000000000000000000000",
         )
 
+
+@pytest.fixture
+def spark_job_version_sanitizer(test_proxy):
+    add_general_regex_sanitizer(function_scoped = True, regex="/codes/[a-z|0-9|-]*", value="/codes/000000000000000000000")
+    add_general_regex_sanitizer(function_scoped = True, regex="/components/azureml_anonymous/versions/[a-z|0-9|-]*", value="/azureml_anonymous/versions/000000000000000000000")
+    add_general_regex_sanitizer(function_scoped = True, regex="/jobs/[a-z|0-9|-|_]*", value="/jobs/000000000000000000000")
+    add_body_key_sanitizer(json_path="$.properties.displayName", value="000000000000000000000")
+    
 
 @pytest.fixture
 def snapshot_hash_sanitizer(test_proxy):
