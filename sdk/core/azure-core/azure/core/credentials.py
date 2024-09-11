@@ -100,9 +100,7 @@ class TokenCredential(Protocol):
 class SupportsTokenInfo(Protocol, ContextManager["SupportsTokenInfo"]):
     """Protocol for classes able to provide OAuth access tokens with additional properties."""
 
-    def get_token_info(
-        self, *scopes: str, options: Optional[TokenRequestOptions] = None
-    ) -> AccessTokenInfo:
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
         """Request an access token for `scopes`.
 
         This is an alternative to `get_token` to enable certain scenarios that require additional properties

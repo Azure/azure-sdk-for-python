@@ -26,15 +26,11 @@ from azure.core.utils._utils import get_running_async_lock
 
 from .._tools_async import await_result
 
-AsyncHTTPResponseType = TypeVar(
-    "AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse
-)
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
-class AsyncBearerTokenCredentialPolicy(
-    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):
+class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
@@ -44,9 +40,7 @@ class AsyncBearerTokenCredentialPolicy(
         tokens. Defaults to False.
     """
 
-    def __init__(
-        self, credential: AsyncTokenProvider, *scopes: str, **kwargs: Any
-    ) -> None:
+    def __init__(self, credential: AsyncTokenProvider, *scopes: str, **kwargs: Any) -> None:
         super().__init__()
         self._credential = credential
         self._scopes = scopes
@@ -67,9 +61,7 @@ class AsyncBearerTokenCredentialPolicy(
         :type request: ~azure.core.pipeline.PipelineRequest
         :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
-        _BearerTokenCredentialPolicyBase._enforce_https(  # pylint:disable=protected-access
-            request
-        )
+        _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
 
         if self._token is None or self._need_new_token():
             async with self._lock:
@@ -79,9 +71,7 @@ class AsyncBearerTokenCredentialPolicy(
         bearer_token = cast(Union[AccessToken, AccessTokenInfo], self._token).token
         request.http_request.headers["Authorization"] = "Bearer " + bearer_token
 
-    async def authorize_request(
-        self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any
-    ) -> None:
+    async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
 
         Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
@@ -177,11 +167,7 @@ class AsyncBearerTokenCredentialPolicy(
     def _need_new_token(self) -> bool:
         now = time.time()
         refresh_on = getattr(self._token, "refresh_on", None)
-        return (
-            not self._token
-            or (refresh_on and refresh_on <= now)
-            or self._token.expires_on - now < 300
-        )
+        return not self._token or (refresh_on and refresh_on <= now) or self._token.expires_on - now < 300
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> None:
         """Request a new token from the credential.
@@ -197,10 +183,7 @@ class AsyncBearerTokenCredentialPolicy(
             options: TokenRequestOptions = {}
             # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
             for key in list(kwargs.keys()):
-                if (
-                    key
-                    in TokenRequestOptions.__annotations__  # pylint: disable=no-member
-                ):
+                if key in TokenRequestOptions.__annotations__:  # pylint: disable=no-member
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
             self._token = await await_result(

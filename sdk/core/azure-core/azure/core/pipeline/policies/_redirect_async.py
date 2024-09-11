@@ -35,15 +35,11 @@ from . import AsyncHTTPPolicy
 from ._redirect import RedirectPolicyBase, domain_changed
 from ._utils import get_domain
 
-AsyncHTTPResponseType = TypeVar(
-    "AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse
-)
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", AsyncHttpResponse, LegacyAsyncHttpResponse)
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
-class AsyncRedirectPolicy(
-    RedirectPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):
+class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """An async redirect policy.
 
     An async redirect policy in the pipeline can be configured directly or per operation.
@@ -75,16 +71,12 @@ class AsyncRedirectPolicy(
         """
         redirects_remaining = True
         redirect_settings = self.configure_redirects(request.context.options)
-        original_domain = (
-            get_domain(request.http_request.url) if redirect_settings["allow"] else None
-        )
+        original_domain = get_domain(request.http_request.url) if redirect_settings["allow"] else None
         while redirects_remaining:
             response = await self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location and redirect_settings["allow"]:
-                redirects_remaining = self.increment(
-                    redirect_settings, response, redirect_location
-                )
+                redirects_remaining = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
                 if domain_changed(original_domain, request.http_request.url):
                     # "insecure_domain_change" is used to indicate that a redirect

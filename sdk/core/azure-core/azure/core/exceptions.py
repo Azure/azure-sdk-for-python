@@ -80,9 +80,7 @@ __all__ = [
 ]
 
 
-def raise_with_traceback(
-    exception: Callable, *args: Any, message: str = "", **kwargs: Any
-) -> NoReturn:
+def raise_with_traceback(exception: Callable, *args: Any, message: str = "", **kwargs: Any) -> NoReturn:
     """Raise exception with a specified traceback.
     This MUST be called inside a "except" clause.
 
@@ -224,10 +222,7 @@ class ODataV4Format:
         self.message: Optional[str] = json_object.get(cls.MESSAGE_LABEL)
 
         if not (self.code or self.message):
-            raise ValueError(
-                "Impossible to extract code/message from received JSON:\n"
-                + json.dumps(json_object)
-            )
+            raise ValueError("Impossible to extract code/message from received JSON:\n" + json.dumps(json_object))
 
         # Optional fields
         self.target: Optional[str] = json_object.get(cls.TARGET_LABEL)
@@ -273,9 +268,7 @@ class ODataV4Format:
                 error_str += "\n".join("\t" + s for s in str(error_obj).splitlines())
 
         if self.innererror:
-            error_str += "\nInner error: {}".format(
-                json.dumps(self.innererror, indent=4)
-            )
+            error_str += "\nInner error: {}".format(json.dumps(self.innererror, indent=4))
         return error_str
 
 
@@ -306,9 +299,7 @@ class AzureError(Exception):
         self.exc_traceback: Optional[TracebackType] = exc_info[2]
 
         self.exc_type = self.exc_type if self.exc_type else type(self.inner_exception)
-        self.exc_msg: str = "{}, {}: {}".format(
-            message, self.exc_type.__name__, self.exc_value
-        )
+        self.exc_msg: str = "{}, {}: {}".format(message, self.exc_type.__name__, self.exc_value)
         self.message: str = str(message)
         self.continuation_token: Optional[str] = kwargs.get("continuation_token")
         super(AzureError, self).__init__(self.message, *args)
@@ -389,9 +380,7 @@ class HttpResponseError(AzureError):
             self.model = model
         else:  # autorest azure-core, for KV 1.0, Storage 12.0, etc.
             self.model = getattr(self, "error", None)
-        self.error: Optional[ODataV4Format] = self._parse_odata_body(
-            error_format, response
-        )
+        self.error: Optional[ODataV4Format] = self._parse_odata_body(error_format, response)
 
         # By priority, message is:
         # - odatav4 message, OR
@@ -400,9 +389,7 @@ class HttpResponseError(AzureError):
         if self.error:
             message = str(self.error)
         else:
-            message = message or "Operation returned an invalid status '{}'".format(
-                self.reason
-            )
+            message = message or "Operation returned an invalid status '{}'".format(self.reason)
 
         super(HttpResponseError, self).__init__(message=message, **kwargs)
 
@@ -463,9 +450,7 @@ class ResourceNotModifiedError(HttpResponseError):
     This will not be raised directly by the Azure core pipeline."""
 
 
-class TooManyRedirectsError(
-    HttpResponseError, Generic[HTTPRequestType, HTTPResponseType]
-):
+class TooManyRedirectsError(HttpResponseError, Generic[HTTPRequestType, HTTPResponseType]):
     """Reached the maximum number of redirect attempts.
 
     :param history: The history of requests made while trying to fulfill the request.
@@ -529,18 +514,10 @@ class ODataV4Error(HttpResponseError):
             try:
                 error_node = self.odata_json["error"]
                 self._error_format = self._ERROR_FORMAT(error_node)
-                self.__dict__.update(
-                    {
-                        k: v
-                        for k, v in self._error_format.__dict__.items()
-                        if v is not None
-                    }
-                )
+                self.__dict__.update({k: v for k, v in self._error_format.__dict__.items() if v is not None})
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.info("Received error message was not valid OdataV4 format.")
-                self._error_format = "JSON was invalid for format " + str(
-                    self._ERROR_FORMAT
-                )
+                self._error_format = "JSON was invalid for format " + str(self._ERROR_FORMAT)
 
     def __str__(self) -> str:
         if self._error_format:
@@ -561,9 +538,7 @@ class StreamConsumedError(AzureError):
     def __init__(self, response: _HttpResponseCommonAPI) -> None:
         message = (
             "You are attempting to read or stream the content from request {}. "
-            "You have likely already consumed this stream, so it can not be accessed anymore.".format(
-                response.request
-            )
+            "You have likely already consumed this stream, so it can not be accessed anymore.".format(response.request)
         )
         super(StreamConsumedError, self).__init__(message)
 

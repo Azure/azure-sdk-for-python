@@ -60,26 +60,16 @@ class AsyncPollingMethod(Generic[PollingReturnType_co]):
         raise NotImplementedError("This method needs to be implemented")
 
     def get_continuation_token(self) -> str:
-        raise TypeError(
-            "Polling method '{}' doesn't support get_continuation_token".format(
-                self.__class__.__name__
-            )
-        )
+        raise TypeError("Polling method '{}' doesn't support get_continuation_token".format(self.__class__.__name__))
 
     @classmethod
     def from_continuation_token(
         cls, continuation_token: str, **kwargs: Any
     ) -> Tuple[Any, Any, DeserializationCallbackType]:
-        raise TypeError(
-            "Polling method '{}' doesn't support from_continuation_token".format(
-                cls.__name__
-            )
-        )
+        raise TypeError("Polling method '{}' doesn't support from_continuation_token".format(cls.__name__))
 
 
-class AsyncNoPolling(
-    _SansIONoPolling[PollingReturnType_co], AsyncPollingMethod[PollingReturnType_co]
-):
+class AsyncNoPolling(_SansIONoPolling[PollingReturnType_co], AsyncPollingMethod[PollingReturnType_co]):
     """An empty async poller that returns the deserialized initial response."""
 
     async def run(self) -> None:
@@ -111,9 +101,7 @@ async def async_poller(
     :return: The final resource at the end of the polling.
     :rtype: any or None
     """
-    poller = AsyncLROPoller(
-        client, initial_response, deserialization_callback, polling_method
-    )
+    poller = AsyncLROPoller(client, initial_response, deserialization_callback, polling_method)
     return await poller
 
 
@@ -147,9 +135,7 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable[PollingReturnType_
         except AttributeError:
             pass
 
-        self._polling_method.initialize(
-            client, initial_response, deserialization_callback
-        )
+        self._polling_method.initialize(client, initial_response, deserialization_callback)
 
     def polling_method(self) -> AsyncPollingMethod[PollingReturnType_co]:
         """Return the polling method associated to this poller.
@@ -169,10 +155,7 @@ class AsyncLROPoller(Generic[PollingReturnType_co], Awaitable[PollingReturnType_
 
     @classmethod
     def from_continuation_token(
-        cls,
-        polling_method: AsyncPollingMethod[PollingReturnType_co],
-        continuation_token: str,
-        **kwargs: Any
+        cls, polling_method: AsyncPollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
     ) -> "AsyncLROPoller[PollingReturnType_co]":
         (
             client,

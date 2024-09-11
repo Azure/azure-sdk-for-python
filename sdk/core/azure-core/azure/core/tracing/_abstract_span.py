@@ -27,9 +27,7 @@ from azure.core.rest import (
     HttpRequest as RestHttpRequest,
 )
 
-HttpResponseType = Union[
-    HttpResponse, AsyncHttpResponse, RestHttpResponse, AsyncRestHttpResponse
-]
+HttpResponseType = Union[HttpResponse, AsyncHttpResponse, RestHttpResponse, AsyncRestHttpResponse]
 HttpRequestType = Union[HttpRequest, RestHttpRequest]
 
 AttributeValue = Union[
@@ -68,9 +66,7 @@ class AbstractSpan(Protocol, Generic[SpanType]):
     :type name: str
     """
 
-    def __init__(
-        self, span: Optional[SpanType] = None, name: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, span: Optional[SpanType] = None, name: Optional[str] = None, **kwargs: Any) -> None:
         pass
 
     def span(self, name: str = "child_span", **kwargs: Any) -> AbstractSpan[SpanType]:
@@ -151,9 +147,7 @@ class AbstractSpan(Protocol, Generic[SpanType]):
         """
         ...
 
-    def set_http_attributes(
-        self, request: HttpRequestType, response: Optional[HttpResponseType] = None
-    ) -> None:
+    def set_http_attributes(self, request: HttpRequestType, response: Optional[HttpResponseType] = None) -> None:
         """
         Add correct attributes for a http client span.
 
@@ -192,9 +186,7 @@ class AbstractSpan(Protocol, Generic[SpanType]):
         ...
 
     @classmethod
-    def link_from_headers(
-        cls, headers: Dict[str, str], attributes: Optional[Attributes] = None
-    ) -> None:
+    def link_from_headers(cls, headers: Dict[str, str], attributes: Optional[Attributes] = None) -> None:
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
 
@@ -324,8 +316,6 @@ class Link:
     :type attributes: dict
     """
 
-    def __init__(
-        self, headers: Dict[str, str], attributes: Optional[Attributes] = None
-    ) -> None:
+    def __init__(self, headers: Dict[str, str], attributes: Optional[Attributes] = None) -> None:
         self.headers = headers
         self.attributes = attributes

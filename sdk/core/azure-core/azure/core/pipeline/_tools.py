@@ -48,9 +48,7 @@ def await_result(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
     """
     result = func(*args, **kwargs)
     if hasattr(result, "__await__"):
-        raise TypeError(
-            "Policy {} returned awaitable object in non-async pipeline.".format(func)
-        )
+        raise TypeError("Policy {} returned awaitable object in non-async pipeline.".format(func))
     return result
 
 

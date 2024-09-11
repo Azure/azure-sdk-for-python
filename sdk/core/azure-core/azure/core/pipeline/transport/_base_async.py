@@ -106,13 +106,9 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
         :raises ValueError: If the content is not multipart/mixed
         """
         if not self.content_type or not self.content_type.startswith("multipart/mixed"):
-            raise ValueError(
-                "You can't get parts if the response is not multipart/mixed"
-            )
+            raise ValueError("You can't get parts if the response is not multipart/mixed")
 
-        return _PartGenerator(
-            self, default_http_response_type=AsyncHttpClientTransportResponse
-        )
+        return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
 
     async def __aexit__(
         self,
@@ -141,9 +137,7 @@ class AsyncHttpTransport(
     """An http sender ABC."""
 
     @abc.abstractmethod
-    async def send(
-        self, request: HTTPRequestType, **kwargs: Any
-    ) -> AsyncHTTPResponseType:
+    async def send(self, request: HTTPRequestType, **kwargs: Any) -> AsyncHTTPResponseType:
         """Send the request using this HTTP sender.
 
         :param request: The request object. Exact type can be inferred from the pipeline.

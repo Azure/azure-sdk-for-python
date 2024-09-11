@@ -56,9 +56,7 @@ class HTTPPolicy(abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     @abc.abstractmethod
-    def send(
-        self, request: PipelineRequest[HTTPRequestType]
-    ) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Abstract send method for a synchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.
@@ -82,9 +80,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     but they will then be tied to AsyncPipeline usage.
     """
 
-    def on_request(
-        self, request: PipelineRequest[HTTPRequestType]
-    ) -> Union[None, Awaitable[None]]:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> Union[None, Awaitable[None]]:
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.

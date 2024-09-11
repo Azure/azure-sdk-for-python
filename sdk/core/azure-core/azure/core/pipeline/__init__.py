@@ -37,12 +37,8 @@ from typing import (
     Union,
 )
 
-HTTPResponseType = TypeVar(  # pylint: disable=typevar-name-incorrect-variance
-    "HTTPResponseType", covariant=True
-)
-HTTPRequestType = TypeVar(  # pylint: disable=typevar-name-incorrect-variance
-    "HTTPRequestType", covariant=True
-)
+HTTPResponseType = TypeVar("HTTPResponseType", covariant=True)  # pylint: disable=typevar-name-incorrect-variance
+HTTPRequestType = TypeVar("HTTPRequestType", covariant=True)  # pylint: disable=typevar-name-incorrect-variance
 
 if TYPE_CHECKING:
     from .transport import HttpTransport, AsyncHttpTransport

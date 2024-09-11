@@ -48,9 +48,7 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
 
-class _SansIOAsyncHTTPPolicyRunner(
-    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):
+class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Async implementation of the SansIO policy.
 
     Modifies the request and sends to the next policy in the chain.
@@ -59,9 +57,7 @@ class _SansIOAsyncHTTPPolicyRunner(
     :type policy: ~azure.core.pipeline.policies.SansIOHTTPPolicy
     """
 
-    def __init__(
-        self, policy: SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-    ) -> None:
+    def __init__(self, policy: SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]) -> None:
         super(_SansIOAsyncHTTPPolicyRunner, self).__init__()
         self._policy = policy
 
@@ -95,9 +91,7 @@ class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseTy
     :type sender: ~azure.core.pipeline.transport.AsyncHttpTransport
     """
 
-    def __init__(
-        self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]
-    ) -> None:
+    def __init__(self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]) -> None:
         super(_AsyncTransportRunner, self).__init__()
         self._sender = sender
 
@@ -154,9 +148,7 @@ class AsyncPipeline(
             ]
         ] = None,
     ) -> None:
-        self._impl_policies: List[
-            AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-        ] = []
+        self._impl_policies: List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] = []
         self._transport = transport
 
         for policy in policies or []:
@@ -233,9 +225,5 @@ class AsyncPipeline(
         await self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
-        first_node = (
-            self._impl_policies[0]
-            if self._impl_policies
-            else _AsyncTransportRunner(self._transport)
-        )
+        first_node = self._impl_policies[0] if self._impl_policies else _AsyncTransportRunner(self._transport)
         return await first_node.send(pipeline_request)

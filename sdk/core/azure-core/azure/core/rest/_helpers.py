@@ -89,17 +89,9 @@ DataType = Optional[Union[bytes, Dict[str, Union[str, int]]]]
 
 def _verify_data_object(name, value):
     if not isinstance(name, str):
-        raise TypeError(
-            "Invalid type for data name. Expected str, got {}: {}".format(
-                type(name), name
-            )
-        )
+        raise TypeError("Invalid type for data name. Expected str, got {}: {}".format(type(name), name))
     if value is not None and not isinstance(value, (str, bytes, int, float)):
-        raise TypeError(
-            "Invalid type for data value. Expected primitive type, got {}: {}".format(
-                type(name), name
-            )
-        )
+        raise TypeError("Invalid type for data value. Expected primitive type, got {}: {}".format(type(name), name))
 
 
 def set_urlencoded_body(data, has_files):
@@ -122,9 +114,7 @@ def set_urlencoded_body(data, has_files):
 
 
 def set_multipart_body(files: FilesType):
-    formatted_files = [
-        (f, _format_data_helper(d)) for f, d in get_file_items(files) if d is not None
-    ]
+    formatted_files = [(f, _format_data_helper(d)) for f, d in get_file_items(files) if d is not None]
     return {}, dict(formatted_files) if isinstance(files, Mapping) else formatted_files
 
 
@@ -253,9 +243,7 @@ class HttpRequestBackcompatMixin:
             return None
 
     @_multipart_mixed_info.setter
-    def _multipart_mixed_info(
-        self, val: Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]]
-    ):
+    def _multipart_mixed_info(self, val: Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]]):
         """DEPRECATED: Set information to make multipart mixed requests.
         This is deprecated and will be removed in a later release.
 
@@ -316,9 +304,7 @@ class HttpRequestBackcompatMixin:
         if not isinstance(data, binary_type) and not any(
             hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
         ):
-            raise TypeError(
-                "A streamable data source must be an open file-like object or iterable."
-            )
+            raise TypeError("A streamable data source must be an open file-like object or iterable.")
         headers = self._set_body(content=data)
         self._files = None
         self.headers.update(headers)
@@ -400,9 +386,7 @@ class HttpRequestBackcompatMixin:
         :param requests: Requests to be sent in the multipart request
         :type requests: list[HttpRequest]
         """
-        self.multipart_mixed_info: Tuple[
-            Sequence[HttpRequest], Sequence[Any], str, Dict[str, Any]
-        ] = (
+        self.multipart_mixed_info: Tuple[Sequence[HttpRequest], Sequence[Any], str, Dict[str, Any]] = (
             requests,
             kwargs.pop("policies", []),
             kwargs.pop("boundary", None),
@@ -434,6 +418,6 @@ class HttpRequestBackcompatMixin:
         :param HttpRequest request: The request to copy from
         :param dict memo: The memo dict used by deepcopy
         """
-        request._multipart_mixed_info = (  # pylint: disable=protected-access
-            copy.deepcopy(self._multipart_mixed_info, memo)
+        request._multipart_mixed_info = copy.deepcopy(  # pylint: disable=protected-access
+            self._multipart_mixed_info, memo
         )

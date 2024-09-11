@@ -52,6 +52,4 @@ class RequestsAsyncTransportBase(RequestsTransport, AsyncHttpTransport):  # type
         exc_value: Optional[BaseException] = None,
         traceback: Optional[TracebackType] = None,
     ):
-        return super(RequestsAsyncTransportBase, self).__exit__(
-            exc_type, exc_value, traceback
-        )
+        return super(RequestsAsyncTransportBase, self).__exit__(exc_type, exc_value, traceback)

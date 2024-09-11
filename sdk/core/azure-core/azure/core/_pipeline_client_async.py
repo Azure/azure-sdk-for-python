@@ -156,16 +156,12 @@ class AsyncPipelineClient(
         self,
         base_url: str,
         *,
-        pipeline: Optional[
-            AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]
-        ] = None,
+        pipeline: Optional[AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]] = None,
         config: Optional[Configuration[HTTPRequestType, AsyncHTTPResponseType]] = None,
         **kwargs: Any,
     ):
         super(AsyncPipelineClient, self).__init__(base_url)
-        self._config: Configuration[HTTPRequestType, AsyncHTTPResponseType] = (
-            config or Configuration(**kwargs)
-        )
+        self._config: Configuration[HTTPRequestType, AsyncHTTPResponseType] = config or Configuration(**kwargs)
         self._base_url = base_url
         self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
 
@@ -229,11 +225,7 @@ class AsyncPipelineClient(
                 [
                     config.logging_policy,
                     DistributedTracingPolicy(**kwargs),
-                    (
-                        SensitiveHeaderCleanupPolicy(**kwargs)
-                        if config.redirect_policy
-                        else None
-                    ),
+                    (SensitiveHeaderCleanupPolicy(**kwargs) if config.redirect_policy else None),
                     config.http_logging_policy or HttpLoggingPolicy(**kwargs),
                 ]
             )
@@ -269,13 +261,9 @@ class AsyncPipelineClient(
 
             transport = AioHttpTransport(**kwargs)
 
-        return AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType](
-            transport, policies
-        )
+        return AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType](transport, policies)
 
-    async def _make_pipeline_call(
-        self, request: HTTPRequestType, **kwargs
-    ) -> AsyncHTTPResponseType:
+    async def _make_pipeline_call(self, request: HTTPRequestType, **kwargs) -> AsyncHTTPResponseType:
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         pipeline_response = await self._pipeline.run(request, **kwargs)
         if return_pipeline_response:

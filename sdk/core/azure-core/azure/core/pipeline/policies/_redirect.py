@@ -82,9 +82,7 @@ class RedirectPolicyBase:
         self.max_redirects: int = kwargs.get("redirect_max", 30)
 
         remove_headers = set(kwargs.get("redirect_remove_headers", []))
-        self._remove_headers_on_redirect = remove_headers.union(
-            self.REDIRECT_HEADERS_BLACKLIST
-        )
+        self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
         redirect_status = set(kwargs.get("redirect_on_status_codes", []))
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
         super(RedirectPolicyBase, self).__init__()
@@ -154,9 +152,7 @@ class RedirectPolicyBase:
         """
         # TODO: Revise some of the logic here.
         settings["redirects"] -= 1
-        settings["history"].append(
-            RequestHistory(response.http_request, http_response=response.http_response)
-        )
+        settings["history"].append(RequestHistory(response.http_request, http_response=response.http_response))
 
         redirected = urlparse(redirect_location)
         if not redirected.netloc:
@@ -191,9 +187,7 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy[HTTPRequestType, HTTPRespons
             :caption: Configuring a redirect policy.
     """
 
-    def send(
-        self, request: PipelineRequest[HTTPRequestType]
-    ) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Sends the PipelineRequest object to the next policy.
         Uses redirect settings to send request to redirect endpoint if necessary.
 
@@ -205,16 +199,12 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy[HTTPRequestType, HTTPRespons
         """
         retryable: bool = True
         redirect_settings = self.configure_redirects(request.context.options)
-        original_domain = (
-            get_domain(request.http_request.url) if redirect_settings["allow"] else None
-        )
+        original_domain = get_domain(request.http_request.url) if redirect_settings["allow"] else None
         while retryable:
             response = self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location and redirect_settings["allow"]:
-                retryable = self.increment(
-                    redirect_settings, response, redirect_location
-                )
+                retryable = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
                 if domain_changed(original_domain, request.http_request.url):
                     # "insecure_domain_change" is used to indicate that a redirect

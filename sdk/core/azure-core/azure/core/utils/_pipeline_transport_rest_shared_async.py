@@ -34,9 +34,7 @@ class _PartGenerator(AsyncIterator[HttpResponseType], Generic[HttpResponseType])
     :type default_http_response_type: any
     """
 
-    def __init__(
-        self, response, default_http_response_type: Type[HttpResponseType]
-    ) -> None:
+    def __init__(self, response, default_http_response_type: Type[HttpResponseType]) -> None:
         self._response = response
         self._parts: Optional[Iterator[HttpResponseType]] = None
         self._default_http_response_type = default_http_response_type
@@ -46,22 +44,16 @@ class _PartGenerator(AsyncIterator[HttpResponseType], Generic[HttpResponseType])
             http_response_type=self._default_http_response_type
         )
         if self._response.request.multipart_mixed_info:
-            policies: List["SansIOHTTPPolicy"] = (
-                self._response.request.multipart_mixed_info[1]
-            )
+            policies: List["SansIOHTTPPolicy"] = self._response.request.multipart_mixed_info[1]
 
             async def parse_responses(response):
                 http_request = response.request
                 context = PipelineContext(None)
                 pipeline_request = PipelineRequest(http_request, context)
-                pipeline_response = PipelineResponse(
-                    http_request, response, context=context
-                )
+                pipeline_response = PipelineResponse(http_request, response, context=context)
 
                 for policy in policies:
-                    await _await_result(
-                        policy.on_response, pipeline_request, pipeline_response
-                    )
+                    await _await_result(policy.on_response, pipeline_request, pipeline_response)
 
             # Not happy to make this code asyncio specific, but that's multipart only for now
             # If we need trio and multipart, let's reinvesitgate that later

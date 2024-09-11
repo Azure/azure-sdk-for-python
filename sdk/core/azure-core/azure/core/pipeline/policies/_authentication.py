@@ -80,11 +80,7 @@ class _BearerTokenCredentialPolicyBase:
     def _need_new_token(self) -> bool:
         now = time.time()
         refresh_on = getattr(self._token, "refresh_on", None)
-        return (
-            not self._token
-            or (refresh_on and refresh_on <= now)
-            or self._token.expires_on - now < 300
-        )
+        return not self._token or (refresh_on and refresh_on <= now) or self._token.expires_on - now < 300
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> None:
         """Request a new token from the credential.
@@ -100,24 +96,15 @@ class _BearerTokenCredentialPolicyBase:
             options: TokenRequestOptions = {}
             # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
             for key in list(kwargs.keys()):
-                if (
-                    key
-                    in TokenRequestOptions.__annotations__  # pylint: disable=no-member
-                ):
+                if key in TokenRequestOptions.__annotations__:  # pylint: disable=no-member
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
-            self._token = cast(SupportsTokenInfo, self._credential).get_token_info(
-                *scopes, options=options
-            )
+            self._token = cast(SupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)
         else:
-            self._token = cast(TokenCredential, self._credential).get_token(
-                *scopes, **kwargs
-            )
+            self._token = cast(TokenCredential, self._credential).get_token(*scopes, **kwargs)
 
 
-class BearerTokenCredentialPolicy(
-    _BearerTokenCredentialPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
-):
+class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
@@ -142,9 +129,7 @@ class BearerTokenCredentialPolicy(
         bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], self._token).token
         self._update_headers(request.http_request.headers, bearer_token)
 
-    def authorize_request(
-        self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any
-    ) -> None:
+    def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
 
         Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
@@ -157,9 +142,7 @@ class BearerTokenCredentialPolicy(
         bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], self._token).token
         self._update_headers(request.http_request.headers, bearer_token)
 
-    def send(
-        self, request: PipelineRequest[HTTPRequestType]
-    ) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Authorize request with a bearer token and send it to the next policy
 
         :param request: The pipeline request object
@@ -255,9 +238,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     ) -> None:
         super().__init__()
         if not hasattr(credential, "key"):
-            raise TypeError(
-                "String is not a supported credential input type. Use an instance of AzureKeyCredential."
-            )
+            raise TypeError("String is not a supported credential input type. Use an instance of AzureKeyCredential.")
         if not name:
             raise ValueError("name can not be None or empty")
         if not isinstance(name, str):
@@ -267,9 +248,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
         self._prefix = prefix + " " if prefix else ""
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
-        request.http_request.headers[self._name] = (
-            f"{self._prefix}{self._credential.key}"
-        )
+        request.http_request.headers[self._name] = f"{self._prefix}{self._credential.key}"
 
 
 class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):

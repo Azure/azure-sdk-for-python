@@ -123,11 +123,7 @@ def convert_logging(value: Union[str, int]) -> int:
     val = value.upper()
     level = _levels.get(val)
     if not level:
-        raise ValueError(
-            "Cannot convert {} to log level, valid values are: {}".format(
-                value, ", ".join(_levels)
-            )
-        )
+        raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
     return level
 
 
@@ -148,9 +144,7 @@ def convert_azure_cloud(value: Union[str, AzureClouds]) -> AzureClouds:
         if value in azure_clouds:
             return azure_clouds[value]
         raise ValueError(
-            "Cannot convert {} to Azure Cloud, valid values are: {}".format(
-                value, ", ".join(azure_clouds.keys())
-            )
+            "Cannot convert {} to Azure Cloud, valid values are: {}".format(value, ", ".join(azure_clouds.keys()))
         )
     raise ValueError("Cannot convert {} to Azure Cloud".format(value))
 
@@ -193,9 +187,7 @@ def _get_opencensus_span_if_opencensus_is_imported() -> Optional[Type[AbstractSp
     return _get_opencensus_span()
 
 
-def _get_opentelemetry_span_if_opentelemetry_is_imported() -> (
-    Optional[Type[AbstractSpan]]
-):
+def _get_opentelemetry_span_if_opentelemetry_is_imported() -> Optional[Type[AbstractSpan]]:
     if "opentelemetry" not in sys.modules:
         return None
     return _get_opentelemetry_span()
@@ -207,9 +199,7 @@ _tracing_implementation_dict: Dict[str, Callable[[], Optional[Type[AbstractSpan]
 }
 
 
-def convert_tracing_impl(
-    value: Optional[Union[str, Type[AbstractSpan]]]
-) -> Optional[Type[AbstractSpan]]:
+def convert_tracing_impl(value: Optional[Union[str, Type[AbstractSpan]]]) -> Optional[Type[AbstractSpan]]:
     """Convert a string to AbstractSpan
 
     If a AbstractSpan is passed in, it is returned as-is. Otherwise the function
@@ -226,8 +216,7 @@ def convert_tracing_impl(
     """
     if value is None:
         return (
-            _get_opentelemetry_span_if_opentelemetry_is_imported()
-            or _get_opencensus_span_if_opencensus_is_imported()
+            _get_opentelemetry_span_if_opentelemetry_is_imported() or _get_opencensus_span_if_opencensus_is_imported()
         )
 
     if not isinstance(value, str):
@@ -297,9 +286,7 @@ class PrioritizedSetting(Generic[ValidInputType, ValueType]):
         self._system_hook = system_hook
         self._default = default
         noop_convert: Callable[[Any], Any] = lambda x: x
-        self._convert: Callable[[Union[ValidInputType, str]], ValueType] = (
-            convert if convert else noop_convert
-        )
+        self._convert: Callable[[Union[ValidInputType, str]], ValueType] = convert if convert else noop_convert
         self._user_value: Union[ValidInputType, _Unset] = _unset
 
     def __repr__(self) -> str:
@@ -337,9 +324,7 @@ class PrioritizedSetting(Generic[ValidInputType, ValueType]):
 
         raise RuntimeError("No configured value found for setting %r" % self._name)
 
-    def __get__(
-        self, instance: Any, owner: Optional[Any] = None
-    ) -> PrioritizedSetting[ValidInputType, ValueType]:
+    def __get__(self, instance: Any, owner: Optional[Any] = None) -> PrioritizedSetting[ValidInputType, ValueType]:
         return self
 
     def __set__(self, instance: Any, value: ValidInputType) -> None:
@@ -471,11 +456,7 @@ class Settings:
         :rtype: namedtuple
         :returns: The implicit default values for all settings
         """
-        props = {
-            k: v.default
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v.default for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         return self._config(props)
 
     @property
@@ -503,11 +484,7 @@ class Settings:
            settings.config(log_level=logging.DEBUG)
 
         """
-        props = {
-            k: v()
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v() for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         props.update(kwargs)
         return self._config(props)
 
@@ -540,13 +517,11 @@ class Settings:
         default=None,
     )
 
-    azure_cloud: PrioritizedSetting[Union[str, AzureClouds], AzureClouds] = (
-        PrioritizedSetting(
-            "azure_cloud",
-            env_var="AZURE_CLOUD",
-            convert=convert_azure_cloud,
-            default=AzureClouds.AZURE_PUBLIC_CLOUD,
-        )
+    azure_cloud: PrioritizedSetting[Union[str, AzureClouds], AzureClouds] = PrioritizedSetting(
+        "azure_cloud",
+        env_var="AZURE_CLOUD",
+        convert=convert_azure_cloud,
+        default=AzureClouds.AZURE_PUBLIC_CLOUD,
     )
 
 

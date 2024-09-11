@@ -102,9 +102,7 @@ def _format_url_section(template, **kwargs: Dict[str, str]) -> str:
             return template.format(**kwargs)
         except KeyError as key:
             formatted_components = template.split("/")
-            components = [
-                c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c
-            ]
+            components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
             template = "/".join(components)
             if last_template == template:
                 raise ValueError(
@@ -143,9 +141,7 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     return parsed_base_url.geturl()
 
 
-class HttpTransport(
-    ContextManager["HttpTransport"], abc.ABC, Generic[HTTPRequestType, HTTPResponseType]
-):
+class HttpTransport(ContextManager["HttpTransport"], abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An http sender ABC."""
 
     @abc.abstractmethod
@@ -213,9 +209,7 @@ class HttpRequest:
         self.headers: MutableMapping[str, str] = case_insensitive_dict(headers)
         self.files: Optional[Any] = files
         self.data: Optional[DataType] = data
-        self.multipart_mixed_info: Optional[
-            Tuple[Sequence[Any], Sequence[Any], Optional[str], Dict[str, Any]]
-        ] = None
+        self.multipart_mixed_info: Optional[Tuple[Sequence[Any], Sequence[Any], Optional[str], Dict[str, Any]]] = None
 
     def __repr__(self) -> str:
         return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
@@ -256,9 +250,7 @@ class HttpRequest:
         self.data = value
 
     @staticmethod
-    def _format_data(
-        data: Union[str, IO]
-    ) -> Union[Tuple[Optional[str], str], Tuple[Optional[str], FileContent, str]]:
+    def _format_data(data: Union[str, IO]) -> Union[Tuple[Optional[str], str], Tuple[Optional[str], FileContent, str]]:
         """Format field data according to whether it is a stream or
         a string for a form-data request.
 
@@ -287,9 +279,7 @@ class HttpRequest:
         if not isinstance(data, binary_type) and not any(
             hasattr(data, attr) for attr in ["read", "__iter__", "__aiter__"]
         ):
-            raise TypeError(
-                "A streamable data source must be an open file-like object or iterable."
-            )
+            raise TypeError("A streamable data source must be an open file-like object or iterable.")
         self.data = data
         self.files = None
 
@@ -347,9 +337,7 @@ class HttpRequest:
             self.data = {f: d for f, d in data.items() if d is not None}
             self.files = None
         else:  # Assume "multipart/form-data"
-            self.files = {
-                f: self._format_data(d) for f, d in data.items() if d is not None
-            }
+            self.files = {f: self._format_data(d) for f, d in data.items() if d is not None}
             self.data = None
 
     def set_bytes_body(self, data: bytes) -> None:
@@ -368,9 +356,7 @@ class HttpRequest:
     def set_multipart_mixed(
         self,
         *requests: "HttpRequest",
-        policies: Optional[
-            List[SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]]
-        ] = None,
+        policies: Optional[List[SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]]] = None,
         boundary: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
@@ -492,9 +478,7 @@ class _HttpResponseBase:
         :rtype: list[HttpResponse]
         :return: The list of HttpResponse
         """
-        return _decode_parts_helper(
-            self, message, http_response_type, requests, _deserialize_response
-        )
+        return _decode_parts_helper(self, message, http_response_type, requests, _deserialize_response)
 
     def _get_raw_parts(
         self, http_response_type: Optional[Type["_HttpResponseBase"]] = None
@@ -508,9 +492,7 @@ class _HttpResponseBase:
         :rtype: iterator[HttpResponse]
         :return: The iterator of HttpResponse
         """
-        return _get_raw_parts_helper(
-            self, http_response_type or HttpClientTransportResponse
-        )
+        return _get_raw_parts_helper(self, http_response_type or HttpClientTransportResponse)
 
     def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
@@ -520,18 +502,12 @@ class _HttpResponseBase:
             raise HttpResponseError(response=self)
 
     def __repr__(self) -> str:
-        content_type_str = (
-            ", Content-Type: {}".format(self.content_type) if self.content_type else ""
-        )
-        return "<{}: {} {}{}>".format(
-            type(self).__name__, self.status_code, self.reason, content_type_str
-        )
+        content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
+        return "<{}: {} {}{}>".format(type(self).__name__, self.status_code, self.reason, content_type_str)
 
 
 class HttpResponse(_HttpResponseBase):
-    def stream_download(
-        self, pipeline: Pipeline[HttpRequest, "HttpResponse"], **kwargs: Any
-    ) -> Iterator[bytes]:
+    def stream_download(self, pipeline: Pipeline[HttpRequest, "HttpResponse"], **kwargs: Any) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download
@@ -578,18 +554,14 @@ class _HttpClientTransportResponse(_HttpResponseBase):
         return self.data
 
 
-class HttpClientTransportResponse(
-    _HttpClientTransportResponse, HttpResponse
-):  # pylint: disable=abstract-method
+class HttpClientTransportResponse(_HttpClientTransportResponse, HttpResponse):  # pylint: disable=abstract-method
     """Create a HTTPResponse from an http.client response.
 
     Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
     """
 
 
-def _deserialize_response(
-    http_response_as_bytes, http_request, http_response_type=HttpClientTransportResponse
-):
+def _deserialize_response(http_response_as_bytes, http_request, http_response_type=HttpClientTransportResponse):
     """Deserialize a HTTPResponse from a string.
 
     :param bytes http_response_as_bytes: The HTTP response as bytes.
@@ -718,9 +690,7 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request(
-            "GET", url, params, headers, content, form_content, None
-        )
+        request = self._request("GET", url, params, headers, content, form_content, None)
         request.method = "GET"
         return request
 
@@ -746,9 +716,7 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request(
-            "PUT", url, params, headers, content, form_content, stream_content
-        )
+        request = self._request("PUT", url, params, headers, content, form_content, stream_content)
         return request
 
     def post(
@@ -773,9 +741,7 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request(
-            "POST", url, params, headers, content, form_content, stream_content
-        )
+        request = self._request("POST", url, params, headers, content, form_content, stream_content)
         return request
 
     def head(
@@ -800,9 +766,7 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request(
-            "HEAD", url, params, headers, content, form_content, stream_content
-        )
+        request = self._request("HEAD", url, params, headers, content, form_content, stream_content)
         return request
 
     def patch(
@@ -827,9 +791,7 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request(
-            "PATCH", url, params, headers, content, form_content, stream_content
-        )
+        request = self._request("PATCH", url, params, headers, content, form_content, stream_content)
         return request
 
     def delete(
@@ -851,9 +813,7 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request(
-            "DELETE", url, params, headers, content, form_content, None
-        )
+        request = self._request("DELETE", url, params, headers, content, form_content, None)
         return request
 
     def merge(
@@ -875,9 +835,7 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request(
-            "MERGE", url, params, headers, content, form_content, None
-        )
+        request = self._request("MERGE", url, params, headers, content, form_content, None)
         return request
 
     def options(
@@ -901,7 +859,5 @@ class PipelineClientBase:
         :return: An HttpRequest object
         :rtype: ~azure.core.pipeline.transport.HttpRequest
         """
-        request = self._request(
-            "OPTIONS", url, params, headers, content, form_content, None
-        )
+        request = self._request("OPTIONS", url, params, headers, content, form_content, None)
         return request
