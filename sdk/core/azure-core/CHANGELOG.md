@@ -12,10 +12,6 @@
 - `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now first check if a credential has the `get_token_info` method defined. If so, the `get_token_info` method is used to acquire a token. Otherwise, the `get_token` method is used. #36565
   - These policies now also check the `refresh_on` attribute when determining if a new token request should be made.
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - The Azure Core OpenTelemetry tracing plugin will now be the preferred tracing plugin over the OpenCensus plugin. If both plugins are installed and `opentelemetry` is imported, then OpenTelemetry will be used to trace Azure SDK operations.  #35050
