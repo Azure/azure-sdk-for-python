@@ -1821,3 +1821,36 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
         await lease.release()
         await share_client.delete_share()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_create_share_access_tier_premium(self, **kwargs):
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
+
+        try:
+            self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
+
+            share = self._get_share_reference()
+            await share.create_share(access_tier='Premium')
+            props = await share.get_share_properties()
+            assert props.access_tier == 'Premium'
+        finally:
+            await self._delete_shares()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_set_share_properties_access_tier_premium(self, **kwargs):
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
+
+        try:
+            self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
+
+            share = self._get_share_reference()
+            await share.create_share()
+            await share.set_share_properties(access_tier='Premium')
+            props = await share.get_share_properties()
+            assert props.access_tier == 'Premium'
+        finally:
+            await self._delete_shares()
