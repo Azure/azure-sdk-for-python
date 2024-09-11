@@ -20,7 +20,7 @@ steps:
     parameters:
       runProxy: false
 
-  - script: |
+  - pwsh: |
       $(VENV_ACTIVATION_SCRIPT)
       python ./scripts/devops_tasks/dispatch_tox.py "*" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="None"
     displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
