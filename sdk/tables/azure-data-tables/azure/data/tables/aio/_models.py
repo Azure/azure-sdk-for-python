@@ -70,7 +70,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
     decoder: TableEntityDecoderABC
     """The decoder used to deserialize the incoming Tables entities."""
 
-    def __init__(self, command, table, **kwargs):
+    def __init__(self, command, table, *, decoder, **kwargs):
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -84,7 +84,7 @@ class TableEntityPropertiesPaged(AsyncPageIterator):
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
-        self.decoder = kwargs.get("decoder")
+        self.decoder = decoder
 
     async def _get_next_cb(self, continuation_token, **kwargs):
         next_partition_key, next_row_key = _extract_continuation_token(continuation_token)

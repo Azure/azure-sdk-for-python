@@ -662,7 +662,7 @@ class TableClient(AsyncTablesBaseClient):
         """
 
     @distributed_trace
-    def list_entities(self, **kwargs) -> AsyncItemPaged[Union[EntityType, T]]:
+    def list_entities(self, **kwargs) -> Union[AsyncItemPaged[EntityType], AsyncItemPaged[T]]:
         results_per_page = kwargs.pop("results_per_page", None)
         decoder = kwargs.pop("decoder", DEFAULT_DECODER)
         select = kwargs.pop("select", None)
@@ -748,7 +748,7 @@ class TableClient(AsyncTablesBaseClient):
         """
 
     @distributed_trace
-    def query_entities(self, *args: str, **kwargs: Any) -> AsyncItemPaged[Union[EntityType, T]]:
+    def query_entities(self, *args: str, **kwargs: Any) -> Union[AsyncItemPaged[EntityType], AsyncItemPaged[T]]:
         query_filter = kwargs.pop("query_filter", None)
         if query_filter is None:
             query_filter = args[0]

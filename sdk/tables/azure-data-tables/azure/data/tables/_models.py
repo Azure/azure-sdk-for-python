@@ -347,7 +347,7 @@ class TableEntityPropertiesPaged(PageIterator):
     decoder: TableEntityDecoderABC
     """The decoder used to deserialize the incoming Tables entities."""
 
-    def __init__(self, command: Callable, table: str, **kwargs: Any) -> None:
+    def __init__(self, command: Callable, table: str, *, decoder: TableEntityDecoderABC, **kwargs: Any) -> None:
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -361,7 +361,7 @@ class TableEntityPropertiesPaged(PageIterator):
         self.results_per_page = kwargs.get("results_per_page")
         self.filter = kwargs.get("filter")
         self.select = kwargs.get("select")
-        self.decoder = kwargs.get("decoder")
+        self.decoder = decoder
 
     def _get_next_cb(self, continuation_token, **kwargs):  # pylint: disable=inconsistent-return-statements
         next_partition_key, next_row_key = _extract_continuation_token(continuation_token)

@@ -4,14 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 import abc
-from typing import Any, Mapping, Union, Generic, Dict
+from typing import Any, Mapping, Union, Generic, Dict, Optional
 from datetime import datetime, timezone
 from urllib.parse import quote
 from uuid import UUID
 
 from ._common_conversion import _decode_base64_to_bytes
 from ._encoder import T
-from ._entity import EntityProperty, EdmType, TableEntity
+from ._entity import EntityProperty, EdmType, TableEntity, EntityMetadata
 
 
 def deserialize_iso(value):
@@ -106,15 +106,16 @@ class TableEntityDecoder(TableEntityDecoderABC[Union[TableEntity, Mapping[str, A
                 properties[name] = value
 
         # prepare metadata
-        timestamp = properties.pop("Timestamp", None)
-        odata.pop("metadata", None)
-        etag = odata.pop("etag", None)
-        if timestamp:
-            if not etag:
-                etag = "W/\"datetime'" + quote(timestamp) + "'\""
-            timestamp = _from_entity_datetime(timestamp)
-        odata.update({"etag": etag, "timestamp": timestamp})
-        decoded._metadata = odata  # pylint: disable=protected-access
+        raw_timestamp: Optional[str] = properties.get("Timestamp")  # type: ignore[assignment]
+        raw_etag: Optional[str] = odata.get("etag")  # type: ignore[assignment]
+        timestamp = None
+        etag = None
+        if raw_timestamp:
+            if not raw_etag:
+                etag = f"W/\"datetime'{quote(raw_timestamp)}'\""
+            timestamp = _from_entity_datetime(raw_timestamp)
+        metadata: EntityMetadata = {"etag": etag, "timestamp": timestamp}
+        decoded._metadata = metadata  # pylint: disable=protected-access
 
         for name, value in properties.items():
             if name in ["PartitionKey", "RowKey"]:
@@ -134,8 +135,8 @@ class TableEntityDecoder(TableEntityDecoderABC[Union[TableEntity, Mapping[str, A
             elif edm_type == EdmType.DATETIME:
                 decoded[name] = _from_entity_datetime(value)
             elif edm_type == EdmType.GUID:
-                decoded[name] = UUID(value)
+                decoded[name] = UUID(value)  # type: ignore[arg-type]
             else:
-                decoded[name] = EntityProperty(value, edm_type)
+                decoded[name] = EntityProperty(value, edm_type)  # type: ignore[arg-type]
 
         return decoded
