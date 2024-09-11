@@ -10,6 +10,7 @@ from typing_extensions import Protocol, runtime_checkable
 if TYPE_CHECKING:
     from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 
+
 @runtime_checkable
 class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]):
     """Protocol for classes able to provide OAuth tokens."""
