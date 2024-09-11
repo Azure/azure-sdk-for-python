@@ -15,9 +15,19 @@ import inspect, json
 
 
 class Tool(ABC):
+    """
+    An abstract class representing a tool that can be used by an assistant.
+    """
+    @property
     @abstractmethod
-    def get_definitions(self) -> List[Dict[str, Any]]:
+    def definitions(self) -> List[Dict[str, Any]]:
         """Get the tool definitions."""
+        pass
+
+    @property
+    @abstractmethod
+    def resources(self) -> Dict[str, Any]:
+        """Get the tool resources."""
         pass
 
     @abstractmethod
@@ -27,6 +37,9 @@ class Tool(ABC):
 
 
 class FunctionTool(Tool):
+    """
+    A tool that executes user-defined functions.
+    """
     def __init__(self, functions: Dict[str, Any]):
         """
         Initialize FunctionTool with a dictionary of functions.
@@ -113,58 +126,155 @@ class FunctionTool(Tool):
     @property
     def definitions(self) -> List[Dict[str, Any]]:
         """
-        Get the function definitions for the assistant.
+        Get the function definitions.
 
         :return: A list of function definitions.
         """
         return self._definitions
 
+    @property
+    def resources(self) -> Dict[str, Any]:
+        """
+        Get the function resources.
+        """
+        return {}
+
 
 class FileSearchTool(Tool):
+    """
+    A tool that searches for uploaded file information from the created vector stores.
+    """
     def __init__(self):
-        self.vector_store = None
+        self.vector_store_ids = []
 
-    def add_vector_store(self, store: Any):
-        self.vector_store = store
+    def add_vector_store(self, store_id: str):
+        """
+        Add a vector store ID to the list of vector stores to search for files.
+        """
+        self.vector_store_ids.append(store_id)
 
-    def get_definitions(self) -> List[Dict[str, Any]]:
-        return [{"name": "File Search", "type": "search"}]
+    @property
+    def definitions(self) -> List[Dict[str, Any]]:
+        """
+        Get the file search definitions.
+        """
+        return [{"type": "file_search"}]
+
+    @property
+    def resources(self) -> Dict[str, Any]:
+        """
+        Get the file search resources.
+        """
+        return {
+            "file_search": {
+                "vector_store_ids": self.vector_store_ids
+            }
+        }
 
     def execute(self, tool_calls: List[Any]) -> Any:
         pass
 
 
 class CodeInterpreterTool(Tool):
+    """
+    A tool that interprets code files uploaded to the assistant.
+    """
     def __init__(self):
-        self.files = []
+        self.file_ids = []
 
-    def add_file(self, file: Any):
-        self.files.append(file)
+    def add_file(self, file_id: str):
+        """
+        Add a file ID to the list of files to interpret.
 
-    def get_definitions(self) -> List[Dict[str, Any]]:
-        return [{"name": "Code Interpreter", "type": "interpreter"}]
+        :param file_id: The ID of the file to interpret.
+        """
+        self.file_ids.append(file_id)
+
+    @property
+    def definitions(self) -> List[Dict[str, Any]]:
+        """
+        Get the code interpreter definitions.
+        """
+        return [{"type": "code_interpreter"}]
+
+    @property
+    def resources(self) -> Dict[str, Any]:
+        """
+        Get the code interpreter resources.
+        """
+        return {
+            "code_interpreter": {
+                "file_ids": self.file_ids
+            }
+        }
 
     def execute(self, tool_calls: List[Any]) -> Any:
         pass
 
 
 class ToolSet:
+    """
+    A collection of tools that can be used by an assistant.
+    """
     def __init__(self):
         self.tools = []
 
     def add(self, tool: Tool):
+        """
+        Add a tool to the tool set.
+
+        :param tool: The tool to add.
+        """
         self.tools.append(tool)
 
-    def get_definitions(self) -> List[Dict[str, Any]]:
-        definitions = []
+    @property
+    def definitions(self) -> List[Dict[str, Any]]:
+        """
+        Get the definitions for all tools in the tool set.
+        """
+        tools = []
         for tool in self.tools:
-            definitions.extend(tool.get_definitions())
-        return definitions
+            tools.extend(tool.definitions)
+        return tools
+
+    @property
+    def resources(self) -> Dict[str, Any]:
+        """
+        Get the resources for all tools in the tool set.
+        """
+        tool_resources = {}
+        for tool in self.tools:
+            resources = tool.resources
+            for key, value in resources.items():
+                if key in tool_resources:
+                    if isinstance(tool_resources[key], dict) and isinstance(value, dict):
+                        tool_resources[key].update(value)
+                else:
+                    tool_resources[key] = value
+        return tool_resources
+
+    def get_definitions_and_resources(self) -> Dict[str, Any]:
+        """
+        Get the definitions and resources for all tools in the tool set.
+
+        :return: A dictionary containing the tool resources and definitions.
+        """
+        return {
+            "tool_resources": self.resources,
+            "tools": self.definitions,
+        }
 
     def execute_tool(self, tool_name: str, params: Dict[str, Any]) -> Any:
+        """
+        Execute a tool operation based on the tool name provided.
+
+        :param tool_name: The name of the tool to execute.
+        :param params: The parameters to pass to the tool
+        :return: The result of the tool operation.
+        """
         for tool in self.tools:
-            tool_definitions = tool.get_definitions()
-            if any(tool_name in definition["name"] for definition in tool_definitions):
+            tool_definitions = tool.definitions
+            if any(tool_name in definition["type"] for definition in tool_definitions):
                 return tool.execute(params)
         raise ValueError(f"Tool {tool_name} not found.")
 
