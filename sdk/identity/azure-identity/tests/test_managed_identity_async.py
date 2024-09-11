@@ -313,7 +313,7 @@ async def test_azure_ml_tenant_id():
 
 
 @pytest.mark.asyncio
-async def test_cloud_shell_user_assigned_identity():
+async def test_cloud_shell_identity_config():
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 
     expected_token = "****"

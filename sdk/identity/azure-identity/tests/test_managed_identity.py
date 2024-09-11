@@ -309,7 +309,7 @@ def test_azure_ml_tenant_id():
         assert token.expires_on == expected_token.expires_on
 
 
-def test_cloud_shell_user_assigned_identity():
+def test_cloud_shell_identity_config():
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 
     expected_token = "****"
