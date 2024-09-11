@@ -34,7 +34,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         job_id: str,
         task_collection: List[_models.BatchTaskCreateContent],
-        concurrencies: Optional[int] = 0,
+        concurrencies: int = 0,
         *,
         time_out_in_seconds: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
