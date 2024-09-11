@@ -5,6 +5,7 @@
     "@cspell/cspell-bundled-dicts": "^6.12.0",
     "@cspell/cspell-types": "^6.12.0",
     "cspell": "^6.12.0",
-    "cspell-lib": "^6.12.0"
+    "cspell-lib": "^6.12.0",
+    "cspell-version-pin": "file:"
   }
 }
