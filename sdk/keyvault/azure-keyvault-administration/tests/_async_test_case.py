@@ -19,10 +19,9 @@ class BaseClientPreparer(AzureRecordedTestCase):
 
         if self.is_live:
             self.managed_hsm_url = os.environ.get("AZURE_MANAGEDHSM_URL")
-            storage_name = os.environ.get("BLOB_STORAGE_ACCOUNT_NAME")
-            storage_endpoint_suffix = os.environ.get("KEYVAULT_STORAGE_ENDPOINT_SUFFIX")
+            storage_url = os.environ.get("BLOB_STORAGE_URL")
             container_name = os.environ.get("BLOB_CONTAINER_NAME")
-            self.container_uri = f"https://{storage_name}.blob.{storage_endpoint_suffix}/{container_name}"
+            self.container_uri = f"{storage_url}/{container_name}"
 
             self.sas_token = os.environ.get("BLOB_STORAGE_SAS_TOKEN")
             
@@ -48,9 +47,9 @@ class BaseClientPreparer(AzureRecordedTestCase):
 
     def _set_mgmt_settings_real_values(self):
         if self.is_live:
-            os.environ["AZURE_TENANT_ID"] = os.environ["KEYVAULT_TENANT_ID"]
-            os.environ["AZURE_CLIENT_ID"] = os.environ["KEYVAULT_CLIENT_ID"]
-            os.environ["AZURE_CLIENT_SECRET"] = os.environ["KEYVAULT_CLIENT_SECRET"]
+            os.environ["AZURE_TENANT_ID"] = os.getenv("KEYVAULT_TENANT_ID", "")  # empty in pipelines
+            os.environ["AZURE_CLIENT_ID"] = os.getenv("KEYVAULT_CLIENT_ID", "")  # empty in pipelines
+            os.environ["AZURE_CLIENT_SECRET"] = os.getenv("KEYVAULT_CLIENT_SECRET", "")  # empty for user-based auth
 
 
 class KeyVaultBackupClientPreparer(BaseClientPreparer):

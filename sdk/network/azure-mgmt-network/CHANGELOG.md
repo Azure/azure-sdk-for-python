@@ -1,5 +1,23 @@
 # Release History
 
+## 26.0.0 (2024-07-21)
+
+### Features Added
+
+  - Added operation InboundSecurityRuleOperations.get
+  - Model BastionHost has a new parameter enable_session_recording
+  - Model ExpressRouteCircuitAuthorization has a new parameter connection_resource_uri
+  - Model FlowLog has a new parameter identity
+  - Model FlowLogInformation has a new parameter identity
+  - Model Probe has a new parameter no_healthy_backends_behavior
+  - Model ServiceEndpointPropertiesFormat has a new parameter network_identifier
+  - Model VirtualNetworkGateway has a new parameter identity
+  - Operation ExpressRouteCrossConnectionsOperations.list has a new optional parameter filter
+
+### Breaking Changes
+
+  - Model FirewallPacketCaptureParameters no longer has parameter id
+
 ## 25.4.0 (2024-05-27)
 
 ### Features Added

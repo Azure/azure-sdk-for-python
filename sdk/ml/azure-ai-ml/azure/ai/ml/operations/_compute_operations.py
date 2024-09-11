@@ -7,8 +7,11 @@
 from typing import Any, Dict, Iterable, Optional, cast
 
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
+from azure.ai.ml._restclient.v2024_04_01_preview.models import SsoSetting
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import COMPUTE_UPDATE_ERROR
 from azure.ai.ml.constants._compute import ComputeType
@@ -39,11 +42,13 @@ class ComputeOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client: ServiceClient022023Preview,
+        service_client_2024: ServiceClient042024Preview,
         **kwargs: Dict,
     ) -> None:
         super(ComputeOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.compute
+        self._operation2024 = service_client_2024.compute
         self._workspace_operations = service_client.workspaces
         self._vmsize_operations = service_client.virtual_machine_sizes
         self._usage_operations = service_client.usages
@@ -415,6 +420,26 @@ class ComputeOperations(_ScopeDependentOperations):
                 if compute_type.lower() in (supported_type.lower() for supported_type in item.supported_compute_types)
             ]
         return [VmSize._from_rest_object(item) for item in size_list.value]
+
+    @distributed_trace
+    @monitor_with_activity(ops_logger, "Compute.enablesso", ActivityType.PUBLICAPI)
+    @experimental
+    def enable_sso(self, *, name: str, enable_sso: bool = True) -> None:
+        """enable sso for a compute instance.
+
+        :keyword name: Name of the compute instance.
+        :paramtype name: str
+        :keyword enable_sso: enable sso bool flag
+            Default to True
+        :paramtype enable_sso: bool
+        """
+
+        self._operation2024.update_sso_settings(
+            self._operation_scope.resource_group_name,
+            self._workspace_name,
+            name,
+            parameters=SsoSetting(enable_sso=enable_sso),
+        )
 
     def _get_workspace_location(self) -> str:
         workspace = self._workspace_operations.get(self._resource_group_name, self._workspace_name)

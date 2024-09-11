@@ -26,7 +26,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     ForecastingTrainingSettings as RestForecastingTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import JobBase, LogVerbosity, MLTableJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import Regression as RestRegression
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import RegressionPrimaryMetrics
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
@@ -38,6 +37,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     TableVerticalLimitSettings as RestTableVerticalLimitSettings,
 )
+from azure.ai.ml._restclient.v2024_01_01_preview.models._models_py3 import JobBase, LogVerbosity, MLTableJobInput
 from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake, to_iso_duration_format_mins
@@ -47,11 +47,11 @@ from azure.ai.ml.constants._job.automl import AutoMLConstants, AutoMLTransformer
 from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
+from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.fixture(autouse=True)

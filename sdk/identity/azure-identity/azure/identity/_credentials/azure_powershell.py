@@ -34,9 +34,24 @@ if (! $m) {{
     exit
 }}
 
-$token = Get-AzAccessToken -ResourceUrl '{}'{}
+$params = @{{ 'ResourceUrl' = '{}'; 'WarningAction' = 'Ignore' }}
 
-Write-Output "`nazsdk%$($token.Token)%$($token.ExpiresOn.ToUnixTimeSeconds())`n"
+$tenantId = '{}'
+if ($tenantId.Length -gt 0) {{
+    $params['TenantId'] = $tenantId
+}}
+
+$useSecureString = $m.Version -ge [version]'2.17.0'
+if ($useSecureString) {{
+    $params['AsSecureString'] = $true
+}}
+
+$token = Get-AzAccessToken @params
+$tokenValue = $token.Token
+if ($useSecureString) {{
+    $tokenValue = $tokenValue | ConvertFrom-SecureString -AsPlainText
+}}
+Write-Output "`nazsdk%$($tokenValue)%$($token.ExpiresOn.ToUnixTimeSeconds())`n"
 """
 
 
@@ -83,7 +98,7 @@ class AzurePowerShellCredential:
     def close(self) -> None:
         """Calling this method is unnecessary."""
 
-    @log_get_token("AzurePowerShellCredential")
+    @log_get_token
     def get_token(
         self,
         *scopes: str,
@@ -182,10 +197,7 @@ def parse_token(output: str) -> AccessToken:
 
 
 def get_command_line(scopes: Tuple[str, ...], tenant_id: str) -> List[str]:
-    if tenant_id:
-        tenant_argument = " -TenantId " + tenant_id
-    else:
-        tenant_argument = ""
+    tenant_argument = tenant_id if tenant_id else ""
     resource = _scopes_to_resource(*scopes)
     script = SCRIPT.format(NO_AZ_ACCOUNT_MODULE, resource, tenant_argument)
     encoded_script = base64.b64encode(script.encode("utf-16-le")).decode()
@@ -212,4 +224,6 @@ def raise_for_error(return_code: int, stdout: str, stderr: str) -> None:
     if stderr:
         # stderr is too noisy to include with an exception but may be useful for debugging
         _LOGGER.debug('%s received an error from Azure PowerShell: "%s"', AzurePowerShellCredential.__name__, stderr)
-    raise CredentialUnavailableError(message="Failed to invoke PowerShell")
+    raise CredentialUnavailableError(
+        message="Failed to invoke PowerShell. Enable debug logging for additional information."
+    )

@@ -9,7 +9,7 @@ import pathlib
 import uuid
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import ASST_AZURE, PREVIEW, GPT_4_OPENAI, configure
+from conftest import ASST_AZURE, PREVIEW, GPT_4_OPENAI, configure, AZURE
 from openai import AssistantEventHandler
 from openai.types.beta.threads import (
     Text,

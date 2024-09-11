@@ -115,7 +115,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             :end-before: [END create_blob_service_client_oauth]
             :language: python
             :dedent: 8
-            :caption: Creating the BlobServiceClient with Azure Identity credentials.
+            :caption: Creating the BlobServiceClient with Default Azure Identity credentials.
     """
 
     def __init__(

@@ -1,5 +1,28 @@
 # Release History
 
+## 9.1.0b1 (2024-09-10)
+
+### Other Changes
+
+  - Regular release
+
+## 9.0.0b3 (2024-08-21)
+
+### Features Added
+
+  - The 'azure.mgmt.hdinsight.operations.ExtensionsOperations' method 'begin_disable_azure_monitor_agent' was added in the current version
+  - The 'azure.mgmt.hdinsight.operations.ExtensionsOperations' method 'begin_enable_azure_monitor_agent' was added in the current version
+  - The 'azure.mgmt.hdinsight.operations.ExtensionsOperations' method 'get_azure_monitor_agent_status' was added in the current version
+  - The 'azure.mgmt.hdinsight.aio.operations.ExtensionsOperations' method 'begin_disable_azure_monitor_agent' was added in the current version
+  - The 'azure.mgmt.hdinsight.aio.operations.ExtensionsOperations' method 'begin_enable_azure_monitor_agent' was added in the current version
+  - The 'azure.mgmt.hdinsight.aio.operations.ExtensionsOperations' method 'get_azure_monitor_agent_status' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsight.models.ClusterPatchParameters' had property 'identity' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsight.models.NetworkProperties' had property 'outbound_dependencies_managed_type' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsight.models.NetworkProperties' had property 'public_ip_tag' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsight.models.StorageAccount' had property 'enable_secure_channel' added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsight.models.IpTag' was added in the current version
+  - The model or publicly exposed class 'azure.mgmt.hdinsight.models.OutboundDependenciesManagedType' was added in the current version
+
 ## 9.0.0b2 (2023-07-21)
 
 ### Features Added

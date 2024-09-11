@@ -14,6 +14,10 @@ if [ ! -f "$TEMP_FILE" ]; then
   exit 1
 fi
 
+if [ -f "$2" ]; then
+  rm "$2"
+fi
+
 # package
 python -m packaging_tools.sdk_package "$TEMP_FILE" "$2" 2>&1
 echo "[Generate] generate done!!!"
