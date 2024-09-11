@@ -16,6 +16,8 @@ from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
+from typing import Annotated
+from typing_extensions import Doc
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -26,6 +28,49 @@ class TestModelClient(ModelClientTestBase):
     #                               UNIT TESTS
     #
     # **********************************************************************************
+    def test_chat_completions_tool_definition_load(self, **kwargs):
+
+        # This function has arguments (positional and non-positional, with some defaults)
+        # All 4 supported argument types are used in this function
+        def tools_function_1(
+            a: Annotated[str, Doc("Doc for `a`")],
+            b: Annotated[int, Doc("Doc for `b`. Default is 5")] = 5,
+            *,
+            c: Annotated[bool, Doc("Doc for `c`. Default is False")] = False,
+            d: Annotated[float, Doc("Doc for `d`")],
+        ) ->  Annotated[str, "Doc for returned value"]:
+            """
+            First function, first doc line
+            First function, second doc line
+            """
+            ...
+
+        # This function has only non-positional argument, no defaults
+        def tools_function_2(
+            *,
+            x: Annotated[str, Doc("Doc for variable `x`")],
+            y: Annotated[int, Doc("Doc for variable `y`")],
+        ) ->  Annotated[str, "Doc for returned value"]:
+            """
+            Second function doc line
+            """
+            ...
+
+        # This function does not have arguments
+        def tools_function_3() ->  Annotated[str, "doc for returned value"]:
+            """
+            Third function doc line
+            """
+            ...
+
+        tools: list[sdk.models.ChatCompletionsToolDefinition] = [
+            sdk.models.ChatCompletionsToolDefinition.load(tools_function_1),
+            sdk.models.ChatCompletionsToolDefinition.load(tools_function_2),
+            sdk.models.ChatCompletionsToolDefinition.load(tools_function_3),
+        ]
+        print(tools)
+        for tool in tools:
+            print(json.dumps(tool, indent=2))
 
     # Test custom code in ChatCompletions class to print its content in a nice multi-line JSON format
     def test_print_method_of_chat_completions_class(self, **kwargs):

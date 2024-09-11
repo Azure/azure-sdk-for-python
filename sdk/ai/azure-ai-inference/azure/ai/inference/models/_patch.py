@@ -8,16 +8,18 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import asyncio
 import base64
+import inspect
 import json
 import logging
 import queue
 import re
 import sys
 
-from typing import List, AsyncIterator, Iterator, Optional, Union
+from typing import List, AsyncIterator, Iterator, Optional, Union, Any, Callable, Dict, Iterable
 from azure.core.rest import HttpResponse, AsyncHttpResponse
 from ._models import ImageUrl as ImageUrlGenerated
 from ._models import ChatCompletions as ChatCompletionsGenerated
+from ._models import ChatCompletionsToolDefinition as ChatCompletionsToolDefinitionGenerated
 from ._models import EmbeddingsResult as EmbeddingsResultGenerated
 from .. import models as _models
 
@@ -26,8 +28,122 @@ if sys.version_info >= (3, 11):
 else:
     from typing_extensions import Self
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
 logger = logging.getLogger(__name__)
 
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+_TOOLS_FUNCTION_ARG_TYPE_MAP = {str: "string", bool: "boolean", int: "integer", float: "number"}
+
+def _make_tools_function_parameters_properties_schema(args: inspect.FullArgSpec, key: str) -> JSON:
+   """
+   This function returns a dictionary that represents the JSON
+   that can be assigned to the "tools->function->parameters->properties" 
+   element in a chat completions request body.
+   All function arguments must be annotated according to https://peps.python.org/pep-0727/.
+   Only "int", "float", "bool" and "str" input argument types are supported.
+
+   Args:
+      args (inspect.FullArgSpe): The function arguments
+      key (str): The function argument name
+      A Python function. Each function
+
+   Returns:
+      dict: A Dictionary that should be converted to JSON string and used in chat
+      completions request body.
+   """
+   # See https://docs.python.org/3/howto/annotations.html
+   # TODO: Test on Python 3.8
+   ann = getattr(args, 'annotations', None)
+   if ann == None:
+      ann = getattr(args, '__annotations__', None)
+   if ann == None:
+      raise Exception("Missing annotations for function arguments")
+
+   if key in ann:
+      if ann[key].__origin__ not in _TOOLS_FUNCTION_ARG_TYPE_MAP:
+         raise TypeError(f"Function arguments in tool definitions can only be `str`, `bool`, `int` or `float`. Type `{ann[key].__origin__}` is not supported")
+      # TODO: Test all options here... e.g. missing Doc(), empty doc string, and raise appropriate exception
+      if not ann[key].__metadata__[0].documentation:
+         raise Exception(f"Missing the documentation annotation on for function argument `{key}`")
+      return {
+         "type": _TOOLS_FUNCTION_ARG_TYPE_MAP[ann[key].__origin__],
+         "description": ann[key].__metadata__[0].documentation
+      }
+   else:
+      raise Exception(f"Missing annotation for function argument `{key}` in tool defintion")
+
+
+def _make_tools_function_schema(func: Callable[..., Any]) -> JSON:
+   """
+   This function returns a dictionary that represents the JSON
+   that can be assigned to the "tools->function" element in a chat completions
+   request body.
+   See: https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#functionobject
+
+   Args:
+      func (Callable[]): A Python function. Each function
+      must have a description using docstring, and function arguments
+      must all be annotated according to https://peps.python.org/pep-0727/.
+      Only "int", "float", "bool" and "str" input argument types are supported.
+
+   Returns:
+      dict: A Dictionary that when converted to JSON, represents the "tools.function"
+      payload in a chat completions request.
+   """
+   argspec = inspect.getfullargspec(func)
+   if argspec.varargs or argspec.varkw:
+      raise ValueError("I cannot create a schema for a function with *args or **kwargs")
+   args = [arg for arg in argspec.args + argspec.kwonlyargs]
+   defaults = (argspec.kwonlydefaults or {}).copy()
+   defaults.update(
+      dict(zip(argspec.args[-len(argspec.defaults or []) :], argspec.defaults or []))
+   )
+   parameters_schema = {
+      "type": "object",
+      "properties": {argname: _make_tools_function_parameters_properties_schema(argspec, argname) for argname in args},
+      "required": [arg for arg in args if not arg in defaults],
+   }
+   function_schema = {"name": func.__name__}
+   if func.__doc__:
+      function_schema["description"] = func.__doc__
+   elif hasattr(func, "_class__") and func.__class__.__doc__:
+      function_schema["description"] = func.__class__.__doc__
+   function_schema["parameters"] = parameters_schema
+   return function_schema
+
+
+def _make_tool_schema(func: Callable[..., Any]) -> JSON:
+   """
+   This function returns a dictionary that represents the JSON of a single element 
+   in the "tools" array in a chat completions request body.
+   See: https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-chat-completions#chatcompletiontool
+
+   Args:
+      func (typing.Callable[]): A Python functions used as the tool. The function
+      must have a general function description using docstring, and function arguments
+      must all be annotated according to https://peps.python.org/pep-0727/.
+      Only "int", "float", "bool" and "str" input argument types are supported.
+
+   Returns:
+      dict: A Dictionary that when converted to JSON, represents a single element in the
+      "tools" array in a chat completions request payload.
+   """
+   return {
+      "type": "function",
+      "function": _make_tools_function_schema(func)
+    }
+
+class ChatCompletionsToolDefinition(ChatCompletionsToolDefinitionGenerated):
+    @classmethod
+    def load(cls, func: Callable[..., Any]) -> Self:
+        """
+        TODO
+        """
+        return cls(_make_tool_schema(func))
 
 class ChatCompletions(ChatCompletionsGenerated):
     """Representation of the response data from a chat completions request.
@@ -269,6 +385,7 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
 __all__: List[str] = [
     "ImageUrl",
     "ChatCompletions",
+    "ChatCompletionsToolDefinition",
     "EmbeddingsResult",
     "StreamingChatCompletions",
     "AsyncStreamingChatCompletions",

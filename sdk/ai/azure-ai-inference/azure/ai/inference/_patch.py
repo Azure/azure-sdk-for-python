@@ -15,6 +15,8 @@ Why do we patch auto-generated code?
 5. Add support for chat completion streaming (ChatCompletionsClient client only)
 6. Add support for friendly print of result objects (__str__ method) (all clients)
 7. Add support for load() method in ImageUrl class (see /models/_patch.py).
+8. Add support for ChatCompletionsToolDefinition.load() to get 'tool' function definitions directly from 
+   the annotations on a give Python function (see /models/_patch.py)
 
 """
 import json
@@ -22,7 +24,19 @@ import logging
 import sys
 
 from io import IOBase
-from typing import Any, Dict, Union, IO, List, Literal, Optional, overload, Type, TYPE_CHECKING, Iterable
+from typing import (
+    Any,
+    Dict,
+    IO,
+    Iterable,
+    List,
+    Literal,
+    Optional,
+    overload,
+    TYPE_CHECKING,
+    Type,
+    Union,
+)
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.credentials import AzureKeyCredential
