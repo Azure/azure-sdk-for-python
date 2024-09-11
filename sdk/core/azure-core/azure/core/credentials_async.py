@@ -8,7 +8,7 @@ from typing import Any, Optional, AsyncContextManager, Type, Union, TYPE_CHECKIN
 from typing_extensions import Protocol, runtime_checkable
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
+    from .credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 
 
 @runtime_checkable
