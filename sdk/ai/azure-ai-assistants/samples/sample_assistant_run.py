@@ -27,7 +27,7 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants import AssistantsClient
-from azure.ai.assistants.models import AssistantFunctions
+from azure.ai.assistants.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet
 from azure.core.credentials import AzureKeyCredential
 from user_functions import user_functions
 
@@ -67,15 +67,15 @@ def sample_assistant_run():
     # Initialize assistant functions
     functions = FunctionTool(user_functions)
     # functions.add_function(...)
-    code_interpreter = CodeInterpreterTool(...)
-    code_interpreter.add_file(...)
-    file_search = FileSearchTool(...)
-    file_search.add_vector_store(...)
+    #code_interpreter = CodeInterpreterTool()
+    #code_interpreter.add_file()
+    #file_search = FileSearchTool()
+    #file_search.add_vector_store(...)
 
     tool_set = ToolSet()
     tool_set.add(functions)
-    tool_set.add(code_interpreter)
-    tool_set.add(file_search)
+    #tool_set.add(code_interpreter)
+    #tool_set.add(file_search)
 
     # Create assistant
     assistant = assistant_client.create_assistant(

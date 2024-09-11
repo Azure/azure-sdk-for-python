@@ -9,18 +9,27 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from ._enums import AssistantStreamEvent
 from ._models import MessageDeltaChunk, ThreadRun, RunStep, ThreadMessage, RunStepDeltaChunk
 
+from abc import ABC, abstractmethod
 from typing import List, Dict, Any
 import inspect, json
 
 
-class AssistantFunctions:
-    """
-    A class to manage a set of user-defined functions for an assistant.
-    """
+class Tool(ABC):
+    @abstractmethod
+    def get_definitions(self) -> List[Dict[str, Any]]:
+        """Get the tool definitions."""
+        pass
 
+    @abstractmethod
+    def execute(self, tool_calls: List[Any]) -> Any:
+        """Execute tool operations based on tool_calls provided."""
+        pass
+
+
+class FunctionTool(Tool):
     def __init__(self, functions: Dict[str, Any]):
         """
-        Initialize AssistantFunctions with a dictionary of functions.
+        Initialize FunctionTool with a dictionary of functions.
 
         :param functions: A dictionary where keys are function names and values are the function objects.
         """
@@ -28,12 +37,6 @@ class AssistantFunctions:
         self._definitions = self._build_function_definitions(functions)
 
     def _build_function_definitions(self, functions: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """
-        Build function definitions for each function provided.
-
-        :param functions: A dictionary of functions to analyze.
-        :return: A list of specifications for each function.
-        """
         specs = []
         type_map = {"str": "string", "int": "integer", "float": "number", "bool": "boolean", "default": "string"}
 
@@ -65,7 +68,7 @@ class AssistantFunctions:
 
         return specs
 
-    def invoke_functions(self, tool_calls):
+    def execute(self, tool_calls: List[Any]) -> Any:
         """
         Invoke a list of function calls with their specified arguments.
 
@@ -85,14 +88,6 @@ class AssistantFunctions:
         return tool_outputs
 
     def _handle_function_call(self, function_name, arguments):
-        """
-        Handle the invocation of a single function call with the given arguments.
-
-        :param function_name: The name of the function to call.
-        :param arguments: A JSON string of arguments to pass to the function.
-        :return: The result of the function call.
-        """
-
         if function_name in self._functions:
             function = self._functions[function_name]
 
@@ -116,11 +111,62 @@ class AssistantFunctions:
             return None
 
     @property
-    def definitions(self):
+    def definitions(self) -> List[Dict[str, Any]]:
         """
         Get the function definitions for the assistant.
+
+        :return: A list of function definitions.
         """
         return self._definitions
+
+
+class FileSearchTool(Tool):
+    def __init__(self):
+        self.vector_store = None
+
+    def add_vector_store(self, store: Any):
+        self.vector_store = store
+
+    def get_definitions(self) -> List[Dict[str, Any]]:
+        return [{"name": "File Search", "type": "search"}]
+
+    def execute(self, tool_calls: List[Any]) -> Any:
+        pass
+
+
+class CodeInterpreterTool(Tool):
+    def __init__(self):
+        self.files = []
+
+    def add_file(self, file: Any):
+        self.files.append(file)
+
+    def get_definitions(self) -> List[Dict[str, Any]]:
+        return [{"name": "Code Interpreter", "type": "interpreter"}]
+
+    def execute(self, tool_calls: List[Any]) -> Any:
+        pass
+
+
+class ToolSet:
+    def __init__(self):
+        self.tools = []
+
+    def add(self, tool: Tool):
+        self.tools.append(tool)
+
+    def get_definitions(self) -> List[Dict[str, Any]]:
+        definitions = []
+        for tool in self.tools:
+            definitions.extend(tool.get_definitions())
+        return definitions
+
+    def execute_tool(self, tool_name: str, params: Dict[str, Any]) -> Any:
+        for tool in self.tools:
+            tool_definitions = tool.get_definitions()
+            if any(tool_name in definition["name"] for definition in tool_definitions):
+                return tool.execute(params)
+        raise ValueError(f"Tool {tool_name} not found.")
 
 
 class AssistantRunStream:
@@ -209,6 +255,12 @@ class AssistantRunStream:
 __all__: List[str] = [
     "AssistantFunctions",
     "AssistantRunStream",
+    "FunctionTool",
+    "FileSearchTool",
+    "CodeInterpreterTool",
+    "ToolSet",
+    "Tool",
+    "ToolSet",
 ]  # Add all objects you want publicly available to users at this package level
 
 
