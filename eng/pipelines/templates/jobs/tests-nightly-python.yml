@@ -28,6 +28,7 @@ jobs:
     variables:
       skipComponentGovernanceDetection: true
       PythonVersion: '3.13.0-rc.2'
+      TargetedPackages: "azure-core,azure-storage*, azure-identity*"
 
     timeoutInMinutes: 90
 
@@ -42,7 +43,6 @@ jobs:
       displayName: Validate Nightly Dev Python Build
       variables:
         skipComponentGovernanceDetection: true
-        TargetedPackages: "azure-core,azure-storage*, azure-identity*"
 
       timeoutInMinutes: 90
 
