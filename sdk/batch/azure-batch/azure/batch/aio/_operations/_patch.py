@@ -592,7 +592,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
         return super().terminate_job(*args, **kwargs)
 
-class _TaskWorkflowManager(object):
+class _TaskWorkflowManager():
     """Worker class for one create_task_collection request
 
     :param ~TaskOperations task_operations: Parent object which instantiated this
