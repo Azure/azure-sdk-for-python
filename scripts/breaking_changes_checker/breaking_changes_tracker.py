@@ -136,12 +136,26 @@ class BreakingChangesTracker:
             self.run_class_level_diff_checks(module)
             self.run_function_level_diff_checks(module)
         # Run custom checkers in the base class, we only need 1 CodeReporter class in the tool
-        # The changelog reporter class is a result of not having pluggable checks
+        # The changelog reporter class is a result of not having pluggable checks, we're migrating away from it as we add more pluggable checks
         for checker in self.checkers:
+            changes_list = self.breaking_changes
             if not checker.is_breaking:
-                self.features_added.extend(checker.run_check(self.diff, self.stable, self.current))
+                changes_list = self.features_added
+
+            if checker.node_type == "module":
+                changes_list.extend(checker.run_check(self.diff, self.stable, self.current))
                 continue
-            self.breaking_changes.extend(checker.run_check(self.diff, self.stable, self.current))
+            for module_name, module_components in self.diff.items():
+                if checker.node_type == "class":
+                        changes_list.extend(checker.run_check(module_components.get("class_nodes", {}), self.stable, self.current, module_name=module_name))
+                        break
+                for class_name, class_components in module_components.get("class_nodes", {}).items():
+                    if checker.node_type == "function_or_method":
+                        # this checker needs to run on all methods and functions
+                        changes_list.extend(checker.run_check(class_components.get("methods", {}), self.stable, self.current, module_name=module_name, class_name=class_name))
+                if checker.node_type == "function_or_method":
+                    changes_list.extend(checker.run_check(module_components.get("function_nodes", {}), self.stable, self.current, module_name=module_name))
+
 
     def run_class_level_diff_checks(self, module: Dict) -> None:
         for class_name, class_components in module.get("class_nodes", {}).items():
