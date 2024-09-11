@@ -22,7 +22,7 @@ steps:
 
   - pwsh: |
       $(VENV_ACTIVATION_SCRIPT)
-      python ./scripts/devops_tasks/dispatch_tox.py "*" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="Build"
+      python ./scripts/devops_tasks/dispatch_tox.py "$(TargetedPackages)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="Build"
     displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
     env:
       YARL_NO_EXTENSIONS: 1
