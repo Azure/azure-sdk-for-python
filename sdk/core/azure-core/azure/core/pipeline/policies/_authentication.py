@@ -100,7 +100,10 @@ class _BearerTokenCredentialPolicyBase:
             options: TokenRequestOptions = {}
             # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
             for key in list(kwargs.keys()):
-                if key in TokenRequestOptions.__annotations__:
+                if (
+                    key
+                    in TokenRequestOptions.__annotations__  # pylint: disable=no-member
+                ):
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
             self._token = cast(SupportsTokenInfo, self._credential).get_token_info(
@@ -278,7 +281,9 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     """
 
     def __init__(
-        self, credential: "AzureSasCredential", **kwargs: Any # pylint: disable=unused-argument
+        self,
+        credential: "AzureSasCredential",
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
         super(AzureSasCredentialPolicy, self).__init__()
         if not credential:

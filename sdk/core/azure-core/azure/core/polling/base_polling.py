@@ -699,7 +699,7 @@ class _SansIOLROBasePolling(
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         # Restore the transport in the context
         initial_response.context.transport = (
-            client._pipeline._transport # pylint: disable=protected-access
+            client._pipeline._transport  # pylint: disable=protected-access
         )
         return client, initial_response, deserialization_callback
 

@@ -40,7 +40,7 @@ from typing import (
 HTTPResponseType = TypeVar(  # pylint: disable=typevar-name-incorrect-variance
     "HTTPResponseType", covariant=True
 )
-HTTPRequestType = TypeVar(   # pylint: disable=typevar-name-incorrect-variance
+HTTPRequestType = TypeVar(  # pylint: disable=typevar-name-incorrect-variance
     "HTTPRequestType", covariant=True
 )
 
@@ -108,7 +108,7 @@ class PipelineContext(Dict[str, Any]):
             raise ValueError("Context value {} cannot be deleted.".format(key))
         return super(PipelineContext, self).__delitem__(key)
 
-    def clear(   # pylint: disable=docstring-missing-return, docstring-missing-rtype
+    def clear(  # pylint: disable=docstring-missing-return, docstring-missing-rtype
         self,
     ) -> None:
         """Context objects cannot be cleared.

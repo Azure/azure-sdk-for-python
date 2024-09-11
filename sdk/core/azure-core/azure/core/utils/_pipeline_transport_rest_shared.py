@@ -306,7 +306,7 @@ def _get_raw_parts_helper(response, http_response_type: Type):
     )
     message: Message = message_parser(http_body)
     requests = response.request.multipart_mixed_info[0]
-    return response._decode_parts(   # pylint: disable=protected-access
+    return response._decode_parts(  # pylint: disable=protected-access
         message, http_response_type, requests
     )
 

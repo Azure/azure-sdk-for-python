@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import collections.abc as collections
-from requests.structures import ( # pylint: disable=networking-import-outside-azure-core-transport
+from requests.structures import (  # pylint: disable=networking-import-outside-azure-core-transport
     CaseInsensitiveDict,
 )
 
