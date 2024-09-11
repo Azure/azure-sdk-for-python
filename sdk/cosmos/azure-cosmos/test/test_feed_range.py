@@ -9,7 +9,7 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.partition_key as partition_key
 import test_config
-from azure.cosmos._change_feed.feed_range import FeedRangeEpk
+from azure.cosmos._change_feed.feed_range import FeedRangeEpk, FeedRangePartitionKey
 from azure.cosmos._routing.routing_range import Range
 from test.test_config import TestConfig
 
@@ -49,30 +49,31 @@ class TestFeedRange:
             partition_key=partition_key.PartitionKey(path="/id")
         )
         feed_range = created_container.feed_range_from_partition_key("1")
-        print(feed_range.get_normalized_range())
+        assert feed_range.get_normalized_range() == Range("3C80B1B7310BB39F29CC4EA05BDD461E",
+                        "3c80b1b7310bb39f29cc4ea05bdd461f", True, False)
         setup["created_db"].delete_container(created_container)
 
 
-    test_ranges = [(Range("", "FFFFFFFFFFFFFFFF", True, False),
-                    Range("3FFFFFFFFFFFFFFF", "7FFFFFFFFFFFFFFF", True, False),
+    test_ranges = [(Range("", "FF", True, False),
+                    Range("3FFFFFFFFFFFFFFF", "7F", True, False),
                     True),
-                   (Range("3FFFFFFFFFFFFFFF", "7FFFFFFFFFFFFFFF", True, False),
-                    Range("", "FFFFFFFFFFFFFFFF", True, False),
+                   (Range("3FFFFFFFFFFFFFFF", "7F", True, False),
+                    Range("", "FF", True, False),
                     False),
-                   (Range("3FFFFFFFFFFFFFFF", "7FFFFFFFFFFFFFFF", True, False),
-                    Range("", "5FFFFFFFFFFFFFFF", True, False),
+                   (Range("3FFFFFFFFFFFFFFF", "7F", True, False),
+                    Range("", "5F", True, False),
                     False),
-                   (Range("3FFFFFFFFFFFFFFF", "7FFFFFFFFFFFFFFF", True, True),
-                    Range("3FFFFFFFFFFFFFFF", "7FFFFFFFFFFFFFFF", True, True),
+                   (Range("3FFFFFFFFFFFFFFF", "7F", True, True),
+                    Range("3FFFFFFFFFFFFFFF", "7F", True, True),
                     True),
-                   (Range("3FFFFFFFFFFFFFFF", "7FFFFFFFFFFFFFFF", False, True),
-                    Range("3FFFFFFFFFFFFFFF", "7FFFFFFFFFFFFFFF", True, True),
+                   (Range("3FFFFFFFFFFFFFFF", "7F", False, True),
+                    Range("3FFFFFFFFFFFFFFF", "7F", True, True),
                     False),
-                   (Range("3FFFFFFFFFFFFFFF", "7FFFFFFFFFFFFFFF", True, False),
-                    Range("3FFFFFFFFFFFFFFF", "7FFFFFFFFFFFFFFF", True, True),
+                   (Range("3FFFFFFFFFFFFFFF", "7F", True, False),
+                    Range("3FFFFFFFFFFFFFFF", "7F", True, True),
                     False),
-                   (Range("3FFFFFFFFFFFFFFF", "7FFFFFFFFFFFFFFF", True, False),
-                   Range("", "2FFFFFFFFFFFFFFF", True, False),
+                   (Range("3FFFFFFFFFFFFFFF", "7F", True, False),
+                   Range("", "2F", True, False),
                    False)]
 
     @pytest.mark.parametrize("parent_feed_range, child_feed_range, is_subset", test_ranges)
@@ -82,9 +83,11 @@ class TestFeedRange:
         assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range) == is_subset
 
     def test_feed_range_is_subset_from_pk(self, setup):
-        epk_parent_feed_range = FeedRangeEpk(Range("", "FFFFFFFFFFFFFFFF", True, False))
+        epk_parent_feed_range = FeedRangeEpk(Range("", "FF", True, False))
         epk_child_feed_range = setup["created_collection"].feed_range_from_partition_key("1")
         assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
+        child_feed_range = FeedRangePartitionKey("1", Range("", "CC", True, False))
+        assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, child_feed_range)
 
 if __name__ == '__main__':
     unittest.main()

@@ -36,11 +36,13 @@ from ._base import (
     _deserialize_throughput,
     _replace_throughput,
     GenerateGuidId,
-    _set_properties_cache
+    _set_properties_cache,
+    ParsePaths,
+    TrimBeginningAndEndingSlashes
 )
 from ._change_feed.feed_range import FeedRange, FeedRangeEpk
 from ._cosmos_client_connection import CosmosClientConnection
-from ._routing.routing_range import Range, partition_key_range_to_range_string
+from ._routing.routing_range import Range, partition_key_range_to_range_string, PartitionKeyRange
 from .offer import Offer, ThroughputProperties
 from .partition_key import (
     NonePartitionKeyValue,
@@ -259,6 +261,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._add_request_context(request_options)
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
@@ -316,6 +319,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
+        # Change to be full range
+        self._add_request_context({})
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
         return items
@@ -499,6 +504,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if kwargs.get("partition_key") is not None:
             change_feed_state_context["partitionKey"] =\
                 self._set_partition_key(cast(PartitionKeyType, kwargs.get('partition_key')))
+            request_context = {"partitionKey": change_feed_state_context["partitionKey"]}
             change_feed_state_context["partitionKeyFeedRange"] =\
                 self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
@@ -516,6 +522,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         result = self.client_connection.QueryItemsChangeFeed(
             self.container_link, options=feed_options, response_hook=response_hook, **kwargs
         )
+        self._add_request_context(request_context)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
@@ -640,6 +647,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook=response_hook,
             **kwargs
         )
+        request_context = {"partitionKey": feed_options["partitionKey"]}
+        self._add_request_context(request_context)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
         return items
@@ -717,10 +726,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        return self.client_connection.ReplaceItem(
-            document_link=item_link, new_document=body, options=request_options, **kwargs
+        request_context = {}
+        result = self.client_connection.ReplaceItem(
+            document_link=item_link, new_document=body, request_context=request_context, options=request_options, **kwargs
         )
+        self._add_request_context(request_context)
+        return result
 
     @distributed_trace
     def upsert_item(  # pylint:disable=docstring-missing-param
@@ -783,13 +794,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populateQueryMetrics"] = populate_query_metrics
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        return self.client_connection.UpsertItem(
+        request_context = {}
+        result = self.client_connection.UpsertItem(
             database_or_container_link=self.container_link,
             document=body,
+            request_context=request_context,
             options=request_options,
             **kwargs
         )
+        self._add_request_context(request_context)
+        return result
 
     @distributed_trace
     def create_item(  # pylint:disable=docstring-missing-param
@@ -860,8 +874,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["indexingDirective"] = indexing_directive
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        return self.client_connection.CreateItem(
-            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
+        request_context = {}
+        result = self.client_connection.CreateItem(
+            database_or_container_link=self.container_link, document=body, request_context=request_context, options=request_options, **kwargs)
+        self._add_request_context(request_context)
+        return result
 
     @distributed_trace
     def patch_item(
@@ -927,8 +944,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         item_link = self._get_document_link(item)
-        return self.client_connection.PatchItem(
-            document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
+        request_context = {}
+        result = self.client_connection.PatchItem(
+            document_link=item_link, operations=patch_operations, request_context=request_context, options=request_options, **kwargs)
+        self._add_request_context(request_context)
+        return result
 
     @distributed_trace
     def execute_item_batch(
@@ -979,10 +999,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['priority'] = priority
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_context = {"partitionKey": request_options["partitionKey"]}
         request_options["disableAutomaticIdGeneration"] = True
-
-        return self.client_connection.Batch(
+        result = self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
+        self._add_request_context(request_context)
+        return result
 
     @distributed_trace
     def delete_item(  # pylint:disable=docstring-missing-param
@@ -1049,7 +1071,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         document_link = self._get_document_link(item)
+        request_context = {"partitionKey": request_options["partitionKey"]}
         self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
+        self._add_request_context(request_context)
 
     @distributed_trace
     def read_offer(self, **kwargs: Any) -> Offer:
@@ -1336,7 +1360,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def get_updated_session_token(self,
                              feed_ranges_to_session_tokens: List,
-                             target_feed_range: Range
+                             target_feed_range: FeedRange
                              ) -> "Session Token":
         """Gets the best session token from the list of session token and feed range tuples
         to figure out which is the most up to date for a specific
@@ -1370,7 +1394,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
         """
-        normalized_parent_range = parent_feed_range.get_normalized_range()
-        normalized_child_range = child_feed_range.get_normalized_range()
-        return normalized_parent_range.contains(normalized_child_range.min) and \
-            (normalized_parent_range.contains(normalized_child_range.max) or normalized_parent_range.max == normalized_child_range.max)
+        return child_feed_range.get_normalized_range().is_subset(parent_feed_range.get_normalized_range())
+
+    def _add_request_context(self, request_context):
+        request_context['session_token'] = self.client_connection.last_response_headers['x-ms-session-token']
+        if 'partitionKey' in request_context:
+            request_context["feed_range"] =  self._get_epk_range_for_partition_key(request_context['partitionKey'])
+        self.client_connection.last_response_headers["request_context"] = request_context

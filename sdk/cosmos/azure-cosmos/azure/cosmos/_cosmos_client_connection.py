@@ -30,6 +30,8 @@ from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
+
+from ._change_feed.feed_range import FeedRange
 from ._vector_session_token import VectorSessionToken
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
@@ -46,7 +48,7 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import HttpRequest, \
     HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 
-from . import _base as base, _request_context
+from . import _base as base
 from . import _global_endpoint_manager as global_endpoint_manager
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
@@ -1259,6 +1261,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         database_or_container_link: str,
         document: Dict[str, Any],
+        request_context: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1289,7 +1292,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         if base.IsItemContainerLink(database_or_container_link):
             options = self._AddPartitionKey(database_or_container_link, document, options)
-        return self.Create(document, path, "docs", collection_id, None, options, **kwargs)
+        request_context["partitionKey"] = options["partitionKey"]
+        result = self.Create(document, path, "docs", collection_id, None, options, **kwargs)
+        return result
 
     def UpsertItem(
         self,
@@ -1971,6 +1976,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         document_link: str,
         new_document: Dict[str, Any],
+        request_context: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -2620,7 +2626,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
-        self.last_response_headers = _request_context.add_request_context(last_response_headers, options)
         if response_hook:
             response_hook(last_response_headers, result)
         return result
@@ -3330,26 +3335,67 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return partition_key_definition
 
     def _get_updated_session_token(self, feed_ranges_to_session_tokens, target_feed_range):
-        comparison_session_token = ''
-        comparison_pk_range_id = ''
-        for (pk, session_token) in feed_ranges_to_session_tokens:
-            if pk == target_feed_range:
-                token_pairs = session_token.split(":")
-                comparison_pk_range_id = token_pairs[0]
-                comparison_session_token = VectorSessionToken.create(token_pairs[1])
-                break
-        for (pk, session_token) in feed_ranges_to_session_tokens:
-            token_pairs = session_token.split(":")
-            pk_range_id = token_pairs[0]
-            vector_session_token = VectorSessionToken.create(token_pairs[1])
-            # This should not be necessary
-            # if pk_range_id == comparison_pk_range_id:
-            #     comparison_session_token = comparison_session_token.merge(vector_session_token)
-            if pk == target_feed_range:
-                if pk_range_id == comparison_pk_range_id:
-                    comparison_session_token = comparison_session_token.merge(vector_session_token)
-                elif session_token.is_greater(comparison_session_token):
-                    comparison_pk_range_id = pk_range_id
-                    comparison_session_token = session_token
-        return comparison_pk_range_id + ":" + comparison_session_token.session_token
+        target_feed_range_normalized = target_feed_range.get_normalized_range()
+        # filter out tuples that overlap with target_feed_range and normalizes all the ranges
+        overlapping_ranges = [(feed_range[0].get_normalized_range(), feed_range[1]) for feed_range in feed_ranges_to_session_tokens if
+                              feed_range[0].get_normalized_range().overlaps(target_feed_range_normalized)]
+        # Is there a feed_range that is a superset of some of the other feed_ranges excluding tuples
+        # with compound session tokens?
+        if overlapping_ranges == 0:
+            raise ValueError('There were no overlapping feed ranges with the target.')
 
+
+        # Clean this up
+        for i in range(len(overlapping_ranges)):
+            for j in range(i + 1, len(overlapping_ranges)):
+                session_token = overlapping_ranges[i][1]
+                session_token_1 = overlapping_ranges[j][1]
+                if (not CosmosClientConnection.is_compound_session_token(session_token) and
+                        not CosmosClientConnection.is_compound_session_token(overlapping_ranges[j][1]) and
+                        overlapping_ranges[i][0] == overlapping_ranges[j][0]):
+                    session_token = CosmosClientConnection.merge_session_tokens(session_token, session_token_1)
+                    overlapping_ranges.append((overlapping_ranges[i][0], session_token))
+                    overlapping_ranges.remove(overlapping_ranges[i])
+                    overlapping_ranges.remove(overlapping_ranges[j])
+
+
+        i = 0
+        session_token = ""
+        while i < len(overlapping_ranges):
+            feed_range_cmp, session_token_cmp = overlapping_ranges[i]
+            subsets = []
+            for j in range(i + 1, len(overlapping_ranges)):
+                feed_range = overlapping_ranges[j][0]
+                session_token = overlapping_ranges[j][1]
+                if not CosmosClientConnection.is_compound_session_token(feed_range) and \
+                        feed_range.is_subset(feed_range_cmp):
+                    subsets.append(overlapping_ranges[j])
+            for j in range(len(subsets)):
+                merged_range = subsets[j][0]
+                for k in range(len(subsets)):
+                    if j == k:
+                        continue
+                    if merged_range.can_merge(subsets[k][0]):
+                        merged_range = merged_range.merge(subsets[k][0])
+                    if feed_range_cmp == merged_range:
+                        session_token = subsets[j][1]
+                        return session_token
+
+    @staticmethod
+    def merge_session_tokens(session_token1, session_token2):
+        token_pairs1 = session_token1.split(",")
+        pk_range_id1 = token_pairs1[0]
+        vector_session_token1 = VectorSessionToken.create(token_pairs1[1])
+        token_pairs2 = session_token2.split(",")
+        pk_range_id2 = token_pairs2[0]
+        vector_session_token2 = VectorSessionToken.create(token_pairs2[1])
+        pk_range_id = pk_range_id1
+        if pk_range_id1 != pk_range_id2:
+            pk_range_id = pk_range_id1 \
+                if vector_session_token1.global_lsn > vector_session_token2.global_lsn else pk_range_id2
+        vector_session_token = vector_session_token1.merge(vector_session_token2)
+        return pk_range_id + "," +  vector_session_token.session_token
+
+    @staticmethod
+    def is_compound_session_token(session_token):
+       return "," in session_token

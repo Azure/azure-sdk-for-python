@@ -25,7 +25,7 @@ database service.
 from abc import ABC, abstractmethod
 from typing import Union, List, Dict, Any
 
-from azure.cosmos._routing.routing_range import Range
+from azure.cosmos._routing.routing_range import Range, PartitionKeyRange
 from azure.cosmos.partition_key import _Undefined, _Empty
 
 
@@ -38,6 +38,21 @@ class FeedRange(ABC):
     @abstractmethod
     def to_dict(self) -> Dict[str, Any]:
         pass
+
+
+
+    @staticmethod
+    def _get_range(pk_ranges) -> Range:
+        max_range = pk_ranges[0][PartitionKeyRange.MaxExclusive]
+        min_range = pk_ranges[0][PartitionKeyRange.MinInclusive]
+        for i in range(1, len(pk_ranges)):
+            pk_ranges_min = pk_ranges[i][PartitionKeyRange.MinInclusive]
+            pk_ranges_max = pk_ranges[i][PartitionKeyRange.MaxExclusive]
+            if pk_ranges_min < min_range:
+                min_range = pk_ranges_min
+            if pk_ranges_max > max_range:
+                max_range = pk_ranges_max
+        return Range(min_range, max_range, True, False)
 
 class FeedRangePartitionKey(FeedRange):
     type_property_name = "PK"
