@@ -1231,3 +1231,11 @@ pipelines:
           lastModifiedDate: 2024-09-11
         armory:
           lastModifiedDate: 2024-09-11
+  6555:
+    usedNonDefaultBranch: true
+    retail:
+      source:
+        credscan:
+          lastModifiedDate: 2024-09-11
+        armory:
+          lastModifiedDate: 2024-09-11
