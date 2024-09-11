@@ -10,36 +10,20 @@ import base64
 import hmac
 import hashlib
 import importlib
-
 from datetime import datetime
 from typing import TYPE_CHECKING
-from ._client import BatchClient as GenerateBatchClient
-from azure.core.credentials import TokenCredential
 
-# from ._batch_service_client import BatchClient as GenerateBatchClient
-
-from ._serialization import Serializer
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
-from ._serialization import TZ_UTC
-from azure.core.pipeline import PipelineRequest
 
-# from ._operations import (
-#     AccountOperations,
-#     ApplicationsOperations,
-#     CertificatesOperations,
-#     BatchNodesOperations,
-#     FileOperations,
-#     JobOperations,
-#     JobScheduleOperations,
-#     PoolOperations,
-#     TaskOperations,
-# )
-
-from typing import TypeVar, Any, Union
+from ._client import BatchClient as GenerateBatchClient
+from ._serialization import (
+    Serializer,
+    TZ_UTC,
+)
 
 try:
     from urlparse import urlparse, parse_qs
@@ -51,20 +35,14 @@ __all__ = [
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Optional, TypeVar, Union, List
-    from ._operations._operations import JSONType
-
-    T = TypeVar("T")
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Type, TypeVar, Any, Union, Dict, List
-
-    ClientType = TypeVar("ClientType", bound="BatchClient")
+    from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest
 
+    ClientType = TypeVar("ClientType", bound="BatchClient")
+    T = TypeVar("T")
+    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
 
