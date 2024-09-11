@@ -11,11 +11,11 @@ import hmac
 import hashlib
 import importlib
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar, Any, Union
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.pipeline import PipelineResponse
+from azure.core.credentials import AzureNamedKeyCredential, TokenCredential
+from azure.core.pipeline import PipelineResponse, PipelineRequest
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 
