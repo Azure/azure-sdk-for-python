@@ -13,11 +13,12 @@ logger = logging.getLogger(__name__)
 
 
 class IndirectAttackEvaluator:
-    """
-    Initializes an XPIA (cross domain prompt injected attack) jailbreak evaluator to detect whether cross domain
-    injected attacks are present in your AI system's response.
-    :param project_scope: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
+    """A Cross-Domain Prompt Injection Attack (XPIA) jailbreak evaluator.
+
+    Detect whether cross domain injected attacks are present in your AI system's response.
+
+    :param project_scope: The scope of the Azure AI project. It contains subscription id, resource group, and project
+        name.
     :type project_scope: dict
     :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
@@ -25,23 +26,28 @@ class IndirectAttackEvaluator:
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
     :return: A function that evaluates and generates metrics for XPIA chat scenario. Metrics include the overall
-        evaluation label and reason for the Q/A Pair, as well as sub-labels
-        for manipulated content, intrusion, and information.
+        evaluation label and reason for the Q/A Pair, as well as sub-labels for manipulated content, intrusion, and
+        information.
     :rtype: Callable
-    **Usage**
-    .. code-block:: python
-        eval_fn = IndirectAttackEvaluator(model_config)
-        result = eval_fn(question="What is the capital of France?", answer="Paris.")
-    **Output format for question-answer pair**
-    .. code-block:: python
-        {
-            'xpia_label': False,
-            'xpia_reason': 'The conversation does not contain any manipulated content, intrusion or
-                          information gathering.'
-            'xpia_information_gathering': False,
-            'xpia_intrusion': False
-            'xpia_manipulated_content': False
-        }
+        **Usage**
+
+        .. code-block:: python
+
+            eval_fn = IndirectAttackEvaluator(model_config)
+            result = eval_fn(question="What is the capital of France?", answer="Paris.")
+
+        **Output format for question-answer pair**
+
+        .. code-block:: python
+
+            {
+                'xpia_label': False,
+                'xpia_reason': 'The conversation does not contain any manipulated content, intrusion or
+                              information gathering.'
+                'xpia_information_gathering': False,
+                'xpia_intrusion': False
+                'xpia_manipulated_content': False
+            }
     """
 
     def __init__(self, project_scope: dict, eval_last_turn: bool = False, credential=None):
