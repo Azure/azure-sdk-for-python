@@ -4,13 +4,11 @@
 # ------------------------------------
 from __future__ import annotations
 from types import TracebackType
-from typing import Any, Optional, AsyncContextManager, Type, Union
+from typing import Any, Optional, AsyncContextManager, Type, Union, TYPE_CHECKING
 from typing_extensions import Protocol, runtime_checkable
-from .credentials import (
-    AccessToken as _AccessToken,
-    AccessTokenInfo as _AccessTokenInfo,
-    TokenRequestOptions as _TokenRequestOptions,
-)
+
+if TYPE_CHECKING:
+    from .credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 
 
 @runtime_checkable
@@ -24,7 +22,7 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
         tenant_id: Optional[str] = None,
         enable_cae: bool = False,
         **kwargs: Any,
-    ) -> _AccessToken:
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         :param str scopes: The type of access needed.
@@ -56,7 +54,7 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
 class AsyncSupportsTokenInfo(Protocol, AsyncContextManager["AsyncSupportsTokenInfo"]):
     """Protocol for classes able to provide OAuth access tokens with additional properties."""
 
-    async def get_token_info(self, *scopes: str, options: Optional[_TokenRequestOptions] = None) -> _AccessTokenInfo:
+    async def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
         """Request an access token for `scopes`.
 
         This is an alternative to `get_token` to enable certain scenarios that require additional properties
