@@ -15,6 +15,7 @@ class PackageProps
     [boolean]$IsNewSdk
     [string]$ArtifactName
     [string]$ReleaseStatus
+    [boolean]$IncludedForValidation
     [string[]]$AdditionalValidationPackages
 
     PackageProps([string]$name, [string]$version, [string]$directoryPath, [string]$serviceDirectory)
@@ -38,6 +39,7 @@ class PackageProps
         $this.Version = $version
         $this.DirectoryPath = $directoryPath
         $this.ServiceDirectory = $serviceDirectory
+        $this.IncludedForValidation = $false
 
         if (Test-Path (Join-Path $directoryPath "README.md"))
         {
@@ -140,6 +142,8 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
         $key = $addition.Replace($RepoRoot, "").SubString(1)
 
         if ($lookup[$key]) {
+            $lookup[$key].IncludedForValidation = $true
+            Write-Host $lookup[$key].IncludedForValidation
             $packagesWithChanges += $lookup[$key]
         }
     }
