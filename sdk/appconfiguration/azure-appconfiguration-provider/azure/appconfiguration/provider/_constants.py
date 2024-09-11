@@ -17,6 +17,11 @@ ContainerAppEnvironmentVariable = "CONTAINER_APP_NAME"
 KubernetesEnvironmentVariable = "KUBERNETES_PORT"
 ServiceFabricEnvironmentVariable = "Fabric_NodeName"  # cspell:disable-line
 
+TELEMETRY_KEY = "telemetry"
+METADATA_KEY = "metadata"
+ETAG_KEY = "etag"
+FEATURE_FLAG_REFERENCE_KEY = "feature_flag_reference"
+FEATURE_FLAG_ID_KEY = "feature_flag_id"
 PERCENTAGE_FILTER_NAMES = ["Percentage", "PercentageFilter", "Microsoft.Percentage", "Microsoft.PercentageFilter"]
 TIME_WINDOW_FILTER_NAMES = ["TimeWindow", "TimeWindowFilter", "Microsoft.TimeWindow", "Microsoft.TimeWindowFilter"]
 TARGETING_FILTER_NAMES = ["Targeting", "TargetingFilter", "Microsoft.Targeting", "Microsoft.TargetingFilter"]
