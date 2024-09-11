@@ -284,7 +284,7 @@ class PartitionKey(dict):
             partition_key: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> bool: # pylint: disable=line-too-long
         if self.kind!= "MultiHash":
             return False
-        if isinstance(partition_key, list) and len(self.path) == len(partition_key):
+        if isinstance(partition_key, list) and len(self['paths']) == len(partition_key):
             return False
         return True
 

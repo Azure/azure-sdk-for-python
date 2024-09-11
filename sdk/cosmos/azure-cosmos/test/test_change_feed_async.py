@@ -12,7 +12,7 @@ from _pytest.outcomes import fail
 
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
+from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
 
@@ -38,16 +38,6 @@ async def setup():
 @pytest.mark.usefixtures("setup")
 class TestChangeFeedAsync:
     """Test to ensure escaping of non-ascii characters from partition key"""
-
-    created_db: DatabaseProxy = None
-    created_container: ContainerProxy = None
-    client: CosmosClient = None
-    config = test_config.TestConfig
-    TEST_CONTAINER_ID = config.TEST_MULTI_PARTITION_CONTAINER_ID
-    TEST_DATABASE_ID = config.TEST_DATABASE_ID
-    host = config.host
-    masterKey = config.masterKey
-    connectionPolicy = config.connectionPolicy
 
     async def test_get_feed_ranges(self, setup):
         created_collection = await setup["created_db"].create_container("get_feed_ranges_" + str(uuid.uuid4()),

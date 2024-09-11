@@ -135,9 +135,7 @@ class ContainerProxy:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
-    async def _get_epk_range_for_partition_key(
-        self,
-        partition_key_value: Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]) -> Range: # pylint: disable=line-too-long
+    async def _get_epk_range_for_partition_key(self, partition_key_value: PartitionKeyType) -> Range:
 
         container_properties = await self._get_properties()
         partition_key_definition = container_properties["partitionKey"]
