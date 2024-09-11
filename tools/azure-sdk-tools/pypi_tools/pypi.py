@@ -1,4 +1,5 @@
-from packaging.version import parse as Version
+import logging
+from packaging.version import InvalidVersion, parse as Version
 import sys
 import pdb
 from urllib3 import Retry, PoolManager
@@ -55,7 +56,13 @@ class PyPIClient:
     def get_ordered_versions(self, package_name, filter_by_compatibility=False) -> List[Version]:
         project = self.project(package_name)
 
-        versions = [Version(package_version) for package_version in project["releases"].keys()]
+        versions = []
+        for package_version in project["releases"].keys():
+            try:
+                versions.append(Version(package_version))
+            except InvalidVersion as e:
+                logging.warn(f"Invalid version {package_version} for package {package_name}")
+                continue
         versions.sort()
 
         if filter_by_compatibility:

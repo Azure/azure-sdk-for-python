@@ -9,21 +9,20 @@ import functools
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.formrecognizer import FormRecognizerApiVersion
 from azure.ai.formrecognizer.aio import FormRecognizerClient
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from conftest import skip_flaky_test
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
 
-FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
+get_fr_client = functools.partial(get_async_client, FormRecognizerClient)
 
 
 class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_business_card_jpg_include_field_elements(self, client):
+    async def test_business_card_jpg_include_field_elements(self):
+        client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg, include_field_elements=True)
 
@@ -72,9 +71,8 @@ class TestBusinessCardFromUrlAsync(AsyncFormRecognizerTest):
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     async def test_business_card_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_business_cards_from_url(self.business_card_url_jpg)
