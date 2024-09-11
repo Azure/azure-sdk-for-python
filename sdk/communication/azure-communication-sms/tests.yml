@@ -24,4 +24,4 @@ extends:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'True'
       TestResourceDirectories:
-        - communication/test-resources/
+        - communication/
