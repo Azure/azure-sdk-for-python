@@ -9,10 +9,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Any
 from ._models import BatchPoolReplaceContent as BatchPoolReplaceContentGenerated
 from .._model_base import rest_field
+from azure.core.exceptions import HttpResponseError
 
 __all__: List[str] = [
     "BatchPoolReplaceContent",
-    "CreateTasksErrorException",
+    "CreateTasksError",
 ]  # Add all objects you want publicly available to users at this package level
 
 class BatchPoolReplaceContent(BatchPoolReplaceContentGenerated):
@@ -23,7 +24,7 @@ class BatchPoolReplaceContent(BatchPoolReplaceContentGenerated):
         self.certificate_references = []
 
 
-class CreateTasksErrorException(Exception):
+class CreateTasksError(HttpResponseError):
     """Aggregate Exception containing details for any failures from a task add operation.
 
     :param str message: Error message describing exit reason
@@ -64,7 +65,7 @@ class CreateTasksErrorException(Exception):
                     result.error.code,
                     result.error.message,
                 )
-        super(CreateTasksErrorException, self).__init__(self.message)
+        super(CreateTasksError, self).__init__(self.message)
 
 
 def patch_sdk():

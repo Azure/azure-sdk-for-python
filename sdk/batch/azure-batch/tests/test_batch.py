@@ -81,7 +81,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         try:
             await async_wrapper(func(*args, **kwargs))
             self.fail("CreateTasksError expected but not raised")
-        except models.CreateTasksErrorException as err:
+        except models.CreateTasksError as err:
             try:
                 batch_error = err.errors.pop()
                 if code:

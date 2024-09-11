@@ -79,7 +79,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          will have to context manage the returned stream.
         :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
-        :raises ~azure.batch.custom.CreateTasksErrorException
+        :raises ~azure.batch.custom.CreateTasksError
         """
 
         kwargs.update({"time_out_in_seconds": time_out_in_seconds, "ocpdate": ocpdate})
@@ -111,7 +111,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         # Only define error if all threads have finished and there were failures
         if task_workflow_manager.failure_tasks or task_workflow_manager.errors:
-            raise _models.CreateTasksErrorException(
+            raise _models.CreateTasksError(
                 task_workflow_manager.tasks_to_add,
                 task_workflow_manager.failure_tasks,
                 task_workflow_manager.errors,
