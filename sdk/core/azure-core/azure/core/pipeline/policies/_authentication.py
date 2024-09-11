@@ -281,9 +281,9 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         credential: "AzureSasCredential",
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         super(AzureSasCredentialPolicy, self).__init__()
         if not credential:
