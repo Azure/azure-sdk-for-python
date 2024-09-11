@@ -7,9 +7,11 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Any
+
+from azure.core.exceptions import HttpResponseError
+
 from ._models import BatchPoolReplaceContent as BatchPoolReplaceContentGenerated
 from .._model_base import rest_field
-from azure.core.exceptions import HttpResponseError
 
 __all__: List[str] = [
     "BatchPoolReplaceContent",
