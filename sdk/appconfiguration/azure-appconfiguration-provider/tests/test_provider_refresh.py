@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 import time
 import unittest
-import pytest
 from unittest.mock import Mock
 from azure.appconfiguration.provider import WatchKey
 from devtools_testutils import recorded_by_proxy
