@@ -1,14 +1,10 @@
 # Release History
 
-## 1.3.1 (Unreleased)
+## 2.0.0b1 (2024-09-11)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+* Added support for feature flag telemetry.
 
 ## 1.3.0 (2024-09-09)
 
