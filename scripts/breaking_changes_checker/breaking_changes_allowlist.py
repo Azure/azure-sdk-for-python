@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 
-RUN_BREAKING_CHANGES_PACKAGES = ["azure-mgmt-*"]
+RUN_BREAKING_CHANGES_PACKAGES = ["azure-mgmt-*", "azure-ai-contentsafety"]
 
 
 # See Readme for ignore format
