@@ -143,17 +143,19 @@ class BreakingChangesTracker:
                 changes_list = self.features_added
 
             if checker.node_type == "module":
+                # If we are running a module checker, we need to run it on the entire diff
                 changes_list.extend(checker.run_check(self.diff, self.stable, self.current))
                 continue
-            for module_name, module_components in self.diff.items():
-                if checker.node_type == "class":
-                        changes_list.extend(checker.run_check(module_components.get("class_nodes", {}), self.stable, self.current, module_name=module_name))
-                        break
-                for class_name, class_components in module_components.get("class_nodes", {}).items():
-                    if checker.node_type == "function_or_method":
-                        # this checker needs to run on all methods and functions
+            if checker.node_type == "class":
+                # If we are running a class checker, we need to run it on all classes in each module in the diff
+                for module_name, module_components in self.diff.items():
+                    changes_list.extend(checker.run_check(module_components.get("class_nodes", {}), self.stable, self.current, module_name=module_name))
+                    continue
+            if checker.node_type == "function_or_method":
+                # If we are running a function or method checker, we need to run it on all functions and class methods in each module in the diff
+                for module_name, module_components in self.diff.items():
+                    for class_name, class_components in module_components.get("class_nodes", {}).items():
                         changes_list.extend(checker.run_check(class_components.get("methods", {}), self.stable, self.current, module_name=module_name, class_name=class_name))
-                if checker.node_type == "function_or_method":
                     changes_list.extend(checker.run_check(module_components.get("function_nodes", {}), self.stable, self.current, module_name=module_name))
 
 
