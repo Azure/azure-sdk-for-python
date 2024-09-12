@@ -73,6 +73,8 @@ setup(
         "pyjwt>=2.8.0",
         "azure-identity",
         "azure-core>=1.30.2",
+        "nltk>=3.8.1",
+        "rouge-score>=0.1.2",
     ],
     extras_require={
         "pf-azure": [

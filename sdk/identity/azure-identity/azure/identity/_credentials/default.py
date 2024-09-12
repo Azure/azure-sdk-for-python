@@ -145,6 +145,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
         credentials: List["TokenCredential"] = []
+        within_dac.set(True)
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
         if not exclude_workload_identity_credential:
@@ -192,7 +193,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
             else:
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
-
+        within_dac.set(False)
         super(DefaultAzureCredential, self).__init__(*credentials)
 
     def get_token(
