@@ -23,11 +23,14 @@ class Suppression(NamedTuple):
     function_name: Optional[str] = None
     parameter_or_property_name: Optional[str] = None
 
-class RegexSuppression(NamedTuple):
+class RegexSuppression:
     value: str
 
+    def __init__(self, value: str):
+        self.value = value
+
     def match(self, compare_value: str) -> bool:
-        return re.search(self.value, compare_value)
+        return True if re.fullmatch(self.value, compare_value) else False
 
 @runtime_checkable
 class ChangesChecker(Protocol):
