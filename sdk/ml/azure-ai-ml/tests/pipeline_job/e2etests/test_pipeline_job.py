@@ -103,6 +103,8 @@ class TestPipelineJob(AzureRecordedTestCase):
             "tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml",
         ],
     )
+    
+    @pytest.mark.usefixtures("spark_job_version_sanitizer")
     def test_pipeline_job_with_spark_job(
         self, client: MLClient, randstr: Callable[[], str], pipeline_job_path: str
     ) -> None:
@@ -1412,6 +1414,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
+    @pytest.mark.usefixtures("spark_job_version_sanitizer")
     def test_register_output_yaml(
         self,
         client: MLClient,
