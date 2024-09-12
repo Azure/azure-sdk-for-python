@@ -135,7 +135,7 @@ class BreakingChangesTracker:
 
             self.run_class_level_diff_checks(module)
             self.run_function_level_diff_checks(module)
-        # Run custom checkers in the base class, we only need 1 CodeReporter class in the tool
+        # Run custom checkers in the base class, we only need one CodeReporter class in the tool
         # The changelog reporter class is a result of not having pluggable checks, we're migrating away from it as we add more pluggable checks
         for checker in self.checkers:
             changes_list = self.breaking_changes

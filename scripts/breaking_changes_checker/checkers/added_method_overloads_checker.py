@@ -36,8 +36,8 @@ class AddedMethodOverloadChecker:
                             changes_list.append((self.message["default"], self.name, module_name, class_name, method_name, parsed_overload_signature))
                 else:
                     # this case is for when the overload is not a symbol and simply shows as a new overload in the diff
-                    parsed_overload_signature = f"def {method_name}(" + ", ".join([f"{name}: {data['type']}" for name,  data in method_components["overloads"][overload]["parameters"].items()]) + ")"
-                    if current_nodes[module_name]["class_nodes"][class_name]["methods"][method_name]["overloads"][overload]["return_type"] is not None:
+                    parsed_overload_signature = f"def {method_name}(" + ", ".join([f"{name}: {data['type']}" for name,  data in overload["parameters"].items()]) + ")"
+                    if overload["return_type"] is not None:
                         parsed_overload_signature += f" -> {overload['return_type']}"
                     changes_list.append((self.message["default"], self.name, module_name, class_name, method_name, parsed_overload_signature))
         return changes_list
