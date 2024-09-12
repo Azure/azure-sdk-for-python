@@ -8,9 +8,7 @@ parameters:
   OSVmImage: ''
   BeforeTestSteps: []
   AfterTestSteps: []
-  CoverageArg: ''
   ToxTestEnv: ""
-  RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   ToxEnvParallel: ''
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
@@ -30,6 +28,12 @@ steps:
       Activate: false
 
   - template: set-dev-build.yml
+
+  - pwsh: |
+      if ("$(PythonVersion)" -ne '3.9') {
+        Write-Host "##vso[task.setvariable variable=CoverageArg]--disableCov"
+      }
+    displayName: "Set Coverage Arg"
 
   - pwsh: |
       if ($IsWindows) {
