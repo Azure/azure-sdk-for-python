@@ -309,12 +309,11 @@ def test_azure_ml_tenant_id():
         assert token.expires_on == expected_token.expires_on
 
 
-def test_cloud_shell_user_assigned_identity():
+def test_cloud_shell_identity_config():
     """Cloud Shell environment: only MSI_ENDPOINT set"""
 
     expected_token = "****"
     expires_on = 42
-    client_id = "some-guid"
     endpoint = "http://localhost:42/token"
     scope = "scope"
     param_name, param_value = "foo", "bar"
@@ -325,7 +324,7 @@ def test_cloud_shell_user_assigned_identity():
                 base_url=endpoint,
                 method="POST",
                 required_headers={"Metadata": "true", "User-Agent": USER_AGENT},
-                required_data={"client_id": client_id, "resource": scope},
+                required_data={"resource": scope},
             ),
             Request(
                 base_url=endpoint,
@@ -350,7 +349,7 @@ def test_cloud_shell_user_assigned_identity():
     )
 
     with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: endpoint}, clear=True):
-        token = ManagedIdentityCredential(client_id=client_id, transport=transport).get_token(scope)
+        token = ManagedIdentityCredential(transport=transport).get_token(scope)
         assert token.token == expected_token
         assert token.expires_on == expires_on
 
@@ -965,3 +964,18 @@ def test_validate_identity_config():
         ManagedIdentityCredential(identity_config={"object_id": "bar", "resource_id": "foo"})
     with pytest.raises(ValueError):
         ManagedIdentityCredential(identity_config={"object_id": "bar", "client_id": "foo"})
+
+
+def test_validate_cloud_shell_credential():
+    with mock.patch.dict(
+        MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True
+    ):
+        ManagedIdentityCredential()
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(client_id="foo")
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(identity_config={"client_id": "foo"})
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(identity_config={"object_id": "foo"})
+        with pytest.raises(ValueError):
+            ManagedIdentityCredential(identity_config={"resource_id": "foo"})
