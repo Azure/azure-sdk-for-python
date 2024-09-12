@@ -72,16 +72,16 @@ class _ConfigurationClientWrapperBase:
 
             if percentile:
                 percentile_allocations = sorted(
-                    (x for x in percentile if x.percentile_from != x.percentile_to),
-                    key=lambda x: x.percentile_from,
+                    (x for x in percentile if x.get("from") != x.get("to")),
+                    key=lambda x: x.get("from"),
                 )
 
                 for percentile_allocation in percentile_allocations:
-                    if percentile_allocation.variant:
-                        allocated_variants.append(percentile_allocation.variant)
+                    if "variant" in percentile_allocation:
+                        allocated_variants.append(percentile_allocation.get("variant"))
 
                 allocation_id += ";".join(
-                    f"{pa.percentile_from},{pa.variant},{pa.percentile_to}" for pa in percentile_allocations
+                    f"{pa.get('from')},{pa.get('variant')},{pa.get('to')}" for pa in percentile_allocations
                 )
         else:
             allocation_id = "seed=\ndefault_when_enabled=\npercentiles="
@@ -93,16 +93,15 @@ class _ConfigurationClientWrapperBase:
         if variants_value and (isinstance(variants_value, list) or all(isinstance(v, dict) for v in variants_value)):
             if allocated_variants:
                 if isinstance(variants_value, list) and all(isinstance(v, dict) for v in variants_value):
-                    if isinstance(variants_value, list) and all(isinstance(v, dict) for v in variants_value):
-                        sorted_variants: List[Dict[str, Any]] = sorted(
-                            (v for v in variants_value if v.get("name") in allocated_variants),
-                            key=lambda v: v.get("name"),
-                        )
-                        allocation_id += ";".join(
-                            f"{base64.b64encode(v.get('name', '').encode('utf-8')).decode('utf-8')},"
-                            f"{json.dumps(v['configuration_value'], separators=(',', ':'))}"
-                            for v in sorted_variants
-                        )
+                    sorted_variants: List[Dict[str, Any]] = sorted(
+                        (v for v in variants_value if v.get("name") in allocated_variants),
+                        key=lambda v: v.get("name"),
+                    )
+                    allocation_id += ";".join(
+                        f"{base64.b64encode(v.get('name', '').encode('utf-8')).decode('utf-8')},"
+                        f"{json.dumps(v.get('configuration_value'), separators=(',', ':'))}"
+                        for v in sorted_variants
+                    )
 
         if not allocated_variants and allocation and not allocation.get("seed"):
             return None
