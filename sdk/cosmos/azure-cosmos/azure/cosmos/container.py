@@ -660,6 +660,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        content_response_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Create an item in the container.
@@ -702,6 +703,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if content_response_on_write_disabled is not None:
+            kwargs['content_response_on_write_disabled'] = content_response_on_write_disabled
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if populate_query_metrics:

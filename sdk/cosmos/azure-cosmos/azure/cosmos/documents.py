@@ -339,6 +339,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False
         self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
+        self.ContentResponseOnWriteDisabled: bool = False
 
 
 class _OperationType:
