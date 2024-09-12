@@ -1,6 +1,6 @@
 # Release History
 
-## 1.20.0 (unreleased)
+## 1.20.0 (2024-09-12)
 
 ### Features Added
   - When a workspace is created with `managed_network` enabled or has `public_network_access` set to disabled, the resources created with the workspace (Key Vault, Storage Account) will be set to have restricted network access settings. This is only applicable when the user does not specify existing resources.
