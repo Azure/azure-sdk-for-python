@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import sys
 
 from azure.core.credentials import SupportsTokenInfo, TokenCredential
 from azure.identity import (
@@ -24,6 +25,7 @@ from azure.identity import (
     AzureDeveloperCliCredential,
     AzurePipelinesCredential,
 )
+import pytest
 
 
 def test_credential_is_token_credential():
@@ -47,6 +49,10 @@ def test_credential_is_token_credential():
     assert isinstance(AzurePipelinesCredential, TokenCredential)
 
 
+@pytest.mark.skipif(
+    sys.version_info < (3, 9),
+    reason="isinstance check doesn't seem to work when the Protocol subclasses ContextManager in Python <=3.8",
+)
 def test_credential_is_supports_token_info():
     assert isinstance(AuthorizationCodeCredential, SupportsTokenInfo)
     assert isinstance(CertificateCredential, SupportsTokenInfo)

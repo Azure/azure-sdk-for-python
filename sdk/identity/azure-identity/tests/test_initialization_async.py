@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import sys
+
 from azure.core.credentials_async import AsyncSupportsTokenInfo, AsyncTokenCredential
 from azure.identity.aio import (
     AuthorizationCodeCredential,
@@ -20,8 +22,13 @@ from azure.identity.aio import (
     AzureDeveloperCliCredential,
     AzurePipelinesCredential,
 )
+import pytest
 
 
+@pytest.mark.skipif(
+    sys.version_info < (3, 9),
+    reason="isinstance check doesn't seem to work when the Protocol subclasses AsyncContextManager in Python <=3.8",
+)
 def test_credential_is_async_token_credential():
     assert isinstance(AuthorizationCodeCredential, AsyncTokenCredential)
     assert isinstance(CertificateCredential, AsyncTokenCredential)
@@ -40,6 +47,10 @@ def test_credential_is_async_token_credential():
     assert isinstance(AzurePipelinesCredential, AsyncTokenCredential)
 
 
+@pytest.mark.skipif(
+    sys.version_info < (3, 9),
+    reason="isinstance check doesn't seem to work when the Protocol subclasses AsyncContextManager in Python <=3.8",
+)
 def test_credential_is_async_supports_token_info():
     assert isinstance(AuthorizationCodeCredential, AsyncSupportsTokenInfo)
     assert isinstance(CertificateCredential, AsyncSupportsTokenInfo)
