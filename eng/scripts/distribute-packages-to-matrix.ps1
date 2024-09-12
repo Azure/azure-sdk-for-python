@@ -27,11 +27,36 @@ if (!(Test-Path $PlatformMatrix)) {
     exit 1
 }
 
+
+function Split-ArrayIntoBatches {
+    param (
+        [Parameter(Mandatory=$true)]
+        [object[]]$InputArray,
+
+        [int]$BatchSize = 5
+    )
+
+    # Initialize an empty array to hold the batches
+    $batches = @()
+
+    # Loop through the input array in increments of the batch size
+    for ($i = 0; $i -lt $InputArray.Count; $i += $BatchSize) {
+        # Create a batch containing up to $BatchSize elements
+        $batch = $InputArray[$i..[math]::Min($i + $BatchSize - 1, $InputArray.Count - 1)]
+
+        # Add the batch to the list of batches
+        $batches += ,$batch
+    }
+
+    return ,$batches
+}
+
 $packageProperties = Get-ChildItem -Recurse "$PackageInfoFolder" *.json | % { Get-Content -Path $_.FullName | ConvertFrom-Json }
 $matrix = Get-Content -Path $PlatformMatrix | ConvertFrom-Json
 
 $versionCount = $matrix.matrix.PythonVersion.Count
 $includeCount = 0
+$includeObject = $null
 if ($matrix.PSObject.Properties.Name -contains "include") {
     $includeCount = $matrix.include.Count
 }
@@ -61,6 +86,9 @@ $batchValues = @()
 $directIncludedPackages = $packageProperties | Where-Object { $_.IncludedForValidation -eq $false }
 $indirectIncludedPackages = $packageProperties | Where-Object { $_.IncludedForValidation -eq $true }
 
+Write-Host "Direct Included Length = $($directIncludedPackages.Length)"
+Write-Host "IndirectIncludedPackages Included Length = $($indirectIncludedPackages.Length)"
+
 # for python, for fast tests, I want the sets of packages to be broken up into sets of five.
 
 # I will assign all the direct included packages first. our goal is to get complete coverage of the direct included packages
@@ -68,10 +96,48 @@ $indirectIncludedPackages = $packageProperties | Where-Object { $_.IncludedForVa
 # this means that these "extra" packages will never run on any platform that's not present in INCLUDE, but frankly
 # that's nbd IMO
 
-# all directly included packages should have their tests invoked in full, so we just need to generate the batches, multiplex them times the number of packages,
-# and evenly assign them to the batches + direct to "include" members
+$directBatches = Split-ArrayIntoBatches -InputArray $directIncludedPackages -BatchSize $batchSize
+Write-Host $directBatches.Length
+Write-Host $directBatches[0].Length
+
+# all directly included packages should have their tests invoked in full, so, lets use a basic storage service discovery. We'll have direct package batches of
+
+# ["azure-storage-blob", "azure-storage-blob-changefeed", "azure-storage-extensions", "azure-storage-file-datalake", "azure-storage-file-share"]
+# ["azure-storage-queue"]
+
+# any other packages will be added to the matrix as additional targetingstring batches. it'll be sparse in that there won't be full matrix coverage
+
+# a basic platform matrix has the following:
+# "matrix" -> "PythonVersion" = ["3.6", "3.7", "3.8", "3.9", "3.10"]
+# "include" -> "ConfigName" -> "ActualJobName" -> PythonVersion=3.9
+# so what we need to do is for each batch
+    # 1. assign the batch * matrix size to the matrix as "TargetingString"
+    # 2. assign the batch to each include with the batch being the value for TargetingString for the include
+        # the easiest way to do this is to take a copy of the `Include` object at the beginning of this script,
+        # for each batch, assign the batch to the include object, and then add the include object to the matrix object
+        # this will have the result of multiplexing our includes, so we will need to update the name there
+
+if ($directBatches) {
+    $matrix.matrix.TargetingString = @()
+}
 
 
+foreach($batch in $directBatches) {
+    $targetingString = ($batch | Select-Object -ExpandProperty Name) -join ","
+
+    $targetingStringArray = @($targetingString) * $versionCount
+    Write-Host "Returning batch:"
+    foreach($item in $targetingStringArray) {
+        Write-Host "`t$item"
+    }
+
+    $matrix.matrix.TargetingString += $targetingStringArray
+
+    # now we need to add the batch to the includes if they exist
+    if ()
+}
+
+$matrix | ConvertTo-Json -Depth 100
 
 # # regular case is when we have more packages than batches
 # if ($packageProperties.Count -ge $batchCount) {
@@ -102,4 +168,4 @@ $indirectIncludedPackages = $packageProperties | Where-Object { $_.IncludedForVa
 # # set the values for the matrix
 # $matrix.matrix | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value $batchValues[2..($batchValues.Length-1)]
 
-# $matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
+$matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
