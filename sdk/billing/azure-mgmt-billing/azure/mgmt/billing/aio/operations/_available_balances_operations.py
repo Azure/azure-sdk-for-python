@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Dict, Optional, Type, TypeVar
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -18,20 +18,21 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
-from ...operations._available_balances_operations import build_get_request
+from ...operations._available_balances_operations import (
+    build_get_by_billing_account_request,
+    build_get_by_billing_profile_request,
+)
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -56,23 +57,23 @@ class AvailableBalancesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(
-        self, billing_account_name: str, billing_profile_name: str, **kwargs: Any
-    ) -> _models.AvailableBalance:
-        """The available credit balance for a billing profile. This is the balance that can be used for
-        pay now to settle due or past due invoices. The operation is supported only for billing
-        accounts with agreement type Microsoft Customer Agreement.
+    async def get_by_billing_account(self, billing_account_name: str, **kwargs: Any) -> _models.AvailableBalance:
+        """The Available Credit or Payment on Account Balance for a billing account. The credit balance
+        can be used to settle due or past due invoices and is supported for billing accounts with
+        agreement type Microsoft Customer Agreement. The payment on account balance is supported for
+        billing accounts with agreement type Microsoft Customer Agreement or Microsoft Online Services
+        Program.
+
+        .. seealso::
+           - https://docs.microsoft.com/en-us/rest/api/billing/
 
         :param billing_account_name: The ID that uniquely identifies a billing account. Required.
         :type billing_account_name: str
-        :param billing_profile_name: The ID that uniquely identifies a billing profile. Required.
-        :type billing_profile_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AvailableBalance or the result of cls(response)
         :rtype: ~azure.mgmt.billing.models.AvailableBalance
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -83,22 +84,20 @@ class AvailableBalancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-05-01"))  # type: Literal["2020-05-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AvailableBalance]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.AvailableBalance] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_by_billing_account_request(
             billing_account_name=billing_account_name,
-            billing_profile_name=billing_profile_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -108,11 +107,71 @@ class AvailableBalancesOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AvailableBalance", pipeline_response)
+        deserialized = self._deserialize("AvailableBalance", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    get.metadata = {"url": "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/availableBalance/default"}  # type: ignore
+    @distributed_trace_async
+    async def get_by_billing_profile(
+        self, billing_account_name: str, billing_profile_name: str, **kwargs: Any
+    ) -> _models.AvailableBalance:
+        """The Available Credit or Payment on Account Balance for a billing profile. The credit balance
+        can be used to settle due or past due invoices and is supported for billing accounts with
+        agreement type Microsoft Customer Agreement. The payment on account balance is supported for
+        billing accounts with agreement type Microsoft Customer Agreement.
+
+        .. seealso::
+           - https://docs.microsoft.com/en-us/rest/api/billing/
+
+        :param billing_account_name: The ID that uniquely identifies a billing account. Required.
+        :type billing_account_name: str
+        :param billing_profile_name: The ID that uniquely identifies a billing profile. Required.
+        :type billing_profile_name: str
+        :return: AvailableBalance or the result of cls(response)
+        :rtype: ~azure.mgmt.billing.models.AvailableBalance
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.AvailableBalance] = kwargs.pop("cls", None)
+
+        _request = build_get_by_billing_profile_request(
+            billing_account_name=billing_account_name,
+            billing_profile_name=billing_profile_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("AvailableBalance", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

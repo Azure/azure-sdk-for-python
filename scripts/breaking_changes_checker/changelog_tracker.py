@@ -18,6 +18,8 @@ class ChangeType(str, Enum):
     ADDED_CLASS_METHOD = "AddedClassMethod"
     ADDED_CLASS_METHOD_PARAMETER = "AddedClassMethodParameter"
     ADDED_CLASS_PROPERTY = "AddedClassProperty"
+    ADDED_ENUM = "AddedEnum"
+    ADDED_ENUM_MEMBER = "AddedEnumMember"
     ADDED_FUNCTION_PARAMETER = "AddedFunctionParameter"
     ADDED_OPERATION_GROUP = "AddedOperationGroup"
 
@@ -36,6 +38,10 @@ class ChangelogTracker(BreakingChangesTracker):
         "Function `{}` added parameter `{}`"
     ADDED_CLASS_PROPERTY_MSG = \
         "Model `{}` added property `{}`"
+    ADDED_ENUM_MSG = \
+        "Added enum `{}`"
+    ADDED_ENUM_MEMBER_MSG = \
+        "Enum `{}` added member `{}`"
     ADDED_OPERATION_GROUP_MSG = \
         "Client `{}` added operation group `{}`"
 
@@ -68,6 +74,14 @@ class ChangelogTracker(BreakingChangesTracker):
                         fa = (
                             self.ADDED_CLIENT_MSG,
                             ChangeType.ADDED_CLIENT,
+                            self.module_name, class_name
+                        )
+                        self.features_added.append(fa)
+                    elif class_components.get("type", None) == "Enum":
+                        # This is a new enum
+                        fa = (
+                            self.ADDED_ENUM_MSG,
+                            ChangeType.ADDED_ENUM,
                             self.module_name, class_name
                         )
                         self.features_added.append(fa)
@@ -135,6 +149,12 @@ class ChangelogTracker(BreakingChangesTracker):
                                         ChangeType.ADDED_OPERATION_GROUP,
                                         self.module_name, self.class_name, property_name
                                     )
+                            if stable_class_nodes[self.class_name]["type"] == "Enum":
+                                fa = (
+                                    self.ADDED_ENUM_MEMBER_MSG,
+                                    ChangeType.ADDED_ENUM_MEMBER,
+                                    self.module_name, class_name, property_name
+                                )
                             self.features_added.append(fa)
 
 
