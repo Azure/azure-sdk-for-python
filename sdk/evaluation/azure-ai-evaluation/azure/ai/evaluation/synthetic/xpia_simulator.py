@@ -6,10 +6,10 @@ import functools
 import logging
 from typing import Any, Callable, Dict
 
-from azure.ai.evaluation.synthetic.adversarial_scenario import AdversarialScenario
 from azure.identity import DefaultAzureCredential
 
 from promptflow._sdk._telemetry import ActivityType, monitor_operation
+from azure.ai.evaluation.synthetic.adversarial_scenario import AdversarialScenario
 
 from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
 from .adversarial_simulator import AdversarialSimulator
@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 def monitor_adversarial_scenario(func) -> Callable:
     """Decorator to monitor adversarial scenario.
+
     :param func: The function to be decorated.
     :type func: Callable
     :return: The decorated function.
@@ -54,9 +55,9 @@ class IndirectAttackSimulator:
         * "subscription_id": Azure subscription ID.
         * "resource_group_name": Name of the Azure resource group.
         * "project_name": Name of the Azure Machine Learning workspace.
-    :type azure_ai_project: Dict[str, Any]
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
+    :type azure_ai_project: Dict[str, Any]
     """
 
     def __init__(self, *, azure_ai_project: Dict[str, Any], credential=None):
@@ -106,6 +107,7 @@ class IndirectAttackSimulator:
         This simulator converses with your AI system using prompts injected into the context to interrupt normal
         expected functionality by eliciting manipulated content, intrusion and attempting to gather information outside
         the scope of your AI system.
+
         :keyword scenario: Enum value specifying the adversarial scenario used for generating inputs.
         :paramtype scenario: promptflow.evals.synthetic.adversarial_scenario.AdversarialScenario
         :keyword target: The target function to simulate adversarial inputs against.
@@ -130,16 +132,21 @@ class IndirectAttackSimulator:
             Defaults to 3.
         :paramtype concurrent_async_task: int
         :return: A list of dictionaries, each representing a simulated conversation. Each dictionary contains:
+
          - 'template_parameters': A dictionary with parameters used in the conversation template,
             including 'conversation_starter'.
          - 'messages': A list of dictionaries, each representing a turn in the conversation.
             Each message dictionary includes 'content' (the message text) and
             'role' (indicating whether the message is from the 'user' or the 'assistant').
          - '**$schema**': A string indicating the schema URL for the conversation format.
+
          The 'content' for 'assistant' role messages may includes the messages that your callback returned.
         :rtype: List[Dict[str, Any]]
+
         **Output format**
+
         .. code-block:: python
+
             return_value = [
                 {
                     'template_parameters': {},

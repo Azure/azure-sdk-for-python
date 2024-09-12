@@ -25,7 +25,7 @@ class ConversationTurn:
 
     :param role: The role of the participant in the conversation. Accepted values are
         "user" and "assistant".
-    :type role: ~azure.ai.evaluation.synthetic._conversation.constants.ConversationRole
+    :type role: ~promptflow.evals.synthetic._conversation.constants.ConversationRole
     :param name: The name of the participant in the conversation.
     :type name: Optional[str]
     :param message: The message exchanged in the conversation. Defaults to an empty string.
