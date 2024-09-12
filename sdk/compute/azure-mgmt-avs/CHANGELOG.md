@@ -1,5 +1,78 @@
 # Release History
 
+## 9.0.0 (2024-09-12)
+
+### Features Added
+
+  - Client `AVSClient` added operation group `iscsi_paths`
+  - Model `CloudLink` added property `provisioning_state`
+  - Model `Cluster` added property `vsan_datastore_name`
+  - Model `ClusterUpdate` added property `sku`
+  - Model `Datastore` added property `elastic_san_volume`
+  - Model `Endpoints` added property `nsxt_manager_ip`
+  - Model `Endpoints` added property `vcenter_ip`
+  - Model `Endpoints` added property `hcx_cloud_manager_ip`
+  - Model `HcxEnterpriseSite` added property `provisioning_state`
+  - Model `ManagementCluster` added parameter `vsan_datastore_name` in method `__init__`
+  - Model `Operation` added property `action_type`
+  - Model `PrivateCloud` added property `virtual_network_id`
+  - Model `PrivateCloud` added property `dns_zone_type`
+  - Model `PrivateCloudUpdate` added property `sku`
+  - Model `PrivateCloudUpdate` added property `dns_zone_type`
+  - Model `Resource` added property `system_data`
+  - Model `ScriptCmdlet` added property `provisioning_state`
+  - Model `ScriptCmdlet` added property `audience`
+  - Model `ScriptPackage` added property `provisioning_state`
+  - Model `Sku` added property `tier`
+  - Model `Sku` added property `size`
+  - Model `Sku` added property `family`
+  - Model `Sku` added property `capacity`
+  - Model `VirtualMachine` added property `provisioning_state`
+  - Model `WorkloadNetworkGateway` added property `provisioning_state`
+  - Model `WorkloadNetworkVirtualMachine` added property `provisioning_state`
+  - Added enum `ActionType`
+  - Added enum `CloudLinkProvisioningState`
+  - Added enum `CreatedByType`
+  - Added enum `DnsZoneType`
+  - Added model `ElasticSanVolume`
+  - Added enum `HcxEnterpriseSiteProvisioningState`
+  - Added model `IscsiPath`
+  - Added model `IscsiPathListResult`
+  - Added enum `IscsiPathProvisioningState`
+  - Added model `OperationListResult`
+  - Added enum `Origin`
+  - Added enum `ScriptCmdletAudience`
+  - Added enum `ScriptCmdletProvisioningState`
+  - Added enum `ScriptPackageProvisioningState`
+  - Added enum `SkuTier`
+  - Added model `SystemData`
+  - Added enum `VirtualMachineProvisioningState`
+  - Added enum `WorkloadNetworkProvisioningState`
+  - Model `WorkloadNetworksOperations` added method `list_public_ips`
+  - Added model `IscsiPathsOperations`
+
+### Breaking Changes
+
+  - Model `Operation` deleted or renamed its instance variable `properties`
+  - Method `PrivateCloud.__init__` removed default value `None` from its parameter `location`
+  - Method `PrivateCloud.__init__` parameter `internet` changed default value from `str` to `none`
+  - Method `PrivateCloudIdentity.__init__` removed default value `None` from its parameter `type`
+  - Method `PrivateCloudUpdate.__init__` parameter `internet` changed default value from `str` to `none`
+  - Method `TrackedResource.__init__` removed default value `None` from its parameter `location`
+  - Deleted or renamed model `ClusterProperties`
+  - Deleted or renamed model `CommonClusterProperties`
+  - Deleted or renamed model `LogSpecification`
+  - Deleted or renamed model `MetricDimension`
+  - Deleted or renamed model `MetricSpecification`
+  - Deleted or renamed model `OperationList`
+  - Deleted or renamed model `OperationProperties`
+  - Deleted or renamed model `PrivateCloudProperties`
+  - Deleted or renamed model `PrivateCloudUpdateProperties`
+  - Deleted or renamed model `ServiceSpecification`
+  - Deleted or renamed model `WorkloadNetworkName`
+  - Method `WorkloadNetworksOperations.get` deleted or renamed its parameter `workload_network_name` of kind `positional_or_keyword`
+  - Deleted or renamed method `WorkloadNetworksOperations.list_public_i_ps`
+
 ## 9.0.0b1 (2024-06-28)
 
 ### Features Added
