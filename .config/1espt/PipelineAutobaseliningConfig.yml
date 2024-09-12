@@ -1647,3 +1647,12 @@ pipelines:
           lastModifiedDate: 2024-09-12
         armory:
           lastModifiedDate: 2024-09-12
+  4616:
+    retail:
+      source:
+        credscan:
+          lastModifiedDate: 2024-09-12
+        psscriptanalyzer:
+          lastModifiedDate: 2024-09-12
+        armory:
+          lastModifiedDate: 2024-09-12
