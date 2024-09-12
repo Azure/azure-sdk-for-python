@@ -145,7 +145,7 @@ steps:
       python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Create Coverage Report
-    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    condition: and(succeeded(), ne(variables["CoverageArg"], "--disableCov"))
 
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
     - task: AzurePowerShell@5
@@ -205,7 +205,7 @@ steps:
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
     continueOnError: true
-    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    condition: and(succeeded(), ne(variables["CoverageArg"], "--disableCov"))
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
