@@ -239,9 +239,9 @@ def mock_model_config() -> dict:
 @pytest.fixture(scope="session")
 def mock_project_scope() -> Dict[str, str]:
     return {
-        "subscription_id": SanitizedValues.SUBSCRIPTION_ID,
-        "resource_group_name": SanitizedValues.RESOURCE_GROUP_NAME,
-        "project_name": SanitizedValues.WORKSPACE_NAME,
+        "subscription_id": f"{SanitizedValues.SUBSCRIPTION_ID}",
+        "resource_group_name": f"{SanitizedValues.RESOURCE_GROUP_NAME}",
+        "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
     }
 
 
