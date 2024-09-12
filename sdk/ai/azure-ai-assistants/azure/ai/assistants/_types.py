@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -16,7 +16,6 @@ if TYPE_CHECKING:
 AssistantsApiResponseFormatOption = Union[
     str, str, "_models.AssistantsApiResponseFormatMode", "_models.AssistantsApiResponseFormat"
 ]
-CreateFileSearchToolResourceOptions = Union[List[str], List["_models.CreateFileSearchToolResourceVectorStoreOptions"]]
 MessageAttachmentToolDefinition = Union["_models.CodeInterpreterToolDefinition", "_models.FileSearchToolDefinition"]
 AssistantsApiToolChoiceOption = Union[
     str, str, "_models.AssistantsApiToolChoiceOptionMode", "_models.AssistantsNamedToolChoice"

@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from ._enums import AssistantStreamEvent
 from ._models import MessageDeltaChunk, ThreadRun, RunStep, ThreadMessage, RunStepDeltaChunk
-from ._models import FunctionToolDefinition, FunctionDefinition, ToolDefinition
+from ._models import FunctionToolDefinition, FunctionDefinition, ToolDefinition, ToolResources, FileSearchToolDefinition, FileSearchToolResource, CodeInterpreterToolDefinition, CodeInterpreterToolResource
 
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
@@ -27,7 +27,7 @@ class Tool(ABC):
 
     @property
     @abstractmethod
-    def resources(self) -> Dict[str, Any]:
+    def resources(self) -> ToolResources:
         """Get the tool resources."""
         pass
 
@@ -41,6 +41,7 @@ class FunctionTool(Tool):
     """
     A tool that executes user-defined functions.
     """
+
     def __init__(self, functions: Dict[str, Any]):
         """
         Initialize FunctionTool with a dictionary of functions.
@@ -49,7 +50,6 @@ class FunctionTool(Tool):
         """
         self._functions = functions
         self._definitions = self._build_function_definitions(functions)
-
 
     def _build_function_definitions(self, functions: Dict[str, Any]) -> List[FunctionToolDefinition]:
         specs = []
@@ -65,20 +65,17 @@ class FunctionTool(Tool):
                 param_name: {
                     "type": type_map.get(
                         param.annotation.__name__ if param.annotation != inspect._empty else "default",
-                        type_map["default"]
+                        type_map["default"],
                     ),
-                    "description": param.annotation.__doc__ if param.annotation != inspect._empty else None
-                } for param_name, param in params.items()
+                    "description": param.annotation.__doc__ if param.annotation != inspect._empty else None,
+                }
+                for param_name, param in params.items()
             }
 
             function_def = FunctionDefinition(
                 name=name,
                 description=description,
-                parameters={
-                    "type": "object",
-                    "properties": properties,
-                    "required": list(params.keys())
-                }
+                parameters={"type": "object", "properties": properties, "required": list(params.keys())},
             )
 
             tool_def = FunctionToolDefinition(function=function_def)
@@ -134,17 +131,20 @@ class FunctionTool(Tool):
         return self._definitions
 
     @property
-    def resources(self) -> Dict[str, Any]:
+    def resources(self) -> ToolResources:
         """
-        Get the function resources.
+        Get the tool resources for the assistant.
+
+        :return: An empty ToolResources as FunctionTool doesn't have specific resources.
         """
-        return {}
+        return ToolResources()
 
 
 class FileSearchTool(Tool):
     """
     A tool that searches for uploaded file information from the created vector stores.
     """
+
     def __init__(self):
         self.vector_store_ids = []
 
@@ -152,25 +152,26 @@ class FileSearchTool(Tool):
         """
         Add a vector store ID to the list of vector stores to search for files.
         """
+        # TODO
         self.vector_store_ids.append(store_id)
 
     @property
-    def definitions(self) -> List[Dict[str, Any]]:
+    def definitions(self) -> List[FileSearchToolDefinition]:
         """
-        Get the file search definitions.
+        Get the file search tool definitions.
         """
-        return [{"type": "file_search"}]
-
+        return [FileSearchToolDefinition()]
+    
     @property
-    def resources(self) -> Dict[str, Any]:
+    def resources(self) -> ToolResources:
         """
-        Get the file search resources.
+        Get the file search resources.       
         """
-        return {
-            "file_search": {
-                "vector_store_ids": self.vector_store_ids
-            }
-        }
+        return ToolResources(
+            file_search=FileSearchToolResource(
+                vector_store_ids=self.vector_store_ids
+            )
+        )
 
     def execute(self, tool_calls: List[Any]) -> Any:
         pass
@@ -180,6 +181,7 @@ class CodeInterpreterTool(Tool):
     """
     A tool that interprets code files uploaded to the assistant.
     """
+
     def __init__(self):
         self.file_ids = []
 
@@ -189,25 +191,26 @@ class CodeInterpreterTool(Tool):
 
         :param file_id: The ID of the file to interpret.
         """
+        # TODO
         self.file_ids.append(file_id)
 
     @property
-    def definitions(self) -> List[Dict[str, Any]]:
+    def definitions(self) -> List[CodeInterpreterToolDefinition]:
         """
-        Get the code interpreter definitions.
+        Get the code interpreter tool definitions.
         """
-        return [{"type": "code_interpreter"}]
+        return [CodeInterpreterToolDefinition()]
 
     @property
-    def resources(self) -> Dict[str, Any]:
+    def resources(self) -> ToolResources:
         """
         Get the code interpreter resources.
         """
-        return {
-            "code_interpreter": {
-                "file_ids": self.file_ids
-            }
-        }
+        return ToolResources(
+            code_interpreter=CodeInterpreterToolResource(
+                file_ids=self.file_ids
+            )
+        )
 
     def execute(self, tool_calls: List[Any]) -> Any:
         pass
@@ -217,6 +220,7 @@ class ToolSet:
     """
     A collection of tools that can be used by an assistant.
     """
+
     def __init__(self):
         self.tools = []
 
@@ -336,7 +340,7 @@ class AssistantRunStream:
             AssistantStreamEvent.THREAD_RUN_FAILED,
             AssistantStreamEvent.THREAD_RUN_CANCELLING,
             AssistantStreamEvent.THREAD_RUN_CANCELLED,
-            AssistantStreamEvent.THREAD_RUN_EXPIRED
+            AssistantStreamEvent.THREAD_RUN_EXPIRED,
         }:
             return event_type, ThreadRun(**parsed_data)
         elif event_type in {
@@ -345,14 +349,14 @@ class AssistantRunStream:
             AssistantStreamEvent.THREAD_RUN_STEP_COMPLETED,
             AssistantStreamEvent.THREAD_RUN_STEP_FAILED,
             AssistantStreamEvent.THREAD_RUN_STEP_CANCELLED,
-            AssistantStreamEvent.THREAD_RUN_STEP_EXPIRED
+            AssistantStreamEvent.THREAD_RUN_STEP_EXPIRED,
         }:
             return event_type, RunStep(**parsed_data)
         elif event_type in {
             AssistantStreamEvent.THREAD_MESSAGE_CREATED,
             AssistantStreamEvent.THREAD_MESSAGE_IN_PROGRESS,
             AssistantStreamEvent.THREAD_MESSAGE_COMPLETED,
-            AssistantStreamEvent.THREAD_MESSAGE_INCOMPLETE
+            AssistantStreamEvent.THREAD_MESSAGE_INCOMPLETE,
         }:
             return event_type, ThreadMessage(**parsed_data)
         elif event_type == AssistantStreamEvent.THREAD_MESSAGE_DELTA:

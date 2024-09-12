@@ -189,7 +189,7 @@ class AssistantsClient(AssistantsClientGenerated):
         :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-            
+
         if isinstance(body, dict):  # Handle overload with JSON body.
             content_type = kwargs.get("content_type", "application/json")
             response = super().create_assistant(body, content_type=content_type, **kwargs)
@@ -214,7 +214,7 @@ class AssistantsClient(AssistantsClientGenerated):
             response = super().create_assistant(body, content_type=content_type, **kwargs)
 
         return response
-    
+
     @overload
     def create_run(
         self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any

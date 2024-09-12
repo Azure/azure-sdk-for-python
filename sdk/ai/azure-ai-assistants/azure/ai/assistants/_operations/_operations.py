@@ -1204,7 +1204,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         description: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.CreateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
@@ -1231,7 +1231,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
          resources are specific to the type of tool. For example, the ``code_interpreter``
          tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
          store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.assistants.models.CreateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -1285,7 +1285,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         description: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.CreateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
@@ -1311,7 +1311,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
          resources are specific to the type of tool. For example, the ``code_interpreter``
          tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
          store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.assistants.models.CreateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -1588,7 +1588,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         description: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
@@ -1618,7 +1618,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
          resources are specific to the type of tool. For example,
          the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
          requires a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.assistants.models.UpdateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -1675,7 +1675,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         description: Optional[str] = None,
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
@@ -1704,7 +1704,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
          resources are specific to the type of tool. For example,
          the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
          requires a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.assistants.models.UpdateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -1887,7 +1887,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         *,
         content_type: str = "application/json",
         messages: Optional[List[_models.ThreadMessageOptions]] = None,
-        tool_resources: Optional[_models.CreateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.AssistantThread:
@@ -1904,7 +1904,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
          a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.assistants.models.CreateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1937,7 +1937,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         messages: Optional[List[_models.ThreadMessageOptions]] = None,
-        tool_resources: Optional[_models.CreateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.AssistantThread:
@@ -1953,7 +1953,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
          a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.assistants.models.CreateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -2109,7 +2109,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         thread_id: str,
         *,
         content_type: str = "application/json",
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.AssistantThread:
@@ -2125,7 +2125,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
          a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.assistants.models.UpdateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -2160,7 +2160,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_resources: Optional[_models.UpdateToolResourcesOptions] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> _models.AssistantThread:
@@ -2175,7 +2175,7 @@ class AssistantsClientOperationsMixin(AssistantsClientMixinABC):  # pylint: disa
          type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
          the ``file_search`` tool requires
          a list of vector store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.assistants.models.UpdateToolResourcesOptions
+        :paramtype tool_resources: ~azure.ai.assistants.models.ToolResources
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is

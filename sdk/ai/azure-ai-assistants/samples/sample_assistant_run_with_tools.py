@@ -67,15 +67,15 @@ def sample_assistant_run():
     # Initialize assistant functions
     functions = FunctionTool(user_functions)
     # functions.add_function(...)
-    #code_interpreter = CodeInterpreterTool()
-    #code_interpreter.add_file()
-    #file_search = FileSearchTool()
-    #file_search.add_vector_store(...)
+    # code_interpreter = CodeInterpreterTool()
+    # code_interpreter.add_file()
+    # file_search = FileSearchTool()
+    # file_search.add_vector_store(...)
 
     tools = ToolSet()
     tools.add(functions)
-    #tool_set.add(code_interpreter)
-    #tool_set.add(file_search)
+    # tool_set.add(code_interpreter)
+    # tool_set.add(file_search)
 
     # Create assistant
     assistant = assistant_client.create_assistant(
@@ -92,9 +92,7 @@ def sample_assistant_run():
     logging.info("Created message, ID: %s", message.id)
 
     # Create and process assistant run in thread with functions
-    run_status = assistant_client.create_and_process_run(
-        thread_id=thread.id, assistant_id=assistant.id
-    )
+    run_status = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
     logging.info("Run finished with status: %s", run_status)
 
     # Fetch and log all messages

@@ -323,7 +323,7 @@ class AssistantThreadCreationOptions(_model_base.Model):
      type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
      the ``file_search`` tool requires
      a list of vector store IDs.
-    :vartype tool_resources: ~azure.ai.assistants.models.CreateToolResourcesOptions
+    :vartype tool_resources: ~azure.ai.assistants.models.ToolResources
     :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length.
@@ -332,7 +332,7 @@ class AssistantThreadCreationOptions(_model_base.Model):
 
     messages: Optional[List["_models.ThreadMessageOptions"]] = rest_field()
     """The initial messages to associate with the new thread."""
-    tool_resources: Optional["_models.CreateToolResourcesOptions"] = rest_field()
+    tool_resources: Optional["_models.ToolResources"] = rest_field()
     """A set of resources that are made available to the assistant's tools in this thread. The
      resources are specific to the
      type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
@@ -348,7 +348,7 @@ class AssistantThreadCreationOptions(_model_base.Model):
         self,
         *,
         messages: Optional[List["_models.ThreadMessageOptions"]] = None,
-        tool_resources: Optional["_models.CreateToolResourcesOptions"] = None,
+        tool_resources: Optional["_models.ToolResources"] = None,
         metadata: Optional[Dict[str, str]] = None,
     ): ...
 
@@ -428,143 +428,22 @@ class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpre
 class CodeInterpreterToolResource(_model_base.Model):
     """A set of resources that are used by the ``code_interpreter`` tool.
 
-
     :ivar file_ids: A list of file IDs made available to the ``code_interpreter`` tool. There can
      be a maximum of 20 files
-     associated with the tool. Required.
-    :vartype file_ids: list[str]
-    """
-
-    file_ids: List[str] = rest_field()
-    """A list of file IDs made available to the ``code_interpreter`` tool. There can be a maximum of
-     20 files
-     associated with the tool. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        file_ids: List[str],
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class CreateCodeInterpreterToolResourceOptions(_model_base.Model):
-    """A set of resources that will be used by the ``code_interpreter`` tool. Request object.
-
-    :ivar file_ids: A list of file IDs made available to the ``code_interpreter`` tool.
+     associated with the tool.
     :vartype file_ids: list[str]
     """
 
     file_ids: Optional[List[str]] = rest_field()
-    """A list of file IDs made available to the ``code_interpreter`` tool."""
+    """A list of file IDs made available to the ``code_interpreter`` tool. There can be a maximum of
+     20 files
+     associated with the tool."""
 
     @overload
     def __init__(
         self,
         *,
         file_ids: Optional[List[str]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class CreateFileSearchToolResourceVectorStoreOptions(_model_base.Model):  # pylint: disable=name-too-long
-    """File IDs associated to the vector store to be passed to the helper.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar file_ids: A list of file IDs to add to the vector store. There can be a maximum of 10000
-     files in a vector store. Required.
-    :vartype file_ids: list[str]
-    :ivar chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will use
-     the ``auto`` strategy. Required.
-    :vartype chunking_strategy: ~azure.ai.assistants.models.VectorStoreChunkingStrategyRequest
-    :ivar metadata: A set of up to 16 key/value pairs that can be attached to an object, used for
-     storing additional information about that object in a structured format. Keys may be up to 64
-     characters in length and values may be up to 512 characters in length.
-    :vartype metadata: dict[str, str]
-    """
-
-    file_ids: List[str] = rest_field()
-    """A list of file IDs to add to the vector store. There can be a maximum of 10000 files in a
-     vector store. Required."""
-    chunking_strategy: "_models.VectorStoreChunkingStrategyRequest" = rest_field()
-    """The chunking strategy used to chunk the file(s). If not set, will use the ``auto`` strategy.
-     Required."""
-    metadata: Optional[Dict[str, str]] = rest_field()
-    """A set of up to 16 key/value pairs that can be attached to an object, used for storing
-     additional information about that object in a structured format. Keys may be up to 64
-     characters in length and values may be up to 512 characters in length."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        file_ids: List[str],
-        chunking_strategy: "_models.VectorStoreChunkingStrategyRequest",
-        metadata: Optional[Dict[str, str]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class CreateToolResourcesOptions(_model_base.Model):
-    """Request object. A set of resources that are used by the assistant's tools. The resources are
-    specific to the
-    type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while the
-    ``file_search``
-    tool requires a list of vector store IDs.
-
-    :ivar code_interpreter: A list of file IDs made available to the ``code_interpreter`` tool.
-     There can be a maximum of 20 files
-     associated with the tool.
-    :vartype code_interpreter: ~azure.ai.assistants.models.CreateCodeInterpreterToolResourceOptions
-    :ivar file_search: A list of vector stores or their IDs made available to the ``file_search``
-     tool. Is either a [str] type or a [CreateFileSearchToolResourceVectorStoreOptions] type.
-    :vartype file_search: list[str] or
-     list[~azure.ai.assistants.models.CreateFileSearchToolResourceVectorStoreOptions]
-    """
-
-    code_interpreter: Optional["_models.CreateCodeInterpreterToolResourceOptions"] = rest_field()
-    """A list of file IDs made available to the ``code_interpreter`` tool. There can be a maximum of
-     20 files
-     associated with the tool."""
-    file_search: Optional["_types.CreateFileSearchToolResourceOptions"] = rest_field()
-    """A list of vector stores or their IDs made available to the ``file_search`` tool. Is either a
-     [str] type or a [CreateFileSearchToolResourceVectorStoreOptions] type."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code_interpreter: Optional["_models.CreateCodeInterpreterToolResourceOptions"] = None,
-        file_search: Optional["_types.CreateFileSearchToolResourceOptions"] = None,
     ): ...
 
     @overload

@@ -14,9 +14,6 @@ from ._models import AssistantsApiResponseFormat
 from ._models import AssistantsNamedToolChoice
 from ._models import CodeInterpreterToolDefinition
 from ._models import CodeInterpreterToolResource
-from ._models import CreateCodeInterpreterToolResourceOptions
-from ._models import CreateFileSearchToolResourceVectorStoreOptions
-from ._models import CreateToolResourcesOptions
 from ._models import FileContentResponse
 from ._models import FileDeletionStatus
 from ._models import FileListResponse
@@ -154,9 +151,6 @@ __all__ = [
     "AssistantsNamedToolChoice",
     "CodeInterpreterToolDefinition",
     "CodeInterpreterToolResource",
-    "CreateCodeInterpreterToolResourceOptions",
-    "CreateFileSearchToolResourceVectorStoreOptions",
-    "CreateToolResourcesOptions",
     "FileContentResponse",
     "FileDeletionStatus",
     "FileListResponse",
