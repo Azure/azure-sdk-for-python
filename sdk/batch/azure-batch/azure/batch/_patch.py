@@ -164,8 +164,6 @@ class BatchClient(GenerateBatchClient):
 
 
 def patch_sdk():
-    curr_package = importlib.import_module("azure.batch")
-    curr_package.BatchClient = BatchClient
     """Do not remove from this file.
 
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
