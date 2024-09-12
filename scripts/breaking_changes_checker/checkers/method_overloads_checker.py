@@ -17,6 +17,9 @@ class MethodOverloadsChecker:
     def run_check(self, diff, stable_nodes, current_nodes):
         bc_list = []
         for module_name, module in diff.items():
+            # This is a new module, so we won't check for removed overloads
+            if module_name not in stable_nodes:
+                continue
             for class_name, class_components in module.get("class_nodes", {}).items():
                 # We aren't checking for deleted classes in this checker
                 if isinstance(class_name, jsondiff.Symbol):
