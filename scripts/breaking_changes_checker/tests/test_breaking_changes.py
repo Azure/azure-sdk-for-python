@@ -11,6 +11,12 @@ import pytest
 from breaking_changes_checker.breaking_changes_tracker import BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
 from breaking_changes_checker.checkers.removed_method_overloads_checker import RemovedMethodOverloadChecker
+from breaking_changes_checker.checkers.removed_class_checker import RemovedClassChecker
+
+CHECKERS = [
+    RemovedClassChecker(),
+    RemovedMethodOverloadChecker(),
+]
 
 def format_breaking_changes(breaking_changes):
     formatted = "\n"
