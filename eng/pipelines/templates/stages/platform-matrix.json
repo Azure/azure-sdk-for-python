@@ -11,6 +11,7 @@
       "macos-latest": { "OSVmImage": "env:MACVMIMAGE", "Pool": "env:MACPOOL" }
     },
     "PythonVersion": [ "3.8", "pypy3.9", "3.9", "3.11", "3.12", "3.10" ],
-    "TestSamples": "false"
+    "TestSamples": "false",
+    "TargetingString": "azure*"
   }
 }
