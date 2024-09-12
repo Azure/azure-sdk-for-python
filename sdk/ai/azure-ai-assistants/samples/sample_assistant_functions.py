@@ -97,7 +97,7 @@ def sample_assistant_functions():
                 assistant_client.cancel_run(thread_id=thread.id, run_id=run.id)
                 break
 
-            tool_outputs = functions.invoke_functions(tool_calls)
+            tool_outputs = functions.execute(tool_calls)
             logging.info("Tool outputs: %s", tool_outputs)
             if tool_outputs:
                 assistant_client.submit_tool_outputs_to_run(
