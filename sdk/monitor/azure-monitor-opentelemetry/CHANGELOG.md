@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Added AAD auth samples to distro
+    ([#37206](https://github.com/Azure/azure-sdk-for-python/pull/37206))
+
 ## 1.6.2 (2024-09-05)
 
 ### Bugs Fixed
