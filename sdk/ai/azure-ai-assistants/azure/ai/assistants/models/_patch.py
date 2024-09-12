@@ -8,6 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from ._enums import AssistantStreamEvent
 from ._models import MessageDeltaChunk, ThreadRun, RunStep, ThreadMessage, RunStepDeltaChunk
+from ._models import FunctionToolDefinition, FunctionDefinition, ToolDefinition
 
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
@@ -20,7 +21,7 @@ class Tool(ABC):
     """
     @property
     @abstractmethod
-    def definitions(self) -> List[Dict[str, Any]]:
+    def definitions(self) -> List[ToolDefinition]:
         """Get the tool definitions."""
         pass
 
@@ -49,7 +50,8 @@ class FunctionTool(Tool):
         self._functions = functions
         self._definitions = self._build_function_definitions(functions)
 
-    def _build_function_definitions(self, functions: Dict[str, Any]) -> List[Dict[str, Any]]:
+
+    def _build_function_definitions(self, functions: Dict[str, Any]) -> List[FunctionToolDefinition]:
         specs = []
         type_map = {"str": "string", "int": "integer", "float": "number", "bool": "boolean", "default": "string"}
 
@@ -60,25 +62,27 @@ class FunctionTool(Tool):
             description = docstring.split("\n")[0] if docstring else "No description"
 
             properties = {
-                param_name: {"type": type_map.get(param.annotation.__name__, type_map["default"])}
-                for param_name, param in params.items()
-                if param.annotation != inspect._empty
+                param_name: {
+                    "type": type_map.get(
+                        param.annotation.__name__ if param.annotation != inspect._empty else "default",
+                        type_map["default"]
+                    ),
+                    "description": param.annotation.__doc__ if param.annotation != inspect._empty else None
+                } for param_name, param in params.items()
             }
 
-            spec = {
-                "type": "function",
-                "function": {
-                    "name": name,
-                    "description": description,
-                    "parameters": {
-                        "type": "object",
-                        "properties": properties,
-                        "required": list(params.keys()),
-                    },
-                },
-            }
-            specs.append(spec)
+            function_def = FunctionDefinition(
+                name=name,
+                description=description,
+                parameters={
+                    "type": "object",
+                    "properties": properties,
+                    "required": list(params.keys())
+                }
+            )
 
+            tool_def = FunctionToolDefinition(function=function_def)
+            specs.append(tool_def)
         return specs
 
     def execute(self, tool_calls: List[Any]) -> Any:
@@ -120,11 +124,8 @@ class FunctionTool(Tool):
             else:
                 return None
 
-        else:
-            return None
-
     @property
-    def definitions(self) -> List[Dict[str, Any]]:
+    def definitions(self) -> List[FunctionToolDefinition]:
         """
         Get the function definitions.
 
@@ -228,7 +229,7 @@ class ToolSet:
         self.tools.append(tool)
 
     @property
-    def definitions(self) -> List[Dict[str, Any]]:
+    def definitions(self) -> List[ToolDefinition]:
         """
         Get the definitions for all tools in the tool set.
         """
@@ -274,7 +275,7 @@ class ToolSet:
         """
         for tool in self.tools:
             tool_definitions = tool.definitions
-            if any(tool_name in definition["type"] for definition in tool_definitions):
+            if any(tool_name in definition.type for definition in tool_definitions):
                 return tool.execute(params)
         raise ValueError(f"Tool {tool_name} not found.")
 
