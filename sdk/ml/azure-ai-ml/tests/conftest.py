@@ -1166,3 +1166,10 @@ def hdfs_keytab_file() -> str:
 @pytest.fixture
 def hdfs_pw_file() -> str:
     return "./tests/test_configs/datastore/hdfs_kerberos_pw.yml"
+
+@pytest.fixture
+def spark_job_version_sanitizer(test_proxy):
+    add_general_regex_sanitizer(function_scoped = True, regex="/codes/[a-z|0-9|-]*", value="/codes/000000000000000000000")
+    add_general_regex_sanitizer(function_scoped = True, regex="/components/azureml_anonymous/versions/[a-z|0-9|-]*", value="/azureml_anonymous/versions/000000000000000000000")
+    add_general_regex_sanitizer(function_scoped = True, regex="/jobs/[a-z|0-9|-|_]*", value="/jobs/000000000000000000000")
+    add_body_key_sanitizer(json_path="$.properties.displayName", value="000000000000000000000")
