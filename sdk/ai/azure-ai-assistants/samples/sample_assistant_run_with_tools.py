@@ -74,11 +74,11 @@ def sample_assistant_run():
 
     tools = ToolSet()
     tools.add(functions)
-    # tool_set.add(code_interpreter)
-    # tool_set.add(file_search)
+    # tools.add(code_interpreter)
+    # tools.add(file_search)
 
     # Create assistant
-    assistant = assistant_client.create_assistant(
+    assistant = assistant_client.create_assistant_with_toolset(
         model="gpt", name="my-assistant", instructions="You are a helpful assistant", tools=tools
     )
     logging.info("Created assistant, ID: %s", assistant.id)

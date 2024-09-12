@@ -11,7 +11,7 @@ from ._models import MessageDeltaChunk, ThreadRun, RunStep, ThreadMessage, RunSt
 from ._models import FunctionToolDefinition, FunctionDefinition, ToolDefinition, ToolResources, FileSearchToolDefinition, FileSearchToolResource, CodeInterpreterToolDefinition, CodeInterpreterToolResource
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Type
 import inspect, json
 
 
@@ -222,7 +222,7 @@ class ToolSet:
     """
 
     def __init__(self):
-        self.tools = []
+        self._tools = []
 
     def add(self, tool: Tool):
         """
@@ -230,7 +230,7 @@ class ToolSet:
 
         :param tool: The tool to add.
         """
-        self.tools.append(tool)
+        self._tools.append(tool)
 
     @property
     def definitions(self) -> List[ToolDefinition]:
@@ -238,7 +238,7 @@ class ToolSet:
         Get the definitions for all tools in the tool set.
         """
         tools = []
-        for tool in self.tools:
+        for tool in self._tools:
             tools.extend(tool.definitions)
         return tools
 
@@ -248,7 +248,7 @@ class ToolSet:
         Get the resources for all tools in the tool set.
         """
         tool_resources = {}
-        for tool in self.tools:
+        for tool in self._tools:
             resources = tool.resources
             for key, value in resources.items():
                 if key in tool_resources:
@@ -269,19 +269,18 @@ class ToolSet:
             "tools": self.definitions,
         }
 
-    def execute_tool(self, tool_name: str, params: Dict[str, Any]) -> Any:
+    def get_tool(self, tool_type: Type[Tool]) -> Tool:
         """
-        Execute a tool operation based on the tool name provided.
+        Get a tool of the specified type from the tool set.
 
-        :param tool_name: The name of the tool to execute.
-        :param params: The parameters to pass to the tool
-        :return: The result of the tool operation.
+        :param tool_type: The type of tool to get.
+        :return: The tool of the specified type.
+        :raises ValueError: If a tool of the specified type is not found.
         """
-        for tool in self.tools:
-            tool_definitions = tool.definitions
-            if any(tool_name in definition.type for definition in tool_definitions):
-                return tool.execute(params)
-        raise ValueError(f"Tool {tool_name} not found.")
+        for tool in self._tools:
+            if isinstance(tool, tool_type):
+                return tool
+        raise ValueError(f"Tool of type {tool_type.__name__} not found.")
 
 
 class AssistantRunStream:

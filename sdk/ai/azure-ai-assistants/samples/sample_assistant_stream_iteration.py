@@ -76,7 +76,7 @@ def sample_assistant_stream_iteration():
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     logging.info(f"Created message, message ID {message.id}")
 
-    with assistant_client.create_and_stream_run(thread_id=thread.id, assistant_id=assistant.id) as stream:
+    with assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, stream=True) as stream:
 
         for event_type, event_data in stream:
 
