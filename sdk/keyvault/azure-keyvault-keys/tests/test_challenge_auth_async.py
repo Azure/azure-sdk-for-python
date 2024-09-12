@@ -7,6 +7,7 @@ Tests for the HTTP challenge authentication implementation. These tests aren't p
 the challenge cache is global to the process.
 """
 import asyncio
+import base64
 import os
 import time
 from unittest.mock import Mock, patch
@@ -18,7 +19,6 @@ from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
-from azure.identity.aio import AzureCliCredential, AzurePowerShellCredential, ClientSecretCredential
 from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy,HttpChallenge, HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from azure.keyvault.keys.aio import KeyClient
@@ -469,7 +469,6 @@ async def test_verify_challenge_resource_matches(verify_challenge_resource):
 
 
 @pytest.mark.asyncio
-@empty_challenge_cache
 @pytest.mark.parametrize("verify_challenge_resource", [True, False])
 async def test_verify_challenge_resource_valid(verify_challenge_resource):
     """The auth policy should raise if the challenge resource isn't a valid URL unless check is disabled"""
@@ -502,3 +501,57 @@ async def test_verify_challenge_resource_valid(verify_challenge_resource):
     else:
         key = await client.get_key("key-name")
         assert key.name == "key-name"
+
+
+@pytest.mark.asyncio
+@empty_challenge_cache
+async def test_cae():
+    """The policy should correctly handle claims in a challenge response"""
+
+    expected_content = b"a duck"
+
+    async def test_with_challenge(challenge, expected_claim):
+        expected_token = "expected_token"
+
+        class Requests:
+            count = 0
+
+        async def send(request):
+            Requests.count += 1
+            if Requests.count == 1:
+                # first request should be unauthorized and have no content
+                assert not request.body
+                assert request.headers["Content-Length"] == "0"
+                return challenge
+            elif Requests.count == 2:
+                # second request should be authorized according to challenge and have the expected content
+                assert request.headers["Content-Length"]
+                assert request.body == expected_content
+                assert expected_token in request.headers["Authorization"]
+                return Mock(status_code=200)
+            raise ValueError("unexpected request")
+
+        async def get_token(*_, **kwargs):
+            assert kwargs.get("claims") == expected_claim
+            return AccessToken(expected_token, 0)
+
+        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+        request = HttpRequest("POST", get_random_url())
+        request.set_bytes_body(expected_content)
+        await pipeline.run(request)
+
+        assert credential.get_token.call_count == 1
+
+    url = f'authorization_uri="{get_random_url()}"'
+    resource = 'resource="https://vault.azure.net"'
+    cid = 'client_id="00000003-0000-0000-c000-000000000000"'
+    err = 'error="insufficient_claims"'
+    claim = '{"access_token": {"foo": "bar"}}'
+    # Claim token is a string of the base64 encoding of the claim
+    claim_token = base64.b64encode(claim.encode()).decode()
+    challenge = f'Bearer realm="", {url}, {resource}, {cid}, {err}, claims="{claim_token}"'
+
+    challenge_response = Mock(status_code=401, headers={"WWW-Authenticate": challenge})
+
+    await test_with_challenge(challenge_response, claim)

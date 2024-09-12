@@ -6,6 +6,7 @@
 Tests for the HTTP challenge authentication implementation. These tests aren't parallelizable, because
 the challenge cache is global to the process.
 """
+import base64
 import functools
 import os
 import time
@@ -21,7 +22,6 @@ from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
-from azure.identity import AzureCliCredential, AzurePowerShellCredential, ClientSecretCredential
 from azure.keyvault.keys import KeyClient
 from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
@@ -536,3 +536,56 @@ def test_verify_challenge_resource_valid(verify_challenge_resource):
     else:
         key = client.get_key("key-name")
         assert key.name == "key-name"
+
+
+@empty_challenge_cache
+def test_cae():
+    """The policy should correctly handle claims in a challenge response"""
+
+    expected_content = b"a duck"
+
+    def test_with_challenge(challenge, expected_claim):
+        expected_token = "expected_token"
+
+        class Requests:
+            count = 0
+
+        def send(request):
+            Requests.count += 1
+            if Requests.count == 1:
+                # first request should be unauthorized and have no content
+                assert not request.body
+                assert request.headers["Content-Length"] == "0"
+                return challenge
+            elif Requests.count == 2:
+                # second request should be authorized according to challenge and have the expected content
+                assert request.headers["Content-Length"]
+                assert request.body == expected_content
+                assert expected_token in request.headers["Authorization"]
+                return Mock(status_code=200)
+            raise ValueError("unexpected request")
+
+        def get_token(*_, **kwargs):
+            assert kwargs.get("claims") == expected_claim
+            return AccessToken(expected_token, 0)
+
+        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+        request = HttpRequest("POST", get_random_url())
+        request.set_bytes_body(expected_content)
+        pipeline.run(request)
+
+        assert credential.get_token.call_count == 1
+
+    url = f'authorization_uri="{get_random_url()}"'
+    resource = 'resource="https://vault.azure.net"'
+    cid = 'client_id="00000003-0000-0000-c000-000000000000"'
+    err = 'error="insufficient_claims"'
+    claim = '{"access_token": {"foo": "bar"}}'
+    # Claim token is a string of the base64 encoding of the claim
+    claim_token = base64.b64encode(claim.encode()).decode()
+    challenge = f'Bearer realm="", {url}, {resource}, {cid}, {err}, claims="{claim_token}"'
+
+    challenge_response = Mock(status_code=401, headers={"WWW-Authenticate": challenge})
+
+    test_with_challenge(challenge_response, claim)
