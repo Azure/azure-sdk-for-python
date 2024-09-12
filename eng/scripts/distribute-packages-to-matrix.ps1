@@ -150,15 +150,16 @@ foreach($batch in $directBatches) {
         foreach ($configElement in $includeCopy) {
             if ($configElement.PSObject.Properties) {
                 # an include looks like this
-                # access by <ConfigName>.<ActualJobName>[ConfigElement]
                 # {
+                #     <ConfigName>
                 #     "CoverageConfig": {
+                #         <jobname>
                 #         "ubuntu2004_39_coverage": {
-                #         "OSVmImage": "env:LINUXVMIMAGE",
-                #         "Pool": "env:LINUXPOOL",
-                #         "PythonVersion": "3.9",
-                #         "CoverageArg": "",
-                #         "TestSamples": "false"
+                #            "OSVmImage": "env:LINUXVMIMAGE",
+                #            "Pool": "env:LINUXPOOL",
+                #            "PythonVersion": "3.9",
+                #            "CoverageArg": "",
+                #            "TestSamples": "false"
                 #         }
                 #     }
                 # }
@@ -166,15 +167,9 @@ foreach($batch in $directBatches) {
                 $topLevelPropertyValue = $configElement.PSObject.Properties[$topLevelPropertyName].Value
 
                 if ($topLevelPropertyValue.PSObject.Properties) {
-
                     $secondLevelPropertyName = $topLevelPropertyValue.PSObject.Properties.Name
                     $secondLevelPropertyValue = $topLevelPropertyValue.PSObject.Properties[$secondLevelPropertyName].Value
 
-                    Write-Host "Top-level: $topLevelPropertyName"
-                    Write-Host "Second-level: $secondLevelPropertyName"
-
-                    # Example of updating the second-level property name (optional)
-                    # This will rename the property `ubuntu2004_39_coverage` to something else
                     $newSecondLevelName = "$secondLevelPropertyName" + "$targetingString"
 
                     $topLevelPropertyValue.PSObject.Properties.Remove($secondLevelPropertyName)
@@ -182,7 +177,7 @@ foreach($batch in $directBatches) {
 
                     # add the targeting string property if it doesn't already exist
                     if (-not $topLevelPropertyValue.$newSecondLevelName.PSObject.Properties["TargetingString"]) {
-                        $topLevelPropertyValue.$newSecondLevelName | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value @()
+                        $topLevelPropertyValue.$newSecondLevelName | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value ""
                     }
 
                     # set the targeting string
@@ -194,36 +189,5 @@ foreach($batch in $directBatches) {
         }
     }
 }
-
-$matrix | ConvertTo-Json -Depth 100
-
-# # regular case is when we have more packages than batches
-# if ($packageProperties.Count -ge $batchCount) {
-#     for ($i = 0; $i -lt $packageProperties.Count; $i++) {
-#         Write-Host "Assigning package $($packageProperties[$i].Name) to batch $batchCounter"
-#         $batches[$batchCounter] += $packageProperties[$i].Name.Replace(".json", "")
-#         $batchCounter = ($batchCounter + 1) % $batchCount
-#     }
-# }
-# # the case where we have fewer packages than batches, we instead walk the batches
-# # and assign packages to them, even if we end up assigning the same package twice
-# # that's ok, we just don't want to have dead platforms running no tests
-# else {
-#     for ($i = 0; $i -lt $batchCount; $i++) {
-#         $batches[$i] += $packageProperties[$i % $packageProperties.Count].Name.Replace(".json", "")
-#     }
-# }
-
-# # simplify the batches down to single values that will be added to the matrix
-# foreach($key in $batches.Keys) {
-#     $batchValues += $batches[$key] -join ","
-# }
-
-# # set the values for include
-# $matrix.include[0].CoverageConfig.ubuntu2004_39_coverage | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value $batchValues[0]
-# $matrix.include[1].Config.Ubuntu2004_312 | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value $batchValues[1]
-
-# # set the values for the matrix
-# $matrix.matrix | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value $batchValues[2..($batchValues.Length-1)]
 
 $matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
