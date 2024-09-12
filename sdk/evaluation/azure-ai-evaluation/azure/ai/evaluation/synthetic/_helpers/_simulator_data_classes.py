@@ -5,7 +5,7 @@
 from dataclasses import dataclass
 from typing import Union
 
-from promptflow.evals.synthetic._conversation.constants import ConversationRole
+from azure.ai.evaluation._conversation.constants import ConversationRole
 
 
 @dataclass

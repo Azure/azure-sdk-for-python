@@ -109,7 +109,7 @@ class IndirectAttackSimulator:
         the scope of your AI system.
 
         :keyword scenario: Enum value specifying the adversarial scenario used for generating inputs.
-        :paramtype scenario: promptflow.evals.synthetic.adversarial_scenario.AdversarialScenario
+        :paramtype scenario: azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario
         :keyword target: The target function to simulate adversarial inputs against.
             This function should be asynchronous and accept a dictionary representing the adversarial input.
         :paramtype target: Callable
