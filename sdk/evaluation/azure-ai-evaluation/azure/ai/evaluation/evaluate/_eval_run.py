@@ -380,7 +380,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         remote_paths = {"paths": []}
         local_paths = []
         # Go over the artifact folder and upload all artifacts.
-        for (root, _, filenames) in os.walk(artifact_folder):
+        for root, _, filenames in os.walk(artifact_folder):
             upload_path = root_upload_path
             if root != artifact_folder:
                 rel_path = os.path.relpath(root, artifact_folder)
