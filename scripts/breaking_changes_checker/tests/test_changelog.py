@@ -9,9 +9,16 @@ import os
 import json
 import pytest
 from checkers.added_method_overloads_checker import AddedMethodOverloadChecker
+from checkers.added_class_checker import AddedClassChecker
+from checkers.added_class_method_checker import AddedClassMethodChecker
 from breaking_changes_checker.changelog_tracker import ChangelogTracker, BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
 
+CHECKERS = [
+    AddedClassChecker(),
+    AddedClassMethodChecker(),
+    AddedMethodOverloadChecker(),
+]
 
 def test_changelog_flag():
     with open(os.path.join(os.path.dirname(__file__), "examples", "code-reports", "content-safety", "stable.json"), "r") as fd:
@@ -19,12 +26,12 @@ def test_changelog_flag():
     with open(os.path.join(os.path.dirname(__file__), "examples", "code-reports", "content-safety", "current.json"), "r") as fd:
         current = json.load(fd)
 
-    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety", checkers=CHECKERS)
     bc.run_checks()
 
     assert len(bc.features_added) > 0
-    msg, _, *args = bc.features_added[0]
-    assert msg == ChangelogTracker.ADDED_CLIENT_METHOD_MSG
+    msg, _, *args = bc.features_added[3]
+    assert msg == AddedClassMethodChecker.message["client_method"]
     assert args == ['azure.ai.contentsafety', 'BlocklistClient', 'new_blocklist_client_method']
 
 def test_new_class_property_added():
@@ -60,12 +67,12 @@ def test_new_class_property_added():
         }
     }
 
-    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety", checkers = CHECKERS)
     bc.run_checks()
 
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
-    assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
+    assert msg == AddedClassChecker.message["class_property"]
     assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att']
 
 
@@ -128,7 +135,7 @@ def test_async_cleanup_check():
         }
     }
 
-    bc = ChangelogTracker(stable, current, "azure-mgmt-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contentsafety", checkers = CHECKERS)
     bc.run_checks()
 
     # Should only have 1 breaking change reported instead of 2
@@ -138,7 +145,7 @@ def test_async_cleanup_check():
     # Should only have 1 feature added reported instead of 2
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
-    assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
+    assert msg == AddedClassChecker.message["class_property"]
 
 
 def test_new_class_property_added_init():
@@ -210,12 +217,12 @@ def test_new_class_property_added_init():
         }
     }
 
-    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety", checkers = CHECKERS)
     bc.run_checks()
 
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
-    assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
+    assert msg == AddedClassChecker.message["class_property"]
     assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att']
 
 
@@ -281,12 +288,12 @@ def test_new_class_property_added_init_only():
         }
     }
 
-    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety", checkers = CHECKERS)
     bc.run_checks()
 
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
-    assert msg == ChangelogTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
+    assert msg == AddedClassMethodChecker.message["class_method_parameter"]
     assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att', '__init__']
 
 
@@ -369,12 +376,12 @@ def test_new_class_method_parameter_added():
         }
     }
 
-    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety", checkers = CHECKERS)
     bc.run_checks()
 
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
-    assert msg == ChangelogTracker.ADDED_CLASS_METHOD_PARAMETER_MSG
+    assert msg == AddedClassMethodChecker.message["class_method_parameter"]
     assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'bar', 'foo']
 
 
@@ -430,15 +437,15 @@ def test_added_operation_group():
         }
     }
 
-    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc = ChangelogTracker(stable, current, "azure-contoso", checkers = CHECKERS)
     bc.run_checks()
 
     assert len(bc.features_added) == 2
     msg, _, *args = bc.features_added[0]
-    assert msg == ChangelogTracker.ADDED_OPERATION_GROUP_MSG
+    assert msg == AddedClassChecker.message["client_operation_group"]
     assert args == ['azure.contoso', 'ContosoClient', 'foo']
     msg, _, *args = bc.features_added[1]
-    assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
+    assert msg == AddedClassChecker.message["class_property"]
 
 
 def test_ignore_changes():
@@ -483,12 +490,12 @@ def test_ignore_changes():
     IGNORE = {
         "azure-contoso": [("AddedOperationGroup", "*", "ContosoClient", "foo")]
     }
-    bc = ChangelogTracker(stable, current, "azure-contoso", ignore=IGNORE)
+    bc = ChangelogTracker(stable, current, "azure-contoso", ignore=IGNORE, checkers = CHECKERS)
     bc.run_checks()
     bc.report_changes()
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
-    assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
+    assert msg == AddedClassChecker.message["class_property"]
 
 
 def test_async_features_added_cleanup():
@@ -499,7 +506,7 @@ def test_async_features_added_cleanup():
     ]
 
     # create dummy BreakingChangesTracker instance
-    ct = ChangelogTracker({}, {}, "azure-contoso")
+    ct = ChangelogTracker({}, {}, "azure-contoso", checkers = CHECKERS)
     ct.features_added = features_added
 
     ct.run_async_cleanup(ct.features_added)
@@ -547,15 +554,15 @@ def test_new_enum_added():
         }
     }
 
-    bc = ChangelogTracker(stable, current, "azure-contoso-widgetmanager")
+    bc = ChangelogTracker(stable, current, "azure-contoso-widgetmanager", checkers = CHECKERS)
     bc.run_checks()
 
     assert len(bc.features_added) == 2
     msg, _, *args = bc.features_added[0]
-    assert msg == ChangelogTracker.ADDED_ENUM_MEMBER_MSG
+    assert msg == AddedClassChecker.message["enum_member"]
     assert args == ['azure.contoso.widgetmanager', 'ManagerEnum', 'bar']
     msg, _, *args = bc.features_added[1]
-    assert msg == ChangelogTracker.ADDED_ENUM_MSG
+    assert msg == AddedClassChecker.message["enum"]
     assert args == ['azure.contoso.widgetmanager', 'WidgetEnum']
 
 
@@ -671,7 +678,7 @@ def test_added_overload():
         }
     }
 
-    bc = ChangelogTracker(stable, current, "azure-contoso", checkers=[AddedMethodOverloadChecker()])
+    bc = ChangelogTracker(stable, current, "azure-contoso", checkers = CHECKERS)
     bc.run_checks()
 
     assert len(bc.features_added) == 2
