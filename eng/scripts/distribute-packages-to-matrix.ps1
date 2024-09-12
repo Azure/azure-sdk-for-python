@@ -59,6 +59,8 @@ $includeCount = 0
 $includeObject = $null
 if ($matrix.PSObject.Properties.Name -contains "include") {
     $includeCount = $matrix.include.Count
+    $originalInclude = $matrix.include
+    Write-Host "Original include type " + $originalInclude.GetType()
 }
 $batchCount = $versionCount + $includeCount
 if ($batchCount -eq 0) {
@@ -75,14 +77,12 @@ $batches = @{}
 for ($i = 0; $i -lt $batchCount; $i++) {
     $batches[$i] = @()
 }
-
 $batchCounter = 0
 $batchValues = @()
 
 # if there is an IMPORT, we should import that first and use THAT. we have a clear edge case where a nested include will NOT work.
 # I am accepting that in interests of making this work with all our platform matrix json files throughout the repo
 # TODO: implement grabbing the matrix from the import if it exists
-
 $directIncludedPackages = $packageProperties | Where-Object { $_.IncludedForValidation -eq $false }
 $indirectIncludedPackages = $packageProperties | Where-Object { $_.IncludedForValidation -eq $true }
 
@@ -99,7 +99,6 @@ Write-Host "IndirectIncludedPackages Included Length = $($indirectIncludedPackag
 $directBatches = Split-ArrayIntoBatches -InputArray $directIncludedPackages -BatchSize $batchSize
 Write-Host $directBatches.Length
 Write-Host $directBatches[0].Length
-
 # all directly included packages should have their tests invoked in full, so, lets use a basic storage service discovery. We'll have direct package batches of
 
 # ["azure-storage-blob", "azure-storage-blob-changefeed", "azure-storage-extensions", "azure-storage-file-datalake", "azure-storage-file-share"]
@@ -118,13 +117,21 @@ Write-Host $directBatches[0].Length
         # this will have the result of multiplexing our includes, so we will need to update the name there
 
 if ($directBatches) {
-    $matrix.matrix.TargetingString = @()
+    # we need to ensure the presence of TargetingString in the matrix object
+    if (-not $matrix.matrix.PSObject.Properties["TargetingString"]) {
+        $matrix.matrix | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value @()
+    }
+    else {
+        $matrix.matrix.TargetingString = @()
+    }
 }
-
 
 foreach($batch in $directBatches) {
     $targetingString = ($batch | Select-Object -ExpandProperty Name) -join ","
 
+    # we need to equal the number of python versions in the matrix (to ensure we get complete coverage)
+    # so we need to multiply the targeting string by the number of python versions, that'll ensure that
+    # across all python versions we see the same packages
     $targetingStringArray = @($targetingString) * $versionCount
     Write-Host "Returning batch:"
     foreach($item in $targetingStringArray) {
@@ -133,8 +140,13 @@ foreach($batch in $directBatches) {
 
     $matrix.matrix.TargetingString += $targetingStringArray
 
-    # now we need to add the batch to the includes if they exist
-    if ()
+    # if there were any include objects, we need to duplicate them exactly and add the targeting string to each
+    # this means that the number of includes at the end of this operation will be incoming # of includes * the number of batches
+    # if ($includeCount -gt 0) {
+    #     foreach($include in $matrix.include) {
+    #         $include | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value $targetingString
+    #     }
+    # }
 }
 
 $matrix | ConvertTo-Json -Depth 100
