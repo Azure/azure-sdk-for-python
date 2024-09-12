@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from promptflow.evals.synthetic.constants import SupportedLanguages
+from azure.ai.evaluation.synthetic.constants import SupportedLanguages
 
 BASE_SUFFIX = "Make the conversation in __language__ language."
 
