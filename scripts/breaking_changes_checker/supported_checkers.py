@@ -7,8 +7,10 @@
 
 from checkers.removed_method_overloads_checker import RemovedMethodOverloadChecker
 from checkers.added_method_overloads_checker import AddedMethodOverloadChecker
+from checkers.added_class_checker import AddedClassChecker
 
 CHECKERS = [
     RemovedMethodOverloadChecker(),
+    AddedClassChecker(),
     AddedMethodOverloadChecker(),
 ]
