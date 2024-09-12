@@ -28,6 +28,13 @@ steps:
     inputs:
       versionSpec: '3.11'
 
+  - pwsh: |
+      if ("${{ parameters.ServiceDirectory }}" -ne "auto")
+      {
+        Write-Host "##vso[task.setvariable variable=ComponentDetection.SourcePath]$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}"
+      }
+    displayName: Set Component Governance Path
+
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: auth-dev-feed.yml
       parameters:

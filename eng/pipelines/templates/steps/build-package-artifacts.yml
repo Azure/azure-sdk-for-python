@@ -46,6 +46,13 @@ steps:
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
+  - pwsh: |
+      if ("${{ parameters.ServiceDirectory }}" -ne "auto")
+      {
+        Write-Host "##vso[task.setvariable variable=ComponentDetection.SourcePath]$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}"
+      }
+    displayName: Set Component Governance Path
+
   # set dev build calls SavePackageProperties with dev version if necessary. this will never happen in a PR build
   # however, it will set the variable SetDevVersion as appropriate for normal nightly runs
   - template: set-dev-build.yml
