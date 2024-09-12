@@ -28,6 +28,13 @@ extends:
     ServiceDirectory: evaluation
     ValidateFormatting: true
     TestProxy: true
+    # This custom matrix config should be dropped once:
+    #  * Resolve the issue of windows runners crashing because a file isn't deletable
+    MatrixConfigs: 
+      - Name: ai_ci_matrix
+        Path: sdk/evaluation/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
     Artifacts:
     - name: azure-ai-evaluation
       safeName: azureaievaluation
