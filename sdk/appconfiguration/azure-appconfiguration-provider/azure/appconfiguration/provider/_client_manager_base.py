@@ -97,13 +97,15 @@ class _ConfigurationClientWrapperBase:
                         (v for v in variants_value if v.get("name") in allocated_variants),
                         key=lambda v: v.get("name"),
                     )
-                    allocation_id += ";".join(
-                        f"{base64.b64encode(v.get('name', '').encode('utf-8')).decode('utf-8')},"
-                        f"{json.dumps(v.get('configuration_value'), separators=(',', ':'))}"
-                        for v in sorted_variants
-                    )
+                   
+                    for v in sorted_variants:
+                        allocation_id +=  f"{base64.b64encode(v.get('name', '').encode('utf-8')).decode('utf-8')},"
+                        if "configuration_value" in v:
+                            allocation_id += f"{json.dumps(v.get('configuration_value', ''), separators=(',', ':'))}"
+                        allocation_id += ";"
+                    allocation_id = allocation_id[:-1]
 
-        if not allocated_variants and allocation and not allocation.get("seed"):
+        if not allocated_variants and ( not allocation or not allocation.get("seed")):
             return None
 
         # Create a sha256 hash of the allocation_id
@@ -136,13 +138,14 @@ class _ConfigurationClientWrapperBase:
             feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
             if feature_flag.label and not feature_flag.label.isspace():
                 feature_flag_reference += f"?label={feature_flag.label}"
-            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
-            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
-                feature_flag.key, feature_flag.label
-            )
-            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = self._generate_allocation_id(
-                feature_flag_value
-            )
+            if feature_flag_value[TELEMETRY_KEY].get("enabled"):
+                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
+                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
+                    feature_flag.key, feature_flag.label
+                )
+                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = self._generate_allocation_id(
+                    feature_flag_value
+                )
 
     def _feature_flag_appconfig_telemetry(
         self, feature_flag: FeatureFlagConfigurationSetting, filters_used: Dict[str, bool]
