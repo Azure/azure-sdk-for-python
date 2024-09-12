@@ -671,15 +671,10 @@ def test_added_overload():
         }
     }
 
-    EXPECTED = [
-        "(AddedMethodOverload): Method `class_name.one` has a new overload `def one(testing: Test) -> TestResult`",
-        "(AddedMethodOverload): Method `class_name.two` has a new overload `def two(testing2: JSON)`",
-    ]
-
     bc = ChangelogTracker(stable, current, "azure-contoso", checkers=[AddedMethodOverloadChecker()])
     bc.run_checks()
 
-    assert len(bc.features_added) == len(EXPECTED)
+    assert len(bc.features_added) == 2
     msg, _, *args = bc.features_added[0]
     assert msg == AddedMethodOverloadChecker.message["default"]
     assert args == ['azure.contoso', 'class_name', 'one', 'def one(testing: Test) -> TestResult']
