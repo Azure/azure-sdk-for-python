@@ -8,7 +8,7 @@ import asyncio
 from azure.appconfiguration.provider.aio import load
 from azure.appconfiguration.provider import SettingSelector
 import os
-from sample_utilities import get_authority, get_audience, get_credential, get_client_modifications
+from sample_utilities import get_authority, get_credential, get_client_modifications
 
 
 async def main():
@@ -21,11 +21,17 @@ async def main():
     config = await load(endpoint=endpoint, credential=credential, **kwargs)
     print(config["message"])
 
+    await credential.close()
+    await config.close()
+
     # Connecting to Azure App Configuration using AAD and trim key prefixes
     trimmed = ["test."]
     config = await load(endpoint=endpoint, credential=credential, trim_prefixes=trimmed, **kwargs)
 
     print(config["message"])
+
+    await credential.close()
+    await config.close()
 
     # Connection to Azure App Configuration using SettingSelector
     selects = [SettingSelector(key_filter="message*")]

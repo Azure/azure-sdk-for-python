@@ -1,16 +1,16 @@
 # Release History
 
-## 1.31.0 (Unreleased)
+## 1.31.0 (2024-09-12)
 
 ### Features Added
 
-- `AccessToken` now has an optional `refresh_on` attribute that can be used to specify when the token should be refreshed.  #36183
-  - `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now check the `refresh_on` attribute when determining if a token request should be made.
-- Added `azure.core.AzureClouds` enum to represent the different Azure clouds.
-
-### Breaking Changes
-
-### Bugs Fixed
+- Added azure.core.AzureClouds enum to represent the different Azure clouds.
+- Added two new credential protocol classes, `SupportsTokenInfo` and `AsyncSupportsTokenInfo`, to offer more extensibility in supporting various token acquisition scenarios. #36565
+  - Each new protocol class defines a `get_token_info` method that returns an `AccessTokenInfo` object.
+- Added a new `TokenRequestOptions` class, which is a `TypedDict` with optional parameters, that can be used to define options for token requests through the `get_token_info` method. #36565
+- Added a new `AccessTokenInfo` class, which is returned by `get_token_info` implementations. This class contains the token, its expiration time, and optional additional information like when a token should be refreshed. #36565
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now first check if a credential has the `get_token_info` method defined. If so, the `get_token_info` method is used to acquire a token. Otherwise, the `get_token` method is used. #36565
+  - These policies now also check the `refresh_on` attribute when determining if a new token request should be made.
 
 ### Other Changes
 

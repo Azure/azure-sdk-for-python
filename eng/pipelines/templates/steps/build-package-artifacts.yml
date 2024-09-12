@@ -36,6 +36,11 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml@self
 
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
+
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
     displayName: 'Tag scheduled builds'
@@ -46,7 +51,6 @@ steps:
   - template: set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   # now we need to call Save-Package-Properties so that we can filter on it
   - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:

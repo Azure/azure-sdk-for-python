@@ -382,7 +382,8 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
             #        )?
             #       )?
             rx = r"{}(((a|b|rc)\d+)?(\.post\d+)?)?".format(base_version)
-            new_req = re.sub(rx, "{}{}1".format(base_version, DEV_BUILD_IDENTIFIER), str(req), flags=re.IGNORECASE)
+            new_req_format = f"{base_version}{DEV_BUILD_IDENTIFIER}1,<{base_version}b0"
+            new_req = re.sub(rx, new_req_format, str(req), flags=re.IGNORECASE)
             logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
             requirement_to_update[old_req] = new_req
 

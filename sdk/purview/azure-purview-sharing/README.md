@@ -569,7 +569,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/azure-purview-sharing/azure/purview/sharing
-[client_pypi_package]: https://aka.ms/azsdk/python/purviewsharing/pypi
+[client_pypi_package]: https://pypi.org/project/azure-purview-sharing/
 [sharing_ref_docs]: https://aka.ms/azsdk/python/purviewcatalog/ref-docs
 [sharing_product_documentation]: https://azure.microsoft.com/services/purview/
 [azure_subscription]: https://azure.microsoft.com/free/
