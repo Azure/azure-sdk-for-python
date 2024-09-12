@@ -17,7 +17,7 @@ IGNORE_BREAKING_CHANGES = {
         # Changes due to latest dpg design + need to support overloads in this tool
         ("ChangedParameterOrdering", "*", "*", "__init__"),
         # Changes due to latest dpg design
-        ("RemovedOrRenamedClass", "*", RegexSuppression("ListResult$")),
+        ("RemovedOrRenamedClass", "*", RegexSuppression(".*ListResult$")),
         ("ChangedParameterKind", "*", "*", "*", "top"),
         ("ChangedParameterKind", "*", "*", "*", "filter"),
         ("ChangedParameterKind", "*", "*", "*", "skip"),
