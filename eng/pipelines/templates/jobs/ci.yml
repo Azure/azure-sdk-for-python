@@ -256,7 +256,6 @@ jobs:
       PreGenerationSteps:
 
         - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
-          condition: eq(variables['Build.Reason'], 'PullRequest')
 
         - task: Powershell@2
           inputs:
