@@ -231,7 +231,9 @@ def process_requirement(req, dependency_type, orig_pkg_name):
     # this method finds either latest or minimum version of a package that is available on PyPI
 
     # find package name and requirement specifier from requires
-    pkg_name, spec = parse_require(req)
+    requirement = parse_require(req)
+    pkg_name = requirement.key
+    spec = requirement.specifier if len(requirement.specifier) else None
 
     # get available versions on PyPI
     client = PyPIClient()

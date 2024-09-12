@@ -133,7 +133,9 @@ def create_package_and_install(
                         logging.info("Installed packages: {}".format(installed_pkgs))
 
                         # parse the specifier
-                        req_name, req_specifier = parse_require(req)
+                        requirement = parse_require(req)
+                        req_name = requirement.key
+                        req_specifier = requirement.specifier if len(requirement.specifier) else None
 
                         # if we have the package already present...
                         if req_name in installed_pkgs:
