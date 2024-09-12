@@ -5,7 +5,19 @@ try:
     from . import constants
 except ImportError:
     import constants
+
+from typing import List
+
+import nltk
 import numpy as np
+
+try:
+    from nltk.tokenize.nist import NISTTokenizer
+except LookupError:
+    nltk.download("perluniprops")
+    nltk.download("punkt")
+    nltk.download("punkt_tab")
+    from nltk.tokenize.nist import NISTTokenizer
 
 
 def get_harm_severity_level(harm_score: int) -> str:
@@ -28,3 +40,16 @@ def get_harm_severity_level(harm_score: int) -> str:
         if harm_score_range[0] <= harm_score <= harm_score_range[1]:
             return harm_level.value
     return np.nan
+
+
+def nltk_tokenize(text: str) -> List[str]:
+    """Tokenize the input text using the NLTK tokenizer."""
+
+    if not text.isascii():
+        # Use NISTTokenizer for international tokenization
+        tokens = NISTTokenizer().international_tokenize(text)
+    else:
+        # By default, use NLTK word tokenizer
+        tokens = nltk.word_tokenize(text)
+
+    return list(tokens)
