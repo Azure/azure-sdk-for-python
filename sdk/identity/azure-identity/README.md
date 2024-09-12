@@ -37,17 +37,17 @@ It's a [known issue](https://github.com/Azure/azure-sdk-for-python/issues/23249)
 
 #### Authenticate via the Azure CLI
 
-`DefaultAzureCredential` and `AzureCliCredential` can authenticate as the user signed in to the [Azure CLI][azure_cli]. To sign in to the Azure CLI, run `az login`. On a system with a default web browser, the Azure CLI will launch the browser to authenticate a user.
+`DefaultAzureCredential` and `AzureCliCredential` can authenticate as the user signed in to the [Azure CLI][azure_cli]. To sign in to the Azure CLI, run `az login`. On a system with a default web browser, the Azure CLI launches the browser to authenticate a user.
 
-When no default browser is available, `az login` will use the device code authentication flow. This flow can also be selected manually by running `az login --use-device-code`.
+When no default browser is available, `az login` uses the device code authentication flow. This flow can also be selected manually by running `az login --use-device-code`.
 
 #### Authenticate via the Azure Developer CLI
 
-Developers coding outside of an IDE can also use the [Azure Developer CLI][azure_developer_cli] to authenticate. Applications using the `DefaultAzureCredential` or the `AzureDeveloperCliCredential` can then use this account to authenticate calls in their application when running locally.
+Developers coding outside of an IDE can also use the [Azure Developer CLI][azure_developer_cli] to authenticate. Applications using `DefaultAzureCredential` or `AzureDeveloperCliCredential` can then use this account to authenticate calls in their application when running locally.
 
-To authenticate with the [Azure Developer CLI][azure_developer_cli], users can run the command `azd auth login`. For users running on a system with a default web browser, the Azure Developer CLI will launch the browser to authenticate the user.
+To authenticate with the [Azure Developer CLI][azure_developer_cli], run the command `azd auth login`. For users running on a system with a default web browser, the Azure Developer CLI launches the browser to authenticate the user.
 
-For systems without a default web browser, the `azd auth login --use-device-code` command will use the device code authentication flow.
+For systems without a default web browser, the `azd auth login --use-device-code` command uses the device code authentication flow.
 
 ## Key concepts
 
@@ -55,7 +55,7 @@ For systems without a default web browser, the `azd auth login --use-device-code
 
 A credential is a class that contains or can obtain the data needed for a service client to authenticate requests. Service clients across the Azure SDK accept a credential instance when they're constructed, and use that credential to authenticate requests.
 
-The Azure Identity library focuses on OAuth authentication with Microsoft Entra ID. It offers various credential classes capable of acquiring a Microsoft Entra access token. See the [Credential classes](#credential-classes "Credential classes") section below for a list of this library's credential classes.
+The Azure Identity library focuses on OAuth authentication with Microsoft Entra ID. It offers various credential classes capable of acquiring a Microsoft Entra access token. See the [Credential classes](#credential-classes "Credential classes") section for a list of this library's credential classes.
 
 ### DefaultAzureCredential
 
@@ -67,17 +67,17 @@ The Azure Identity library focuses on OAuth authentication with Microsoft Entra 
 
 ![DefaultAzureCredential authentication flow](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/identity/azure-identity/images/mermaidjs/DefaultAzureCredentialAuthFlow.svg)
 
-1. **Environment** - `DefaultAzureCredential` will read account information specified via [environment variables](#environment-variables "environment variables") and use it to authenticate.
-1. **Workload Identity** - If the application is deployed to Azure Kubernetes Service with Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
-1. **Managed Identity** - If the application is deployed to an Azure host with Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
-1. **Azure CLI** - If a user has signed in via the Azure CLI `az login` command, `DefaultAzureCredential` will authenticate as that user.
-1. **Azure PowerShell** - If a user has signed in via Azure PowerShell's `Connect-AzAccount` command, `DefaultAzureCredential` will authenticate as that user.
-1. **Azure Developer CLI** - If the developer has authenticated via the Azure Developer CLI `azd auth login` command, the `DefaultAzureCredential` will authenticate with that account.
-1. **Interactive browser** - If enabled, `DefaultAzureCredential` will interactively authenticate a user via the default browser. This credential type is disabled by default.
+1. **Environment** - `DefaultAzureCredential` reads account information specified via [environment variables](#environment-variables "environment variables") and uses it to authenticate.
+1. **Workload Identity** - If the application is deployed to Azure Kubernetes Service with Managed Identity enabled, `DefaultAzureCredential` authenticates with it.
+1. **Managed Identity** - If the application is deployed to an Azure host with Managed Identity enabled, `DefaultAzureCredential` authenticates with it.
+1. **Azure CLI** - If a user signed in via the Azure CLI `az login` command, `DefaultAzureCredential` authenticates as that user.
+1. **Azure PowerShell** - If a user signed in via Azure PowerShell's `Connect-AzAccount` command, `DefaultAzureCredential` authenticates as that user.
+1. **Azure Developer CLI** - If the developer authenticated via the Azure Developer CLI `azd auth login` command, `DefaultAzureCredential` authenticates with that account.
+1. **Interactive browser** - If enabled, `DefaultAzureCredential` interactively authenticates a user via the default browser. This credential type is disabled by default.
 
 #### Continuation policy
 
-As of version 1.14.0, `DefaultAzureCredential` will attempt to authenticate with all developer credentials until one succeeds, regardless of any errors previous developer credentials experienced. For example, a developer credential may attempt to get a token and fail, so `DefaultAzureCredential` will continue to the next credential in the flow. Deployed service credentials will stop the flow with a thrown exception if they're able to attempt token retrieval, but don't receive one. Prior to version 1.14.0, developer credentials would similarly stop the authentication flow if token retrieval failed, but this is no longer the case.
+As of version 1.14.0, `DefaultAzureCredential` attempts to authenticate with all developer credentials until one succeeds, regardless of any errors previous developer credentials experienced. For example, a developer credential may attempt to get a token and fail, so `DefaultAzureCredential` will continue to the next credential in the flow. Deployed service credentials stop the flow with a thrown exception if they're able to attempt token retrieval, but don't receive one. Prior to version 1.14.0, developer credentials would similarly stop the authentication flow if token retrieval failed, but this is no longer the case.
 
 This allows for trying all of the developer credentials on your machine while having predictable deployed behavior.
 
@@ -87,7 +87,7 @@ Due to a [known issue](https://github.com/Azure/azure-sdk-for-python/issues/2324
 
 ## Examples
 
-The following examples are provided below:
+The following examples are provided:
 
 - [Authenticate with DefaultAzureCredential](#authenticate-with-defaultazurecredential "Authenticate with DefaultAzureCredential")
 - [Define a custom authentication flow with ChainedTokenCredential](#define-a-custom-authentication-flow-with-chainedtokencredential "Define a custom authentication flow with ChainedTokenCredential")
@@ -95,7 +95,7 @@ The following examples are provided below:
 
 ### Authenticate with `DefaultAzureCredential`
 
-More details on configuring your environment to use the `DefaultAzureCredential` can be found in the class's [reference documentation][default_cred_ref].
+More details on configuring your environment to use `DefaultAzureCredential` can be found in the class's [reference documentation][default_cred_ref].
 
 This example demonstrates authenticating the `BlobServiceClient` from the [azure-storage-blob][azure_storage_blob] library using `DefaultAzureCredential`.
 
@@ -110,7 +110,7 @@ client = BlobServiceClient(account_url, credential=default_credential)
 
 #### Enable interactive authentication with `DefaultAzureCredential`
 
-Interactive authentication is disabled in the `DefaultAzureCredential` by default and can be enabled with a keyword argument:
+By default, interactive authentication is disabled in `DefaultAzureCredential` and can be enabled with a keyword argument:
 
 ```python
 DefaultAzureCredential(exclude_interactive_browser_credential=False)
@@ -120,7 +120,7 @@ When enabled, `DefaultAzureCredential` falls back to interactively authenticatin
 
 #### Specify a user-assigned managed identity for `DefaultAzureCredential`
 
-Many Azure hosts allow the assignment of a user-assigned managed identity. To configure `DefaultAzureCredential` to authenticate a user-assigned identity, use the `managed_identity_client_id` keyword argument:
+Many Azure hosts allow the assignment of a user-assigned managed identity. To configure `DefaultAzureCredential` to authenticate a user-assigned managed identity, use the `managed_identity_client_id` keyword argument:
 
 ```python
 DefaultAzureCredential(managed_identity_client_id=client_id)
@@ -130,9 +130,9 @@ Alternatively, set the environment variable `AZURE_CLIENT_ID` to the identity's 
 
 ### Define a custom authentication flow with `ChainedTokenCredential`
 
-`DefaultAzureCredential` is generally the quickest way to get started developing applications for Azure. For more advanced scenarios, [ChainedTokenCredential][chain_cred_ref] links multiple credential instances to be tried sequentially when authenticating. It will try each chained credential in turn until one provides a token or fails to authenticate due to an error.
+`DefaultAzureCredential` is generally the quickest way to get started developing applications for Azure. For more advanced scenarios, [ChainedTokenCredential][chain_cred_ref] links multiple credential instances to be tried sequentially when authenticating. It tries each credential in turn until one provides a token or fails to authenticate due to an error.
 
-The following example demonstrates creating a credential that will first attempt to authenticate using managed identity. The credential will fall back to authenticating via the Azure CLI when a managed identity is unavailable. This example uses the `EventHubProducerClient` from the [azure-eventhub][azure_eventhub] client library.
+The following example demonstrates creating a credential that first attempts to authenticate using managed identity. The credential falls back to authenticating via the Azure CLI when a managed identity is unavailable. This example uses the `EventHubProducerClient` from the [azure-eventhub][azure_eventhub] client library.
 
 ```python
 from azure.eventhub import EventHubProducerClient
@@ -165,8 +165,7 @@ async with credential:
   ...
 ```
 
-This example demonstrates authenticating the asynchronous `SecretClient` from [azure-keyvault-secrets][azure_keyvault_secrets] with an asynchronous
-credential.
+This example demonstrates authenticating the asynchronous `SecretClient` from [azure-keyvault-secrets][azure_keyvault_secrets] with an asynchronous credential.
 
 ```python
 from azure.identity.aio import DefaultAzureCredential
@@ -178,7 +177,7 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 
 ## Managed identity support
 
-[Managed identity authentication](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview) is supported via either the `DefaultAzureCredential` or the `ManagedIdentityCredential` directly for the following Azure services:
+[Managed identity authentication](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview) is supported via either `DefaultAzureCredential` or `ManagedIdentityCredential` directly for the following Azure services:
 
 - [Azure App Service and Azure Functions](https://learn.microsoft.com/azure/app-service/overview-managed-identity?tabs=python)
 - [Azure Arc](https://learn.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
@@ -236,12 +235,17 @@ Not all credentials require this configuration. Credentials that authenticate th
 
 ## Credential classes
 
-### Authenticate Azure-hosted applications
+### Credential chains
 
 |Credential|Usage
 |-|-
 |[`DefaultAzureCredential`][default_cred_ref]| Provides a simplified authentication experience to quickly start developing applications run in Azure.
 |[`ChainedTokenCredential`][chain_cred_ref]| Allows users to define custom authentication flows composing multiple credentials.
+
+### Authenticate Azure-hosted applications
+
+|Credential|Usage
+|-|-
 |[`EnvironmentCredential`][environment_cred_ref]| Authenticates a service principal or user via credential information specified in environment variables.
 |[`ManagedIdentityCredential`][managed_id_cred_ref]| Authenticates the managed identity of an Azure resource.
 |[`WorkloadIdentityCredential`][workload_id_cred_ref]| Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/aks/workload-identity-overview) on Kubernetes.
@@ -263,7 +267,7 @@ Not all credentials require this configuration. Credentials that authenticate th
 |[`DeviceCodeCredential`][device_code_cred_ref]| Interactively authenticates a user on devices with limited UI. | [Device code authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-device-code)|
 |[`InteractiveBrowserCredential`][interactive_cred_ref]| Interactively authenticates a user with the default system browser. | [OAuth2 authentication code](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)| `InteractiveBrowserCredential` doesn't support GitHub Codespaces. As a workaround, use [`DeviceCodeCredential`][device_code_cred_ref].
 |[`OnBehalfOfCredential`][obo_cred_ref]| Propagates the delegated user identity and permissions through the request chain. | [On-behalf-of authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow)|
-|[`UsernamePasswordCredential`][userpass_cred_ref]| Authenticates a user with a username and password (doesn't support multi-factor authentication). | [Username + password authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth-ropc)|
+|[`UsernamePasswordCredential`][userpass_cred_ref]| Authenticates a user with a username and password (doesn't support multifactor authentication). | [Username + password authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth-ropc)|
 
 ### Authenticate via development tools
 
@@ -295,7 +299,7 @@ variables:
 |`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant|X
 |`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PEM or PKCS12 certificate file including private key|X
 |`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any|
-|`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`|if True, the credential will send the public certificate chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to False. There is a [known limitation](https://github.com/Azure/azure-sdk-for-python/issues/13349) that async SNI authentication is not supported.|
+|`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`|If `True`, the credential sends the public certificate chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to False. There's a [known limitation](https://github.com/Azure/azure-sdk-for-python/issues/13349) that async SNI authentication isn't supported.|
 
 ### Username and password
 
@@ -305,7 +309,7 @@ variables:
 |`AZURE_USERNAME`|a username (usually an email address)
 |`AZURE_PASSWORD`|that user's password
 
-Configuration is attempted in the above order. For example, if values for a client secret and certificate are both present, the client secret will be used.
+Configuration is attempted in the preceding order. For example, if values for a client secret and certificate are both present, the client secret is used.
 
 ## Continuous Access Evaluation
 
@@ -318,7 +322,7 @@ Token caching is a feature provided by the Azure Identity library that allows ap
 - Improve resilience and performance.
 - Reduce the number of requests made to Microsoft Entra ID to obtain access tokens.
 
-The Azure Identity library offers both in-memory and persistent disk caching. For more details, see the [token caching documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TOKEN_CACHING.md).
+The Azure Identity library offers both in-memory and persistent disk caching. For more information, see the [token caching documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TOKEN_CACHING.md).
 
 ## Brokered authentication
 
@@ -330,8 +334,7 @@ See the [troubleshooting guide][troubleshooting_guide] for details on how to dia
 
 ### Error handling
 
-Credentials raise `CredentialUnavailableError` when they're unable to attempt authentication because they lack required data or state. For example,
-[EnvironmentCredential][environment_cred_ref] will raise this exception when [its configuration](#environment-variables "its configuration") is incomplete.
+Credentials raise `CredentialUnavailableError` when they're unable to attempt authentication because they lack required data or state. For example, [EnvironmentCredential][environment_cred_ref] raises this exception when [its configuration](#environment-variables "its configuration") is incomplete.
 
 Credentials raise `azure.core.exceptions.ClientAuthenticationError` when they fail to authenticate. `ClientAuthenticationError` has a `message` attribute, which describes why authentication failed. When raised by `DefaultAzureCredential` or `ChainedTokenCredential`, the message collects error messages from each credential in the chain.
 
@@ -341,13 +344,13 @@ For more information on handling specific Microsoft Entra ID errors, see the Mic
 
 This library uses the standard [logging](https://docs.python.org/3/library/logging.html) library for logging. Credentials log basic information, including HTTP sessions (URLs, headers, etc.) at INFO level. These log entries don't contain authentication secrets.
 
-Detailed DEBUG level logging, including request/response bodies and header values, isn't enabled by default. It can be enabled with the `logging_enable` argument. For example:
+Detailed DEBUG-level logging, including request/response bodies and header values, isn't enabled by default. It can be enabled with the `logging_enable` argument. For example:
 
 ```python
 credential = DefaultAzureCredential(logging_enable=True)
 ```
 
-> CAUTION: DEBUG level logs from credentials contain sensitive information.
+> CAUTION: DEBUG-level logs from credentials contain sensitive information.
 > These logs must be protected to avoid compromising account security.
 
 ## Next steps

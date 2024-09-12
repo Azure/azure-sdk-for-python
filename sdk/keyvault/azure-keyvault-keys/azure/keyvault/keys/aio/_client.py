@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint:disable=too-many-lines
 from datetime import datetime
 from functools import partial
-from typing import Any, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -12,6 +13,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ..crypto.aio import CryptographyClient
 from .._client import _get_key_id
+from .._enums import KeyCurveName, KeyExportEncryptionAlgorithm, KeyOperation
 from .._generated.models import KeyAttributes
 from .._shared._polling_async import AsyncDeleteRecoverPollingMethod
 from .._shared import AsyncKeyVaultClientBase
@@ -19,6 +21,8 @@ from .. import (
     DeletedKey,
     JsonWebKey,
     KeyProperties,
+    KeyReleasePolicy,
+    KeyRotationLifetimeAction,
     KeyRotationPolicy,
     KeyType,
     KeyVaultKey,
@@ -105,7 +109,23 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def create_key(self, name: str, key_type: Union[str, KeyType], **kwargs: Any) -> KeyVaultKey:
+    async def create_key(
+        self,
+        name: str,
+        key_type: Union[str, KeyType],
+        *,
+        size: Optional[int] = None,
+        curve: Optional[Union[str, KeyCurveName]] = None,
+        public_exponent: Optional[int] = None,
+        key_operations: Optional[List[Union[str, KeyOperation]]] = None,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        exportable: Optional[bool] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
+        **kwargs: Any,
+    ) -> KeyVaultKey:
         """Create a key or, if ``name`` is already in use, create a new version of the key.
 
         Requires keys/create permission.
@@ -123,7 +143,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword public_exponent: The RSA public exponent to use. Applies only to RSA keys created in a Managed HSM.
         :paramtype public_exponent: int or None
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :paramtype key_operations: List[~azure.keyvault.keys.KeyOperation or str] or None
         :keyword enabled: Whether the key is enabled for use.
         :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
@@ -150,27 +170,23 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Create a key
                 :dedent: 8
         """
-        enabled = kwargs.pop("enabled", None)
-        not_before = kwargs.pop("not_before", None)
-        expires_on = kwargs.pop("expires_on", None)
-        exportable = kwargs.pop("exportable", None)
         attributes = self._get_attributes(
             enabled=enabled, not_before=not_before, expires_on=expires_on, exportable=exportable
         )
 
-        policy = kwargs.pop("release_policy", None)
+        policy = release_policy
         if policy is not None:
             policy = self._models.KeyReleasePolicy(
                 encoded_policy=policy.encoded_policy, content_type=policy.content_type, immutable=policy.immutable
             )
         parameters = self._models.KeyCreateParameters(
             kty=key_type,
-            key_size=kwargs.pop("size", None),
+            key_size=size,
             key_attributes=attributes,
-            key_ops=kwargs.pop("key_operations", None),
-            tags=kwargs.pop("tags", None),
-            curve=kwargs.pop("curve", None),
-            public_exponent=kwargs.pop("public_exponent", None),
+            key_ops=key_operations,
+            tags=tags,
+            curve=curve,
+            public_exponent=public_exponent,
             release_policy=policy,
         )
 
@@ -183,7 +199,22 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def create_rsa_key(self, name: str, **kwargs: Any) -> KeyVaultKey:
+    async def create_rsa_key(
+        self,
+        name: str,
+        *,
+        size: Optional[int] = None,
+        public_exponent: Optional[int] = None,
+        hardware_protected: Optional[bool] = False,
+        key_operations: Optional[List[Union[str, KeyOperation]]] = None,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        exportable: Optional[bool] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
+        **kwargs: Any,
+    ) -> KeyVaultKey:
         """Create a new RSA key or, if ``name`` is already in use, create a new version of the key
 
         Requires the keys/create permission.
@@ -198,7 +229,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             Defaults to ``False``.
         :paramtype hardware_protected: bool or None
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :paramtype key_operations: List[~azure.keyvault.keys.KeyOperation or str] or None
         :keyword enabled: Whether the key is enabled for use.
         :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
@@ -225,11 +256,37 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Create RSA key
                 :dedent: 8
         """
-        hsm = kwargs.pop("hardware_protected", False)
-        return await self.create_key(name, key_type="RSA-HSM" if hsm else "RSA", **kwargs)
+        return await self.create_key(
+            name,
+            key_type="RSA-HSM" if hardware_protected else "RSA",
+            size=size,
+            public_exponent=public_exponent,
+            key_operations=key_operations,
+            enabled=enabled,
+            tags=tags,
+            not_before=not_before,
+            expires_on=expires_on,
+            exportable=exportable,
+            release_policy=release_policy,
+            **kwargs,
+        )
 
     @distributed_trace_async
-    async def create_ec_key(self, name: str, **kwargs: Any) -> KeyVaultKey:
+    async def create_ec_key(
+        self,
+        name: str,
+        *,
+        curve: Optional[Union[str, KeyCurveName]] = None,
+        key_operations: Optional[List[Union[str, KeyOperation]]] = None,
+        hardware_protected: Optional[bool] = False,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        exportable: Optional[bool] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
+        **kwargs: Any,
+    ) -> KeyVaultKey:
         """Create a new elliptic curve key or, if ``name`` is already in use, create a new version of the key.
 
         Requires the keys/create permission.
@@ -239,7 +296,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword curve: Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
         :paramtype curve: ~azure.keyvault.keys.KeyCurveName or str or None
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :paramtype key_operations: List[~azure.keyvault.keys.KeyOperation or str] or None
         :keyword hardware_protected: Whether the key should be created in a hardware security module.
             Defaults to ``False``.
         :paramtype hardware_protected: bool or None
@@ -269,11 +326,36 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Create an elliptic curve key
                 :dedent: 8
         """
-        hsm = kwargs.pop("hardware_protected", False)
-        return await self.create_key(name, key_type="EC-HSM" if hsm else "EC", **kwargs)
+        return await self.create_key(
+            name,
+            key_type="EC-HSM" if hardware_protected else "EC",
+            curve=curve,
+            key_operations=key_operations,
+            enabled=enabled,
+            tags=tags,
+            not_before=not_before,
+            expires_on=expires_on,
+            exportable=exportable,
+            release_policy=release_policy,
+            **kwargs,
+        )
 
     @distributed_trace_async
-    async def create_oct_key(self, name: str, **kwargs: Any) -> KeyVaultKey:
+    async def create_oct_key(
+        self,
+        name: str,
+        *,
+        size: Optional[int] = None,
+        key_operations: Optional[List[Union[str, KeyOperation]]] = None,
+        hardware_protected: Optional[bool] = False,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        exportable: Optional[bool] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
+        **kwargs: Any,
+    ) -> KeyVaultKey:
         """Create a new octet sequence (symmetric) key or, if ``name`` is in use, create a new version of the key.
 
         Requires the keys/create permission.
@@ -283,7 +365,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :keyword size: Key size in bits, for example 128, 192, or 256.
         :paramtype size: int or None
         :keyword key_operations: Allowed key operations.
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :paramtype key_operations: List[~azure.keyvault.keys.KeyOperation or str] or None
         :keyword hardware_protected: Whether the key should be created in a hardware security module.
             Defaults to ``False``.
         :paramtype hardware_protected: bool or None
@@ -313,8 +395,19 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Create an octet sequence (symmetric) key
                 :dedent: 8
         """
-        hsm = kwargs.pop("hardware_protected", False)
-        return await self.create_key(name, key_type="oct-HSM" if hsm else "oct", **kwargs)
+        return await self.create_key(
+            name,
+            key_type="oct-HSM" if hardware_protected else "oct",
+            size=size,
+            key_operations=key_operations,
+            enabled=enabled,
+            tags=tags,
+            not_before=not_before,
+            expires_on=expires_on,
+            exportable=exportable,
+            release_policy=release_policy,
+            **kwargs,
+        )
 
     @distributed_trace_async
     async def delete_key(self, name: str, **kwargs: Any) -> DeletedKey:
@@ -567,7 +660,19 @@ class KeyClient(AsyncKeyVaultClientBase):
         return polling_method.resource()
 
     @distributed_trace_async
-    async def update_key_properties(self, name: str, version: Optional[str] = None, **kwargs: Any) -> KeyVaultKey:
+    async def update_key_properties(
+        self,
+        name: str,
+        version: Optional[str] = None,
+        *,
+        key_operations: Optional[List[Union[str, KeyOperation]]] = None,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
+        **kwargs: Any,
+    ) -> KeyVaultKey:
         """Change a key's properties (not its cryptographic material).
 
         Requires keys/update permission.
@@ -577,7 +682,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :type version: str or None
 
         :keyword key_operations: Allowed key operations
-        :paramtype key_operations: list[~azure.keyvault.keys.KeyOperation or str] or None
+        :paramtype key_operations: List[~azure.keyvault.keys.KeyOperation or str] or None
         :keyword enabled: Whether the key is enabled for use.
         :paramtype enabled: bool or None
         :keyword tags: Application specific metadata in the form of key-value pairs.
@@ -603,20 +708,17 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Update a key's attributes
                 :dedent: 8
         """
-        enabled = kwargs.pop("enabled", None)
-        not_before = kwargs.pop("not_before", None)
-        expires_on = kwargs.pop("expires_on", None)
         attributes = self._get_attributes(enabled=enabled, not_before=not_before, expires_on=expires_on)
 
-        policy = kwargs.pop("release_policy", None)
+        policy = release_policy
         if policy is not None:
             policy = self._models.KeyReleasePolicy(
                 content_type=policy.content_type, encoded_policy=policy.encoded_policy, immutable=policy.immutable
             )
         parameters = self._models.KeyUpdateParameters(
-            key_ops=kwargs.pop("key_operations", None),
+            key_ops=key_operations,
             key_attributes=attributes,
-            tags=kwargs.pop("tags", None),
+            tags=tags,
             release_policy=policy,
         )
 
@@ -688,7 +790,20 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def import_key(self, name: str, key: JsonWebKey, **kwargs: Any) -> KeyVaultKey:
+    async def import_key(
+        self,
+        name: str,
+        key: JsonWebKey,
+        *,
+        hardware_protected: Optional[bool] = None,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        exportable: Optional[bool] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
+        **kwargs: Any,
+    ) -> KeyVaultKey:
         """Import a key created externally.
 
         Requires keys/import permission. If ``name`` is already in use, the key will be imported as a new version.
@@ -717,15 +832,11 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        enabled = kwargs.pop("enabled", None)
-        not_before = kwargs.pop("not_before", None)
-        expires_on = kwargs.pop("expires_on", None)
-        exportable = kwargs.pop("exportable", None)
         attributes = self._get_attributes(
             enabled=enabled, not_before=not_before, expires_on=expires_on, exportable=exportable
         )
 
-        policy = kwargs.pop("release_policy", None)
+        policy = release_policy
         if policy is not None:
             policy = self._models.KeyReleasePolicy(
                 content_type=policy.content_type, encoded_policy=policy.encoded_policy, immutable=policy.immutable
@@ -733,8 +844,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         parameters = self._models.KeyImportParameters(
             key=key._to_generated_model(),
             key_attributes=attributes,
-            hsm=kwargs.pop("hardware_protected", None),
-            tags=kwargs.pop("tags", None),
+            hsm=hardware_protected,
+            tags=tags,
             release_policy=policy,
         )
 
@@ -744,7 +855,16 @@ class KeyClient(AsyncKeyVaultClientBase):
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def release_key(self, name: str, target_attestation_token: str, **kwargs: Any) -> ReleaseKeyResult:
+    async def release_key(
+        self,
+        name: str,
+        target_attestation_token: str,
+        *,
+        version: Optional[str] = None,
+        algorithm: Optional[Union[str, KeyExportEncryptionAlgorithm]] = None,
+        nonce: Optional[str] = None,
+        **kwargs: Any,
+    ) -> ReleaseKeyResult:
         """Releases a key.
 
         The release key operation is applicable to all key types. The target key must be marked
@@ -765,15 +885,14 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        version = kwargs.pop("version", None)
         result = await self._client.release(
             vault_base_url=self._vault_url,
             key_name=name,
             key_version=version or "",
             parameters=self._models.KeyReleaseParameters(
                 target_attestation_token=target_attestation_token,
-                nonce=kwargs.pop("nonce", None),
-                enc=kwargs.pop("algorithm", None),
+                nonce=nonce,
+                enc=algorithm,
             ),
             **kwargs,
         )
@@ -837,7 +956,13 @@ class KeyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def update_key_rotation_policy(
-        self, key_name: str, policy: KeyRotationPolicy, **kwargs: Any
+        self,
+        key_name: str,
+        policy: KeyRotationPolicy,
+        *,
+        lifetime_actions: Optional[List[KeyRotationLifetimeAction]] = None,
+        expires_in: Optional[str] = None,
+        **kwargs: Any,
     ) -> KeyRotationPolicy:
         """Updates the rotation policy of a Key Vault key.
 
@@ -849,7 +974,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key. This will
             override the lifetime actions of the provided ``policy``.
-        :paramtype lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
+        :paramtype lifetime_actions: List[~azure.keyvault.keys.KeyRotationLifetimeAction]
         :keyword str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an
             ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H". See
             `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more information on ISO 8601 durations.
@@ -860,22 +985,22 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        lifetime_actions = kwargs.pop("lifetime_actions", policy.lifetime_actions)
-        if lifetime_actions:
-            lifetime_actions = [
+        actions = lifetime_actions or policy.lifetime_actions
+        if actions:
+            actions = [
                 self._models.LifetimeActions(
                     action=self._models.LifetimeActionsType(type=action.action),
                     trigger=self._models.LifetimeActionsTrigger(
                         time_after_create=action.time_after_create, time_before_expiry=action.time_before_expiry
                     ),
                 )
-                for action in lifetime_actions
+                for action in actions
             ]
 
-        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=kwargs.pop("expires_in", policy.expires_in))
-        new_policy = self._models.KeyRotationPolicy(lifetime_actions=lifetime_actions or [], attributes=attributes)
+        attributes = self._models.KeyRotationPolicyAttributes(expiry_time=expires_in or policy.expires_in)
+        new_policy = self._models.KeyRotationPolicy(lifetime_actions=actions or [], attributes=attributes)
         result = await self._client.update_key_rotation_policy(
-            vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy
+            vault_base_url=self._vault_url, key_name=key_name, key_rotation_policy=new_policy, **kwargs
         )
         return KeyRotationPolicy._from_generated(result)
 
