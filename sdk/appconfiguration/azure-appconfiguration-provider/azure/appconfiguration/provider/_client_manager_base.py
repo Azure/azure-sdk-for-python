@@ -34,7 +34,6 @@ MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
 
 JSON = Mapping[str, Any]
 
-
 @dataclass
 class _ConfigurationClientWrapperBase:
     endpoint: str
@@ -81,7 +80,8 @@ class _ConfigurationClientWrapperBase:
                         allocated_variants.append(percentile_allocation.get("variant"))
 
                 allocation_id += ";".join(
-                    f"{pa.get('from')},{pa.get('variant')},{pa.get('to')}" for pa in percentile_allocations
+                    f"{pa.get('from')},{base64.b64encode(pa.get('variant').encode('utf-8')).decode('utf-8')},{pa.get('to')}"
+                    for pa in percentile_allocations
                 )
         else:
             allocation_id = "seed=\ndefault_when_enabled=\npercentiles="
