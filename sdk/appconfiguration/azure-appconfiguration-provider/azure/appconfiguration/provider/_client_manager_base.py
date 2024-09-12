@@ -34,6 +34,7 @@ MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
 
 JSON = Mapping[str, Any]
 
+
 @dataclass
 class _ConfigurationClientWrapperBase:
     endpoint: str
@@ -80,7 +81,9 @@ class _ConfigurationClientWrapperBase:
                         allocated_variants.append(percentile_allocation.get("variant"))
 
                 allocation_id += ";".join(
-                    f"{pa.get('from')},{base64.b64encode(pa.get('variant').encode('utf-8')).decode('utf-8')},{pa.get('to')}"
+                    f"{pa.get('from')},"
+                    f"{base64.b64encode(pa.get('variant').encode('utf-8')).decode('utf-8')},"
+                    f"{pa.get('to')}"
                     for pa in percentile_allocations
                 )
         else:
@@ -97,15 +100,15 @@ class _ConfigurationClientWrapperBase:
                         (v for v in variants_value if v.get("name") in allocated_variants),
                         key=lambda v: v.get("name"),
                     )
-                   
+
                     for v in sorted_variants:
-                        allocation_id +=  f"{base64.b64encode(v.get('name', '').encode('utf-8')).decode('utf-8')},"
+                        allocation_id += f"{base64.b64encode(v.get('name', '').encode('utf-8')).decode('utf-8')},"
                         if "configuration_value" in v:
                             allocation_id += f"{json.dumps(v.get('configuration_value', ''), separators=(',', ':'))}"
                         allocation_id += ";"
                     allocation_id = allocation_id[:-1]
 
-        if not allocated_variants and ( not allocation or not allocation.get("seed")):
+        if not allocated_variants and (not allocation or not allocation.get("seed")):
             return None
 
         # Create a sha256 hash of the allocation_id
