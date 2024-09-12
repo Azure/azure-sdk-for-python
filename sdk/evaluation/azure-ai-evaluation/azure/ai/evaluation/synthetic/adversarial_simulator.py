@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 # noqa: E501
 import asyncio
-import functools
 import logging
 import random
 from typing import Any, Callable, Dict, List, Optional
@@ -12,7 +11,6 @@ from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 from azure.identity import DefaultAzureCredential
 from tqdm import tqdm
 
-from promptflow._sdk._telemetry import ActivityType, monitor_operation
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation.synthetic.adversarial_scenario import AdversarialScenario, _UnstableAdversarialScenario
 
@@ -25,40 +23,10 @@ from ._model_tools import (
     RAIClient,
     TokenScope,
 )
+from ._tracing import monitor_adversarial_scenario
 from ._utils import JsonLineList
 
 logger = logging.getLogger(__name__)
-
-
-def monitor_adversarial_scenario(func) -> Callable:
-    """Monitor an adversarial scenario with logging
-
-    :param func: The function to be monitored
-    :type func: Callable
-    :return: The decorated function
-    :rtype: Callable
-    """
-
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        scenario = str(kwargs.get("scenario", None))
-        max_conversation_turns = kwargs.get("max_conversation_turns", None)
-        max_simulation_results = kwargs.get("max_simulation_results", None)
-        _jailbreak_type = kwargs.get("_jailbreak_type", None)
-        decorated_func = monitor_operation(
-            activity_name="adversarial.simulator.call",
-            activity_type=ActivityType.PUBLICAPI,
-            custom_dimensions={
-                "scenario": scenario,
-                "max_conversation_turns": max_conversation_turns,
-                "max_simulation_results": max_simulation_results,
-                "_jailbreak_type": _jailbreak_type,
-            },
-        )(func)
-
-        return decorated_func(*args, **kwargs)
-
-    return wrapper
 
 
 class AdversarialSimulator:
@@ -101,7 +69,7 @@ class AdversarialSimulator:
         if self.rai_client is None:
             raise ValueError("Simulation options require rai services but ai client is not provided.")
 
-    @monitor_adversarial_scenario
+    @monitor_adversarial_scenario(activity_name="adversarial.simulator.call")
     async def __call__(
         self,
         *,
