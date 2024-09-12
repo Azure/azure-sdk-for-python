@@ -61,7 +61,7 @@ if ($matrix.PSObject.Properties.Name -contains "include") {
     $includeCount = $matrix.include.Count
     $originalInclude = $matrix.include
     # todo: reenable this
-    $matrix.include = []
+    $matrix.include = @()
     Write-Host "Original include type " + $originalInclude.GetType()
 }
 $batchCount = $versionCount + $includeCount
@@ -175,7 +175,7 @@ foreach($batch in $directBatches) {
 
                     # Example of updating the second-level property name (optional)
                     # This will rename the property `ubuntu2004_39_coverage` to something else
-                    $newSecondLevelName = "$secondLevelPropertyName_$targetingString"
+                    $newSecondLevelName = "$secondLevelPropertyName" + "$targetingString"
 
                     $topLevelPropertyValue.PSObject.Properties.Remove($secondLevelPropertyName)
                     $topLevelPropertyValue | Add-Member -MemberType NoteProperty -Name $newSecondLevelName -Value $secondLevelPropertyValue
