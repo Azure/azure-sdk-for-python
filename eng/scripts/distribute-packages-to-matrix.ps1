@@ -190,8 +190,9 @@ foreach($batch in $directBatches) {
     }
 }
 
-foreach($batch in $indirectBatches) {
+# # todo: implement indirect
+# foreach($batch in $indirectBatches) {
 
-}
+# }
 
 $matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
