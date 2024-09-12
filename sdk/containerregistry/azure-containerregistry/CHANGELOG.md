@@ -1,12 +1,6 @@
 # Release History
 
-## 1.2.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.2.1 (2024-09-17)
 
 ### Other Changes
 - Added support for Python 3.12.
