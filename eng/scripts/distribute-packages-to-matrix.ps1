@@ -60,6 +60,8 @@ $includeObject = $null
 if ($matrix.PSObject.Properties.Name -contains "include") {
     $includeCount = $matrix.include.Count
     $originalInclude = $matrix.include
+    # todo: reenable this
+    $matrix.include = []
     Write-Host "Original include type " + $originalInclude.GetType()
 }
 $batchCount = $versionCount + $includeCount
@@ -142,11 +144,55 @@ foreach($batch in $directBatches) {
 
     # if there were any include objects, we need to duplicate them exactly and add the targeting string to each
     # this means that the number of includes at the end of this operation will be incoming # of includes * the number of batches
-    # if ($includeCount -gt 0) {
-    #     foreach($include in $matrix.include) {
-    #         $include | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value $targetingString
-    #     }
-    # }
+    if ($includeCount -gt 0) {
+        Write-Host "Walking include objects for $targetingString"
+        $includeCopy = $originalInclude | ConvertTo-Json -Depth 100 | ConvertFrom-Json
+        foreach ($configElement in $includeCopy) {
+            if ($configElement.PSObject.Properties) {
+                # an include looks like this
+                # access by <ConfigName>.<ActualJobName>[ConfigElement]
+                # {
+                #     "CoverageConfig": {
+                #         "ubuntu2004_39_coverage": {
+                #         "OSVmImage": "env:LINUXVMIMAGE",
+                #         "Pool": "env:LINUXPOOL",
+                #         "PythonVersion": "3.9",
+                #         "CoverageArg": "",
+                #         "TestSamples": "false"
+                #         }
+                #     }
+                # }
+                $topLevelPropertyName = $configElement.PSObject.Properties.Name
+                $topLevelPropertyValue = $configElement.PSObject.Properties[$topLevelPropertyName].Value
+
+                if ($topLevelPropertyValue.PSObject.Properties) {
+
+                    $secondLevelPropertyName = $topLevelPropertyValue.PSObject.Properties.Name
+                    $secondLevelPropertyValue = $topLevelPropertyValue.PSObject.Properties[$secondLevelPropertyName].Value
+
+                    Write-Host "Top-level: $topLevelPropertyName"
+                    Write-Host "Second-level: $secondLevelPropertyName"
+
+                    # Example of updating the second-level property name (optional)
+                    # This will rename the property `ubuntu2004_39_coverage` to something else
+                    $newSecondLevelName = "$secondLevelPropertyName_$targetingString"
+
+                    $topLevelPropertyValue.PSObject.Properties.Remove($secondLevelPropertyName)
+                    $topLevelPropertyValue | Add-Member -MemberType NoteProperty -Name $newSecondLevelName -Value $secondLevelPropertyValue
+
+                    # add the targeting string property if it doesn't already exist
+                    if (-not $topLevelPropertyValue.$newSecondLevelName.PSObject.Properties["TargetingString"]) {
+                        $topLevelPropertyValue.$newSecondLevelName | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value @()
+                    }
+
+                    # set the targeting string
+                    $topLevelPropertyValue.$newSecondLevelName.TargetingString = $targetingString
+                }
+            }
+
+            $matrix.include += $configElement
+        }
+    }
 }
 
 $matrix | ConvertTo-Json -Depth 100
