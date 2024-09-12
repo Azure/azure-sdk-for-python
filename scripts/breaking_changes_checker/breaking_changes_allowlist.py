@@ -37,5 +37,17 @@ IGNORE_BREAKING_CHANGES = {
         ("RemovedOrRenamedPositionalParam", "*", "*", "__init__", "config"),
         ("RemovedOrRenamedPositionalParam", "*", "*", "__init__", "serializer"),
         ("RemovedOrRenamedPositionalParam", "*", "*", "__init__", "deserializer"),
+        # compared with msrest model, new DPG model is inherited from dict so we shall ignore some methods(e.g get/keys/items/values/...)
+        ("ADDED_CLASS_METHOD", "*", "*", "clear"),
+        ("ADDED_CLASS_METHOD", "*", "*", "copy"),
+        ("ADDED_CLASS_METHOD", "*", "*", "get"),
+        ("ADDED_CLASS_METHOD", "*", "*", "items"),
+        ("ADDED_CLASS_METHOD", "*", "*", "keys"),
+        ("ADDED_CLASS_METHOD", "*", "*", "pop"),
+        ("ADDED_CLASS_METHOD", "*", "*", "popitem"),
+        ("ADDED_CLASS_METHOD", "*", "*", "setdefault"),
+        ("ADDED_CLASS_METHOD", "*", "*", "update"),
+        ("ADDED_CLASS_METHOD", "*", "*", "values"),
+        ("ADDED_CLASS_METHOD_PARAMETER", "*", "*", "args", "__init__"),
     ]
 }
