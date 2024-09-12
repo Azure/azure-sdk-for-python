@@ -336,13 +336,8 @@ class AssistantsClient(AssistantsClientGenerated):
         :keyword instructions: The system instructions for the new assistant to use. Default value is
          None.
         :paramtype instructions: str
-        :keyword tools: The collection of tools to enable for the new assistant. Default value is None.
-        :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
-        :keyword tool_resources: A set of resources that are used by the assistant's tools. The
-         resources are specific to the type of tool. For example, the ``code_interpreter``
-         tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
-         store IDs. Default value is None.
-        :paramtype tool_resources: ~azure.ai.assistants.models.CreateToolResourcesOptions
+        :keyword tool_set: The collection of tools to enable for the new assistant. Default value is None.
+        :paramtype tool_set: ~azure.ai.assistants.models.ToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
