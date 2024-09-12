@@ -9,6 +9,9 @@ extends:
       Clouds: Public,Int
       CloudConfig:
         Public:
+          ServiceConnection: azure-sdk-tests
+          SubscriptionConfigurationFilePaths:
+            - eng/common/TestResources/sub-config/AzurePublicMsft.json
           SubscriptionConfigurations:
             - $(sub-config-azure-cloud-test-resources)
             - $(sub-config-communication-services-cloud-test-resources-common)
@@ -24,4 +27,4 @@ extends:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'True'
       TestResourceDirectories:
-        - communication/
+        - communication/test-resources/
