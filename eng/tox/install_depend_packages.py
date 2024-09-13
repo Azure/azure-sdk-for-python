@@ -13,7 +13,7 @@ import logging
 import re
 from subprocess import check_call
 from typing import TYPE_CHECKING
-from pkg_resources import parse_version
+from pkg_resources import parse_version, Requirement
 from pypi_tools.pypi import PyPIClient
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse
@@ -231,7 +231,18 @@ def process_requirement(req, dependency_type, orig_pkg_name):
     # this method finds either latest or minimum version of a package that is available on PyPI
 
     # find package name and requirement specifier from requires
-    pkg_name, spec = parse_require(req)
+    requirement = parse_require(req)
+    pkg_name = requirement.key
+    spec = requirement.specifier if len(requirement.specifier) else None
+
+    # Filter out requirements with environment markers that don't match the current environment
+    # e.g. `; python_version > 3.10` when running on Python3.9
+    if not (requirement.marker is None or requirement.marker.evaluate()):
+        logging.info(
+            f"Skipping requirement {req!r}. Environment marker {str(requirement.marker)!r} "
+            + "does not apply to current environment."
+        )
+        return ""
 
     # get available versions on PyPI
     client = PyPIClient()
