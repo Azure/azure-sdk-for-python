@@ -318,7 +318,7 @@ class AssistantsClient(AssistantsClientGenerated):
         name: Optional[str] = None,
         description: Optional[str] = None,
         instructions: Optional[str] = None,
-        tool_set: Optional[_models.ToolSet] = None,
+        toolset: Optional[_models.ToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
@@ -336,8 +336,8 @@ class AssistantsClient(AssistantsClientGenerated):
         :keyword instructions: The system instructions for the new assistant to use. Default value is
          None.
         :paramtype instructions: str
-        :keyword tool_set: The collection of tools to enable for the new assistant. Default value is None.
-        :paramtype tool_set: ~azure.ai.assistants.models.ToolSet
+        :keyword toolset: The collection of tools to enable for the new assistant. Default value is None.
+        :paramtype toolset: ~azure.ai.assistants.models.ToolSet
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output more random,
          while lower values like 0.2 will make it more focused and deterministic. Default value is
@@ -364,15 +364,15 @@ class AssistantsClient(AssistantsClientGenerated):
         :rtype: ~azure.ai.assistants.models.Assistant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._tool_set = tool_set
+        self._toolset = toolset
 
         response = self.create_assistant(
             model=model,
             name=name,
             description=description,
             instructions=instructions,
-            tools=tool_set.definitions if tool_set else None,
-            tool_resources=tool_set.resources if tool_set else None,
+            tools=toolset.definitions if toolset else None,
+            tool_resources=toolset.resources if toolset else None,
             temperature=temperature,
             top_p=top_p,
             response_format=response_format,
@@ -519,8 +519,8 @@ class AssistantsClient(AssistantsClientGenerated):
                     break
 
                 # TODO: Find better way to retrieve tool set
-                if hasattr(self, "_tool_set"):
-                    tool_outputs = self._tool_set.get_tool(_models.FunctionTool).execute(tool_calls)
+                if hasattr(self, "_toolset"):
+                    tool_outputs = self._toolset.get_tool(_models.FunctionTool).execute(tool_calls)
                 else:
                     raise ValueError("No tool set provided to handle tool calls")
                     
