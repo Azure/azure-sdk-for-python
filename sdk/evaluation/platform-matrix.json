@@ -35,6 +35,17 @@
           "TestSamples": "false"
         }
       }
+    },
+    {
+      "Config": {
+        "Ubuntu2004_312": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.12",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
     }
   ]
 }
