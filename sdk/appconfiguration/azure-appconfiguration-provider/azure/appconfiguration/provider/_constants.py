@@ -20,6 +20,7 @@ ServiceFabricEnvironmentVariable = "Fabric_NodeName"  # cspell:disable-line
 TELEMETRY_KEY = "telemetry"
 METADATA_KEY = "metadata"
 ETAG_KEY = "ETag"
+
 FEATURE_FLAG_REFERENCE_KEY = "FeatureFlagReference"
 FEATURE_FLAG_ID_KEY = "FeatureFlagId"
 PERCENTAGE_FILTER_NAMES = ["Percentage", "PercentageFilter", "Microsoft.Percentage", "Microsoft.PercentageFilter"]
