@@ -59,7 +59,7 @@ class RunInfo:
         :param run_name: The name of a run.
         :type run_name: Optional[str]
         :return: The RunInfo instance.
-        :rtype: azure.ai.evaluation.evaluate.RunInfo
+        :rtype: azure.ai.evaluation._evaluate._eval_run.RunInfo
         """
         return RunInfo(str(uuid.uuid4()), str(uuid.uuid4()), run_name or "")
 
@@ -229,7 +229,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         """The Context Manager enter call.
 
         :return: The instance of the class.
-        :rtype: azure.ai.evaluation.evaluate.EvalRun
+        :rtype: azure.ai.evaluation._evaluate._eval_run.EvalRun
         """
         self._start_run()
         return self
@@ -360,7 +360,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :param artifact_folder: The folder with artifacts to be uploaded.
         :type artifact_folder: str
         :param artifact_name: The name of the artifact to be uploaded. Defaults to
-            azure.ai.evaluation.evaluate.EvalRun.EVALUATION_ARTIFACT.
+            azure.ai.evaluation._evaluate._eval_run.EvalRun.EVALUATION_ARTIFACT.
         :type artifact_name: str
         """
         if not self._check_state_and_log("log artifact", {RunStatus.BROKEN, RunStatus.NOT_STARTED}, False):

@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from devtools_testutils import is_live
 
-from azure.ai.evaluation.evaluators import (
+from azure.ai.evaluation import (
     BleuScoreEvaluator,
     ChatEvaluator,
     CoherenceEvaluator,
@@ -27,7 +27,7 @@ from azure.ai.evaluation.evaluators import (
     SimilarityEvaluator,
     ViolenceEvaluator,
 )
-from azure.ai.evaluation.evaluators._eci._eci import ECIEvaluator
+from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
