@@ -24,6 +24,9 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud (which is the default).
         :class:`~azure.identity.AzureAuthorityHosts` defines authorities for other clouds.
+    :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
+        will cache tokens in memory.
+    :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
