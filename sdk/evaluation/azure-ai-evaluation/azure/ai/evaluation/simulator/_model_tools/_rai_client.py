@@ -25,7 +25,7 @@ class RAIClient:
     :param azure_ai_project: The Azure AI project
     :type azure_ai_project: Dict
     :param token_manager: The token manager
-    :type token_manage: ~azure.ai.evaluation.synthetic._model_tools._identity_manager.APITokenManager
+    :type token_manage: ~azure.ai.evaluation.simulator._model_tools._identity_manager.APITokenManager
     """
 
     def __init__(self, azure_ai_project: Dict, token_manager: APITokenManager) -> None:

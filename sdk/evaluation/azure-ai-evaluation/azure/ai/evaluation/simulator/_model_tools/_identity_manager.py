@@ -93,7 +93,7 @@ class ManagedIdentityAPITokenManager(APITokenManager):
     """API Token Manager for Azure Managed Identity
 
     :param token_scope: Token scope for Azure endpoint
-    :type token_scope: ~azure.ai.evaluation.synthetic._model_tools.TokenScope
+    :type token_scope: ~azure.ai.evaluation.simulator._model_tools.TokenScope
     :param logger: Logger object
     :type logger: logging.Logger
     :keyword kwargs: Additional keyword arguments

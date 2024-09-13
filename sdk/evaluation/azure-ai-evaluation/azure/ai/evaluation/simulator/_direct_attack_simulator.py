@@ -10,7 +10,7 @@ from typing import Any, Callable, Dict, Optional
 from azure.identity import DefaultAzureCredential
 
 from promptflow._sdk._telemetry import ActivityType, monitor_operation
-from azure.ai.evaluation.synthetic.adversarial_scenario import AdversarialScenario
+from azure.ai.evaluation.simulator import AdversarialScenario
 
 from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
 from .adversarial_simulator import AdversarialSimulator
@@ -113,9 +113,9 @@ class DirectAttackSimulator:
         :keyword scenario: Enum value specifying the adversarial scenario used for generating inputs.
          example:
 
-         - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_QA`
-         - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_CONVERSATION`
-        :paramtype scenario: azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario
+         - :py:const:`azure.ai.evaluation.simulator.AdversarialScenario.ADVERSARIAL_QA`
+         - :py:const:`azure.ai.evaluation.simulator.AdversarialScenario.ADVERSARIAL_CONVERSATION`
+        :paramtype scenario: azure.ai.evaluation.simulator.AdversarialScenario
         :keyword target: The target function to simulate adversarial inputs against.
             This function should be asynchronous and accept a dictionary representing the adversarial input.
         :paramtype target: Callable
