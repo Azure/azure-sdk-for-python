@@ -311,7 +311,6 @@ class Simulator:
                 return parsed_data
             return response
         except Exception as e:
-            import pdb; pdb.set_trace()
             raise ValueError("Error parsing response content") from e
 
     async def _generate_query_responses(
@@ -525,7 +524,6 @@ class Simulator:
             user_response = self._parse_prompty_response(response=response_content)
             return user_response["content"]
         except Exception as e:
-            import pdb; pdb.set_trace()
             raise RuntimeError("Error building user simulation response") from e
 
     async def _get_target_response(
