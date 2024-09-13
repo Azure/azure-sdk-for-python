@@ -32,7 +32,7 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
         disable_instance_discovery: Optional[bool] = None,
         tenant_id: Optional[str] = None,
         enable_support_logging: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._instance_discovery = None if disable_instance_discovery is None else not disable_instance_discovery
         self._authority = normalize_authority(authority) if authority else get_default_authority()
@@ -104,17 +104,26 @@ class MsalCredential:  # pylint: disable=too-many-instance-attributes
             token_cache = self._initialize_cache(is_cae=bool(kwargs.get("enable_cae")))
 
         if tenant_id not in client_applications_map:
-            client_applications_map[tenant_id] = app_class(
-                client_id=self._client_id,
-                client_credential=self._client_credential,
-                client_capabilities=capabilities,
-                authority="{}/{}".format(self._authority, tenant_id),
-                azure_region=self._regional_authority,
-                token_cache=token_cache,
-                http_client=self._client,
-                instance_discovery=self._instance_discovery,
-                enable_pii_log=self._enable_support_logging,
-            )
+            try:
+                client_applications_map[tenant_id] = app_class(
+                    client_id=self._client_id,
+                    client_credential=self._client_credential,
+                    client_capabilities=capabilities,
+                    authority="{}/{}".format(self._authority, tenant_id),
+                    azure_region=self._regional_authority,
+                    token_cache=token_cache,
+                    http_client=self._client,
+                    instance_discovery=self._instance_discovery,
+                    enable_pii_log=self._enable_support_logging,
+                )
+            except ValueError as ex:
+                if "invalid_instance" in str(ex):
+                    raise ValueError(  # pylint: disable=raise-missing-from
+                        f"The authority provided, {self._authority}, is not well-known. If this authority is valid "
+                        "and trustworthy, you can disable this check by passing in "
+                        "'disable_instance_discovery=True' when constructing the credential."
+                    )
+                raise
 
         return client_applications_map[tenant_id]
 
