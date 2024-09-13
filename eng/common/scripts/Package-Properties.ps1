@@ -15,6 +15,7 @@ class PackageProps
     [boolean]$IsNewSdk
     [string]$ArtifactName
     [string]$ReleaseStatus
+    [boolean]$BuildDocs
     [boolean]$IncludedForValidation
     [string[]]$AdditionalValidationPackages
 
@@ -64,6 +65,8 @@ class PackageProps
         {
             $this.ChangeLogPath = $null
         }
+
+        $this.InitializeBuildDocs($ServiceDirectory)
     }
 
     hidden [void]Initialize(
@@ -76,6 +79,41 @@ class PackageProps
     {
         $this.Initialize($name, $version, $directoryPath, $serviceDirectory)
         $this.Group = $group
+    }
+
+    hidden [void]InitializeBuildDocs(
+        [string]$ServiceDirectory
+    )
+    {
+        # parse the relevant ci.yml file to determine if the package should build docs
+        $ciYmlPath = Join-Path $ServiceDirectory ".ci.yml"
+
+        if (Test-Path $ciYmlPath)
+        {
+            $ciYml = ConvertFrom-Yaml (Get-Content $ciYmlPath -Raw)
+
+            if ($ciYml.extends -and $ciYml.extends.parameters -and $ciYml.extends.parameters.Artifacts) {
+                $packagesBuildingDocs = $ciYml.extends.parameters.Artifacts `
+                    | Where-Object {
+                        if ($_.PSObject.Properties["skipPublishDocsMs"]) {
+                            $false
+                        }
+                        else {
+                            $true
+                        }
+                    } `
+                    | Select-Object -ExpandProperty name
+
+                if ($packagesBuildingDocs -contains $this.Name)
+                {
+                    $this.BuildDocs = $true
+                }
+            }
+        }
+        else
+        {
+            $this.BuildDocs = $false
+        }
     }
 }
 
@@ -146,7 +184,6 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
 
         if ($lookup[$key]) {
             $lookup[$key].IncludedForValidation = $true
-            Write-Host $lookup[$key].IncludedForValidation
             $packagesWithChanges += $lookup[$key]
         }
     }
