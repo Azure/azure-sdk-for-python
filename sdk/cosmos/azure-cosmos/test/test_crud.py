@@ -705,6 +705,9 @@ class TestCRUDOperations(unittest.TestCase):
                                'key': 'value',
                                'pk': 'pk'}
 
+        no_response = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, content_response_on_write_disabled=True)
+        self.assertIsNone(no_response)
+
         created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True)
         self.assertEqual(created_document.get('name'),
                          document_definition['name'])
@@ -730,7 +733,7 @@ class TestCRUDOperations(unittest.TestCase):
         documents = list(created_collection.read_all_items())
         self.assertEqual(
             len(documents),
-            before_create_documents_count + 2,
+            before_create_documents_count + 3,
             'create should increase the number of documents')
         # query documents
         documents = list(created_collection.query_items(
