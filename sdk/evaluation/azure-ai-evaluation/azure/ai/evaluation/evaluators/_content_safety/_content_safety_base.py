@@ -4,7 +4,7 @@
 
 from abc import ABC
 
-from azure.ai.evaluation._common.constants import EvaluationMetrics
+from azure.ai.evaluation._common.constants import EvaluationMetrics, Tasks
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 
 
@@ -49,9 +49,13 @@ class ContentSafetyEvaluatorBase(ABC):
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(
             metric_name=self._metric,
-            question=question,
-            answer=answer,
-            project_scope=self._azure_ai_project,
+            data={
+                "question": question,
+                "answer": answer
+            },
+            project_scope=self._project_scope,
             credential=self._credential,
+            annotation_task=Tasks.CONTENT_HARM
         )
+
         return result

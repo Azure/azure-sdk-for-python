@@ -17,7 +17,7 @@ except ImportError:
     USER_AGENT = None
 
 
-class _AsyncGroundednessEvaluator:
+class _AsyncLLMGroundednessEvaluator:
     # Constants must be defined within eval's directory to be save/loadable
     PROMPTY_FILE = "groundedness.prompty"
     LLM_CALL_TIMEOUT = 600
@@ -63,7 +63,7 @@ class _AsyncGroundednessEvaluator:
         return {"gpt_groundedness": float(score)}
 
 
-class GroundednessEvaluator:
+class LLMGroundednessEvaluator:
     """
     Initialize a groundedness evaluator configured for a specific Azure OpenAI model.
 
@@ -75,7 +75,7 @@ class GroundednessEvaluator:
 
     .. code-block:: python
 
-        eval_fn = GroundednessEvaluator(model_config)
+        eval_fn = LLMGroundednessEvaluator(model_config)
         result = eval_fn(
             answer="The capital of Japan is Tokyo.",
             context="Tokyo is Japan's capital, known for its blend of traditional culture \
@@ -91,11 +91,11 @@ class GroundednessEvaluator:
     """
 
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
-        self._async_evaluator = _AsyncGroundednessEvaluator(model_config)
+        self._async_evaluator = _AsyncLLMGroundednessEvaluator(model_config)
 
     def __call__(self, *, answer: str, context: str, **kwargs):
         """
-        Evaluate groundedness of the answer in the context.
+        Evaluate groundedness by LLM of the answer in the context.
 
         :keyword answer: The answer to be evaluated.
         :paramtype answer: str

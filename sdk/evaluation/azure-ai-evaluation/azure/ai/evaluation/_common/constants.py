@@ -33,6 +33,7 @@ class Tasks:
     CONTENT_HARM = "content harm"
     PROTECTED_MATERIAL = "protected material"
     XPIA = "xpia"
+    GROUNDEDNESS = "groundedness"
 
 
 class _InternalAnnotationTasks:
@@ -54,6 +55,7 @@ class EvaluationMetrics:
     SEXUAL = "sexual"
     PROTECTED_MATERIAL = "protected_material"
     XPIA = "xpia"
+    GROUNDEDNESS = "generic_groundedness"
 
 
 class _InternalEvaluationMetrics:
