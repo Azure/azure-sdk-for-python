@@ -6,5 +6,5 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-VERSION = "2.0.0b1"
+VERSION = "2.0.0b2"
 API_VERSION = "2024-04-01"

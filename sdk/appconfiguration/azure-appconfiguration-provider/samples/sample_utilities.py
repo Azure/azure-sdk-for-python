@@ -13,10 +13,8 @@ DESCRIPTION:
     - get_credential(): get credential of the ConfigurationClient
     It is not a file expected to run independently.
 """
-
-import os
-from azure.identity import AzureAuthorityHosts, ClientSecretCredential, InteractiveBrowserCredential
-from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
+from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 
 
 def get_authority(endpoint):
@@ -45,14 +43,11 @@ def get_audience(authority):
 
 def get_credential(authority, **kwargs):
     if kwargs.pop("is_async", False):
-        return AsyncClientSecretCredential(
-            tenant_id=os.environ["APPCONFIGURATION_TENANT_ID"],
-            client_id=os.environ["APPCONFIGURATION_CLIENT_ID"],
-            client_secret=os.environ["APPCONFIGURATION_CLIENT_SECRET"],
+        return AsyncDefaultAzureCredential(
             authority=authority,
             validate_authority=False,
         )
-    return InteractiveBrowserCredential(
+    return DefaultAzureCredential(
         authority=authority,
         validate_authority=False,
     )

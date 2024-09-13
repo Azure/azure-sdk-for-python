@@ -8,11 +8,12 @@ import functools
 import pytest
 from unittest import mock
 
-from aiohttp.client_exceptions import ClientPayloadError, ServerTimeoutError
+from aiohttp.client_exceptions import ServerTimeoutError
 from aiohttp.streams import StreamReader
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
+    IncompleteReadError,
     HttpResponseError,
     ResourceExistsError,
     ServiceResponseError
@@ -521,14 +522,14 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
 
         stream_reader_read_mock = mock.MagicMock()
         future = asyncio.Future()
-        future.set_exception(ClientPayloadError())
+        future.set_exception(IncompleteReadError())
         stream_reader_read_mock.return_value = future
         with mock.patch.object(StreamReader, "read", stream_reader_read_mock), pytest.raises(HttpResponseError):
             blob = container.get_blob_client(blob=blob_name)
             count = [0]
             blob._pipeline._transport.send = self._count_wrapper(count, blob._pipeline._transport.send)
             await blob.download_blob()
-        assert stream_reader_read_mock.call_count == count[0] == 4
+        assert stream_reader_read_mock.call_count == count[0] == 3
 
     @BlobPreparer()
     async def test_invalid_storage_account_key(self, **kwargs):

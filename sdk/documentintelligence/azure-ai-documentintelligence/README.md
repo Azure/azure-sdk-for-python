@@ -18,7 +18,7 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 
 ## _Disclaimer_
 
-_The API version 2024-02-29-preview is currently only available in some Azure regions, the available regions can be found from [here][python-di-available-regions]._
+_The latest service API is currently only available in some Azure regions, the available regions can be found from [here][python-di-available-regions]._
 
 ## Getting started
 
@@ -195,6 +195,8 @@ Sample code snippets are provided to illustrate using long-running operations [b
 The following section provides several code snippets covering some of the most common Document Intelligence tasks, including:
 
 * [Extract Layout](#extract-layout "Extract Layout")
+* [Extract Figures from Documents](#extract-figures-from-documents "Extract Figures from Documents")
+* [Analyze Documents Result in PDF](#analyze-documents-result-in-pdf "Analyze Documents Result in PDF")
 * [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
 * [Using Prebuilt Models](#using-prebuilt-models "Using Prebuilt Models")
 * [Build a Custom Model](#build-a-custom-model "Build a custom model")
@@ -299,6 +301,81 @@ if result.tables:
                     )
 
 print("----------------------------------------")
+```
+
+<!-- END SNIPPET -->
+
+### Extract Figures from Documents
+
+Extract figures from the document as cropped images.
+
+<!-- SNIPPET:sample_analyze_result_figures.analyze_result_figures -->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeOutputOption, AnalyzeResult
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-layout",
+        analyze_request=f,
+        output=[AnalyzeOutputOption.FIGURES],
+        content_type="application/octet-stream",
+    )
+result: AnalyzeResult = poller.result()
+operation_id = poller.details["operation_id"]
+
+if result.figures:
+    for figure in result.figures:
+        if figure.id:
+            response = document_intelligence_client.get_analyze_result_figure(
+                model_id=result.model_id, result_id=operation_id, figure_id=figure.id
+            )
+            with open(f"{figure.id}.png", "wb") as writer:
+                writer.writelines(response)
+else:
+    print("No figures found.")
+```
+
+<!-- END SNIPPET -->
+
+### Analyze Documents Result in PDF
+
+Convert an analog PDF into a PDF with embedded text. Such text can enable text search within the PDF or allow the PDF to be used in LLM chat scenarios.
+
+_Note: For now, this feature is only supported by `prebuilt-read`. All other models will return error._
+
+<!-- SNIPPET:sample_analyze_result_pdf.analyze_result_pdf -->
+
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeOutputOption, AnalyzeResult
+
+endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
+key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
+
+document_intelligence_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+with open(path_to_sample_documents, "rb") as f:
+    poller = document_intelligence_client.begin_analyze_document(
+        "prebuilt-read",
+        analyze_request=f,
+        output=[AnalyzeOutputOption.PDF],
+        content_type="application/octet-stream",
+    )
+result: AnalyzeResult = poller.result()
+operation_id = poller.details["operation_id"]
+
+response = document_intelligence_client.get_analyze_result_pdf(model_id=result.model_id, result_id=operation_id)
+with open("analyze_result.pdf", "wb") as writer:
+    writer.writelines(response)
 ```
 
 <!-- END SNIPPET -->
@@ -544,12 +621,13 @@ if model.doc_types:
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
         print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
-        for field_name, field in doc_type.field_schema.items():
-            if doc_type.field_confidence:
-                print(
-                    f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                    f"{doc_type.field_confidence[field_name]}"
-                )
+        if doc_type.field_schema:
+            for field_name, field in doc_type.field_schema.items():
+                if doc_type.field_confidence:
+                    print(
+                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                        f"{doc_type.field_confidence[field_name]}"
+                    )
 ```
 
 <!-- END SNIPPET -->
@@ -737,12 +815,13 @@ if model.doc_types:
     print("Doc types the model can recognize:")
     for name, doc_type in model.doc_types.items():
         print(f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:")
-        for field_name, field in doc_type.field_schema.items():
-            if doc_type.field_confidence:
-                print(
-                    f"Field: '{field_name}' has type '{field['type']}' and confidence score "
-                    f"{doc_type.field_confidence[field_name]}"
-                )
+        if doc_type.field_schema:
+            for field_name, field in doc_type.field_schema.items():
+                if doc_type.field_confidence:
+                    print(
+                        f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+                        f"{doc_type.field_confidence[field_name]}"
+                    )
 ```
 
 <!-- END SNIPPET -->
@@ -754,11 +833,6 @@ account_details = document_intelligence_admin_client.get_resource_info()
 print(
     f"Our resource has {account_details.custom_document_models.count} custom models, "
     f"and we can have at most {account_details.custom_document_models.limit} custom models"
-)
-neural_models = account_details.custom_neural_document_model_builds
-print(
-    f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
-    f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_reset_date_time}"
 )
 ```
 

@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 
-RUN_BREAKING_CHANGES_PACKAGES = ["azure-mgmt-*"]
+RUN_BREAKING_CHANGES_PACKAGES = ["azure-mgmt-*", "azure-ai-contentsafety", "azure-ai-vision-face"]
 
 
 # See Readme for ignore format
@@ -20,6 +20,8 @@ IGNORE_BREAKING_CHANGES = {
         ("ChangedParameterKind", "*", "*", "*", "filter"),
         ("ChangedParameterKind", "*", "*", "*", "skip"),
         ("RemovedOrRenamedPositionalParam", "*", "*", "*", "maxpagesize"),
+        # msrest model bases on vendored _serialization.model instead of msrest.Model which no longer has "validate"
+        ("RemovedOrRenamedClassMethod", "*", "*", "validate"),
         # Changes due to not using msrest anymore
         ("RemovedOrRenamedClassMethod", "*", "*", "as_dict"),
         ("RemovedOrRenamedClassMethod", "*", "*", "deserialize"),
@@ -30,5 +32,23 @@ IGNORE_BREAKING_CHANGES = {
         ("RemovedOrRenamedPositionalParam", "*", "*", "as_dict", "key_transformer"),
         ("RemovedOrRenamedPositionalParam", "*", "*", "as_dict"),
         ("RemovedFunctionKwargs", "*", "*", "as_dict"),
+        # operation group can't be instantiated independently so don't need check for it
+        ("RemovedOrRenamedPositionalParam", "*", "*", "__init__", "client"),
+        ("RemovedOrRenamedPositionalParam", "*", "*", "__init__", "config"),
+        ("RemovedOrRenamedPositionalParam", "*", "*", "__init__", "serializer"),
+        ("RemovedOrRenamedPositionalParam", "*", "*", "__init__", "deserializer"),
+        # compared with msrest model, new DPG model is inherited from dict so we shall ignore some methods(e.g get/keys/items/values/...)
+        ("AddedClassMethod", "*", "*", "clear"),
+        ("AddedClassMethod", "*", "*", "copy"),
+        ("AddedClassMethod", "*", "*", "get"),
+        ("AddedClassMethod", "*", "*", "items"),
+        ("AddedClassMethod", "*", "*", "keys"),
+        ("AddedClassMethod", "*", "*", "pop"),
+        ("AddedClassMethod", "*", "*", "popitem"),
+        ("AddedClassMethod", "*", "*", "setdefault"),
+        ("AddedClassMethod", "*", "*", "update"),
+        ("AddedClassMethod", "*", "*", "values"),
+        ("AddedClassMethodParameter", "*", "*", "args", "__init__"),
+        ("AddedClassMethodParameter", "*", "*", "exclude_readonly", "as_dict"),
     ]
 }

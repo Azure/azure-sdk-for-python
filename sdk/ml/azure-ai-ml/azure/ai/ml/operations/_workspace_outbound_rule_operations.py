@@ -4,8 +4,8 @@
 
 from typing import Any, Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2023_08_01_preview.models import OutboundRuleBasicResource
+from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
+from azure.ai.ml._restclient.v2024_07_01_preview.models import OutboundRuleBasicResource
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -28,7 +28,7 @@ class WorkspaceOutboundRuleOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient082023Preview,
+        service_client: ServiceClient072024Preview,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,

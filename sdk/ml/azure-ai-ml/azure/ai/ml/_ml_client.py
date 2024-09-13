@@ -473,7 +473,7 @@ class MLClient:
 
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
-            self._service_client_08_2023_preview,
+            self._service_client_07_2024_preview,
             self._operation_container,
             self._credential,
             requests_pipeline=self._requests_pipeline,
@@ -483,7 +483,7 @@ class MLClient:
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
-            self._service_client_08_2023_preview,
+            self._service_client_07_2024_preview,
             self._operation_container,
             self._credential,
             **kwargs,
@@ -696,7 +696,7 @@ class MLClient:
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
-            self._service_client_08_2023_preview,
+            self._service_client_07_2024_preview,
             self._operation_container,
             self._credential,
         )
@@ -935,7 +935,6 @@ class MLClient:
         return self._featurestoreentities
 
     @property
-    @experimental
     def connections(self) -> WorkspaceConnectionsOperations:
         """A collection of connection related operations.
 

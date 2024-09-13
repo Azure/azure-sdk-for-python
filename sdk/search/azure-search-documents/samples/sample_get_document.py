@@ -38,8 +38,6 @@ def get_document():
 
     print("Details for hotel '23' are:")
     print("        Name: {}".format(result["hotelName"]))
-    print("      Rating: {}".format(result["rating"]))
-    print("    Category: {}".format(result["category"]))
     # [END get_document]
 
 

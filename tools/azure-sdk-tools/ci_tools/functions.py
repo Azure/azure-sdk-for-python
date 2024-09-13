@@ -209,10 +209,8 @@ def discover_targeted_packages(
     if compatibility_filter:
         collected_packages = apply_compatibility_filter(collected_packages)
 
-    # apply package-specific exclusions only if we have gotten more than one
-    if len(collected_packages) > 1:
-        if not include_inactive:
-            collected_packages = apply_inactive_filter(collected_packages)
+    if not include_inactive:
+        collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)
@@ -372,7 +370,8 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
             #        )?
             #       )?
             rx = r"{}(((a|b|rc)\d+)?(\.post\d+)?)?".format(base_version)
-            new_req = re.sub(rx, "{}{}1".format(base_version, DEV_BUILD_IDENTIFIER), str(req), flags=re.IGNORECASE)
+            new_req_format = f"{base_version}{DEV_BUILD_IDENTIFIER}1,<{base_version}b0"
+            new_req = re.sub(rx, new_req_format, str(req), flags=re.IGNORECASE)
             logging.info("New requirement for package {0}: {1}".format(pkg_name, new_req))
             requirement_to_update[old_req] = new_req
 
