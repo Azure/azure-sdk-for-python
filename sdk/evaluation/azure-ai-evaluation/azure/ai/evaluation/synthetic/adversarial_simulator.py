@@ -44,7 +44,6 @@ def monitor_adversarial_scenario(func) -> Callable:
         scenario = str(kwargs.get("scenario", None))
         max_conversation_turns = kwargs.get("max_conversation_turns", None)
         max_simulation_results = kwargs.get("max_simulation_results", None)
-        _jailbreak_type = kwargs.get("_jailbreak_type", None)
         decorated_func = monitor_operation(
             activity_name="adversarial.simulator.call",
             activity_type=ActivityType.PUBLICAPI,
@@ -52,7 +51,6 @@ def monitor_adversarial_scenario(func) -> Callable:
                 "scenario": scenario,
                 "max_conversation_turns": max_conversation_turns,
                 "max_simulation_results": max_simulation_results,
-                "_jailbreak_type": _jailbreak_type,
             },
         )(func)
 
