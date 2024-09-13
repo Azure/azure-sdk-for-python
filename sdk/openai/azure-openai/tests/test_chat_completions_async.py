@@ -6,6 +6,8 @@
 import os
 import pytest
 import json
+from typing import List
+from pydantic import BaseModel
 import openai
 from devtools_testutils import AzureRecordedTestCase
 from conftest import (
@@ -864,7 +866,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             {"role": "user", "content": "What is the best time of year to pick pineapple?"}
         ]
         with pytest.raises(openai.BadRequestError) as e:
-            await client_async.chat.completions.create(messages=messages, **kwargs)
+            await client_async.chat.completions.create(messages=messages, model="gpt-4-1106-preview")
         err = e.value.body
         assert err["code"] == "content_filter"
         content_filter_result = err["innererror"]["content_filter_result"]
@@ -1190,8 +1192,6 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
     async def test_chat_completion_structured_outputs(self, client_async, api_type, api_version, **kwargs):
-        from typing import List
-        from pydantic import BaseModel
 
         class Step(BaseModel):
             explanation: str
