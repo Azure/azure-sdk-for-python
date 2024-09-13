@@ -1,16 +1,12 @@
 # Release History
 
-## 7.12.3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 7.12.3 (2024-09-17)
 
 ### Bugs Fixed
- 
- - Fixed a bug where token refreshes were not happening on long running operations ([35717](https://github.com/Azure/azure-sdk-for-python/issues/35717))
 
-### Other Changes
+ - Fixed a bug where token refreshes were not happening on long running operations ([35717](https://github.com/Azure/azure-sdk-for-python/issues/35717))
+ - Fixed a bug where using TokenCredential to create a subscription with forwarding caused a `ResourceNotFoundError` ([36545](https://github.com/Azure/azure-sdk-for-python/pull/36545))
+ - Fixed a bug where messages received on one receiver could not be settled on another receiver over mgmt link ([35304](https://github.com/Azure/azure-sdk-for-python/issues/35304))
 
 ## 7.12.2 (2024-05-08)
 

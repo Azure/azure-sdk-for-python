@@ -57,7 +57,7 @@ setup(
     include_package_data=True,
     packages=find_packages(
         exclude=[
-            "tests",
+            "tests*",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.ai",
@@ -69,10 +69,12 @@ setup(
         "promptflow-core>=1.15.0",
         "websocket-client>=1.2.0",
         "jsonpath_ng>=1.5.0",
-        "numpy>=1.22",
+        "numpy>=1.23.2",
         "pyjwt>=2.8.0",
-        "azure-identity",
+        "azure-identity>=1.12.0",
         "azure-core>=1.30.2",
+        "nltk>=3.9.1",
+        "rouge-score>=0.1.2",
     ],
     extras_require={
         "pf-azure": [

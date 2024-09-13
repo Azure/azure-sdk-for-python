@@ -19,7 +19,7 @@ from .._user_agent import USER_AGENT
 
 class AsyncAnonymousAccessCredential(AsyncTokenCredential):
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
         raise ValueError("This credential cannot be used to obtain access tokens.")
 
@@ -62,7 +62,7 @@ class AnonymousACRExchangeClient(object):
         )
 
     async def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator-async
-        self, challenge: str, **kwargs
+        self, challenge: str, **kwargs: Any
     ) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         return await self.exchange_refresh_token_for_access_token(
@@ -74,7 +74,7 @@ class AnonymousACRExchangeClient(object):
         )
 
     async def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator-async
-        self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs
+        self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs: Any
     ) -> Optional[str]:
         auth_operation = cast(AuthenticationOperations, self._client.authentication)
         access_token = await auth_operation.exchange_acr_refresh_token_for_acr_access_token(
