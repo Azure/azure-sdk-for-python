@@ -33,6 +33,9 @@ steps:
       if ("$(PythonVersion)" -ne '3.9') {
         Write-Host "##vso[task.setvariable variable=CoverageArg]--disableCov"
       }
+      else {
+        Write-Host "##vso[task.setvariable variable=CoverageArg]"
+      }
     displayName: "Set Coverage Arg"
 
   - pwsh: |
@@ -90,7 +93,7 @@ steps:
           python scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
           ${{ parameters.AdditionalTestArgs }}
-          ${{ parameters.CoverageArg }}
+          $(CoverageArg)
           --mark_arg="${{ parameters.TestMarkArgument }}"
           --service="${{ parameters.ServiceDirectory }}"
           --toxenv="${{ parameters.ToxTestEnv }}"
@@ -110,7 +113,7 @@ steps:
         Write-Host (Get-Command python).Source
         python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
           ${{ parameters.AdditionalTestArgs }} `
-          ${{ parameters.CoverageArg }} `
+          $(CoverageArg) `
           --mark_arg="${{ parameters.TestMarkArgument }}" `
           --service="${{ parameters.ServiceDirectory }}" `
           --toxenv="${{ parameters.ToxTestEnv }}" `
