@@ -1,10 +1,11 @@
 from azure.mgmt.mongocluster import MongoClusterMgmtClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+import pytest
 
 AZURE_LOCATION = "westus2"
-Mongo_Cluster_Name = "pythontestmongocluster"
+Mongo_Cluster_Name = "pythonmongoclustertest"
 
-
+@pytest.mark.live_test_only
 class TestMgmtMongoCluster(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
@@ -19,12 +20,12 @@ class TestMgmtMongoCluster(AzureMgmtRecordedTestCase):
             resource={
                 "location": AZURE_LOCATION,
                 "properties": {
-                    "administratorLogin": "myMongoCluster",
-                    "administratorLoginPassword": "myMongoCluster333",
+                    "administrator": {"password": "mongoAdmin3", "userName": "mongoAdmin"},
+                    "compute": {"tier": "M30"},
+                    "highAvailability": {"targetMode": "Disabled"},
                     "serverVersion": "5.0",
-                    "nodeGroupSpecs": [
-                        {"diskSizeGB": 128, "enableHa": True, "kind": "Shard", "nodeCount": 1, "sku": "M30"}
-                    ],
+                    "sharding": {"shardCount": 1},
+                    "storage": {"sizeGb": 128},
                 },
             },
         ).result()
@@ -36,13 +37,13 @@ class TestMgmtMongoCluster(AzureMgmtRecordedTestCase):
             properties={
                 "location": AZURE_LOCATION,
                 "properties": {
-                    "administratorLogin": "myMongoCluster",
-                    "administratorLoginPassword": "myMongoCluster333",
-                    "serverVersion": "5.0",
-                    "nodeGroupSpecs": [
-                        {"kind": "Shard", "sku": "M50", "diskSizeGB": 256, "enableHa": True, "nodeCount": 1}
-                    ],
+                    "administrator": {"userName": "mongoAdmin"},
+                    "compute": {"tier": "M50"},
+                    "highAvailability": {"targetMode": "Disabled"},
+                    "previewFeatures": [],
                     "publicNetworkAccess": "Enabled",
+                    "serverVersion": "5.0",
+                    "storage": {"sizeGb": 256},
                 },
             },
         ).result()
