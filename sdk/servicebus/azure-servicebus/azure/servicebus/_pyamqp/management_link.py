@@ -32,7 +32,7 @@ _LOGGER = logging.getLogger(__name__)
 PendingManagementOperation = namedtuple('PendingManagementOperation', ['message', 'on_execute_operation_complete'])
 
 
-class ManagementLink(object): # pylint:disable=too-many-instance-attributes
+class ManagementLink: # pylint:disable=too-many-instance-attributes
     """
        # TODO: Fill in docstring
     """
@@ -67,7 +67,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
 
         self._sender_connected = False
         self._receiver_connected = False
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
     def __enter__(self):
         self.open()
@@ -117,7 +117,6 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
         )
         if new_state == previous_state:
             return
-        
         with self._lock:
             if self.state == ManagementLinkState.OPENING:
                 if new_state == LinkState.ATTACHED:
