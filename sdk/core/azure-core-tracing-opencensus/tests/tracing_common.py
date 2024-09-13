@@ -71,3 +71,4 @@ class MockExporter(Exporter):
         for node in self._all_nodes:
             if node.span_data.span_id in self.parent_dict:
                 node.children = sorted(self.parent_dict[node.span_data.span_id], key=lambda x: x.span_data.start_time)
+
