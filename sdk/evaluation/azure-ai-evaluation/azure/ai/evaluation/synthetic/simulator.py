@@ -285,8 +285,6 @@ class Simulator:
         :raises ValueError: If the response cannot be parsed.
         """
         try:
-            if "'" in response:
-                response = response.replace("'", '"')
             if isinstance(response, str):
                 response = ast.literal_eval(response)
             response = json.dumps(response)
