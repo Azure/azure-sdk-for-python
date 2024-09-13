@@ -28,7 +28,7 @@ from ._model_tools import (
     TokenScope,
 )
 from ._utils import JsonLineList
-from .constants import SupportedLanguages
+from ._constants import SupportedLanguages
 
 logger = logging.getLogger(__name__)
 
@@ -154,7 +154,7 @@ class AdversarialSimulator:
             Defaults to 3.
         :paramtype concurrent_async_task: int
         :keyword language: The language in which the conversation should be generated. Defaults to English.
-        :paramtype language: azure.ai.evaluation.simulator._constants.SupportedLanguages
+        :paramtype language: azure.ai.evaluation.simulator.SupportedLanguages
         :keyword randomize_order: Whether or not the order of the prompts should be randomized. Defaults to True.
         :paramtype randomize_order: bool
         :keyword randomization_seed: The seed used to randomize prompt selection. If unset, the system's
