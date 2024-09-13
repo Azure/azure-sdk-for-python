@@ -82,7 +82,7 @@ class ManagementLink:  # pylint:disable=too-many-instance-attributes
         )
         if new_state == previous_state:
             return
-        
+
         if self.state == ManagementLinkState.OPENING:
             if new_state == LinkState.ATTACHED:
                 self._sender_connected = True
@@ -113,7 +113,7 @@ class ManagementLink:  # pylint:disable=too-many-instance-attributes
         )
         if new_state == previous_state:
             return
-        
+
         if self.state == ManagementLinkState.OPENING:
             if new_state == LinkState.ATTACHED:
                 self._receiver_connected = True
