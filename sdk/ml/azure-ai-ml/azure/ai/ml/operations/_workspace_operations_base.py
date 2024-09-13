@@ -34,11 +34,11 @@ from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_mi
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import (
+    WORKSPACE_PATCH_REJECTED_KEYS,
     ArmConstants,
     LROConfigurations,
     WorkspaceKind,
     WorkspaceResourceConstants,
-    WORKSPACE_PATCH_REJECTED_KEYS,
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Hub, Project, Workspace
@@ -64,7 +64,7 @@ class WorkspaceOperationsBase(ABC):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._subscription_id = operation_scope.subscription_id
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name
