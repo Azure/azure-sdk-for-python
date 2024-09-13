@@ -11,7 +11,6 @@ import os.path
 from io import open
 from setuptools import find_packages, setup  # type: ignore
 
-# Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-core"
 PACKAGE_PPRINT_NAME = "Core"
 
