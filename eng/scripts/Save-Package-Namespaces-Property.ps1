@@ -15,18 +15,50 @@ PackageInfo subdirectory. The whl files are going to be in the subdirectory whic
 is the same as the artifact's name but artifact name in the file's name will have
  underscores instead of dashes.
 
-.PARAMETER ArtifactsList
-The list of artifacts to gather namespaces for, this is only done for libraries that are
-producing docs.
--ArtifactsList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json)
+.PARAMETER RepoRoot
+The root of the directory. This will be used in combination with the paths of of
+the properties within each PackageInfo file to determine the full path to other relevant
+metadata...like ci.yml for instance.
 #>
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory = $True)]
-    [string] $ArtifactStagingDirectory
+    [string] $ArtifactStagingDirectory,
+    [Parameter(Mandatory = $True)]
+    [string] $RepoRoot
 )
 
-$ArtifactsList = $ArtifactsList | Where-Object -Not "skipPublishDocMs"
+Install-ModuleIfNotInstalled "powershell-yaml" "0.4.1" | Import-Module
+
+function ShouldPublish ($ServiceDirectory, $PackageName) {
+    $ciYmlPath = Join-Path $ServiceDirectory ".ci.yml"
+
+    if (Test-Path $ciYmlPath)
+    {
+        $ciYml = ConvertFrom-Yaml (Get-Content $ciYmlPath -Raw)
+
+        if ($ciYml.extends -and $ciYml.extends.parameters -and $ciYml.extends.parameters.Artifacts) {
+            $packagesBuildingDocs = $ciYml.extends.parameters.Artifacts `
+                | Where-Object {
+                    if ($_.PSObject.Properties["skipPublishDocsMs"]) {
+                        $false
+                    }
+                    else {
+                        $true
+                    }
+                } `
+                | Select-Object -ExpandProperty name
+
+            if ($packagesBuildingDocs -contains $PackageName)
+            {
+                return $true
+            }
+            else {
+                return $false
+            }
+        }
+    }
+}
 
 . (Join-Path $PSScriptRoot ".." common scripts common.ps1)
 
@@ -57,6 +89,12 @@ foreach($packageInfoFile in $artifacts) {
     if ($packageInfo.DevVersion) {
       $version = $packageInfo.DevVersion
     }
+
+    if (-not (ShouldPublish -ServiceDirectory (Join-Path $RepoRoot "sdk" $packageInfo.ServiceDirectory) -PackageName $packageInfo.Name)) {
+        Write-Host "Skipping publishing docs for $($packageInfo.Name)"
+        continue
+    }
+
     # From the $packageInfo piece together the path to the javadoc jar file
     $WhlDir = Join-Path $ArtifactStagingDirectory $packageInfo.Name
     $WhlName = $packageInfo.Name.Replace("-","_")
