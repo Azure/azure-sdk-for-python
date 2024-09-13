@@ -367,7 +367,6 @@ class AssistantRunStream:
 
 
 __all__: List[str] = [
-    "AssistantFunctions",
     "AssistantRunStream",
     "FunctionTool",
     "FileSearchTool",
