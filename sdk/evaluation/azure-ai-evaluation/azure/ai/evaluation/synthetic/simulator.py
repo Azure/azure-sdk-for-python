@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import ast
+import re
 import asyncio
 import json
 import os
@@ -285,12 +285,34 @@ class Simulator:
         :raises ValueError: If the response cannot be parsed.
         """
         try:
-            if isinstance(response, str):
-                response = ast.literal_eval(response)
-            response = json.dumps(response)
-            return json.loads(response)
+            if type(response) == str:
+                response = response.replace('\u2019', "'").replace('\u2018', "'")
+                response = response.replace('\u201C', '"').replace('\u201D', '"')
+                
+                # Replace None with null
+                response = response.replace('None', 'null')
+                
+                # Escape unescaped single quotes inside string values
+                def escape_single_quotes(match):
+                    s = match.group(0)
+                    # Remove the outer single quotes
+                    s_content = s[1:-1]
+                    # Escape single quotes within the content
+                    s_content_escaped = s_content.replace("'", "\\'")
+                    return f"'{s_content_escaped}'"
+
+                # Pattern to match single-quoted strings
+                pattern = r"'(.*?)'"
+                response = re.sub(pattern, escape_single_quotes, response)
+
+                # Now replace single quotes around keys and values with double quotes
+                response = re.sub(r"'([^']+)'", r'"\1"', response)
+                parsed_data = json.loads(response)
+                return parsed_data
+            return response
         except Exception as e:
-            raise ValueError("Failed to parse the prompty response") from e
+            import pdb; pdb.set_trace()
+            raise ValueError("Error parsing response content") from e
 
     async def _generate_query_responses(
         self,
@@ -322,6 +344,9 @@ class Simulator:
 
         try:
             query_responses = query_flow(text=text, num_queries=num_queries)
+            if type(query_responses) == dict:
+                keys = list(query_responses.keys())
+                return query_responses[keys[0]]
             return json.loads(query_responses)
         except Exception as e:
             raise RuntimeError("Error generating query responses") from e
@@ -498,6 +523,7 @@ class Simulator:
             user_response = self._parse_prompty_response(response=response_content)
             return user_response["content"]
         except Exception as e:
+            import pdb; pdb.set_trace()
             raise RuntimeError("Error building user simulation response") from e
 
     async def _get_target_response(
