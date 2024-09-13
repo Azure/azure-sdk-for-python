@@ -72,14 +72,14 @@ def sample_assistant_run():
     # file_search = FileSearchTool()
     # file_search.add_vector_store(...)
 
-    tools = ToolSet()
-    tools.add(functions)
+    tool_set = ToolSet()
+    tool_set.add(functions)
     # tools.add(code_interpreter)
     # tools.add(file_search)
 
     # Create assistant
     assistant = assistant_client.create_assistant_with_toolset(
-        model="gpt", name="my-assistant", instructions="You are a helpful assistant", tools=tools
+        model="gpt", name="my-assistant", instructions="You are a helpful assistant", tool_set=tool_set
     )
     logging.info("Created assistant, ID: %s", assistant.id)
 

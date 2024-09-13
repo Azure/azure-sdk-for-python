@@ -414,6 +414,7 @@ class AssistantsClient(AssistantsClientGenerated):
                     self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
 
+                # TODO: Find better way to retrieve tool set
                 if hasattr(self, "_tool_set"):
                     tool_outputs = self._tool_set.get_tool(_models.FunctionTool).execute(tool_calls)
                 else:
