@@ -396,11 +396,13 @@ class Simulator:
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]
         """
+        total_turns = len(query_responses) * max_conversation_turns
+
         progress_bar = tqdm(
-            total=len(query_responses),
+            total=total_turns,
             desc="Generating simulations",
             ncols=100,
-            unit="simulations",
+            unit="messages",
         )
         all_conversations = []
 
