@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import asyncio
 import time
 import logging
 from functools import partial
