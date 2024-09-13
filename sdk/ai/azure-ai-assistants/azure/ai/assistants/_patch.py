@@ -386,6 +386,7 @@ class AssistantsClient(AssistantsClientGenerated):
         self,
         thread_id: str,
         assistant_id: str,
+        stream: bool = False,
         sleep_interval: int = 1,
         **kwargs: Any
     ) -> str:
@@ -394,13 +395,17 @@ class AssistantsClient(AssistantsClientGenerated):
 
         :param thread_id: The ID of the thread.
         :param assistant_id: The ID of the assistant.
-        :param functions: An instance of AssistantFunctions to handle tool calls.
+        :param stream: If ``True``, returns a stream of events that happen during the Run as server-sent events,
         :param sleep_interval: Time in seconds to wait between status checks.
         :param kwargs: Additional parameters passed to the create_run method.
         :return: Final status of the run.
         """
         # Create and initiate the run with additional parameters
-        run = self.create_run(thread_id=thread_id, assistant_id=assistant_id, **kwargs)
+        run = self.create_run(thread_id=thread_id, assistant_id=assistant_id, stream=stream, **kwargs)
+
+        # Return the stream object if streaming is enabled
+        if stream:
+            return run
 
         # Monitor and process the run status
         while run.status in ["queued", "in_progress", "requires_action"]:
