@@ -12,7 +12,7 @@ from promptflow._sdk._telemetry import ActivityType, monitor_operation
 from azure.ai.evaluation.simulator import AdversarialScenario
 
 from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
-from .adversarial_simulator import AdversarialSimulator
+from ._adversarial_simulator import AdversarialSimulator
 
 logger = logging.getLogger(__name__)
 

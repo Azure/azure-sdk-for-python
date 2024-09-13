@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ._evaluate import evaluate
+from ._evaluate._evaluate import evaluate
 from ._evaluators._bleu import BleuScoreEvaluator
 from ._evaluators._chat import ChatEvaluator
 from ._evaluators._coherence import CoherenceEvaluator
