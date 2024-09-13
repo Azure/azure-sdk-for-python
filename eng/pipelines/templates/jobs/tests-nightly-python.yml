@@ -8,27 +8,12 @@ parameters:
 
 jobs:
 
-  - job: Validate_RC_Python_Build_Windows
-    displayName: Validate Release Candidate Python - Windows
-    variables:
-      skipComponentGovernanceDetection: true
-      PythonVersion: '3.13.0-rc.2'
-      TargetedPackages: "azure-core,azure-storage*, azure-identity*"
-
-    timeoutInMinutes: 90
-
-    pool:
-      name: 'azsdk-pool-mms-win-2022-general'
-
-    steps:
-      - template: ../steps/release-candidate-steps.yml
-
   - job: Validate_RC_Python_Build_Linux
     displayName: Validate Release Candidate Python - Linux
     variables:
       skipComponentGovernanceDetection: true
       PythonVersion: '3.13.0-rc.2'
-      TargetedPackages: "azure-core,azure-storage*, azure-identity*"
+      TargetedPackages: "azure-core,azure-keyvault*, azure-identity*, azure-storage-queue"
 
     timeoutInMinutes: 90
 
