@@ -22,6 +22,8 @@ class JobType(object):
     SPARK = "spark"
     DATA_TRANSFER = "data_transfer"
     FINE_TUNING = "finetuning"
+    LABEL_GENERATION = "label_generation"
+    DATA_GENERATION = "data_generation"
 
 
 class JobLimitsType(object):
