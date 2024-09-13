@@ -10,8 +10,32 @@
       "ubuntu-20.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" },
       "macos-latest": { "OSVmImage": "env:MACVMIMAGE", "Pool": "env:MACPOOL" }
     },
-    "PythonVersion": [ "3.8", "pypy3.9", "3.9", "3.11", "3.12", "3.10" ],
-    "TestSamples": "false",
-    "TargetingString": "azure*"
-  }
+    "PythonVersion": [ "3.8", "pypy3.9", "3.11", "3.10" ],
+    "CoverageArg": "--disablecov",
+    "TestSamples": "false"
+  },
+  "include": [
+    {
+      "CoverageConfig": {
+        "ubuntu2004_39_coverage": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.9",
+          "CoverageArg": "",
+          "TestSamples": "false"
+        }
+      }
+    },
+    {
+      "Config": {
+        "Ubuntu2004_312": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.12",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
+    }
+  ]
 }

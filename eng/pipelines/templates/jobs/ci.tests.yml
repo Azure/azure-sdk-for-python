@@ -117,6 +117,7 @@ jobs:
       parameters:
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
         ToxTestEnv: $(toxenv)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}

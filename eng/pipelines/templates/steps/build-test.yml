@@ -8,7 +8,9 @@ parameters:
   OSVmImage: ''
   BeforeTestSteps: []
   AfterTestSteps: []
+  CoverageArg: ''
   ToxTestEnv: ""
+  RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   ToxEnvParallel: ''
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
@@ -28,15 +30,6 @@ steps:
       Activate: false
 
   - template: set-dev-build.yml
-
-  - pwsh: |
-      if ("$(PythonVersion)" -ne '3.9') {
-        Write-Host "##vso[task.setvariable variable=CoverageArg]--disableCov"
-      }
-      else {
-        Write-Host "##vso[task.setvariable variable=CoverageArg]"
-      }
-    displayName: "Set Coverage Arg"
 
   - pwsh: |
       if ($IsWindows) {
@@ -93,7 +86,7 @@ steps:
           python scripts/devops_tasks/dispatch_tox.py
           "$(TargetingString)"
           ${{ parameters.AdditionalTestArgs }}
-          $(CoverageArg)
+          ${{ parameters.CoverageArg }}
           --mark_arg="${{ parameters.TestMarkArgument }}"
           --service="${{ parameters.ServiceDirectory }}"
           --toxenv="${{ parameters.ToxTestEnv }}"
@@ -113,7 +106,7 @@ steps:
         Write-Host (Get-Command python).Source
         python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
           ${{ parameters.AdditionalTestArgs }} `
-          $(CoverageArg) `
+          ${{ parameters.CoverageArg }} `
           --mark_arg="${{ parameters.TestMarkArgument }}" `
           --service="${{ parameters.ServiceDirectory }}" `
           --toxenv="${{ parameters.ToxTestEnv }}" `
@@ -148,7 +141,7 @@ steps:
       python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Create Coverage Report
-    condition: and(succeeded(), ne(variables["CoverageArg"], "--disableCov"))
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
   - ${{ if eq('true', parameters.UseFederatedAuth) }}:
     - task: AzurePowerShell@5
@@ -208,7 +201,7 @@ steps:
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
     continueOnError: true
-    condition: and(succeeded(), ne(variables["CoverageArg"], "--disableCov"))
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
