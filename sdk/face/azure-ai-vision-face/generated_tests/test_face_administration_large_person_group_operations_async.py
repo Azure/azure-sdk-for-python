@@ -15,7 +15,7 @@ from testpreparer_async import FaceAdministrationClientTestBaseAsync
 class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationClientTestBaseAsync):
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_create(self, faceadministration_endpoint):
+    async def test_large_person_group_create(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.create(
             large_person_group_id="str",
@@ -28,7 +28,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_delete(self, faceadministration_endpoint):
+    async def test_large_person_group_delete(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.delete(
             large_person_group_id="str",
@@ -39,7 +39,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_get(self, faceadministration_endpoint):
+    async def test_large_person_group_get(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.get(
             large_person_group_id="str",
@@ -50,7 +50,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_update(self, faceadministration_endpoint):
+    async def test_large_person_group_update(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.update(
             large_person_group_id="str",
@@ -62,7 +62,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_get_large_person_groups(self, faceadministration_endpoint):
+    async def test_large_person_group_get_large_person_groups(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.get_large_person_groups()
 
@@ -71,7 +71,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_get_training_status(self, faceadministration_endpoint):
+    async def test_large_person_group_get_training_status(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.get_training_status(
             large_person_group_id="str",
@@ -82,7 +82,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_begin_train(self, faceadministration_endpoint):
+    async def test_large_person_group_begin_train(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await (
             await client.large_person_group.begin_train(
@@ -95,7 +95,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_create_person(self, faceadministration_endpoint):
+    async def test_large_person_group_create_person(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.create_person(
             large_person_group_id="str",
@@ -108,7 +108,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_delete_person(self, faceadministration_endpoint):
+    async def test_large_person_group_delete_person(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.delete_person(
             large_person_group_id="str",
@@ -120,7 +120,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_get_person(self, faceadministration_endpoint):
+    async def test_large_person_group_get_person(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.get_person(
             large_person_group_id="str",
@@ -132,7 +132,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_update_person(self, faceadministration_endpoint):
+    async def test_large_person_group_update_person(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.update_person(
             large_person_group_id="str",
@@ -145,7 +145,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_get_persons(self, faceadministration_endpoint):
+    async def test_large_person_group_get_persons(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.get_persons(
             large_person_group_id="str",
@@ -156,7 +156,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_add_face_from_url(self, faceadministration_endpoint):
+    async def test_large_person_group_add_face_from_url(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.add_face_from_url(
             large_person_group_id="str",
@@ -170,7 +170,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_add_face(self, faceadministration_endpoint):
+    async def test_large_person_group_add_face(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.add_face(
             large_person_group_id="str",
@@ -184,7 +184,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_delete_face(self, faceadministration_endpoint):
+    async def test_large_person_group_delete_face(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.delete_face(
             large_person_group_id="str",
@@ -197,7 +197,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_get_face(self, faceadministration_endpoint):
+    async def test_large_person_group_get_face(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.get_face(
             large_person_group_id="str",
@@ -210,7 +210,7 @@ class TestFaceAdministrationLargePersonGroupOperationsAsync(FaceAdministrationCl
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_update_face(self, faceadministration_endpoint):
+    async def test_large_person_group_update_face(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_person_group.update_face(
             large_person_group_id="str",

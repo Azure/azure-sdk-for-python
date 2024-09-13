@@ -447,6 +447,24 @@ class CreateLivenessWithVerifySessionMultipartContent(_model_base.Model):  # pyl
     """The image stream for verify. Content-Disposition header field for this part must have filename.
      Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        parameters: "_models.CreateLivenessWithVerifySessionContent",
+        verify_image: FileType,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
 
 class CreateLivenessWithVerifySessionResult(_model_base.Model):
     """Response of liveness session with verify creation with verify image provided.
@@ -1051,7 +1069,7 @@ class FaceLandmarks(_model_base.Model):  # pylint: disable=too-many-instance-att
     """The coordinates of the under lip bottom. Required."""
 
     @overload
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         pupil_left: "_models.LandmarkCoordinate",

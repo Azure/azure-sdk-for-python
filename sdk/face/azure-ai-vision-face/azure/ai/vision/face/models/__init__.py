@@ -14,6 +14,7 @@ from ._models import BlurProperties
 from ._models import CreateLivenessSessionContent
 from ._models import CreateLivenessSessionResult
 from ._models import CreateLivenessWithVerifySessionContent
+from ._models import CreateLivenessWithVerifySessionMultipartContent
 from ._models import CreateLivenessWithVerifySessionResult
 from ._models import CreatePersonResult
 from ._models import ExposureProperties
@@ -90,6 +91,7 @@ __all__ = [
     "CreateLivenessSessionContent",
     "CreateLivenessSessionResult",
     "CreateLivenessWithVerifySessionContent",
+    "CreateLivenessWithVerifySessionMultipartContent",
     "CreateLivenessWithVerifySessionResult",
     "CreatePersonResult",
     "ExposureProperties",

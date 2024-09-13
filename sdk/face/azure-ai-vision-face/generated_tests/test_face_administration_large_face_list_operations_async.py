@@ -15,7 +15,7 @@ from testpreparer_async import FaceAdministrationClientTestBaseAsync
 class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClientTestBaseAsync):
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_create(self, faceadministration_endpoint):
+    async def test_large_face_list_create(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.create(
             large_face_list_id="str",
@@ -28,7 +28,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_delete(self, faceadministration_endpoint):
+    async def test_large_face_list_delete(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.delete(
             large_face_list_id="str",
@@ -39,7 +39,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_get(self, faceadministration_endpoint):
+    async def test_large_face_list_get(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.get(
             large_face_list_id="str",
@@ -50,7 +50,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_update(self, faceadministration_endpoint):
+    async def test_large_face_list_update(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.update(
             large_face_list_id="str",
@@ -62,7 +62,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_get_large_face_lists(self, faceadministration_endpoint):
+    async def test_large_face_list_get_large_face_lists(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.get_large_face_lists()
 
@@ -71,7 +71,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_get_training_status(self, faceadministration_endpoint):
+    async def test_large_face_list_get_training_status(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.get_training_status(
             large_face_list_id="str",
@@ -82,7 +82,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_begin_train(self, faceadministration_endpoint):
+    async def test_large_face_list_begin_train(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await (
             await client.large_face_list.begin_train(
@@ -95,7 +95,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_add_face_from_url(self, faceadministration_endpoint):
+    async def test_large_face_list_add_face_from_url(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.add_face_from_url(
             large_face_list_id="str",
@@ -108,7 +108,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_add_face(self, faceadministration_endpoint):
+    async def test_large_face_list_add_face(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.add_face(
             large_face_list_id="str",
@@ -121,7 +121,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_delete_face(self, faceadministration_endpoint):
+    async def test_large_face_list_delete_face(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.delete_face(
             large_face_list_id="str",
@@ -133,7 +133,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_get_face(self, faceadministration_endpoint):
+    async def test_large_face_list_get_face(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.get_face(
             large_face_list_id="str",
@@ -145,7 +145,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_update_face(self, faceadministration_endpoint):
+    async def test_large_face_list_update_face(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.update_face(
             large_face_list_id="str",
@@ -158,7 +158,7 @@ class TestFaceAdministrationLargeFaceListOperationsAsync(FaceAdministrationClien
 
     @FaceAdministrationPreparer()
     @recorded_by_proxy_async
-    async def test_get_faces(self, faceadministration_endpoint):
+    async def test_large_face_list_get_faces(self, faceadministration_endpoint):
         client = self.create_async_client(endpoint=faceadministration_endpoint)
         response = await client.large_face_list.get_faces(
             large_face_list_id="str",
