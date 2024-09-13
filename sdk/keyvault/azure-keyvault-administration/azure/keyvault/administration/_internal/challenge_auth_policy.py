@@ -82,9 +82,11 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
                 scope = challenge.get_scope() or challenge.get_resource() + "/.default"
                 # Exclude tenant for AD FS authentication
                 if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
-                    self._token = self._credential.get_token(scope)
+                    self._token = self._credential.get_token(scope, claims=challenge.claims)
                 else:
-                    self._token = self._credential.get_token(scope, tenant_id=challenge.tenant_id)
+                    self._token = self._credential.get_token(
+                        scope, claims=challenge.claims, tenant_id=challenge.tenant_id
+                    )
 
             # ignore mypy's warning -- although self._token is Optional, get_token raises when it fails to get a token
             request.http_request.headers["Authorization"] = f"Bearer {self._token.token}"  # type: ignore
@@ -132,9 +134,9 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         # The tenant parsed from AD FS challenges is "adfs"; we don't actually need a tenant for AD FS authentication
         # For AD FS we skip cross-tenant authentication per https://github.com/Azure/azure-sdk-for-python/issues/28648
         if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
-            self.authorize_request(request, scope)
+            self.authorize_request(request, scope, claims=challenge.claims)
         else:
-            self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+            self.authorize_request(request, scope, claims=challenge.claims, tenant_id=challenge.tenant_id)
 
         return True
 
