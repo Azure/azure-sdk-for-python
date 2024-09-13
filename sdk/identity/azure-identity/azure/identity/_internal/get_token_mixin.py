@@ -117,7 +117,7 @@ class GetTokenMixin(abc.ABC):
         self,
         *scopes: str,
         options: Optional[TokenRequestOptions] = None,
-        base_method_name: str = "get_token",
+        base_method_name: str = "get_token_info",
         **kwargs: Any,
     ) -> AccessTokenInfo:
         if not scopes:
