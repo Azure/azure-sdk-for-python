@@ -371,7 +371,6 @@ __all__: List[str] = [
     "FunctionTool",
     "FileSearchTool",
     "CodeInterpreterTool",
-    "ToolSet",
     "Tool",
     "ToolSet",
 ]  # Add all objects you want publicly available to users at this package level
