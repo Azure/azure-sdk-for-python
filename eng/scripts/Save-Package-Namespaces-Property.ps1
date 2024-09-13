@@ -27,11 +27,11 @@ Param (
     [Parameter(Mandatory = $True)]
     [string] $RepoRoot
 )
-
+.  (Join-Path $PSScriptRoot ".." common scripts Helpers PSModule-Helpers.ps1)
 Install-ModuleIfNotInstalled "powershell-yaml" "0.4.1" | Import-Module
 
 function ShouldPublish ($ServiceDirectory, $PackageName) {
-    $ciYmlPath = Join-Path $ServiceDirectory ".ci.yml"
+    $ciYmlPath = Join-Path $ServiceDirectory "ci.yml"
 
     if (Test-Path $ciYmlPath)
     {
@@ -62,11 +62,6 @@ function ShouldPublish ($ServiceDirectory, $PackageName) {
 
 . (Join-Path $PSScriptRoot ".." common scripts common.ps1)
 
-if (-not $ArtifactsList) {
-    Write-Host "ArtifactsList is empty, nothing to process. This can happen if skipPublishDocMs is set to true for all libraries being built."
-    exit 0
-}
-
 Write-Host "ArtifactStagingDirectory=$ArtifactStagingDirectory"
 if (-not (Test-Path -Path $ArtifactStagingDirectory)) {
     LogError "ArtifactStagingDirectory '$ArtifactStagingDirectory' does not exist."
@@ -77,6 +72,11 @@ $packageInfoDirectory = Join-Path $ArtifactStagingDirectory "PackageInfo"
 $foundError = $false
 $artifacts = Get-ChildItem -Path $packageInfoDirectory -File -Filter "*.json"
 $artifacts | Format-Table -Property Name | Out-String | Write-Host
+
+if (-not $artifacts) {
+    Write-Host "Artifacts list is empty, nothing to process. This can happen if skipPublishDocMs is set to true for all libraries being built."
+    exit 0
+}
 
 # by this point, the PackageInfo folder will have a json file for each artifact
 # we simply need to read each file, get the appropriate metadata, and add the namespaces if necessary
