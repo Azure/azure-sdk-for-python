@@ -212,6 +212,108 @@ if __name__ == "__main__":
     print("done!")
 ```
 
+Simulator expects the user to have a callback method that invokes their AI application.
+Here's a sample of a callback which invokes AsyncAzureOpenAI:
+
+```python
+from from azure.ai.evaluation.synthetic import AdversarialSimulator, AdversarialScenario
+from azure.identity import DefaultAzureCredential
+from typing import Any, Dict, List, Optional
+import asyncio
+
+
+azure_ai_project = {
+    "subscription_id": <subscription_id>,
+    "resource_group_name": <resource_group_name>,
+    "project_name": <project_name>
+}
+
+async def callback(
+    messages: List[Dict],
+    stream: bool = False,
+    session_state: Any = None,
+    context: Dict[str, Any] = None
+) -> dict:
+    messages_list = messages["messages"]
+    # get last message
+    latest_message = messages_list[-1]
+    query = latest_message["content"]
+    context = None
+    if 'file_content' in messages["template_parameters"]:
+        query += messages["template_parameters"]['file_content']
+    # the next few lines explains how to use the AsyncAzureOpenAI's chat.completions
+    # to respond to the simulator. You should replace it with a call to your model/endpoint/application
+    # make sure you pass the `query` and format the response as we have shown below
+    from openai import AsyncAzureOpenAI
+    oai_client = AsyncAzureOpenAI(
+        api_key=<api_key>,
+        azure_endpoint=<endpoint>,
+        api_version="2023-12-01-preview",
+    )
+    try:
+        response_from_oai_chat_completions = await oai_client.chat.completions.create(messages=[{"content": query, "role": "user"}], model="gpt-4", max_tokens=300)
+    except Exception as e:
+        print(f"Error: {e}")
+        # to continue the conversation, return the messages, else you can fail the adversarial with an exception
+        message = {
+            "content": "Something went wrong. Check the exception e for more details.",
+            "role": "assistant",
+            "context": None,
+        }
+        messages["messages"].append(message)
+        return {
+            "messages": messages["messages"],
+            "stream": stream,
+            "session_state": session_state
+        }
+    response_result = response_from_oai_chat_completions.choices[0].message.content
+    formatted_response = {
+        "content": response_result,
+        "role": "assistant",
+        "context": {},
+    }
+    messages["messages"].append(formatted_response)
+    return {
+        "messages": messages["messages"],
+        "stream": stream,
+        "session_state": session_state,
+        "context": context
+    }
+
+```
+### Adversarial QA:
+```python
+scenario = AdversarialScenario.ADVERSARIAL_QA
+simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
+
+outputs = asyncio.run(
+    simulator(
+        scenario=scenario,
+        max_conversation_turns=1,
+        max_simulation_results=3,
+        target=callback
+    )
+)
+
+print(outputs.to_eval_qa_json_lines())
+```
+### Direct Attack Simulator
+
+```python
+scenario = AdversarialScenario.ADVERSARIAL_QA
+simulator = DirectAttackSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
+
+outputs = asyncio.run(
+    simulator(
+        scenario=scenario,
+        max_conversation_turns=1,
+        max_simulation_results=2,
+        target=callback
+    )
+)
+
+print(outputs)
+```
 ## Troubleshooting
 
 ## Next steps
