@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -18,6 +19,7 @@ from . import models as _models
 from ._configuration import RedisEnterpriseManagementClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
+    AccessPolicyAssignmentOperations,
     DatabasesOperations,
     Operations,
     OperationsStatusOperations,
@@ -31,7 +33,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class RedisEnterpriseManagementClient:  # pylint: disable=client-accepts-api-version-keyword
+class RedisEnterpriseManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """REST API for managing Redis Enterprise resources in Azure.
 
     :ivar operations: Operations operations
@@ -42,6 +44,9 @@ class RedisEnterpriseManagementClient:  # pylint: disable=client-accepts-api-ver
     :vartype redis_enterprise: azure.mgmt.redisenterprise.operations.RedisEnterpriseOperations
     :ivar databases: DatabasesOperations operations
     :vartype databases: azure.mgmt.redisenterprise.operations.DatabasesOperations
+    :ivar access_policy_assignment: AccessPolicyAssignmentOperations operations
+    :vartype access_policy_assignment:
+     azure.mgmt.redisenterprise.operations.AccessPolicyAssignmentOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.redisenterprise.operations.PrivateEndpointConnectionsOperations
@@ -54,7 +59,7 @@ class RedisEnterpriseManagementClient:  # pylint: disable=client-accepts-api-ver
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-03-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2024-09-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -103,6 +108,9 @@ class RedisEnterpriseManagementClient:  # pylint: disable=client-accepts-api-ver
             self._client, self._config, self._serialize, self._deserialize
         )
         self.databases = DatabasesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.access_policy_assignment = AccessPolicyAssignmentOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -135,7 +143,7 @@ class RedisEnterpriseManagementClient:  # pylint: disable=client-accepts-api-ver
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "RedisEnterpriseManagementClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
