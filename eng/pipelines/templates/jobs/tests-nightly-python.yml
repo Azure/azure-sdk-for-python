@@ -5,6 +5,9 @@ parameters:
   - name: RunNightlyTests
     type: boolean
     default: false
+  - name: TargetedPackages
+    type: string
+    default: "azure-core,azure-keyvault*, azure-identity*, azure-storage-queue"
 
 jobs:
 
@@ -13,7 +16,7 @@ jobs:
     variables:
       skipComponentGovernanceDetection: true
       PythonVersion: '3.13.0-rc.2'
-      TargetedPackages: "azure-core,azure-keyvault*, azure-identity*, azure-storage-queue"
+      TargetedPackages: ${{ parameters.TargetedPackages }}
 
     timeoutInMinutes: 90
 
