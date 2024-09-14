@@ -41,13 +41,25 @@ To construct any of the clients, you will need to pass in the endpoint URL. If y
 
 ## Running the samples
 
-To run the first sample, type:
+To run any of the samples, type the following command with the respective sample script:
 
 ```bash
-python sample_chat_completions.py
+python <sample_script_name>.py
 ```
 
-similarly for the other samples.
+For example, to run the assistant basics sample, you would type:
+```bash
+python sample_assistant_basics.py
+```
+
+Here is the list of available samples:
+
+- `sample_assistant_basics.py`
+- `sample_assistant_code_interpreter.py`
+- `sample_assistant_file_search.py`
+- `sample_assistant_functions.py`
+- `sample_assistant_run_with_toolset.py`
+- `sample_assistant_stream_iteration.py`
 
 ## Samples
 
