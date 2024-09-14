@@ -191,7 +191,6 @@ class CodeInterpreterTool(Tool):
 
         :param file_id: The ID of the file to interpret.
         """
-        # TODO
         self.file_ids.append(file_id)
 
     @property

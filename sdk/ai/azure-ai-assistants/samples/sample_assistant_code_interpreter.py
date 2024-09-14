@@ -4,14 +4,14 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to use assistants client convenience methods for user functions and run creation and processing 
+    This sample demonstrates how to use assistants client for code interpreter and processing 
     with a synchronous client.
 
     See package documentation:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
-    python sample_assistant_run.py
+    python sample_assistant_code_interpreter.py
 
     Set these two environment variables before running the sample:
     1) AZUREAI_ENDPOINT_URL - Your endpoint URL, in the form 
@@ -62,24 +62,18 @@ def sample_assistant_run():
     assistant_client = AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version)
     logging.info("Created assistant client")
 
-    # Initialize assistant functions
-    functions = FunctionTool(user_functions)
-    # functions.add_function(...)
-    # code_interpreter = CodeInterpreterTool()
-    # code_interpreter.add_file()
-    # file_search = FileSearchTool()
-    # file_search.add_vector_store(...)
+    # Create code interpreter tool
+    code_interpreter = CodeInterpreterTool()
+    openai_file = assistant_client.upload_file(file_path="nifty_500_quarterly_results.csv", purpose="assistants")
+    code_interpreter.add_file(openai_file.id)
 
     toolset = ToolSet()
-    toolset.add(functions)
-    # tools.add(code_interpreter)
-    # tools.add(file_search)
+    toolset.add(code_interpreter)
 
     # Create assistant
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+        model="gpt", name="my-assistant", instructions="You are a helpful assistant that can analyze data and create charts", toolset=toolset
     )
-
     logging.info("Created assistant, ID: %s", assistant.id)
 
     # Create thread for communication
@@ -87,7 +81,7 @@ def sample_assistant_run():
     logging.info("Created thread, ID: %s", thread.id)
 
     # Create message to thread
-    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
+    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, please provide bar chart on METALS & MINING sector?")
     logging.info("Created message, ID: %s", message.id)
 
     # Create and process assistant run in thread with tools
@@ -97,6 +91,10 @@ def sample_assistant_run():
     # Fetch and log all messages
     messages = assistant_client.list_messages(thread_id=thread.id)
     logging.info("Messages: %s", messages)
+
+    # Delete the file when done
+    assistant_client.delete_file(openai_file.id)
+    logging.info("Deleted file")
 
     # Delete the assistant when done
     assistant_client.delete_assistant(assistant.id)
