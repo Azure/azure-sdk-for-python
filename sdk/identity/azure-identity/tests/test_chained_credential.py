@@ -251,3 +251,25 @@ def test_credentials_with_no_get_token_info():
     chain = ChainedTokenCredential(credential1, credential2, credential3)  # type: ignore
     token_info = chain.get_token_info("scope")
     assert token_info.token == access_token
+
+
+def test_credentials_with_pop_option():
+    """ChainedTokenCredential should skip credentials that don't support get_token_info and the pop option is set."""
+
+    access_token = "****"
+    credential1 = Mock(
+        spec_set=["get_token_info"],
+        get_token_info=Mock(side_effect=CredentialUnavailableError(message="")),
+    )
+    credential2 = Mock(
+        spec_set=["get_token"],
+        get_token=Mock(return_value=AccessToken("foo", 42)),
+    )
+    credential3 = Mock(
+        spec_set=["get_token", "get_token_info"],
+        get_token=Mock(return_value=AccessToken("bar", 42)),
+        get_token_info=Mock(return_value=AccessTokenInfo(access_token, 42)),
+    )
+    chain = ChainedTokenCredential(credential1, credential2, credential3)  # type: ignore
+    token_info = chain.get_token_info("scope", options={"pop": True})  # type: ignore
+    assert token_info.token == access_token

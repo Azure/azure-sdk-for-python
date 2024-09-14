@@ -147,13 +147,17 @@ class ChainedTokenCredential:
         """
         within_credential_chain.set(True)
         history = []
+        options = options or {}
         for credential in self.credentials:
             try:
                 # A custom credential in the chain may not implement get_token_info
                 if hasattr(credential, "get_token_info"):
                     token_info = cast(SupportsTokenInfo, credential).get_token_info(*scopes, options=options)
                 else:
-                    options = options or {}
+                    if options.get("pop"):
+                        raise CredentialUnavailableError(
+                            "Proof of possession arguments are not supported for this credential."
+                        )
                     token = credential.get_token(*scopes, **options)
                     token_info = AccessTokenInfo(token=token.token, expires_on=token.expires_on)
                 _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
