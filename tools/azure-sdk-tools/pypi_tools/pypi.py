@@ -39,15 +39,19 @@ class PyPIClient:
 
     def filter_packages_for_compatibility(self, package_name, version_set):
         # only need the packaging.specifiers import if we're actually executing this filter.
-        from packaging.specifiers import SpecifierSet
+        from packaging.specifiers import InvalidSpecifier, SpecifierSet
 
         results = []
 
         for version in version_set:
             requires_python = self.project_release(package_name, version)["info"]["requires_python"]
             if requires_python:
-                if Version(".".join(map(str, sys.version_info[:3]))) in SpecifierSet(requires_python):
-                    results.append(version)
+                try:
+                    if Version(".".join(map(str, sys.version_info[:3]))) in SpecifierSet(requires_python):
+                        results.append(version)
+                except InvalidSpecifier:
+                    logging.warn(f"Invalid python_requires {requires_python!r} for package {package_name}=={version}")
+                    continue
             else:
                 results.append(version)
 
