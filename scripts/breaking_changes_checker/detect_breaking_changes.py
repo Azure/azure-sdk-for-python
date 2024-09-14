@@ -260,6 +260,8 @@ def get_parameter_type(annotation) -> str:
     if isinstance(annotation, ast.Attribute):
         return annotation.attr
     if isinstance(annotation, ast.Constant):
+        if annotation.value is None:
+            return "None"
         return annotation.value
     if isinstance(annotation, ast.Subscript):
         if isinstance(annotation.slice, tuple):
