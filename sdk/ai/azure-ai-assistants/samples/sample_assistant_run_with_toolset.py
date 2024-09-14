@@ -76,9 +76,10 @@ def sample_assistant_run():
     # tools.add(file_search)
 
     # Create assistant
-    assistant = assistant_client.create_assistant_with_toolset(
+    assistant = assistant_client.create_assistant(
         model="gpt", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
     )
+
     logging.info("Created assistant, ID: %s", assistant.id)
 
     # Create thread for communication

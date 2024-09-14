@@ -45,8 +45,6 @@ def setup_console_trace_exporter():
 
 
 def sample_assistant_functions():
-    # Setup logging
-    logging.basicConfig(level=logging.INFO)
 
     # Setup console trace exporter
     setup_console_trace_exporter()
@@ -118,4 +116,6 @@ def sample_assistant_functions():
 
 
 if __name__ == "__main__":
+    # Set logging level
+    logging.basicConfig(level=logging.INFO)
     sample_assistant_functions()
