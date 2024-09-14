@@ -4,14 +4,14 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to use assistants client for code interpreter and processing 
+    This sample demonstrates how to use assistants client for file search and processing 
     with a synchronous client.
 
     See package documentation:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
-    python sample_assistant_code_interpreter.py
+    python sample_assistant_file_search.py
 
     Set these two environment variables before running the sample:
     1) AZUREAI_ENDPOINT_URL - Your endpoint URL, in the form 
@@ -27,7 +27,7 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants import AssistantsClient
-from azure.ai.assistants.models import CodeInterpreterTool, ToolSet
+from azure.ai.assistants.models import FileSearchTool, ToolSet
 from azure.core.credentials import AzureKeyCredential
 from user_functions import user_functions
 
@@ -62,17 +62,18 @@ def sample_assistant_run():
     assistant_client = AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version)
     logging.info("Created assistant client")
 
-    # Create code interpreter tool
-    code_interpreter = CodeInterpreterTool()
-    openai_file = assistant_client.upload_file(file_path="nifty_500_quarterly_results.csv", purpose="assistants")
-    code_interpreter.add_file(openai_file.id)
+    # Create file search tool
+    file_search = FileSearchTool()
+    openai_file = assistant_client.upload_file(file_path="product_info_1.md", purpose="assistants")
+    openai_vectorstore = assistant_client.create_vector_store(file_ids=[openai_file.id], name="my_vectorstore")
+    file_search.add_vector_store(openai_vectorstore.id)
 
     toolset = ToolSet()
-    toolset.add(code_interpreter)
+    toolset.add(file_search)
 
     # Create assistant
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="You are a helpful assistant that can analyze data and create charts", toolset=toolset
+        model="gpt", name="my-assistant", instructions="Hello, you are helpful assistant and can search information from uploaded files", toolset=toolset
     )
     logging.info("Created assistant, ID: %s", assistant.id)
 
@@ -81,14 +82,18 @@ def sample_assistant_run():
     logging.info("Created thread, ID: %s", thread.id)
 
     # Create message to thread
-    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, please provide bar chart on METALS & MINING sector?")
+    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?")
     logging.info("Created message, ID: %s", message.id)
 
     # Create and process assistant run in thread with tools
+    # Note: If vector store has been created just before this, there can be need to poll the status of vector store to be ready for information retrieval
+    #       This can be done by calling `assistant_client.get_vector_store(vector_store_id)` and checking the status of vector store
+    #       We may want to add conveniency around this
     run = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
     logging.info("Run finished with status: %s", run.status)
 
     if run.status == "failed":
+        # Check if you got "Rate limit is exceeded.", then you want to get more quota
         logging.error("Run failed: %s", run.last_error)
 
     # Fetch and log all messages
@@ -96,8 +101,8 @@ def sample_assistant_run():
     logging.info("Messages: %s", messages)
 
     # Delete the file when done
-    assistant_client.delete_file(openai_file.id)
-    logging.info("Deleted file")
+    assistant_client.delete_vector_store(openai_vectorstore.id)
+    logging.info("Deleted vector store")
 
     # Delete the assistant when done
     assistant_client.delete_assistant(assistant.id)
