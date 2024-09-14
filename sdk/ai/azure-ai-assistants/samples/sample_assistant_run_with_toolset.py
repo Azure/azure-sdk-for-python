@@ -91,8 +91,11 @@ def sample_assistant_run():
     logging.info("Created message, ID: %s", message.id)
 
     # Create and process assistant run in thread with tools
-    run_status = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
-    logging.info("Run finished with status: %s", run_status)
+    run = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+    logging.info("Run finished with status: %s", run.status)
+
+    if run.status == "failed":
+        logging.error("Run failed: %s", run.last_error)
 
     # Fetch and log all messages
     messages = assistant_client.list_messages(thread_id=thread.id)

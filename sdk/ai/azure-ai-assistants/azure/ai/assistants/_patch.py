@@ -332,7 +332,7 @@ class AssistantsClient(AssistantsClientGenerated):
         metadata: Optional[Dict[str, str]] = None,
         sleep_interval: int = 1,
         **kwargs: Any
-    ) -> Union[str, _models.AssistantRunStream]:
+    ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
         """Creates a new run for an assistant thread and processes the run.
 
         :param thread_id: Required.
@@ -460,7 +460,7 @@ class AssistantsClient(AssistantsClientGenerated):
 
             _LOGGER.info("Current run status: %s", run.status)
 
-        return run.status
+        return run
 
 
 __all__: List[str] = ["AssistantsClient"]  # Add all objects you want publicly available to users at this package level
