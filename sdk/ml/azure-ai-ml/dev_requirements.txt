@@ -23,4 +23,3 @@ pytest-reportlog
 python-dotenv
 azureml-dataprep-rslex>=2.22.0
 azure-monitor-opentelemetry
-opentelemetry
