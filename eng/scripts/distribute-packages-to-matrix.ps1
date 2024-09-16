@@ -16,6 +16,7 @@ param(
 )
 
 Set-StrictMode -Version 4
+$BATCHSIZE = 10
 
 if (!(Test-Path $PackageInfoFolder)) {
     Write-Error "PackageInfo folder file not found: $PackageInfoFolder"
@@ -27,13 +28,56 @@ if (!(Test-Path $PlatformMatrix)) {
     exit 1
 }
 
+function Extract-MatrixMultiplier {
+    param (
+        [Parameter(Mandatory=$true)]
+        [PSCustomObject]$Matrix
+    )
+
+    $highestCount = 1
+
+    foreach ($property in $Matrix.PSObject.Properties) {
+        $type = $property.Value.GetType().Name
+        switch ($type) {
+            "PSCustomObject" {
+                # Write-Host $property.Value
+                # Write-Host $property.Value.GetType()
+                $itemCount = 0
+
+                # this looks very strange to loop over the properties of a PSCustomObject,
+                # but this is the only way to actually count. The Count/Length property is
+                # NOT available
+                foreach($innerProperty in $property.Value.PSObject.Properties) {
+                    # Write-Host "Counting $($innerProperty.Name)"
+                    $itemCount++
+                }
+
+                if ($itemCount -gt $highestCount) {
+                    # Write-Host "Overwriting highest count with $itemCount from $($property.Name)"
+                    $highestCount = $itemCount
+                }
+            }
+            "Object[]" {
+                $count = $property.Value.Length
+                # Write-Host $property.Value
+                # Write-Host "Found a Object[] and returning $count from $($property.Name)"
+                if ($count -gt $highestCount) {
+                    $highestCount = $count
+                }
+            }
+        }
+    }
+
+    return $highestCount
+}
 
 function Split-ArrayIntoBatches {
     param (
         [Parameter(Mandatory=$true)]
         [object[]]$InputArray,
 
-        [int]$BatchSize = 5
+        [Parameter(Mandatory=$true)]
+        [int]$BatchSize
     )
 
     # Initialize an empty array to hold the batches
@@ -51,18 +95,79 @@ function Split-ArrayIntoBatches {
     return ,$batches
 }
 
-$packageProperties = Get-ChildItem -Recurse "$PackageInfoFolder" *.json | % { Write-Host $_.FullName; Get-Content -Path $_.FullName | ConvertFrom-Json }
+function Update-Matrix {
+    param (
+        [Parameter(Mandatory=$true)]
+        [PSCustomObject]$Matrix,
+
+        [Parameter(Mandatory=$true)]
+        $DirectBatches,
+
+        [Parameter(Mandatory=$true)]
+        $IndirectBatches
+    )
+
+    foreach($batch in $DirectBatches) {
+        $targetingString = ($batch | Select-Object -ExpandProperty Name) -join ","
+
+        # we need to equal the number of python versions in the matrix (to ensure we get complete coverage)
+        # so we need to multiply the targeting string by the number of python versions, that'll ensure that
+        # across all python versions we see the same packages
+        $targetingStringArray = @($targetingString) * $versionCount
+        Write-Host "Returning batch:"
+        foreach($item in $targetingStringArray) {
+            Write-Host "`t$item"
+        }
+
+        $matrix.matrix.TargetingString += $targetingStringArray
+
+        # if there were any include objects, we need to duplicate them exactly and add the targeting string to each
+        # this means that the number of includes at the end of this operation will be incoming # of includes * the number of batches
+        if ($includeCount -gt 0) {
+            Write-Host "Walking include objects for $targetingString"
+            $includeCopy = $originalInclude | ConvertTo-Json -Depth 100 | ConvertFrom-Json
+
+            foreach ($configElement in $includeCopy) {
+                if ($configElement.PSObject.Properties) {
+                    $topLevelPropertyName = $configElement.PSObject.Properties.Name
+                    $topLevelPropertyValue = $configElement.PSObject.Properties[$topLevelPropertyName].Value
+
+                    if ($topLevelPropertyValue.PSObject.Properties) {
+                        $secondLevelPropertyName = $topLevelPropertyValue.PSObject.Properties.Name
+                        $secondLevelPropertyValue = $topLevelPropertyValue.PSObject.Properties[$secondLevelPropertyName].Value
+
+                        $newSecondLevelName = "$secondLevelPropertyName" + "$targetingString"
+
+                        $topLevelPropertyValue.PSObject.Properties.Remove($secondLevelPropertyName)
+                        $topLevelPropertyValue | Add-Member -MemberType NoteProperty -Name $newSecondLevelName -Value $secondLevelPropertyValue
+
+                        # add the targeting string property if it doesn't already exist
+                        if (-not $topLevelPropertyValue.$newSecondLevelName.PSObject.Properties["TargetingString"]) {
+                            $topLevelPropertyValue.$newSecondLevelName | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value ""
+                        }
+
+                        # set the targeting string
+                        $topLevelPropertyValue.$newSecondLevelName.TargetingString = $targetingString
+                    }
+                }
+
+                $matrix.include += $configElement
+            }
+        }
+    }
+}
+
+$packageProperties = Get-ChildItem -Recurse "$PackageInfoFolder" *.json `
+    | % { Write-Host $_.FullName; Get-Content -Path $_.FullName | ConvertFrom-Json }
 $matrix = Get-Content -Path $PlatformMatrix | ConvertFrom-Json
 
-
-
-$versionCount = $matrix.matrix.PythonVersion.Count
+$versionCount = Extract-MatrixMultiplier -Matrix $matrix.matrix
+# Write-Host "Calculated a versionCount of $versionCount"
 $includeCount = 0
 $includeObject = $null
 if ($matrix.PSObject.Properties.Name -contains "include") {
     $includeCount = $matrix.include.Count
     $originalInclude = $matrix.include
-    # todo: reenable this
     $matrix.include = @()
 }
 $batchCount = $versionCount + $includeCount
@@ -70,8 +175,6 @@ if ($batchCount -eq 0) {
     Write-Error "No batches detected, skipping without updating platform matrix file $PlatformMatrix"
     exit 1
 }
-
-$batchSize = 5
 
 # batches is a hashtable because you cannot instantiate an array of empty arrays
 # the add method will merely invoke and silently NOT add a new item
@@ -84,8 +187,8 @@ $batchCounter = 0
 $batchValues = @()
 
 # if there is an IMPORT, we should import that first and use THAT. we have a clear edge case where a doubly-nested include will NOT work.
-
 # TODO: implement grabbing the matrix from the import if it exists
+
 $directIncludedPackages = $packageProperties | Where-Object { $_.IncludedForValidation -eq $false }
 $indirectIncludedPackages = $packageProperties | Where-Object { $_.IncludedForValidation -eq $true }
 
@@ -94,14 +197,12 @@ if ($indirectIncludedPackages) {
     Write-Host "IndirectIncludedPackages Included Length = $($indirectIncludedPackages.Length)"
 }
 
-# for python, for fast tests, I want the sets of packages to be broken up into sets of five.
-
 # I will assign all the direct included packages first. our goal is to get complete coverage of the direct included packages
 # then, for the indirect packages, we will ADD them as extra TargetingString bundles to the matrix.
 
-$directBatches = Split-ArrayIntoBatches -InputArray $directIncludedPackages -BatchSize $batchSize
-Write-Host $directBatches.Length
-Write-Host $directBatches[0].Length
+$directBatches = Split-ArrayIntoBatches -InputArray $directIncludedPackages -BatchSize $BATCHSIZE
+# Write-Host $directBatches.Length
+# Write-Host $directBatches[0].Length
 # all directly included packages should have their tests invoked in full, so, lets use a basic storage service discovery. We'll have direct package batches of
 
 # ["azure-storage-blob", "azure-storage-blob-changefeed", "azure-storage-extensions", "azure-storage-file-datalake", "azure-storage-file-share"]
@@ -129,59 +230,6 @@ if ($directBatches) {
     }
 }
 
-
-foreach($batch in $directBatches) {
-    $targetingString = ($batch | Select-Object -ExpandProperty Name) -join ","
-
-    # we need to equal the number of python versions in the matrix (to ensure we get complete coverage)
-    # so we need to multiply the targeting string by the number of python versions, that'll ensure that
-    # across all python versions we see the same packages
-    $targetingStringArray = @($targetingString) * $versionCount
-    Write-Host "Returning batch:"
-    foreach($item in $targetingStringArray) {
-        Write-Host "`t$item"
-    }
-
-    $matrix.matrix.TargetingString += $targetingStringArray
-
-    # if there were any include objects, we need to duplicate them exactly and add the targeting string to each
-    # this means that the number of includes at the end of this operation will be incoming # of includes * the number of batches
-    if ($includeCount -gt 0) {
-        Write-Host "Walking include objects for $targetingString"
-        $includeCopy = $originalInclude | ConvertTo-Json -Depth 100 | ConvertFrom-Json
-
-        foreach ($configElement in $includeCopy) {
-            if ($configElement.PSObject.Properties) {
-                $topLevelPropertyName = $configElement.PSObject.Properties.Name
-                $topLevelPropertyValue = $configElement.PSObject.Properties[$topLevelPropertyName].Value
-
-                if ($topLevelPropertyValue.PSObject.Properties) {
-                    $secondLevelPropertyName = $topLevelPropertyValue.PSObject.Properties.Name
-                    $secondLevelPropertyValue = $topLevelPropertyValue.PSObject.Properties[$secondLevelPropertyName].Value
-
-                    $newSecondLevelName = "$secondLevelPropertyName" + "$targetingString"
-
-                    $topLevelPropertyValue.PSObject.Properties.Remove($secondLevelPropertyName)
-                    $topLevelPropertyValue | Add-Member -MemberType NoteProperty -Name $newSecondLevelName -Value $secondLevelPropertyValue
-
-                    # add the targeting string property if it doesn't already exist
-                    if (-not $topLevelPropertyValue.$newSecondLevelName.PSObject.Properties["TargetingString"]) {
-                        $topLevelPropertyValue.$newSecondLevelName | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value ""
-                    }
-
-                    # set the targeting string
-                    $topLevelPropertyValue.$newSecondLevelName.TargetingString = $targetingString
-                }
-            }
-
-            $matrix.include += $configElement
-        }
-    }
-}
-
-# # todo: implement indirect
-# foreach($batch in $indirectBatches) {
-
-# }
+Update-Matrix -Matrix $matrix -DirectBatches $directBatches -IndirectBatches @()
 
 $matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
