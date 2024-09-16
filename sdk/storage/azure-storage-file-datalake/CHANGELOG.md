@@ -1,9 +1,12 @@
 # Release History
 
-## 12.17.0 (Unreleased)
+## 12.17.0 (2024-09-17)
 
 ### Features Added
+- Stable release of features from 12.23.0b1
 
+### Bugs Fixed
+- Fixed batch APIs for Azurite
 
 ## 12.17.0b1 (2024-08-07)
 
