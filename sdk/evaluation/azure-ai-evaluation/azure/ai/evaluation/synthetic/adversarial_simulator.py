@@ -364,7 +364,7 @@ class AdversarialSimulator:
     ) -> List[Dict[str, Any]]:
         """Call the adversarial simulator synchronously.
         :keyword scenario: Enum value specifying the adversarial scenario used for generating inputs.
-         example:
+        example:
 
          - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_QA`
          - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_CONVERSATION`
