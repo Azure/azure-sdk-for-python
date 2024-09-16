@@ -16,7 +16,7 @@ from ._content_safety import (
 from ._f1_score import F1ScoreEvaluator
 from ._fluency import FluencyEvaluator
 from ._gleu import GleuScoreEvaluator
-from ._groundedness import GroundednessEvaluator
+from ._groundedness import GroundednessEvaluator, LLMGroundednessEvaluator
 from ._meteor import MeteorScoreEvaluator
 from ._protected_material import ProtectedMaterialEvaluator
 from ._qa import QAEvaluator
@@ -30,6 +30,7 @@ __all__ = [
     "F1ScoreEvaluator",
     "FluencyEvaluator",
     "GroundednessEvaluator",
+    "LLMGroundednessEvaluator",
     "RelevanceEvaluator",
     "SimilarityEvaluator",
     "QAEvaluator",
