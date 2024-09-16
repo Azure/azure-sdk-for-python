@@ -15,6 +15,7 @@ from azure.core.credentials import TokenCredential
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.evaluation._http_utils import get_async_http_client
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 from .constants import (
     CommonConstants,
@@ -330,11 +331,11 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
     return result
 
 
-async def _get_service_discovery_url(azure_ai_project: dict, token: str) -> str:
+async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: str) -> str:
     """Get the discovery service URL for the Azure AI project
 
     :param azure_ai_project: The Azure AI project details.
-    :type azure_ai_project: Dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param token: The Azure authentication token.
     :type token: str
     :return: The discovery service URL.
@@ -414,7 +415,7 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: str = None) -
 
 
 async def evaluate_with_rai_service(
-    question: str, answer: str, metric_name: str, project_scope: dict, credential: TokenCredential
+    question: str, answer: str, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
 ):
     """ "Evaluate the content safety of the answer using Responsible AI service
 

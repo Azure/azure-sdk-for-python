@@ -6,6 +6,7 @@ from abc import ABC
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 
 class ContentSafetyEvaluatorBase(ABC):
@@ -18,12 +19,12 @@ class ContentSafetyEvaluatorBase(ABC):
     :type metric: ~azure.ai.evaluation._evaluators._content_safety.flow.constants.EvaluationMetrics
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type azure_ai_project: Dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, metric: EvaluationMetrics, azure_ai_project: dict, credential=None):
+    def __init__(self, metric: EvaluationMetrics, azure_ai_project: AzureAIProject, credential=None):
         self._metric = metric
         self._azure_ai_project = azure_ai_project
         self._credential = credential

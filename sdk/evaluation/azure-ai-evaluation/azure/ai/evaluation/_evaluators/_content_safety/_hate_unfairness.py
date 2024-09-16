@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from azure.ai.evaluation._common.constants import EvaluationMetrics
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 try:
     from ._content_safety_base import ContentSafetyEvaluatorBase
@@ -11,7 +12,7 @@ except ImportError:
 
 
 class _AsyncHateUnfairnessEvaluator(ContentSafetyEvaluatorBase):
-    def __init__(self, azure_ai_project: dict, credential=None):
+    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
         # Hate_fairness is the actual backend metric name. Which, uh, doesn't sound great.
         # so invert the name.
         super().__init__(
@@ -30,7 +31,7 @@ class HateUnfairnessEvaluator:
 
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type azure_ai_project: dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
 
@@ -57,7 +58,7 @@ class HateUnfairnessEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: dict, credential=None) -> None:
+    def __init__(self, azure_ai_project: AzureAIProject, credential=None) -> None:
         self._async_evaluator = _AsyncHateUnfairnessEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, question: str, answer: str, **kwargs):

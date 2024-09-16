@@ -12,6 +12,7 @@ import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
 from promptflow.client import PFClient
 
+from .._model_configurations import AzureAIProject
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EvaluationMetrics,
@@ -360,7 +361,7 @@ def evaluate(
     data: Optional[str] = None,
     evaluators: Optional[Dict[str, Callable]] = None,
     evaluator_config: Optional[Dict[str, Dict[str, str]]] = None,
-    azure_ai_project: Optional[Dict] = None,
+    azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
     **kwargs,
 ):
@@ -386,7 +387,7 @@ def evaluate(
           the results will be saved to a file named `evaluation_results.json` in the folder.
     :paramtype output_path: Optional[str]
     :keyword azure_ai_project: Logs evaluation results to AI Studio if set.
-    :paramtype azure_ai_project: Optional[Dict]
+    :paramtype azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
     :return: Evaluation results.
     :rtype: dict
 
@@ -466,7 +467,7 @@ def _evaluate(  # pylint: disable=too-many-locals
     data: Optional[str] = None,
     evaluators: Optional[Dict[str, Callable]] = None,
     evaluator_config: Optional[Dict[str, Dict[str, str]]] = None,
-    azure_ai_project: Optional[Dict] = None,
+    azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
     **kwargs,
 ):

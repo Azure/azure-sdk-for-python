@@ -9,6 +9,7 @@ from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
 from azure.ai.evaluation._user_agent import USER_AGENT
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 from ._identity_manager import APITokenManager
 
@@ -22,13 +23,14 @@ if "RAI_SVC_URL" in os.environ:
 class RAIClient:
     """Client for the Responsible AI Service
 
-    :param azure_ai_project: The Azure AI project
-    :type azure_ai_project: Dict
+    :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
+        name.
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param token_manager: The token manager
     :type token_manage: ~azure.ai.evaluation.simulator._model_tools._identity_manager.APITokenManager
     """
 
-    def __init__(self, azure_ai_project: Dict, token_manager: APITokenManager) -> None:
+    def __init__(self, azure_ai_project: AzureAIProject, token_manager: APITokenManager) -> None:
         self.azure_ai_project = azure_ai_project
         self.token_manager = token_manager
 
