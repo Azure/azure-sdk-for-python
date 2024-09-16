@@ -51,8 +51,10 @@ function Split-ArrayIntoBatches {
     return ,$batches
 }
 
-$packageProperties = Get-ChildItem -Recurse "$PackageInfoFolder" *.json | % { Get-Content -Path $_.FullName | ConvertFrom-Json }
+$packageProperties = Get-ChildItem -Recurse "$PackageInfoFolder" *.json | % { Write-Host $_.FullName; Get-Content -Path $_.FullName | ConvertFrom-Json }
 $matrix = Get-Content -Path $PlatformMatrix | ConvertFrom-Json
+
+
 
 $versionCount = $matrix.matrix.PythonVersion.Count
 $includeCount = 0
@@ -62,7 +64,6 @@ if ($matrix.PSObject.Properties.Name -contains "include") {
     $originalInclude = $matrix.include
     # todo: reenable this
     $matrix.include = @()
-    Write-Host "Original include type " + $originalInclude.GetType()
 }
 $batchCount = $versionCount + $includeCount
 if ($batchCount -eq 0) {
@@ -82,21 +83,21 @@ for ($i = 0; $i -lt $batchCount; $i++) {
 $batchCounter = 0
 $batchValues = @()
 
-# if there is an IMPORT, we should import that first and use THAT. we have a clear edge case where a nested include will NOT work.
-# I am accepting that in interests of making this work with all our platform matrix json files throughout the repo
+# if there is an IMPORT, we should import that first and use THAT. we have a clear edge case where a doubly-nested include will NOT work.
+
 # TODO: implement grabbing the matrix from the import if it exists
 $directIncludedPackages = $packageProperties | Where-Object { $_.IncludedForValidation -eq $false }
 $indirectIncludedPackages = $packageProperties | Where-Object { $_.IncludedForValidation -eq $true }
 
 Write-Host "Direct Included Length = $($directIncludedPackages.Length)"
-Write-Host "IndirectIncludedPackages Included Length = $($indirectIncludedPackages.Length)"
+if ($indirectIncludedPackages) {
+    Write-Host "IndirectIncludedPackages Included Length = $($indirectIncludedPackages.Length)"
+}
 
 # for python, for fast tests, I want the sets of packages to be broken up into sets of five.
 
 # I will assign all the direct included packages first. our goal is to get complete coverage of the direct included packages
 # then, for the indirect packages, we will ADD them as extra TargetingString bundles to the matrix.
-# this means that these "extra" packages will never run on any platform that's not present in INCLUDE, but frankly
-# that's nbd IMO
 
 $directBatches = Split-ArrayIntoBatches -InputArray $directIncludedPackages -BatchSize $batchSize
 Write-Host $directBatches.Length
@@ -128,6 +129,7 @@ if ($directBatches) {
     }
 }
 
+
 foreach($batch in $directBatches) {
     $targetingString = ($batch | Select-Object -ExpandProperty Name) -join ","
 
@@ -147,22 +149,9 @@ foreach($batch in $directBatches) {
     if ($includeCount -gt 0) {
         Write-Host "Walking include objects for $targetingString"
         $includeCopy = $originalInclude | ConvertTo-Json -Depth 100 | ConvertFrom-Json
+
         foreach ($configElement in $includeCopy) {
             if ($configElement.PSObject.Properties) {
-                # an include looks like this
-                # {
-                #     <ConfigName>
-                #     "CoverageConfig": {
-                #         <jobname>
-                #         "ubuntu2004_39_coverage": {
-                #            "OSVmImage": "env:LINUXVMIMAGE",
-                #            "Pool": "env:LINUXPOOL",
-                #            "PythonVersion": "3.9",
-                #            "CoverageArg": "",
-                #            "TestSamples": "false"
-                #         }
-                #     }
-                # }
                 $topLevelPropertyName = $configElement.PSObject.Properties.Name
                 $topLevelPropertyValue = $configElement.PSObject.Properties[$topLevelPropertyName].Value
 
