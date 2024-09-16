@@ -283,23 +283,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("disableRUPerMinuteUsage"):
         headers[http_constants.HttpHeaders.DisableRUPerMinuteUsage] = options["disableRUPerMinuteUsage"]
 
-    if options.get("changeFeed") is True:
-        # On REST level, change feed is using IfNoneMatch/ETag instead of continuation.
-        if_none_match_value = None
-        if options.get("continuation"):
-            if_none_match_value = options["continuation"]
-        elif options.get("isStartFromBeginning") and not options["isStartFromBeginning"]:
-            if_none_match_value = "*"
-        elif options.get("startTime"):
-            start_time = options.get("startTime")
-            headers[http_constants.HttpHeaders.IfModified_since] = start_time
-        if if_none_match_value:
-            headers[http_constants.HttpHeaders.IfNoneMatch] = if_none_match_value
-
-        headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
-    else:
-        if options.get("continuation"):
-            headers[http_constants.HttpHeaders.Continuation] = options["continuation"]
+    if options.get("continuation"):
+        headers[http_constants.HttpHeaders.Continuation] = options["continuation"]
 
     if options.get("populatePartitionKeyRangeStatistics"):
         headers[http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] = options[
