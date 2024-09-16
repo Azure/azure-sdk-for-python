@@ -1121,7 +1121,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             data_change_detection_policy=self.data_change_detection_policy,
             data_deletion_detection_policy=self.data_deletion_detection_policy,
             e_tag=self.e_tag,
-            encryption_key=self.encryption_key._to_generated(),
+            encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
             identity=self.identity,
         )
 
@@ -1141,7 +1141,11 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             data_change_detection_policy=search_indexer_data_source.data_change_detection_policy,
             data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
             e_tag=search_indexer_data_source.e_tag,
-            encryption_key=SearchResourceEncryptionKey._from_generated(search_indexer_data_source.encryption_key),
+            encryption_key=(
+                SearchResourceEncryptionKey._from_generated(search_indexer_data_source.encryption_key)
+                if search_indexer_data_source.encryption_key
+                else None
+            ),
             identity=search_indexer_data_source.identity,
         )
 
