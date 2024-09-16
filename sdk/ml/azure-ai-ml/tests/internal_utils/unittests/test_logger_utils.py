@@ -1,7 +1,7 @@
 import logging
 
 import pytest
-from mock import patch
+from mock import MagicMock, patch
 
 from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, set_appinsights_distro
 from azure.ai.ml._user_agent import USER_AGENT
@@ -26,13 +26,20 @@ class TestLoggerUtils:
 @pytest.mark.unittest
 class TestLoggingHandler:
     @patch("azure.ai.ml._telemetry.logging_handler.configure_azure_monitor")
-    def test_logging_enabled(self, mock_configure_azure_monitor) -> None:
+    @patch("azure.ai.ml._telemetry.logging_handler.logging.getLogger")
+    def test_logging_enabled(self, mock_get_logger, mock_configure_azure_monitor) -> None:
+        mock_logger = MagicMock()
+        mock_get_logger.return_value = mock_logger
         with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
             set_appinsights_distro(user_agent=USER_AGENT)
+            assert len(mock_logger.addHandler.call_args_list) == 1
+            assert isinstance(mock_logger.addHandler.call_args[0][0], logging.NullHandler)
             mock_configure_azure_monitor.assert_not_called()
+            mock_logger.reset_mock()
 
         with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
             set_appinsights_distro(user_agent=USER_AGENT)
+            mock_logger.addHandler.assert_not_called()
             mock_configure_azure_monitor.assert_called_once()
 
 
