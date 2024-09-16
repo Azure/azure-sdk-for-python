@@ -26,8 +26,8 @@ class TestSimulator:
     @patch(
         "azure.ai.evaluation.simulator._model_tools.AdversarialTemplateHandler._get_content_harm_template_collections"
     )
-    @patch("azure.ai.evaluation.simulator.adversarial_simulator.AdversarialSimulator._simulate_async")
-    @patch("azure.ai.evaluation.simulator.adversarial_simulator.AdversarialSimulator._ensure_service_dependencies")
+    @patch("azure.ai.evaluation.simulator.AdversarialSimulator._simulate_async")
+    @patch("azure.ai.evaluation.simulator.AdversarialSimulator._ensure_service_dependencies")
     def test_initialization_with_all_valid_scenarios(
         self,
         mock_ensure_service_dependencies,
