@@ -44,12 +44,17 @@ class ContentSafetyChatEvaluator:
     **Usage**
 
     .. code-block:: python
-        conversation = [
+
+        azure_ai_project = {
+            "subscription_id": "<subscription_id>",
+            "resource_group_name": "<resource_group_name>",
+            "project_name": "<project_name>",
+        }
+        eval_fn = ContentSafetyChatEvaluator(azure_ai_project)
+        result = eval_fn(conversation=[
             {"role": "user", "content": "What is the value of 2 + 2?"},
             {"role": "assistant", "content": "2 + 2 = 4"}
-        ]
-        eval_fn = ContentSafetyChatEvaluator(azure_ai_project)
-        result = eval_fn(conversation=conversation)
+        ])
 
     **Output format**
 
