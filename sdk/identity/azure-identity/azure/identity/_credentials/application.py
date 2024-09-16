@@ -6,7 +6,7 @@ import logging
 import os
 from typing import Any, Optional, cast
 
-from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
@@ -83,7 +83,9 @@ class AzureApplicationCredential(ChainedTokenCredential):
             `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            token = self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            token = cast(TokenCredential, self._successful_credential).get_token(
+                *scopes, claims=claims, tenant_id=tenant_id, **kwargs
+            )
             _LOGGER.info(
                 "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
             )

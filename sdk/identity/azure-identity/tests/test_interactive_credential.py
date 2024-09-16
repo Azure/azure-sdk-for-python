@@ -450,3 +450,19 @@ def test_multitenant_authentication_not_allowed(get_token_method):
             kwargs = {"options": kwargs}
         token = getattr(credential, get_token_method)("scope", **kwargs)
         assert token.token == expected_token
+
+
+def test_arbitrary_kwargs_propagated_get_token_info():
+    """For intermediary testing of PoP support."""
+
+    class TestCredential(InteractiveCredential):
+        def __init__(self, **kwargs):
+            super(TestCredential, self).__init__(client_id="...", **kwargs)
+
+        def _request_token(self, *_, **kwargs):
+            assert "foo" in kwargs
+            raise ValueError("Raising here since keyword arg was propagated")
+
+    credential = TestCredential()
+    with pytest.raises(ValueError):
+        credential.get_token_info("scope", options={"foo": "bar"})  # type: ignore

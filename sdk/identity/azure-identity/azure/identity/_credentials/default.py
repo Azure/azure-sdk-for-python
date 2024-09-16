@@ -4,9 +4,9 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, TYPE_CHECKING, Any, Optional, cast
+from typing import List, Any, Optional, cast
 
-from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority, within_dac
 from .azure_powershell import AzurePowerShellCredential
@@ -19,9 +19,6 @@ from .azure_cli import AzureCliCredential
 from .azd_cli import AzureDeveloperCliCredential
 from .vscode import VisualStudioCodeCredential
 from .workload_identity import WorkloadIdentityCredential
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -217,7 +214,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
             `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            token = self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            token = cast(TokenCredential, self._successful_credential).get_token(
+                *scopes, claims=claims, tenant_id=tenant_id, **kwargs
+            )
             _LOGGER.info(
                 "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
             )

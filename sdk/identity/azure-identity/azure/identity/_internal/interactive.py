@@ -190,6 +190,12 @@ class InteractiveCredential(MsalCredential, ABC):
         claims = options.get("claims")
         tenant_id = options.get("tenant_id")
         enable_cae = options.get("enable_cae", False)
+
+        # Check for arbitrary additional options to enable intermediary support for PoP tokens.
+        for key in options:
+            if key not in TokenRequestOptions.__annotations__:
+                kwargs.setdefault(key, options[key])
+
         try:
             token = self._acquire_token_silent(
                 *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs

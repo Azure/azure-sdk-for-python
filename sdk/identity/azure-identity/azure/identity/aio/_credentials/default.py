@@ -196,7 +196,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
           `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            token = await self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            token = await cast(AsyncTokenCredential, self._successful_credential).get_token(
+                *scopes, claims=claims, tenant_id=tenant_id, **kwargs
+            )
             _LOGGER.info(
                 "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
             )

@@ -4,18 +4,15 @@
 # ------------------------------------
 import asyncio
 import logging
-from typing import Any, Optional, TYPE_CHECKING, cast
+from typing import Any, Optional, cast
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
-from azure.core.credentials_async import AsyncSupportsTokenInfo
+from azure.core.credentials_async import AsyncSupportsTokenInfo, AsyncTokenCredential, AsyncTokenProvider
 from .._internal import AsyncContextManager
 from ... import CredentialUnavailableError
 from ..._credentials.chained import _get_error_message
 from ..._internal import within_credential_chain
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,11 +36,11 @@ class ChainedTokenCredential(AsyncContextManager):
             :caption: Create a ChainedTokenCredential.
     """
 
-    def __init__(self, *credentials: "AsyncTokenCredential") -> None:
+    def __init__(self, *credentials: AsyncTokenProvider) -> None:
         if not credentials:
             raise ValueError("at least one credential is required")
 
-        self._successful_credential: Optional[AsyncTokenCredential] = None
+        self._successful_credential: Optional[AsyncTokenProvider] = None
         self.credentials = credentials
 
     async def close(self) -> None:
@@ -52,7 +49,12 @@ class ChainedTokenCredential(AsyncContextManager):
         await asyncio.gather(*(credential.close() for credential in self.credentials))
 
     async def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
     ) -> AccessToken:
         """Asynchronously request a token from each credential, in order, returning the first token received.
 
@@ -67,6 +69,8 @@ class ChainedTokenCredential(AsyncContextManager):
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
+        :keyword bool enable_cae: indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -76,7 +80,21 @@ class ChainedTokenCredential(AsyncContextManager):
         history = []
         for credential in self.credentials:
             try:
-                token = await credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+                # Prioritize "get_token". Fall back to "get_token_info" if not available.
+                if hasattr(credential, "get_token"):
+                    token = await cast(AsyncTokenCredential, credential).get_token(
+                        *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                    )
+                else:
+                    options: TokenRequestOptions = {}
+                    if claims:
+                        options["claims"] = claims
+                    if tenant_id:
+                        options["tenant_id"] = tenant_id
+                    options["enable_cae"] = enable_cae
+                    token_info = await cast(AsyncSupportsTokenInfo, credential).get_token_info(*scopes, **kwargs)
+                    token = AccessToken(token_info.token, token_info.expires_on)
+
                 _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
                 self._successful_credential = credential
                 within_credential_chain.set(False)
@@ -95,7 +113,6 @@ class ChainedTokenCredential(AsyncContextManager):
                     exc_info=True,
                 )
                 break
-
         within_credential_chain.set(False)
         attempts = _get_error_message(history)
         message = (
@@ -131,7 +148,7 @@ class ChainedTokenCredential(AsyncContextManager):
         options = options or {}
         for credential in self.credentials:
             try:
-                # A custom credential in the chain may not implement get_token_info
+                # Prioritize "get_token_info". Fall back to "get_token" if not available.
                 if hasattr(credential, "get_token_info"):
                     token_info = await cast(AsyncSupportsTokenInfo, credential).get_token_info(*scopes, options=options)
                 else:
@@ -139,8 +156,9 @@ class ChainedTokenCredential(AsyncContextManager):
                         raise CredentialUnavailableError(
                             "Proof of possession arguments are not supported for this credential."
                         )
-                    token = await credential.get_token(*scopes, **options)
+                    token = await cast(AsyncTokenCredential, credential).get_token(*scopes, **options)
                     token_info = AccessTokenInfo(token=token.token, expires_on=token.expires_on)
+
                 _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
                 self._successful_credential = credential
                 within_credential_chain.set(False)

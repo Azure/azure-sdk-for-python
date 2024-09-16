@@ -255,6 +255,32 @@ async def test_credentials_with_no_get_token_info():
 
 
 @pytest.mark.asyncio
+async def test_credentials_with_no_get_token():
+    """ChainedTokenCredential should work with credentials that only implement get_token_info."""
+
+    async def credential_unavailable(message="it didn't work", **_):
+        raise CredentialUnavailableError(message)
+
+    access_token = "****"
+    credential1 = Mock(
+        spec_set=["get_token"],
+        get_token=Mock(wraps=credential_unavailable),
+    )
+    credential2 = Mock(
+        spec_set=["get_token_info"],
+        get_token_info=Mock(wraps=wrap_in_future(lambda _, **__: AccessTokenInfo(access_token, 42))),
+    )
+    credential3 = Mock(
+        spec_set=["get_token", "get_token_info"],
+        get_token=Mock(wraps=wrap_in_future(lambda _, **__: AccessToken("foo", 42))),
+        get_token_info=Mock(wraps=wrap_in_future(lambda _, **__: AccessTokenInfo("bar", 42))),
+    )
+    chain = ChainedTokenCredential(credential1, credential2, credential3)  # type: ignore
+    token_info = await chain.get_token("scope")
+    assert token_info.token == access_token
+
+
+@pytest.mark.asyncio
 async def test_credentials_with_pop_option():
     """ChainedTokenCredential should skip credentials that don't support get_token_info and the pop option is set."""
 
