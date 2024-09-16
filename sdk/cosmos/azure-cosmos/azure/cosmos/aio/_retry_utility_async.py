@@ -102,10 +102,10 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             # setting the throttle related response headers before returning the result
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryCount
-            ] = resourceThrottle_retry_policy.current_retry_attempt_count
+            ] = str(resourceThrottle_retry_policy.current_retry_attempt_count)
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryWaitTimeInMs
-            ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
+            ] = str(resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds)
             # TODO: It is better to raise Exceptions manually in the method related to the request,
             #  a rework of retry would be needed to be able to retry exceptions raised that way.
             #  for now raising a manual exception here should allow it to be retried.
@@ -173,10 +173,10 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     client.last_response_headers = {}
                 client.last_response_headers[
                     HttpHeaders.ThrottleRetryCount
-                ] = resourceThrottle_retry_policy.current_retry_attempt_count
+                ] = str(resourceThrottle_retry_policy.current_retry_attempt_count)
                 client.last_response_headers[
                     HttpHeaders.ThrottleRetryWaitTimeInMs
-                ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
+                ] = str(resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds)
                 if args and args[0].should_clear_session_token_on_session_read_failure:
                     client.session.clear_session_token(client.last_response_headers)
                 raise
