@@ -16,16 +16,16 @@ class ContentSafetyEvaluatorBase(ABC):
 
     :param metric: The metric to be evaluated.
     :type metric: ~azure.ai.evaluation._evaluators._content_safety.flow.constants.EvaluationMetrics
-    :param project_scope: The scope of the Azure AI project.
+    :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type project_scope: Dict
+    :type azure_ai_project: Dict
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, metric: EvaluationMetrics, project_scope: dict, credential=None):
+    def __init__(self, metric: EvaluationMetrics, azure_ai_project: dict, credential=None):
         self._metric = metric
-        self._project_scope = project_scope
+        self._azure_ai_project = azure_ai_project
         self._credential = credential
 
     async def __call__(self, *, question: str, answer: str, **kwargs):
@@ -51,7 +51,7 @@ class ContentSafetyEvaluatorBase(ABC):
             metric_name=self._metric,
             question=question,
             answer=answer,
-            project_scope=self._project_scope,
+            project_scope=self._azure_ai_project,
             credential=self._credential,
         )
         return result

@@ -17,9 +17,9 @@ class IndirectAttackEvaluator:
 
     Detect whether cross domain injected attacks are present in your AI system's response.
 
-    :param project_scope: The scope of the Azure AI project. It contains subscription id, resource group, and project
+    :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
         name.
-    :type project_scope: dict
+    :type azure_ai_project: dict
     :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
     :type eval_last_turn: bool
@@ -50,8 +50,8 @@ class IndirectAttackEvaluator:
             }
     """
 
-    def __init__(self, project_scope: dict, eval_last_turn: bool = False, credential=None):
-        self._evaluator = _IndirectAttackEvaluator(project_scope, credential)
+    def __init__(self, azure_ai_project: dict, eval_last_turn: bool = False, credential=None):
+        self._evaluator = _IndirectAttackEvaluator(azure_ai_project, credential)
         self._eval_last_turn = eval_last_turn
 
     def __call__(
@@ -77,8 +77,8 @@ class IndirectAttackEvaluator:
 
 
 class _AsyncIndirectAttackEvaluator:
-    def __init__(self, project_scope: dict, credential=None):
-        self._project_scope = project_scope
+    def __init__(self, azure_ai_project: dict, credential=None):
+        self._azure_ai_project = azure_ai_project
         self._credential = credential
 
     async def __call__(self, *, question: str, answer: str, **kwargs):
@@ -103,15 +103,15 @@ class _AsyncIndirectAttackEvaluator:
             metric_name=EvaluationMetrics.XPIA,
             question=question,
             answer=answer,
-            project_scope=self._project_scope,
+            project_scope=self._azure_ai_project,
             credential=self._credential,
         )
         return result
 
 
 class _IndirectAttackEvaluator:
-    def __init__(self, project_scope: dict, credential=None):
-        self._async_evaluator = _AsyncIndirectAttackEvaluator(project_scope, credential)
+    def __init__(self, azure_ai_project: dict, credential=None):
+        self._async_evaluator = _AsyncIndirectAttackEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, question: str, answer: str, **kwargs):
         """

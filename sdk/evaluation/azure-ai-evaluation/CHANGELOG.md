@@ -6,6 +6,8 @@
 
 - The `synthetic` namespace has been renamed to `simulator`, and sub-namespaces under this module have been removed
 - The `evaluate` and `evaluators` namespaces have been removed, and everything previously exposed in those modules has been added to the root namespace `azure.ai.evaluation`  
+- The parameter name `project_scope` in content safety evaluators have been renamed to `azure_ai_project` for consistency with evaluate API and simulators.
+
 
 ### Features Added
 
