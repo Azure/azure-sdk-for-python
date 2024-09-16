@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import asyncio
+import copy
 import functools
 import importlib
 import json
@@ -65,11 +66,14 @@ def _add_request_chat_attributes(span: AbstractSpan, *args: Any, **kwargs: Any) 
     client = args[0]
     endpoint = client._config.endpoint
     server_address, port = parse_url(endpoint)
+    model = INFERENCE_GEN_AI_SYSTEM_NAME
+    if kwargs.get('model') is not None:
+        model = kwargs.get('model')
     _set_attributes(
         span,
         ("gen_ai.operation.name", "chat"),
         ("gen_ai.system", INFERENCE_GEN_AI_SYSTEM_NAME),
-        ("gen_ai.request.model", kwargs.get("model")),
+        ("gen_ai.request.model", model),
         ("gen_ai.request.max_tokens", kwargs.get("max_tokens")),
         ("gen_ai.request.temperature", kwargs.get("temperature")),
         ("gen_ai.request.top_p", kwargs.get("top_p")),
@@ -79,36 +83,63 @@ def _add_request_chat_attributes(span: AbstractSpan, *args: Any, **kwargs: Any) 
         span.add_attribute("server.port", port)
 
 
+def remove_function_call_names_and_arguments(tool_calls: list) -> list:
+    tool_calls_copy = copy.deepcopy(tool_calls)
+    for tool_call in tool_calls_copy:
+        if 'function' in tool_call:
+            if 'name' in tool_call['function']:
+                del tool_call['function']['name']
+            if 'arguments' in tool_call['function']:
+                del tool_call['function']['arguments']
+            if not tool_call['function']:
+                del tool_call['function']
+    return tool_calls_copy
+
+
+def get_finish_reasons(result):
+    if hasattr(result, "choices") and result.choices:
+        return [getattr(choice, "finish_reason", None).value if getattr(choice, "finish_reason", None) is not None else "none" for choice in result.choices]
+    else:
+        return None
+
+
+def get_finish_reason_for_choice(choice):
+    return getattr(choice, "finish_reason", None).value if getattr(choice, "finish_reason", None) is not None else "none"
+
+
 def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCompletions) -> None:
     for choice in result.choices:
         if _trace_inference_content:
             response: Dict[str, Any] = {
                 "message": {"content": choice.message.content},
-                "finish_reason": str(choice.finish_reason),
+                "finish_reason": get_finish_reason_for_choice(choice),
                 "index": choice.index,
             }
+            if choice.message.tool_calls:
+                response["message"]["tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
             attributes={
                 "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
                 "gen_ai.event.content": json.dumps(response)
             }
         else:
             response: Dict[str, Any] = {
-                "finish_reason": str(choice.finish_reason),
+                "finish_reason": get_finish_reason_for_choice(choice),
                 "index": choice.index,
             }
-            attributes={
-                "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-            }
-        if choice.message.tool_calls:
-            response["message"]["tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
+            if choice.message.tool_calls:
+                response["message"] = {}
+                tool_calls_function_names_and_arguments_removed = remove_function_call_names_and_arguments(choice.message.tool_calls)
+                response["message"]["tool_calls"] = [tool.as_dict() for tool in tool_calls_function_names_and_arguments_removed]
+                attributes={
+                    "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                    "gen_ai.event.content": json.dumps(response)
+                }
+            else:
+                attributes={
+                    "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                    "gen_ai.event.content": json.dumps(response)
+                }
         span.span_instance.add_event(name="gen_ai.choice", attributes=attributes)
-
-
-def get_finish_reasons(result):
-    if hasattr(result, "choices") and result.choices:
-        return [getattr(choice, "finish_reason", None).value if getattr(choice, "finish_reason", None) is not None else "none" for choice in result.choices] 
-    else:
-        return None
 
 
 def _add_response_chat_attributes(span: AbstractSpan, result: _models.ChatCompletions | _models.StreamingChatCompletionsUpdate) -> None:
@@ -150,15 +181,16 @@ def _accumulate_response(item, accumulate: Dict[str, Any]) -> None:
     if item.delta.tool_calls:
         accumulate.setdefault("message", {})
         accumulate["message"].setdefault("tool_calls", [])
-        for tool_call in item.delta.tool_calls:
-            if tool_call.id:
-                accumulate["message"]["tool_calls"].append({"id": tool_call.id, "type": "", "function": {"name": "", "arguments": ""}})
-            if tool_call.type:
-                accumulate["message"]["tool_calls"][-1]["type"] = tool_call.type
-            if tool_call.function and tool_call.function.name:
-                accumulate["message"]["tool_calls"][-1]["function"]["name"] = tool_call.function.name
-            if tool_call.function and tool_call.function.arguments:
-                accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
+        if item.delta.tool_calls is not None:
+            for tool_call in item.delta.tool_calls:
+                if tool_call.id:
+                    accumulate["message"]["tool_calls"].append({"id": tool_call.id, "type": "", "function": {"name": "", "arguments": ""}})
+                if tool_call.function:
+                    accumulate["message"]["tool_calls"][-1]["type"] = "function"
+                if tool_call.function and tool_call.function.name:
+                    accumulate["message"]["tool_calls"][-1]["function"]["name"] = tool_call.function.name
+                if tool_call.function and tool_call.function.arguments:
+                    accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
 
 
 def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: AbstractSpan) ->  _models.StreamingChatCompletions:
@@ -175,14 +207,6 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
                         _accumulate_response(item, accumulate)
                     yield chunk
 
-                if _trace_inference_content:
-                    span.span_instance.add_event(
-                        name="gen_ai.choice",
-                        attributes={
-                            "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                            "gen_ai.event.content": json.dumps(accumulate)
-                        }
-                    )
                 _add_response_chat_attributes(span, chunk)
 
             except Exception as exc:
@@ -198,14 +222,24 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
                 if stream_obj._done is False:
                     if accumulate.get("finish_reason") is None:
                         accumulate["finish_reason"] = "error"
-                    if _trace_inference_content:
-                        span.span_instance.add_event(
-                            name="gen_ai.choice",
-                            attributes={
-                                "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                                "gen_ai.event.content": json.dumps(accumulate)
-                            }
-                        )
+                else:
+                    # Only one choice expected with streaming
+                    accumulate["index"] = 0
+                    # Delete message if content tracing is not enabled
+                    if not _trace_inference_content:
+                        if 'message' in accumulate:
+                            if 'content' in accumulate['message']:
+                                del accumulate['message']['content']
+                            if not accumulate['message']:
+                                del accumulate['message']
+
+                    span.span_instance.add_event(
+                        name="gen_ai.choice",
+                        attributes={
+                            "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                            "gen_ai.event.content": json.dumps(accumulate)
+                        }
+                    )
                 span.finish()
 
     return StreamWrapper(stream_obj)
@@ -243,8 +277,10 @@ def _trace_sync_function(
         class_function_name = get_function_and_class_name(function, *args)
 
         if class_function_name.startswith("ChatCompletionsClient.complete"):
-            # span_name = {gen_ai.operation.name} {gen_ai.request.model}
-            span_name = f"chat {kwargs.get('model')}"
+            model = INFERENCE_GEN_AI_SYSTEM_NAME
+            if kwargs.get('model') is not None:
+                model = kwargs.get('model')
+            span_name = f"chat {model}"
             span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
             try:
                 # tracing events not supported in azure-core-tracing-opentelemetry
@@ -305,7 +341,10 @@ def _trace_async_function(
 
         if class_function_name.startswith("ChatCompletionsClient.complete"):
             # span_name = {gen_ai.operation.name} {gen_ai.request.model}
-            span_name = f"chat {kwargs.get('model')}"
+            model = INFERENCE_GEN_AI_SYSTEM_NAME
+            if kwargs.get('model') is not None:
+                model = kwargs.get('model')
+            span_name = f"chat {model}"
             span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
             try:
                 # tracing events not supported in azure-core-tracing-opentelemetry
