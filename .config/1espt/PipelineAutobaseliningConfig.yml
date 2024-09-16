@@ -52,6 +52,8 @@ pipelines:
           lastModifiedDate: 2024-09-13
         armory:
           lastModifiedDate: 2024-09-13
+        psscriptanalyzer:
+          lastModifiedDate: 2024-09-16
   1036:
     retail:
       source:
