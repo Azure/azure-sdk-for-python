@@ -1658,7 +1658,8 @@ class TestStorageShare(StorageRecordedTestCase):
             iops = 102400
 
             # Act / Assert
-            share = self._create_share(
+            share = self._get_share_reference()
+            share.create_share(
                 paid_bursting_enabled=True,
                 paid_bursting_bandwidth_mibps=5000,
                 paid_bursting_iops=1000

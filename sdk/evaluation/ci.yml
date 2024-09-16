@@ -1,0 +1,40 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+
+trigger:
+  branches:
+    include:
+    - main
+    - feature/*
+    - hotfix/*
+    - release/*
+  paths:
+    include:
+    - sdk/evaluation
+
+pr:
+  branches:
+    include:
+    - main
+    - feature/*
+    - hotfix/*
+    - release/*
+  paths:
+    include:
+    - sdk/evaluation
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: evaluation
+    ValidateFormatting: true
+    TestProxy: true
+    # This custom matrix config should be dropped once:
+    #  * Resolve the issue of windows runners crashing because a file isn't deletable
+    MatrixConfigs: 
+      - Name: ai_ci_matrix
+        Path: sdk/evaluation/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
+    Artifacts:
+    - name: azure-ai-evaluation
+      safeName: azureaievaluation

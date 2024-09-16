@@ -29,6 +29,11 @@ steps:
     inputs:
       versionSpec: '3.11'
 
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
+
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
       PackageName: "azure-template"
@@ -45,18 +50,12 @@ steps:
   - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - script: |
-      python -m pip install setuptools==58.3.0
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 
   - template: set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: auth-dev-feed.yml
-      parameters:
-        DevFeedName: ${{ parameters.DevFeedName }}
 
   - task: PythonScript@0
     displayName: 'Generate Docs'
@@ -79,6 +78,39 @@ steps:
       AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
 
   - ${{ parameters.BeforePublishSteps }}
+
+  - task: Powershell@2
+    inputs:
+      filePath: $(Build.SourcesDirectory)/eng/scripts/Save-Package-Namespaces-Property.ps1
+      arguments: >
+        -ArtifactStagingDirectory "$(Build.ArtifactStagingDirectory)"
+        -ArtifactsList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json)
+      pwsh: true
+      workingDirectory: $(Pipeline.Workspace)
+    displayName: Update package properties with namespaces
+
+    # Component governance collates discovered dependencies from a combination of
+    # manifest files, splatted json output from CG detections, setup.py files, and other sources.
+    # At this point in the job, we have downloadeded package artifacts from 3 previous platform-specific build jobs,
+    # so the directory that will be published as packages_extended _already contains_ a collated set of dependencies by
+    # json file. When we attempt to publish the packages_extended artifact, CG re-collates data from the current job, but ALSO
+    # includes all the data from json files left behind by the previous jobs. While this doesn't result in double counting,
+    # we've been running into some nasty timeout issues of the CG running on this job specifically.
+    #
+    # Given that we've ALREADY RUN CG on the previous jobs, we can clean up these artifacts to avoid
+    # incurring an increased CG runtime. What's present within IS accurate.
+  - pwsh: |
+      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)" -Filter GovCompDisc* | % { Write-Host "Removing $($_.FullName)"; Remove-Item $_ }
+      Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)" -Filter ScanTelemetry* | % { Write-Host "Removing $($_.FullName)"; Remove-Item $_ }
+
+      if (Test-Path -Path "$(Build.ArtifactStagingDirectory)/bcde-output") {
+        Remove-Item -Recurse -Force -Path "$(Build.ArtifactStagingDirectory)/bcde-output"
+      }
+
+      if (Test-Path -Path "$(Build.ArtifactStagingDirectory)/_manifest") {
+        Remove-Item -Recurse -Force -Path "$(Build.ArtifactStagingDirectory)/_manifest"
+      }
+    displayName: Clean up Artifact Directory
 
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:

@@ -10,7 +10,6 @@ from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.policies import (
-    BearerTokenCredentialPolicy,
     ContentDecodePolicy,
     HttpLoggingPolicy,
     RedirectPolicy,
@@ -44,6 +43,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
     get_statsbeat_shutdown,
@@ -58,7 +58,6 @@ logger = logging.getLogger(__name__)
 _AZURE_TEMPDIR_PREFIX = "Microsoft/AzureMonitor"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
-_APPLICATION_INSIGHTS_RESOURCE_SCOPE = "https://monitor.azure.com//.default"
 
 class ExportResult(Enum):
     SUCCESS = 0
@@ -344,19 +343,6 @@ class BaseExporter:
 
     def _is_stats_exporter(self):
         return self.__class__.__name__ == "_StatsBeatExporter"
-
-
-def _get_auth_policy(credential, default_auth_policy):
-    if credential:
-        if hasattr(credential, 'get_token'):
-            return BearerTokenCredentialPolicy(
-                credential,
-                _APPLICATION_INSIGHTS_RESOURCE_SCOPE,
-            )
-        raise ValueError(
-            'Must pass in valid TokenCredential.'
-        )
-    return default_auth_policy
 
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:

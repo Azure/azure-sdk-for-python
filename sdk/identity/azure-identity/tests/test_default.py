@@ -412,3 +412,13 @@ def test_unexpected_kwarg():
 def test_error_tenant_id():
     with pytest.raises(TypeError):
         DefaultAzureCredential(tenant_id="foo")
+
+
+def test_validate_cloud_shell_credential_in_dac():
+    MANAGED_IDENTITY_ENVIRON = "azure.identity._credentials.managed_identity.os.environ"
+    with patch.dict(MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True):
+        DefaultAzureCredential()
+        DefaultAzureCredential(managed_identity_client_id="foo")
+        DefaultAzureCredential(identity_config={"client_id": "foo"})
+        DefaultAzureCredential(identity_config={"object_id": "foo"})
+        DefaultAzureCredential(identity_config={"resource_id": "foo"})
