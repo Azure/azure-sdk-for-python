@@ -11,6 +11,7 @@
 ### Bugs Fixed
 
 - Fixed the issue that we missed ODATA header when using Entra ID auth.
+- Fixed the issue that `encryptionKey` was lost during serialization.  #37251
 
 ### Other Changes
 
