@@ -19,10 +19,10 @@ logging.getLogger(AZURE_MONITOR_OPENTELEMETRY_LOGGER_NAMESPACE).addHandler(loggi
 
 AML_INTERNAL_LOGGER_NAMESPACE = "azure.ai.ml._telemetry"
 CONNECTION_STRING = (
-    "InstrumentationKey=4bbdc4e5-6bcf-4ae3-870a-6034ac59f273;"
-    "IngestionEndpoint=https://centralindia-0.in.applicationinsights.azure.com/;"
-    "LiveEndpoint=https://centralindia.livediagnostics.monitor.azure.com/;"
-    "ApplicationId=5e305493-818f-4aa0-915e-ff8aa9ad6524"
+    "InstrumentationKey=71b954a8-6b7d-43f5-986c-3d3a6605d803;"
+    "IngestionEndpoint=https://westus2-0.in.applicationinsights.azure.com/;"
+    "LiveEndpoint=https://westus2.livediagnostics.monitor.azure.com/;"
+    "ApplicationId=82daf08e-6a78-455f-9ce1-9396a8b5128b"
 )
 
 test_subscriptions = [
