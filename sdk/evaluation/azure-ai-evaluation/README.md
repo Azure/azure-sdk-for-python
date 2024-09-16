@@ -61,13 +61,13 @@ if __name__ == "__main__":
     # Content Safety Evaluator
 
     # Initialize Project Scope
-    project_scope = {
+    azure_ai_project = {
         "subscription_id": "e0fd569c-e34a-4249-8c24-e8d723c7f054",
         "resource_group_name": "rg-test",
         "project_name": "project-test",
     }
 
-    violence_eval = ViolenceEvaluator(project_scope)
+    violence_eval = ViolenceEvaluator(azure_ai_project)
     violence_score = violence_eval(question="What is the capital of France?", answer="Paris.")
     pprint(violence_score)
     # {'violence': 'Very low',

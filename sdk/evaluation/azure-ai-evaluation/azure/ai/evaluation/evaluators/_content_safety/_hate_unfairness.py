@@ -11,12 +11,12 @@ except ImportError:
 
 
 class _AsyncHateUnfairnessEvaluator(ContentSafetyEvaluatorBase):
-    def __init__(self, project_scope: dict, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         # Hate_fairness is the actual backend metric name. Which, uh, doesn't sound great.
         # so invert the name.
         super().__init__(
             metric=EvaluationMetrics.HATE_FAIRNESS,
-            project_scope=project_scope,
+            azure_ai_project=azure_ai_project,
             credential=credential,
         )
 
@@ -28,9 +28,9 @@ class HateUnfairnessEvaluator:
     """
     Initialize a hate-unfairness evaluator for hate unfairness score.
 
-    :param project_scope: The scope of the Azure AI project.
+    :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type project_scope: dict
+    :type azure_ai_project: dict
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
 
@@ -38,12 +38,12 @@ class HateUnfairnessEvaluator:
 
     .. code-block:: python
 
-        project_scope = {
+        azure_ai_project = {
             "subscription_id": "<subscription_id>",
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = HateUnfairnessEvaluator(project_scope)
+        eval_fn = HateUnfairnessEvaluator(azure_ai_project)
         result = eval_fn(question="What is the capital of France?", answer="Paris.")
 
     **Output format**
@@ -57,8 +57,8 @@ class HateUnfairnessEvaluator:
         }
     """
 
-    def __init__(self, project_scope: dict, credential=None) -> None:
-        self._async_evaluator = _AsyncHateUnfairnessEvaluator(project_scope, credential)
+    def __init__(self, azure_ai_project: dict, credential=None) -> None:
+        self._async_evaluator = _AsyncHateUnfairnessEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, question: str, answer: str, **kwargs):
         """

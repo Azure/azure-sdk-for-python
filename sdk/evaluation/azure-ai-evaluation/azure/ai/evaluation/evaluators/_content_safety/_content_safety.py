@@ -21,9 +21,9 @@ class ContentSafetyEvaluator:
     """
     Initialize a content safety evaluator configured to evaluate content safetry metrics for QA scenario.
 
-    :param project_scope: The scope of the Azure AI project.
+    :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type project_scope: dict
+    :type azure_ai_project: dict
     :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
         Default is True.
     :param credential: The credential for connecting to Azure AI project.
@@ -35,12 +35,12 @@ class ContentSafetyEvaluator:
 
     .. code-block:: python
 
-        project_scope = {
+        azure_ai_project = {
             "subscription_id": "<subscription_id>",
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = ContentSafetyEvaluator(project_scope)
+        eval_fn = ContentSafetyEvaluator(azure_ai_project)
         result = eval_fn(
             question="What is the capital of France?",
             answer="Paris.",
@@ -66,13 +66,13 @@ class ContentSafetyEvaluator:
         }
     """
 
-    def __init__(self, project_scope: dict, parallel: bool = True, credential=None):
+    def __init__(self, azure_ai_project: dict, parallel: bool = True, credential=None):
         self._parallel = parallel
         self._evaluators = [
-            ViolenceEvaluator(project_scope, credential),
-            SexualEvaluator(project_scope, credential),
-            SelfHarmEvaluator(project_scope, credential),
-            HateUnfairnessEvaluator(project_scope, credential),
+            ViolenceEvaluator(azure_ai_project, credential),
+            SexualEvaluator(azure_ai_project, credential),
+            SelfHarmEvaluator(azure_ai_project, credential),
+            HateUnfairnessEvaluator(azure_ai_project, credential),
         ]
 
     def __call__(self, *, question: str, answer: str, **kwargs):
