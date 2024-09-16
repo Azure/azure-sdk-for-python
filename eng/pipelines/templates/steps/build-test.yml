@@ -209,10 +209,9 @@ steps:
       testRunTitle: '${{ parameters.ServiceDirectory }} ${{ parameters.CloudName }} $(Agent.JobName)'
       failTaskOnFailedTests: true
 
-  - task: PublishCodeCoverageResults@1
+  - task: PublishCodeCoverageResults@2
     displayName: 'Publish Code Coverage to DevOps'
     continueOnError: true
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
     inputs:
-      codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'

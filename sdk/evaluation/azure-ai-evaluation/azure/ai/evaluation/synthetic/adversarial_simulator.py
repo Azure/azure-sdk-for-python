@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # noqa: E501
+# pylint: disable=E0401,E0611
 import asyncio
 import functools
 import logging
@@ -26,6 +27,7 @@ from ._model_tools import (
     TokenScope,
 )
 from ._utils import JsonLineList
+from .constants import SupportedLanguages
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +46,7 @@ def monitor_adversarial_scenario(func) -> Callable:
         scenario = str(kwargs.get("scenario", None))
         max_conversation_turns = kwargs.get("max_conversation_turns", None)
         max_simulation_results = kwargs.get("max_simulation_results", None)
+        selected_language = kwargs.get("language", SupportedLanguages.English)
         decorated_func = monitor_operation(
             activity_name="adversarial.simulator.call",
             activity_type=ActivityType.PUBLICAPI,
@@ -51,6 +54,7 @@ def monitor_adversarial_scenario(func) -> Callable:
                 "scenario": scenario,
                 "max_conversation_turns": max_conversation_turns,
                 "max_simulation_results": max_simulation_results,
+                "selected_language": selected_language,
             },
         )(func)
 
@@ -114,6 +118,7 @@ class AdversarialSimulator:
         api_call_delay_sec: int = 0,
         concurrent_async_task: int = 3,
         _jailbreak_type: Optional[str] = None,
+        language: SupportedLanguages = SupportedLanguages.English,
         randomize_order: bool = True,
         randomization_seed: Optional[int] = None,
     ):
@@ -147,6 +152,8 @@ class AdversarialSimulator:
         :keyword concurrent_async_task: The number of asynchronous tasks to run concurrently during the simulation.
             Defaults to 3.
         :paramtype concurrent_async_task: int
+        :keyword language: The language in which the conversation should be generated. Defaults to English.
+        :paramtype language: azure.ai.evaluation.synthetic.constants.SupportedLanguages
         :keyword randomize_order: Whether or not the order of the prompts should be randomized. Defaults to True.
         :paramtype randomize_order: bool
         :keyword randomization_seed: The seed used to randomize prompt selection. If unset, the system's
@@ -244,6 +251,7 @@ class AdversarialSimulator:
                             api_call_retry_limit=api_call_retry_limit,
                             api_call_retry_sleep_sec=api_call_retry_sleep_sec,
                             api_call_delay_sec=api_call_delay_sec,
+                            language=language,
                             semaphore=semaphore,
                         )
                     )
@@ -296,6 +304,7 @@ class AdversarialSimulator:
         api_call_retry_limit,
         api_call_retry_sleep_sec,
         api_call_delay_sec,
+        language,
         semaphore,
     ) -> List[Dict]:
         user_bot = self._setup_bot(role=ConversationRole.USER, template=template, parameters=parameters)
@@ -317,6 +326,7 @@ class AdversarialSimulator:
                 session=session,
                 turn_limit=max_conversation_turns,
                 api_call_delay_sec=api_call_delay_sec,
+                language=language,
             )
         return self._to_chat_protocol(conversation_history=conversation_history, template_parameters=parameters)
 
