@@ -1,0 +1,6 @@
+requests==2.28.1
+-e ../../tools/azure-sdk-tools
+pyright==1.1.287
+azure-data-tables
+azure-identity
+setuptools
