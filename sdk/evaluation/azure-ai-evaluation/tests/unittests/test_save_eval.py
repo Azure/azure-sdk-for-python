@@ -6,7 +6,7 @@ from typing import Any, List, Optional, Type
 
 import pytest
 
-from azure.ai.evaluation import evaluators
+import azure.ai.evaluation as evaluators
 
 
 @pytest.fixture
