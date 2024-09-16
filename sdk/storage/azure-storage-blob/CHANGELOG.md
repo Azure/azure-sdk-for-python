@@ -6,7 +6,7 @@
 - Stable release of features from 12.23.0b1
 
 ### Bugs Fixed
-- Fixed batch APIs for Azurite
+- Fixed an issue with batch APIs when using Azurite.
 
 ## 12.23.0b1 (2024-08-07)
 
