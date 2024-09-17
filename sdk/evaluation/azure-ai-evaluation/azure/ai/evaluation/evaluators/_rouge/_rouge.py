@@ -77,7 +77,6 @@ class RougeScoreEvaluator:
     """
 
     def __init__(self, rouge_type: RougeType):
-        self._rouge_type = rouge_type
         self._async_evaluator = _AsyncRougeScoreEvaluator(rouge_type)
 
     def __call__(self, *, ground_truth: str, answer: str, **kwargs):
