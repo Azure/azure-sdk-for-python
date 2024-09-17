@@ -9,6 +9,21 @@ $PackageRepositoryUri = "https://pypi.org/project"
 ."$PSScriptRoot/docs/Docs-ToC.ps1"
 ."$PSScriptRoot/docs/Docs-Onboarding.ps1"
 
+function Get-python-AdditionalValidationPackagesFromPackageSet {
+  param(
+    [Parameter(Mandatory=$true)]
+    $LocatedPackages,
+    [Parameter(Mandatory=$true)]
+    $diffObj
+  )
+
+  $additionalValidationPackages = @()
+
+  Write-Host "We are in Get-python-AdditionalValidationPackagesFromPackageSet getting called."
+  Write-Host $LocatedPackages
+  Write-Host $diffObj
+}
+
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
   $allPackageProps = @()
