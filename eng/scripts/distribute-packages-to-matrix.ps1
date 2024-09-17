@@ -215,8 +215,8 @@ $packageProperties = Get-ChildItem -Recurse "$PackageInfoFolder" *.json `
 $directIncludedPackages = $packageProperties | Where-Object { $_.IncludedForValidation -eq $false }
 $indirectIncludedPackages = $packageProperties | Where-Object { $_.IncludedForValidation -eq $true }
 
-# I will assign all the direct included packages first. our goal is to get complete coverage of the direct included packages
-# then, for the indirect packages, we will ADD them as extra TargetingString bundles to the matrix.
+# I will assign all the direct included packages first. our goal is to get full coverage of the direct included packages
+# then, for the indirect packages, we will add them as sparse TargetingString bundles to the matrix
 $directBatches = Split-ArrayIntoBatches -InputArray $directIncludedPackages -BatchSize $BATCHSIZE
 $indirectBatches = @()
 if ($indirectIncludedPackages) {
@@ -224,10 +224,24 @@ if ($indirectIncludedPackages) {
 }
 
 $matrix = Get-Content -Path $PlatformMatrix | ConvertFrom-Json
+$matrixLocation = $PlatformMatrix
 
 # handle the case where we discover an import, we need to climb the dependency in that case
 if ($matrix.matrix.PSObject.Properties["`$IMPORT"]) {
-    #todo implement handling for this thing
+    $originalMatrix = $matrix
+    $originalMatrixLocation = $PlatformMatrix
+
+    # rest of the update will happen to that matrix object
+    $matrixLocation = (Join-Path $RepoRoot $matrix.matrix."`$IMPORT")
+    $matrix = Get-Content -Path $matrixLocation | ConvertFrom-Json
+
+    # we just need to walk the include objects and update the targeting string for the batches we have before
+    # updating in place, then continuing on to update the actual matrix object that we imported
+    # there is a clear and present edge case here with nested import. We will not handle that case
+
+    # update the include objects for the original matrix that was importing
+    Update-Matrix -Matrix $originalMatrix -DirectBatches $directBatches -IndirectBatches $indirectBatches -MatrixMultiplier 1 -IncludeCount $matrix.include.Count -OriginalIncludeObject $originalMatrix.include
+    $originalMatrix | ConvertTo-Json -Depth 100 | Set-Content -Path $originalMatrixLocation
 }
 
 $matrixMultiplier = Extract-MatrixMultiplier -Matrix $matrix.matrix
@@ -243,4 +257,4 @@ if ($matrix.PSObject.Properties.Name -contains "include") {
 
 Update-Matrix -Matrix $matrix -DirectBatches $directBatches -IndirectBatches $indirectBatches -MatrixMultiplier $matrixMultiplier -IncludeCount $includeCount -OriginalIncludeObject $originalInclude
 
-$matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
+$matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $matrixLocation
