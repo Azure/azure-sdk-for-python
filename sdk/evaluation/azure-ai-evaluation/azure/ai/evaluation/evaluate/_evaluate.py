@@ -589,7 +589,6 @@ def _evaluate(  # pylint: disable=too-many-locals
     result_df = pd.concat([input_data_df, evaluators_result_df], axis=1, verify_integrity=True)
     metrics = _aggregate_metrics(evaluators_result_df, evaluators)
     metrics.update(evaluators_metric)
-
     studio_url = _log_metrics_and_instance_results(
         metrics,
         result_df,

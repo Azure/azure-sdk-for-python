@@ -8,6 +8,7 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 from promptflow.client import PFClient
+from sympy import im
 
 from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME
 from azure.ai.evaluation.evaluate import evaluate
@@ -66,6 +67,10 @@ def questions_wrong_file():
 @pytest.fixture
 def questions_answers_file():
     return _get_file("questions_answers.jsonl")
+
+@pytest.fixture
+def questions_answers_basic_file():
+    return _get_file("questions_answers_basic.jsonl")
 
 
 def _target_fn(question):
@@ -507,3 +512,48 @@ class TestEvaluate:
         assert aggregation["thing.metric"] == 3
         assert aggregation["other_thing.other_meteric"] == -3
         assert aggregation["final_thing.final_metric"] == 0.4
+
+    @pytest.mark.parametrize("use_pf_client", [True])
+    def test_optional_inputs(self, questions_file, questions_answers_basic_file, use_pf_client,):
+        from test_evaluators.test_inputs_evaluators import NonOptionalEval, HalfOptionalEval, OptionalEval
+        
+        # All variants work with both keyworded inputs
+        results = evaluate(
+            data=questions_answers_basic_file, 
+            evaluators={
+                "non": NonOptionalEval(),
+                "half": HalfOptionalEval(),
+                "opt": OptionalEval()
+            },
+            _use_pf_client=use_pf_client
+        )
+
+        first_row = results["rows"][0]
+        assert first_row["outputs.non.non_score"] == 0
+        assert first_row["outputs.half.half_score"] == 1
+        assert first_row["outputs.opt.opt_score"] == 3
+
+        # Variant with no default inputs fails on single input
+        with pytest.raises(ValueError) as exc_info:
+            evaluate(
+                data=questions_file,
+                evaluators={
+                    "non": NonOptionalEval(),
+                },
+            _use_pf_client=use_pf_client
+            )
+        assert exc_info._excinfo[1].__str__() == "Missing required inputs for evaluator non : ['answer']."
+
+        # Variants with default answer work when only question is inputted
+        only_question_results = evaluate(
+            data=questions_file, 
+            evaluators={
+                "half": HalfOptionalEval(),
+                "opt": OptionalEval()
+            },
+            _use_pf_client=use_pf_client
+        )
+        
+        first_row_2 = only_question_results["rows"][0]
+        assert first_row_2["outputs.half.half_score"] == 0
+        assert first_row_2["outputs.opt.opt_score"] == 1
