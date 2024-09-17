@@ -13,6 +13,7 @@ import pandas as pd
 
 from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, Prefixes
 from azure.ai.evaluation.evaluate._eval_run import EvalRun
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 LOGGER = logging.getLogger(__name__)
 
@@ -31,11 +32,17 @@ def is_none(value):
 def extract_workspace_triad_from_trace_provider(trace_provider: str):  # pylint: disable=name-too-long
     match = re.match(AZURE_WORKSPACE_REGEX_FORMAT, trace_provider)
     if not match or len(match.groups()) != 5:
-        raise ValueError(
-            "Malformed trace provider string, expected azureml://subscriptions/<subscription_id>/"
-            "resourceGroups/<resource_group>/providers/Microsoft.MachineLearningServices/"
-            f"workspaces/<workspace_name>, got {trace_provider}"
-        )
+        raise EvaluationException(
+                message="Malformed trace provider string, expected azureml://subscriptions/<subscription_id>/"
+                "resourceGroups/<resource_group>/providers/Microsoft.MachineLearningServices/"
+                f"workspaces/<workspace_name>, got {trace_provider}",
+                internal_message="Malformed trace provider string, expected azureml://subscriptions/<subscription_id>/"
+                "resourceGroups/<resource_group>/providers/Microsoft.MachineLearningServices/"
+                "workspaces/<workspace_name>,",
+                target=ErrorTarget.UNKNOWN,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.UNKNOWN,
+            )
     subscription_id = match.group(1)
     resource_group_name = match.group(3)
     workspace_name = match.group(5)

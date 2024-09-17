@@ -15,7 +15,7 @@ from tqdm import tqdm
 from promptflow._sdk._telemetry import ActivityType, monitor_operation
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation.synthetic.adversarial_scenario import AdversarialScenario, _UnstableAdversarialScenario
-
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole
 from ._conversation._conversation import simulate_conversation
 from ._model_tools import (
@@ -78,10 +78,24 @@ class AdversarialSimulator:
         """Constructor."""
         # check if azure_ai_project has the keys: subscription_id, resource_group_name and project_name
         if not all(key in azure_ai_project for key in ["subscription_id", "resource_group_name", "project_name"]):
-            raise ValueError("azure_ai_project must contain keys: subscription_id, resource_group_name, project_name")
+            msg = "azure_ai_project must contain keys: subscription_id, resource_group_name, project_name"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
+            )
         # check the value of the keys in azure_ai_project is not none
         if not all(azure_ai_project[key] for key in ["subscription_id", "resource_group_name", "project_name"]):
-            raise ValueError("subscription_id, resource_group_name and project_name must not be None")
+            msg = "subscription_id, resource_group_name and project_name cannot be None"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
+            )
         if "credential" not in azure_ai_project and not credential:
             credential = DefaultAzureCredential()
         elif "credential" in azure_ai_project:
@@ -99,7 +113,14 @@ class AdversarialSimulator:
 
     def _ensure_service_dependencies(self):
         if self.rai_client is None:
-            raise ValueError("Simulation options require rai services but ai client is not provided.")
+            msg = "RAI service is required for simulation, but an RAI client was not provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
     @monitor_adversarial_scenario
     async def __call__(
@@ -198,7 +219,14 @@ class AdversarialSimulator:
             scenario in AdversarialScenario.__members__.values()
             or scenario in _UnstableAdversarialScenario.__members__.values()
         ):
-            raise ValueError("Invalid adversarial scenario")
+            msg = f"Invalid scenario: {scenario}. Supported scenarios are: {AdversarialScenario.__members__.values()}"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
         self._ensure_service_dependencies()
         templates = await self.adversarial_template_handler._get_content_harm_template_collections(scenario.value)
         concurrent_async_task = min(concurrent_async_task, 1000)

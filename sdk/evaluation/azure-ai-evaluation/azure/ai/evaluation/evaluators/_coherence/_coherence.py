@@ -10,6 +10,7 @@ import numpy as np
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty, AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 try:
     from ..._user_agent import USER_AGENT
@@ -49,7 +50,14 @@ class _AsyncCoherenceEvaluator:
         answer = str(answer or "")
 
         if not (question.strip() and answer.strip()):
-            raise ValueError("Both 'question' and 'answer' must be non-empty strings.")
+            msg = "Both 'question' and 'answer' must be non-empty strings."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                error_category=ErrorCategory.INVALID_VALUE,
+                error_blame=ErrorBlame.USER_ERROR,
+                error_target=ErrorTarget.COHERENCE_EVALUATOR,
+            )
 
         # Run the evaluation flow
         llm_output = await self._flow(question=question, answer=answer, timeout=self.LLM_CALL_TIMEOUT, **kwargs)

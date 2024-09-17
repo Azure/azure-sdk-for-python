@@ -6,6 +6,7 @@ from collections import Counter
 from typing import List
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 class _AsyncF1ScoreEvaluator:
@@ -17,7 +18,14 @@ class _AsyncF1ScoreEvaluator:
         if not (answer and answer.strip() and answer != "None") or not (
             ground_truth and ground_truth.strip() and ground_truth != "None"
         ):
-            raise ValueError("Both 'answer' and 'ground_truth' must be non-empty strings.")
+            msg = "Both 'answer' and 'ground_truth' must be non-empty strings."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                error_category=ErrorCategory.MISSING_FIELD,
+                error_blame=ErrorBlame.USER_ERROR,
+                error_target=ErrorTarget.F1_EVALUATOR,
+            )
 
         # Run f1 score computation.
         f1_result = self._compute_f1_score(answer=answer, ground_truth=ground_truth)

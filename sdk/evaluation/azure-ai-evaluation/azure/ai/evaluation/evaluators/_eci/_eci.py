@@ -4,6 +4,7 @@
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from azure.ai.evaluation._common.constants import _InternalEvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 class _AsyncECIEvaluator:
@@ -17,7 +18,14 @@ class _AsyncECIEvaluator:
         if not (question and question.strip() and question != "None") or not (
             answer and answer.strip() and answer != "None"
         ):
-            raise ValueError("Both 'question' and 'answer' must be non-empty strings.")
+            msg = "Both 'question' and 'answer' must be non-empty strings."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                error_category=ErrorCategory.MISSING_FIELD,
+                error_blame=ErrorBlame.USER_ERROR,
+                error_target=ErrorTarget.ECI_EVALUATOR,
+            )
 
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(

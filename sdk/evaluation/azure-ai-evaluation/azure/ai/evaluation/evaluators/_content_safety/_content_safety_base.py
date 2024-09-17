@@ -6,7 +6,7 @@ from abc import ABC
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
-
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 class ContentSafetyEvaluatorBase(ABC):
     """
@@ -44,7 +44,14 @@ class ContentSafetyEvaluatorBase(ABC):
         if not (question and question.strip() and question != "None") or not (
             answer and answer.strip() and answer != "None"
         ):
-            raise ValueError("Both 'question' and 'answer' must be non-empty strings.")
+            msg = "Both 'question' and 'answer' must be non-empty strings."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                error_category=ErrorCategory.MISSING_FIELD,
+                error_blame=ErrorBlame.USER_ERROR,
+                error_target=ErrorTarget.CONTENT_SAFETY_EVALUATOR,
+            )
 
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(
