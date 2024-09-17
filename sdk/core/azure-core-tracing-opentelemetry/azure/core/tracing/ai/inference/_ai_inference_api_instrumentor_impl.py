@@ -66,7 +66,7 @@ def _add_request_chat_attributes(span: AbstractSpan, *args: Any, **kwargs: Any) 
     client = args[0]
     endpoint = client._config.endpoint
     server_address, port = parse_url(endpoint)
-    model = INFERENCE_GEN_AI_SYSTEM_NAME
+    model = 'chat'
     if kwargs.get('model') is not None:
         model = kwargs.get('model')
     _set_attributes(
@@ -277,10 +277,12 @@ def _trace_sync_function(
         class_function_name = get_function_and_class_name(function, *args)
 
         if class_function_name.startswith("ChatCompletionsClient.complete"):
-            model = INFERENCE_GEN_AI_SYSTEM_NAME
-            if kwargs.get('model') is not None:
+            if kwargs.get('model') is None:
+                span_name = f"chat"
+            else:
                 model = kwargs.get('model')
-            span_name = f"chat {model}"
+                span_name = f"chat {model}"
+
             span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
             try:
                 # tracing events not supported in azure-core-tracing-opentelemetry
@@ -340,11 +342,12 @@ def _trace_async_function(
         class_function_name = get_function_and_class_name(function, *args)
 
         if class_function_name.startswith("ChatCompletionsClient.complete"):
-            # span_name = {gen_ai.operation.name} {gen_ai.request.model}
-            model = INFERENCE_GEN_AI_SYSTEM_NAME
-            if kwargs.get('model') is not None:
+            if kwargs.get('model') is None:
+                span_name = f"chat"
+            else:
                 model = kwargs.get('model')
-            span_name = f"chat {model}"
+                span_name = f"chat {model}"
+
             span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
             try:
                 # tracing events not supported in azure-core-tracing-opentelemetry
