@@ -336,7 +336,7 @@ section of the project.
 [attestation_admin_client]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationadministrationclient
 [attestation_policy_result_parameters]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationpolicyresult#parameters
 [attest_sgx]: https://docs.microsoft.com/python/api/azure-security-attestation/azure.security.attestation.attestationclient?view=azure-python-preview#attest-sgx-enclave-quote--inittime-data-none--runtime-data-none--draft-policy-none----kwargs-
-[attestation_pypi]: https://aka.ms/azsdk/python/azure-security-attestation
+[attestation_pypi]: https://pypi.org/project/azure-security-attestation/
 [API_reference]:https://docs.microsoft.com/python/api/overview/azure/security-attestation-readme?view=azure-python-preview
 [style-guide-msft]: https://docs.microsoft.com/style-guide/capitalization
 [style-guide-cloud]: https://aka.ms/azsdk/cloud-style-guide

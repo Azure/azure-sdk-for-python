@@ -13,7 +13,7 @@ from .link import Link
 from .constants import LinkState, Role
 from .performatives import TransferFrame, DispositionFrame
 from .outcomes import Received, Accepted, Rejected, Released, Modified
-from .error import AMQPLinkError, ErrorCondition
+from .error import AMQPException, ErrorCondition
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -60,7 +60,7 @@ class ReceiverLink(Link):
         # If more is false --> this is the last frame of the message
         if not frame[5]:
             self.current_link_credit -= 1
-        self.delivery_count += 1
+            self.delivery_count += 1
         self.received_delivery_id = frame[1]  # delivery_id
         if self.received_delivery_id is not None:
             self._first_frame = frame
@@ -109,7 +109,7 @@ class ReceiverLink(Link):
         batchable: Optional[bool],
     ):
         if delivery_tag not in self._received_delivery_tags:
-            raise AMQPLinkError(condition=ErrorCondition.InternalError, description = "Delivery tag not found.")
+            raise AMQPException(condition=ErrorCondition.IllegalState, description = "Delivery tag not found.")
 
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable

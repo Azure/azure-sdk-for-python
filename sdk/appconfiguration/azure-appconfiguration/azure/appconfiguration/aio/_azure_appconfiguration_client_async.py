@@ -109,6 +109,7 @@ class AzureAppConfigurationClient:
         .. code-block:: python
 
             from azure.appconfiguration.aio import AzureAppConfigurationClient
+
             connection_str = "<my connection string>"
             async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
         """
@@ -122,7 +123,7 @@ class AzureAppConfigurationClient:
         )
 
     @distributed_trace_async
-    async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> AsyncHttpResponse:
+    async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> AsyncHttpResponse:
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the vault URL. The service API version used for the request is the same as
@@ -211,7 +212,7 @@ class AzureAppConfigurationClient:
         """
 
     @distributed_trace
-    def list_configuration_settings(self, *args, **kwargs) -> AsyncItemPaged[ConfigurationSetting]:
+    def list_configuration_settings(self, *args: Optional[str], **kwargs: Any) -> AsyncItemPaged[ConfigurationSetting]:
         accept_datetime = kwargs.pop("accept_datetime", None)
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
@@ -252,7 +253,7 @@ class AzureAppConfigurationClient:
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         *,
         accept_datetime: Optional[Union[datetime, str]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> Union[None, ConfigurationSetting]:
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -300,7 +301,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace_async
     async def add_configuration_setting(
-        self, configuration_setting: ConfigurationSetting, **kwargs
+        self, configuration_setting: ConfigurationSetting, **kwargs: Any
     ) -> ConfigurationSetting:
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
 
@@ -343,7 +344,7 @@ class AzureAppConfigurationClient:
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         *,
         etag: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> ConfigurationSetting:
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
@@ -402,7 +403,7 @@ class AzureAppConfigurationClient:
         *,
         etag: Optional[str] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
-        **kwargs,
+        **kwargs: Any,
     ) -> Union[None, ConfigurationSetting]:
         """Delete a ConfigurationSetting if it exists
 
@@ -455,7 +456,7 @@ class AzureAppConfigurationClient:
         tags_filter: Optional[List[str]] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> AsyncItemPaged[ConfigurationSetting]:
         """
         Find the ConfigurationSetting revision history, optionally filtered by key, label, tags and accept_datetime.
@@ -521,7 +522,7 @@ class AzureAppConfigurationClient:
         read_only: bool = True,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
-        **kwargs,
+        **kwargs: Any,
     ) -> ConfigurationSetting:
         """Set a configuration setting read only
 
@@ -574,7 +575,7 @@ class AzureAppConfigurationClient:
         after: Optional[str] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, LabelFields]]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> AsyncItemPaged[ConfigurationSettingLabel]:
         """Gets a list of labels.
 
@@ -615,7 +616,7 @@ class AzureAppConfigurationClient:
         composition_type: Optional[Union[str, SnapshotComposition]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> AsyncLROPoller[ConfigurationSnapshot]:
         """Create a snapshot of the configuration settings.
 
@@ -658,7 +659,7 @@ class AzureAppConfigurationClient:
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> ConfigurationSnapshot:
         """Archive a configuration setting snapshot. It will update the status of a snapshot from "ready" to "archived".
         The retention period will start to count, the snapshot will expire when the entire retention period elapses.
@@ -689,7 +690,7 @@ class AzureAppConfigurationClient:
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> ConfigurationSnapshot:
         """Recover a configuration setting snapshot. It will update the status of a snapshot from "archived" to "ready".
 
@@ -714,7 +715,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace_async
     async def get_snapshot(
-        self, name: str, *, fields: Optional[List[Union[str, SnapshotFields]]] = None, **kwargs
+        self, name: str, *, fields: Optional[List[Union[str, SnapshotFields]]] = None, **kwargs: Any
     ) -> ConfigurationSnapshot:
         """Get a configuration setting snapshot.
 
@@ -737,7 +738,7 @@ class AzureAppConfigurationClient:
         name: Optional[str] = None,
         fields: Optional[List[Union[str, SnapshotFields]]] = None,
         status: Optional[List[Union[str, SnapshotStatus]]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> AsyncItemPaged[ConfigurationSnapshot]:
         """List the configuration setting snapshots stored in the configuration service, optionally filtered by
         snapshot name, snapshot status and fields to present in return.

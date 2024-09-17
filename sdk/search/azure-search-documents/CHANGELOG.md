@@ -1,18 +1,109 @@
 # Release History
 
-## 11.6.0b5 (Unreleased)
+## 11.6.0b5 (2024-09-17)
 
 ### Features Added
 
 - `SearchIndexClient`.`get_search_client` inherits the API version.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Fixed the issue that we missed ODATA header when using Entra ID auth.
+- Fixed the issue that `encryptionKey` was lost during serialization.  #37251
 
 ### Other Changes
+
+- Updated the API version to "2024-09-01-preview"
+- Below models were renamed
+  - `azure.search.documents.indexes.models.SearchIndexerIndexProjections` -> `azure.search.documents.indexes.models.SearchIndexerIndexProjection`
+  - `azure.search.documents.indexes.models.LineEnding` -> `azure.search.documents.indexes.models.OrcLineEnding`
+  - `azure.search.documents.indexes.models.ScalarQuantizationCompressionConfiguration` -> `azure.search.documents.indexes.models.ScalarQuantizationCompression`
+  - `azure.search.documents.indexes.models.VectorSearchCompressionConfiguration` -> `azure.search.documents.indexes.models.VectorSearchCompression`
+  - `azure.search.documents.indexes.models.VectorSearchCompressionTargetDataType` -> `azure.search.documents.indexes.models.VectorSearchCompressionTarget`
+- Below properties were renamed
+  - `azure.search.documents.indexes.models.AzureMachineLearningVectorizer.name` -> `azure.search.documents.indexes.models.AzureMachineLearningVectorizer.vectorizer_name`
+  - `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.deployment_id` -> `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.deployment_name`
+  - `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.resource_uri` -> `azure.search.documents.indexes.models.AzureOpenAIEmbeddingSkill.resource_url`
+  - `azure.search.documents.indexes.models.AzureOpenAIVectorizer.azure_open_ai_parameters` -> `azure.search.documents.indexes.models.AzureOpenAIVectorizer.parameters`
+  - `azure.search.documents.indexes.models.AzureOpenAIVectorizer.name` -> `azure.search.documents.indexes.models.AzureOpenAIVectorizer.vectorizer_name`
+  - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity.user_assigned_identity` -> `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity.resource_id`
+  - `azure.search.documents.indexes.models.VectorSearchProfile.compression_configuration_name` -> `azure.search.documents.indexes.models.VectorSearchProfile.compression_name`
+  - `azure.search.documents.indexes.models.VectorSearchProfile.vectorizer` -> `azure.search.documents.indexes.models.VectorSearchProfile.vectorizer_name`
+  - `azure.search.documents.indexes.models.VectorSearchVectorizer.name` -> `azure.search.documents.indexes.models.VectorSearchVectorizer.vectorizer_name`
+
+## 11.5.1 (2024-07-30)
+
+### Other Changes
+
+- Improved type checks.
+
+## 11.5.0 (2024-07-16)
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.4.0.
+> Only code written against a beta version such as 11.6.0b4 may be affected.
+- Below models are renamed
+  - `azure.search.documents.indexes.models.SearchIndexerIndexProjections` -> `azure.search.documents.indexes.models.SearchIndexerIndexProjection`
+  - `azure.search.documents.indexes.models.LineEnding` -> `azure.search.documents.indexes.models.OrcLineEnding`
+  - `azure.search.documents.indexes.models.ScalarQuantizationCompressionConfiguration` -> `azure.search.documents.indexes.models.ScalarQuantizationCompression`
+  - `azure.search.documents.indexes.models.VectorSearchCompressionConfiguration` -> `azure.search.documents.indexes.models.VectorSearchCompression`
+  - `azure.search.documents.indexes.models.VectorSearchCompressionTargetDataType` -> `azure.search.documents.indexes.models.VectorSearchCompressionTarget`
+
+- Below models do not exist in this release
+  - `azure.search.documents.models.QueryLanguage`
+  - `azure.search.documents.models.QuerySpellerType`
+  - `azure.search.documents.models.QueryDebugMode`
+  - `azure.search.documents.models.HybridCountAndFacetMode`
+  - `azure.search.documents.models.HybridSearch`
+  - `azure.search.documents.models.SearchScoreThreshold`
+  - `azure.search.documents.models.VectorSimilarityThreshold`
+  - `azure.search.documents.models.VectorThreshold`
+  - `azure.search.documents.models.VectorThresholdKind`
+  - `azure.search.documents.models.VectorizableImageBinaryQuery`
+  - `azure.search.documents.models.VectorizableImageUrlQuery`
+  - `azure.search.documents.indexes.models.SearchAlias`
+  - `azure.search.documents.indexes.models.AIServicesVisionParameters`
+  - `azure.search.documents.indexes.models.AIServicesVisionVectorizer`
+  - `azure.search.documents.indexes.models.AIStudioModelCatalogName`
+  - `azure.search.documents.indexes.models.AzureMachineLearningParameters`
+  - `azure.search.documents.indexes.models.AzureMachineLearningSkill`
+  - `azure.search.documents.indexes.models.AzureMachineLearningVectorizer`
+  - `azure.search.documents.indexes.models.CustomVectorizer`
+  - `azure.search.documents.indexes.models.CustomNormalizer`
+  - `azure.search.documents.indexes.models.DocumentKeysOrIds`
+  - `azure.search.documents.indexes.models.IndexingMode`
+  - `azure.search.documents.indexes.models.LexicalNormalizer`
+  - `azure.search.documents.indexes.models.LexicalNormalizerName`
+  - `azure.search.documents.indexes.models.NativeBlobSoftDeleteDeletionDetectionPolicy`
+  - `azure.search.documents.indexes.models.SearchIndexerCache`
+  - `azure.search.documents.indexes.models.SkillNames`
+  - `azure.search.documents.indexes.models.VisionVectorizeSkill`
+
+- SearchAlias operations do not exist in this release
+- `SearchIndexerClient.reset_documents` does not exist in this release
+- `SearchIndexerClient.reset_skills` does not exist in this release
+
+- Below properties do not exist
+  - `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.identity`
+  - `azure.search.documents.indexes.models.SearchIndex.normalizers`
+  - `azure.search.documents.indexes.models.SearchField.normalizer_name`
+
+- Below parameters do not exist
+  - `SearchClient.search.debug`
+  - `SearchClient.search.hybrid_search`
+  - `SearchClient.search.query_language`
+  - `SearchClient.search.query_speller`
+  - `SearchClient.search.semantic_fields`
+  - `SearchIndexerClient.create_or_update_indexer.skip_indexer_reset_requirement_for_cache`
+  - `SearchIndexerClient.create_or_update_data_source_connection.skip_indexer_reset_requirement_for_cache`
+  - `SearchIndexerClient.create_or_update_skillset.skip_indexer_reset_requirement_for_cache`
+  - `SearchIndexerClient.create_or_update_indexer.disable_cache_reprocessing_change_detection`
+  - `SearchIndexerClient.create_or_update_skillset.disable_cache_reprocessing_change_detection`
+
+### Other Changes
+
+- Updated default API version to `2024-07-01`.
 
 ## 11.6.0b4 (2024-05-07)
 

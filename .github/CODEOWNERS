@@ -50,6 +50,12 @@
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @achauhan-scc @kingernupur @paulshealy1 @singankit
 
+# ServiceOwners: @luigiw @needuv @singankit
+# ServiceLabel: %Evaluation
+
+# PRLabel: %Evaluation
+/sdk/evaluation/                                                     @Azure/azure-sdk-write-evaluation
+
 # ServiceLabel: %AgriFood
 # PRLabel: %AgriFood
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
@@ -118,7 +124,7 @@
 
 # ServiceLabel: %Communication - Phone Numbers
 # PRLabel: %Communication - Phone Numbers
-/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @RoyHerrod @danielav7
+/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @danielav7
 
 # ServiceLabel: %Communication - Rooms
 # PRLabel: %Communication - Rooms
@@ -271,8 +277,8 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @JustinFirsching
 
 # PRLabel: %ML-Jobs
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @TonyJ1 @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @TonyJ1 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @TonyJ1 @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @TonyJ1 @wangchao1230 @kingernupur @achauhan-scc
 /sdk/ml/training-experiences.tests.yml                               @TonyJ1
 
 # PRLabel: %ML-AutoML
@@ -285,15 +291,15 @@
 /sdk/ml/automl.tests.yml                                             @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @anupsms @MaurisLucis @novaturient95
 
 # PRLabel: %ML-Pipelines
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/                    @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component/                   @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/schedule/                    @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/dsl/                                 @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/                  @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component/                 @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/                  @wangchao1230
-/sdk/ml/azure-ai-ml/azure/ai/ml/_internal/                           @wangchao1230
-/sdk/ml/pipeline.tests.yml                                           @wangchao1230 @eniac871
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/                    @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/component/                   @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/schedule/                    @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/dsl/                                 @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/                  @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component/                 @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/                  @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/_internal/                           @wangchao1230 @kingernupur @achauhan-scc
+/sdk/ml/pipeline.tests.yml                                           @wangchao1230 @eniac871 @kingernupur @achauhan-scc
 
 # PRLabel: %ML-Workspace
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/                            @seanyao1 @debuggerXi
@@ -322,6 +328,10 @@
 
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
+
+# ServiceLabel: %Operator Nexus - Network Cloud
+# PRLabel: %Operator Nexus - Network Cloud
+/sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
 
 # ServiceLabel: %Purview
 # PRLabel: %Purview
@@ -378,7 +388,7 @@
 
 # ServiceLabel: %Health Deidentification
 # PRLabel: %Health Deidentification
-/sdk/healthdataaiservices/                                           @GrahamMThomas @danielszaniszlo
+/sdk/healthdataaiservices/                                           @GrahamMThomas
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Cognitive - Form Recognizer
@@ -839,7 +849,11 @@
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312 @kristapratico
 /eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
+
+# Add approvers for typespec-python emitter version updates
+/eng/emitter-package.json                                            @mccoyp @catalinaperalta @kristapratico @iscai-msft
+/eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @kristapratico @iscai-msft
 
 /pylintrc                                                            @l0lawrence

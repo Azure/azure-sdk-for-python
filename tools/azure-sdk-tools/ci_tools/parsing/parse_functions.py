@@ -272,7 +272,7 @@ def parse_setup(
     classifiers = kwargs.get("classifiers", [])
     keywords = kwargs.get("keywords", [])
 
-    is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
+    is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).key in NEW_REQ_PACKAGES), requires))
 
     ext_package = kwargs.get("ext_package", None)
     ext_modules = kwargs.get("ext_modules", [])
@@ -301,23 +301,13 @@ def get_install_requires(setup_path: str) -> List[str]:
     return ParsedSetup.from_path(setup_path).requires
 
 
-def parse_require(req: str) -> Tuple[str, SpecifierSet]:
+def parse_require(req: str) -> Requirement:
     """
     Parses the incoming version specification and returns a tuple of the requirement name and specifier.
 
     "azure-core<2.0.0,>=1.11.0" -> [azure-core, <2.0.0,>=1.11.0]
     """
-    req_object = Requirement.parse(req.split(";")[0].lower())
-    pkg_name = req_object.key
-
-    # we were not passed a full requirement. Instead we were passed a value of "readme-renderer" or another string without a version.
-    if not req_object.specifier:
-        return [pkg_name, None]
-
-    # regex details ripped from https://peps.python.org/pep-0508/
-    isolated_spec = re.sub(r"^([a-zA-Z0-9\-\_\.]+)(\[[a-zA-Z0-9\-\_\.\,]*\])?", "", str(req_object))
-    spec = SpecifierSet(isolated_spec)
-    return (pkg_name, spec)
+    return Requirement.parse(req)
 
 
 def parse_freeze_output(file_location: str) -> Dict[str, str]:
