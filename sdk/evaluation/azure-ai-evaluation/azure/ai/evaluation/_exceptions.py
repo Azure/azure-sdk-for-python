@@ -9,9 +9,9 @@ from azure.core.exceptions import AzureError
 
 
 class ErrorCategory(Enum):
-    """Error category to be specified when using PromptflowEvalsException class.
+    """Error category to be specified when using EvaluationException class.
 
-    When using PromptflowEvalsException, specify the type that best describes the nature of the error being captured.
+    When using EvaluationException, specify the type that best describes the nature of the error being captured.
 
     * INVALID_VALUE -> One or more inputs are invalid (e.g. incorrect type or format)
     * UNKNOWN_FIELD -> A least one unrecognized parameter is specified
@@ -32,9 +32,9 @@ class ErrorCategory(Enum):
 
 
 class ErrorBlame(Enum):
-    """Source of blame to be specified when using PromptflowEvalsException class.
+    """Source of blame to be specified when using EvaluationException class.
 
-    When using PromptflowEvalsException, specify whether the error is due to user actions or the system.
+    When using EvaluationException, specify whether the error is due to user actions or the system.
     """
 
     USER_ERROR = "UserError"
@@ -43,16 +43,18 @@ class ErrorBlame(Enum):
 
 
 class ErrorTarget(Enum):
-    """Error target to be specified when using PromptflowEvalsException class.
+    """Error target to be specified when using EvaluationException class.
 
-    When using PromptflowEvalsException, specify the code are that was being targeted when the
+    When using EvaluationException, specify the code are that was being targeted when the
     exception was triggered.
     """
 
+    EVAL_RUN = "EvalRun"
+    EVALUATE = "Evaluate"
     UNKNOWN = "Unknown"
 
 
-class PromptflowEvalsException(AzureError):
+class EvaluationException(AzureError):
     """The base class for all exceptions raised in pazure-ai-evaluation. If there is a need to define a custom
     exception type, that custom exception type should extend from this class.
 
