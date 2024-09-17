@@ -122,10 +122,8 @@ class _QueryExecutionContextBase(object):
             (fetched_items, response_headers) = fetch_function(new_options)
 
             continuation_key = http_constants.HttpHeaders.Continuation
-            if fetched_items:
-                self._continuation = response_headers.get(continuation_key)
-            else:
-                self._continuation = None
+            self._continuation = response_headers.get(continuation_key)
+
             if fetched_items:
                 break
         return fetched_items
