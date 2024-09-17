@@ -92,7 +92,7 @@ if __name__ == "__main__":
 
     pprint(result)
 ```
-### Non adversarial simulator
+## Simulator
 
 Sample application prompty
 
@@ -151,6 +151,23 @@ wiki_title = wikipedia.search(wiki_search_term)[0]
 wiki_page = wikipedia.page(wiki_title)
 text = wiki_page.summary[:1000]
 
+def method_to_invoke_application_prompty(query: str):
+    try:
+        current_dir = os.path.dirname(__file__)
+        prompty_path = os.path.join(current_dir, "application.prompty")
+        _flow = load_flow(source=prompty_path, model={
+            "configuration": azure_ai_project
+        })
+        response = _flow(
+            query=query,
+            context=context,
+            conversation_history=messages_list
+        )
+        return response
+    except:
+        print("Something went wrong invoking the prompty")
+        return "something went wrong"
+
 async def callback(
     messages: List[Dict],
     stream: bool = False,
@@ -163,17 +180,7 @@ async def callback(
     query = latest_message["content"]
     context = None
     # call your endpoint or ai application here
-    current_dir = os.path.dirname(__file__)
-    prompty_path = os.path.join(current_dir, "application.prompty")
-    _flow = load_flow(source=prompty_path, model={
-        "configuration": azure_ai_project
-    })
-    response = _flow(
-        query=query,
-        context=context,
-        conversation_history=messages_list
-    )
-    print(f"Response from application prompty: {response}")
+    response = method_to_invoke_application_prompty(query)
     # we are formatting the response to follow the openAI chat protocol format
     formatted_response = {
         "content": response,
