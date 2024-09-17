@@ -34,7 +34,7 @@ from azure.cosmos import http_constants
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromInternal, \
     ChangeFeedStartFromETagAndFeedRange
 from azure.cosmos._change_feed.composite_continuation_token import CompositeContinuationToken
-from azure.cosmos._change_feed.feed_range import FeedRange, FeedRangeEpk, FeedRangePartitionKey
+from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternal, FeedRangeInternalEpk, FeedRangeInternalPartitionKey
 from azure.cosmos._change_feed.feed_range_composite_continuation_token import FeedRangeCompositeContinuation
 from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider as AsyncSmartRoutingMapProvider
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
@@ -79,7 +79,7 @@ class ChangeFeedState(ABC):
     def from_json(
             container_link: str,
             container_rid: str,
-            change_feed_state_context: Dict[str, Any]):
+            change_feed_state_context: Dict[str, Any]) -> 'ChangeFeedState':
 
         if (change_feed_state_context.get("partitionKeyRangeId")
                 or change_feed_state_context.get("continuationPkRangeId")):
@@ -184,7 +184,7 @@ class ChangeFeedStateV2(ChangeFeedState):
             self,
             container_link: str,
             container_rid: str,
-            feed_range: FeedRange,
+            feed_range: FeedRangeInternal,
             change_feed_start_from: ChangeFeedStartFromInternal,
             continuation: Optional[FeedRangeCompositeContinuation]
     ) -> None:
@@ -380,22 +380,20 @@ class ChangeFeedStateV2(ChangeFeedState):
             collection_rid: str,
             change_feed_state_context: Dict[str, Any]) -> 'ChangeFeedStateV2':
 
-        feed_range: Optional[FeedRange] = None
+        feed_range: Optional[FeedRangeInternal] = None
         if change_feed_state_context.get("feedRange"):
-            feed_range_str = base64.b64decode(change_feed_state_context["feedRange"]).decode('utf-8')
-            feed_range_json = json.loads(feed_range_str)
-            feed_range = FeedRangeEpk(Range.ParseFromDict(feed_range_json))
+            feed_range = change_feed_state_context.get("feedRange")
         elif change_feed_state_context.get("partitionKey"):
             if change_feed_state_context.get("partitionKeyFeedRange"):
                 feed_range =\
-                    FeedRangePartitionKey(
+                    FeedRangeInternalPartitionKey(
                         change_feed_state_context["partitionKey"],
                         change_feed_state_context["partitionKeyFeedRange"])
             else:
                 raise ValueError("partitionKey is in the changeFeedStateContext, but missing partitionKeyFeedRange")
         else:
             # default to full range
-            feed_range = FeedRangeEpk(
+            feed_range = FeedRangeInternalEpk(
                 Range(
                 "",
                 "FF",

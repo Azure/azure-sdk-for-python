@@ -29,7 +29,7 @@ from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.partition_key import _Undefined, _Empty
 
 
-class FeedRange(ABC):
+class FeedRangeInternal(ABC):
 
     @abstractmethod
     def get_normalized_range(self) -> Range:
@@ -39,7 +39,7 @@ class FeedRange(ABC):
     def to_dict(self) -> Dict[str, Any]:
         pass
 
-class FeedRangePartitionKey(FeedRange):
+class FeedRangeInternalPartitionKey(FeedRangeInternal):
     type_property_name = "PK"
 
     def __init__(
@@ -69,7 +69,7 @@ class FeedRangePartitionKey(FeedRange):
         return { self.type_property_name: self._pk_value }
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any], feed_range: Range) -> 'FeedRangePartitionKey':
+    def from_json(cls, data: Dict[str, Any], feed_range: Range) -> 'FeedRangeInternalPartitionKey':
         if data.get(cls.type_property_name):
             pk_value = data.get(cls.type_property_name)
             if not pk_value:
@@ -80,11 +80,11 @@ class FeedRangePartitionKey(FeedRange):
                 return cls(list(pk_value), feed_range)
             return cls(data[cls.type_property_name], feed_range)
 
-        raise ValueError(f"Can not parse FeedRangePartitionKey from the json,"
+        raise ValueError(f"Can not parse FeedRangeInternalPartitionKey from the json,"
                          f" there is no property {cls.type_property_name}")
 
 
-class FeedRangeEpk(FeedRange):
+class FeedRangeInternalEpk(FeedRangeInternal):
     type_property_name = "Range"
 
     def __init__(self, feed_range: Range) -> None:
@@ -102,8 +102,9 @@ class FeedRangeEpk(FeedRange):
         }
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> 'FeedRangeEpk':
+    def from_json(cls, data: Dict[str, Any]) -> 'FeedRangeInternalEpk':
         if data.get(cls.type_property_name):
             feed_range = Range.ParseFromDict(data.get(cls.type_property_name))
             return cls(feed_range)
-        raise ValueError(f"Can not parse FeedRangeEPK from the json, there is no property {cls.type_property_name}")
+        raise ValueError(f"Can not parse FeedRangeInternalEPK from the json,"
+                         f" there is no property {cls.type_property_name}")
