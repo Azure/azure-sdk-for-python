@@ -95,10 +95,48 @@ function Split-ArrayIntoBatches {
     return ,$batches
 }
 
+function Update-Include {
+    param (
+        [Parameter(Mandatory=$true)]
+        $Matrix,
+        [Parameter(Mandatory=$true)]
+        $IncludeConfig,
+        [Parameter(Mandatory=$true)]
+        $TargetingString
+    )
+
+    foreach ($configElement in $IncludeConfig) {
+        if ($configElement.PSObject.Properties) {
+            $topLevelPropertyName = $configElement.PSObject.Properties.Name
+            $topLevelPropertyValue = $configElement.PSObject.Properties[$topLevelPropertyName].Value
+
+            if ($topLevelPropertyValue.PSObject.Properties) {
+                $secondLevelPropertyName = $topLevelPropertyValue.PSObject.Properties.Name
+                $secondLevelPropertyValue = $topLevelPropertyValue.PSObject.Properties[$secondLevelPropertyName].Value
+
+                $newSecondLevelName = "$secondLevelPropertyName" + "$TargetingString"
+
+                $topLevelPropertyValue.PSObject.Properties.Remove($secondLevelPropertyName)
+                $topLevelPropertyValue | Add-Member -MemberType NoteProperty -Name $newSecondLevelName -Value $secondLevelPropertyValue
+
+                # add the targeting string property if it doesn't already exist
+                if (-not $topLevelPropertyValue.$newSecondLevelName.PSObject.Properties["TargetingString"]) {
+                    $topLevelPropertyValue.$newSecondLevelName | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value ""
+                }
+
+                # set the targeting string
+                $topLevelPropertyValue.$newSecondLevelName.TargetingString = $TargetingString
+            }
+        }
+
+        $Matrix.include += $configElement
+    }
+}
+
 function Update-Matrix {
     param (
         [Parameter(Mandatory=$true)]
-        [PSCustomObject]$Matrix,
+        $Matrix,
 
         [Parameter(Mandatory=$true)]
         $DirectBatches,
@@ -107,9 +145,23 @@ function Update-Matrix {
         $IndirectBatches,
 
         [Parameter(Mandatory=$true)]
-        [int]$MatrixMultiplier
+        $MatrixMultiplier
     )
 
+    $matrixUpdate = $true
+    if ($Matrix.matrix.PSObject.Properties["`$IMPORT"]) {
+        $matrixUpdate = $false
+    }
+
+    # a basic platform matrix has the following:
+    # "matrix" -> "PythonVersion" = ["3.6", "3.7", "3.8", "3.9", "3.10"]
+    # "include" -> "ConfigName" -> "ActualJobName" -> PythonVersion=3.9
+    # so what we need to do is for each batch
+        # 1. assign the batch * matrix size to the matrix as "TargetingString", this will evenly distribute the packages to EACH python version non-sparsely
+        # 2. assign the batch to each include with the batch being the value for TargetingString for the include
+            # the easiest way to do this is to take a copy of the `Include` object at the beginning of this script,
+            # for each batch, assign the batch to the include object, and then add the include object to the matrix object
+            # this will have the result of multiplexing our includes, so we will need to update the name there as well
     foreach($batch in $DirectBatches) {
         $targetingString = ($batch | Select-Object -ExpandProperty Name) -join ","
 
@@ -119,11 +171,13 @@ function Update-Matrix {
         # we are generating the matrix sparsely, we still want full coverage of these targetingStrings
         $targetingStringArray = @($targetingString) * $MatrixMultiplier
         # Write-Host "Returning batch:"
-        foreach($item in $targetingStringArray) {
-            # Write-Host "`t$item"
-        }
+        # foreach($item in $targetingStringArray) {
+        #     Write-Host "`t$item"
+        # }
 
-        $matrix.matrix.TargetingString += $targetingStringArray
+        if ($matrixUpdate) {
+            $matrix.matrix.TargetingString += $targetingStringArray
+        }
 
         # if there were any include objects, we need to duplicate them exactly and add the targeting string to each
         # this means that the number of includes at the end of this operation will be incoming # of includes * the number of batches
@@ -131,35 +185,13 @@ function Update-Matrix {
             # Write-Host "Walking include objects for $targetingString"
             $includeCopy = $originalInclude | ConvertTo-Json -Depth 100 | ConvertFrom-Json
 
-            foreach ($configElement in $includeCopy) {
-                if ($configElement.PSObject.Properties) {
-                    $topLevelPropertyName = $configElement.PSObject.Properties.Name
-                    $topLevelPropertyValue = $configElement.PSObject.Properties[$topLevelPropertyName].Value
-
-                    if ($topLevelPropertyValue.PSObject.Properties) {
-                        $secondLevelPropertyName = $topLevelPropertyValue.PSObject.Properties.Name
-                        $secondLevelPropertyValue = $topLevelPropertyValue.PSObject.Properties[$secondLevelPropertyName].Value
-
-                        $newSecondLevelName = "$secondLevelPropertyName" + "$targetingString"
-
-                        $topLevelPropertyValue.PSObject.Properties.Remove($secondLevelPropertyName)
-                        $topLevelPropertyValue | Add-Member -MemberType NoteProperty -Name $newSecondLevelName -Value $secondLevelPropertyValue
-
-                        # add the targeting string property if it doesn't already exist
-                        if (-not $topLevelPropertyValue.$newSecondLevelName.PSObject.Properties["TargetingString"]) {
-                            $topLevelPropertyValue.$newSecondLevelName | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value ""
-                        }
-
-                        # set the targeting string
-                        $topLevelPropertyValue.$newSecondLevelName.TargetingString = $targetingString
-                    }
-                }
-
-                $matrix.include += $configElement
-            }
+            Update-Include -Matrix $matrix -IncludeConfig $includeCopy -TargetingString $targetingString
         }
     }
 
+    foreach($batch in $IndirectBatches) {
+
+    }
 
 }
 
@@ -221,16 +253,6 @@ else {
 # ["azure-storage-queue"]
 
 # any other packages will be added to the matrix as additional targetingstring batches. it'll be sparse in that there won't be full matrix coverage
-
-# a basic platform matrix has the following:
-# "matrix" -> "PythonVersion" = ["3.6", "3.7", "3.8", "3.9", "3.10"]
-# "include" -> "ConfigName" -> "ActualJobName" -> PythonVersion=3.9
-# so what we need to do is for each batch
-    # 1. assign the batch * matrix size to the matrix as "TargetingString"
-    # 2. assign the batch to each include with the batch being the value for TargetingString for the include
-        # the easiest way to do this is to take a copy of the `Include` object at the beginning of this script,
-        # for each batch, assign the batch to the include object, and then add the include object to the matrix object
-        # this will have the result of multiplexing our includes, so we will need to update the name there
 
 if ($directBatches) {
     # we need to ensure the presence of TargetingString in the matrix object
