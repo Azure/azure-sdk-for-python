@@ -18,6 +18,7 @@ from ._generated.models import (
     SnapshotStatus,
     SnapshotComposition,
 )
+from ._generated._model_base import _deserialize
 
 
 class ConfigurationSetting(Model):
@@ -519,7 +520,7 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
         if deserialized.filters:
             for config_setting_filter in deserialized.filters:
                 filters.append(
-                    ConfigurationSettingsFilter(key=config_setting_filter.key, label=config_setting_filter.label)
+                    ConfigurationSettingsFilter(key=config_setting_filter.key, label=config_setting_filter.label, tags=config_setting_filter.tags)
                 )
         snapshot = cls(
             filters=filters,
@@ -540,7 +541,7 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
     def _to_generated(self) -> GeneratedConfigurationSnapshot:
         config_setting_filters = []
         for kv_filter in self.filters:
-            config_setting_filters.append(KeyValueFilter(key=kv_filter.key, label=kv_filter.label))
+            config_setting_filters.append(KeyValueFilter(key=kv_filter.key, label=kv_filter.label, tags=kv_filter.tags))
         return GeneratedConfigurationSnapshot(
             filters=config_setting_filters,
             composition_type=self.composition_type,
@@ -602,8 +603,9 @@ class ConfigurationSettingPropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         deserialized, response_headers = get_next_return
+        list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
         self.etag = response_headers.pop("ETag")
-        return deserialized.next_link or None, iter(self._deserializer(deserialized.items))
+        return deserialized.get("@nextLink") or None, iter(self._deserializer(list_of_elem))
 
 
 class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
@@ -641,5 +643,6 @@ class ConfigurationSettingPropertiesPagedAsync(AsyncPageIterator):
 
     async def _extract_data_cb(self, get_next_return):
         deserialized, response_headers = get_next_return
+        list_of_elem = _deserialize(List[KeyValue], deserialized["items"])
         self.etag = response_headers.pop("ETag")
-        return deserialized.next_link or None, AsyncList(self._deserializer(deserialized.items))
+        return deserialized.get("@nextLink") or None, iter(self._deserializer(list_of_elem))
