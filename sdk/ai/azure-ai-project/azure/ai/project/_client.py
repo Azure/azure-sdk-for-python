@@ -15,24 +15,22 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ProjectClientConfiguration
+from ._operations import ProjectClientOperationsMixin
 from ._serialization import Deserializer, Serializer
-from .operations import ConnectionsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ProjectClient:  # pylint: disable=client-accepts-api-version-keyword
+class ProjectClient(ProjectClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """ProjectClient.
 
-    :ivar connections: ConnectionsOperations operations
-    :vartype connections: azure.ai.project.operations.ConnectionsOperations
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param resource_group_name: The name of the Resource Group. Required.
     :type resource_group_name: str
-    :param workspace_name: The name of the AzureML workspace or AI project. Required.
+    :param workspace_name: The name of the workspace (Azure AI Studio hub). Required.
     :type workspace_name: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -80,7 +78,6 @@ class ProjectClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

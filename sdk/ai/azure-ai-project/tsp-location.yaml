@@ -1,4 +1,4 @@
 directory: specification/machinelearningservices/AzureAI.Project
-commit: 3861c3d91a2fdc977156a872b7f77f3bf7be96a5
+commit: 0529d8e02344c621dda014c6a5a37cfe655d49e6
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 

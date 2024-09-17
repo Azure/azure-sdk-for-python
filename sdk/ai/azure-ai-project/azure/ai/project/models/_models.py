@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Mapping, TYPE_CHECKING, overload
+from typing import TYPE_CHECKING
 
 from .. import _model_base
 from .._model_base import rest_field
@@ -24,31 +24,13 @@ class ListSecretsProperties(_model_base.Model):
     :ivar auth_type: to do. Required.
     :vartype auth_type: str
     :ivar credentials: to do. Required.
-    :vartype credentials: ~azure.ai.project.models.ListSecretsPropertiesCredentials
+    :vartype credentials: ~azure.ai.project.models._models.ListSecretsPropertiesCredentials
     """
 
     auth_type: str = rest_field(name="authType")
     """to do. Required."""
-    credentials: "_models.ListSecretsPropertiesCredentials" = rest_field()
+    credentials: "_models._models.ListSecretsPropertiesCredentials" = rest_field()
     """to do. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        auth_type: str,
-        credentials: "_models.ListSecretsPropertiesCredentials",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class ListSecretsPropertiesCredentials(_model_base.Model):
@@ -62,48 +44,14 @@ class ListSecretsPropertiesCredentials(_model_base.Model):
     key: str = rest_field()
     """to do. Required."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        key: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
 
 class ListSecretsResponse(_model_base.Model):
     """to do.
 
 
     :ivar properties: to do. Required.
-    :vartype properties: ~azure.ai.project.models.ListSecretsProperties
+    :vartype properties: ~azure.ai.project.models._models.ListSecretsProperties
     """
 
-    properties: "_models.ListSecretsProperties" = rest_field()
+    properties: "_models._models.ListSecretsProperties" = rest_field()
     """to do. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.ListSecretsProperties",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)

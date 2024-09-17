@@ -27,7 +27,7 @@ class ProjectClientConfiguration:  # pylint: disable=too-many-instance-attribute
     :type subscription_id: str
     :param resource_group_name: The name of the Resource Group. Required.
     :type resource_group_name: str
-    :param workspace_name: The name of the AzureML workspace or AI project. Required.
+    :param workspace_name: The name of the workspace (Azure AI Studio hub). Required.
     :type workspace_name: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -61,7 +61,7 @@ class ProjectClientConfiguration:  # pylint: disable=too-many-instance-attribute
         self.workspace_name = workspace_name
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://ml.azure.com/.default"])
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "ai-project/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
