@@ -30,18 +30,27 @@ Param (
 .  (Join-Path $PSScriptRoot ".." common scripts Helpers PSModule-Helpers.ps1)
 Install-ModuleIfNotInstalled "powershell-yaml" "0.4.1" | Import-Module
 
+. (Join-Path $PSScriptRoot ".." common scripts common.ps1)
+
 function ShouldPublish ($ServiceDirectory, $PackageName) {
     $ciYmlPath = Join-Path $ServiceDirectory "ci.yml"
 
+    Write-Host $PackageName
+
     if (Test-Path $ciYmlPath)
     {
+        Write-Host $ciYmlPath
         $ciYml = ConvertFrom-Yaml (Get-Content $ciYmlPath -Raw)
 
         if ($ciYml.extends -and $ciYml.extends.parameters -and $ciYml.extends.parameters.Artifacts) {
             $packagesBuildingDocs = $ciYml.extends.parameters.Artifacts `
                 | Where-Object {
-                    if ($_.PSObject.Properties["skipPublishDocsMs"]) {
-                        $false
+                    if ($_["skipPublishDocMs"]) {
+                        if ($_["skipPublishDocMs"] -eq $true) {
+                            $false
+                        } else {
+                            $true
+                        }
                     }
                     else {
                         $true
@@ -51,6 +60,7 @@ function ShouldPublish ($ServiceDirectory, $PackageName) {
 
             if ($packagesBuildingDocs -contains $PackageName)
             {
+                Write-Host $packagesBuildingDocs
                 return $true
             }
             else {
@@ -59,8 +69,6 @@ function ShouldPublish ($ServiceDirectory, $PackageName) {
         }
     }
 }
-
-. (Join-Path $PSScriptRoot ".." common scripts common.ps1)
 
 Write-Host "ArtifactStagingDirectory=$ArtifactStagingDirectory"
 if (-not (Test-Path -Path $ArtifactStagingDirectory)) {
@@ -94,6 +102,7 @@ foreach($packageInfoFile in $artifacts) {
         Write-Host "Skipping publishing docs for $($packageInfo.Name)"
         continue
     }
+
 
     # From the $packageInfo piece together the path to the javadoc jar file
     $WhlDir = Join-Path $ArtifactStagingDirectory $packageInfo.Name
