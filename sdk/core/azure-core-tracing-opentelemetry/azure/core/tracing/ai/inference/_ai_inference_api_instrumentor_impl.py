@@ -232,14 +232,18 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
                                 del accumulate['message']['content']
                             if not accumulate['message']:
                                 del accumulate['message']
+                        if 'message' in accumulate:
+                            if 'tool_calls' in accumulate['message']:
+                                tool_calls_function_names_and_arguments_removed = remove_function_call_names_and_arguments(accumulate['message']['tool_calls'])
+                                accumulate['message']['tool_calls'] = [tool for tool in tool_calls_function_names_and_arguments_removed]
 
-                    span.span_instance.add_event(
-                        name="gen_ai.choice",
-                        attributes={
-                            "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                            "gen_ai.event.content": json.dumps(accumulate)
-                        }
-                    )
+                span.span_instance.add_event(
+                    name="gen_ai.choice",
+                    attributes={
+                        "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                        "gen_ai.event.content": json.dumps(accumulate)
+                    }
+                )
                 span.finish()
 
     return StreamWrapper(stream_obj)

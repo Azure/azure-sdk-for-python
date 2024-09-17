@@ -5,7 +5,7 @@ import os
 from .azure_telemetry_instrumentor import AzureTelemetryInstrumentor
 
 
-class AiInferenceApiInstrumentor(AzureTelemetryInstrumentor):
+class AIInferenceApiInstrumentor(AzureTelemetryInstrumentor):
     def __init__(self):
         super().__init__()
 
