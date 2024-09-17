@@ -182,7 +182,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         if response.status_code != 202:
             raise HttpResponseError(
-                message=f"Received unexpected HTTP status: {response.status} {await response.text()}", response=response
+                message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
             )
 
         response = response.json()

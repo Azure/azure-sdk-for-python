@@ -15,7 +15,9 @@ class PackageProps
     [boolean]$IsNewSdk
     [string]$ArtifactName
     [string]$ReleaseStatus
+    # was this package purely included because other packages included it as an AdditionalValidationPackage?
     [boolean]$IncludedForValidation
+    # does this package include other packages that we should trigger validation for?
     [string[]]$AdditionalValidationPackages
 
     PackageProps([string]$name, [string]$version, [string]$directoryPath, [string]$serviceDirectory)
