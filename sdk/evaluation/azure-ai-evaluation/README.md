@@ -32,7 +32,7 @@ def answer_length(answer, **kwargs):
 
 if __name__ == "__main__":
     # Built-in evaluators
-    # Initialize Azure OpenAI Connection
+    # Initialize Azure OpenAI Model Configuration
     model_config = {
         "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
         "api_key": os.environ.get("AZURE_OPENAI_KEY"),
