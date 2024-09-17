@@ -1162,7 +1162,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
         else:
             options = dict(options)
-        options["changeFeed"] = True
 
         resource_key_map = {"Documents": "docs"}
 
