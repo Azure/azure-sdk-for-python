@@ -7,7 +7,6 @@
 
 from typing import List, Optional, Union, TYPE_CHECKING
 from enum import Enum
-from datetime import datetime
 from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
@@ -955,7 +954,7 @@ class CancelAddParticipantOperationResult:
             operation_context=cancel_add_participant_operation_result_generated.operation_context
         )
 
-class AudioData:
+class ServerAudioData:
     """
     Data for Audio Streaming.
     :keyword  data: Audio streaming data.
@@ -967,19 +966,11 @@ class AudioData:
     """
     data: bytes
     """ Audio streaming data. """
-    time_stamp : datetime
-    """ Time stamp. """
-    is_silent : bool
-    """ Is silent. """
     def __init__(
            self,
            *,
-           data: bytes,
-           time_stamp: str,
-           is_silent: bool):
+           data: bytes):
         self.data = data
-        self.time_stamp = time_stamp
-        self.is_silent = is_silent
 
 class Mark:
     """
@@ -1022,7 +1013,7 @@ class ServerStreamingData:
     kind: ServerMessageType
     """ Message that determines the format that of the subsequent messages, 
     received through the WebSocket. Required. """
-    audio_data : AudioData
+    audio_data : ServerAudioData
     """ Audio Data which contains the audio data stream information. """
     mark : Mark
     """ Mark determines end of stream of data."""
