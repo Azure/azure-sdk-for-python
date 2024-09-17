@@ -488,20 +488,22 @@ def _evaluate(  # pylint: disable=too-many-locals
     )
 
     trace_destination = pf_client._config.get_trace_destination()
-
     target_run = None
-
     target_generated_columns = set()
+
+    # Create default configuration for evaluators that directly maps
+    # input data names to keyword inputs of the same name in the evaluators.
+    if not evaluator_config:
+        evaluator_config = {}
+    if "default" not in evaluator_config:
+        evaluator_config["default"] = {}
+        for col in input_data_df.columns:
+            evaluator_config["default"][col] = f"${{data.{col}}}"
+
     if data is not None and target is not None:
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
             target, data, pf_client, input_data_df, evaluation_name, _run_name=kwargs.get("_run_name")
         )
-
-        # Make sure, the default is always in the configuration.
-        if not evaluator_config:
-            evaluator_config = {}
-        if "default" not in evaluator_config:
-            evaluator_config["default"] = {}
 
         for evaluator_name, mapping in evaluator_config.items():
             mapped_to_values = set(mapping.values())
