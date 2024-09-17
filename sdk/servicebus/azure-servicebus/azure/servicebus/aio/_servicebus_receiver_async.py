@@ -434,9 +434,12 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             
             # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
             if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
-                link_credit_needed = max_message_count - amqp_receive_client._link.current_link_credit
+                if amqp_receive_client._link.total_link_credit:
+                    link_credit_needed = max_message_count - amqp_receive_client._link.total_link_credit
+                else:
+                    link_credit_needed = max_message_count - len(batch)
                 if link_credit_needed > 0:
-                    await self._amqp_transport.reset_link_credit_async(amqp_receive_client, link_credit_needed)
+                    self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
 
             first_message_received = expired = False
             receiving = True

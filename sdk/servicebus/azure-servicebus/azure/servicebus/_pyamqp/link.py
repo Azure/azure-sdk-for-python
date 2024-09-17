@@ -97,6 +97,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._on_link_state_change = kwargs.get("on_link_state_change")
         self._on_attach = kwargs.get("on_attach")
         self._error: Optional[AMQPLinkError] = None
+        self.total_link_credit = self.link_credit
 
     def __enter__(self) -> "Link":
         self.attach()
@@ -268,5 +269,9 @@ class Link:  # pylint: disable=too-many-instance-attributes
             self._set_state(LinkState.DETACHED)
 
     def flow(self, *, link_credit: Optional[int] = None, **kwargs: Any) -> None:
+        # Total link credit is the link credit on the wire
+        self.total_link_credit = link_credit + self.total_link_credit if link_credit is not None else self.link_credit
+        # # Current link credit is the link credit from the most recent outgoing flow frame
         self.current_link_credit = link_credit if link_credit is not None else self.link_credit
+
         self._outgoing_flow(**kwargs)

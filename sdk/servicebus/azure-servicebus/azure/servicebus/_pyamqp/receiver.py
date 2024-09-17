@@ -60,6 +60,7 @@ class ReceiverLink(Link):
         # If more is false --> this is the last frame of the message
         if not frame[5]:
             self.current_link_credit -= 1
+            self.total_link_credit -=1
             self.delivery_count += 1
         self.received_delivery_id = frame[1]  # delivery_id
         if self.received_delivery_id is not None:
@@ -114,6 +115,7 @@ class ReceiverLink(Link):
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
+        print(f"DISPOSITION FRAME: {disposition_frame}")
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
