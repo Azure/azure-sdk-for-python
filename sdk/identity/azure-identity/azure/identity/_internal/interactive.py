@@ -193,8 +193,8 @@ class InteractiveCredential(MsalCredential, ABC):
 
         # Check for arbitrary additional options to enable intermediary support for PoP tokens.
         for key in options:
-            if key not in TokenRequestOptions.__annotations__:
-                kwargs.setdefault(key, options[key])
+            if key not in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
+                kwargs.setdefault(key, options[key])  # type: ignore
 
         try:
             token = self._acquire_token_silent(
