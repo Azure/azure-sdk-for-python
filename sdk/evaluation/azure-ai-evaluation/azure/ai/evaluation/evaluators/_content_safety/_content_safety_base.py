@@ -28,29 +28,29 @@ class ContentSafetyEvaluatorBase(ABC):
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
-    async def __call__(self, *, query: str, answer: str, **kwargs):
+    async def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Any
         """
         # Validate inputs
         # Raises value error if failed, so execution alone signifies success.
         if not (query and query.strip() and query != "None") or not (
-            answer and answer.strip() and answer != "None"
+            response and response.strip() and response != "None"
         ):
-            raise ValueError("Both 'query' and 'answer' must be non-empty strings.")
+            raise ValueError("Both 'query' and 'response' must be non-empty strings.")
 
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(
             metric_name=self._metric,
             query=query,
-            answer=answer,
+            response=response,
             project_scope=self._azure_ai_project,
             credential=self._credential,
         )

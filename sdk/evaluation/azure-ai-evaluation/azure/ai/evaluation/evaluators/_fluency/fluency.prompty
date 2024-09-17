@@ -20,7 +20,7 @@ model:
 inputs:
   query:
     type: string
-  answer:
+  response:
     type: string
 
 ---
@@ -57,5 +57,5 @@ answer: Every morning, I wake up at 6 am, drink a glass of water, and do some li
 stars: 5
 
 question: {{query}}
-answer: {{answer}}
+answer: {{response}}
 stars:

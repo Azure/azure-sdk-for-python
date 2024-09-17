@@ -55,12 +55,12 @@ class JsonLineList(list):
                 if user_message and assistant_message:
                     if context:
                         json_lines += (
-                            json.dumps({"query": user_message, "answer": assistant_message, "context": context})
+                            json.dumps({"query": user_message, "response": assistant_message, "context": context})
                             + "\n"
                         )
                         user_message = assistant_message = context = None
                     else:
-                        json_lines += json.dumps({"query": user_message, "answer": assistant_message}) + "\n"
+                        json_lines += json.dumps({"query": user_message, "response": assistant_message}) + "\n"
                         user_message = assistant_message = None
 
         return json_lines

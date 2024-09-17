@@ -43,16 +43,16 @@ class _AsyncCoherenceEvaluator:
         prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
-    async def __call__(self, *, query: str, answer: str, **kwargs):
+    async def __call__(self, *, query: str, response: str, **kwargs):
         # Validate input parameters
         query = str(query or "")
-        answer = str(answer or "")
+        response = str(response or "")
 
-        if not (query.strip() and answer.strip()):
-            raise ValueError("Both 'query' and 'answer' must be non-empty strings.")
+        if not (query.strip() and response.strip()):
+            raise ValueError("Both 'query' and 'response' must be non-empty strings.")
 
         # Run the evaluation flow
-        llm_output = await self._flow(query=query, answer=answer, timeout=self.LLM_CALL_TIMEOUT, **kwargs)
+        llm_output = await self._flow(query=query, response=response, timeout=self.LLM_CALL_TIMEOUT, **kwargs)
 
         score = np.nan
         if llm_output:
@@ -78,7 +78,7 @@ class CoherenceEvaluator:
         eval_fn = CoherenceEvaluator(model_config)
         result = eval_fn(
             query="What is the capital of Japan?",
-            answer="The capital of Japan is Tokyo.")
+            response="The capital of Japan is Tokyo.")
 
     **Output format**
 
@@ -92,18 +92,18 @@ class CoherenceEvaluator:
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         self._async_evaluator = _AsyncCoherenceEvaluator(model_config)
 
-    def __call__(self, *, query: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluate coherence.
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :return: The coherence score.
         :rtype: Dict[str, float]
         """
-        return async_run_allowing_running_loop(self._async_evaluator, query=query, answer=answer, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator

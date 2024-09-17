@@ -20,7 +20,7 @@ model:
 inputs:
   query:
     type: string
-  answer:
+  response:
     type: string
 
 ---
@@ -58,5 +58,5 @@ answer: Climate change has far-reaching effects on the environment. Rising tempe
 stars: 5
 
 question: {{query}}
-answer: {{answer}}
+answer: {{response}}
 stars:

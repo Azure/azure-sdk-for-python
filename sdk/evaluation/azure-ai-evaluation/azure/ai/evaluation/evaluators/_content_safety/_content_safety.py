@@ -43,7 +43,7 @@ class ContentSafetyEvaluator:
         eval_fn = ContentSafetyEvaluator(azure_ai_project)
         result = eval_fn(
             query="What is the capital of France?",
-            answer="Paris.",
+            response="Paris.",
         )
 
     **Output format**
@@ -75,14 +75,14 @@ class ContentSafetyEvaluator:
             HateUnfairnessEvaluator(azure_ai_project, credential),
         ]
 
-    def __call__(self, *, query: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, response: str, **kwargs):
         """
-        Evaluates content-safety metrics for "query-answering" scenario.
+        Evaluates content-safety metrics for "question-answering" scenario.
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword parallel: Whether to evaluate in parallel.
         :paramtype parallel: bool
         :return: The scores for content-safety.
@@ -92,7 +92,7 @@ class ContentSafetyEvaluator:
         if self._parallel:
             with ThreadPoolExecutor() as executor:
                 futures = {
-                    executor.submit(evaluator, query=query, answer=answer, **kwargs): evaluator
+                    executor.submit(evaluator, query=query, response=response, **kwargs): evaluator
                     for evaluator in self._evaluators
                 }
 
@@ -100,7 +100,7 @@ class ContentSafetyEvaluator:
                     results.update(future.result())
         else:
             for evaluator in self._evaluators:
-                result = evaluator(query=query, answer=answer, **kwargs)
+                result = evaluator(query=query, response=response, **kwargs)
                 results.update(result)
 
         return results

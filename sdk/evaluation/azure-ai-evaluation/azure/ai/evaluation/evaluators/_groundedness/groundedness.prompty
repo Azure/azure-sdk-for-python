@@ -18,7 +18,7 @@ model:
       type: text
 
 inputs:
-  answer:
+  response:
     type: string
   context:
     type: string
@@ -49,6 +49,6 @@ Independent Examples:
 ## Example Task #4 Output:
 1
 ## Actual Task Input:
-{"CONTEXT": {{context}}, "QUESTION": "", "ANSWER": {{answer}}}
+{"CONTEXT": {{context}}, "QUESTION": "", "ANSWER": {{response}}}
 Reminder: The return values for each task should be correctly formatted as an integer between 1 and 5. Do not repeat the context and question.
 Actual Task Output:

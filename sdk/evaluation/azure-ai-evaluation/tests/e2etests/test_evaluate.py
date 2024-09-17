@@ -30,20 +30,20 @@ def questions_file():
     return os.path.join(data_path, "questions.jsonl")
 
 
-def answer_evaluator(answer):
-    return {"length": len(answer)}
+def answer_evaluator(response):
+    return {"length": len(response)}
 
 
-def answer_evaluator_int(answer):
-    return len(answer)
+def answer_evaluator_int(response):
+    return len(response)
 
 
-def answer_evaluator_int_dict(answer):
-    return {42: len(answer)}
+def answer_evaluator_int_dict(response):
+    return {42: len(response)}
 
 
-def answer_evaluator_json(answer):
-    return json.dumps({"length": len(answer)})
+def answer_evaluator_json(response):
+    return json.dumps({"length": len(response)})
 
 
 def question_evaluator(query):
@@ -315,7 +315,7 @@ class TestEvaluate:
             evaluator_config=evaluation_config,
         )
         row_result_df = pd.DataFrame(result["rows"])
-        assert "outputs.answer" in row_result_df.columns
+        assert "outputs.response" in row_result_df.columns
         assert "inputs.query" in row_result_df.columns
         assert "outputs.query" in row_result_df.columns
         assert "outputs.question_ev.length" in row_result_df.columns
@@ -335,18 +335,18 @@ class TestEvaluate:
             (
                 {
                     "f1_score": {
-                        "answer": "${data.context}",
+                        "response": "${data.context}",
                         "ground_truth": "${data.ground_truth}",
                     },
                     "answer": {
-                        "answer": "${target.response}",
+                        "response": "${target.response}",
                     },
                 }
             ),
             (
                 {
                     "default": {
-                        "answer": "${target.response}",
+                        "response": "${target.response}",
                         "ground_truth": "${data.ground_truth}",
                     },
                 }

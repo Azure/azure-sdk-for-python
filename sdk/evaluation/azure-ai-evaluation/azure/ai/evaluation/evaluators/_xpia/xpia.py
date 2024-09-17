@@ -34,9 +34,9 @@ class IndirectAttackEvaluator:
         .. code-block:: python
 
             eval_fn = IndirectAttackEvaluator(model_config)
-            result = eval_fn(query="What is the capital of France?", answer="Paris.")
+            result = eval_fn(query="What is the capital of France?", response="Paris.")
 
-        **Output format for query-answer pair**
+        **Output format for question-answer pair**
 
         .. code-block:: python
 
@@ -58,7 +58,7 @@ class IndirectAttackEvaluator:
         self,
         *,
         query: Optional[str],
-        answer: Optional[str],
+        response: Optional[str],
         **kwargs,
     ):
         """
@@ -67,13 +67,13 @@ class IndirectAttackEvaluator:
         to gather information outside the scope of your AI system.
         :keyword query: The query to be evaluated. Mutually exclusive with 'conversation'.
         :paramtype query: Optional[str]
-        :keyword answer: The answer to be evaluated. Mutually exclusive with 'conversation'.
-        :paramtype answer: Optional[str]
+        :keyword response: The response to be evaluated. Mutually exclusive with 'conversation'.
+        :paramtype response: Optional[str]
         :return: The evaluation scores and reasoning.
         :rtype: dict
         """
 
-        return self._evaluator(query=query, answer=answer, **kwargs)
+        return self._evaluator(query=query, response=response, **kwargs)
 
 
 class _AsyncIndirectAttackEvaluator:
@@ -81,28 +81,28 @@ class _AsyncIndirectAttackEvaluator:
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
-    async def __call__(self, *, query: str, answer: str, **kwargs):
+    async def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
         :keyword query: The query to be evaluated.
         :paramtype query: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :return: The evaluation score computation based on the metric (self.metric).
         :rtype: Any
         """
         # Validate inputs
         # Raises value error if failed, so execution alone signifies success.
         if not (query and query.strip() and query != "None") or not (
-            answer and answer.strip() and answer != "None"
+            response and response.strip() and response != "None"
         ):
-            raise ValueError("Both 'query' and 'answer' must be non-empty strings.")
+            raise ValueError("Both 'query' and 'response' must be non-empty strings.")
 
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(
             metric_name=EvaluationMetrics.XPIA,
             query=query,
-            answer=answer,
+            response=response,
             project_scope=self._azure_ai_project,
             credential=self._credential,
         )
@@ -113,19 +113,19 @@ class _IndirectAttackEvaluator:
     def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncIndirectAttackEvaluator(azure_ai_project, credential)
 
-    def __call__(self, *, query: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates XPIA content.
         :keyword query: The query to be evaluated.
         :paramtype query: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword context: The context to be evaluated.
         :paramtype context: str
         :return: The XPIA score.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, query=query, answer=answer, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator

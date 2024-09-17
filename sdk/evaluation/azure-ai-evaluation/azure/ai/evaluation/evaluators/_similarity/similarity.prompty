@@ -20,7 +20,7 @@ model:
 inputs:
   query:
     type: string
-  answer:
+  response:
     type: string
   ground_truth:
     type: string
@@ -67,5 +67,5 @@ stars: 5
 
 question: {{query}}
 correct answer:{{ground_truth}}
-predicted answer: {{answer}}
+predicted answer: {{response}}
 stars:

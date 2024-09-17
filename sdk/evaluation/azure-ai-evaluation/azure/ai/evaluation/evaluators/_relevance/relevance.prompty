@@ -20,7 +20,7 @@ model:
 inputs:
   query:
     type: string
-  answer:
+  response:
     type: string
   context:
     type: string
@@ -65,5 +65,5 @@ stars: 5
 
 context: {{context}}
 question: {{query}}
-answer: {{answer}}
+answer: {{response}}
 stars:

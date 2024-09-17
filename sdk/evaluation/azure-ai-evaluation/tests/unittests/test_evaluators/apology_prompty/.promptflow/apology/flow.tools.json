@@ -1,15 +1,10 @@
 {
   "package": {},
   "code": {
-    "groundedness.prompty": {
+    "apology.prompty": {
       "type": "llm",
       "inputs": {
         "response": {
-          "type": [
-            "string"
-          ]
-        },
-        "context": {
           "type": [
             "string"
           ]

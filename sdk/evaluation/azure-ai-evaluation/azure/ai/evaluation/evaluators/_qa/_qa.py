@@ -33,7 +33,7 @@ class QAEvaluator:
         eval_fn = QAEvaluator(model_config)
         result = qa_eval(
             query="Tokyo is the capital of which country?",
-            answer="Japan",
+            response="Japan",
             context="Tokyo is the capital of Japan.",
             ground_truth="Japan"
         )
@@ -66,14 +66,14 @@ class QAEvaluator:
             F1ScoreEvaluator(),
         ]
 
-    def __call__(self, *, query: str, answer: str, context: str, ground_truth: str, **kwargs):
+    def __call__(self, *, query: str, response: str, context: str, ground_truth: str, **kwargs):
         """
         Evaluates question-answering scenario.
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword context: The context to be evaluated.
         :paramtype context: str
         :keyword ground_truth: The ground truth to be evaluated.
@@ -90,7 +90,7 @@ class QAEvaluator:
                     executor.submit(
                         evaluator,
                         query=query,
-                        answer=answer,
+                        response=response,
                         context=context,
                         ground_truth=ground_truth,
                         **kwargs
@@ -104,7 +104,7 @@ class QAEvaluator:
         else:
             for evaluator in self._evaluators:
                 result = evaluator(
-                    query=query, answer=answer, context=context, ground_truth=ground_truth, **kwargs
+                    query=query, response=response, context=context, ground_truth=ground_truth, **kwargs
                 )
                 results.update(result)
 

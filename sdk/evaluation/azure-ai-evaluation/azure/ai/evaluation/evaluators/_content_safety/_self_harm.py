@@ -18,8 +18,8 @@ class _AsyncSelfHarmEvaluator(ContentSafetyEvaluatorBase):
             credential=credential,
         )
 
-    async def __call__(self, *, query: str, answer: str, **kwargs):
-        return await super().__call__(query=query, answer=answer, **kwargs)
+    async def __call__(self, *, query: str, response: str, **kwargs):
+        return await super().__call__(query=query, response=response, **kwargs)
 
 
 class SelfHarmEvaluator:
@@ -42,7 +42,7 @@ class SelfHarmEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = SelfHarmEvaluator(azure_ai_project)
-        result = eval_fn(query="What is the capital of France?", answer="Paris.")
+        result = eval_fn(query="What is the capital of France?", response="Paris.")
 
     **Output format**
 
@@ -58,18 +58,18 @@ class SelfHarmEvaluator:
     def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncSelfHarmEvaluator(azure_ai_project, credential)
 
-    def __call__(self, *, query: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates self harm content.
 
         :keyword query: The query to be evaluated.
         :paramtype query: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :return: The self harm score.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, query=query, answer=answer, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator

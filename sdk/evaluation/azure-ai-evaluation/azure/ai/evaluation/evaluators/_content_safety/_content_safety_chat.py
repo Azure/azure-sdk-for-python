@@ -156,9 +156,9 @@ class ContentSafetyChatEvaluator:
     def _evaluate_turn(self, turn_num, questions, answers, evaluator):
         try:
             query = questions[turn_num] if turn_num < len(questions) else ""
-            answer = answers[turn_num] if turn_num < len(answers) else ""
+            response = answers[turn_num] if turn_num < len(answers) else ""
 
-            score = evaluator(query=query, answer=answer)
+            score = evaluator(query=query, response=response)
 
             return score
         except Exception as e:  # pylint: disable=broad-exception-caught
