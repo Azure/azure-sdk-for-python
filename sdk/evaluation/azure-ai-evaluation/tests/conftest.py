@@ -16,7 +16,7 @@ from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.proxy_testcase import transform_request
 from promptflow.client import PFClient
-from promptflow.core import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from promptflow.executor._line_execution_process_pool import _process_wrapper
 from promptflow.executor._process_manager import create_spawned_fork_process_manager
 from pytest_mock import MockerFixture
@@ -51,7 +51,7 @@ def add_sanitizers(
 ) -> None:
     def azureopenai_connection_sanitizer():
         """Sanitize the openai deployment name."""
-        mock_deployment = mock_model_config.azure_deployment
+        mock_deployment = mock_model_config["azure_deployment"]
 
         add_general_regex_sanitizer(
             regex=r"/openai/deployments/([^\/&#\"]+)", value=mock_deployment, group_for_replace="1"
@@ -119,7 +119,7 @@ def add_sanitizers(
             regex=project_scope["resource_group_name"], value=SanitizedValues.RESOURCE_GROUP_NAME
         )
         add_general_regex_sanitizer(regex=project_scope["project_name"], value=SanitizedValues.WORKSPACE_NAME)
-        add_general_regex_sanitizer(regex=model_config["azure_endpoint"], value=mock_model_config.azure_endpoint)
+        add_general_regex_sanitizer(regex=model_config["azure_endpoint"], value=mock_model_config["azure_endpoint"])
 
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
@@ -212,12 +212,7 @@ def dev_connections(
         return {
             "azure_ai_project_scope": {"value": mock_project_scope},
             "azure_openai_model_config": {
-                "value": {
-                    "azure_endpoint": mock_model_config.azure_endpoint,
-                    "api_key": mock_model_config.api_key,
-                    "api_version": mock_model_config.api_version,
-                    "azure_deployment": mock_model_config.azure_deployment,
-                }
+                "value": mock_model_config,
             },
         }
 
@@ -227,7 +222,7 @@ def dev_connections(
 
 
 @pytest.fixture(scope="session")
-def mock_model_config() -> dict:
+def mock_model_config() -> AzureOpenAIModelConfiguration:
     return AzureOpenAIModelConfiguration(
         azure_endpoint="https://Sanitized.openai.azure.com",
         api_key="aoai-api-key",
@@ -246,7 +241,7 @@ def mock_project_scope() -> Dict[str, str]:
 
 
 @pytest.fixture
-def model_config(dev_connections: Dict[str, Any]) -> dict:
+def model_config(dev_connections: Dict[str, Any]) -> AzureOpenAIModelConfiguration:
     conn_name = "azure_openai_model_config"
 
     if conn_name not in dev_connections:
@@ -260,7 +255,7 @@ def model_config(dev_connections: Dict[str, Any]) -> dict:
 
 
 @pytest.fixture
-def non_azure_openai_model_config(dev_connections: Dict[str, Any]) -> dict:
+def non_azure_openai_model_config(dev_connections: Dict[str, Any]) -> OpenAIModelConfiguration:
     """Requires the following in your local connections.json file. If not present, ask around the team.
 
 

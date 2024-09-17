@@ -397,15 +397,14 @@ def evaluate(
 
     .. code-block:: python
 
-            from promptflow.core import AzureOpenAIModelConfiguration
             from azure.ai.evaluation import evaluate, RelevanceEvaluator, CoherenceEvaluator
 
 
-            model_config = AzureOpenAIModelConfiguration(
-                azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
-                api_key=os.environ.get("AZURE_OPENAI_KEY"),
-                azure_deployment=os.environ.get("AZURE_OPENAI_DEPLOYMENT")
-            )
+            model_config = {
+                "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+                "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+                "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT")
+            }
 
             coherence_eval = CoherenceEvaluator(model_config=model_config)
             relevance_eval = RelevanceEvaluator(model_config=model_config)

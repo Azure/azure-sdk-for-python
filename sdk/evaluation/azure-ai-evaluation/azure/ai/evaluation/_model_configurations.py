@@ -11,7 +11,7 @@ class AzureOpenAIModelConfigurationBase(TypedDict):
     api_key: str
 
 
-class AzureOpenAIModelConfiguration(TypedDict, total=False):
+class AzureOpenAIModelConfiguration(AzureOpenAIModelConfigurationBase, total=False):
     api_version: str
 
 
