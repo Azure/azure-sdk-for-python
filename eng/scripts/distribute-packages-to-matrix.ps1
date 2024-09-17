@@ -104,19 +104,23 @@ function Update-Matrix {
         $DirectBatches,
 
         [Parameter(Mandatory=$true)]
-        $IndirectBatches
+        $IndirectBatches,
+
+        [Parameter(Mandatory=$true)]
+        [int]$MatrixMultiplier
     )
 
     foreach($batch in $DirectBatches) {
         $targetingString = ($batch | Select-Object -ExpandProperty Name) -join ","
 
-        # we need to equal the number of python versions in the matrix (to ensure we get complete coverage)
-        # so we need to multiply the targeting string by the number of python versions, that'll ensure that
-        # across all python versions we see the same packages
-        $targetingStringArray = @($targetingString) * $versionCount
-        Write-Host "Returning batch:"
+        # we need to equal the largest multiplier in the matrix. That is USUALLY python version,
+        # but in some cases it could be something else (like sdk/cosmos/cosmos-emulator-matrix.json) the multiplier
+        # is a different property. We do this because we want to ensure that the matrix is fully covered, even if
+        # we are generating the matrix sparsely, we still want full coverage of these targetingStrings
+        $targetingStringArray = @($targetingString) * $MatrixMultiplier
+        # Write-Host "Returning batch:"
         foreach($item in $targetingStringArray) {
-            Write-Host "`t$item"
+            # Write-Host "`t$item"
         }
 
         $matrix.matrix.TargetingString += $targetingStringArray
@@ -124,7 +128,7 @@ function Update-Matrix {
         # if there were any include objects, we need to duplicate them exactly and add the targeting string to each
         # this means that the number of includes at the end of this operation will be incoming # of includes * the number of batches
         if ($includeCount -gt 0) {
-            Write-Host "Walking include objects for $targetingString"
+            # Write-Host "Walking include objects for $targetingString"
             $includeCopy = $originalInclude | ConvertTo-Json -Depth 100 | ConvertFrom-Json
 
             foreach ($configElement in $includeCopy) {
@@ -155,14 +159,16 @@ function Update-Matrix {
             }
         }
     }
+
+
 }
 
 $packageProperties = Get-ChildItem -Recurse "$PackageInfoFolder" *.json `
     | % { Write-Host $_.FullName; Get-Content -Path $_.FullName | ConvertFrom-Json }
 $matrix = Get-Content -Path $PlatformMatrix | ConvertFrom-Json
+$matrixMultiplier = Extract-MatrixMultiplier -Matrix $matrix.matrix
 
-$versionCount = Extract-MatrixMultiplier -Matrix $matrix.matrix
-# Write-Host "Calculated a versionCount of $versionCount"
+# Write-Host "Calculated a matrixMultiplier of $matrixMultiplier"
 $includeCount = 0
 $includeObject = $null
 if ($matrix.PSObject.Properties.Name -contains "include") {
@@ -170,7 +176,7 @@ if ($matrix.PSObject.Properties.Name -contains "include") {
     $originalInclude = $matrix.include
     $matrix.include = @()
 }
-$batchCount = $versionCount + $includeCount
+$batchCount = $matrixMultiplier + $includeCount
 if ($batchCount -eq 0) {
     Write-Error "No batches detected, skipping without updating platform matrix file $PlatformMatrix"
     exit 1
@@ -201,6 +207,12 @@ if ($indirectIncludedPackages) {
 # then, for the indirect packages, we will ADD them as extra TargetingString bundles to the matrix.
 
 $directBatches = Split-ArrayIntoBatches -InputArray $directIncludedPackages -BatchSize $BATCHSIZE
+if ($indirectIncludedPackages) {
+    $indirectBatches = Split-ArrayIntoBatches -InputArray $indirectIncludedPackages -BatchSize $BATCHSIZE
+}
+else {
+    $indirectBatches = @()
+}
 # Write-Host $directBatches.Length
 # Write-Host $directBatches[0].Length
 # all directly included packages should have their tests invoked in full, so, lets use a basic storage service discovery. We'll have direct package batches of
@@ -230,6 +242,6 @@ if ($directBatches) {
     }
 }
 
-Update-Matrix -Matrix $matrix -DirectBatches $directBatches -IndirectBatches @()
+Update-Matrix -Matrix $matrix -DirectBatches $directBatches -IndirectBatches $indirectBatches -MatrixMultiplier $matrixMultiplier
 
 $matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
