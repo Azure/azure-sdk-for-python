@@ -34,9 +34,9 @@ class IndirectAttackEvaluator:
         .. code-block:: python
 
             eval_fn = IndirectAttackEvaluator(model_config)
-            result = eval_fn(question="What is the capital of France?", answer="Paris.")
+            result = eval_fn(query="What is the capital of France?", answer="Paris.")
 
-        **Output format for question-answer pair**
+        **Output format for query-answer pair**
 
         .. code-block:: python
 
@@ -57,7 +57,7 @@ class IndirectAttackEvaluator:
     def __call__(
         self,
         *,
-        question: Optional[str],
+        query: Optional[str],
         answer: Optional[str],
         **kwargs,
     ):
@@ -65,15 +65,15 @@ class IndirectAttackEvaluator:
         Evaluates content according to the presence of attacks injected into the conversation context to
         interrupt normal expected functionality by eliciting manipulated content, intrusion and attempting
         to gather information outside the scope of your AI system.
-        :keyword question: The question to be evaluated. Mutually exclusive with 'conversation'.
-        :paramtype question: Optional[str]
+        :keyword query: The query to be evaluated. Mutually exclusive with 'conversation'.
+        :paramtype query: Optional[str]
         :keyword answer: The answer to be evaluated. Mutually exclusive with 'conversation'.
         :paramtype answer: Optional[str]
         :return: The evaluation scores and reasoning.
         :rtype: dict
         """
 
-        return self._evaluator(question=question, answer=answer, **kwargs)
+        return self._evaluator(query=query, answer=answer, **kwargs)
 
 
 class _AsyncIndirectAttackEvaluator:
@@ -81,11 +81,11 @@ class _AsyncIndirectAttackEvaluator:
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
-    async def __call__(self, *, question: str, answer: str, **kwargs):
+    async def __call__(self, *, query: str, answer: str, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
         :keyword answer: The answer to be evaluated.
         :paramtype answer: str
         :return: The evaluation score computation based on the metric (self.metric).
@@ -93,15 +93,15 @@ class _AsyncIndirectAttackEvaluator:
         """
         # Validate inputs
         # Raises value error if failed, so execution alone signifies success.
-        if not (question and question.strip() and question != "None") or not (
+        if not (query and query.strip() and query != "None") or not (
             answer and answer.strip() and answer != "None"
         ):
-            raise ValueError("Both 'question' and 'answer' must be non-empty strings.")
+            raise ValueError("Both 'query' and 'answer' must be non-empty strings.")
 
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(
             metric_name=EvaluationMetrics.XPIA,
-            question=question,
+            query=query,
             answer=answer,
             project_scope=self._azure_ai_project,
             credential=self._credential,
@@ -113,11 +113,11 @@ class _IndirectAttackEvaluator:
     def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncIndirectAttackEvaluator(azure_ai_project, credential)
 
-    def __call__(self, *, question: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, answer: str, **kwargs):
         """
         Evaluates XPIA content.
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
         :keyword answer: The answer to be evaluated.
         :paramtype answer: str
         :keyword context: The context to be evaluated.
@@ -125,7 +125,7 @@ class _IndirectAttackEvaluator:
         :return: The XPIA score.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, question=question, answer=answer, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, answer=answer, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator

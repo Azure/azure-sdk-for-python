@@ -120,11 +120,11 @@ def generate_payload(normalized_user_text: str, metric: str) -> Dict:
     )
 
 
-async def submit_request(question: str, answer: str, metric: str, rai_svc_url: str, token: str) -> str:
+async def submit_request(query: str, answer: str, metric: str, rai_svc_url: str, token: str) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
-    :param question: The question to evaluate.
-    :type question: str
+    :param query: The query to evaluate.
+    :type query: str
     :param answer: The answer to evaluate.
     :type answer: str
     :param metric: The evaluation metric to use.
@@ -136,7 +136,7 @@ async def submit_request(question: str, answer: str, metric: str, rai_svc_url: s
     :return: The operation ID.
     :rtype: str
     """
-    user_text = f"<Human>{question}</><System>{answer}</>"
+    user_text = f"<Human>{query}</><System>{answer}</>"
     normalized_user_text = user_text.replace("'", '\\"')
     payload = generate_payload(normalized_user_text, metric)
 
@@ -414,12 +414,12 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: str = None) -
 
 
 async def evaluate_with_rai_service(
-    question: str, answer: str, metric_name: str, project_scope: dict, credential: TokenCredential
+    query: str, answer: str, metric_name: str, project_scope: dict, credential: TokenCredential
 ):
     """ "Evaluate the content safety of the answer using Responsible AI service
 
-       :param question: The question to evaluate.
-       :type question: str
+       :param query: The query to evaluate.
+       :type query: str
        :param answer: The answer to evaluate.
        :type answer: str
        :param metric_name: The evaluation metric to use.
@@ -443,7 +443,7 @@ async def evaluate_with_rai_service(
     await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
 
     # Submit annotation request and fetch result
-    operation_id = await submit_request(question, answer, metric_name, rai_svc_url, token)
+    operation_id = await submit_request(query, answer, metric_name, rai_svc_url, token)
     annotation_response = await fetch_result(operation_id, rai_svc_url, credential, token)
     result = parse_response(annotation_response, metric_name)
 

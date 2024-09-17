@@ -193,11 +193,11 @@ class ChatEvaluator:
 
     def _evaluate_turn(self, turn_num, questions, answers, contexts, evaluator):
         try:
-            question = questions[turn_num] if turn_num < len(questions) else ""
+            query = questions[turn_num] if turn_num < len(questions) else ""
             answer = answers[turn_num] if turn_num < len(answers) else ""
             context = contexts[turn_num] if turn_num < len(contexts) else ""
 
-            score = evaluator(question=question, answer=answer, context=context)
+            score = evaluator(query=query, answer=answer, context=context)
 
             return score
         except Exception as e:  # pylint: disable=broad-exception-caught

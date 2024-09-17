@@ -420,12 +420,12 @@ def evaluate(
                 evaluator_config={
                     "coherence": {
                         "answer": "${data.answer}",
-                        "question": "${data.question}"
+                        "query": "${data.query}"
                     },
                     "relevance": {
                         "answer": "${data.answer}",
                         "context": "${data.context}",
-                        "question": "${data.question}"
+                        "query": "${data.query}"
                     }
                 }
             )

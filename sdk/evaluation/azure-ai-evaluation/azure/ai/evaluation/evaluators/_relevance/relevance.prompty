@@ -18,7 +18,7 @@ model:
       type: text
 
 inputs:
-  question:
+  query:
     type: string
   answer:
     type: string
@@ -64,6 +64,6 @@ answer: The main attractions of the Queen's Royal Castle are its expansive 500-a
 stars: 5
 
 context: {{context}}
-question: {{question}}
+question: {{query}}
 answer: {{answer}}
 stars:

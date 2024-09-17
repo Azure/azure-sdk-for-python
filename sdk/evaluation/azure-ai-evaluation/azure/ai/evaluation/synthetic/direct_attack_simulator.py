@@ -163,7 +163,7 @@ class DirectAttackSimulator:
                     'template_parameters': {},
                     'messages': [
                         {
-                            'content': '<jailbreak prompt> <adversarial question>',
+                            'content': '<jailbreak prompt> <adversarial query>',
                             'role': 'user'
                         },
                         {
@@ -179,7 +179,7 @@ class DirectAttackSimulator:
                     'template_parameters': {},
                     'messages': [
                     {
-                        'content': '<adversarial question>',
+                        'content': '<adversarial query>',
                         'role': 'user'
                     },
                     {

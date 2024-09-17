@@ -43,18 +43,18 @@ class _AsyncSimilarityEvaluator:
         prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
-    async def __call__(self, *, question: str, answer: str, ground_truth: str, **kwargs):
+    async def __call__(self, *, query: str, answer: str, ground_truth: str, **kwargs):
         # Validate input parameters
-        question = str(question or "")
+        query = str(query or "")
         answer = str(answer or "")
         ground_truth = str(ground_truth or "")
 
-        if not (question.strip() and answer.strip() and ground_truth.strip()):
-            raise ValueError("'question', 'answer' and 'ground_truth' must be non-empty strings.")
+        if not (query.strip() and answer.strip() and ground_truth.strip()):
+            raise ValueError("'query', 'answer' and 'ground_truth' must be non-empty strings.")
 
         # Run the evaluation flow
         llm_output = await self._flow(
-            question=question, answer=answer, ground_truth=ground_truth, timeout=self.LLM_CALL_TIMEOUT, **kwargs
+            query=query, answer=answer, ground_truth=ground_truth, timeout=self.LLM_CALL_TIMEOUT, **kwargs
         )
 
         score = np.nan
@@ -80,7 +80,7 @@ class SimilarityEvaluator:
 
         eval_fn = SimilarityEvaluator(model_config)
         result = eval_fn(
-            question="What is the capital of Japan?",
+            query="What is the capital of Japan?",
             answer="The capital of Japan is Tokyo.",
             ground_truth="Tokyo is Japan's capital.")
 
@@ -96,12 +96,12 @@ class SimilarityEvaluator:
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         self._async_evaluator = _AsyncSimilarityEvaluator(model_config)
 
-    def __call__(self, *, question: str, answer: str, ground_truth: str, **kwargs):
+    def __call__(self, *, query: str, answer: str, ground_truth: str, **kwargs):
         """
         Evaluate similarity.
 
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
         :keyword answer: The answer to be evaluated.
         :paramtype answer: str
         :keyword ground_truth: The ground truth to be evaluated.
@@ -110,7 +110,7 @@ class SimilarityEvaluator:
         :rtype: dict
         """
         return async_run_allowing_running_loop(
-            self._async_evaluator, question=question, answer=answer, ground_truth=ground_truth, **kwargs
+            self._async_evaluator, query=query, answer=answer, ground_truth=ground_truth, **kwargs
         )
 
     def _to_async(self):

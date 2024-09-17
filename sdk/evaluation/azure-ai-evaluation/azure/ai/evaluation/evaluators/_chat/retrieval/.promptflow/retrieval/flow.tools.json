@@ -1,0 +1,25 @@
+{
+  "package": {},
+  "code": {
+    "retrieval.prompty": {
+      "type": "llm",
+      "inputs": {
+        "query": {
+          "type": [
+            "string"
+          ]
+        },
+        "history": {
+          "type": [
+            "string"
+          ]
+        },
+        "documents": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    }
+  }
+}

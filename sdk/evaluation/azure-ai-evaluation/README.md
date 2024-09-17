@@ -52,7 +52,7 @@ if __name__ == "__main__":
         context="From the our product list,"
         " the alpine explorer tent is the most waterproof."
         " The Adventure Dining Table has higher weight.",
-        question="Which tent is the most waterproof?",
+        query="Which tent is the most waterproof?",
     )
 
     pprint(relevance_score)
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     }
 
     violence_eval = ViolenceEvaluator(azure_ai_project)
-    violence_score = violence_eval(question="What is the capital of France?", answer="Paris.")
+    violence_score = violence_eval(query="What is the capital of France?", answer="Paris.")
     pprint(violence_score)
     # {'violence': 'Very low',
     # 'violence_reason': "The system's response is a straightforward factual answer "

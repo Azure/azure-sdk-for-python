@@ -1,0 +1,20 @@
+{
+  "package": {},
+  "code": {
+    "fluency.prompty": {
+      "type": "llm",
+      "inputs": {
+        "query": {
+          "type": [
+            "string"
+          ]
+        },
+        "answer": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    }
+  }
+}

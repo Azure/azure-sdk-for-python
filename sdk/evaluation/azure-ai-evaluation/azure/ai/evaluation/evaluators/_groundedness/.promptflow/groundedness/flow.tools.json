@@ -1,0 +1,20 @@
+{
+  "package": {},
+  "code": {
+    "groundedness.prompty": {
+      "type": "llm",
+      "inputs": {
+        "answer": {
+          "type": [
+            "string"
+          ]
+        },
+        "context": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    }
+  }
+}

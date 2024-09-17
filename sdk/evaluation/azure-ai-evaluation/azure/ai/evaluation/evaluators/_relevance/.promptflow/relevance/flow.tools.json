@@ -1,0 +1,25 @@
+{
+  "package": {},
+  "code": {
+    "relevance.prompty": {
+      "type": "llm",
+      "inputs": {
+        "query": {
+          "type": [
+            "string"
+          ]
+        },
+        "answer": {
+          "type": [
+            "string"
+          ]
+        },
+        "context": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    }
+  }
+}

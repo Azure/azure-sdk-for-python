@@ -66,16 +66,16 @@ class _AsyncRetrievalChatEvaluator:
         # Evaluate each turn
         per_turn_scores = []
         history = []
-        for turn_num, question in enumerate(questions):
+        for turn_num, query in enumerate(questions):
             try:
-                question = question if turn_num < len(questions) else ""
+                query = query if turn_num < len(questions) else ""
                 answer = answers[turn_num] if turn_num < len(answers) else ""
                 context = contexts[turn_num] if turn_num < len(contexts) else ""
 
-                history.append({"user": question, "assistant": answer})
+                history.append({"user": query, "assistant": answer})
 
                 llm_output = await self._flow(
-                    query=question, history=history, documents=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs
+                    query=query, history=history, documents=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs
                 )
                 score = np.nan
                 if llm_output:

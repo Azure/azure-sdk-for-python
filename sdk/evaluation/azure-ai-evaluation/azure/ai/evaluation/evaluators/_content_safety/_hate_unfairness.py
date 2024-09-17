@@ -20,8 +20,8 @@ class _AsyncHateUnfairnessEvaluator(ContentSafetyEvaluatorBase):
             credential=credential,
         )
 
-    async def __call__(self, *, question: str, answer: str, **kwargs):
-        return await super().__call__(question=question, answer=answer, **kwargs)
+    async def __call__(self, *, query: str, answer: str, **kwargs):
+        return await super().__call__(query=query, answer=answer, **kwargs)
 
 
 class HateUnfairnessEvaluator:
@@ -44,7 +44,7 @@ class HateUnfairnessEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = HateUnfairnessEvaluator(azure_ai_project)
-        result = eval_fn(question="What is the capital of France?", answer="Paris.")
+        result = eval_fn(query="What is the capital of France?", answer="Paris.")
 
     **Output format**
 
@@ -60,18 +60,18 @@ class HateUnfairnessEvaluator:
     def __init__(self, azure_ai_project: dict, credential=None) -> None:
         self._async_evaluator = _AsyncHateUnfairnessEvaluator(azure_ai_project, credential)
 
-    def __call__(self, *, question: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, answer: str, **kwargs):
         """
         Evaluates hate unfairness content.
 
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
         :keyword answer: The answer to be evaluated.
         :paramtype answer: str
         :return: The hate unfairness score.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, question=question, answer=answer, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, answer=answer, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator

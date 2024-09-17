@@ -1,0 +1,20 @@
+{
+  "package": {},
+  "code": {
+    "coherence.prompty": {
+      "type": "llm",
+      "inputs": {
+        "query": {
+          "type": [
+            "string"
+          ]
+        },
+        "answer": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -11,18 +11,18 @@ class _AsyncECIEvaluator:
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
-    async def __call__(self, *, question: str, answer: str, **kwargs):
+    async def __call__(self, *, query: str, answer: str, **kwargs):
         # Validate inputs
         # Raises value error if failed, so execution alone signifies success.
-        if not (question and question.strip() and question != "None") or not (
+        if not (query and query.strip() and query != "None") or not (
             answer and answer.strip() and answer != "None"
         ):
-            raise ValueError("Both 'question' and 'answer' must be non-empty strings.")
+            raise ValueError("Both 'query' and 'answer' must be non-empty strings.")
 
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(
             metric_name=_InternalEvaluationMetrics.ECI,
-            question=question,
+            query=query,
             answer=answer,
             project_scope=self._azure_ai_project,
             credential=self._credential,
@@ -58,7 +58,7 @@ class ECIEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = ECIEvaluator(azure_ai_project)
-        result = eval_fn(question="What is the capital of France?", answer="Paris.")
+        result = eval_fn(query="What is the capital of France?", answer="Paris.")
 
     **Output format**
 
@@ -73,18 +73,18 @@ class ECIEvaluator:
     def __init__(self, azure_ai_project: dict, credential=None) -> None:
         self._async_evaluator = _AsyncECIEvaluator(azure_ai_project, credential)
 
-    def __call__(self, *, question: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, answer: str, **kwargs):
         """
         Evaluates ECI content.
 
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
         :keyword answer: The answer to be evaluated.
         :paramtype answer: str
         :return: The ECI result.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, question=question, answer=answer, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, answer=answer, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator

@@ -68,25 +68,25 @@ def questions_answers_file():
     return _get_file("questions_answers.jsonl")
 
 
-def _target_fn(question):
+def _target_fn(query):
     """An example target function."""
-    if "LV-426" in question:
+    if "LV-426" in query:
         return {"answer": "There is nothing good there."}
-    if "central heating" in question:
+    if "central heating" in query:
         return {"answer": "There is no central heating on the streets today, but it will be, I promise."}
-    if "strange" in question:
+    if "strange" in query:
         return {"answer": "The life is strange..."}
 
 
-def _yeti_evaluator(question, answer):
-    if "yeti" in question.lower():
+def _yeti_evaluator(query, answer):
+    if "yeti" in query.lower():
         raise ValueError("Do not ask about Yeti!")
     return {"result": len(answer)}
 
 
-def _target_fn2(question):
-    response = _target_fn(question)
-    response["question"] = f"The question is as follows: {question}"
+def _target_fn2(query):
+    response = _target_fn(query)
+    response["query"] = f"The query is as follows: {query}"
     return response
 
 
@@ -136,7 +136,7 @@ class TestEvaluate:
     def test_evaluate_missing_required_inputs_target(self, questions_wrong_file):
         with pytest.raises(ValueError) as exc_info:
             evaluate(data=questions_wrong_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
-        assert "Missing required inputs for target : ['question']." in exc_info.value.args[0]
+        assert "Missing required inputs for target : ['query']." in exc_info.value.args[0]
 
     def test_wrong_target(self, questions_file):
         """Test error, when target function does not generate required column."""
@@ -164,7 +164,7 @@ class TestEvaluate:
             (
                 "questions_ground_truth.jsonl",
                 "questions_answers_ground_truth.jsonl",
-                {"answer", "question"},
+                {"answer", "query"},
                 _target_fn2,
             ),
         ],
@@ -182,22 +182,22 @@ class TestEvaluate:
     def test_apply_column_mapping(self):
         json_data = [
             {
-                "question": "How are you?",
+                "query": "How are you?",
                 "ground_truth": "I'm fine",
             }
         ]
         inputs_mapping = {
-            "question": "${data.question}",
+            "query": "${data.query}",
             "answer": "${data.ground_truth}",
         }
 
         data_df = pd.DataFrame(json_data)
         new_data_df = _apply_column_mapping(data_df, inputs_mapping)
 
-        assert "question" in new_data_df.columns
+        assert "query" in new_data_df.columns
         assert "answer" in new_data_df.columns
 
-        assert new_data_df["question"][0] == "How are you?"
+        assert new_data_df["query"][0] == "How are you?"
         assert new_data_df["answer"][0] == "I'm fine"
 
     @pytest.mark.parametrize(
@@ -206,12 +206,12 @@ class TestEvaluate:
             (
                 [
                     {
-                        "question": "How are you?",
+                        "query": "How are you?",
                         "__outputs.answer": "I'm fine",
                     }
                 ],
                 {
-                    "question": "${data.question}",
+                    "query": "${data.query}",
                     "answer": "${run.outputs.answer}",
                 },
                 "I'm fine",
@@ -219,13 +219,13 @@ class TestEvaluate:
             (
                 [
                     {
-                        "question": "How are you?",
+                        "query": "How are you?",
                         "answer": "I'm fine",
                         "__outputs.answer": "I'm great",
                     }
                 ],
                 {
-                    "question": "${data.question}",
+                    "query": "${data.query}",
                     "answer": "${run.outputs.answer}",
                 },
                 "I'm great",
@@ -233,13 +233,13 @@ class TestEvaluate:
             (
                 [
                     {
-                        "question": "How are you?",
+                        "query": "How are you?",
                         "answer": "I'm fine",
                         "__outputs.answer": "I'm great",
                     }
                 ],
                 {
-                    "question": "${data.question}",
+                    "query": "${data.query}",
                     "answer": "${data.answer}",
                 },
                 "I'm fine",
@@ -247,13 +247,13 @@ class TestEvaluate:
             (
                 [
                     {
-                        "question": "How are you?",
+                        "query": "How are you?",
                         "answer": "I'm fine",
                         "__outputs.answer": "I'm great",
                     }
                 ],
                 {
-                    "question": "${data.question}",
+                    "query": "${data.query}",
                     "answer": "${data.answer}",
                     "another_answer": "${run.outputs.answer}",
                 },
@@ -262,13 +262,13 @@ class TestEvaluate:
             (
                 [
                     {
-                        "question": "How are you?",
+                        "query": "How are you?",
                         "answer": "I'm fine",
                         "__outputs.answer": "I'm great",
                     }
                 ],
                 {
-                    "question": "${data.question}",
+                    "query": "${data.query}",
                     "answer": "${run.outputs.answer}",
                     "another_answer": "${data.answer}",
                 },
@@ -277,14 +277,14 @@ class TestEvaluate:
             (
                 [
                     {
-                        "question": "How are you?",
+                        "query": "How are you?",
                         "__outputs.answer": "I'm fine",
                         "else": "Another column",
                         "else1": "Another column 1",
                     }
                 ],
                 {
-                    "question": "${data.question}",
+                    "query": "${data.query}",
                     "answer": "${run.outputs.answer}",
                     "else1": "${data.else}",
                     "else2": "${data.else1}",
@@ -298,10 +298,10 @@ class TestEvaluate:
         data_df = pd.DataFrame(json_data)
         new_data_df = _apply_column_mapping(data_df, inputs_mapping)
 
-        assert "question" in new_data_df.columns
+        assert "query" in new_data_df.columns
         assert "answer" in new_data_df.columns
 
-        assert new_data_df["question"][0] == "How are you?"
+        assert new_data_df["query"][0] == "How are you?"
         assert new_data_df["answer"][0] == answer
         if "another_answer" in inputs_mapping:
             assert "another_answer" in new_data_df.columns
@@ -318,7 +318,7 @@ class TestEvaluate:
             evaluate(
                 data=evaluate_test_data_jsonl_file,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
-                evaluator_config={"g": {"question": "${foo.question}"}},
+                evaluator_config={"g": {"query": "${foo.query}"}},
             )
 
         assert (
@@ -385,7 +385,7 @@ class TestEvaluate:
         result = evaluate(data=data, evaluators={"yeti": _yeti_evaluator})
         result_df = pd.DataFrame(result["rows"])
         expected = pd.read_json(data, lines=True)
-        expected.rename(columns={"question": "inputs.question", "answer": "inputs.answer"}, inplace=True)
+        expected.rename(columns={"query": "inputs.query", "answer": "inputs.answer"}, inplace=True)
 
         expected["outputs.yeti.result"] = expected["inputs.answer"].str.len()
         expected.at[0, "outputs.yeti.result"] = np.nan

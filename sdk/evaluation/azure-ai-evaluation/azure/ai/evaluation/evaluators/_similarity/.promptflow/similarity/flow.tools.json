@@ -1,0 +1,25 @@
+{
+  "package": {},
+  "code": {
+    "similarity.prompty": {
+      "type": "llm",
+      "inputs": {
+        "query": {
+          "type": [
+            "string"
+          ]
+        },
+        "answer": {
+          "type": [
+            "string"
+          ]
+        },
+        "ground_truth": {
+          "type": [
+            "string"
+          ]
+        }
+      }
+    }
+  }
+}

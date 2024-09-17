@@ -18,7 +18,7 @@ model:
       type: text
 
 inputs:
-  question:
+  query:
     type: string
   answer:
     type: string
@@ -65,7 +65,7 @@ correct answer: Regular exercise can help maintain a healthy weight, increase mu
 predicted answer: Routine physical activity can contribute to maintaining ideal body weight, enhancing muscle and bone strength, and preventing chronic illnesses. In addition, it supports mental health by alleviating stress and augmenting general mood.
 stars: 5
 
-question: {{question}}
+question: {{query}}
 correct answer:{{ground_truth}}
 predicted answer: {{answer}}
 stars:
