@@ -253,7 +253,7 @@ jobs:
               -PackageInfoFolder "$(Build.ArtifactStagingDirectory)/PackageInfo"
               -PlatformMatrix "${{ parameters.MatrixConfigs[0].Path }}"
           displayName: 'Distribute Packages to Matrix'
-          condition: and(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.ServiceDirectory }}', "auto" ))
+          condition: and(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.ServiceDirectory }}','auto'))
 
       CloudConfig:
         Cloud: Public
