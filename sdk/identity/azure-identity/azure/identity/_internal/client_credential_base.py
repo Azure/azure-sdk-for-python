@@ -39,7 +39,7 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
         return None
 
     @wrap_exceptions
-    def _request_token(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         app = self._get_app(**kwargs)
         request_time = int(time.time())
         result = app.acquire_token_for_client(list(scopes), claims_challenge=kwargs.pop("claims", None))

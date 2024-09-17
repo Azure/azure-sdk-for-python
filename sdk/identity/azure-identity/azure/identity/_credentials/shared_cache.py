@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, Optional, TypeVar, cast
-from azure.core.credentials import AccessToken, TokenRequestOptions, AccessTokenInfo, SupportsTokenInfo
+from typing import Any, Optional, TypeVar, cast
+from azure.core.credentials import AccessToken, TokenRequestOptions, AccessTokenInfo, SupportsTokenInfo, TokenCredential
 
 from .silent import SilentAuthenticationCredential
 from .. import CredentialUnavailableError
@@ -11,9 +11,6 @@ from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import AadClient, AadClientBase
 from .._internal.decorators import log_get_token
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 
 T = TypeVar("T", bound="_SharedTokenCacheCredential")
@@ -39,7 +36,7 @@ class SharedTokenCacheCredential:
 
     def __init__(self, username: Optional[str] = None, **kwargs: Any) -> None:
         if "authentication_record" in kwargs:
-            self._credential: TokenCredential = SilentAuthenticationCredential(**kwargs)
+            self._credential: SupportsTokenInfo = SilentAuthenticationCredential(**kwargs)
         else:
             self._credential = _SharedTokenCacheCredential(username=username, **kwargs)
 
@@ -85,7 +82,9 @@ class SharedTokenCacheCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
         """
-        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
+        return cast(TokenCredential, self._credential).get_token(
+            *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+        )
 
     @log_get_token
     def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
@@ -131,6 +130,9 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
     def __exit__(self, *args):
         if self._client:
             self._client.__exit__(*args)
+
+    def close(self) -> None:
+        self.__exit__()
 
     def get_token(
         self,

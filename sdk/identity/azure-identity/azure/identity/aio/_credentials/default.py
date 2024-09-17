@@ -133,7 +133,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
-        credentials: List[AsyncTokenCredential] = []
+        credentials: List[AsyncSupportsTokenInfo] = []
         within_dac.set(True)
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))

@@ -134,7 +134,10 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 now = int(time.time())
                 result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
                 if result and "access_token" in result and "expires_in" in result:
-                    return AccessTokenInfo(result["access_token"], now + int(result["expires_in"]))
+                    refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
+                    return AccessTokenInfo(
+                        result["access_token"], now + int(result["expires_in"]), refresh_on=refresh_on
+                    )
 
         return None
 
@@ -153,4 +156,5 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         except ClientAuthenticationError:
             pass  # non-fatal; we'll use the assertion again next time instead of a refresh token
 
-        return AccessTokenInfo(result["access_token"], request_time + int(result["expires_in"]))
+        refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
+        return AccessTokenInfo(result["access_token"], request_time + int(result["expires_in"]), refresh_on=refresh_on)

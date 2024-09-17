@@ -58,6 +58,9 @@ class SilentAuthenticationCredential:
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
+    def close(self) -> None:
+        self.__exit__()
+
     def get_token(
         self,
         *scopes: str,

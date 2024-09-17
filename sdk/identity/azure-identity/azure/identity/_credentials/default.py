@@ -141,7 +141,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
-        credentials: List["TokenCredential"] = []
+        credentials: List[SupportsTokenInfo] = []
         within_dac.set(True)
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))

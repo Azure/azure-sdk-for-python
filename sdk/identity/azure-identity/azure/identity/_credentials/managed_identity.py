@@ -4,15 +4,13 @@
 # ------------------------------------
 import logging
 import os
-from typing import Optional, TYPE_CHECKING, Any, Mapping, cast
+from typing import Optional, Any, Mapping, cast
 
-from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, TokenCredential, SupportsTokenInfo
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.decorators import log_get_token
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,7 +60,7 @@ class ManagedIdentityCredential:
         self, *, client_id: Optional[str] = None, identity_config: Optional[Mapping[str, str]] = None, **kwargs: Any
     ) -> None:
         validate_identity_config(client_id, identity_config)
-        self._credential: Optional[TokenCredential] = None
+        self._credential: Optional[SupportsTokenInfo] = None
         exclude_workload_identity = kwargs.pop("_exclude_workload_identity_credential", False)
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
@@ -159,7 +157,7 @@ class ManagedIdentityCredential:
                 "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
                 "troubleshoot this issue."
             )
-        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return cast(TokenCredential, self._credential).get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
     @log_get_token
     def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:

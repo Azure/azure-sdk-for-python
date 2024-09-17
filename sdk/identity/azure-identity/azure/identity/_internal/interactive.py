@@ -236,7 +236,13 @@ class InteractiveCredential(MsalCredential, ABC):
             raise
 
         _LOGGER.info("%s.%s succeeded", self.__class__.__name__, base_method_name)
-        return AccessTokenInfo(result["access_token"], now + int(result["expires_in"]))
+        refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
+        return AccessTokenInfo(
+            result["access_token"],
+            now + int(result["expires_in"]),
+            token_type=result.get("token_type", "Bearer"),
+            refresh_on=refresh_on,
+        )
 
     def authenticate(
         self, *, scopes: Optional[Iterable[str]] = None, claims: Optional[str] = None, **kwargs: Any
