@@ -239,8 +239,11 @@ if ($matrix.matrix.PSObject.Properties["`$IMPORT"]) {
     # updating in place, then continuing on to update the actual matrix object that we imported
     # there is a clear and present edge case here with nested import. We will not handle that case
 
+    $originalInclude = $originalMatrix.include
+    $originalMatrix.include = @()
+
     # update the include objects for the original matrix that was importing
-    Update-Matrix -Matrix $originalMatrix -DirectBatches $directBatches -IndirectBatches $indirectBatches -MatrixMultiplier 1 -IncludeCount $matrix.include.Count -OriginalIncludeObject $originalMatrix.include
+    Update-Matrix -Matrix $originalMatrix -DirectBatches $directBatches -IndirectBatches $indirectBatches -MatrixMultiplier 1 -IncludeCount $matrix.include.Count -OriginalIncludeObject $originalInclude
     $originalMatrix | ConvertTo-Json -Depth 100 | Set-Content -Path $originalMatrixLocation
 }
 
