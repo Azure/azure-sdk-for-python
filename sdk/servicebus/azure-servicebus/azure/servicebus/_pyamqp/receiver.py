@@ -115,7 +115,6 @@ class ReceiverLink(Link):
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
-        print(f"DISPOSITION FRAME: {disposition_frame}")
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
