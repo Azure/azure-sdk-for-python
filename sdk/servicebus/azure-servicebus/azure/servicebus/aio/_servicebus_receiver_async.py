@@ -439,7 +439,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                 else:
                     link_credit_needed = max_message_count - len(batch)
                 if link_credit_needed > 0:
-                    self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
+                    await self._amqp_transport.reset_link_credit_async(amqp_receive_client, link_credit_needed)
 
             first_message_received = expired = False
             receiving = True
