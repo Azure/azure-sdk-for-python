@@ -60,7 +60,7 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   # now we need to call Save-Package-Properties so that we can filter on it
-  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.ServiceDirectory, 'auto'))) }}:
+  - ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), eq(parameters.ServiceDirectory, 'auto')) }}:
     - pwsh: |
         mkdir -p $(Build.ArtifactStagingDirectory)/diff
       displayName: Create PR Diff Folder
