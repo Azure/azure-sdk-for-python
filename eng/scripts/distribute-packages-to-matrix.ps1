@@ -16,7 +16,7 @@ param(
 )
 
 Set-StrictMode -Version 4
-$BATCHSIZE = 10
+$BATCHSIZE = 8
 
 if (!(Test-Path $PackageInfoFolder)) {
     Write-Error "PackageInfo folder file not found: $PackageInfoFolder"
@@ -190,7 +190,10 @@ function Update-Matrix {
     }
 
     foreach($batch in $IndirectBatches) {
-
+        $targetingString = ($batch | Select-Object -ExpandProperty Name) -join ","
+        if ($matrixUpdate) {
+            $matrix.matrix.TargetingString += @($targetingString)
+        }
     }
 
 }
