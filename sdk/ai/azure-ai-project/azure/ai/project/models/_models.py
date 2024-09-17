@@ -25,11 +25,15 @@ class ListSecretsProperties(_model_base.Model):
     :vartype auth_type: str
     :ivar credentials: to do. Required.
     :vartype credentials: ~azure.ai.project.models._models.ListSecretsPropertiesCredentials
+    :ivar target: to do. Required.
+    :vartype target: str
     """
 
     auth_type: str = rest_field(name="authType")
     """to do. Required."""
     credentials: "_models._models.ListSecretsPropertiesCredentials" = rest_field()
+    """to do. Required."""
+    target: str = rest_field()
     """to do. Required."""
 
 
