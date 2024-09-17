@@ -46,6 +46,16 @@ class MonitoringStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
 
 
+class Operation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operation for the patch on the resource."""
+
+    ADD_BEGIN = "AddBegin"
+    ADD_COMPLETE = "AddComplete"
+    DELETE_BEGIN = "DeleteBegin"
+    DELETE_COMPLETE = "DeleteComplete"
+    ACTIVE = "Active"
+
+
 class OperationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operation to be performed on the given vm resource id."""
 
@@ -72,6 +82,15 @@ class SendingLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUE = "True"
     FALSE = "False"
+
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of monitoring."""
+
+    IN_PROGRESS = "InProgress"
+    ACTIVE = "Active"
+    FAILED = "Failed"
+    DELETING = "Deleting"
 
 
 class TagAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):

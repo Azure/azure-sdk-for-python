@@ -6,7 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import BillingInfoResponse
 from ._models_py3 import CompanyInfo
+from ._models_py3 import ConnectedPartnerResourceProperties
+from ._models_py3 import ConnectedPartnerResourcesListFormat
+from ._models_py3 import ConnectedPartnerResourcesListResponse
 from ._models_py3 import DeploymentInfoResponse
 from ._models_py3 import ElasticCloudDeployment
 from ._models_py3 import ElasticCloudUser
@@ -14,6 +18,8 @@ from ._models_py3 import ElasticMonitorResource
 from ._models_py3 import ElasticMonitorResourceListResponse
 from ._models_py3 import ElasticMonitorResourceUpdateParameters
 from ._models_py3 import ElasticMonitorUpgrade
+from ._models_py3 import ElasticOrganizationToAzureSubscriptionMappingResponse
+from ._models_py3 import ElasticOrganizationToAzureSubscriptionMappingResponseProperties
 from ._models_py3 import ElasticProperties
 from ._models_py3 import ElasticTrafficFilter
 from ._models_py3 import ElasticTrafficFilterResponse
@@ -21,6 +27,9 @@ from ._models_py3 import ElasticTrafficFilterRule
 from ._models_py3 import ElasticVersionListFormat
 from ._models_py3 import ElasticVersionListProperties
 from ._models_py3 import ElasticVersionsListResponse
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import ErrorResponseBody
 from ._models_py3 import ExternalUserCreationResponse
 from ._models_py3 import ExternalUserInfo
@@ -32,14 +41,26 @@ from ._models_py3 import MarketplaceSaaSInfoMarketplaceSubscription
 from ._models_py3 import MonitorProperties
 from ._models_py3 import MonitoredResource
 from ._models_py3 import MonitoredResourceListResponse
+from ._models_py3 import MonitoredSubscription
+from ._models_py3 import MonitoredSubscriptionProperties
+from ._models_py3 import MonitoredSubscriptionPropertiesList
 from ._models_py3 import MonitoringTagRules
 from ._models_py3 import MonitoringTagRulesListResponse
 from ._models_py3 import MonitoringTagRulesProperties
+from ._models_py3 import OpenAIIntegrationProperties
+from ._models_py3 import OpenAIIntegrationRPModel
+from ._models_py3 import OpenAIIntegrationRPModelListResponse
+from ._models_py3 import OpenAIIntegrationStatusResponse
+from ._models_py3 import OpenAIIntegrationStatusResponseProperties
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import OperationResult
+from ._models_py3 import PartnerBillingEntity
+from ._models_py3 import PlanDetails
 from ._models_py3 import ResourceProviderDefaultErrorResponse
 from ._models_py3 import ResourceSku
+from ._models_py3 import ResubscribeProperties
+from ._models_py3 import SubscriptionList
 from ._models_py3 import SystemData
 from ._models_py3 import UpgradableVersionsList
 from ._models_py3 import UserApiKeyResponse
@@ -56,9 +77,11 @@ from ._microsoft_elastic_enums import ElasticDeploymentStatus
 from ._microsoft_elastic_enums import LiftrResourceCategories
 from ._microsoft_elastic_enums import ManagedIdentityTypes
 from ._microsoft_elastic_enums import MonitoringStatus
+from ._microsoft_elastic_enums import Operation
 from ._microsoft_elastic_enums import OperationName
 from ._microsoft_elastic_enums import ProvisioningState
 from ._microsoft_elastic_enums import SendingLogs
+from ._microsoft_elastic_enums import Status
 from ._microsoft_elastic_enums import TagAction
 from ._microsoft_elastic_enums import Type
 from ._patch import __all__ as _patch_all
@@ -66,7 +89,11 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "BillingInfoResponse",
     "CompanyInfo",
+    "ConnectedPartnerResourceProperties",
+    "ConnectedPartnerResourcesListFormat",
+    "ConnectedPartnerResourcesListResponse",
     "DeploymentInfoResponse",
     "ElasticCloudDeployment",
     "ElasticCloudUser",
@@ -74,6 +101,8 @@ __all__ = [
     "ElasticMonitorResourceListResponse",
     "ElasticMonitorResourceUpdateParameters",
     "ElasticMonitorUpgrade",
+    "ElasticOrganizationToAzureSubscriptionMappingResponse",
+    "ElasticOrganizationToAzureSubscriptionMappingResponseProperties",
     "ElasticProperties",
     "ElasticTrafficFilter",
     "ElasticTrafficFilterResponse",
@@ -81,6 +110,9 @@ __all__ = [
     "ElasticVersionListFormat",
     "ElasticVersionListProperties",
     "ElasticVersionsListResponse",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "ErrorResponseBody",
     "ExternalUserCreationResponse",
     "ExternalUserInfo",
@@ -92,14 +124,26 @@ __all__ = [
     "MonitorProperties",
     "MonitoredResource",
     "MonitoredResourceListResponse",
+    "MonitoredSubscription",
+    "MonitoredSubscriptionProperties",
+    "MonitoredSubscriptionPropertiesList",
     "MonitoringTagRules",
     "MonitoringTagRulesListResponse",
     "MonitoringTagRulesProperties",
+    "OpenAIIntegrationProperties",
+    "OpenAIIntegrationRPModel",
+    "OpenAIIntegrationRPModelListResponse",
+    "OpenAIIntegrationStatusResponse",
+    "OpenAIIntegrationStatusResponseProperties",
     "OperationDisplay",
     "OperationListResult",
     "OperationResult",
+    "PartnerBillingEntity",
+    "PlanDetails",
     "ResourceProviderDefaultErrorResponse",
     "ResourceSku",
+    "ResubscribeProperties",
+    "SubscriptionList",
     "SystemData",
     "UpgradableVersionsList",
     "UserApiKeyResponse",
@@ -115,9 +159,11 @@ __all__ = [
     "LiftrResourceCategories",
     "ManagedIdentityTypes",
     "MonitoringStatus",
+    "Operation",
     "OperationName",
     "ProvisioningState",
     "SendingLogs",
+    "Status",
     "TagAction",
     "Type",
 ]
