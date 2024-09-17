@@ -446,7 +446,8 @@ class ServiceBusReceiver(
                 and max_message_count >= 1
             ):
                 link_credit_needed = max_message_count - amqp_receive_client._link.current_link_credit
-                self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
+                if link_credit_needed > 0:
+                    self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
 
             first_message_received = expired = False
             receiving = True
