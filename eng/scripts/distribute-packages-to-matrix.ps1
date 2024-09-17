@@ -145,7 +145,11 @@ function Update-Matrix {
         $IndirectBatches,
 
         [Parameter(Mandatory=$true)]
-        $MatrixMultiplier
+        $MatrixMultiplier,
+
+        [Parameter(Mandatory=$true)]
+        $OriginalIncludeObject
+
     )
 
     $matrixUpdate = $true
@@ -183,7 +187,7 @@ function Update-Matrix {
         # this means that the number of includes at the end of this operation will be incoming # of includes * the number of batches
         if ($includeCount -gt 0) {
             # Write-Host "Walking include objects for $targetingString"
-            $includeCopy = $originalInclude | ConvertTo-Json -Depth 100 | ConvertFrom-Json
+            $includeCopy = $OriginalIncludeObject | ConvertTo-Json -Depth 100 | ConvertFrom-Json
 
             Update-Include -Matrix $matrix -IncludeConfig $includeCopy -TargetingString $targetingString
         }
@@ -267,6 +271,6 @@ if ($directBatches) {
     }
 }
 
-Update-Matrix -Matrix $matrix -DirectBatches $directBatches -IndirectBatches $indirectBatches -MatrixMultiplier $matrixMultiplier
+Update-Matrix -Matrix $matrix -DirectBatches $directBatches -IndirectBatches $indirectBatches -MatrixMultiplier $matrixMultiplier -OriginalIncludeObject $originalInclude
 
 $matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
