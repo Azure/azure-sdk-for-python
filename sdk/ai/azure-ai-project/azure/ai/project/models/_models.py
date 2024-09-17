@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Union
 
 from .. import _model_base
 from .._model_base import rest_field
@@ -21,19 +21,23 @@ class ListSecretsProperties(_model_base.Model):
     """to do.
 
 
-    :ivar auth_type: to do. Required.
-    :vartype auth_type: str
-    :ivar credentials: to do. Required.
+    :ivar auth_type: to do. Required. Known values are: "ApiKey" and "AAD".
+    :vartype auth_type: str or ~azure.ai.project.models.ConnectionAuthType
+    :ivar credentials: Credentials will only be present for authType=ApiKey.
     :vartype credentials: ~azure.ai.project.models._models.ListSecretsPropertiesCredentials
     :ivar target: to do. Required.
     :vartype target: str
+    :ivar metadata: to do. Required.
+    :vartype metadata: ~azure.ai.project.models._models.PropertiesMetadata
     """
 
-    auth_type: str = rest_field(name="authType")
-    """to do. Required."""
-    credentials: "_models._models.ListSecretsPropertiesCredentials" = rest_field()
-    """to do. Required."""
+    auth_type: Union[str, "_models._enums.ConnectionAuthType"] = rest_field(name="authType")
+    """to do. Required. Known values are: \"ApiKey\" and \"AAD\"."""
+    credentials: Optional["_models._models.ListSecretsPropertiesCredentials"] = rest_field()
+    """Credentials will only be present for authType=ApiKey."""
     target: str = rest_field()
+    """to do. Required."""
+    metadata: "_models._models.PropertiesMetadata" = rest_field()
     """to do. Required."""
 
 
@@ -59,3 +63,26 @@ class ListSecretsResponse(_model_base.Model):
 
     properties: "_models._models.ListSecretsProperties" = rest_field()
     """to do. Required."""
+
+
+class PropertiesMetadata(_model_base.Model):
+    """Metadata on the properties.
+
+    :ivar model_name: The name of the AI model. For example: ``Phi21``.
+    :vartype model_name: str
+    :ivar model_type: The type of the AI model. A Unique identifier for the profile. Known values
+     are: "embeddings", "image_generation", "text_generation", "image_embeddings",
+     "audio_generation", and "chat_completion".
+    :vartype model_type: str or ~azure.ai.project.models.ModelType
+    :ivar model_provider_name: The model provider name. For example: ``Microsoft Research``.
+    :vartype model_provider_name: str
+    """
+
+    model_name: Optional[str] = rest_field()
+    """The name of the AI model. For example: ``Phi21``."""
+    model_type: Optional[Union[str, "_models._enums.ModelType"]] = rest_field()
+    """The type of the AI model. A Unique identifier for the profile. Known values are:
+     \"embeddings\", \"image_generation\", \"text_generation\", \"image_embeddings\",
+     \"audio_generation\", and \"chat_completion\"."""
+    model_provider_name: Optional[str] = rest_field()
+    """The model provider name. For example: ``Microsoft Research``."""

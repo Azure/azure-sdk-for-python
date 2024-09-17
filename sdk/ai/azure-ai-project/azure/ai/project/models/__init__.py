@@ -8,6 +8,8 @@
 from ._models import ListSecretsResponse
 from ._models import ListSecretsPropertiesCredentials
 from ._models import ListSecretsProperties
+from ._enums import ModelType
+from ._enums import ConnectionAuthType
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -16,7 +18,9 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "ListSecretsResponse",
     "ListSecretsPropertiesCredentials",
-    "ListSecretsProperties"
+    "ListSecretsProperties",
+    "ModelType",
+    "ConnectionAuthType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

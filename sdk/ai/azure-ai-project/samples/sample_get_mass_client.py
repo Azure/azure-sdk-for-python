@@ -2,6 +2,7 @@
 
 
 """
+
 import sys
 import logging
 
@@ -23,8 +24,10 @@ project = ProjectClient(
     logging_enable=True,
 )
 
-# Get a ChatCompletionsClient for a key-auth connection:
-client = project.get_maas_client(connection_name=os.environ["AI_STUDIO_CONNECTION_3"])
+# Get an Azure AI Inference ChatCompletionsClient:
+client = project.get_maas_client(
+    connection_name=os.environ["AI_STUDIO_CONNECTION_3"]
+)
 
 response = client.complete(
     messages=[
@@ -32,5 +35,4 @@ response = client.complete(
     ]
 )
 
-print(f"\n\n===============> {completion.choices[0].message.content}\n\n")
-
+print(f"\n\n===============> {response.choices[0].message.content}\n\n")
