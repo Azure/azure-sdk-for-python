@@ -6,6 +6,8 @@
 # --------------------------------------------------------------------------
 
 from typing import List, Optional, Union, TYPE_CHECKING
+from enum import Enum
+from datetime import datetime
 from typing_extensions import Literal
 from ._generated.models import (
     CallLocator,
@@ -952,3 +954,86 @@ class CancelAddParticipantOperationResult:
             invitation_id=cancel_add_participant_operation_result_generated.invitation_id,
             operation_context=cancel_add_participant_operation_result_generated.operation_context
         )
+
+class AudioData:
+    """
+    Data for Audio Streaming.
+    :keyword  data: Audio streaming data.
+    :paramtype  data: str
+    :keyword time_stamp: time stamp.
+    :paramtype time_stamp: datetime
+    :keyword is_silent: Is silent.
+    :paramtype is_silent: bool
+    """
+    data: bytes
+    """ Audio streaming data. """
+    time_stamp : datetime
+    """ Time stamp. """
+    is_silent : bool
+    """ Is silent. """
+    def __init__(
+           self,
+           *,
+           data: bytes,
+           time_stamp: str,
+           is_silent: bool):
+        self.data = data
+        self.time_stamp = time_stamp
+        self.is_silent = is_silent
+
+class Mark:
+    """
+    Incrementing sequence of the audio byte.
+
+    :keyword sequence: Increasing Sequence. Required.
+    :paramtype sequence: str
+    """
+    sequence:str
+    def __init__(self, sequence: str):
+        self.sequence = sequence
+
+class StopAudio:
+    """ 
+    TODO stop audio description and properties
+    """
+
+class ServerMessageType(Enum):
+    """
+    Messages sent from websocket server.
+    """
+
+    AUDIODATA = "audioData"
+    """Audio data type"""
+    MARK = "mark"
+    """Mark metadata type"""
+    STOPAUDIO = "stopAudio"
+    """Stop audio data type"""
+
+class ServerStreamingData:
+    """
+    Data for Audio Streaming.
+    :keyword  data: Audio streaming data.
+    :paramtype  data: str
+    :keyword time_stamp: time stamp.
+    :paramtype time_stamp: datetime
+    :keyword is_silent: Is silent.
+    :paramtype is_silent: bool
+    """
+    kind: ServerMessageType
+    """ Message that determines the format that of the subsequent messages, 
+    received through the WebSocket. Required. """
+    audio_data : AudioData
+    """ Audio Data which contains the audio data stream information. """
+    mark : Mark
+    """ Mark determines end of stream of data."""
+    stop_audio : StopAudio
+    """ Stop playback and clear buffers."""
+    def __init__(
+           self,
+           *,
+           data: bytes,
+           time_stamp: str,
+           is_silent: bool):
+        self.data = data
+        self.time_stamp = time_stamp
+        self.is_silent = is_silent
