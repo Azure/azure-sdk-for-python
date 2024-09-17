@@ -48,17 +48,17 @@ class _AsyncRetrievalChatEvaluator:
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
     async def __call__(self, *, conversation, **kwargs):
-        # Extract questions, answers and contexts from conversation
-        questions = []
-        answers = []
+        # Extract queries, responses and contexts from conversation
+        queries = []
+        responses = []
         contexts = []
 
         for each_turn in conversation:
             role = each_turn["role"]
             if role == "user":
-                questions.append(each_turn["content"])
+                queries.append(each_turn["content"])
             elif role == "assistant":
-                answers.append(each_turn["content"])
+                responses.append(each_turn["content"])
                 if "context" in each_turn and "citations" in each_turn["context"]:
                     citations = json.dumps(each_turn["context"]["citations"])
                     contexts.append(citations)
@@ -66,10 +66,10 @@ class _AsyncRetrievalChatEvaluator:
         # Evaluate each turn
         per_turn_scores = []
         history = []
-        for turn_num, query in enumerate(questions):
+        for turn_num, query in enumerate(queries):
             try:
-                query = query if turn_num < len(questions) else ""
-                answer = answers[turn_num] if turn_num < len(answers) else ""
+                query = query if turn_num < len(queries) else ""
+                answer = responses[turn_num] if turn_num < len(responses) else ""
                 context = contexts[turn_num] if turn_num < len(contexts) else ""
 
                 history.append({"user": query, "assistant": answer})
