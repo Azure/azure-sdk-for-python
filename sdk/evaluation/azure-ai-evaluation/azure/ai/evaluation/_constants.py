@@ -19,7 +19,6 @@ class EvaluationMetrics:
     SELF_HARM = "self_harm"
     SEXUAL = "sexual"
     PROTECTED_MATERIAL = "protected_material"
-    XPIA = "xpia"
 
 
 class _InternalEvaluationMetrics:
