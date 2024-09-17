@@ -152,7 +152,7 @@ class AMQPClientAsync(AMQPClientSync):
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
                     await asyncio.shield(self._connection.listen(wait=self._socket_timeout,
-                        batch=self._link.current_link_credit))
+                        batch=self._link.total_link_credit))
                     start_time = current_time
                 await asyncio.sleep(1)
         except Exception as e:  # pylint: disable=broad-except

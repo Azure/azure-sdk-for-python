@@ -269,9 +269,15 @@ class Link:  # pylint: disable=too-many-instance-attributes
             self._set_state(LinkState.DETACHED)
 
     def flow(self, *, link_credit: Optional[int] = None, **kwargs: Any) -> None:
-        # Total link credit is the link credit on the wire
-        self.total_link_credit = link_credit + self.total_link_credit if link_credit is not None else self.link_credit
-        # # Current link credit is the link credit from the most recent outgoing flow frame
-        self.current_link_credit = link_credit if link_credit is not None else self.link_credit
+        # Given the desired link credit `link_credit`, the link credit sent via FlowFrame is calculated as follows:
+        # The link credit to flow on the wire `self.current_link_credit` is the desired link credit 
+        # `link_credit` minus the current link credit on the wire `self.total_link_credit`.
+        self.current_link_credit = link_credit - self.total_link_credit if link_credit is not None else self.link_credit
 
-        self._outgoing_flow(**kwargs)
+        # If the link credit to flow is greater than 0 (i.e the desired link credit is greater than the current link credit on the wire),
+        # then we will send a flow to issue more link credit. Otherwise link credit on the wire is sufficient.
+        if self.current_link_credit > 0:
+            # Calculate the total link credit on the wire, by adding the credit we will flow to the total link credit.
+            self.total_link_credit = self.current_link_credit + self.total_link_credit if link_credit is not None else self.link_credit
+            self._outgoing_flow(**kwargs)
+
