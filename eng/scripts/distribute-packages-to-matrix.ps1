@@ -1,12 +1,13 @@
 <#
 .SYNOPSIS
-Distributes a set of packages to a platform matrix file by adding TargetingString property dynamically.
-If an unexpected situation is encountered, the script will make no changes to the input file.
+Distributes a set of packages to a platform matrix file by adding computing and adding a TargetingSTring property
+dynamically. If an unexpected situation is encountered, the script will make no changes to the input file.
 
 .DESCRIPTION
 Because of the way the platform matrix file is structured, we need to distribute the packages in a way that
 honors the Include packages. We have these included this way because want to ensure that these python versions
-run on that platform. This is aware of these additional configurations and will set TargetingString for them as well.
+run on that platform. This script is aware of these additional configurations and will set TargetingString for
+them as well.
 #>
 param(
     [parameter(Mandatory=$true)]
@@ -148,8 +149,10 @@ function Update-Matrix {
         $MatrixMultiplier,
 
         [Parameter(Mandatory=$true)]
-        $OriginalIncludeObject
+        $IncludeCount,
 
+        [Parameter(Mandatory=$false)]
+        $OriginalIncludeObject
     )
 
     $matrixUpdate = $true
@@ -205,31 +208,23 @@ function Update-Matrix {
 $packageProperties = Get-ChildItem -Recurse "$PackageInfoFolder" *.json `
     | % { Write-Host $_.FullName; Get-Content -Path $_.FullName | ConvertFrom-Json }
 $matrix = Get-Content -Path $PlatformMatrix | ConvertFrom-Json
+
+# handle the case where we discover an import, we need to climb the dependency in that case
+if ($matrix.matrix.PSObject.Properties["`$IMPORT"]) {
+    $matrixUpdate = $false
+}
+
 $matrixMultiplier = Extract-MatrixMultiplier -Matrix $matrix.matrix
 
 # Write-Host "Calculated a matrixMultiplier of $matrixMultiplier"
 $includeCount = 0
 $includeObject = $null
+$originalInclude = $null
 if ($matrix.PSObject.Properties.Name -contains "include") {
     $includeCount = $matrix.include.Count
     $originalInclude = $matrix.include
     $matrix.include = @()
 }
-$batchCount = $matrixMultiplier + $includeCount
-if ($batchCount -eq 0) {
-    Write-Error "No batches detected, skipping without updating platform matrix file $PlatformMatrix"
-    exit 1
-}
-
-# batches is a hashtable because you cannot instantiate an array of empty arrays
-# the add method will merely invoke and silently NOT add a new item
-# using a hashtable bypasses this limitation
-$batches = @{}
-for ($i = 0; $i -lt $batchCount; $i++) {
-    $batches[$i] = @()
-}
-$batchCounter = 0
-$batchValues = @()
 
 # if there is an IMPORT, we should import that first and use THAT. we have a clear edge case where a doubly-nested include will NOT work.
 # TODO: implement grabbing the matrix from the import if it exists
@@ -271,6 +266,6 @@ if ($directBatches) {
     }
 }
 
-Update-Matrix -Matrix $matrix -DirectBatches $directBatches -IndirectBatches $indirectBatches -MatrixMultiplier $matrixMultiplier -OriginalIncludeObject $originalInclude
+Update-Matrix -Matrix $matrix -DirectBatches $directBatches -IndirectBatches $indirectBatches -MatrixMultiplier $matrixMultiplier -IncludeCount $includeCount -OriginalIncludeObject $originalInclude
 
 $matrix | ConvertTo-Json -Depth 100 | Set-Content -Path $PlatformMatrix
