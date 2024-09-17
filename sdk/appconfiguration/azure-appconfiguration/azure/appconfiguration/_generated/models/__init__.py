@@ -6,7 +6,9 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import AppConfigError
+from ._models import Error
+from ._models import ErrorDetail
+from ._models import InnerError
 from ._models import Key
 from ._models import KeyValue
 from ._models import KeyValueFilter
@@ -25,7 +27,9 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AppConfigError",
+    "Error",
+    "ErrorDetail",
+    "InnerError",
     "Key",
     "KeyValue",
     "KeyValueFilter",

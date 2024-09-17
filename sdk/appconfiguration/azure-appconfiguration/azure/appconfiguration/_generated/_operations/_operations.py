@@ -942,7 +942,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[List[_models.Key]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1009,7 +1009,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.AppConfigError, response.json())
+                error = _deserialize(_models.Error, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1046,7 +1046,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1082,7 +1082,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1151,7 +1151,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[List[_models.KeyValue]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1230,7 +1230,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.AppConfigError, response.json())
+                error = _deserialize(_models.Error, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1291,7 +1291,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1339,7 +1339,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1390,7 +1390,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: ~azure.appconfiguration.models.KeyValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1440,7 +1440,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1536,7 +1536,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: ~azure.appconfiguration.models.KeyValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1597,7 +1597,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1646,7 +1646,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: ~azure.appconfiguration.models.KeyValue or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1694,7 +1694,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         deserialized = None
@@ -1757,7 +1757,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1802,7 +1802,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1851,7 +1851,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[List[_models.Snapshot]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1919,7 +1919,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.AppConfigError, response.json())
+                error = _deserialize(_models.Error, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -1942,7 +1942,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1976,7 +1976,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2018,7 +2018,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: ~azure.appconfiguration.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2066,7 +2066,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2100,7 +2100,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: ~azure.appconfiguration.models.OperationDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2138,7 +2138,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -2159,7 +2159,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         sync_token: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2207,7 +2207,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2227,7 +2227,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
     @overload
     def begin_create_snapshot(
         self, name: str, entity: _models.Snapshot, *, content_type: str, sync_token: Optional[str] = None, **kwargs: Any
-    ) -> LROPoller[_models.Error]:
+    ) -> LROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
         Creates a key-value snapshot.
@@ -2242,16 +2242,16 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
          None.
         :paramtype sync_token: str
-        :return: An instance of LROPoller that returns Error. The Error is compatible with
+        :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Error]
+        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_create_snapshot(
         self, name: str, entity: JSON, *, content_type: str, sync_token: Optional[str] = None, **kwargs: Any
-    ) -> LROPoller[_models.Error]:
+    ) -> LROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
         Creates a key-value snapshot.
@@ -2266,16 +2266,16 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
          None.
         :paramtype sync_token: str
-        :return: An instance of LROPoller that returns Error. The Error is compatible with
+        :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Error]
+        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def begin_create_snapshot(
         self, name: str, entity: IO[bytes], *, content_type: str, sync_token: Optional[str] = None, **kwargs: Any
-    ) -> LROPoller[_models.Error]:
+    ) -> LROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
         Creates a key-value snapshot.
@@ -2291,9 +2291,9 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
          None.
         :paramtype sync_token: str
-        :return: An instance of LROPoller that returns Error. The Error is compatible with
+        :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Error]
+        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -2305,7 +2305,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         *,
         sync_token: Optional[str] = None,
         **kwargs: Any
-    ) -> LROPoller[_models.Error]:
+    ) -> LROPoller[_models.Snapshot]:
         """Creates a key-value snapshot.
 
         Creates a key-value snapshot.
@@ -2318,16 +2318,16 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
          None.
         :paramtype sync_token: str
-        :return: An instance of LROPoller that returns Error. The Error is compatible with
+        :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Error]
+        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.models.Snapshot]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Error] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Snapshot] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -2356,7 +2356,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
             )
             response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
 
-            deserialized = _deserialize(_models.Error, response.json())
+            deserialized = _deserialize(_models.Snapshot, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -2374,13 +2374,13 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.Error].from_continuation_token(
+            return LROPoller[_models.Snapshot].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.Error](
+        return LROPoller[_models.Snapshot](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -2454,7 +2454,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: ~azure.appconfiguration.models.Snapshot
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2511,7 +2511,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2558,7 +2558,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2600,7 +2600,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2651,7 +2651,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[List[_models.Label]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2719,7 +2719,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.AppConfigError, response.json())
+                error = _deserialize(_models.Error, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -2760,7 +2760,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2797,7 +2797,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2838,7 +2838,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: ~azure.appconfiguration.models.KeyValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2886,7 +2886,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2935,7 +2935,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: ~azure.appconfiguration.models.KeyValue
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2983,7 +2983,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3049,7 +3049,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         cls: ClsType[List[_models.KeyValue]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3119,7 +3119,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.AppConfigError, response.json())
+                error = _deserialize(_models.Error, response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -3169,7 +3169,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3208,7 +3208,7 @@ class AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-pu
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.AppConfigError, response.json())
+            error = _deserialize(_models.Error, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
