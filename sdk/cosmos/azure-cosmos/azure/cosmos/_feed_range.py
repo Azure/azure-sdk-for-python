@@ -29,14 +29,18 @@ from azure.cosmos._routing.routing_range import Range
 
 
 class FeedRange(ABC):
-    """Represents a single feed range in an Azure Cosmos DB SQL API container. """
+    """Represents a single feed range in an Azure Cosmos DB SQL API container.
+
+    """
 
     def to_string(self) -> str:
-        """Get a json representation of the feed range.
-           The returned json string can be used to create a new feed range from it.
+        """
+        Get a json representation of the feed range.
+        The returned json string can be used to create a new feed range from it.
         :return: A json representation of the feed range.
         :rtype: str
         """
+
         return self._to_base64_encoded_string()
 
     @staticmethod
