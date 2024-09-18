@@ -67,7 +67,6 @@ setup(
     install_requires=[
         "promptflow-devkit>=1.15.0",
         "promptflow-core>=1.15.0",
-        "websocket-client>=1.2.0",
         "numpy>=1.23.2; python_version<'3.12'",
         "numpy>=1.26.4; python_version>='3.12'",
         "pyjwt>=2.8.0",
