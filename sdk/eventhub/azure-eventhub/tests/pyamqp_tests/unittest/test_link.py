@@ -105,7 +105,10 @@ def test_receive_transfer_continuation_frame():
 
     link._incoming_transfer(transfer_frame_one)
     assert link.current_link_credit == 2
+    assert link.delivery_count == 1
     link._incoming_transfer(transfer_frame_two)
     assert link.current_link_credit == 2
+    assert link.delivery_count == 1
     link._incoming_transfer(transfer_frame_three)
     assert link.current_link_credit == 1
+    assert link.delivery_count == 2

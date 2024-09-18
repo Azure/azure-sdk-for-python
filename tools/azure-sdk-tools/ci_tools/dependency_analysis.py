@@ -68,7 +68,9 @@ def get_lib_deps(base_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str, Di
             packages[lib_name] = {"version": version, "source": lib_dir, "deps": []}
 
             for req in requires:
-                req_name, spec = parse_require(req)
+                req_obj = parse_require(req)
+                req_name = req_obj.key
+                spec = req_obj.specifier if len(req_obj.specifier) else None
                 if spec is None:
                     spec = ""
 
@@ -97,7 +99,10 @@ def get_wheel_deps(wheel_dir: str) -> Tuple[Dict[str, Dict[str, Any]], Dict[str,
                 for req in requires:
                     req = req.split(";")[0]  # Extras conditions appear after a semicolon
                     req = re.sub(r"[\s\(\)]", "", req)  # Version specifiers appear in parentheses
-                    req_name, spec = parse_require(req)
+                    req_obj = parse_require(req)
+
+                    req_name = req_obj.key
+                    spec = req_obj.specifier if len(req_obj.specifier) else None
                     if spec is None:
                         spec = ""
 
