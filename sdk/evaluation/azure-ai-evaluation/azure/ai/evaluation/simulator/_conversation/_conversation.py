@@ -6,8 +6,8 @@ import asyncio
 import logging
 from typing import Callable, Dict, List, Tuple, Union
 
-from azure.ai.evaluation.synthetic._helpers._language_suffix_mapping import SUPPORTED_LANGUAGES_MAPPING
-from azure.ai.evaluation.synthetic.constants import SupportedLanguages
+from azure.ai.evaluation.simulator._helpers._language_suffix_mapping import SUPPORTED_LANGUAGES_MAPPING
+from azure.ai.evaluation.simulator._constants import SupportedLanguages
 
 from ..._http_utils import AsyncHttpPipeline
 from . import ConversationBot, ConversationTurn
@@ -110,7 +110,7 @@ async def simulate_conversation(
         if not isinstance(language, SupportedLanguages) or language not in SupportedLanguages:
             raise Exception(  # pylint: disable=broad-exception-raised
                 f"Language option '{language}' isn't supported. Select a supported language option from "
-                f"azure.ai.evaluation.synthetic._constants.SupportedLanguages: {[f'{e}' for e in SupportedLanguages]}"
+                f"azure.ai.evaluation.simulator.SupportedLanguages: {[f'{e}' for e in SupportedLanguages]}"
             )
         first_prompt += f" {SUPPORTED_LANGUAGES_MAPPING[language]}"
     # Add all generated turns into array to pass for each bot while generating

@@ -25,7 +25,7 @@ class ConversationTurn:
 
     :param role: The role of the participant in the conversation. Accepted values are
         "user" and "assistant".
-    :type role: ~azure.ai.evaluation.synthetic._conversation.constants.ConversationRole
+    :type role: ~azure.ai.evaluation.simulator._conversation.constants.ConversationRole
     :param name: The name of the participant in the conversation.
     :type name: Optional[str]
     :param message: The message exchanged in the conversation. Defaults to an empty string.
@@ -90,11 +90,11 @@ class ConversationBot:
     A conversation chat bot with a specific name, persona and a sentence that can be used as a conversation starter.
 
     :param role: The role of the bot in the conversation, either "user" or "assistant".
-    :type role: ~azure.ai.evaluation.synthetic._conversation.constants.ConversationRole
+    :type role: ~azure.ai.evaluation.simulator._conversation.constants.ConversationRole
     :param model: The LLM model to use for generating responses.
     :type model: Union[
-        ~azure.ai.evaluation.synthetic._model_tools.LLMBase,
-        ~azure.ai.evaluation.synthetic._model_tools.OpenAIChatCompletionsModel
+        ~azure.ai.evaluation.simulator._model_tools.LLMBase,
+        ~azure.ai.evaluation.simulator._model_tools.OpenAIChatCompletionsModel
     ]
     :param conversation_template: A Jinja2 template describing the conversation to generate the prompt for the LLM
     :type conversation_template: str

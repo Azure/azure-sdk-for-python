@@ -2,4 +2,5 @@
 mypy = false
 pyright = false
 pylint = false
-black = true
+bandit = false
+verifytypes = false

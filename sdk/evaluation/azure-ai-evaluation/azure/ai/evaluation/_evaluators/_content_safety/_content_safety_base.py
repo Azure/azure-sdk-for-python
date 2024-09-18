@@ -15,7 +15,7 @@ class ContentSafetyEvaluatorBase(ABC):
 
 
     :param metric: The metric to be evaluated.
-    :type metric: ~azure.ai.evaluation.evaluators._content_safety.flow.constants.EvaluationMetrics
+    :type metric: ~azure.ai.evaluation._evaluators._content_safety.flow.constants.EvaluationMetrics
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: Dict

@@ -60,7 +60,7 @@ def _aggregate_content_safety_metrics(
             module = inspect.getmodule(evaluators[evaluator_name])
             if (
                 module
-                and module.__name__.startswith("azure.ai.evaluation.evaluators.")
+                and module.__name__.startswith("azure.ai.evaluation.")
                 and metric_name.endswith("_score")
                 and metric_name.replace("_score", "") in content_safety_metrics
             ):
@@ -397,8 +397,7 @@ def evaluate(
     .. code-block:: python
 
             from promptflow.core import AzureOpenAIModelConfiguration
-            from azure.ai.evaluation.evaluate import evaluate
-            from azure.ai.evaluation.evaluators import RelevanceEvaluator, CoherenceEvaluator
+            from azure.ai.evaluation import evaluate, RelevanceEvaluator, CoherenceEvaluator
 
 
             model_config = AzureOpenAIModelConfiguration(

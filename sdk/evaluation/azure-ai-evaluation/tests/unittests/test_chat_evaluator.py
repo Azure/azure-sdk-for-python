@@ -1,6 +1,6 @@
 import pytest
 
-from azure.ai.evaluation.evaluators import ChatEvaluator
+from azure.ai.evaluation import ChatEvaluator
 
 
 @pytest.mark.usefixtures("mock_model_config")
