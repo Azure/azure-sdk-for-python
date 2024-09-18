@@ -124,7 +124,7 @@ Before releasing, you must update the DevOps release work items in the DevOps Re
 azure-sdk-for-python> cd eng/common/scripts
 azure-sdk-for-python/eng/common/scripts> ./Prepare-Release.ps1 -PackageName azure-mypackage -ServiceDirectory mypackage -ReleaseDate MM/DD/YYYY
 ```
-- When asked to `Input the new version, or press Enter to use use current project version`, press Enter.
+- Follow the command prompts.
 - You may see a `WARNING: API Review is not approved for package azure-mypackage. Release pipeline will fail if API review is not approved for a GA version release.` This can be ignored as the API Review check will not be run on `Inactive` packages.
 - Discard any automatic changes made to the CHANGELOG.md/README.md by the script.
 
