@@ -100,7 +100,7 @@ class AdversarialTemplateHandler:
     :param azure_ai_project: The Azure AI project.
     :type azure_ai_project: Dict[str, Any]
     :param rai_client: The RAI client.
-    :type rai_client: ~azure.ai.evaluation.synthetic._model_tools.RAIClient
+    :type rai_client: ~azure.ai.evaluation.simulator._model_tools.RAIClient
     """
 
     def __init__(self, azure_ai_project: Dict[str, Any], rai_client: RAIClient) -> None:
@@ -148,7 +148,7 @@ class AdversarialTemplateHandler:
         :param template_name: The name of the template.
         :type template_name: str
         :return: The generated content harm template.
-        :rtype: Optional[~azure.ai.evaluation.synthetic._model_tools.AdversarialTemplate]
+        :rtype: Optional[~azure.ai.evaluation.simulator._model_tools.AdversarialTemplate]
         """
         if template_name in CONTENT_HARM_TEMPLATES_COLLECTION_KEY:
             return AdversarialTemplate(template_name=template_name, text=None, context_key=[], template_parameters=None)

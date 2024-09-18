@@ -35,9 +35,9 @@ def _get_evaluator_type(evaluator: Dict[str, Callable]):
     content_safety = False
 
     module = inspect.getmodule(evaluator)
-    built_in = module and module.__name__.startswith("azure.ai.evaluation.evaluators.")
+    built_in = module and module.__name__.startswith("azure.ai.evaluation._evaluators.")
     if built_in:
-        content_safety = module.__name__.startswith("azure.ai.evaluation.evaluators._content_safety")
+        content_safety = module.__name__.startswith("azure.ai.evaluation._evaluators._content_safety")
 
     if content_safety:
         return "content-safety"
