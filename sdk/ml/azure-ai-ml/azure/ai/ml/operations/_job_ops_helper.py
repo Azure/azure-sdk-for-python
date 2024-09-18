@@ -185,7 +185,9 @@ def stream_logs_until_completion(
     datastore_operations: Optional[DatastoreOperations] = None,
     raise_exception_on_failed_job: bool = True,
     *,
-    requests_pipeline: HttpPipeline
+    requests_pipeline: HttpPipeline,
+    file_handle: Optional[TextIO] = None,
+    from_start: bool = False
 ) -> None:
     """Stream the experiment run output to the specified file handle. By default the the file handle points to stdout.
 
@@ -193,14 +195,28 @@ def stream_logs_until_completion(
     :type run_operations: RunOperations
     :param job_resource: The job to stream
     :type job_resource: JobBase
-    :param datastore_operations: Optional, the datastore operations class, used to get logs from datastore
+    :param datastore_operations: Optional, the datastore operations class, used
+        to get logs from datastore
     :type datastore_operations: Optional[DatastoreOperations]
-    :param raise_exception_on_failed_job: Should this method fail if job fails
+    :param raise_exception_on_failed_job: If true (default), this raises a
+        JobException exception if the job fails or failed before. Else if
+        false an error is output and the function returns silently.
     :type raise_exception_on_failed_job: Boolean
     :keyword requests_pipeline: The HTTP pipeline to use for requests.
     :type requests_pipeline: ~azure.ai.ml._utils._http_utils.HttpPipeline
+    :keyword file_handle: Output file which to output to. Defaults to
+        'sys.stdout'.
+    :type file_handle: ~typing.TextIO
+    :keyword from_start: Optional, default False. If True and the job has
+        finished, treats as if the job was running and output all log files
+        once. Then proceeds to output status or raise error (see
+        'raise_exception_on_failed_job'). If the job is running, this parameter
+        has no effect.
+    :type from_start: Boolean
     :return:
     :rtype: None
+    :raises azure.core.exceptions.JobException: Raised if the job fails/failed
+        and 'raise_exception_on_failed_job' is True.
     """
     job_type = job_resource.properties.job_type
     job_name = job_resource.name
@@ -237,7 +253,8 @@ def stream_logs_until_completion(
             run_id=job_name,
         )
 
-    file_handle = sys.stdout
+    if file_handle is None:
+        file_handle = sys.stdout
     ds_properties = None
     prefix = None
     if (
@@ -270,7 +287,9 @@ def stream_logs_until_completion(
         while (
             _current_details.status in RunHistoryConstants.IN_PROGRESS_STATUSES
             or _current_details.status == JobStatus.FINALIZING
+            or from_start
         ):
+            from_start = False
             file_handle.flush()
             time.sleep(_wait_before_polling(time.time() - poll_start_time))
             _current_details = run_operations.get_run_details(job_name)  # TODO use FileWatcher
