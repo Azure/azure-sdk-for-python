@@ -5,7 +5,7 @@ import pytest
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from azure.ai.evaluation._http_utils import get_async_http_client
-from azure.ai.evaluation.synthetic._conversation import (
+from azure.ai.evaluation.simulator._conversation import (
     ConversationBot,
     ConversationRole,
     ConversationTurn,

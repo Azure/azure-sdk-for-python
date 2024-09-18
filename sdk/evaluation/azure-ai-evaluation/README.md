@@ -25,9 +25,7 @@ from pprint import pprint
 
 from promptflow.core import AzureOpenAIModelConfiguration
 
-from azure.ai.evaluation.evaluate import evaluate
-from azure.ai.evaluation.evaluators import RelevanceEvaluator
-from azure.ai.evaluation.evaluators.content_safety import ViolenceEvaluator
+from azure.ai.evaluation import evaluate, RelevanceEvaluator, ViolenceEvaluator
 
 
 def response_length(response, **kwargs):
@@ -97,7 +95,7 @@ Simulator expects the user to have a callback method that invokes their AI appli
 Here's a sample of a callback which invokes AsyncAzureOpenAI:
 
 ```python
-from from azure.ai.evaluation.synthetic import AdversarialSimulator, AdversarialScenario
+from from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
 from azure.identity import DefaultAzureCredential
 from typing import Any, Dict, List, Optional
 import asyncio

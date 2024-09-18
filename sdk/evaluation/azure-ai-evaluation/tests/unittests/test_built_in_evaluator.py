@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from azure.ai.evaluation.evaluators import FluencyEvaluator
+from azure.ai.evaluation import FluencyEvaluator
 
 
 async def fluency_async_mock():
