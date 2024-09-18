@@ -10,6 +10,7 @@ from unittest.mock import AsyncMock, MagicMock, Mock, patch
 import pytest
 
 from azure.ai.evaluation.synthetic import AdversarialScenario, AdversarialSimulator
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 @pytest.fixture()
@@ -79,7 +80,7 @@ class TestSimulator:
             return x
 
         simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
-        with pytest.raises(ValueError):
+        with pytest.raises(EvaluationException):
             outputs = asyncio.run(
                 simulator(
                     scenario="unknown-scenario", max_conversation_turns=1, max_simulation_results=3, target=callback

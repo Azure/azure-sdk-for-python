@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from azure.ai.evaluation.evaluators import FluencyEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 async def fluency_async_mock():
@@ -34,12 +35,12 @@ class TestBuiltInEvaluators:
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
         fluency_eval._async_evaluator._flow = MagicMock(return_value=fluency_async_mock())
 
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             fluency_eval(question="What is the capital of Japan?", answer=None)
 
         assert "Both 'question' and 'answer' must be non-empty strings." in exc_info.value.args[0]
 
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             fluency_eval(question="What is the capital of Japan?", answer="")
 
         assert "Both 'question' and 'answer' must be non-empty strings." in exc_info.value.args[0]

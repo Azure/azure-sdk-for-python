@@ -1,6 +1,7 @@
 import pytest
 
 from azure.ai.evaluation.evaluators import ContentSafetyChatEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 @pytest.mark.usefixtures("mock_project_scope")
@@ -34,7 +35,7 @@ class TestChatEvaluator:
         chat_eval = ContentSafetyChatEvaluator(mock_project_scope)
         chat_eval._evaluators = []
 
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(EvaluationException) as e:
             chat_eval(conversation=conversation)
         assert str(e.value) == "Each turn in 'conversation' must have 'role' and 'content' keys. Turn number: 2"
 
@@ -48,7 +49,7 @@ class TestChatEvaluator:
         chat_eval = ContentSafetyChatEvaluator(mock_project_scope)
         chat_eval._evaluators = []
 
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(EvaluationException) as e:
             chat_eval(conversation=conversation)
         assert str(e.value) == "Expected role user but got assistant. Turn number: 3"
 

@@ -11,6 +11,7 @@ from promptflow.azure._utils._token_cache import ArmTokenCache
 
 import azure.ai.evaluation.evaluate._utils as ev_utils
 from azure.ai.evaluation.evaluate._eval_run import EvalRun, RunStatus
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 def generate_mock_token():
@@ -65,7 +66,7 @@ class TestEvalRun:
         ), caplog.at_level(logging.INFO):
             with EvalRun(run_name=None, **TestEvalRun._MOCK_CREDS) as run:
                 if should_raise:
-                    with pytest.raises(ValueError) as cm:
+                    with pytest.raises(EvaluationException) as cm:
                         run._end_run(status)
                     assert status in cm.value.args[0]
                 else:
@@ -468,6 +469,6 @@ class TestEvalRun:
             run._start_run()
             if status == RunStatus.TERMINATED:
                 run._end_run("FINISHED")
-        with pytest.raises(RuntimeError) as cm:
+        with pytest.raises(EvaluationException) as cm:
             run._start_run()
         assert f"Unable to start run due to Run status={status}" in cm.value.args[0], cm.value.args[0]
