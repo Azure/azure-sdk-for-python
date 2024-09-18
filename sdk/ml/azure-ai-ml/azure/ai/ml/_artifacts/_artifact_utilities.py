@@ -169,12 +169,15 @@ def list_logs_in_datastore(
     log_dict = {}
     for item_name in items:
         sub_name = item_name.split(prefix + "/")[1]
-        if isinstance(storage_client, BlobStorageClient):
+        credential = ds_info["credential"]
+        if credential.startswith("?"):
+            token = credential[1:]
+        elif isinstance(storage_client, BlobStorageClient):
             token = generate_blob_sas(
                 account_name=ds_info["storage_account"],
                 container_name=ds_info["container_name"],
                 blob_name=item_name,
-                account_key=ds_info["credential"],
+                account_key=credential,
                 permission=BlobSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(minutes=30),
             )
@@ -183,7 +186,7 @@ def list_logs_in_datastore(
                 account_name=ds_info["storage_account"],
                 file_system_name=ds_info["container_name"],
                 file_name=item_name,
-                credential=ds_info["credential"],
+                credential=credential,
                 permission=FileSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(minutes=30),
             )
