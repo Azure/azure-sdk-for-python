@@ -16,8 +16,10 @@ Clone the `azure-sdk-for-python` repository and update the following files of yo
 
 ## README.md
 
-A disclaimer should be added indicating end-of-life date of the package and directing to a replacement package and migration guide as necessary.
-  - (TODO: check with Laurent about end of life/deprecation policy) The package end-of-life date (same as the release date in the CHANGELOG.md) should be in the format `MM-DD-YYY`. In general, the dates of the service retirement and package end-of-life/deprecation should be aligned.
+A disclaimer should be added indicating end-of-life date (EOLDate) of the package and directing to a replacement package and migration guide as necessary.
+  - The EOLDate should be in the format `MM-DD-YYYY`.
+    - If there is no replacement package, the package EOLDate should be the service retirement date. This does not necessarily need to be the same as the release date in the CHANGELOG.md, since the package may potentially be deprecated before/after the service is retired.
+    - If there is a replacement package, the EOLDate should be the same as the release date in the CHANGELOG.md.
     - Service retirement dates MAY be listed [here](https://aka.ms/servicesretirementworkbook), where retiring feature says 'Entire service'.
   - The link to the replacement package should be a PyPI link: `https://pypi.org/project/azure-mynewpackage/`.
   - The link to the migration guide should be an `aka.ms` link in the format `https://aka.ms/azsdk/python/migrate/my-new-package`. To create this link, go to [https://aka.ms/](https://aka.ms/).
@@ -30,15 +32,15 @@ Replace ALL existing text with a disclaimer in the following format.
     ```md
     # Microsoft Azure SDK for Python
     
-    This package has been deprecated and will no longer be maintained after MM-DD-YYY. Upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/), to continue receiving updates. Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading. Refer to our deprecation policy (https://azure.github.io/azure-sdk/policies_support.html) for more details.
+    This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/). Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading.
     ```
 
-  - If a migration guide will not be provided:
+  - If a migration guide is not provided:
 
     ```md
     # Microsoft Azure SDK for Python
     
-    This package has been deprecated and will no longer be maintained after MM-DD-YYY. Upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/), to continue receiving updates.
+    This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/).
     ```
 
   - If a replacement package does not exist:
@@ -46,15 +48,15 @@ Replace ALL existing text with a disclaimer in the following format.
     ```md
     # Microsoft Azure SDK for Python
     
-    This package has been deprecated and will no longer be maintained after MM-DD-YYY.
+    This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>.
     ```
 
-  - If the a new service has replaced the service, and existing customers should be directed to the new service's Rest API docs/repo:
+  - If a new service has replaced the service, and existing customers should be directed to the new service's Rest API docs/repo:
 
     ```md
     # Microsoft Azure SDK for Python
     
-    This package has been deprecated and will no longer be maintained after MM-DD-YYY. Refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
+    This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. Refer to the samples in the [My New Service repo](https://github.com/microsoft/my-new-service/tree/main) instead.
     
     For additional support, open a new issue in the [Issues](https://github.com/microsoft/my-new-service/issues) section of the My New Service repo.
     ```
@@ -70,9 +72,8 @@ Replace ALL existing text with a disclaimer in the following format.
   ## 1.2.4 (2023-03-31)
   
   ### Other Changes
-  
-  - This package is no longer being maintained. Use the [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/) package instead.
-  - For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
+
+  - This package has been deprecated and will no longer be maintained after <EOLDate>. This package will only receive security fixes until <EOLDate>. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [azure-mynewpackage](https://pypi.org/project/azure-mynewpackage/). Refer to the migration guide (https://aka.ms/azsdk/python/migrate/my-new-package) for guidance on upgrading.
   ```
 
 ## sdk_packaging.toml
@@ -188,7 +189,7 @@ Check for your package in the [azure.github.io docs](https://azure.github.io/azu
 - Open the `_data/releases/latest/python-packages.csv` file.
   - If using Visual Studio Code, the `Edit CSV` extension may be helpful for editing the file.
 - Find the entry for your package and update the following fields.
-  - `EOLDate`: Date your package will officially be deprecated in mm/dd/yyyy format. If the SDK deprecation is due to a service retirement, this date should match the service final retirement date.
+  - `EOLDate`: In MM/DD/YYYY format. If the SDK deprecation is due to a service retirement, this date should match the service final retirement date. If there is a replacement package, this should match the release date of the deprecated package.
   - `Support`: Change the value to `deprecated`.
   - `Replace`: If it exists, set the value to the name of the package meant to replace the package being deprecated. If not, set the value to `NA`.
   - `ReplaceGuide`: If it exists, link to a migration guide in the following format: `aka.ms/azsdk/<language>/migrate/<library>`. If not, set the value to `NA`.
@@ -207,4 +208,8 @@ More detailed instructions on updating the CSV file can be found [here](https://
 
 TODO: The process for this section is still a WIP. Guidance will be updated here once we have concrete steps.
 
-- These will be on the MS Learn page. You can search in the search bar for mentions of the deprecated packages.
+- These will be on the MS Learn page. You can search for mentions of the deprecated packages.
+
+# Step 7: Blog Post
+
+If applicable, consider adding a post to the Azure Blog stating that a new package is available which replaces the old package, the old package is scheduled to be deprecated on a specific date, and guidance on adjusting code to use the new package. Reach out to the Python Azure SDK PM, Rohit Ganguly (ROHITGANGULY), if you have any questions about creating a blog post.
