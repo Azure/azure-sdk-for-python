@@ -321,7 +321,7 @@ class AdversarialSimulator:
             )
         )
 
-        async with semaphore:
+        async with semaphore, session:
             _, conversation_history = await simulate_conversation(
                 bots=bots,
                 session=session,
