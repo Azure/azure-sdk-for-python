@@ -9,7 +9,7 @@ import sys
 from typing import Any, List, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
@@ -89,6 +89,42 @@ class AzureCliCredential(AsyncContextManager):
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncAzureCliCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
 
+        options: TokenRequestOptions = {}
+        if tenant_id:
+            options["tenant_id"] = tenant_id
+
+        token_info = await self._get_token_base(*scopes, options=options, **kwargs)
+        return AccessToken(token_info.token, token_info.expires_on)
+
+    @log_get_token_async
+    async def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients. Applications calling this method
+        directly must also handle token caching because this credential doesn't cache the tokens it acquires.
+
+        :param str scopes: desired scopes for the access token. This credential allows only one scope per request.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+
+        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
+          receive an access token.
+        """
+        # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
+        if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
+            return _SyncAzureCliCredential().get_token_info(*scopes, options=options)
+        return await self._get_token_base(*scopes, options=options)
+
+    async def _get_token_base(
+        self, *scopes: str, options: Optional[TokenRequestOptions] = None, **kwargs: Any
+    ) -> AccessTokenInfo:
+        tenant_id = options.get("tenant_id") if options else None
         if tenant_id:
             validate_tenant_id(tenant_id)
         for scope in scopes:
