@@ -389,7 +389,7 @@ class ChangeFeedStateV2(ChangeFeedState):
                 feed_range =\
                     FeedRangeInternalPartitionKey(
                         change_feed_state_context["partitionKey"],
-                        change_feed_state_context["partitionKeyFeedRange"])  # type: FeedRangeInternal
+                        change_feed_state_context["partitionKeyFeedRange"])
             else:
                 raise ValueError("partitionKey is in the changeFeedStateContext, but missing partitionKeyFeedRange")
         else:
@@ -400,10 +400,12 @@ class ChangeFeedStateV2(ChangeFeedState):
                 "FF",
                 True,
                 False)
-            )  # type: FeedRangeInternal
+            )
 
         change_feed_start_from = (
             ChangeFeedStartFromInternal.from_start_time(change_feed_state_context.get("startTime")))
+
+        assert feed_range is not None
         return cls(
             container_link=container_link,
             container_rid=collection_rid,
