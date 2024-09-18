@@ -174,6 +174,10 @@ def list_logs(run_operations: RunOperations, job_resource: JobBase) -> Dict:
     return {key: logs_dict[key] for key in keys}
 
 
+def _coerce_data_type(v: Optional[str]) -> Optional[str]:
+    return v and str(v).lower().replace("_", "")
+
+
 # pylint: disable=too-many-statements,too-many-locals
 def stream_logs_until_completion(
     run_operations: RunOperations,
@@ -237,17 +241,16 @@ def stream_logs_until_completion(
     ds_properties = None
     prefix = None
     if (
-        hasattr(job_resource.properties, "outputs")
+        datastore_operations
         and job_resource.properties.job_type != RestJobType.AUTO_ML
-        and datastore_operations
+        and getattr(job_resource.properties, "outputs", None)
+        and "defaults" in job_resource.properties.outputs
     ):
         # Get default output location
 
-        default_output = (
-            job_resource.properties.outputs.get("default", None) if job_resource.properties.outputs else None
-        )
-        is_uri_folder = default_output and default_output.job_output_type == DataType.URI_FOLDER
-        if is_uri_folder:
+        default_output = job_resource.properties.outputs["default"]
+        uri_folder_value = _coerce_data_type(DataType.URI_FOLDER.value)
+        if _coerce_data_type(default_output.job_output_type) == uri_folder_value:
             output_uri = default_output.uri
             # Parse the uri format
             output_uri = output_uri.split("datastores/")[1]
