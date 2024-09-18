@@ -15,6 +15,7 @@ class _AsyncBleuScoreEvaluator:
         reference_tokens = nltk_tokenize(ground_truth)
         hypothesis_tokens = nltk_tokenize(answer)
 
+        # NIST Smoothing
         smoothing_function = SmoothingFunction().method4
         score = sentence_bleu([reference_tokens], hypothesis_tokens, smoothing_function=smoothing_function)
 

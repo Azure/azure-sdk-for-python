@@ -430,13 +430,6 @@ class ServiceBusReceiver(
                 else 0
             )
             batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
-            while (
-                not received_messages_queue.empty() and len(batch) < max_message_count
-            ):
-                batch.append(received_messages_queue.get())
-                received_messages_queue.task_done()
-            if len(batch) >= max_message_count:
-                return [self._build_received_message(message) for message in batch]
 
             # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
             if (
@@ -446,6 +439,14 @@ class ServiceBusReceiver(
             ):
                 link_credit_needed = max_message_count - len(batch)
                 self._amqp_transport.reset_link_credit(amqp_receive_client, link_credit_needed)
+
+            while (
+                not received_messages_queue.empty() and len(batch) < max_message_count
+            ):
+                batch.append(received_messages_queue.get())
+                received_messages_queue.task_done()
+            if len(batch) >= max_message_count:
+                return [self._build_received_message(message) for message in batch]
 
             first_message_received = expired = False
             receiving = True

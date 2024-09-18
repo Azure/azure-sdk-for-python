@@ -23,6 +23,7 @@ from ._qa import QAEvaluator
 from ._relevance import RelevanceEvaluator
 from ._rouge import RougeScoreEvaluator, RougeType
 from ._similarity import SimilarityEvaluator
+from ._xpia import IndirectAttackEvaluator
 
 __all__ = [
     "CoherenceEvaluator",

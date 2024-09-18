@@ -6,18 +6,10 @@ try:
 except ImportError:
     import constants
 
-from typing import List, cast
+from typing import List
 
-import nltk
 import numpy as np
 
-try:
-    from nltk.tokenize.nist import NISTTokenizer
-except LookupError:
-    nltk.download("perluniprops")
-    nltk.download("punkt")
-    nltk.download("punkt_tab")
-    from nltk.tokenize.nist import NISTTokenizer
 
 
 def get_harm_severity_level(harm_score: int) -> str:
@@ -45,14 +37,21 @@ def get_harm_severity_level(harm_score: int) -> str:
 def nltk_tokenize(text: str) -> List[str]:
     """Tokenize the input text using the NLTK tokenizer."""
 
-    is_latin_or_numeric = all(
-        ("\u0020" <= c <= "\u007E")  # Basic Latin
-        or ("\u00A0" <= c <= "\u00FF")  # Latin-1 Supplement
-        or ("0" <= c <= "9")  # Digits
-        for c in text
-    )
+    import nltk
 
-    if is_latin_or_numeric:
-        return cast(List[str], nltk.word_tokenize(text))
+    try:
+        from nltk.tokenize.nist import NISTTokenizer
+    except LookupError:
+        nltk.download("perluniprops")
+        nltk.download("punkt")
+        nltk.download("punkt_tab")
+        from nltk.tokenize.nist import NISTTokenizer
 
-    return list(NISTTokenizer().international_tokenize(text))
+    if not text.isascii():
+        # Use NISTTokenizer for international tokenization
+        tokens = NISTTokenizer().international_tokenize(text)
+    else:
+        # By default, use NLTK word tokenizer
+        tokens = nltk.word_tokenize(text)
+
+    return list(tokens)

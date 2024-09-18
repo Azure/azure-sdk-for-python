@@ -1,14 +1,16 @@
 # Release History
 
-## 1.3.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 2.0.0b2 (2024-09-12)
 
 ### Bugs Fixed
 
-### Other Changes
+* Fixing ETag to be "ETag" instead of "etag" in feature flag telemetry.
+
+## 2.0.0b1 (2024-09-11)
+
+### Features Added
+
+* Added support for feature flag telemetry.
 
 ## 1.3.0 (2024-09-09)
 

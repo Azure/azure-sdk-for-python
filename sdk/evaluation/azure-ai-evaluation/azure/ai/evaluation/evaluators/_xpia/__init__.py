@@ -1,4 +1,4 @@
-from ._xpia import IndirectAttackEvaluator
+from .xpia import IndirectAttackEvaluator
 
 __all__ = [
     "IndirectAttackEvaluator",

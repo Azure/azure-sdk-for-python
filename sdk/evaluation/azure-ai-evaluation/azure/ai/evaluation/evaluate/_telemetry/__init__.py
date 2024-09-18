@@ -111,9 +111,11 @@ def log_evaluate_activity(func) -> None:
         azure_ai_project = kwargs.get("azure_ai_project", None)
 
         pf_client = PFClient(
-            config={"trace.destination": _trace_destination_from_project_scope(azure_ai_project)}
-            if azure_ai_project
-            else None,
+            config=(
+                {"trace.destination": _trace_destination_from_project_scope(azure_ai_project)}
+                if azure_ai_project
+                else None
+            ),
             user_agent=USER_AGENT,
         )
 

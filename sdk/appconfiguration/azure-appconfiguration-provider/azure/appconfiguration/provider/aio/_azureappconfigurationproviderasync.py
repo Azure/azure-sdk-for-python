@@ -71,7 +71,10 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], Awaitable[None]]] = None,
-    **kwargs
+    feature_flag_enabled: bool = False,
+    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_refresh_enabled: bool = False,
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -129,7 +132,7 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     feature_flag_enabled: bool = False,
     feature_flag_selectors: Optional[List[SettingSelector]] = None,
     feature_flag_refresh_enabled: bool = False,
-    **kwargs
+    **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
@@ -334,7 +337,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             replica_discovery_enabled=kwargs.pop("replica_discovery_enabled", True),
             min_backoff_sec=min_backoff,
             max_backoff_sec=max_backoff,
-            **kwargs
+            **kwargs,
         )
         self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}

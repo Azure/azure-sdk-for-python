@@ -10,8 +10,7 @@ import re
 from enum import Enum
 from typing import Any, Dict, List, Union
 from copy import deepcopy
-from breaking_changes_allowlist import IGNORE_BREAKING_CHANGES
-from _models import ChangesChecker, Suppression
+from _models import ChangesChecker, Suppression, RegexSuppression
 
 
 class BreakingChangeType(str, Enum):
@@ -99,7 +98,7 @@ class BreakingChangesTracker:
         self._class_name = None
         self._function_name = None
         self._parameter_name = None
-        self.ignore = kwargs.get("ignore", None)
+        self.ignore = kwargs.get("ignore", {})
         checkers: List[ChangesChecker] = kwargs.get("checkers", [])
         for checker in checkers:
             if not isinstance(checker, ChangesChecker):
@@ -622,6 +621,11 @@ class BreakingChangesTracker:
         for b, i in zip(bc, ignored):
             if i == "*":
                 continue
+            if isinstance(i, RegexSuppression) and b is not None:
+                if i.match(b):
+                    continue
+                else:
+                    return False
             if b != i:
                 return False
         return True
@@ -654,7 +658,7 @@ class BreakingChangesTracker:
                     break
 
     def report_changes(self) -> None:
-        ignore_changes = self.ignore if self.ignore else IGNORE_BREAKING_CHANGES
+        ignore_changes = self.ignore if self.ignore else {}
         self.get_reportable_changes(ignore_changes, self.breaking_changes)
 
         # If there are no breaking changes after the ignore check, return early
