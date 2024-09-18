@@ -212,4 +212,4 @@ TODO: The process for this section is still a WIP. Guidance will be updated here
 
 # Step 7: Blog Post
 
-If applicable, consider adding a post to the Azure Blog stating that a new package is available which replaces the old package, the old package is scheduled to be deprecated on a specific date, and guidance on adjusting code to use the new package. Reach out to the Python Azure SDK PM, Rohit Ganguly (ROHITGANGULY), if you have any questions about creating a blog post.
+If applicable, consider adding a post to the Azure Blog stating that a new package is available which replaces the old package, the old package is scheduled to be deprecated on a specific date, and guidance on adjusting code to use the new package. Reach out to the Python Azure SDK PM, Rohit Ganguly (rohitganguly), if you have any questions about creating a blog post.
