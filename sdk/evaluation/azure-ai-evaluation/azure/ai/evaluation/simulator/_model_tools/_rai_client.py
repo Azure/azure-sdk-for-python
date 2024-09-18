@@ -122,7 +122,9 @@ class RAIClient:
         }
 
         session = self._create_async_client()
-        response = await session.get(url=url, headers=headers)  # pylint: disable=unexpected-keyword-arg
+
+        async with session:
+            response = await session.get(url=url, headers=headers)  # pylint: disable=unexpected-keyword-arg
 
         if response.status_code == 200:
             return response.json()
