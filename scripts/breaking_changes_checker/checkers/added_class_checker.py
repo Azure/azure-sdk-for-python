@@ -26,6 +26,9 @@ class AddedClassChecker:
     def run_check(self, diff, stable_nodes, current_nodes, **kwargs):
         features_added = []
         module_name = kwargs.get("module_name")
+        if module_name not in stable_nodes:
+            # This is a new module, so we won't check for added classes
+            return features_added
         for class_name, class_components in diff.items():
             class_name = class_name
             stable_class_nodes = stable_nodes[module_name]["class_nodes"]

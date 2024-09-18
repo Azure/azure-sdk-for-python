@@ -25,7 +25,7 @@ class RemovedMethodOverloadChecker:
         bc_list = []
         # This is a new module, so we won't check for removed overloads
         if module_name not in stable_nodes:
-            continue
+            return bc_list
         for method_name, method_components in diff.items():
             # We aren't checking for deleted methods in this checker
             if isinstance(method_name, jsondiff.Symbol):
