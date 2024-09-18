@@ -34,7 +34,8 @@ from azure.cosmos import http_constants
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromInternal, \
     ChangeFeedStartFromETagAndFeedRange
 from azure.cosmos._change_feed.composite_continuation_token import CompositeContinuationToken
-from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternal, FeedRangeInternalEpk, FeedRangeInternalPartitionKey
+from azure.cosmos._change_feed.feed_range_internal import (FeedRangeInternal, FeedRangeInternalEpk,
+                                                           FeedRangeInternalPartitionKey)
 from azure.cosmos._change_feed.feed_range_composite_continuation_token import FeedRangeCompositeContinuation
 from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider as AsyncSmartRoutingMapProvider
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
@@ -388,7 +389,7 @@ class ChangeFeedStateV2(ChangeFeedState):
                 feed_range =\
                     FeedRangeInternalPartitionKey(
                         change_feed_state_context["partitionKey"],
-                        change_feed_state_context["partitionKeyFeedRange"])
+                        change_feed_state_context["partitionKeyFeedRange"])  # type: FeedRangeInternal
             else:
                 raise ValueError("partitionKey is in the changeFeedStateContext, but missing partitionKeyFeedRange")
         else:
@@ -399,7 +400,7 @@ class ChangeFeedStateV2(ChangeFeedState):
                 "FF",
                 True,
                 False)
-            )
+            )  # type: FeedRangeInternal
 
         change_feed_start_from = (
             ChangeFeedStartFromInternal.from_start_time(change_feed_state_context.get("startTime")))

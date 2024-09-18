@@ -1265,4 +1265,5 @@ class ContainerProxy:
                 [Range("", "FF", True, False)],
                 **kwargs)
 
-        return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)) for partitionKeyRange in partition_key_ranges]
+        return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange))
+                for partitionKeyRange in partition_key_ranges]

@@ -27,7 +27,7 @@ from typing import Any, Dict
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternal, FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 
-
+# pylint: disable=protected-access
 class FeedRange(ABC):
     """Represents a single feed range in an Azure Cosmos DB SQL API container.
 
@@ -37,6 +37,7 @@ class FeedRange(ABC):
         """
         Get a json representation of the feed range.
         The returned json string can be used to create a new feed range from it.
+
         :return: A json representation of the feed range.
         :rtype: str
         """
@@ -48,7 +49,7 @@ class FeedRange(ABC):
         """
         Create a feed range from previously obtained string representation.
 
-        :param json_str: A string representation of a feed range.
+        :param str json_str: A string representation of a feed range.
         :return: A feed range.
         :rtype: ~azure.cosmos.FeedRange
         """
@@ -56,8 +57,8 @@ class FeedRange(ABC):
         feed_range_json = json.loads(feed_range_json_str)
         if feed_range_json.get(FeedRangeEpk.type_property_name):
             return FeedRangeEpk._from_json(feed_range_json)
-        else:
-            raise ValueError("Invalid feed range base64 encoded string [Wrong feed range type]")
+
+        raise ValueError("Invalid feed range base64 encoded string [Wrong feed range type]")
 
     @abstractmethod
     def _to_dict(self) -> Dict[str, Any]:

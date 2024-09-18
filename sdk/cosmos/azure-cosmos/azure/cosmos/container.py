@@ -1332,4 +1332,5 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 [Range("", "FF", True, False)], # default to full range
                 **kwargs)
 
-        return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)) for partitionKeyRange in partition_key_ranges]
+        return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange))
+                for partitionKeyRange in partition_key_ranges]

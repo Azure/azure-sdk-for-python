@@ -26,7 +26,8 @@ from collections import deque
 from typing import Any, Deque, Dict, Optional
 
 from azure.cosmos._change_feed.composite_continuation_token import CompositeContinuationToken
-from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternal, FeedRangeInternalEpk, FeedRangeInternalPartitionKey
+from azure.cosmos._change_feed.feed_range_internal import (FeedRangeInternal, FeedRangeInternalEpk,
+                                                           FeedRangeInternalPartitionKey)
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider as AsyncSmartRoutingMapProvider
 from azure.cosmos._routing.routing_range import Range
