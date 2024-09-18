@@ -50,7 +50,7 @@ class _AsyncFluencyEvaluator:
         answer = str(answer or "")
 
         if not (question.strip() and answer.strip()):
-            msg = "Both 'answer' and 'ground_truth' must be non-empty strings."
+            msg = "Both 'question' and 'answer' must be non-empty strings."
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,
