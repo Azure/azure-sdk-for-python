@@ -149,14 +149,21 @@ class BreakingChangesTracker:
             if checker.node_type == "class":
                 # If we are running a class checker, we need to run it on all classes in each module in the diff
                 for module_name, module_components in self.diff.items():
-                    changes_list.extend(checker.run_check(module_components.get("class_nodes", {}), self.stable, self.current, module_name=module_name))
-                    continue
+                    # If the module_name is a symbol, we'll skip it since we can't run class checks on it
+                    if not isinstance(module_name, jsondiff.Symbol):
+                        changes_list.extend(checker.run_check(module_components.get("class_nodes", {}), self.stable, self.current, module_name=module_name))
+                        continue
             if checker.node_type == "function_or_method":
                 # If we are running a function or method checker, we need to run it on all functions and class methods in each module in the diff
                 for module_name, module_components in self.diff.items():
-                    for class_name, class_components in module_components.get("class_nodes", {}).items():
-                        changes_list.extend(checker.run_check(class_components.get("methods", {}), self.stable, self.current, module_name=module_name, class_name=class_name))
-                    changes_list.extend(checker.run_check(module_components.get("function_nodes", {}), self.stable, self.current, module_name=module_name))
+                    # If the module_name is a symbol, we'll skip it since we can't run class checks on it
+                    if not isinstance(module_name, jsondiff.Symbol):
+                        for class_name, class_components in module_components.get("class_nodes", {}).items():
+                            # If the class_name is a symbol, we'll skip it since we can't run method checks on it
+                            if not isinstance(class_name, jsondiff.Symbol):
+                                changes_list.extend(checker.run_check(class_components.get("methods", {}), self.stable, self.current, module_name=module_name, class_name=class_name))
+                                continue
+                        changes_list.extend(checker.run_check(module_components.get("function_nodes", {}), self.stable, self.current, module_name=module_name))
 
 
     def run_class_level_diff_checks(self, module: Dict) -> None:
