@@ -10,6 +10,15 @@ The overall idea is that PyPI does not support an official deprecation logic. We
 - Push a new release to PyPI.
 - Update the API reference docs to show the deprecated status of the package.
 
+## Pre-deprecation: Blog Post
+
+If applicable, consider adding a post to the Azure Blog stating that:
+ - a new package is available which replaces the old package
+ - the old package is scheduled to be deprecated on a specific date
+ - guidance on adjusting code to use the new package.
+
+Reach out to the Python Azure SDK PM, Rohit Ganguly (rohitganguly), if you have any questions about creating a blog post.
+
 # Step 1: Updates to the package files
 
 Clone the `azure-sdk-for-python` repository and update the following files of your package.
@@ -209,7 +218,3 @@ More detailed instructions on updating the CSV file can be found [here](https://
 TODO: The process for this section is still a WIP. Guidance will be updated here once we have concrete steps.
 
 - These will be on the MS Learn page. You can search for mentions of the deprecated packages.
-
-# Step 7: Blog Post
-
-If applicable, consider adding a post to the Azure Blog stating that a new package is available which replaces the old package, the old package is scheduled to be deprecated on a specific date, and guidance on adjusting code to use the new package. Reach out to the Python Azure SDK PM, Rohit Ganguly (rohitganguly), if you have any questions about creating a blog post.
