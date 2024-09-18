@@ -7,8 +7,9 @@ from unittest.mock import MagicMock, Mock, patch
 
 from azure.identity._internal.aad_client_base import JWT_BEARER_ASSERTION
 from azure.identity import ClientAssertionCredential, TokenCachePersistenceOptions
+import pytest
 
-from helpers import build_aad_response, mock_response
+from helpers import build_aad_response, mock_response, GET_TOKEN_METHODS
 
 
 def test_init_with_kwargs():
@@ -40,7 +41,8 @@ def test_context_manager():
     assert transport.__exit__.called
 
 
-def test_token_cache_persistence():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_token_cache_persistence(get_token_method):
     """The credential should use a persistent cache if cache_persistence_options are configured."""
 
     access_token = "foo"
@@ -72,12 +74,15 @@ def test_token_cache_persistence():
         assert credential._client._cache is None
         assert credential._client._cae_cache is None
 
-        token = credential.get_token(scope)
+        token = getattr(credential, get_token_method)(scope)
         assert token.token == access_token
         assert load_persistent_cache.call_count == 1
         assert credential._client._cache is not None
         assert credential._client._cae_cache is None
 
-        token = credential.get_token(scope, enable_cae=True)
+        kwargs = {"enable_cae": True}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = getattr(credential, get_token_method)(scope, **kwargs)
         assert load_persistent_cache.call_count == 2
         assert credential._client._cae_cache is not None

@@ -8,7 +8,7 @@ from typing import Any, Callable, Dict, Optional
 
 from msal import TokenCache
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError, DecodeError
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline import PipelineResponse
@@ -40,7 +40,7 @@ class ManagedIdentityClientBase(abc.ABC):
         self._pipeline = self._build_pipeline(**kwargs)
         self._request_factory = request_factory
 
-    def _process_response(self, response: PipelineResponse, request_time: int) -> AccessToken:
+    def _process_response(self, response: PipelineResponse, request_time: int) -> AccessTokenInfo:
         content = response.context.get(ContentDecodePolicy.CONTEXT_NAME)
         if not content:
             try:
@@ -70,7 +70,13 @@ class ManagedIdentityClientBase(abc.ABC):
         expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
         content["expires_on"] = expires_on
 
-        token = AccessToken(content["access_token"], content["expires_on"])
+        expires_in = int(content.get("expires_in") or expires_on - request_time)
+        if "refresh_in" not in content and expires_in >= 7200:
+            # MSAL TokenCache expects "refresh_in"
+            content["refresh_in"] = expires_in // 2
+
+        refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
+        token = AccessTokenInfo(content["access_token"], content["expires_on"], refresh_on=refresh_on)
 
         # caching is the final step because TokenCache.add mutates its "event"
         self._cache.add(
@@ -80,15 +86,15 @@ class ManagedIdentityClientBase(abc.ABC):
 
         return token
 
-    def get_cached_token(self, *scopes: str) -> Optional[AccessToken]:
+    def get_cached_token(self, *scopes: str) -> Optional[AccessTokenInfo]:
         resource = _scopes_to_resource(*scopes)
-        for token in self._cache.search(
-            TokenCache.CredentialType.ACCESS_TOKEN,
-            target=[resource],
-        ):
+        now = time.time()
+        for token in self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]):
             expires_on = int(token["expires_on"])
-            if expires_on > time.time():
-                return AccessToken(token["secret"], expires_on)
+            refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
+            if expires_on > now and (not refresh_on or refresh_on > now):
+                return AccessTokenInfo(token["secret"], expires_on, refresh_on=refresh_on)
+
         return None
 
     @abc.abstractmethod
@@ -124,7 +130,7 @@ class ManagedIdentityClient(ManagedIdentityClientBase):
     def close(self) -> None:
         self.__exit__()
 
-    def request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource, self._identity_config)
         kwargs.pop("tenant_id", None)
