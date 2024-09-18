@@ -324,7 +324,7 @@ class RoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describes the ServerVersion of an a MongoDB account."""
+    """Describes the version of the MongoDB account."""
 
     THREE2 = "3.2"
     THREE6 = "3.6"
@@ -332,6 +332,7 @@ class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FOUR2 = "4.2"
     FIVE0 = "5.0"
     SIX0 = "6.0"
+    SEVEN0 = "7.0"
 
 
 class ServiceSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
