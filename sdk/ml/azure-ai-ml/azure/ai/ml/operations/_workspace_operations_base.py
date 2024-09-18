@@ -595,6 +595,10 @@ class WorkspaceOperationsBase(ABC):
                 param["storageAccountResourceGroupName"],
                 workspace.resource_group,
             )
+            _set_val(
+                param["storageAccountSubscriptionId"],
+                self._subscription_id,
+            )
 
         if workspace.application_insights:
             resource_name, group_name = get_resource_and_group_name(workspace.application_insights)
