@@ -97,7 +97,7 @@ If there is a replacement library, provide a link to the new library or an exist
 
 Create a PR targeting the `main` branch.
 
-Example PR to deprecate azure-cognitiveservices-language-luis [here.](https://github.com/Azure/azure-sdk-for-python/pull/36893/files)
+Example PR to deprecate azure-cognitiveservices-language-spellcheck [here.](https://github.com/Azure/azure-sdk-for-python/pull/37456/files)
 
 ## Fix any CI issues
 
