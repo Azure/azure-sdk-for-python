@@ -14,9 +14,9 @@ class _AsyncMeteorScoreEvaluator:
         self._gamma = gamma
 
         try:
-            nltk.find('corpora/wordnet.zip')
+            nltk.find("corpora/wordnet.zip")
         except LookupError:
-            nltk.download('wordnet')
+            nltk.download("wordnet")
 
     async def __call__(self, *, ground_truth: str, answer: str, **kwargs):
         reference_tokens = nltk_tokenize(ground_truth)
