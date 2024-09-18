@@ -8,8 +8,8 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 
 
 class _AsyncECIEvaluator:
-    def __init__(self, project_scope: dict, credential=None):
-        self._project_scope = project_scope
+    def __init__(self, azure_ai_project: dict, credential=None):
+        self._azure_ai_project = azure_ai_project
         self._credential = credential
 
     async def __call__(self, *, question: str, answer: str, **kwargs):
@@ -32,7 +32,7 @@ class _AsyncECIEvaluator:
             metric_name=_InternalEvaluationMetrics.ECI,
             question=question,
             answer=answer,
-            project_scope=self._project_scope,
+            project_scope=self._azure_ai_project,
             credential=self._credential,
         )
         return result
@@ -48,9 +48,9 @@ class ECIEvaluator:
     "AI-generated content may be incorrect. If you are seeking ECI-related information, please go to Bing Search."
     Outputs True or False with AI-generated reasoning.
 
-    :param project_scope: The scope of the Azure AI project.
+    :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type project_scope: dict
+    :type azure_ai_project: dict
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
     :return: Whether or not ECI was found in the response without a disclaimer, with AI-generated reasoning
@@ -60,12 +60,12 @@ class ECIEvaluator:
 
     .. code-block:: python
 
-        project_scope = {
+        azure_ai_project = {
             "subscription_id": "<subscription_id>",
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = ECIEvaluator(project_scope)
+        eval_fn = ECIEvaluator(azure_ai_project)
         result = eval_fn(question="What is the capital of France?", answer="Paris.")
 
     **Output format**
@@ -78,8 +78,8 @@ class ECIEvaluator:
         }
     """
 
-    def __init__(self, project_scope: dict, credential=None) -> None:
-        self._async_evaluator = _AsyncECIEvaluator(project_scope, credential)
+    def __init__(self, azure_ai_project: dict, credential=None) -> None:
+        self._async_evaluator = _AsyncECIEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, question: str, answer: str, **kwargs):
         """

@@ -6,7 +6,7 @@ from typing import Optional
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
-from azure.ai._common.constants import EvaluationMetrics
+from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
@@ -14,39 +14,45 @@ logger = logging.getLogger(__name__)
 
 
 class IndirectAttackEvaluator:
-    """
-    Initializes an XPIA (cross domain prompt injected attack) jailbreak evaluator to detect whether cross domain
-    injected attacks are present in your AI system's response.
-    :param project_scope: The scope of the Azure AI project.
-        It contains subscription id, resource group, and project name.
-    :type project_scope: dict
+    """A Cross-Domain Prompt Injection Attack (XPIA) jailbreak evaluator.
+
+    Detect whether cross domain injected attacks are present in your AI system's response.
+
+    :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
+        name.
+    :type azure_ai_project: dict
     :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
     :type eval_last_turn: bool
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
     :return: A function that evaluates and generates metrics for XPIA chat scenario. Metrics include the overall
-        evaluation label and reason for the Q/A Pair, as well as sub-labels
-        for manipulated content, intrusion, and information.
+        evaluation label and reason for the Q/A Pair, as well as sub-labels for manipulated content, intrusion, and
+        information.
     :rtype: Callable
-    **Usage**
-    .. code-block:: python
-        eval_fn = IndirectAttackEvaluator(model_config)
-        result = eval_fn(question="What is the capital of France?", answer="Paris.")
-    **Output format for question-answer pair**
-    .. code-block:: python
-        {
-            'xpia_label': False,
-            'xpia_reason': 'The conversation does not contain any manipulated content, intrusion or
-                          information gathering.'
-            'xpia_information_gathering': False,
-            'xpia_intrusion': False
-            'xpia_manipulated_content': False
-        }
+        **Usage**
+
+        .. code-block:: python
+
+            eval_fn = IndirectAttackEvaluator(model_config)
+            result = eval_fn(question="What is the capital of France?", answer="Paris.")
+
+        **Output format for question-answer pair**
+
+        .. code-block:: python
+
+            {
+                'xpia_label': False,
+                'xpia_reason': 'The conversation does not contain any manipulated content, intrusion or
+                              information gathering.'
+                'xpia_information_gathering': False,
+                'xpia_intrusion': False
+                'xpia_manipulated_content': False
+            }
     """
 
-    def __init__(self, project_scope: dict, eval_last_turn: bool = False, credential=None):
-        self._evaluator = _IndirectAttackEvaluator(project_scope, credential)
+    def __init__(self, azure_ai_project: dict, eval_last_turn: bool = False, credential=None):
+        self._evaluator = _IndirectAttackEvaluator(azure_ai_project, credential)
         self._eval_last_turn = eval_last_turn
 
     def __call__(
@@ -72,8 +78,8 @@ class IndirectAttackEvaluator:
 
 
 class _AsyncIndirectAttackEvaluator:
-    def __init__(self, project_scope: dict, credential=None):
-        self._project_scope = project_scope
+    def __init__(self, azure_ai_project: dict, credential=None):
+        self._azure_ai_project = azure_ai_project
         self._credential = credential
 
     async def __call__(self, *, question: str, answer: str, **kwargs):
@@ -105,15 +111,15 @@ class _AsyncIndirectAttackEvaluator:
             metric_name=EvaluationMetrics.XPIA,
             question=question,
             answer=answer,
-            project_scope=self._project_scope,
+            project_scope=self._azure_ai_project,
             credential=self._credential,
         )
         return result
 
 
 class _IndirectAttackEvaluator:
-    def __init__(self, project_scope: dict, credential=None):
-        self._async_evaluator = _AsyncIndirectAttackEvaluator(project_scope, credential)
+    def __init__(self, azure_ai_project: dict, credential=None):
+        self._async_evaluator = _AsyncIndirectAttackEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, question: str, answer: str, **kwargs):
         """

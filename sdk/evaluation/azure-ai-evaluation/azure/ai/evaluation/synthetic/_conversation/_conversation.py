@@ -6,6 +6,9 @@ import asyncio
 import logging
 from typing import Callable, Dict, List, Tuple, Union
 
+from azure.ai.evaluation.synthetic._helpers._language_suffix_mapping import SUPPORTED_LANGUAGES_MAPPING
+from azure.ai.evaluation.synthetic.constants import SupportedLanguages
+
 from ..._http_utils import AsyncHttpPipeline
 from . import ConversationBot, ConversationTurn
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
@@ -68,8 +71,10 @@ def is_closing_message_helper(response: str) -> bool:
 
 
 async def simulate_conversation(
+    *,
     bots: List[ConversationBot],
     session: AsyncHttpPipeline,
+    language: SupportedLanguages,
     stopping_criteria: Callable[[str], bool] = is_closing_message,
     turn_limit: int = 10,
     history_limit: int = 5,
@@ -109,6 +114,13 @@ async def simulate_conversation(
     else:
         conversation_id = None
     first_prompt = first_response["samples"][0]
+    if language != SupportedLanguages.English:
+        if not isinstance(language, SupportedLanguages) or language not in SupportedLanguages:
+            raise Exception(  # pylint: disable=broad-exception-raised
+                f"Language option '{language}' isn't supported. Select a supported language option from "
+                f"azure.ai.evaluation.synthetic._constants.SupportedLanguages: {[f'{e}' for e in SupportedLanguages]}"
+            )
+        first_prompt += f" {SUPPORTED_LANGUAGES_MAPPING[language]}"
     # Add all generated turns into array to pass for each bot while generating
     # new responses. We add generated response and the person generating it.
     # in the case of the first turn, it is supposed to be the user search query

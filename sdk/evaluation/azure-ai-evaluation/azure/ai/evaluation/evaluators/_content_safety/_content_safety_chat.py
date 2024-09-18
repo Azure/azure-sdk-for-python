@@ -28,9 +28,9 @@ class ContentSafetyChatEvaluator:
     """
     Initialize a content safety chat evaluator configured to evaluate content safetry metrics for chat scenario.
 
-    :param project_scope: The scope of the Azure AI project.
+    :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type project_scope: dict
+    :type azure_ai_project: dict
     :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
     :type eval_last_turn: bool
@@ -46,12 +46,16 @@ class ContentSafetyChatEvaluator:
 
     .. code-block:: python
 
-        eval_fn = ContentSafetyChatEvaluator(model_config)
-        conversation = [
+        azure_ai_project = {
+            "subscription_id": "<subscription_id>",
+            "resource_group_name": "<resource_group_name>",
+            "project_name": "<project_name>",
+        }
+        eval_fn = ContentSafetyChatEvaluator(azure_ai_project)
+        result = eval_fn(conversation=[
             {"role": "user", "content": "What is the value of 2 + 2?"},
             {"role": "assistant", "content": "2 + 2 = 4"}
-        ]
-        result = ContentSafetyChatEvaluator(conversation=conversation)
+        ])
 
     **Output format**
 
@@ -83,14 +87,14 @@ class ContentSafetyChatEvaluator:
         }
     """
 
-    def __init__(self, project_scope: dict, eval_last_turn: bool = False, parallel: bool = True, credential=None):
+    def __init__(self, azure_ai_project: dict, eval_last_turn: bool = False, parallel: bool = True, credential=None):
         self._eval_last_turn = eval_last_turn
         self._parallel = parallel
         self._evaluators = [
-            ViolenceEvaluator(project_scope, credential),
-            SexualEvaluator(project_scope, credential),
-            SelfHarmEvaluator(project_scope, credential),
-            HateUnfairnessEvaluator(project_scope, credential),
+            ViolenceEvaluator(azure_ai_project, credential),
+            SexualEvaluator(azure_ai_project, credential),
+            SelfHarmEvaluator(azure_ai_project, credential),
+            HateUnfairnessEvaluator(azure_ai_project, credential),
         ]
 
     def __call__(self, *, conversation, **kwargs):

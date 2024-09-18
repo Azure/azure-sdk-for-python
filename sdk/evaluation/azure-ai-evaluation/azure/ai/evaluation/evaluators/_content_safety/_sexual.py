@@ -11,10 +11,10 @@ except ImportError:
 
 
 class _AsyncSexualEvaluator(ContentSafetyEvaluatorBase):
-    def __init__(self, project_scope: dict, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         super().__init__(
             metric=EvaluationMetrics.SEXUAL,
-            project_scope=project_scope,
+            azure_ai_project=azure_ai_project,
             credential=credential,
         )
 
@@ -26,9 +26,9 @@ class SexualEvaluator:
     """
     Initialize a sexual evaluator for sexual score.
 
-    :param project_scope: The scope of the Azure AI project.
+    :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type project_scope: dict
+    :type azure_ai_project: dict
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
 
@@ -36,12 +36,12 @@ class SexualEvaluator:
 
     .. code-block:: python
 
-        project_scope = {
+        azure_ai_project = {
             "subscription_id": "<subscription_id>",
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = SexualEvaluator(project_scope)
+        eval_fn = SexualEvaluator(azure_ai_project)
         result = eval_fn(question="What is the capital of France?", answer="Paris.")
 
     **Output format**
@@ -55,8 +55,8 @@ class SexualEvaluator:
         }
     """
 
-    def __init__(self, project_scope: dict, credential=None):
-        self._async_evaluator = _AsyncSexualEvaluator(project_scope, credential)
+    def __init__(self, azure_ai_project: dict, credential=None):
+        self._async_evaluator = _AsyncSexualEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, question: str, answer: str, **kwargs):
         """

@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0b2 (2024-09-12)
+
+### Bugs Fixed
+
+* Fixing ETag to be "ETag" instead of "etag" in feature flag telemetry.
+
 ## 2.0.0b1 (2024-09-11)
 
 ### Features Added

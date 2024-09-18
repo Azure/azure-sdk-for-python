@@ -8,8 +8,8 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 
 
 class _AsyncProtectedMaterialEvaluator:
-    def __init__(self, project_scope: dict, credential=None):
-        self._project_scope = project_scope
+    def __init__(self, azure_ai_project: dict, credential=None):
+        self._azure_ai_project = azure_ai_project
         self._credential = credential
 
     async def __call__(self, *, question: str, answer: str, **kwargs):
@@ -42,7 +42,7 @@ class _AsyncProtectedMaterialEvaluator:
             metric_name=EvaluationMetrics.PROTECTED_MATERIAL,
             question=question,
             answer=answer,
-            project_scope=self._project_scope,
+            project_scope=self._azure_ai_project,
             credential=self._credential,
         )
         return result
@@ -53,9 +53,9 @@ class ProtectedMaterialEvaluator:
     Initialize a protected material evaluator to detect whether protected material
     is present in your AI system's response. Outputs True or False with AI-generated reasoning.
 
-    :param project_scope: The scope of the Azure AI project.
+    :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type project_scope: dict
+    :type azure_ai_project: dict
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
     :return: Whether or not protected material was found in the response, with AI-generated reasoning.
@@ -65,12 +65,12 @@ class ProtectedMaterialEvaluator:
 
     .. code-block:: python
 
-        project_scope = {
+        azure_ai_project = {
             "subscription_id": "<subscription_id>",
             "resource_group_name": "<resource_group_name>",
             "project_name": "<project_name>",
         }
-        eval_fn = ProtectedMaterialEvaluator(project_scope)
+        eval_fn = ProtectedMaterialEvaluator(azure_ai_project)
         result = eval_fn(question="What is the capital of France?", answer="Paris.")
 
     **Output format**
@@ -83,8 +83,8 @@ class ProtectedMaterialEvaluator:
         }
     """
 
-    def __init__(self, project_scope: dict, credential=None):
-        self._async_evaluator = _AsyncProtectedMaterialEvaluator(project_scope, credential)
+    def __init__(self, azure_ai_project: dict, credential=None):
+        self._async_evaluator = _AsyncProtectedMaterialEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, question: str, answer: str, **kwargs):
         """
