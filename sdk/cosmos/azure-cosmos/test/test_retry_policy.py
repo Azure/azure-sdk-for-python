@@ -79,13 +79,13 @@ class TestRetryPolicy(unittest.TestCase):
                 self.created_collection.create_item(body=document_definition)
             except exceptions.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-                self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
+                self.assertEqual(str(connection_policy.RetryOptions.MaxRetryAttemptCount),
                                  self.created_collection.client_connection.last_response_headers[
                                      HttpHeaders.ThrottleRetryCount])
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
                                             HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxRetryAttemptCount *
-                                        self.retry_after_in_milliseconds)
+                                        str(connection_policy.RetryOptions.MaxRetryAttemptCount *
+                                        self.retry_after_in_milliseconds))
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
@@ -106,12 +106,12 @@ class TestRetryPolicy(unittest.TestCase):
                 self.created_collection.create_item(body=document_definition)
             except exceptions.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-                self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
+                self.assertEqual(str(connection_policy.RetryOptions.MaxRetryAttemptCount),
                                  self.created_collection.client_connection.last_response_headers[
                                      HttpHeaders.ThrottleRetryCount])
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
                                             HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
+                                        str(connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds))
 
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
@@ -135,7 +135,7 @@ class TestRetryPolicy(unittest.TestCase):
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
                                             HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
+                                        str(connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000))
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
@@ -164,12 +164,12 @@ class TestRetryPolicy(unittest.TestCase):
                     }))
             except exceptions.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
-                self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
+                self.assertEqual(str(connection_policy.RetryOptions.MaxRetryAttemptCount),
                                  self.created_collection.client_connection.last_response_headers[
                                      HttpHeaders.ThrottleRetryCount])
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[
                                             HttpHeaders.ThrottleRetryWaitTimeInMs],
-                                        connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
+                                        str(connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds))
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 
