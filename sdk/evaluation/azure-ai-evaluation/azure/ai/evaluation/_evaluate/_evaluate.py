@@ -418,13 +418,13 @@ def evaluate(
                 },
                 evaluator_config={
                     "coherence": {
-                        "answer": "${data.answer}",
-                        "question": "${data.question}"
+                        "response": "${data.response}",
+                        "query": "${data.query}"
                     },
                     "relevance": {
-                        "answer": "${data.answer}",
+                        "response": "${data.response}",
                         "context": "${data.context}",
-                        "question": "${data.question}"
+                        "query": "${data.query}"
                     }
                 }
             )

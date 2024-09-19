@@ -181,7 +181,7 @@ class AdversarialSimulator:
                     'template_parameters': {},
                     'messages': [
                         {
-                            'content': '<jailbreak prompt> <adversarial question>',
+                            'content': '<jailbreak prompt> <adversarial query>',
                             'role': 'user'
                         },
                         {
