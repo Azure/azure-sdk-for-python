@@ -521,7 +521,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         priority: Optional[Literal["High", "Low"]] = None,
         response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """Replaces the specified item if it exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -544,10 +544,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip sending 
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
             when also not specified there from client-level kwargs.  
-        :returns: A dict representing the item after replace went through or if content-response on write is disabled None.
+        :returns: A dict representing the item after replace went through or if response payload on write is disabled None.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
-        :rtype: Dict[str, Any]
+        :rtype: Optional[Dict[str, Any]]
         """
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
@@ -597,7 +597,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         priority: Optional[Literal["High", "Low"]] = None,
         response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """Insert or update the specified item.
 
         If the item already exists in the container, it is replaced. If the item
@@ -619,9 +619,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip sending 
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
             when also not specified there from client-level kwargs.   
-        :returns: A dict representing the upserted item or if content-response on write is disabled None.
+        :returns: A dict representing the upserted item or if response payload on write is disabled None.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
-        :rtype: Dict[str, Any]
+        :rtype: Optional[Dict[str, Any]]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -674,7 +674,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         priority: Optional[Literal["High", "Low"]] = None,
         response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """Create an item in the container.
 
         To update or replace an existing item, use the
@@ -700,9 +700,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip sending 
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
             when also not specified there from client-level kwargs.
-        :returns: A dict representing the new item or if content-response on write is disabled None.
+        :returns: A dict representing the new item or if response payload on write is disabled None.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
-        :rtype: Dict[str, Any]
+        :rtype: Optional[Dict[str, Any]]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -751,7 +751,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         priority: Optional[Literal["High", "Low"]] = None,
         response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """ Patches the specified item with the provided operations if it
          exists in the container.
 
@@ -777,10 +777,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip sending 
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
             when also not specified there from client-level kwargs.
-        :returns: A dict representing the item after the patch operations went through or if content-response on write is disabled None.
+        :returns: A dict representing the item after the patch operations went through or if response payload on write is disabled None.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
-        :rtype: dict[str, Any]
+        :rtype: Optional[Dict[str, Any]]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
