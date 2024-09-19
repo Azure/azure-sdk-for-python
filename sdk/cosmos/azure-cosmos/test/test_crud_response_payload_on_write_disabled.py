@@ -2601,9 +2601,10 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # Create item to patch
+        pkValue = "patch_item_pk" = str(uuid.uuid4())
         item = {
             "id": "patch_item",
-            "pk": "patch_item_pk",
+            "pk": pkValue,
             "prop": "prop1",
             "address": {
                 "city": "Redmond"
@@ -2620,11 +2621,11 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             {"op": "incr", "path": "/number", "value": 7},
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
-        none_response = created_container.patch_item(item="patch_item", partition_key="patch_item_pk",
+        none_response = created_container.patch_item(item="patch_item", partition_key=pkValue,
                                                     patch_operations=operations)
         self.assertIsNone(none_response)
 
-        patched_item = created_container.read_item(item="patch_item", partition_key="patch_item_pk")
+        patched_item = created_container.read_item(item="patch_item", partition_key=pkValue)
 
         # Verify results from patch operations
         self.assertTrue(patched_item.get("color") is None)
@@ -2637,37 +2638,38 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         # Negative test - attempt to replace non-existent field
         operations = [{"op": "replace", "path": "/wrong_field", "value": "wrong_value"}]
         try:
-            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+            created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to remove non-existent field
         operations = [{"op": "remove", "path": "/wrong_field"}]
         try:
-            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+            created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to increment non-number field
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         try:
-            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+            created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
         # Negative test - attempt to move from non-existent field
         operations = [{"op": "move", "from": "/wrong_field", "path": "/other_field"}]
         try:
-            created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
+            created_container.patch_item(item="patch_item", partition_key=pkValue, patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
     def test_conditional_patching(self):
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Create item to patch
+        pkValue = "patch_item_pk" = str(uuid.uuid4())
         item = {
             "id": "conditional_patch_item",
-            "pk": "patch_item_pk",
+            "pk": pkValue,
             "prop": "prop1",
             "address": {
                 "city": "Redmond"
@@ -2690,7 +2692,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         num_false = item.get("number") + 1
         filter_predicate = "from root where root.number = " + str(num_false)
         try:
-            created_container.patch_item(item="conditional_patch_item", partition_key="patch_item_pk",
+            created_container.patch_item(item="conditional_patch_item", partition_key=pkValue,
                                          patch_operations=operations, filter_predicate=filter_predicate)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.PRECONDITION_FAILED)
@@ -2699,13 +2701,13 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         headerEnvelope=CosmosResponseHeaderEnvelope()
         filter_predicate = "from root where root.number = " + str(item.get("number"))
         none_Response = created_container.patch_item(item="conditional_patch_item",
-                                                    partition_key="patch_item_pk",
+                                                    partition_key=pkValue,
                                                     patch_operations=operations,
                                                     filter_predicate=filter_predicate,
                                                     response_hook=headerEnvelope.capture_response_headers)
         self.assertIsNone(none_Response)
 
-        patched_item = created_container.read_item(item="conditional_patch_item", partition_key="patch_item_pk")
+        patched_item = created_container.read_item(item="conditional_patch_item", partition_key=pkValue)
         self.assertEqual(headerEnvelope.headers['etag'], patched_item['_etag'])
 
         # Verify results from patch operations
