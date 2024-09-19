@@ -665,10 +665,9 @@ def _validate_and_unwrap_cek(
     # For V2, the version is included with the cek. We need to validate it
     # and remove it from the actual cek.
     if encryption_data.encryption_agent.protocol in _ENCRYPTION_V2_PROTOCOLS:
-        version_2_bytes = _ENCRYPTION_PROTOCOL_V2.encode().ljust(8, b'\0')
-        version_2_1_bytes = _ENCRYPTION_PROTOCOL_V2_1.encode().ljust(8, b'\0')
+        version_2_bytes = encryption_data.encryption_agent.protocol.encode().ljust(8, b'\0')
         cek_version_bytes = content_encryption_key[:len(version_2_bytes)]
-        if not ((cek_version_bytes == version_2_bytes) or (cek_version_bytes == version_2_1_bytes)):
+        if cek_version_bytes != version_2_bytes:
             raise ValueError('The encryption metadata is not valid and may have been modified.')
 
         # Remove version from the start of the cek.
