@@ -39,38 +39,6 @@ additional_pr_triggers: Dict[str, List[str]] = {
     ]
 }
 
-# todo triggers based on paths and not files
-# tools/
-#   azure-storage-blob
-#   azure-servicebus
-#   azure-eventhub
-#   azure-data-table
-#   azure-appconfig
-#   azure-keyvault-keys
-#   azure-identity
-#   azure-mgmt-core
-#   azure-core-experimental
-#   azure-core-tracing-opentelemetry
-#   azure-core-tracing-opencensus
-#   azure-cosmos
-#   azure-ai-documentintelligence
-#   azure-ai-ml
-#   azure-ai-inference
-#   azure-ai-textanalytics
-#   azure-ai-doctranslation
-#   azure-mgmt-compute
-#   azure-communication-chat
-#   azure-communication-identity
-
-# eng/
-#   azure-template
-#   azure-core
-
-# scripts/, doc/, common/, conda/
-#   azure-template
-#   azure-core
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Get package version details from the repo")
     parser.add_argument("-s", "--search_path", required=True, help="The scope of the search")

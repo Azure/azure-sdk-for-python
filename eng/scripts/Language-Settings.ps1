@@ -9,6 +9,7 @@ $PackageRepositoryUri = "https://pypi.org/project"
 ."$PSScriptRoot/docs/Docs-ToC.ps1"
 ."$PSScriptRoot/docs/Docs-Onboarding.ps1"
 
+
 function Get-python-AdditionalValidationPackagesFromPackageSet {
   param(
     [Parameter(Mandatory=$true)]
@@ -17,11 +18,59 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     $diffObj
   )
 
+  function Add-IfNotExist {
+    param (
+      [Parameter(Mandatory = $true)]
+      $IncomingPackageName,
+
+      [Parameter(Mandatory = $true)]
+      [ref]$List
+    )
+
+    # Check if an item with the same name already exists
+    if (-not $List.Value | Where-Object { $_.Name -eq $Name }) {
+      # Add the item if it doesn't exist
+      $List.Value += [PSCustomObject]@{ Name = $Name }
+    }
+  }
   $additionalValidationPackages = @()
 
   Write-Host "We are in Get-python-AdditionalValidationPackagesFromPackageSet getting called."
-  Write-Host $LocatedPackages
-  Write-Host $diffObj
+
+  $toolChanged = $json.ChangedFiles | Where-Object { $_.StartsWith("tool")}
+  $engChanged = $json.ChangedFiles | Where-Object { $_.StartsWith("eng")}
+  $othersChanged = $json.ChangedFiles | Where-Object { $_.StartsWith("scripts") -or $_.StartsWith("doc") -or $_.StartsWith("common") -or $_.StartsWith("conda") }
+
+  # todo triggers based on paths and not files
+  # tools/
+  #   azure-storage-blob
+  #   azure-servicebus
+  #   azure-eventhub
+  #   azure-data-table
+  #   azure-appconfig
+  #   azure-keyvault-keys
+  #   azure-identity
+  #   azure-mgmt-core
+  #   azure-core-experimental
+  #   azure-core-tracing-opentelemetry
+  #   azure-core-tracing-opencensus
+  #   azure-cosmos
+  #   azure-ai-documentintelligence
+  #   azure-ai-ml
+  #   azure-ai-inference
+  #   azure-ai-textanalytics
+  #   azure-ai-doctranslation
+  #   azure-mgmt-compute
+  #   azure-communication-chat
+  #   azure-communication-identity
+
+  # eng/
+  #   azure-template
+  #   azure-core
+
+  # scripts/, doc/, common/, conda/
+  #   azure-template
+  #   azure-core
 }
 
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
