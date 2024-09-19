@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -109,11 +109,13 @@ class ConnectionsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def _get_connections(self, **kwargs: Any) -> List[_models._models.ConnectionDetails]:
+    def _get_connections(  # pylint: disable=protected-access
+        self, **kwargs: Any
+    ) -> _models._models.ConnectionDetailsList:
         """List the details of all the connections (not including their credentials).
 
-        :return: list of ConnectionDetails
-        :rtype: list[~azure.ai.client.models._models.ConnectionDetails]
+        :return: ConnectionDetailsList. The ConnectionDetailsList is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models._models.ConnectionDetailsList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
@@ -127,7 +129,7 @@ class ConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models._models.ConnectionDetails]] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[_models._models.ConnectionDetailsList] = kwargs.pop(  # pylint: disable=protected-access
             "cls", None
         )
 
@@ -164,7 +166,9 @@ class ConnectionsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[_models._models.ConnectionDetails], response.json())
+            deserialized = _deserialize(
+                _models._models.ConnectionDetailsList, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Literal, TYPE_CHECKING, Union
+from typing import Dict, List, Literal, TYPE_CHECKING, Union
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
@@ -26,7 +26,21 @@ class ConnectionDetails(_model_base.Model):
     :vartype properties: ~azure.ai.client.models._models.ConnectionProperties
     """
 
+    name: str = rest_field()
+
     properties: "_models._models.ConnectionProperties" = rest_field()
+    """to do. Required."""
+
+
+class ConnectionDetailsList(_model_base.Model):
+    """to do.
+
+
+    :ivar value: to do. Required.
+    :vartype value: list[~azure.ai.client.models._models.ConnectionDetails]
+    """
+
+    value: List["_models._models.ConnectionDetails"] = rest_field()
     """to do. Required."""
 
 

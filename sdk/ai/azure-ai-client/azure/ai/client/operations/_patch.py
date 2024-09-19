@@ -15,11 +15,19 @@ from ..models._enums import AuthType, ConnectionCategory
 class ConnectionsOperations(ConnectionsOperationsGenerated):
 
     def get_credential(
-        self, *, connection_name: str, **kwargs
+        self, *, connection_name: str = None, **kwargs
     ) -> Tuple[Union[str, AzureKeyCredential, TokenCredential], str]:
 
-        if not connection_name:
-            raise ValueError("connection_name is required.")
+        if connection_name == "":
+            raise ValueError("connection_name cannot be an empty string.")
+        elif connection_name is None:
+            response = self._get_connections()
+            if len(response.value) == 0:
+                raise ValueError("No connections found.")
+            elif len(response.value) == 1:
+                connection_name = response.value[0].name
+            else:
+                raise ValueError("There is more than one connection. Please specify the connection_name.")
 
         response = self._get_connection_secrets(
             connection_name_in_url=connection_name,
