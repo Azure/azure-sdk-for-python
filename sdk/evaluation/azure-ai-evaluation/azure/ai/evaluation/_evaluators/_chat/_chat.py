@@ -107,9 +107,9 @@ class ChatEvaluator:
         """
         self._validate_conversation(conversation)
 
-        # Extract questions, answers and contexts from conversation
-        questions = []
-        answers = []
+        # Extract queries, responses and contexts from conversation
+        queries = []
+        responses = []
         contexts = []
 
         if self._eval_last_turn:
@@ -121,16 +121,16 @@ class ChatEvaluator:
         for each_turn in conversation_slice:
             role = each_turn["role"]
             if role == "user":
-                questions.append(each_turn["content"])
+                queries.append(each_turn["content"])
             elif role == "assistant":
-                answers.append(each_turn["content"])
+                responses.append(each_turn["content"])
                 if "context" in each_turn and "citations" in each_turn["context"]:
                     citations = json.dumps(each_turn["context"]["citations"])
                     contexts.append(citations)
 
         # Select evaluators to be used for evaluation
         compute_rag_based_metrics = True
-        if len(answers) != len(contexts):
+        if len(responses) != len(contexts):
             safe_message = (
                 "Skipping rag based metrics as we need citations or "
                 "retrieved_documents in context key of every assistant's turn"
@@ -145,7 +145,7 @@ class ChatEvaluator:
 
         # Evaluate each turn
         per_turn_results = []
-        for turn_num in range(len(questions)):
+        for turn_num in range(len(queries)):
             current_turn_result = {}
 
             if self._parallel:
@@ -153,7 +153,7 @@ class ChatEvaluator:
                 with ThreadPoolExecutor() as executor:
                     future_to_evaluator = {
                         executor.submit(
-                            self._evaluate_turn, turn_num, questions, answers, contexts, evaluator
+                            self._evaluate_turn, turn_num, queries, responses, contexts, evaluator
                         ): evaluator
                         for evaluator in selected_evaluators
                     }
@@ -165,7 +165,7 @@ class ChatEvaluator:
                 # Sequential execution
                 for evaluator in selected_evaluators:
                     async_evaluator = evaluator._to_async()
-                    result = self._evaluate_turn(turn_num, questions, answers, contexts, async_evaluator)
+                    result = self._evaluate_turn(turn_num, queries, responses, contexts, async_evaluator)
                     current_turn_result.update(result)
 
             per_turn_results.append(current_turn_result)
@@ -191,13 +191,13 @@ class ChatEvaluator:
 
         return aggregated
 
-    def _evaluate_turn(self, turn_num, questions, answers, contexts, evaluator):
+    def _evaluate_turn(self, turn_num, queries, responses, contexts, evaluator):
         try:
-            question = questions[turn_num] if turn_num < len(questions) else ""
-            answer = answers[turn_num] if turn_num < len(answers) else ""
+            query = queries[turn_num] if turn_num < len(queries) else ""
+            response = responses[turn_num] if turn_num < len(responses) else ""
             context = contexts[turn_num] if turn_num < len(contexts) else ""
 
-            score = evaluator(question=question, answer=answer, context=context)
+            score = evaluator(query=query, response=response, context=context)
 
             return score
         except Exception as e:  # pylint: disable=broad-exception-caught

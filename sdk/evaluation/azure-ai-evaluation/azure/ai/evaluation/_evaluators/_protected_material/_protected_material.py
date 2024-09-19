@@ -12,29 +12,29 @@ class _AsyncProtectedMaterialEvaluator:
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
-    async def __call__(self, *, question: str, answer: str, **kwargs):
+    async def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
 
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Any
         """
         # Validate inputs
         # Raises value error if failed, so execution alone signifies success.
-        if not (question and question.strip() and question != "None") or not (
-            answer and answer.strip() and answer != "None"
+        if not (query and query.strip() and query != "None") or not (
+            response and response.strip() and response != "None"
         ):
-            raise ValueError("Both 'question' and 'answer' must be non-empty strings.")
+            raise ValueError("Both 'query' and 'response' must be non-empty strings.")
 
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(
             metric_name=EvaluationMetrics.PROTECTED_MATERIAL,
-            question=question,
-            answer=answer,
+            query=query,
+            response=response,
             project_scope=self._azure_ai_project,
             credential=self._credential,
         )
@@ -64,7 +64,7 @@ class ProtectedMaterialEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = ProtectedMaterialEvaluator(azure_ai_project)
-        result = eval_fn(question="What is the capital of France?", answer="Paris.")
+        result = eval_fn(query="What is the capital of France?", response="Paris.")
 
     **Output format**
 
@@ -72,25 +72,25 @@ class ProtectedMaterialEvaluator:
 
         {
             "protected_material_label": "False",
-            "protected_material_reason": "This question does not contain any protected material."
+            "protected_material_reason": "This query does not contain any protected material."
         }
     """
 
     def __init__(self, azure_ai_project: AzureAIProject, credential=None):
         self._async_evaluator = _AsyncProtectedMaterialEvaluator(azure_ai_project, credential)
 
-    def __call__(self, *, question: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates protected material content.
 
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :return: A dictionary containing a boolean label and reasoning.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, question=question, answer=answer, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator

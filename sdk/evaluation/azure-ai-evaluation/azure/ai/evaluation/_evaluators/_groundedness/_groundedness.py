@@ -48,16 +48,16 @@ class _AsyncGroundednessEvaluator:
         prompty_path = os.path.join(current_dir, "groundedness.prompty")
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
-    async def __call__(self, *, answer: str, context: str, **kwargs):
+    async def __call__(self, *, response: str, context: str, **kwargs):
         # Validate input parameters
-        answer = str(answer or "")
+        response = str(response or "")
         context = str(context or "")
 
-        if not answer.strip() or not context.strip():
-            raise ValueError("Both 'answer' and 'context' must be non-empty strings.")
+        if not response.strip() or not context.strip():
+            raise ValueError("Both 'response' and 'context' must be non-empty strings.")
 
         # Run the evaluation flow
-        llm_output = await self._flow(answer=answer, context=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs)
+        llm_output = await self._flow(response=response, context=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs)
 
         score = np.nan
         if llm_output:
@@ -82,7 +82,7 @@ class GroundednessEvaluator:
 
         eval_fn = GroundednessEvaluator(model_config)
         result = eval_fn(
-            answer="The capital of Japan is Tokyo.",
+            response="The capital of Japan is Tokyo.",
             context="Tokyo is Japan's capital, known for its blend of traditional culture \
                 and technological advancements.")
 
@@ -98,18 +98,18 @@ class GroundednessEvaluator:
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         self._async_evaluator = _AsyncGroundednessEvaluator(model_config)
 
-    def __call__(self, *, answer: str, context: str, **kwargs):
+    def __call__(self, *, response: str, context: str, **kwargs):
         """
-        Evaluate groundedness of the answer in the context.
+        Evaluate groundedness of the response in the context.
 
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
-        :keyword context: The context in which the answer is evaluated.
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword context: The context in which the response is evaluated.
         :paramtype context: str
         :return: The groundedness score.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, answer=answer, context=context, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, response=response, context=context, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator

@@ -48,18 +48,18 @@ class _AsyncRelevanceEvaluator:
         prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
-    async def __call__(self, *, question: str, answer: str, context: str, **kwargs):
+    async def __call__(self, *, query: str, response: str, context: str, **kwargs):
         # Validate input parameters
-        question = str(question or "")
-        answer = str(answer or "")
+        query = str(query or "")
+        response = str(response or "")
         context = str(context or "")
 
-        if not (question.strip() and answer.strip() and context.strip()):
-            raise ValueError("'question', 'answer' and 'context' must be non-empty strings.")
+        if not (query.strip() and response.strip() and context.strip()):
+            raise ValueError("'query', 'response' and 'context' must be non-empty strings.")
 
         # Run the evaluation flow
         llm_output = await self._flow(
-            question=question, answer=answer, context=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs
+            query=query, response=response, context=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs
         )
 
         score = np.nan
@@ -85,8 +85,8 @@ class RelevanceEvaluator:
 
         eval_fn = RelevanceEvaluator(model_config)
         result = eval_fn(
-            question="What is the capital of Japan?",
-            answer="The capital of Japan is Tokyo.",
+            query="What is the capital of Japan?",
+            response="The capital of Japan is Tokyo.",
             context="Tokyo is Japan's capital, known for its blend of traditional culture \
                 and technological advancements.")
 
@@ -102,21 +102,21 @@ class RelevanceEvaluator:
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         self._async_evaluator = _AsyncRelevanceEvaluator(model_config)
 
-    def __call__(self, *, question: str, answer: str, context: str, **kwargs):
+    def __call__(self, *, query: str, response: str, context: str, **kwargs):
         """
         Evaluate relevance.
 
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword context: The context to be evaluated.
         :paramtype context: str
         :return: The relevance score.
         :rtype: dict
         """
         return async_run_allowing_running_loop(
-            self._async_evaluator, question=question, answer=answer, context=context, **kwargs
+            self._async_evaluator, query=query, response=response, context=context, **kwargs
         )
 
     def _to_async(self):
