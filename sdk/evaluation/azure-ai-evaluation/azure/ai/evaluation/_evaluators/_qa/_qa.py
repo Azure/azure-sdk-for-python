@@ -5,13 +5,13 @@
 from concurrent.futures import as_completed
 from typing import Union
 
-from promptflow.core import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
 from .._coherence import CoherenceEvaluator
 from .._f1_score import F1ScoreEvaluator
 from .._fluency import FluencyEvaluator
 from .._groundedness import GroundednessEvaluator
+from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from .._relevance import RelevanceEvaluator
 from .._similarity import SimilarityEvaluator
 
@@ -21,8 +21,8 @@ class QAEvaluator:
     Initialize a question-answer evaluator configured for a specific Azure OpenAI model.
 
     :param model_config: Configuration for the Azure OpenAI model.
-    :type model_config: Union[~promptflow.core.AzureOpenAIModelConfiguration,
-        ~promptflow.core.OpenAIModelConfiguration]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
     :return: A function that evaluates and generates metrics for "question-answering" scenario.
     :rtype: Callable
 
