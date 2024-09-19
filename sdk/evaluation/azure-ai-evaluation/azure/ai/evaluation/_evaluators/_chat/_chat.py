@@ -74,7 +74,7 @@ class ChatEvaluator:
 
     def __init__(
         self,
-        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        model_config: dict,
         eval_last_turn: bool = False,
         parallel: bool = True,
     ):
