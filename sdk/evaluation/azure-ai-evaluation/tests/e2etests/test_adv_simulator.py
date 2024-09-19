@@ -9,7 +9,6 @@ from azure.ai.evaluation._exceptions import EvaluationException
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
-@pytest.mark.azuretest
 class TestAdvSimulator:
     def test_adv_sim_init_with_prod_url(self, azure_cred, project_scope):
         os.environ.pop("RAI_SVC_URL", None)

@@ -52,7 +52,6 @@ class TestMetricsUpload(object):
             ]
             assert not error_messages, "\n".join(error_messages)
 
-    @pytest.mark.azuretest
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_writing_to_run_history(self, caplog, project_scope, azure_ml_client, tracking_uri):
         """Test logging data to RunHistory service."""
@@ -83,7 +82,6 @@ class TestMetricsUpload(object):
             ev_run.write_properties_to_run_history({"test": 42})
         self._assert_no_errors_for_module(caplog.records, [EvalRun.__module__])
 
-    @pytest.mark.azuretest
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_logging_metrics(self, caplog, project_scope, azure_ml_client, tracking_uri):
         """Test logging metrics."""
@@ -113,7 +111,6 @@ class TestMetricsUpload(object):
             ev_run.log_metric("f1", 0.54)
         self._assert_no_errors_for_module(caplog.records, EvalRun.__module__)
 
-    @pytest.mark.azuretest
     @pytest.mark.skipif(not is_live(), reason="This test fails in CI and needs to be investigate. See bug: 3415807")
     def test_log_artifact(self, project_scope, azure_ml_client, tracking_uri, caplog, tmp_path):
         """Test uploading artifact to the service."""

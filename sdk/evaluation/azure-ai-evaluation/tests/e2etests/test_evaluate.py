@@ -112,7 +112,6 @@ def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
-@pytest.mark.localtest
 class TestEvaluate:
     @pytest.mark.skip(reason="Temporary skip to merge 37201, will re-enable in subsequent pr")
     def test_evaluate_with_groundedness_evaluator(self, model_config, data_file):
@@ -373,7 +372,6 @@ class TestEvaluate:
         assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
 
     def test_evaluate_with_groundedness_pro_evaluator(self, project_scope, data_convo_file, azure_cred):
-
         # CS evaluator tries to store the credential, which breaks multiprocessing at
         # pickling stage. So we pass None for credential and let child evals
         # generate a default credential at runtime.
@@ -585,7 +583,6 @@ class TestEvaluate:
         assert "f1_score.f1_score" in metrics.keys()
 
     @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
-    @pytest.mark.azuretest
     def test_evaluate_track_in_cloud(
         self,
         questions_file,
@@ -631,7 +628,6 @@ class TestEvaluate:
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
 
     @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
-    @pytest.mark.azuretest
     def test_evaluate_track_in_cloud_no_target(
         self,
         data_file,
