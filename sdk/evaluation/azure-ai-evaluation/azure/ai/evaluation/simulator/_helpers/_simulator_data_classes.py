@@ -5,7 +5,7 @@
 from dataclasses import dataclass
 from typing import Union
 
-from azure.ai.evaluation.synthetic._conversation.constants import ConversationRole
+from azure.ai.evaluation.simulator._conversation.constants import ConversationRole
 
 
 @dataclass

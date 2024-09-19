@@ -367,9 +367,9 @@ class AdversarialSimulator:
         :keyword scenario: Enum value specifying the adversarial scenario used for generating inputs.
         example:
 
-         - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_QA`
-         - :py:const:`azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario.ADVERSARIAL_CONVERSATION`
-        :paramtype scenario: azure.ai.evaluation.synthetic.adversarial_scenario.AdversarialScenario
+         - :py:const:`azure.ai.evaluation.simulator.adversarial_scenario.AdversarialScenario.ADVERSARIAL_QA`
+         - :py:const:`azure.ai.evaluation.simulator.adversarial_scenario.AdversarialScenario.ADVERSARIAL_CONVERSATION`
+        :paramtype scenario: azure.ai.evaluation.simulator.adversarial_scenario.AdversarialScenario
 
         :keyword max_conversation_turns: The maximum number of conversation turns to simulate.
         :paramtype max_conversation_turns: int
