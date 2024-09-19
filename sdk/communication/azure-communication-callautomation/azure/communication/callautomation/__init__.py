@@ -32,8 +32,7 @@ from ._models import (
     GroupCallLocator,
     RoomCallLocator,
     AzureBlobContainerRecordingStorage,
-    AzureCommunicationsRecordingStorage,
-    ServerStreamingData
+    AzureCommunicationsRecordingStorage
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -83,7 +82,6 @@ __all__ = [
     "TranscriptionSubscription",
     "AzureBlobContainerRecordingStorage",
     "AzureCommunicationsRecordingStorage",
-    "ServerStreamingData",
 
     # models for output
     "CallConnectionProperties",
