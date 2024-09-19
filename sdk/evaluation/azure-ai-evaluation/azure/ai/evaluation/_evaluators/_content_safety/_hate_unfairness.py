@@ -12,7 +12,7 @@ except ImportError:
 
 
 class _AsyncHateUnfairnessEvaluator(ContentSafetyEvaluatorBase):
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         # Hate_fairness is the actual backend metric name. Which, uh, doesn't sound great.
         # so invert the name.
         super().__init__(
