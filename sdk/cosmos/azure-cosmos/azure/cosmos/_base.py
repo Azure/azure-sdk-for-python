@@ -323,8 +323,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         if "responsePayloadOnWriteDisabled" in options:
             responsePayloadOnWriteDisabled = options["responsePayloadOnWriteDisabled"]
         else:
-            responsePayloadOnWriteDisabled = cosmos_client_connection.connection_policy.ResponsePayloadOnWriteDisabled    
-        
+            responsePayloadOnWriteDisabled = cosmos_client_connection.connection_policy.ResponsePayloadOnWriteDisabled
+
         if responsePayloadOnWriteDisabled:
             headers[http_constants.HttpHeaders.Prefer] = http_constants.HttpHeaderValues.PreferReturnMinimal
 
