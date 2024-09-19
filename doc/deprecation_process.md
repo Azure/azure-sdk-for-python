@@ -33,7 +33,7 @@ A disclaimer should be added indicating end-of-life date (EOLDate) of the packag
     - If there is a replacement package (or repo), the EOLDate should be the same as the deprecation release date of the old package in the CHANGELOG.md.
     - Service retirement dates MAY be listed [here](https://aka.ms/servicesretirementworkbook), where retiring feature says 'Entire service'.
   - The link to the replacement package should be a PyPI link: `https://pypi.org/project/azure-mynewpackage/`.
-  - The link to the migration guide should be an `aka.ms` link in the format `https://aka.ms/azsdk/python/migrate/my-new-package`. To create this link, go to [https://aka.ms/](https://aka.ms/).
+  - The link to the migration guide should be an `aka.ms` link in the format `https://aka.ms/azsdk/python/migrate/my-new-package`. To create this link, follow the "How to create aka.ms links" section [here](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/233/Azure-SDK-AKA.ms-Links?anchor=how-to-create-aka.ms-links).
     - **NOTE**: You may decide to postpone or skip writing a migration guide based on downloads numbers (found on [pypistats](https://pypistats.org/), [pepy.tech](https://www.pepy.tech/), etc.) and internal knowledge of the usage of the package.
 
 Replace ALL existing text with a disclaimer in the following format.
