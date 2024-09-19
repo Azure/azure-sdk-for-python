@@ -197,8 +197,8 @@ with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_c
 
     result = face_client.detect(
         file_content,
-        detection_model=FaceDetectionModel.DETECTION_03,  # The latest detection model.
-        recognition_model=FaceRecognitionModel.RECOGNITION_04,  # The latest recognition model.
+        detection_model=FaceDetectionModel.DETECTION03,  # The latest detection model.
+        recognition_model=FaceRecognitionModel.RECOGNITION04,  # The latest recognition model.
         return_face_id=True,
         return_face_attributes=[
             FaceAttributeTypeDetection03.HEAD_POSE,
@@ -243,7 +243,7 @@ large_person_group_id = "lpg_family"
 with FaceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_admin_client:
     print(f"Create a large person group with id: {large_person_group_id}")
     face_admin_client.large_person_group.create(
-        large_person_group_id, name="My Family", recognition_model=FaceRecognitionModel.RECOGNITION_04
+        large_person_group_id, name="My Family", recognition_model=FaceRecognitionModel.RECOGNITION04
     )
 
     print("Create a Person Bill and add a face to him.")
@@ -255,7 +255,7 @@ with FaceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(k
         large_person_group_id,
         bill_person_id,
         read_file_content(bill_image_file_path),
-        detection_model=FaceDetectionModel.DETECTION_03,
+        detection_model=FaceDetectionModel.DETECTION03,
         user_data="Dad-0001",
     )
 
@@ -268,7 +268,7 @@ with FaceAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(k
         large_person_group_id,
         clare_person_id,
         read_file_content(clare_image_file_path),
-        detection_model=FaceDetectionModel.DETECTION_03,
+        detection_model=FaceDetectionModel.DETECTION03,
         user_data="Mom-0001",
     )
 ```
@@ -291,8 +291,8 @@ with FaceClient(endpoint=endpoint, credential=AzureKeyCredential(key)) as face_c
     target_image_file_path = "./samples/images/identification1.jpg"
     detect_result = face_client.detect(
         read_file_content(target_image_file_path),
-        detection_model=FaceDetectionModel.DETECTION_03,
-        recognition_model=FaceRecognitionModel.RECOGNITION_04,
+        detection_model=FaceDetectionModel.DETECTION03,
+        recognition_model=FaceRecognitionModel.RECOGNITION04,
         return_face_id=True,
     )
     target_face_ids = list(f.face_id for f in detect_result)

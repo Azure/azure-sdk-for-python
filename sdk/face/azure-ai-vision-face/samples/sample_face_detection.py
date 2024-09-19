@@ -54,8 +54,8 @@ class DetectFaces:
             sample_file_path = helpers.get_image_path(TestImages.IMAGE_DETECTION_5)
             result = face_client.detect(
                 helpers.read_file_content(sample_file_path),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=True,
                 return_face_attributes=[
                     FaceAttributeTypeDetection03.BLUR,
@@ -86,8 +86,8 @@ class DetectFaces:
             sample_url = TestImages.DEFAULT_IMAGE_URL
             result = face_client.detect_from_url(
                 url=sample_url,
-                detection_model=FaceDetectionModel.DETECTION_01,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION01,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=False,
                 return_face_attributes=[
                     FaceAttributeTypeDetection01.ACCESSORIES,

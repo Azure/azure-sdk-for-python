@@ -58,8 +58,8 @@ class FaceAuthentication:
             sample_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
             result = face_client.detect(
                 helpers.read_file_content(sample_file_path),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=False,
             )
 
@@ -78,8 +78,8 @@ class FaceAuthentication:
             sample_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
             result = face_client.detect(
                 helpers.read_file_content(sample_file_path),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=False,
             )
 

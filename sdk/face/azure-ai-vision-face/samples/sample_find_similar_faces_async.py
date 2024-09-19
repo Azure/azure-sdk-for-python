@@ -51,8 +51,8 @@ class FindSimilarFaces:
             nine_faces_file_path = helpers.get_image_path(TestImages.IMAGE_NINE_FACES)
             detect_result1 = await face_client.detect(
                 helpers.read_file_content(nine_faces_file_path),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=True,
             )
 
@@ -63,8 +63,8 @@ class FindSimilarFaces:
             find_similar_file_path = helpers.get_image_path(TestImages.IMAGE_FINDSIMILAR)
             detect_result2 = await face_client.detect(
                 helpers.read_file_content(find_similar_file_path),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=True,
             )
 
@@ -101,7 +101,7 @@ class FindSimilarFaces:
                 large_face_list_id,
                 name="List of Face",
                 user_data="Large Face List for Test",
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
             )
 
             # Add faces into the largeFaceList
@@ -109,31 +109,31 @@ class FindSimilarFaces:
             await face_admin_client.large_face_list.add_face(
                 large_face_list_id,
                 helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_1)),
-                detection_model=FaceDetectionModel.DETECTION_02,
+                detection_model=FaceDetectionModel.DETECTION02,
                 user_data="Lady1-1",
             )
             await face_admin_client.large_face_list.add_face(
                 large_face_list_id,
                 helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_2)),
-                detection_model=FaceDetectionModel.DETECTION_02,
+                detection_model=FaceDetectionModel.DETECTION02,
                 user_data="Lady1-2",
             )
             await face_admin_client.large_face_list.add_face(
                 large_face_list_id,
                 helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_2_LADY_1)),
-                detection_model=FaceDetectionModel.DETECTION_02,
+                detection_model=FaceDetectionModel.DETECTION02,
                 user_data="Lady2-1",
             )
             await face_admin_client.large_face_list.add_face(
                 large_face_list_id,
                 helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_2_LADY_2)),
-                detection_model=FaceDetectionModel.DETECTION_02,
+                detection_model=FaceDetectionModel.DETECTION02,
                 user_data="Lady2-2",
             )
             await face_admin_client.large_face_list.add_face(
                 large_face_list_id,
                 helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_3_LADY_1)),
-                detection_model=FaceDetectionModel.DETECTION_02,
+                detection_model=FaceDetectionModel.DETECTION02,
                 user_data="Lady3-1",
             )
 
@@ -146,8 +146,8 @@ class FindSimilarFaces:
             find_similar_file_path = helpers.get_image_path(TestImages.IMAGE_FINDSIMILAR)
             detect_result = await face_client.detect(
                 helpers.read_file_content(find_similar_file_path),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=True,
             )
 

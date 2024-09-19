@@ -62,7 +62,7 @@ class VerifyAndIdentifyFromLargePersonGroup:
                 large_person_group_id,
                 name="Family 1",
                 user_data="A sweet family",
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
             )
 
             # Add person and faces into the LargePersonGroup
@@ -76,14 +76,14 @@ class VerifyAndIdentifyFromLargePersonGroup:
                 person1.person_id,
                 helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_1)),
                 user_data="Dad-1",
-                detection_model=FaceDetectionModel.DETECTION_03,
+                detection_model=FaceDetectionModel.DETECTION03,
             )
             await face_admin_client.large_person_group.add_face(
                 large_person_group_id,
                 person1.person_id,
                 helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_2)),
                 user_data="Dad-2",
-                detection_model=FaceDetectionModel.DETECTION_03,
+                detection_model=FaceDetectionModel.DETECTION03,
             )
 
             person2 = await face_admin_client.large_person_group.create_person(
@@ -94,14 +94,14 @@ class VerifyAndIdentifyFromLargePersonGroup:
                 person2.person_id,
                 helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_1)),
                 user_data="Mom-1",
-                detection_model=FaceDetectionModel.DETECTION_03,
+                detection_model=FaceDetectionModel.DETECTION03,
             )
             await face_admin_client.large_person_group.add_face(
                 large_person_group_id,
                 person2.person_id,
                 helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_MOM_2)),
                 user_data="Mom-2",
-                detection_model=FaceDetectionModel.DETECTION_03,
+                detection_model=FaceDetectionModel.DETECTION03,
             )
 
             person3 = await face_admin_client.large_person_group.create_person(
@@ -112,14 +112,14 @@ class VerifyAndIdentifyFromLargePersonGroup:
                 person3.person_id,
                 helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_SON_1)),
                 user_data="Son-1",
-                detection_model=FaceDetectionModel.DETECTION_03,
+                detection_model=FaceDetectionModel.DETECTION03,
             )
             await face_admin_client.large_person_group.add_face(
                 large_person_group_id,
                 person3.person_id,
                 helpers.read_file_content(helpers.get_image_path(TestImages.IMAGE_FAMILY_1_SON_2)),
                 user_data="Son-2",
-                detection_model=FaceDetectionModel.DETECTION_03,
+                detection_model=FaceDetectionModel.DETECTION03,
             )
 
             # Train the LargePersonGroup
@@ -131,8 +131,8 @@ class VerifyAndIdentifyFromLargePersonGroup:
             dad_3_image = helpers.get_image_path(TestImages.IMAGE_FAMILY_1_DAD_3)
             detect_result = await face_client.detect(
                 helpers.read_file_content(dad_3_image),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=True,
             )
 

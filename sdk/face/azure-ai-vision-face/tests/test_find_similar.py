@@ -28,8 +28,8 @@ class TestFindSimilar(AzureRecordedTestCase):
             image_path = helpers.get_image_path(image)
             result = client.detect(
                 helpers.read_file_content(image_path),
-                detection_model=FaceDetectionModel.DETECTION_03,
-                recognition_model=FaceRecognitionModel.RECOGNITION_04,
+                detection_model=FaceDetectionModel.DETECTION03,
+                recognition_model=FaceRecognitionModel.RECOGNITION04,
                 return_face_id=True,
             )
             face_ids.append(result[0].face_id)
@@ -37,13 +37,13 @@ class TestFindSimilar(AzureRecordedTestCase):
 
     def _setup_large_face_list(self, client: FaceAdministrationClient):
         operations = client.large_face_list
-        operations.create(self.list_id, name=self.list_id, recognition_model=FaceRecognitionModel.RECOGNITION_04)
+        operations.create(self.list_id, name=self.list_id, recognition_model=FaceRecognitionModel.RECOGNITION04)
 
         persisted_face_ids = []
         for image in self.test_images:
             image_path = helpers.get_image_path(image)
             result = operations.add_face(
-                self.list_id, helpers.read_file_content(image_path), detection_model=FaceDetectionModel.DETECTION_03
+                self.list_id, helpers.read_file_content(image_path), detection_model=FaceDetectionModel.DETECTION03
             )
             assert result.persisted_face_id
             persisted_face_ids.append(result.persisted_face_id)

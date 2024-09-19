@@ -32,8 +32,8 @@ class TestIdentify(AzureRecordedTestCase):
         image_path = helpers.get_image_path(TestImages.IMAGE_IDENTIFICATION1)
         result = client.detect(
             helpers.read_file_content(image_path),
-            detection_model=FaceDetectionModel.DETECTION_03,
-            recognition_model=FaceRecognitionModel.RECOGNITION_04,
+            detection_model=FaceDetectionModel.DETECTION03,
+            recognition_model=FaceRecognitionModel.RECOGNITION04,
             return_face_id=True,
         )
         for face in result:
@@ -41,7 +41,7 @@ class TestIdentify(AzureRecordedTestCase):
         return face_ids
 
     def _setup_group(self, operations):
-        operations.create(self.group_id, name=self.group_id, recognition_model=FaceRecognitionModel.RECOGNITION_04)
+        operations.create(self.group_id, name=self.group_id, recognition_model=FaceRecognitionModel.RECOGNITION04)
 
         person_ids = []
         for image in self.test_images:
@@ -53,7 +53,7 @@ class TestIdentify(AzureRecordedTestCase):
                 self.group_id,
                 result.person_id,
                 helpers.read_file_content(image_path),
-                detection_model=FaceDetectionModel.DETECTION_03,
+                detection_model=FaceDetectionModel.DETECTION03,
             )
 
         poller = operations.begin_train(self.group_id)
