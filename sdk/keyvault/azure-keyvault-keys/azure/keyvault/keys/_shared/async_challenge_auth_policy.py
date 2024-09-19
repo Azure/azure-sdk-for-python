@@ -42,6 +42,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         self._token: Optional[AccessToken] = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
         self._request_copy: Optional[HttpRequest] = None
+        self._enable_cae = kwargs.pop("enable_cae", True)  # When True, `enable_cae=True` is always passed to get_token
 
     async def on_request(self, request: PipelineRequest) -> None:
         _enforce_tls(request)
@@ -78,6 +79,14 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
 
     async def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         try:
+            # CAE challenges may not include a scope or tenant; cache from the previous challenge to use if necessary
+            old_scope: Optional[str] = None
+            old_tenant: Optional[str] = None
+            cached_challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
+            if cached_challenge:
+                old_scope = cached_challenge.get_scope() or cached_challenge.get_resource() + "/.default"
+                old_tenant = cached_challenge.tenant_id
+
             challenge = _update_challenge(request, response)
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
             scope = challenge.get_scope() or challenge.get_resource() + "/.default"
@@ -87,7 +96,13 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         if self._verify_challenge_resource:
             resource_domain = urlparse(scope).netloc
             if not resource_domain:
-                raise ValueError(f"The challenge contains invalid scope '{scope}'.")
+                # Use the old scope for CAE challenges. The parsing will succeed here since it did before
+                if challenge.claims and old_scope:
+                    resource_domain = urlparse(old_scope).netloc
+                    challenge._parameters["scope"] = old_scope
+                    challenge.tenant_id = old_tenant
+                else:
+                    raise ValueError(f"The challenge contains invalid scope '{scope}'.")
 
             request_domain = urlparse(request.http_request.url).netloc
             if not request_domain.lower().endswith(f".{resource_domain.lower()}"):
@@ -104,10 +119,10 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         # The tenant parsed from AD FS challenges is "adfs"; we don't actually need a tenant for AD FS authentication
         # For AD FS we skip cross-tenant authentication per https://github.com/Azure/azure-sdk-for-python/issues/28648
         if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
-            await self.authorize_request(request, scope, claims=challenge.claims, enable_cae=True)
+            await self.authorize_request(request, scope, claims=challenge.claims)
         else:
             await self.authorize_request(
-                request, scope, claims=challenge.claims, enable_cae=True, tenant_id=challenge.tenant_id
+                request, scope, claims=challenge.claims, tenant_id=challenge.tenant_id
             )
 
         return True
