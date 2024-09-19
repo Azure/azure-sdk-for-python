@@ -10,6 +10,7 @@ import uuid
 import tempfile
 
 from azure.ai.evaluation import (
+    evaluate,
     ContentSafetyEvaluator,
     ContentSafetyMultimodalEvaluator,
     SexualMultimodalEvaluator,
