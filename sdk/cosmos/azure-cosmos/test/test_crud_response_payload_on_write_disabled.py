@@ -2601,7 +2601,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
         # Create item to patch
-        pkValue = "patch_item_pk" = str(uuid.uuid4())
+        pkValue = "patch_item_pk" + str(uuid.uuid4())
         item = {
             "id": "patch_item",
             "pk": pkValue,
@@ -2666,7 +2666,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     def test_conditional_patching(self):
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
         # Create item to patch
-        pkValue = "patch_item_pk" = str(uuid.uuid4())
+        pkValue = "patch_item_pk" + str(uuid.uuid4())
         item = {
             "id": "conditional_patch_item",
             "pk": pkValue,
