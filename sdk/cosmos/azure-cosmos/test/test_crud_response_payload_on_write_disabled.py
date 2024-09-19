@@ -57,7 +57,7 @@ class TimeoutTransport(RequestsTransport):
 
 
 @pytest.mark.cosmosEmulator
-class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
+class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     """Python CRUD Tests.
     """
 
@@ -716,7 +716,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
 
         self.assertEqual(0, len(conflictlist))
 
-    def test_document_crud_content_response_enabled_via_override(self):
+    def test_document_crud_response_payload_enabled_via_override(self):
         # create database
         created_db = self.databaseForTest
         # create collection
