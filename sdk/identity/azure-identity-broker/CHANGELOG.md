@@ -5,7 +5,7 @@
 ### Features Added
 
 - `InteractiveBrowserBrokerCredential` now implements the `SupportsTokenInfo` protocol. It now has a `get_token_info` method which returns an `AccessTokenInfo` object. The `get_token_info` method is an alternative method to `get_token` that improves support for more complex authentication scenarios.
-- Added pop token support to `InteractiveBrowserBrokerCredential`.
+- Added Proof-of-Possession (PoP) token support to `InteractiveBrowserBrokerCredential`.
 
 ### Breaking Changes
 
