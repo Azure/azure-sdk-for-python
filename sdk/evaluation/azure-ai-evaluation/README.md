@@ -88,8 +88,8 @@ if __name__ == "__main__":
     pprint(result)
 ```
 
-Simulators allow users to generate synthentic data using thier application. Simulator expects the user to have a callback method that invokes their AI
-application. Here's a sample of a callback which invokes AsyncAzureOpenAI:
+Simulators allow users to generate synthentic data using their application. Simulator expects the user to have a callback method that invokes
+their AI application. Here's a sample of a callback which invokes AsyncAzureOpenAI:
 
 ```python
 from from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
