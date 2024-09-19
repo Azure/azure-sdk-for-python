@@ -1,12 +1,20 @@
 trigger:
-  branches:
-    exclude:
-    - pipelinev3-v2
 
 pr:
   branches:
     include:
+    - main
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
     - pipelinev3*
+  paths:
+    include:
+    - "*"
+
+    exclude:
+    - sdk/cosmos
 
 parameters:
   - name: Service
