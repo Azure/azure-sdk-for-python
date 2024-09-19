@@ -492,22 +492,6 @@ def mock_expired_token(scope=package_scope_in_live_mode()):
     return jwt.encode({"exp": expiration_time}, "secret", algorithm="HS256")
 
 
-def pytest_collection_modifyitems(items):
-    parents = {}
-    for item in items:
-        # Check if parent contains 'localtest' marker and remove it.
-        if any(mark.name == "localtest" for mark in item.parent.own_markers) or id(item.parent) in parents:
-            if id(item.parent) not in parents:
-                item.parent.own_markers = [
-                    marker for marker in item.own_markers if getattr(marker, "name", None) != "localtest"
-                ]
-                parents[id(item.parent)] = item.parent
-            if not item.get_closest_marker("azuretest"):
-                # If item's parent was marked as 'localtest', mark the child as such, but not if
-                # it was marked as 'azuretest'.
-                item.add_marker(pytest.mark.localtest)
-
-
 def pytest_sessionfinish() -> None:
     def stop_promptflow_service() -> None:
         """Ensure that the promptflow service is stopped when pytest exits.
