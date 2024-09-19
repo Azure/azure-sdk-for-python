@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-Distributes a set of packages to a platform matrix file by adding computing and adding a TargetingSTring property
+Distributes a set of packages to a platform matrix file by adding computing and adding a TargetingString property
 dynamically. If an unexpected situation is encountered, the script will make no changes to the input file.
 
 .DESCRIPTION
