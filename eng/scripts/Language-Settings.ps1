@@ -37,9 +37,9 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
 
   Write-Host "We are in Get-python-AdditionalValidationPackagesFromPackageSet getting called."
 
-  $toolChanged = $json.ChangedFiles | Where-Object { $_.StartsWith("tool")}
-  $engChanged = $json.ChangedFiles | Where-Object { $_.StartsWith("eng")}
-  $othersChanged = $json.ChangedFiles | Where-Object { $_.StartsWith("scripts") -or $_.StartsWith("doc") -or $_.StartsWith("common") -or $_.StartsWith("conda") }
+  $toolChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("tool")}
+  $engChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("eng")}
+  $othersChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("scripts") -or $_.StartsWith("doc") -or $_.StartsWith("common") -or $_.StartsWith("conda") }
 
   # todo triggers based on paths and not files
   # tools/
