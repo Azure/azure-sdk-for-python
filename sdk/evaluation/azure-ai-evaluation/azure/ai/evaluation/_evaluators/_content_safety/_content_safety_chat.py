@@ -6,8 +6,9 @@ from concurrent.futures import as_completed
 from typing import Dict, List
 
 import numpy as np
-
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+
+from azure.ai.evaluation._model_configurations import AzureAIProject 
 
 try:
     from ._hate_unfairness import HateUnfairnessEvaluator
@@ -29,7 +30,7 @@ class ContentSafetyChatEvaluator:
 
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type azure_ai_project: dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
     :type eval_last_turn: bool
