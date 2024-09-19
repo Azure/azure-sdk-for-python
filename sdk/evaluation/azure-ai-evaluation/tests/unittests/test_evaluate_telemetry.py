@@ -9,8 +9,8 @@ import pandas as pd
 import pytest
 from promptflow.client import load_flow
 
-from azure.ai.evaluation.evaluate._telemetry import log_evaluate_activity
-from azure.ai.evaluation.evaluators import F1ScoreEvaluator, HateUnfairnessEvaluator
+from azure.ai.evaluation._evaluate._telemetry import log_evaluate_activity
+from azure.ai.evaluation import F1ScoreEvaluator, HateUnfairnessEvaluator
 
 
 def _add_nans(df, n, column_name):
@@ -28,8 +28,8 @@ def _get_file(name):
     return os.path.join(data_path, name)
 
 
-def answer_length(answer):
-    return len(answer)
+def answer_length(response):
+    return len(response)
 
 
 @pytest.fixture
