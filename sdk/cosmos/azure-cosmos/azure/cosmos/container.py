@@ -797,7 +797,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
         if response_payload_on_write_disabled is not None:
-            kwargs['response_payload_on_write_disabled'] = response_payload_on_write_disabled       
+            kwargs['response_payload_on_write_disabled'] = response_payload_on_write_disabled
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = self._set_partition_key(partition_key)
