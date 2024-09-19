@@ -2,6 +2,9 @@
 
 ## 1.21.0 (unreleased)
 
+### Features Added
+  - Cross subscription storage account support for workspace and feature store. Developer can provide a storage account from another subscription while creating a workspace or storage account.
+
 ## 1.20.0 (2024-09-10)
 
 ### Features Added
