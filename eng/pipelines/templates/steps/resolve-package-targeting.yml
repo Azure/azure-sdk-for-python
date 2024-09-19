@@ -18,10 +18,8 @@ steps:
           $setting = "$(BuildTargetingString)"
       }
       else {
-        $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}" `
-          | Where-Object { $_.Extension -eq '.json' } `
-          | Foreach-Object { $_.Name } `
-          | ForEach-Object { $_.Replace(".json", "") }
+        $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
+          | ForEach-Object { $_.Name.Replace(".json", "") }
         $setting = $packageProperties -join ","
       }
 
