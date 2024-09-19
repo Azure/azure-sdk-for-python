@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -43,7 +43,28 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_connections_list_secrets_request(connection_name_in_url: str, **kwargs: Any) -> HttpRequest:
+def build_connections_get_connections_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/connections"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_connections_get_connection_secrets_request(  # pylint: disable=name-too-long
+    connection_name_in_url: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -87,12 +108,75 @@ class ConnectionsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+    @distributed_trace
+    def _get_connections(self, **kwargs: Any) -> List[_models._models.ConnectionDetails]:
+        """List the details of all the connections (not including their credentials).
+
+        :return: list of ConnectionDetails
+        :rtype: list[~azure.ai.client.models._models.ConnectionDetails]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models._models.ConnectionDetails]] = kwargs.pop(  # pylint: disable=protected-access
+            "cls", None
+        )
+
+        _request = build_connections_get_connections_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(List[_models._models.ConnectionDetails], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     @overload
-    def _list_secrets(  # pylint: disable=protected-access
+    def _get_connection_secrets(  # pylint: disable=protected-access
         self, connection_name_in_url: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.ListSecretsResponse: ...
+    ) -> _models._models.ConnectionDetails: ...
     @overload
-    def _list_secrets(  # pylint: disable=protected-access
+    def _get_connection_secrets(  # pylint: disable=protected-access
         self,
         connection_name_in_url: str,
         *,
@@ -103,14 +187,14 @@ class ConnectionsOperations:
         api_version_in_body: str,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.ListSecretsResponse: ...
+    ) -> _models._models.ConnectionDetails: ...
     @overload
-    def _list_secrets(  # pylint: disable=protected-access
+    def _get_connection_secrets(  # pylint: disable=protected-access
         self, connection_name_in_url: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.ListSecretsResponse: ...
+    ) -> _models._models.ConnectionDetails: ...
 
     @distributed_trace
-    def _list_secrets(  # pylint: disable=protected-access
+    def _get_connection_secrets(  # pylint: disable=protected-access
         self,
         connection_name_in_url: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -121,8 +205,8 @@ class ConnectionsOperations:
         workspace_name: str = _Unset,
         api_version_in_body: str = _Unset,
         **kwargs: Any
-    ) -> _models._models.ListSecretsResponse:
-        """List secrets for a given connection.
+    ) -> _models._models.ConnectionDetails:
+        """Get the details of a single connection, includeing credential (if avaialble).
 
         :param connection_name_in_url: Connection Name. Required.
         :type connection_name_in_url: str
@@ -138,8 +222,8 @@ class ConnectionsOperations:
         :paramtype workspace_name: str
         :keyword api_version_in_body: The api version. Required.
         :paramtype api_version_in_body: str
-        :return: ListSecretsResponse. The ListSecretsResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.client.models._models.ListSecretsResponse
+        :return: ConnectionDetails. The ConnectionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models._models.ConnectionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
@@ -154,7 +238,7 @@ class ConnectionsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.ListSecretsResponse] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.ConnectionDetails] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         if body is _Unset:
             if connection_name is _Unset:
@@ -182,7 +266,7 @@ class ConnectionsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_connections_list_secrets_request(
+        _request = build_connections_get_connection_secrets_request(
             connection_name_in_url=connection_name_in_url,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -219,7 +303,7 @@ class ConnectionsOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.ListSecretsResponse, response.json()  # pylint: disable=protected-access
+                _models._models.ConnectionDetails, response.json()  # pylint: disable=protected-access
             )
 
         if cls:

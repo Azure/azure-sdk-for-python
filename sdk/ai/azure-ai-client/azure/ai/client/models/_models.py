@@ -7,41 +7,120 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Optional, TYPE_CHECKING, Union
+from typing import Dict, Literal, TYPE_CHECKING, Union
 
 from .. import _model_base
-from .._model_base import rest_field
+from .._model_base import rest_discriminator, rest_field
+from ._enums import AuthType
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
-class ListSecretsProperties(_model_base.Model):
+class ConnectionDetails(_model_base.Model):
     """to do.
 
 
-    :ivar auth_type: to do. Required. Known values are: "ApiKey" and "AAD".
-    :vartype auth_type: str or ~azure.ai.client.models.ConnectionAuthType
-    :ivar credentials: Credentials will only be present for authType=ApiKey.
-    :vartype credentials: ~azure.ai.client.models._models.ListSecretsPropertiesCredentials
-    :ivar target: to do. Required.
-    :vartype target: str
-    :ivar metadata: to do. Required.
-    :vartype metadata: ~azure.ai.client.models._models.PropertiesMetadata
+    :ivar properties: to do. Required.
+    :vartype properties: ~azure.ai.client.models._models.ConnectionProperties
     """
 
-    auth_type: Union[str, "_models._enums.ConnectionAuthType"] = rest_field(name="authType")
-    """to do. Required. Known values are: \"ApiKey\" and \"AAD\"."""
-    credentials: Optional["_models._models.ListSecretsPropertiesCredentials"] = rest_field()
-    """Credentials will only be present for authType=ApiKey."""
+    properties: "_models._models.ConnectionProperties" = rest_field()
+    """to do. Required."""
+
+
+class ConnectionProperties(_model_base.Model):
+    """to do.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ConnectionPropertiesAADAuth, ConnectionPropertiesApiKeyAuth, ConnectionPropertiesSASAuth
+
+
+    :ivar auth_type: Authentication type of the connection target. Required. Known values are:
+     "ApiKey", "AAD", and "SAS".
+    :vartype auth_type: str or ~azure.ai.client.models.AuthType
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    auth_type: str = rest_discriminator(name="authType")
+    """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"AAD\",
+     and \"SAS\"."""
+
+
+class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
+    """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``\\
+    ).
+
+
+    :ivar auth_type: Authentication type of the connection target. Required. to do
+    :vartype auth_type: str or ~azure.ai.client.models.AAD
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
+     "Serverless".
+    :vartype category: str or ~azure.ai.client.models.ConnectionCategory
+    :ivar target: to do. Required.
+    :vartype target: str
+    """
+
+    auth_type: Literal[AuthType.AAD] = rest_discriminator(name="authType")  # type: ignore
+    """Authentication type of the connection target. Required. to do"""
+    category: Union[str, "_models._enums.ConnectionCategory"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
     target: str = rest_field()
     """to do. Required."""
-    metadata: "_models._models.PropertiesMetadata" = rest_field()
+
+
+class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey"):
+    """Connection properties for connections with API key authentication.
+
+
+    :ivar auth_type: Authentication type of the connection target. Required. to do
+    :vartype auth_type: str or ~azure.ai.client.models.API_KEY
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
+     "Serverless".
+    :vartype category: str or ~azure.ai.client.models.ConnectionCategory
+    :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
+    :vartype credentials: ~azure.ai.client.models._models.CredentialsApiKeyAuth
+    :ivar target: to do. Required.
+    :vartype target: str
+    """
+
+    auth_type: Literal[AuthType.API_KEY] = rest_discriminator(name="authType")  # type: ignore
+    """Authentication type of the connection target. Required. to do"""
+    category: Union[str, "_models._enums.ConnectionCategory"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
+    credentials: "_models._models.CredentialsApiKeyAuth" = rest_field()
+    """Credentials will only be present for authType=ApiKey. Required."""
+    target: str = rest_field()
     """to do. Required."""
 
 
-class ListSecretsPropertiesCredentials(_model_base.Model):
+class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
+    """Connection properties for connections with SAS authentication.
+
+
+    :ivar auth_type: Authentication type of the connection target. Required. to do
+    :vartype auth_type: str or ~azure.ai.client.models.SAS
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
+     "Serverless".
+    :vartype category: str or ~azure.ai.client.models.ConnectionCategory
+    :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
+    :vartype credentials: ~azure.ai.client.models._models.CredentialsSASAuth
+    :ivar target: to do. Required.
+    :vartype target: str
+    """
+
+    auth_type: Literal[AuthType.SAS] = rest_discriminator(name="authType")  # type: ignore
+    """Authentication type of the connection target. Required. to do"""
+    category: Union[str, "_models._enums.ConnectionCategory"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
+    credentials: "_models._models.CredentialsSASAuth" = rest_field()
+    """Credentials will only be present for authType=ApiKey. Required."""
+    target: str = rest_field()
+    """to do. Required."""
+
+
+class CredentialsApiKeyAuth(_model_base.Model):
     """to do.
 
 
@@ -53,36 +132,13 @@ class ListSecretsPropertiesCredentials(_model_base.Model):
     """to do. Required."""
 
 
-class ListSecretsResponse(_model_base.Model):
+class CredentialsSASAuth(_model_base.Model):
     """to do.
 
 
-    :ivar properties: to do. Required.
-    :vartype properties: ~azure.ai.client.models._models.ListSecretsProperties
+    :ivar sas: to do. Required.
+    :vartype sas: str
     """
 
-    properties: "_models._models.ListSecretsProperties" = rest_field()
+    sas: str = rest_field(name="SAS")
     """to do. Required."""
-
-
-class PropertiesMetadata(_model_base.Model):
-    """Metadata on the properties.
-
-    :ivar model_name: The name of the AI model. For example: ``Phi21``.
-    :vartype model_name: str
-    :ivar model_type: The type of the AI model. A Unique identifier for the profile. Known values
-     are: "embeddings", "image_generation", "text_generation", "image_embeddings",
-     "audio_generation", and "chat_completion".
-    :vartype model_type: str or ~azure.ai.client.models.ModelType
-    :ivar model_provider_name: The model provider name. For example: ``Microsoft Research``.
-    :vartype model_provider_name: str
-    """
-
-    model_name: Optional[str] = rest_field()
-    """The name of the AI model. For example: ``Phi21``."""
-    model_type: Optional[Union[str, "_models._enums.ModelType"]] = rest_field()
-    """The type of the AI model. A Unique identifier for the profile. Known values are:
-     \"embeddings\", \"image_generation\", \"text_generation\", \"image_embeddings\",
-     \"audio_generation\", and \"chat_completion\"."""
-    model_provider_name: Optional[str] = rest_field()
-    """The model provider name. For example: ``Microsoft Research``."""

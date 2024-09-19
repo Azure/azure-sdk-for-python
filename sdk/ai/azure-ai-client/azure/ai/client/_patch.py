@@ -7,17 +7,19 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Tuple, Union
-from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.identity import get_bearer_token_provider
-from openai import AzureOpenAI
-from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient
+#from azure.core.credentials import AzureKeyCredential, TokenCredential
+#from azure.identity import get_bearer_token_provider
+#from openai import AzureOpenAI
+#from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient
 
 from ._client import Client as ClientGenerated
-from .models._enums import ConnectionAuthType, ModelType
+#from .models._enums import ConnectionAuthType, ModelType
 
 
+# This is only done to rename the client. Can we do this in TypeSpec?
 class AzureAIClient(ClientGenerated):
 
+    """
     def get_maas_client(self, *, connection_name: str, **kwargs) -> ChatCompletionsClient | EmbeddingsClient:
 
         if not connection_name:
@@ -32,8 +34,8 @@ class AzureAIClient(ClientGenerated):
             api_version_in_body=self._config.api_version,
         )
 
-        #print(f"response.properties.auth_type = {response.properties.auth_type}")
-        #print(f"response.properties.metadata.model_type = {response.properties.metadata.model_type}")
+        # print(f"response.properties.auth_type = {response.properties.auth_type}")
+        # print(f"response.properties.metadata.model_type = {response.properties.metadata.model_type}")
 
         # Remove trailing slash from the endpoint if exist. Not really needed, but it's confusing to see double slashes in OpenAI SDK logs,
         # never knowing if that's contributing to whatever issues you're debugging.
@@ -43,14 +45,20 @@ class AzureAIClient(ClientGenerated):
 
         if response.properties.auth_type == ConnectionAuthType.API_KEY:
             # TODO: Remove "chat-completion" once Mistral Large is fixed
-            if response.properties.metadata.model_type == ModelType.CHAT_COMPLETION or response.properties.metadata.model_type == "chat-completion":
+            if (
+                response.properties.metadata.model_type == ModelType.CHAT_COMPLETION
+                or response.properties.metadata.model_type == "chat-completion"
+            ):
                 client = ChatCompletionsClient(
                     endpoint=endpoint, credential=AzureKeyCredential(response.properties.credentials.key)
                 )
             else:
                 raise ValueError("Unknown model type.")
         elif response.properties.auth_type == ConnectionAuthType.AAD:
-            if response.properties.metadata.model_type == ModelType.CHAT_COMPLETION or response.properties.metadata.model_type == "chat-completion":
+            if (
+                response.properties.metadata.model_type == ModelType.CHAT_COMPLETION
+                or response.properties.metadata.model_type == "chat-completion"
+            ):
                 client = ChatCompletionsClient(endpoint=endpoint, credential=self._config.credential)
             else:
                 raise ValueError("Unknown model type.")
@@ -98,6 +106,7 @@ class AzureAIClient(ClientGenerated):
             raise ValueError("Unknown authentication.")
 
         return client
+    """
 
 __all__: List[str] = ["AzureAIClient"]  # Add all objects you want publicly available to users at this package level
 

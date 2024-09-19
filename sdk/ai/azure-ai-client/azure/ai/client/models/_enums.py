@@ -10,27 +10,21 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ConnectionAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """to do."""
 
     API_KEY = "ApiKey"
     """to do"""
     AAD = "AAD"
     """to do"""
+    SAS = "SAS"
+    """to do"""
 
 
-class ModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of AI model."""
+class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category of the connection."""
 
-    EMBEDDINGS = "embeddings"
-    """A model capable of generating embeddings from a text"""
-    IMAGE_GENERATION = "image_generation"
-    """A model capable of generating images from an image and text description"""
-    TEXT_GENERATION = "text_generation"
-    """A text generation model"""
-    IMAGE_EMBEDDINGS = "image_embeddings"
-    """A model capable of generating embeddings from an image"""
-    AUDIO_GENERATION = "audio_generation"
-    """A text-to-audio generative model"""
-    CHAT_COMPLETION = "chat_completion"
-    """A model capable of taking chat-formatted messages and generate responses"""
+    AZURE_OPEN_AI = "AzureOpenAI"
+    """Azure OpenAI"""
+    SERVERLESS = "Serverless"
+    """Serverless API"""

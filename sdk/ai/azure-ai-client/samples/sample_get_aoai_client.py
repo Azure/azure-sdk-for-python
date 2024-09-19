@@ -28,7 +28,7 @@ key, endpoint = ai_client.connections.get_credential(connection_name=os.environ[
 client = AzureOpenAI(
     api_key=key,
     azure_endpoint=endpoint,
-    api_version="2024-08-01-preview", # See https://learn.microsoft.com/en-us/azure/ai-services/openai/reference-preview#api-specs
+    api_version="2024-08-01-preview",  # See https://learn.microsoft.com/en-us/azure/ai-services/openai/reference-preview#api-specs
 )
 
 completion = client.chat.completions.create(
@@ -40,6 +40,7 @@ completion = client.chat.completions.create(
         },
     ],
 )
+
 print(f"\n\n===============> {completion.choices[0].message.content}\n\n")
 
 exit()

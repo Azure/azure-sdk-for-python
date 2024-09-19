@@ -24,17 +24,12 @@ ai_client = AzureAIClient(
     logging_enable=True,
 )
 
-credential, endpoint = ai_client.connections.get_credentials(connection_name=os.environ["AI_STUDIO_CONNECTION_3"])
+credential, endpoint = ai_client.connections.get_credential(connection_name=os.environ["AI_STUDIO_CONNECTION_3"])
 
 client = ChatCompletionsClient(
     endpoint=endpoint,
-    credential=credentials
+    credential=credential
 )
-
-# Get an Azure AI Inference ChatCompletionsClient:
-#client = ai_client.get_maas_client(
-#    connection_name=os.environ["AI_STUDIO_CONNECTION_3"]
-#)
 
 response = client.complete(
     messages=[
