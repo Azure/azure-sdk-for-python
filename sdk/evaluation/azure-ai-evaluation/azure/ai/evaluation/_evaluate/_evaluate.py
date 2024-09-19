@@ -355,10 +355,10 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
 @log_evaluate_activity
 def evaluate(
     *,
+    data: str,
+    evaluators: Optional[Dict[str, Callable]],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
-    data: Optional[str] = None,
-    evaluators: Optional[Dict[str, Callable]] = None,
     evaluator_config: Optional[Dict[str, Dict[str, str]]] = None,
     azure_ai_project: Optional[Dict] = None,
     output_path: Optional[str] = None,
