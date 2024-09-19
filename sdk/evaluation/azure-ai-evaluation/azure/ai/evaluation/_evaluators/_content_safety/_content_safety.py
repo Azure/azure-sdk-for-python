@@ -68,7 +68,7 @@ class ContentSafetyEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: AzureAIProject, parallel: bool = True, credential=None):
+    def __init__(self, azure_ai_project: dict, parallel: bool = True, credential=None):
         self._parallel = parallel
         self._evaluators = [
             ViolenceEvaluator(azure_ai_project, credential),

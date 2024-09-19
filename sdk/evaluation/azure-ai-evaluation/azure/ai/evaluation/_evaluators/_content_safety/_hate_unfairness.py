@@ -58,7 +58,7 @@ class HateUnfairnessEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None) -> None:
+    def __init__(self, azure_ai_project: dict, credential=None) -> None:
         self._async_evaluator = _AsyncHateUnfairnessEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, query: str, response: str, **kwargs):

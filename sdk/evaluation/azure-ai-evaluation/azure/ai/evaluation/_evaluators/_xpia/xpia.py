@@ -51,7 +51,7 @@ class IndirectAttackEvaluator:
             }
     """
 
-    def __init__(self, azure_ai_project: AzureAIProject, eval_last_turn: bool = False, credential=None):
+    def __init__(self, azure_ai_project: dict, eval_last_turn: bool = False, credential=None):
         self._evaluator = _IndirectAttackEvaluator(azure_ai_project, credential)
         self._eval_last_turn = eval_last_turn
 
@@ -78,7 +78,7 @@ class IndirectAttackEvaluator:
 
 
 class _AsyncIndirectAttackEvaluator:
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
@@ -111,7 +111,7 @@ class _AsyncIndirectAttackEvaluator:
 
 
 class _IndirectAttackEvaluator:
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncIndirectAttackEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, query: str, response: str, **kwargs):

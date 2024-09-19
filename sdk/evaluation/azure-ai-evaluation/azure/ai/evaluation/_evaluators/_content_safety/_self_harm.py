@@ -12,7 +12,7 @@ except ImportError:
 
 
 class _AsyncSelfHarmEvaluator(ContentSafetyEvaluatorBase):
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         super().__init__(
             metric=EvaluationMetrics.SELF_HARM,
             azure_ai_project=azure_ai_project,

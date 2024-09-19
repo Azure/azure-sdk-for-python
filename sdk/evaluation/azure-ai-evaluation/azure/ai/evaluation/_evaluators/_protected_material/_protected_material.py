@@ -8,7 +8,7 @@ from azure.ai.evaluation._model_configurations import AzureAIProject
 
 
 class _AsyncProtectedMaterialEvaluator:
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
@@ -76,7 +76,7 @@ class ProtectedMaterialEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncProtectedMaterialEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, query: str, response: str, **kwargs):

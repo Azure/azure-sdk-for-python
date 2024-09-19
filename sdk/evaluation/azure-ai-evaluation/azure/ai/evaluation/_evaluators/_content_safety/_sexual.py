@@ -12,7 +12,7 @@ except ImportError:
 
 
 class _AsyncSexualEvaluator(ContentSafetyEvaluatorBase):
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         super().__init__(
             metric=EvaluationMetrics.SEXUAL,
             azure_ai_project=azure_ai_project,
@@ -56,7 +56,7 @@ class SexualEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncSexualEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, query: str, response: str, **kwargs):

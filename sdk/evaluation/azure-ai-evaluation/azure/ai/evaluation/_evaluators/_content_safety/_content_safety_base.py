@@ -24,7 +24,7 @@ class ContentSafetyEvaluatorBase(ABC):
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, metric: EvaluationMetrics, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, metric: EvaluationMetrics, azure_ai_project: dict, credential=None):
         self._metric = metric
         self._azure_ai_project = azure_ai_project
         self._credential = credential

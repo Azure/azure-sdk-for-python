@@ -87,7 +87,7 @@ class ContentSafetyChatEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: AzureAIProject, eval_last_turn: bool = False, parallel: bool = True, credential=None):
+    def __init__(self, azure_ai_project: dict, eval_last_turn: bool = False, parallel: bool = True, credential=None):
         self._eval_last_turn = eval_last_turn
         self._parallel = parallel
         self._evaluators = [

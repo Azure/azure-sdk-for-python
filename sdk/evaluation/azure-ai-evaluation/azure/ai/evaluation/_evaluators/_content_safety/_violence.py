@@ -12,7 +12,7 @@ except ImportError:
 
 
 class _AsyncViolenceEvaluator(ContentSafetyEvaluatorBase):
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         super().__init__(
             metric=EvaluationMetrics.VIOLENCE,
             azure_ai_project=azure_ai_project,
@@ -56,7 +56,7 @@ class ViolenceEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncViolenceEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, query: str, response: str, **kwargs):

@@ -53,7 +53,7 @@ class QAEvaluator:
     """
 
     def __init__(
-        self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], parallel: bool = True
+        self, model_config: dict, parallel: bool = True
     ):
         self._parallel = parallel
 

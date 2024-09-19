@@ -29,7 +29,7 @@ class _AsyncSimilarityEvaluator:
     LLM_CALL_TIMEOUT = 600
     DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
-    def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
+    def __init__(self, model_config: dict):
         check_and_add_api_version_for_aoai_model_config(model_config, self.DEFAULT_OPEN_API_VERSION)
 
         prompty_model_config = {"configuration": model_config, "parameters": {"extra_headers": {}}}
@@ -98,7 +98,7 @@ class SimilarityEvaluator:
         }
     """
 
-    def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
+    def __init__(self, model_config: dict):
         self._async_evaluator = _AsyncSimilarityEvaluator(model_config)
 
     def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):
