@@ -8,6 +8,7 @@ import asyncio
 import json
 import os
 from typing import Any, Dict, List, Optional
+import warnings
 
 from tqdm import tqdm
 
@@ -17,7 +18,7 @@ from promptflow.core import AzureOpenAIModelConfiguration
 from .._user_agent import USER_AGENT
 from ._conversation.constants import ConversationRole
 from ._helpers import ConversationHistory, Turn
-from ._tracing import monitor_task_simulator
+# from ._tracing import monitor_task_simulator
 from ._utils import JsonLineChatProtocol
 
 
@@ -55,7 +56,7 @@ class Simulator:
         if not all(azure_ai_project[key] for key in required_keys):
             raise ValueError("subscription_id, resource_group_name, and project_name must not be None")
 
-    @monitor_task_simulator
+    # @monitor_task_simulator
     async def __call__(
         self,
         *,
@@ -100,7 +101,25 @@ class Simulator:
         :paramtype conversation_turns: List[List[str]]
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]
+
+        Return Value:
+        The method returns a list of JsonLineChatProtocol objects, which are essentially JSON lines where each line is a dictionary containing the query, response, and context.
+
+        Modes:
+        - Task-Free Mode: When only num_queries is specified and tasks is not, the method generates num_queries x max_conversation_turns lines of simulated data grounded in the context of the text.
+        - Task-Specific Mode: When both num_queries and tasks are specified, the method generates lines of simulated data based on the tasks. If num_queries > len(tasks), the remaining lines are simulated in task-free mode. If num_queries < len(tasks), only the first num_queries tasks are used.
+        - Conversation Starter Mode: When conversation_turns are specified, the method starts each conversation with the user-specified queries and then follows the conversation history for the remaining turns.
         """
+        if num_queries > len(tasks):
+            warnings.warn(
+                f"You have specified 'num_queries' > len('tasks') ({num_queries} < {len(tasks)}). 
+                All tasks will be used for generation and the remaining {num_queries - len(tasks)} lines will be simulated in task-free mode"
+            )
+        elif num_queries < len(tasks):
+            warnings.warn(
+                f"You have specified 'num_queries' < len('tasks') ({num_queries} < {len(tasks)}). 
+                Only the first {num_queries} lines of the specified tasks will be simulated."
+            )
         num_queries = min(num_queries, len(tasks))
         max_conversation_turns *= 2  # account for both user and assistant turns
 
