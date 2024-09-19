@@ -139,7 +139,7 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
-    - template: ../steps/build-extended-artifacts.yml
+    - template: /eng/pipelines/templates/steps/build-extended-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
