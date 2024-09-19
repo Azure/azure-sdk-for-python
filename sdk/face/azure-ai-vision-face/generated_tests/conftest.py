@@ -18,7 +18,7 @@ from devtools_testutils import (
 load_dotenv()
 
 
-# aovid record sensitive identity information in recordings
+# avoid record sensitive identity information in recordings
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     faceadministration_subscription_id = os.environ.get(
