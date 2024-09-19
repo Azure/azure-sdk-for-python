@@ -9,7 +9,7 @@
 ### Bugs Fixed
 
 - Fix setting custom `TracerProvider` bug
-    ([#36363](https://github.com/Azure/azure-sdk-for-python/pull/36363))
+    ([#37469](https://github.com/Azure/azure-sdk-for-python/pull/37469))
 
 ### Other Changes
 
