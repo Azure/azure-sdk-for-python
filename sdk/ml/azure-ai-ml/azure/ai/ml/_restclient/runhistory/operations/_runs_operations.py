@@ -1623,43 +1623,24 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
         error_map.update(kwargs.pop('error_map', {}))
-        def prepare_request(next_link=None):
-            if not next_link:
+        def prepare_request(continuation_token=None):
                 
-                request = build_get_child_request(
-                    subscription_id=subscription_id,
-                    resource_group_name=resource_group_name,
-                    workspace_name=workspace_name,
-                    run_id=run_id,
-                    filter=filter,
-                    continuationtoken=continuationtoken,
-                    orderby=orderby,
-                    sortorder=sortorder,
-                    top=top,
-                    count=count,
-                    template_url=self.get_child.metadata['url'],
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+            request = build_get_child_request(
+                subscription_id=subscription_id,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                run_id=run_id,
+                filter=filter,
+                continuationtoken=continuationtoken or continuation_token,
+                orderby=orderby,
+                sortorder=sortorder,
+                top=top,
+                count=count,
+                template_url=self.get_child.metadata['url'],
+            )
+            request = _convert_request(request)
+            request.url = self._client.format_url(request.url)
 
-            else:
-                
-                request = build_get_child_request(
-                    subscription_id=subscription_id,
-                    resource_group_name=resource_group_name,
-                    workspace_name=workspace_name,
-                    run_id=run_id,
-                    filter=filter,
-                    continuationtoken=continuationtoken,
-                    orderby=orderby,
-                    sortorder=sortorder,
-                    top=top,
-                    count=count,
-                    template_url=next_link,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
@@ -1667,10 +1648,10 @@ class RunsOperations(object):  # pylint: disable=too-many-public-methods
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.continuation_token or None, iter(list_of_elem)
 
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
+        def get_next(continuation_token=None):
+            request = prepare_request(continuation_token)
 
             pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
                 request,
