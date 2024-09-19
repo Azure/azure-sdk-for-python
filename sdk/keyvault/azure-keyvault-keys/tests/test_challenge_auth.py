@@ -540,12 +540,21 @@ def test_verify_challenge_resource_valid(verify_challenge_resource):
 
 @empty_challenge_cache
 def test_cae():
-    """The policy should correctly handle claims in a challenge response"""
+    """The policy should handle claims in a challenge response after having successfully authenticated prior."""
 
     expected_content = b"a duck"
 
     def test_with_challenge(challenge, expected_claim):
+        first_token = "first_token"
         expected_token = "expected_token"
+        tenant = "tenant-id"
+        endpoint = f"https://authority.net/{tenant}"
+        resource = "https://vault.azure.net"
+
+        first_challenge = Mock(
+            status_code=401,
+            headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource={resource}'},
+        )
 
         class Requests:
             count = 0
@@ -556,9 +565,21 @@ def test_cae():
                 # first request should be unauthorized and have no content
                 assert not request.body
                 assert request.headers["Content-Length"] == "0"
-                return challenge
+                return first_challenge
             elif Requests.count == 2:
                 # second request should be authorized according to challenge and have the expected content
+                assert request.headers["Content-Length"]
+                assert request.body == expected_content
+                assert first_token in request.headers["Authorization"]
+                return Mock(status_code=200)
+            elif Requests.count == 3:
+                # third request will trigger a CAE challenge response in this test scenario
+                assert request.headers["Content-Length"]
+                assert request.body == expected_content
+                assert first_token in request.headers["Authorization"]
+                return challenge
+            elif Requests.count == 4:
+                # fourth request should include the required claims and correctly use context from the first challenge
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
                 assert expected_token in request.headers["Authorization"]
@@ -566,8 +587,93 @@ def test_cae():
             raise ValueError("unexpected request")
 
         def get_token(*_, **kwargs):
-            assert kwargs.get("claims") == expected_claim
-            return AccessToken(expected_token, 0)
+            if Requests.count == 1:
+                assert kwargs.get("claims") == None
+                assert kwargs.get("enable_cae") == True
+                assert kwargs.get("tenant_id") == tenant
+                return AccessToken(first_token, time.time() + 3600)
+            elif Requests.count == 3:
+                assert kwargs.get("claims") == expected_claim
+                assert kwargs.get("enable_cae") == True
+                assert kwargs.get("tenant_id") == tenant
+                return AccessToken(expected_token, time.time() + 3600)
+
+        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+        request = HttpRequest("POST", get_random_url())
+        request.set_bytes_body(expected_content)
+        pipeline.run(request)  # Send the request once to trigger a regular auth challenge
+        pipeline.run(request)  # Send the request again to trigger a CAE challenge
+
+        assert credential.get_token.call_count == 2
+
+    url = f'authorization_uri="{get_random_url()}"'
+    cid = 'client_id="00000003-0000-0000-c000-000000000000"'
+    err = 'error="insufficient_claims"'
+    claim = '{"access_token": {"foo": "bar"}}'
+    # Claim token is a string of the base64 encoding of the claim
+    claim_token = base64.b64encode(claim.encode()).decode()
+    # Note that no resource or scope is necessarily proovided in a CAE challenge
+    challenge = f'Bearer realm="", {url}, {cid}, {err}, claims="{claim_token}"'
+
+    challenge_response = Mock(status_code=401, headers={"WWW-Authenticate": challenge})
+
+    test_with_challenge(challenge_response, claim)
+
+
+@empty_challenge_cache
+def test_cae_consecutive_challenges():
+    """The policy should correctly handle consecutive challenges in cases where the flow is valid or invalid."""
+
+    expected_content = b"a duck"
+
+    def test_with_challenge(challenge, expected_claim):
+        first_token = "first_token"
+        expected_token = "expected_token"
+        tenant = "tenant-id"
+        endpoint = f"https://authority.net/{tenant}"
+        resource = "https://vault.azure.net"
+
+        first_challenge = Mock(
+            status_code=401,
+            headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource={resource}'},
+        )
+
+        class Requests:
+            count = 0
+
+        def send(request):
+            Requests.count += 1
+            if Requests.count == 1:
+                # first request should be unauthorized and have no content
+                assert not request.body
+                assert request.headers["Content-Length"] == "0"
+                return first_challenge
+            elif Requests.count == 2:
+                # second request will trigger a CAE challenge response in this test scenario
+                assert request.headers["Content-Length"]
+                assert request.body == expected_content
+                assert first_token in request.headers["Authorization"]
+                return challenge
+            elif Requests.count == 3:
+                # third request should include the required claims and correctly use context from the first challenge
+                assert request.headers["Content-Length"]
+                assert request.body == expected_content
+                assert expected_token in request.headers["Authorization"]
+                return Mock(status_code=200)
+            raise ValueError("unexpected request")
+
+        def get_token(*_, **kwargs):
+            if Requests.count == 1:
+                assert kwargs.get("claims") == None
+                assert kwargs.get("enable_cae") == True
+                assert kwargs.get("tenant_id") == tenant
+                return AccessToken(first_token, time.time() + 3600)
+            elif Requests.count == 2:
+                assert kwargs.get("claims") == expected_claim
+                assert kwargs.get("enable_cae") == True
+                assert kwargs.get("tenant_id") == tenant
+                return AccessToken(expected_token, time.time() + 3600)
 
         credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
         pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
@@ -575,16 +681,16 @@ def test_cae():
         request.set_bytes_body(expected_content)
         pipeline.run(request)
 
-        assert credential.get_token.call_count == 1
+        assert credential.get_token.call_count == 2
 
     url = f'authorization_uri="{get_random_url()}"'
-    resource = 'resource="https://vault.azure.net"'
     cid = 'client_id="00000003-0000-0000-c000-000000000000"'
     err = 'error="insufficient_claims"'
     claim = '{"access_token": {"foo": "bar"}}'
     # Claim token is a string of the base64 encoding of the claim
     claim_token = base64.b64encode(claim.encode()).decode()
-    challenge = f'Bearer realm="", {url}, {resource}, {cid}, {err}, claims="{claim_token}"'
+    # Note that no resource or scope is necessarily proovided in a CAE challenge
+    challenge = f'Bearer realm="", {url}, {cid}, {err}, claims="{claim_token}"'
 
     challenge_response = Mock(status_code=401, headers={"WWW-Authenticate": challenge})
 
