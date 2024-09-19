@@ -44,7 +44,6 @@ from .._shared.policies_async import ExponentialRetry
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline.policies import AsyncHTTPPolicy
     from datetime import datetime
     from ._lease_async import BlobLeaseClient
     from .._models import (
