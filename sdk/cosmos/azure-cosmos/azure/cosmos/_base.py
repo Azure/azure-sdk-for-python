@@ -319,7 +319,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("correlatedActivityId"):
         headers[http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
 
-    if resource_type is "docs" and verb is not "get":
+    if resource_type == "docs" and verb != "get":
         responsePayloadOnWriteDisabled = options.pop(
             "responsePayloadOnWriteDisabled",
             cosmos_client_connection.connection_policy.ResponsePayloadOnWriteDisabled)
