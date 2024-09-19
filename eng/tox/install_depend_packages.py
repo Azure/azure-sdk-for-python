@@ -5,23 +5,22 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-
 import argparse
 import os
 import sys
 import logging
 import re
+import pkginfo
+
 from subprocess import check_call
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Optional
 from pkg_resources import parse_version, Requirement
 from pypi_tools.pypi import PyPIClient
 from packaging.specifiers import SpecifierSet
-from packaging.version import Version, parse
-import pdb
+from packaging.version import Version
 
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.functions import compare_python_version
-
 
 from typing import List
 
@@ -89,6 +88,98 @@ SPECIAL_CASE_OVERRIDES = {
     }
 }
 
+def resolve_compatible_package(target_package_name: str, target_package_version: str, target_package_reqs: List[Requirement], input_packages: List[Requirement]) -> Optional[str]:
+    """
+    This function resolves a compatible version of target_package_name that is compatible with the input_packages. It is intended to be used
+    when a dev requirement is incompatible with the current set of packages being installed, so it only walks backwards from newest version of
+    target_package_name to oldest.
+    """
+
+    pypi = PyPIClient()
+
+    pkgs = {req.key: req for req in input_packages}
+
+    for requirement in input_packages:
+        version = next(iter(requirement.specifier)).version
+        # requirement_release = pypi.project_release(requirement.key, version)
+
+        for target_dependency_req in target_package_reqs:
+            if target_dependency_req.key in pkgs:
+                if str(target_dependency_req.specifier):
+                    # check compatibility here. if the dep is compatible with the current set of packages, we can use it.
+                    # otherwise we need to keep walking backwards until we find a compatible version.
+                    pass
+                else:
+                    # no specifier, we can use this version.
+                    return None
+            else:
+                continue
+
+
+
+
+
+def handle_incompatible_minimum_dev_reqs(setup_path: str, filtered_requirement_list: List[str], packages_for_install: List[Requirement]) -> List[str]:
+    """
+    This function is used to handle the case where a dev requirement is incompatible with the current set of packages
+    being installed. This is used to update or remove dev_requirements that are incompatible with a targeted set of packages.
+
+    :param str setup_path: The path to the setup.py file whos dev_requirements are being filtered.
+
+    :param List[str] filtered_requirement_list: A list of dev requirements that have been filtered out of the original dev requirements file. This list
+    must be filtered for compatibility with packages_for_install.
+
+    :param List[Requirement] packages_for_install: A list of packages that dev_requirements MUST be compatible with.
+    """
+
+    cleansed_reqs = []
+
+    for req in filtered_requirement_list:
+        cleansed_req = req.strip().replace("-e ", "").split("#")[0].split(";")[0]
+
+        if cleansed_req:
+            # this is a replaced dev req that we can use pkginfo to resolve
+            if os.path.exists(cleansed_req):
+                try:
+                    local_package_metadata = pkginfo.get_metadata(cleansed_req)
+
+                    if local_package_metadata:
+                        local_reqs = [Requirement(r) for r in local_package_metadata.requires_dist]
+                        new_req = resolve_compatible_package(local_package_metadata.name, local_package_metadata.version, local_reqs, packages_for_install)
+                        if new_req:
+                            cleansed_reqs.append(new_req)
+                        else:
+                            cleansed_reqs.append(cleansed_req)
+                    else:
+                        logging.error(f"Error while processing locally built requirement {cleansed_req}. Unable to resolve metadata.")
+                        cleansed_reqs.append(cleansed_req)
+                except Exception as e:
+                    logging.error(f"Error while processing locally built requirement {cleansed_req}: {e}")
+                    cleansed_reqs.append(cleansed_req)
+            # relative requirement
+            elif cleansed_req.startswith("."):
+                try:
+                    local_package = ParsedSetup.from_path(os.path.join(setup_path, cleansed_req))
+                    local_reqs = [Requirement(r) for r in local_package.requires]
+                    new_req = resolve_compatible_package(local_package.name, local_package.version, local_reqs, packages_for_install)
+
+                    if new_req:
+                        cleansed_reqs.append(new_req)
+                    else:
+                        cleansed_reqs.append(new_req)
+
+                except Exception as e:
+                    logging.error(f"Error while processing relative requirement {cleansed_req}: {e}")
+                    cleansed_reqs.append(cleansed_req)
+            else:
+                # doing nothing here, as we don't understand how to resolve this yet
+                cleansed_reqs.append(cleansed_req)
+                logging.info(f"While filtering incompatible minimum dev requirements, found a requirement that I don't know how to deal with yet: \"{cleansed_req}\"")
+                continue
+
+
+    return cleansed_reqs
+
 
 def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # This method identifies latest/ minimal version of dependent packages and installs them from pyPI
@@ -104,7 +195,12 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
 
     logging.info("%s released packages: %s", dependency_type, released_packages)
     # filter released packages from dev_requirements and create a new file "new_dev_requirements.txt"
-    dev_req_file_path = filter_dev_requirements(setup_py_file_path, released_packages, temp_dir)
+
+    additionalFilterFn = None
+    if dependency_type == "Minimum":
+        additionalFilterFn = handle_incompatible_minimum_dev_reqs
+
+    dev_req_file_path = filter_dev_requirements(setup_py_file_path, released_packages, temp_dir, additionalFilterFn)
 
     if override_added_packages:
         logging.info(f"Expanding the requirement set by the packages {override_added_packages}.")
@@ -251,7 +347,6 @@ def process_requirement(req, dependency_type, orig_pkg_name):
 
     # think of the various versions that come back from pypi as the top of a funnel
     # We apply generic overrides -> platform specific overrides -> package specific overrides
-
     versions = process_bounded_versions(orig_pkg_name, pkg_name, versions)
 
     # Search from lowest to latest in case of finding minimum dependency
@@ -304,7 +399,7 @@ def check_req_against_exclusion(req, req_to_exclude):
     return req_id == req_to_exclude
 
 
-def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
+def filter_dev_requirements(setup_py_path, released_packages, temp_dir, additionalFilterFn: Optional[Callable[[str, List[str],List[Requirement]], List[str]]] = None):
     # This method returns list of requirements from dev_requirements by filtering out packages in given list
     dev_req_path = os.path.join(os.path.dirname(setup_py_path), DEV_REQ_FILE)
     requirements = []
@@ -313,12 +408,13 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
 
     # filter out any package available on PyPI (released_packages)
     # include packages without relative reference and packages not available on PyPI
-    released_packages = [p.split("==")[0] for p in released_packages]
+    released_packages = [parse_require(p) for p in released_packages]
+    released_package_names = [p.key for p in released_packages]
     # find prebuilt whl paths in dev requiremente
     prebuilt_dev_reqs = [os.path.basename(req.replace("\n", "")) for req in requirements if os.path.sep in req]
     # filter any req if wheel is for a released package
-    req_to_exclude = [req for req in prebuilt_dev_reqs if req.split("-")[0].replace("_", "-") in released_packages]
-    req_to_exclude.extend(released_packages)
+    req_to_exclude = [req for req in prebuilt_dev_reqs if req.split("-")[0].replace("_", "-") in released_package_names]
+    req_to_exclude.extend(released_package_names)
 
     filtered_req = [
         req
@@ -326,6 +422,9 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
         if os.path.basename(req.replace("\n", "")) not in req_to_exclude
         and not any([check_req_against_exclusion(req, i) for i in req_to_exclude])
     ]
+
+    if additionalFilterFn:
+        filtered_req = additionalFilterFn(setup_py_path, filtered_req, released_packages)
 
     logging.info("Filtered dev requirements: %s", filtered_req)
 
