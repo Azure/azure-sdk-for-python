@@ -11,9 +11,9 @@ class _AsyncGleuScoreEvaluator:
     def __init__(self):
         pass
 
-    async def __call__(self, *, ground_truth: str, answer: str, **kwargs):
+    async def __call__(self, *, ground_truth: str, response: str, **kwargs):
         reference_tokens = nltk_tokenize(ground_truth)
-        hypothesis_tokens = nltk_tokenize(answer)
+        hypothesis_tokens = nltk_tokenize(response)
 
         score = sentence_gleu([reference_tokens], hypothesis_tokens)
 
@@ -37,7 +37,7 @@ class GleuScoreEvaluator:
 
         eval_fn = GleuScoreEvaluator()
         result = eval_fn(
-            answer="Tokyo is the capital of Japan.",
+            response="Tokyo is the capital of Japan.",
             ground_truth="The capital of Japan is Tokyo.")
 
     **Output format**
@@ -52,19 +52,19 @@ class GleuScoreEvaluator:
     def __init__(self):
         self._async_evaluator = _AsyncGleuScoreEvaluator()
 
-    def __call__(self, *, ground_truth: str, answer: str, **kwargs):
+    def __call__(self, *, ground_truth: str, response: str, **kwargs):
         """
-        Evaluate the GLEU score between the answer and the ground truth.
+        Evaluate the GLEU score between the response and the ground truth.
 
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword ground_truth: The ground truth to be compared against.
         :paramtype ground_truth: str
         :return: The GLEU score.
         :rtype: dict
         """
         return async_run_allowing_running_loop(
-            self._async_evaluator, ground_truth=ground_truth, answer=answer, **kwargs
+            self._async_evaluator, ground_truth=ground_truth, response=response, **kwargs
         )
 
     def _to_async(self):

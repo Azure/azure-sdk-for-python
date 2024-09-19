@@ -107,9 +107,9 @@ class ContentSafetyChatEvaluator:
         """
         self._validate_conversation(conversation)
 
-        # Extract questions, answers from conversation
-        questions = []
-        answers = []
+        # Extract queries, responses from conversation
+        queries = []
+        responses = []
 
         if self._eval_last_turn:
             # Process only the last two turns if _eval_last_turn is True
@@ -120,13 +120,13 @@ class ContentSafetyChatEvaluator:
         for each_turn in conversation_slice:
             role = each_turn["role"]
             if role == "user":
-                questions.append(each_turn["content"])
+                queries.append(each_turn["content"])
             elif role == "assistant":
-                answers.append(each_turn["content"])
+                responses.append(each_turn["content"])
 
         # Evaluate each turn
         per_turn_results = []
-        for turn_num in range(len(questions)):
+        for turn_num in range(len(queries)):
             current_turn_result = {}
 
             if self._parallel:
@@ -135,7 +135,7 @@ class ContentSafetyChatEvaluator:
                 # as it's ~20% faster than asyncio tasks based on tests.
                 with ThreadPoolExecutor() as executor:
                     future_to_evaluator = {
-                        executor.submit(self._evaluate_turn, turn_num, questions, answers, evaluator): evaluator
+                        executor.submit(self._evaluate_turn, turn_num, queries, responses, evaluator): evaluator
                         for evaluator in self._evaluators
                     }
 
@@ -145,7 +145,7 @@ class ContentSafetyChatEvaluator:
             else:
                 # Sequential execution
                 for evaluator in self._evaluators:
-                    result = self._evaluate_turn(turn_num, questions, answers, evaluator)
+                    result = self._evaluate_turn(turn_num, queries, responses, evaluator)
                     current_turn_result.update(result)
 
             per_turn_results.append(current_turn_result)
@@ -153,12 +153,12 @@ class ContentSafetyChatEvaluator:
         aggregated = self._aggregate_results(per_turn_results)
         return aggregated
 
-    def _evaluate_turn(self, turn_num, questions, answers, evaluator):
+    def _evaluate_turn(self, turn_num, queries, responses, evaluator):
         try:
-            question = questions[turn_num] if turn_num < len(questions) else ""
-            answer = answers[turn_num] if turn_num < len(answers) else ""
+            query = queries[turn_num] if turn_num < len(queries) else ""
+            response = responses[turn_num] if turn_num < len(responses) else ""
 
-            score = evaluator(question=question, answer=answer)
+            score = evaluator(query=query, response=response)
 
             return score
         except Exception as e:  # pylint: disable=broad-exception-caught

@@ -18,8 +18,8 @@ class _AsyncViolenceEvaluator(ContentSafetyEvaluatorBase):
             credential=credential,
         )
 
-    async def __call__(self, *, question: str, answer: str, **kwargs):
-        return await super().__call__(question=question, answer=answer, **kwargs)
+    async def __call__(self, *, query: str, response: str, **kwargs):
+        return await super().__call__(query=query, response=response, **kwargs)
 
 
 class ViolenceEvaluator:
@@ -42,7 +42,7 @@ class ViolenceEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = ViolenceEvaluator(azure_ai_project)
-        result = eval_fn(question="What is the capital of France?", answer="Paris.")
+        result = eval_fn(query="What is the capital of France?", response="Paris.")
 
     **Output format**
 
@@ -58,18 +58,18 @@ class ViolenceEvaluator:
     def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncViolenceEvaluator(azure_ai_project, credential)
 
-    def __call__(self, *, question: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates violence content.
 
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :return: The violence score.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, question=question, answer=answer, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator
