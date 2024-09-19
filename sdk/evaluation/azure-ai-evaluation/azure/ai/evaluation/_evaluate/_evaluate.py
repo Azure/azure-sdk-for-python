@@ -353,7 +353,7 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-@log_evaluate_activity
+# @log_evaluate_activity
 def evaluate(
     *,
     evaluation_name: Optional[str] = None,

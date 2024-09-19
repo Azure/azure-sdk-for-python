@@ -87,7 +87,7 @@ class IndirectAttackSimulator:
         if self.rai_client is None:
             raise ValueError("Simulation options require rai services but ai client is not provided.")
 
-    @monitor_adversarial_scenario
+    # @monitor_adversarial_scenario
     async def __call__(
         self,
         *,
