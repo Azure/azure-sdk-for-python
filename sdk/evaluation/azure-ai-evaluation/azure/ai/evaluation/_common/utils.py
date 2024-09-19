@@ -13,7 +13,11 @@ except ImportError:
 
 from typing import List
 
+import threading
 import numpy as np
+import nltk
+
+_nltk_data_download_lock = threading.Lock()
 
 
 def get_harm_severity_level(harm_score: int) -> str:
@@ -38,21 +42,24 @@ def get_harm_severity_level(harm_score: int) -> str:
     return np.nan
 
 
-def nltk_tokenize(text: str) -> List[str]:
-    """Tokenize the input text using the NLTK tokenizer."""
-
-    import nltk
-
-    try:
-        from nltk.tokenize.nist import NISTTokenizer
-    except LookupError:
+def ensure_nltk_data_downloaded():
+    """Download NLTK data packages if not already downloaded."""
+    with _nltk_data_download_lock:
+        # For international tokenizer
         nltk.download("perluniprops")
+
+        # For word tokenizer
         nltk.download("punkt")
         nltk.download("punkt_tab")
-        from nltk.tokenize.nist import NISTTokenizer
+
+
+def nltk_tokenize(text: str) -> List[str]:
+    """Tokenize the input text using the NLTK tokenizer."""
+    ensure_nltk_data_downloaded()
 
     if not text.isascii():
         # Use NISTTokenizer for international tokenization
+        from nltk.tokenize.nist import NISTTokenizer
         tokens = NISTTokenizer().international_tokenize(text)
     else:
         # By default, use NLTK word tokenizer
