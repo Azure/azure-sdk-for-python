@@ -28,7 +28,7 @@ class TestCosmosDBManagementCollectionPartitionRegionOperations(AzureMgmtRecorde
             database_rid="str",
             collection_rid="str",
             filter="str",
-            api_version="2024-08-15",
+            api_version="2024-09-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
