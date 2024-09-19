@@ -17,12 +17,9 @@ from pkg_resources import parse_version, Requirement
 from pypi_tools.pypi import PyPIClient
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse
-import pkginfo
 
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.functions import compare_python_version
-from ci_tools.variables import in_ci
-
 
 from typing import List
 
@@ -309,7 +306,7 @@ def replace_identity(dev_requirement_line) -> str:
     regex = r"azure[-_]identity"
 
     if re.search(regex, dev_requirement_line):
-        return "azure-identity==1.17.0"
+        return "azure-identity==1.17.0\n"
     else:
         return dev_requirement_line
 
