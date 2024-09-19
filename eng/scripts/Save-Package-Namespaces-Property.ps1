@@ -23,9 +23,7 @@ metadata...like ci.yml for instance.
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory = $True)]
-    [string] $ArtifactStagingDirectory,
-    [Parameter(Mandatory = $True)]
-    [string] $RepoRoot
+    [string] $ArtifactStagingDirectory
 )
 .  (Join-Path $PSScriptRoot ".." common scripts Helpers PSModule-Helpers.ps1)
 Install-ModuleIfNotInstalled "powershell-yaml" "0.4.1" | Import-Module
@@ -44,18 +42,7 @@ function ShouldPublish ($ServiceDirectory, $PackageName) {
 
         if ($ciYml.extends -and $ciYml.extends.parameters -and $ciYml.extends.parameters.Artifacts) {
             $packagesBuildingDocs = $ciYml.extends.parameters.Artifacts `
-                | Where-Object {
-                    if ($_["skipPublishDocMs"]) {
-                        if ($_["skipPublishDocMs"] -eq $true) {
-                            $false
-                        } else {
-                            $true
-                        }
-                    }
-                    else {
-                        $true
-                    }
-                } `
+                | Where-Object { -not ($_["skipPublishDocMs"] -eq $true) }
                 | Select-Object -ExpandProperty name
 
             if ($packagesBuildingDocs -contains $PackageName)

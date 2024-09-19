@@ -5,6 +5,9 @@ parameters:
   - name: PackagePropertiesFolder
     type: string
     default: ''
+  - name: IncludeIndirect
+    type: boolean
+    default: true
 
 steps:
   # whether we are running within a PR build or not, we need to walk the package properties and save them to
@@ -18,8 +21,16 @@ steps:
           $setting = "$(BuildTargetingString)"
       }
       else {
-        $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
-          | ForEach-Object { $_.Name.Replace(".json", "") }
+        if ("${{ parameters.IncludeIndirect }}" -eq "true") {
+          $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
+              | ForEach-Object { $_.Name.Replace(".json", "") }
+        }
+        else {
+          $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
+            | Where-Object { (Get-Content -Raw $_ | ConvertFrom-Json).IncludedForValidation -eq $false } `
+            | ForEach-Object { $_.Name.Replace(".json", "") }
+        }
+
         $setting = $packageProperties -join ","
       }
 

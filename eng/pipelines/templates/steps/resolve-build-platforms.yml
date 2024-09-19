@@ -8,7 +8,10 @@ steps:
     # as the generate-pr-diff call + resolution will be present in resolve-package-targeting.yml.
     # until then, we simply check to see if we're targeting storage service directory
     - pwsh: |
-        if ("${{ parameters.PackagePropertiesFolder }}".Contains("azure-storage-extension")) {
+        $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
+          | ForEach-Object { $_.Name.Replace(".json", "") }
+
+        if ($packageProperties -contains "azure-storage-extensions") {
           Write-Host "Targeting storage, enabling extension build."
           Write-Host "##vso[task.setvariable variable=ENABLE_EXTENSION_BUILD]true"
         }
