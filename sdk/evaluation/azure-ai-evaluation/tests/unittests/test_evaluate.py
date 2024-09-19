@@ -8,7 +8,6 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 from promptflow.client import PFClient
-from sympy import im
 
 from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME
 from azure.ai.evaluation._evaluate._evaluate import (
