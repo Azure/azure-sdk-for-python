@@ -65,11 +65,10 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
     headers = get_common_headers(token)
     svc_liveness_url = rai_svc_url + "/checkannotation"
 
-    client = get_async_http_client()
-
-    response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-        svc_liveness_url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-    )
+    async with get_async_http_client() as client:
+        response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+            svc_liveness_url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
+        )
 
     if response.status_code != 200:
         raise Exception(  # pylint: disable=broad-exception-raised
@@ -143,11 +142,10 @@ async def submit_request(question: str, answer: str, metric: str, rai_svc_url: s
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token)
 
-    client = get_async_http_client()
-
-    response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-        url, json=payload, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-    )
+    async with get_async_http_client() as client:
+        response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+            url, json=payload, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
+        )
 
     if response.status_code != 202:
         print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], response.text))
@@ -180,11 +178,10 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         token = await fetch_or_reuse_token(credential, token)
         headers = get_common_headers(token)
 
-        client = get_async_http_client()
-
-        response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-            url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-        )
+        async with get_async_http_client() as client:
+            response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+                url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
+            )
 
         if response.status_code == 200:
             return response.json()
@@ -342,16 +339,15 @@ async def _get_service_discovery_url(azure_ai_project: dict, token: str) -> str:
     """
     headers = get_common_headers(token)
 
-    client = get_async_http_client()
-
-    response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-        f"https://management.azure.com/subscriptions/{azure_ai_project['subscription_id']}/"
-        f"resourceGroups/{azure_ai_project['resource_group_name']}/"
-        f"providers/Microsoft.MachineLearningServices/workspaces/{azure_ai_project['project_name']}?"
-        f"api-version=2023-08-01-preview",
-        headers=headers,
-        timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT,
-    )
+    async with get_async_http_client() as client:
+        response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+            f"https://management.azure.com/subscriptions/{azure_ai_project['subscription_id']}/"
+            f"resourceGroups/{azure_ai_project['resource_group_name']}/"
+            f"providers/Microsoft.MachineLearningServices/workspaces/{azure_ai_project['project_name']}?"
+            f"api-version=2023-08-01-preview",
+            headers=headers,
+            timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT,
+        )
 
     if response.status_code != 200:
         raise Exception("Failed to retrieve the discovery service URL")  # pylint: disable=broad-exception-raised

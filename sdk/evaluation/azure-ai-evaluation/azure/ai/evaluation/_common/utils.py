@@ -11,7 +11,6 @@ from typing import List
 import numpy as np
 
 
-
 def get_harm_severity_level(harm_score: int) -> str:
     """Generate harm severity level based on harm score.
 

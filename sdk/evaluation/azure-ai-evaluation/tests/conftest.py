@@ -471,3 +471,28 @@ def pytest_collection_modifyitems(items):
                 # If item's parent was marked as 'localtest', mark the child as such, but not if
                 # it was marked as 'azuretest'.
                 item.add_marker(pytest.mark.localtest)
+
+
+def pytest_sessionfinish() -> None:
+
+    def stop_promptflow_service() -> None:
+        """Ensure that the promptflow service is stopped when pytest exits.
+
+        .. note::
+
+            The azure-sdk-for-python CI performs a cleanup step that deletes
+            the python environment that the tests run in.
+
+            At time of writing, at least one test starts the promptflow service
+            (served from `waitress-serve`). The promptflow service is a separate
+            process that gets orphaned by pytest.
+
+            Crucially, that process has a handles on files in the python environment.
+            On Windows, this causes the cleanup step to fail with a permission issue
+            since the OS disallows deletion of files in use by a process.
+        """
+        from promptflow._cli._pf._service import stop_service
+
+        stop_service()
+
+    stop_promptflow_service()
