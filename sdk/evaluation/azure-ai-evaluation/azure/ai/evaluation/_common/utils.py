@@ -8,16 +8,7 @@ except ImportError:
 
 from typing import List
 
-import nltk
 import numpy as np
-
-try:
-    from nltk.tokenize.nist import NISTTokenizer
-except LookupError:
-    nltk.download("perluniprops")
-    nltk.download("punkt")
-    nltk.download("punkt_tab")
-    from nltk.tokenize.nist import NISTTokenizer
 
 
 def get_harm_severity_level(harm_score: int) -> str:
@@ -44,6 +35,16 @@ def get_harm_severity_level(harm_score: int) -> str:
 
 def nltk_tokenize(text: str) -> List[str]:
     """Tokenize the input text using the NLTK tokenizer."""
+
+    import nltk
+
+    try:
+        from nltk.tokenize.nist import NISTTokenizer
+    except LookupError:
+        nltk.download("perluniprops")
+        nltk.download("punkt")
+        nltk.download("punkt_tab")
+        from nltk.tokenize.nist import NISTTokenizer
 
     if not text.isascii():
         # Use NISTTokenizer for international tokenization
