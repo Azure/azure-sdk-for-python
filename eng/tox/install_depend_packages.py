@@ -88,34 +88,49 @@ SPECIAL_CASE_OVERRIDES = {
     }
 }
 
-def resolve_compatible_package(target_package_name: str, target_package_version: str, target_package_reqs: List[Requirement], input_packages: List[Requirement]) -> Optional[str]:
+def resolve_compatible_package(dev_req_pkg_name: str, dev_req_pkg_version: str, dev_req_pkg_reqs: List[Requirement], immovable_requirements: List[Requirement]) -> Optional[str]:
     """
-    This function resolves a compatible version of target_package_name that is compatible with the input_packages. It is intended to be used
+    This function resolves a compatible version of dev_req_pkg_name that is compatible with the input_packages. It is intended to be used
     when a dev requirement is incompatible with the current set of packages being installed, so it only walks backwards from newest version of
-    target_package_name to oldest.
+    dev_req_pkg_name to oldest.
     """
 
     pypi = PyPIClient()
+    immovable_pkgs = {req.key: req for req in immovable_requirements}
 
-    pkgs = {req.key: req for req in input_packages}
-
-    for requirement in input_packages:
-        version = next(iter(requirement.specifier)).version
-        # requirement_release = pypi.project_release(requirement.key, version)
-
-        for target_dependency_req in target_package_reqs:
-            if target_dependency_req.key in pkgs:
-                if str(target_dependency_req.specifier):
+    # Let's use a real use-case to walk through this function. We're going to use the azure-ai-language-conversations package as an example.
+    # immovable_pkgs = the selected mindependency for azure-ai-language-conversations
+    #   -> "azure-core==1.28.0",
+    #   -> "isodate==0.6.1",
+    #   -> "typing-extensions==4.0.1",
+    for pkg in immovable_pkgs:
+        required_pkg_version = next(iter(immovable_pkgs[pkg].specifier)).version
+        # as we walk through each hard dependency, we need to check all of the dev_requirements for compatibility with these packages
+        for dev_req_dependency in dev_req_pkg_reqs:
+            # if the dev_req_dependency is present in the hard dependencies, we need to check compatibility
+            if dev_req_dependency.key in immovable_pkgs:
+                if str(dev_req_dependency.specifier):
                     # check compatibility here. if the dep is compatible with the current set of packages, we can use it.
                     # otherwise we need to keep walking backwards until we find a compatible version.
-                    pass
-                else:
-                    # no specifier, we can use this version.
-                    return None
-            else:
-                continue
+                    # from here on we have to check the same dependency for this package on the retrieved version as well
+                    available_versions = pypi.get_ordered_versions(dev_req_dependency.key, True) # they come back smallest to largest by default
+                    available_versions.reverse()
+
+                    if not required_pkg_version in dev_req_dependency.specifier:
+                        breakpoint()
+
+                        pypi.get_ordered_versions(dev_req_dependency.key, True)
 
 
+                    # # we're attempting to do this entirely with metadata instead of downloading each version
+                    # for version in available_versions:
+                    #     version_release = pypi.project_release(dev_req_dependency.key, version)
+                    #     breakpoint()
+
+                    # breakpoint()
+
+    # no changes necessary
+    return None
 
 
 
@@ -176,7 +191,6 @@ def handle_incompatible_minimum_dev_reqs(setup_path: str, filtered_requirement_l
                 cleansed_reqs.append(cleansed_req)
                 logging.info(f"While filtering incompatible minimum dev requirements, found a requirement that I don't know how to deal with yet: \"{cleansed_req}\"")
                 continue
-
 
     return cleansed_reqs
 
