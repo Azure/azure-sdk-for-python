@@ -134,3 +134,27 @@ def test_azure_pipelines_credential_authentication(get_token_method):
     token = getattr(credential, get_token_method)(scope)
     assert token.token
     assert isinstance(token.expires_on, int)
+
+@pytest.mark.live_test_only("Requires Azure Pipelines environment with configured service connection")
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_azure_pipelines_credential_authentication_invalid(get_token_method):
+    system_access_token = "invalidSystemAccessToken"
+    service_connection_id = os.environ.get("AZURE_SERVICE_CONNECTION_ID", "")
+    tenant_id = os.environ.get("AZURE_SERVICE_CONNECTION_TENANT_ID", "")
+    client_id = os.environ.get("AZURE_SERVICE_CONNECTION_CLIENT_ID", "")
+
+    scope = "https://vault.azure.net/.default"
+
+    if not all([service_connection_id, tenant_id, client_id]):
+        pytest.skip("This test requires environment variables to be set")
+
+    credential = AzurePipelinesCredential(
+        system_access_token=system_access_token,
+        tenant_id=tenant_id,
+        client_id=client_id,
+        service_connection_id=service_connection_id,
+    )
+    with pytest.raises(CredentialUnavailableError) as err:
+        token = getattr(credential, get_token_method)(scope)
+
+    assert err.value.message == "302 (Found)"
