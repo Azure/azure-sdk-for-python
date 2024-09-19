@@ -149,7 +149,7 @@ class AdversarialSimulator:
                     'template_parameters': {},
                     'messages': [
                         {
-                            'content': '<jailbreak prompt> <adversarial question>',
+                            'content': '<jailbreak prompt> <adversarial query>',
                             'role': 'user'
                         },
                         {
@@ -289,7 +289,7 @@ class AdversarialSimulator:
             )
         )
 
-        async with semaphore:
+        async with semaphore, session:
             _, conversation_history = await simulate_conversation(
                 bots=bots,
                 session=session,

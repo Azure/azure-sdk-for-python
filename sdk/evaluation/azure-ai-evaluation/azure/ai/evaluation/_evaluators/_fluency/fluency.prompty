@@ -18,9 +18,9 @@ model:
       type: text
 
 inputs:
-  question:
+  query:
     type: string
-  answer:
+  response:
     type: string
 
 ---
@@ -56,6 +56,6 @@ question: Can you describe your morning routine?
 answer: Every morning, I wake up at 6 am, drink a glass of water, and do some light stretching. After that, I take a shower and get dressed for work. Then, I have a healthy breakfast, usually consisting of oatmeal and fruits, before leaving the house around 7:30 am.
 stars: 5
 
-question: {{question}}
-answer: {{answer}}
+question: {{query}}
+answer: {{response}}
 stars:

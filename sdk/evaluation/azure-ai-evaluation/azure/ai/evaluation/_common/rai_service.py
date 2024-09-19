@@ -65,11 +65,10 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
     headers = get_common_headers(token)
     svc_liveness_url = rai_svc_url + "/checkannotation"
 
-    client = get_async_http_client()
-
-    response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-        svc_liveness_url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-    )
+    async with get_async_http_client() as client:
+        response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+            svc_liveness_url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
+        )
 
     if response.status_code != 200:
         raise Exception(  # pylint: disable=broad-exception-raised
@@ -120,13 +119,13 @@ def generate_payload(normalized_user_text: str, metric: str) -> Dict:
     )
 
 
-async def submit_request(question: str, answer: str, metric: str, rai_svc_url: str, token: str) -> str:
+async def submit_request(query: str, response: str, metric: str, rai_svc_url: str, token: str) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
-    :param question: The question to evaluate.
-    :type question: str
-    :param answer: The answer to evaluate.
-    :type answer: str
+    :param query: The query to evaluate.
+    :type query: str
+    :param response: The response to evaluate.
+    :type response: str
     :param metric: The evaluation metric to use.
     :type metric: str
     :param rai_svc_url: The Responsible AI service URL.
@@ -136,18 +135,17 @@ async def submit_request(question: str, answer: str, metric: str, rai_svc_url: s
     :return: The operation ID.
     :rtype: str
     """
-    user_text = f"<Human>{question}</><System>{answer}</>"
+    user_text = f"<Human>{query}</><System>{response}</>"
     normalized_user_text = user_text.replace("'", '\\"')
     payload = generate_payload(normalized_user_text, metric)
 
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token)
 
-    client = get_async_http_client()
-
-    response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-        url, json=payload, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-    )
+    async with get_async_http_client() as client:
+        response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+            url, json=payload, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
+        )
 
     if response.status_code != 202:
         print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], response.text))
@@ -180,11 +178,10 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         token = await fetch_or_reuse_token(credential, token)
         headers = get_common_headers(token)
 
-        client = get_async_http_client()
-
-        response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-            url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-        )
+        async with get_async_http_client() as client:
+            response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+                url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
+            )
 
         if response.status_code == 200:
             return response.json()
@@ -342,16 +339,15 @@ async def _get_service_discovery_url(azure_ai_project: dict, token: str) -> str:
     """
     headers = get_common_headers(token)
 
-    client = get_async_http_client()
-
-    response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-        f"https://management.azure.com/subscriptions/{azure_ai_project['subscription_id']}/"
-        f"resourceGroups/{azure_ai_project['resource_group_name']}/"
-        f"providers/Microsoft.MachineLearningServices/workspaces/{azure_ai_project['project_name']}?"
-        f"api-version=2023-08-01-preview",
-        headers=headers,
-        timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT,
-    )
+    async with get_async_http_client() as client:
+        response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+            f"https://management.azure.com/subscriptions/{azure_ai_project['subscription_id']}/"
+            f"resourceGroups/{azure_ai_project['resource_group_name']}/"
+            f"providers/Microsoft.MachineLearningServices/workspaces/{azure_ai_project['project_name']}?"
+            f"api-version=2023-08-01-preview",
+            headers=headers,
+            timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT,
+        )
 
     if response.status_code != 200:
         raise Exception("Failed to retrieve the discovery service URL")  # pylint: disable=broad-exception-raised
@@ -414,14 +410,14 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: str = None) -
 
 
 async def evaluate_with_rai_service(
-    question: str, answer: str, metric_name: str, project_scope: dict, credential: TokenCredential
+    query: str, response: str, metric_name: str, project_scope: dict, credential: TokenCredential
 ):
-    """ "Evaluate the content safety of the answer using Responsible AI service
+    """ "Evaluate the content safety of the response using Responsible AI service
 
-       :param question: The question to evaluate.
-       :type question: str
-       :param answer: The answer to evaluate.
-       :type answer: str
+       :param query: The query to evaluate.
+       :type query: str
+       :param response: The response to evaluate.
+       :type response: str
        :param metric_name: The evaluation metric to use.
        :type metric_name: str
        :param project_scope: The Azure AI project scope details.
@@ -443,7 +439,7 @@ async def evaluate_with_rai_service(
     await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
 
     # Submit annotation request and fetch result
-    operation_id = await submit_request(question, answer, metric_name, rai_svc_url, token)
+    operation_id = await submit_request(query, response, metric_name, rai_svc_url, token)
     annotation_response = await fetch_result(operation_id, rai_svc_url, credential, token)
     result = parse_response(annotation_response, metric_name)
 

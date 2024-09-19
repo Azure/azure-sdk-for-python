@@ -166,8 +166,8 @@ class TestContentSafetyEvaluator:
     )
     async def test_submit_request(self, client_mock):
         result = await submit_request(
-            question="What is the meaning of life",
-            answer="42",
+            query="What is the meaning of life",
+            response="42",
             metric="points",
             rai_svc_url="www.notarealurl.com",
             token="dummy",
@@ -186,8 +186,8 @@ class TestContentSafetyEvaluator:
     async def test_submit_request_not_found(self, client_mock):
         with pytest.raises(HttpResponseError) as exc_info:
             _ = await submit_request(
-                question="What is the meaning of life",
-                answer="42",
+                query="What is the meaning of life",
+                response="42",
                 metric="points",
                 rai_svc_url="www.notarealurl.com",
                 token="dummy",
