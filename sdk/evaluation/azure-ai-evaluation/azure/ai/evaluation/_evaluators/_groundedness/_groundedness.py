@@ -73,7 +73,7 @@ class GroundednessEvaluator:
     Initialize a groundedness evaluator configured for a specific Azure OpenAI model.
 
     :param model_config: Configuration for the Azure OpenAI model.
-    :type model_config: Union[~auzre.ai.evalation.AzureOpenAIModelConfiguration,
+    :type model_config: Union[~azure.ai.evalation.AzureOpenAIModelConfiguration,
         ~azure.ai.evalation.OpenAIModelConfiguration]
 
     **Usage**
