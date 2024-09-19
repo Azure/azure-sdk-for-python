@@ -301,7 +301,7 @@ def check_req_against_exclusion(req, req_to_exclude):
 
     return req_id == req_to_exclude
 
-
+# todo: remove when merging #37450
 def replace_identity(dev_requirement_line) -> str:
     regex = r"azure[-_]identity"
 
