@@ -15,7 +15,7 @@ from ..models._enums import AuthType, ConnectionCategory
 class ConnectionsOperations(ConnectionsOperationsGenerated):
 
     def get_credential(
-        self, *, connection_name: str = None, **kwargs
+        self, *, connection_name: str | None = None, **kwargs
     ) -> Tuple[Union[str, AzureKeyCredential, TokenCredential], str]:
 
         if connection_name == "":
@@ -52,8 +52,14 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 return credential, endpoint
             else:
                 raise ValueError("Unknown connection category `{response.properties.category}`.")
-        # elif response.properties.auth_type == AuthType.AAD:
-        #    credentials = self._config.credential
+        elif response.properties.auth_type == AuthType.AAD:
+            if response.properties.category == ConnectionCategory.AZURE_OPEN_AI:
+                credential = self._config.credential
+                return credential, endpoint
+            elif response.properties.category == ConnectionCategory.SERVERLESS:
+                raise ValueError("Serverless API does not support AAD authentication.")
+            else:
+                raise ValueError("Unknown connection category `{response.properties.category}`.")
         # elif response.properties.auth_type == AuthType.SAS:
         #    credentials =
         else:

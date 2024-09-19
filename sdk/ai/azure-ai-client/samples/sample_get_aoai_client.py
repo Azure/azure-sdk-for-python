@@ -13,7 +13,7 @@ logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 import os
 from azure.ai.client import AzureAIClient
 from openai import AzureOpenAI
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 ai_client = AzureAIClient(
     credential=DefaultAzureCredential(),
@@ -23,38 +23,48 @@ ai_client = AzureAIClient(
     logging_enable=True,
 )
 
-key, endpoint = ai_client.connections.get_credential(connection_name=os.environ["AI_STUDIO_CONNECTION_1"])
+use_key_auth = False
 
-client = AzureOpenAI(
-    api_key=key,
-    azure_endpoint=endpoint,
-    api_version="2024-08-01-preview",  # See https://learn.microsoft.com/en-us/azure/ai-services/openai/reference-preview#api-specs
-)
+if use_key_auth:
+    key, endpoint = ai_client.connections.get_credential(connection_name=os.environ["AI_STUDIO_CONNECTION_1"])
 
-completion = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[
-        {
-            "role": "user",
-            "content": "How many feet are in a mile?",
-        },
-    ],
-)
+    client = AzureOpenAI(
+        api_key=key,
+        azure_endpoint=endpoint,
+        api_version="2024-08-01-preview",  # See https://learn.microsoft.com/en-us/azure/ai-services/openai/reference-preview#api-specs
+    )
 
-print(f"\n\n===============> {completion.choices[0].message.content}\n\n")
+    completion = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": "How many feet are in a mile?",
+            },
+        ],
+    )
 
-exit()
+    print(f"\n\n===============> {completion.choices[0].message.content}\n\n")
 
-# Get an AOAI client for an AAD-auth connection:
-aoai_client = client.get_azure_openai_client(connection_name=os.environ["AI_STUDIO_CONNECTION_2"])
+# Use AAD passthrough auth:
+else:
 
-completion = aoai_client.chat.completions.create(
-    model="gpt-4o",
-    messages=[
-        {
-            "role": "user",
-            "content": "What's the distance from earth to the moon in miles?",
-        },
-    ],
-)
-print(f"\n\n===============> {completion.choices[0].message.content}\n\n")
+    credential, endpoint = ai_client.connections.get_credential(connection_name=os.environ["AI_STUDIO_CONNECTION_1"])
+
+    client = AzureOpenAI(
+        # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
+        azure_ad_token_provider=get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default"),
+        azure_endpoint=endpoint,
+        api_version="2024-08-01-preview",  # See https://learn.microsoft.com/en-us/azure/ai-services/openai/reference-preview#api-specs
+    )
+
+    completion = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": "What's the distance from earth to the moon in miles?",
+            },
+        ],
+    )
+    print(f"\n\n===============> {completion.choices[0].message.content}\n\n")
