@@ -94,6 +94,15 @@ def _target_fn2(question):
     response["question"] = f"The question is as follows: {question}"
     return response
 
+def _new_answer_target():
+    return {"answer": "new answer"}
+
+def _question_override_target(question):
+    return {"question": "new question"}
+
+def _question_answer_override_target(question, answer):
+    return {"question": "new question", "answer": "new answer"}
+
 
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
@@ -513,25 +522,34 @@ class TestEvaluate:
         assert aggregation["other_thing.other_meteric"] == -3
         assert aggregation["final_thing.final_metric"] == 0.4
 
-    @pytest.mark.parametrize("use_pf_client", [True])
-    def test_optional_inputs(self, questions_file, questions_answers_basic_file, use_pf_client,):
-        from test_evaluators.test_inputs_evaluators import NonOptionalEval, HalfOptionalEval, OptionalEval
-        
+    @pytest.mark.parametrize("use_pf_client", [True, False])
+    def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file, use_pf_client):
+        from test_evaluators.test_inputs_evaluators import (
+            NonOptionalEval,
+            HalfOptionalEval,
+            OptionalEval,
+            NoInputEval
+        )
+
         # All variants work with both keyworded inputs
         results = evaluate(
             data=questions_answers_basic_file, 
             evaluators={
                 "non": NonOptionalEval(),
                 "half": HalfOptionalEval(),
-                "opt": OptionalEval()
+                "opt": OptionalEval(),
+                "no": NoInputEval()
             },
             _use_pf_client=use_pf_client
-        )
+        ) # type: ignore
 
         first_row = results["rows"][0]
         assert first_row["outputs.non.non_score"] == 0
         assert first_row["outputs.half.half_score"] == 1
         assert first_row["outputs.opt.opt_score"] == 3
+        # CodeClient doesn't like no-input evals.
+        if use_pf_client:
+            assert first_row["outputs.no.no_score"] == 0
 
         # Variant with no default inputs fails on single input
         with pytest.raises(ValueError) as exc_info:
@@ -541,19 +559,65 @@ class TestEvaluate:
                     "non": NonOptionalEval(),
                 },
             _use_pf_client=use_pf_client
-            )
-        assert exc_info._excinfo[1].__str__() == "Missing required inputs for evaluator non : ['answer']."
+            ) # type: ignore
+        assert exc_info._excinfo[1].__str__() == "Missing required inputs for evaluator non : ['answer']." # type: ignore
 
         # Variants with default answer work when only question is inputted
         only_question_results = evaluate(
             data=questions_file, 
             evaluators={
                 "half": HalfOptionalEval(),
-                "opt": OptionalEval()
+                "opt": OptionalEval(),
+                "no": NoInputEval()
             },
             _use_pf_client=use_pf_client
-        )
-        
+        ) # type: ignore
+
         first_row_2 = only_question_results["rows"][0]
         assert first_row_2["outputs.half.half_score"] == 0
         assert first_row_2["outputs.opt.opt_score"] == 1
+        if use_pf_client:
+            assert first_row["outputs.no.no_score"] == 0
+
+    @pytest.mark.parametrize("use_pf_client", [True])
+    def test_optional_inputs_with_target(self, questions_file, questions_answers_basic_file, use_pf_client):
+        from test_evaluators.test_inputs_evaluators import EchoEval
+
+        # Check that target overrides default inputs
+        target_answer_results = evaluate(
+            data=questions_file,
+            target=_new_answer_target, 
+            evaluators={
+                "echo": EchoEval()
+            },
+            _use_pf_client=use_pf_client
+        ) # type: ignore
+
+        assert target_answer_results['rows'][0]['outputs.echo.echo_question'] == 'How long is flight from Earth to LV-426?'
+        assert target_answer_results['rows'][0]['outputs.echo.echo_answer'] == 'new answer'
+
+        # Check that target replaces inputs from data (I.E. if both data and target have same output
+        # the target output is sent to the evaluator.)
+        question_override_results = evaluate(
+            data=questions_answers_basic_file,
+            target=_question_override_target, 
+            evaluators={
+                "echo": EchoEval()
+            },
+            _use_pf_client=use_pf_client
+        ) # type: ignore
+
+        assert question_override_results['rows'][0]['outputs.echo.echo_question'] == "new question"
+        assert question_override_results['rows'][0]['outputs.echo.echo_answer'] == 'There is nothing good there.'
+
+        # Check that target can replace default and data inputs at the same time.
+        double_override_results = evaluate(
+            data=questions_answers_basic_file,
+            target=_question_answer_override_target, 
+            evaluators={
+                "echo": EchoEval()
+            },
+            _use_pf_client=use_pf_client
+        ) # type: ignore
+        assert double_override_results['rows'][0]['outputs.echo.echo_question'] == "new question"
+        assert double_override_results['rows'][0]['outputs.echo.echo_answer'] == "new answer"

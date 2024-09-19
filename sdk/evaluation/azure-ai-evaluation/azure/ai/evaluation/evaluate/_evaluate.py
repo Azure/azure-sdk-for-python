@@ -497,9 +497,8 @@ def _evaluate(  # pylint: disable=too-many-locals
         evaluator_config = {}
     if "default" not in evaluator_config:
         evaluator_config["default"] = {}
-        for col in input_data_df.columns:
-            evaluator_config["default"][col] = f"${{data.{col}}}"
 
+    # If target is set, apply 1-1 column mapping from target outputs to evaluator inputs
     if data is not None and target is not None:
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
             target, data, pf_client, input_data_df, evaluation_name, _run_name=kwargs.get("_run_name")
@@ -521,6 +520,16 @@ def _evaluate(  # pylint: disable=too-many-locals
         # everything we need for evaluators.
         _validate_columns(input_data_df, evaluators, target=None, evaluator_config=evaluator_config)
 
+    # Apply 1-1 mapping from input data to evaluator inputs, excluding values already assigned
+    # via target mapping.
+    # If both the data and the output dictionary of the target function
+    # have the same column, then the target function value is used.
+    if input_data_df is not None:
+        for col in input_data_df.columns:
+            # Ignore columns added by target mapping. These are formatted as "__outputs.<column_name>"
+            # Also ignore columns that are already in config, since they've been covered by target mapping.
+            if not col.startswith(Prefixes.TSG_OUTPUTS) and col not in evaluator_config["default"].keys():
+                evaluator_config["default"][col] = f"${{data.{col}}}"
     # Batch Run
     evaluators_info = {}
     use_pf_client = kwargs.get("_use_pf_client", True)

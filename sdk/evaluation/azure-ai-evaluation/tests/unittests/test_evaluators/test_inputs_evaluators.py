@@ -12,7 +12,6 @@ class NonOptionalEval():
     def __call__(self, question, answer):
         return {"non_score": 0}
 
-
 class HalfOptionalEval():
     def __init__(self):
         pass
@@ -27,3 +26,19 @@ class OptionalEval():
 
     def __call__(self, *, question = "default", answer = "default"):
         return {"opt_score": (0 if question == "default" else 1) + (0 if answer == "default" else 2)}
+    
+class NoInputEval():
+    def __init__(self):
+        pass
+
+    def __call__(self):
+        return {"no_score": 0}
+
+class EchoEval():
+    def __init__(self):
+        pass
+
+    def __call__(self, *, question = "default", answer = "default"):
+        return {"echo_question": question, "echo_answer": answer}
+    
+    
