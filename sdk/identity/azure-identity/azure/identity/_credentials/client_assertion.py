@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import Callable, Optional, Any
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from .._internal import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
 
@@ -68,10 +68,10 @@ class ClientAssertionCredential(GetTokenMixin):
     def close(self) -> None:
         self.__exit__()
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         assertion = self._func()
         token = self._client.obtain_token_by_jwt_assertion(scopes, assertion, **kwargs)
         return token
