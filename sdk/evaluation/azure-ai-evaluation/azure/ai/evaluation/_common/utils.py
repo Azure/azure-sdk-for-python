@@ -63,13 +63,12 @@ def nltk_tokenize(text: str) -> List[str]:
 
 def check_and_add_api_version_for_aoai_model_config(
     model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-    default_api_version: str
+    default_api_version: str,
 ) -> None:
     if (
         "azure_endpoint" in model_config or "azure_deployment" in model_config
-        and not model_config.get("api_version", None)
     ):
-        model_config["api_version"] = default_api_version
+        model_config["api_version"] = model_config.get("api_version", default_api_version)
 
 
 def check_and_add_user_agent_for_aoai_model_config(

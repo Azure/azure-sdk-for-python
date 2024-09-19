@@ -8,7 +8,6 @@ Install the Azure AI Evaluation library for Python with:
 
 ```bash
 pip install azure-ai-evaluation
-pip install azure-identity
 ```
 
 ## Key concepts
@@ -89,8 +88,8 @@ if __name__ == "__main__":
     pprint(result)
 ```
 
-Simulator expects the user to have a callback method that invokes their AI application.
-Here's a sample of a callback which invokes AsyncAzureOpenAI:
+Simulators allow users to generate synthentic data using thier application. Simulator expects the user to have a callback method that invokes their AI
+application. Here's a sample of a callback which invokes AsyncAzureOpenAI:
 
 ```python
 from from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
