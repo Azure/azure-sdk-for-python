@@ -27,8 +27,8 @@ Clone the `azure-sdk-for-python` repository and update the following files of yo
 
 A disclaimer should be added indicating end-of-life date (EOLDate) of the package and directing to a replacement package and migration guide as necessary.
   - The EOLDate should be in the format `MM-DD-YYYY`.
-    - If there is no replacement package, the package EOLDate should be the service retirement date. This does not necessarily need to be the same as the release date in the CHANGELOG.md, since the package may potentially be deprecated before/after the service is retired.
-    - If there is a replacement package, the EOLDate should be the same as the release date in the CHANGELOG.md.
+    - If there is no replacement package, the package EOLDate should be the service retirement date. This does not necessarily need to be the same as the release date in the CHANGELOG.md, since the package may be deprecated before/after the service is retired.
+    - If there is a replacement package (or repo), the EOLDate should be the same as the deprecation release date of the old package in the CHANGELOG.md.
     - Service retirement dates MAY be listed [here](https://aka.ms/servicesretirementworkbook), where retiring feature says 'Entire service'.
   - The link to the replacement package should be a PyPI link: `https://pypi.org/project/azure-mynewpackage/`.
   - The link to the migration guide should be an `aka.ms` link in the format `https://aka.ms/azsdk/python/migrate/my-new-package`. To create this link, go to [https://aka.ms/](https://aka.ms/).
@@ -179,7 +179,7 @@ Check to make sure that the new version of the package has been released on PyPI
 - Once the PR has been approved by codeowner, merge.
 - You're responsible for fixing any CI issues related to this PR.
 
-Example post-deprecation PR for azure-cognitiveservices-language-luis [here](https://github.com/Azure/azure-sdk-for-python/pull/36908).
+Example post-deprecation PR for azure-cognitiveservices-language-spellcheck [here](https://github.com/Azure/azure-sdk-for-python/pull/37459/files).
 
 # Step 6: Update API Documentation
 
@@ -198,12 +198,13 @@ Check for your package in the [azure.github.io docs](https://azure.github.io/azu
 - Open the `_data/releases/latest/python-packages.csv` file.
   - If using Visual Studio Code, the `Edit CSV` extension may be helpful for editing the file.
 - Find the entry for your package and update the following fields.
-  - `EOLDate`: In MM/DD/YYYY format. If the SDK deprecation is due to a service retirement, this date should match the service final retirement date. If there is a replacement package, this should match the release date of the deprecated package.
+  - `EOLDate`: In MM/DD/YYYY format. If the SDK deprecation is due to a service retirement, this date should match the service final retirement date. If there is a replacement package (or repo), this should match the release date of the deprecated package.
   - `Support`: Change the value to `deprecated`.
-  - `Replace`: If it exists, set the value to the name of the package meant to replace the package being deprecated. If not, set the value to `NA`.
+  - `Replace`: If it exists, set the value to the name of the Azure SDK for Python package meant to replace the package being deprecated. If not, set the value to `NA`.
   - `ReplaceGuide`: If it exists, link to a migration guide in the following format: `aka.ms/azsdk/<language>/migrate/<library>`. If not, set the value to `NA`.
 - **Note: If you are deprecating multiple packages, please wait until all deprecated packages have been released and update all entries necessary in one PR.**
 - Create a PR to push these changes. Checks will run to notify the repo owners to review your commit.
+  - Example PR for azure-cognitiveservices-language-spellcheck [here](https://github.com/Azure/azure-sdk/pull/8012/files).
 - Ping Xiang Yan (xiangyan) for a review and include a link to your PR. If he is unavailable, ping Ronnie Geraghty (rgeraghty) or Wes Haggard (wesh).
 - Once the PR has been approved, merge.
 
