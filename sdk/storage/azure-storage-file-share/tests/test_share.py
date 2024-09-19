@@ -7,7 +7,6 @@ import os
 import time
 import unittest
 from datetime import datetime, timedelta
-from os import access
 
 import pytest
 import requests
