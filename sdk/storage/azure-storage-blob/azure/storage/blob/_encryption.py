@@ -41,8 +41,9 @@ if TYPE_CHECKING:
 _ENCRYPTION_PROTOCOL_V1 = '1.0'
 _ENCRYPTION_PROTOCOL_V2 = '2.0'
 _ENCRYPTION_PROTOCOL_V2_1 = '2.1'
+_VALID_ENCRYPTION_PROTOCOLS = [_ENCRYPTION_PROTOCOL_V1, _ENCRYPTION_PROTOCOL_V2, _ENCRYPTION_PROTOCOL_V2_1]
 _ENCRYPTION_V2_PROTOCOLS = [_ENCRYPTION_PROTOCOL_V2, _ENCRYPTION_PROTOCOL_V2_1]
-_GCM_REGION_DATA_LENGTH = 4 * 1024 * 1024 # Probably something to do with this
+_GCM_REGION_DATA_LENGTH = 4 * 1024 * 1024
 _GCM_NONCE_LENGTH = 12
 _GCM_TAG_LENGTH = 16
 
@@ -352,7 +353,7 @@ def get_adjusted_upload_size(length: int, encryption_version: str) -> int:
     if encryption_version == _ENCRYPTION_PROTOCOL_V1:
         return length + (16 - (length % 16))
 
-    if encryption_version == _ENCRYPTION_PROTOCOL_V2: # Do not adjust this one, we are not supporting uploads
+    if encryption_version == _ENCRYPTION_PROTOCOL_V2:
         encryption_data_length = _GCM_NONCE_LENGTH + _GCM_TAG_LENGTH
         regions = math.ceil(length / _GCM_REGION_DATA_LENGTH)
         return length + (regions * encryption_data_length)
@@ -414,7 +415,7 @@ def get_adjusted_download_range_and_offset(
             raise ValueError("Missing required metadata for Encryption V2")
 
         nonce_length = encryption_data.encrypted_region_info.nonce_length
-        data_length = encryption_data.encrypted_region_info.data_length # Is this where we would get user-configured "block size?"
+        data_length = encryption_data.encrypted_region_info.data_length
         tag_length = encryption_data.encrypted_region_info.tag_length
         region_length = nonce_length + data_length + tag_length
         requested_length = end - start
@@ -503,7 +504,7 @@ def _generate_encryption_data_dict(
     if version == _ENCRYPTION_PROTOCOL_V1:
         wrapped_cek = kek.wrap_key(cek)
     # For V2, we include the encryption version in the wrapped key.
-    elif version == _ENCRYPTION_PROTOCOL_V2: # Do not change, we are not supporting uploads
+    elif version == _ENCRYPTION_PROTOCOL_V2:
         # We must pad the version to 8 bytes for AES Keywrap algorithms
         to_wrap = _ENCRYPTION_PROTOCOL_V2.encode().ljust(8, b'\0') + cek
         wrapped_cek = kek.wrap_key(to_wrap)
@@ -521,7 +522,7 @@ def _generate_encryption_data_dict(
     if version == _ENCRYPTION_PROTOCOL_V1:
         encryption_agent['EncryptionAlgorithm'] = _EncryptionAlgorithm.AES_CBC_256
 
-    elif version == _ENCRYPTION_PROTOCOL_V2: # Same thing, this gates 2.1 uploads
+    elif version == _ENCRYPTION_PROTOCOL_V2:
         encryption_agent['EncryptionAlgorithm'] = _EncryptionAlgorithm.AES_GCM_256
 
         encrypted_region_info = OrderedDict()
@@ -533,7 +534,7 @@ def _generate_encryption_data_dict(
     encryption_data_dict['EncryptionAgent'] = encryption_agent
     if version == _ENCRYPTION_PROTOCOL_V1:
         encryption_data_dict['ContentEncryptionIV'] = encode_base64(iv)
-    elif version == _ENCRYPTION_PROTOCOL_V2: # Final gate on 2.1
+    elif version == _ENCRYPTION_PROTOCOL_V2:
         encryption_data_dict['EncryptedRegionInfo'] = encrypted_region_info
     encryption_data_dict['KeyWrappingMetadata'] = OrderedDict({'EncryptionLibrary': 'Python ' + VERSION})
 
@@ -552,7 +553,7 @@ def _dict_to_encryption_data(encryption_data_dict: Dict[str, Any]) -> _Encryptio
     """
     try:
         protocol = encryption_data_dict['EncryptionAgent']['Protocol']
-        if protocol not in [_ENCRYPTION_PROTOCOL_V1, _ENCRYPTION_PROTOCOL_V2]:
+        if protocol not in _VALID_ENCRYPTION_PROTOCOLS:
             raise ValueError("Unsupported encryption version.")
     except KeyError as exc:
         raise ValueError("Unsupported encryption version.") from exc
@@ -789,7 +790,7 @@ def encrypt_blob(blob: bytes, key_encryption_key: KeyEncryptionKey, version: str
         encryptor = cipher.encryptor()
         encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
 
-    elif version == _ENCRYPTION_PROTOCOL_V2: # Do not modify, this is for encryption
+    elif version == _ENCRYPTION_PROTOCOL_V2:
         # AES256 GCM uses 256 bit (32 byte) keys and a 12 byte nonce.
         content_encryption_key = os.urandom(32)
         initialization_vector = None
@@ -896,7 +897,7 @@ def decrypt_blob(  # pylint: disable=too-many-locals,too-many-statements
         raise ValueError('Specified encryption algorithm is not supported.')
 
     version = encryption_data.encryption_agent.protocol
-    if version not in (_ENCRYPTION_PROTOCOL_V1, _ENCRYPTION_PROTOCOL_V2, _ENCRYPTION_PROTOCOL_V2_1):
+    if version not in _VALID_ENCRYPTION_PROTOCOLS:
         raise ValueError('Specified encryption version is not supported.')
 
     content_encryption_key = _validate_and_unwrap_cek(encryption_data, key_encryption_key, key_resolver)
