@@ -165,7 +165,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
-        authentication. Only has an effect when credential is of type Async TokenCredential. The value could be
+        authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
     """
     def __init__(
@@ -184,7 +184,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level"
             "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
         if hasattr(credential, 'get_token') and not token_intent:
-            raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
+            raise ValueError("'token_intent' keyword is required when 'credential' is an AsyncTokenCredential.")
         parsed_url = _parse_url(account_url, share_name, file_path)
         path_snapshot, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:

@@ -58,7 +58,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
         an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
-        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an account shared access key, or an instance of a AsyncTokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
@@ -69,8 +69,8 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         ~azure.core.credentials_async.AsyncTokenCredential or
         str or dict[str, str] or None
     :keyword token_intent:
-        Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
-        Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+        Required when using `AsyncTokenCredential` for authentication and ignored for other forms of authentication.
+        Specifies the intent for all requests when using `AsyncTokenCredential` authentication. Possible values are:
 
         backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
                  ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
@@ -154,7 +154,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token. The value can be a SAS token string,
             an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
-            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            an account shared access key, or an instance of a AsyncTokenCredentials class from azure.identity.
             If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
@@ -162,7 +162,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         :type credential:
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or
-            ~azure.core.credentials.TokenCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or
             str or dict[str, str] or None
         :returns: A File Share service client.
         :rtype: ~azure.storage.fileshare.ShareServiceClient
