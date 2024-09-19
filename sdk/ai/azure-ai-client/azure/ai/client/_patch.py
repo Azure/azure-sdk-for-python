@@ -6,8 +6,8 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
-from azure.core.credentials import AzureKeyCredential
+from typing import List, Tuple, Union
+from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.identity import get_bearer_token_provider
 from openai import AzureOpenAI
 from azure.ai.inference import ChatCompletionsClient, EmbeddingsClient

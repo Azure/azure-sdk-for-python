@@ -13,6 +13,7 @@ logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 import os
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
+from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import UserMessage
 
 ai_client = AzureAIClient(
@@ -23,10 +24,17 @@ ai_client = AzureAIClient(
     logging_enable=True,
 )
 
-# Get an Azure AI Inference ChatCompletionsClient:
-client = ai_client.get_maas_client(
-    connection_name=os.environ["AI_STUDIO_CONNECTION_3"]
+credential, endpoint = ai_client.connections.get_credentials(connection_name=os.environ["AI_STUDIO_CONNECTION_3"])
+
+client = ChatCompletionsClient(
+    endpoint=endpoint,
+    credential=credentials
 )
+
+# Get an Azure AI Inference ChatCompletionsClient:
+#client = ai_client.get_maas_client(
+#    connection_name=os.environ["AI_STUDIO_CONNECTION_3"]
+#)
 
 response = client.complete(
     messages=[

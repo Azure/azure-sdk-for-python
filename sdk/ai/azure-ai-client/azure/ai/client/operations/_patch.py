@@ -6,9 +6,51 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
+from typing import List, Tuple, Union
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
+from ..models._enums import ConnectionAuthType, ModelType
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+class ConnectionsOperations(ConnectionsOperationsGenerated):
+
+    def get_credentials(self, *, connection_name: str, **kwargs) -> Tuple[Union[str, AzureKeyCredential, TokenCredential], str]:
+
+        if not connection_name:
+            raise ValueError("connection_name is required.")
+
+        response = self._list_secrets(
+            connection_name_in_url=connection_name,
+            connection_name=connection_name,
+            subscription_id=self._config.subscription_id,
+            resource_group_name=self._config.resource_group_name,
+            workspace_name=self._config.workspace_name,
+            api_version_in_body=self._config.api_version,
+        )
+
+        # Remove trailing slash from the endpoint if exist
+        endpoint: str = (
+            response.properties.target[:-1] if response.properties.target.endswith("/") else response.properties.target
+        )
+
+        if response.properties.auth_type == ConnectionAuthType.API_KEY:
+            if response.properties.category == "AzureOpenAI": # TODO: Replace with enum
+                credential = AzureKeyCredential(response.properties.credentials.key)
+                return credential, endpoint
+            elif response.properties.category == "Serverless":
+                key: str = response.properties.credentials.key
+                return key, endpoint
+            else:
+                raise ValueError("Unknown connection category `{response.properties.category}`.")
+        #elif response.properties.auth_type == ConnectionAuthType.AAD:
+        #    credentials = self._config.credential
+        #elif response.properties.auth_type == "SAS" # TODO: ConnectionAuthType.SAS:
+        #    credentials = 
+        else:
+            raise ValueError("Unknown authentication type `{response.properties.auth_type}`.")
+
+
+
+__all__: List[str] = ["ConnectionsOperations"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
