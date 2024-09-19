@@ -113,15 +113,9 @@ def test_receive_transfer_continuation_frame():
     assert link.current_link_credit == 1
     assert link.delivery_count == 2
 
-def mock_flow(link, link_credit):
-    link.current_link_credit = link_credit - link.total_link_credit if link_credit is not None \
-        else link.link_credit
-
-    if link.current_link_credit > 0:
-        link.total_link_credit = link.current_link_credit + link.total_link_credit if link_credit is not None \
-            else link.link_credit
 
 def test_receive_transfer_and_flow():
+    def mock_outgoing(): pass
     session = None
     link = ReceiverLink(
         session,
@@ -133,10 +127,10 @@ def test_receive_transfer_and_flow():
         on_transfer=Mock(),
     )
 
+    link._outgoing_flow =  mock_outgoing
     link.total_link_credit = 0 # Set the total link credit to 0 to start, no credit on the wire
-    link.flow = mock_flow # Set the desired link credit to 100
 
-    link.flow(link, link_credit=100) # Send a flow frame with desired link credit of 100
+    link.flow(link_credit=100) # Send a flow frame with desired link credit of 100
 
     # frame: handle, delivery_id, delivery_tag, message_format, settled, more, rcv_settle_mode, state, resume, aborted, batchable, payload
     transfer_frame_one = [3, 0, b'/blah', 0, True, False, None, None, None, None, False, ""]
@@ -149,7 +143,7 @@ def test_receive_transfer_and_flow():
 
     # Only received 1 transfer frame per receive call, we set desired link credit again
     # this will send a flow of 1
-    link.flow(link, link_credit=100)
+    link.flow(link_credit=100)
     assert link.current_link_credit == 1
     assert link.total_link_credit == 100
 
