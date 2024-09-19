@@ -578,7 +578,7 @@ class TestEvaluate:
         if use_pf_client:
             assert first_row["outputs.no.no_score"] == 0
 
-    @pytest.mark.parametrize("use_pf_client", [True])
+    @pytest.mark.parametrize("use_pf_client", [True, False])
     def test_optional_inputs_with_target(self, questions_file, questions_answers_basic_file, use_pf_client):
         from test_evaluators.test_inputs_evaluators import EchoEval
 
