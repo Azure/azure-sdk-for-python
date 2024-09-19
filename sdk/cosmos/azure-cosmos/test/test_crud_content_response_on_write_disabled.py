@@ -89,7 +89,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey,content_response_on_write_disabled=True)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey,response_payload_on_write_disabled=True)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.logger = logging.getLogger("DisableResponseOnWriteTestLogger")
         cls.logger.setLevel(logging.DEBUG)
@@ -267,7 +267,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # create document without partition key being specified
-        created_document = created_collection.create_item(body=document_definition, content_response_on_write_disabled=False)
+        created_document = created_collection.create_item(body=document_definition, response_payload_on_write_disabled=False)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[0], '["WA"]')
         del self.last_headers[:]
@@ -284,7 +284,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present as a leaf level property but a dict
-        created_document = created_collection1.create_item(document_definition, content_response_on_write_disabled=False)
+        created_document = created_collection1.create_item(document_definition, response_payload_on_write_disabled=False)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[0], [{}])
         del self.last_headers[:]
@@ -300,7 +300,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present in the document
-        created_document = created_collection2.create_item(document_definition, content_response_on_write_disabled=False)
+        created_document = created_collection2.create_item(document_definition, response_payload_on_write_disabled=False)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[0], [{}])
         del self.last_headers[:]
@@ -732,7 +732,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
                                'key': 'value',
                                'pk': 'pk'}
 
-        created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, content_response_on_write_disabled=False)
+        created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, response_payload_on_write_disabled=False)
         self.assertEqual(created_document.get('name'),
                          document_definition['name'])
 
@@ -742,7 +742,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
                                'pk': 'pk',
                                'id': str(uuid.uuid4())}
 
-        created_document = created_collection.create_item(body=document_definition, content_response_on_write_disabled=False)
+        created_document = created_collection.create_item(body=document_definition, response_payload_on_write_disabled=False)
         self.assertEqual(created_document.get('name'),
                          document_definition['name'])
         self.assertEqual(created_document.get('id'),
@@ -786,7 +786,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
         replaced_document = created_collection.replace_item(
             item=created_document['id'],
             body=created_document,
-            content_response_on_write_disabled=False
+            response_payload_on_write_disabled=False
         )
         self.assertEqual(replaced_document['name'],
                          'replaced document',
@@ -817,7 +817,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
                 etag=replaced_document['_etag'],
                 item=replaced_document['id'],
                 body=replaced_document,
-                content_response_on_write_disabled=False
+                response_payload_on_write_disabled=False
             )
 
         # should fail if only match condition specified
@@ -826,14 +826,14 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
                 match_condition=MatchConditions.IfNotModified,
                 item=replaced_document['id'],
                 body=replaced_document,
-                content_response_on_write_disabled=False
+                response_payload_on_write_disabled=False
             )
         with self.assertRaises(ValueError):
             created_collection.replace_item(
                 match_condition=MatchConditions.IfModified,
                 item=replaced_document['id'],
                 body=replaced_document,
-                content_response_on_write_disabled=False
+                response_payload_on_write_disabled=False
             )
 
         # should fail if invalid match condition specified
@@ -842,7 +842,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
                 match_condition=replaced_document['_etag'],
                 item=replaced_document['id'],
                 body=replaced_document,
-                content_response_on_write_disabled=False
+                response_payload_on_write_disabled=False
             )
 
         # should pass for most recent etag
@@ -851,7 +851,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
             etag=replaced_document['_etag'],
             item=replaced_document['id'],
             body=replaced_document,
-            content_response_on_write_disabled=False
+            response_payload_on_write_disabled=False
         )
         self.assertEqual(replaced_document_conditional['name'],
                          'replaced document based on condition',
@@ -1020,7 +1020,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
             etag=to_be_replaced_document['_etag'],
             item=to_be_replaced_document['id'],
             body=to_be_replaced_document,
-            content_response_on_write_disabled=False
+            response_payload_on_write_disabled=False
         )
         self.assertEqual(replaced_document_conditional['name'],
                          'replaced document based on condition',
@@ -2039,9 +2039,9 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
         collection = self.databaseForTest.create_container("query-iterable-container",
                                                            partition_key=PartitionKey("/pk"))
 
-        doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1', 'pk': 'pk'}, content_response_on_write_disabled=False)
-        doc2 = collection.create_item(body={'id': 'doc2', 'prop1': 'value2', 'pk': 'pk'}, content_response_on_write_disabled=False)
-        doc3 = collection.create_item(body={'id': 'doc3', 'prop1': 'value3', 'pk': 'pk'}, content_response_on_write_disabled=False)
+        doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1', 'pk': 'pk'}, response_payload_on_write_disabled=False)
+        doc2 = collection.create_item(body={'id': 'doc2', 'prop1': 'value2', 'pk': 'pk'}, response_payload_on_write_disabled=False)
+        doc3 = collection.create_item(body={'id': 'doc3', 'prop1': 'value3', 'pk': 'pk'}, response_payload_on_write_disabled=False)
         resources = {
             'coll': collection,
             'doc1': doc1,
@@ -2198,7 +2198,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
             body={'id': 'doc1',
                   'key': 'value'},
             pre_trigger_include='t1',
-            content_response_on_write_disabled=False
+            response_payload_on_write_disabled=False
         )
         self.assertEqual(document_1_1['id'],
                          'DOC1t1',
@@ -2208,14 +2208,14 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
             body={'id': 'testing post trigger', 'key': 'value'},
             pre_trigger_include='t1',
             post_trigger_include='response1',
-            content_response_on_write_disabled=False
+            response_payload_on_write_disabled=False
         )
         self.assertEqual(document_1_2['id'], 'TESTING POST TRIGGERt1')
 
         document_1_3 = collection1.create_item(
             body={'id': 'responseheaders', 'key': 'value'},
             pre_trigger_include='t1',
-            content_response_on_write_disabled=False
+            response_payload_on_write_disabled=False
         )
         self.assertEqual(document_1_3['id'], "RESPONSEHEADERSt1")
 
@@ -2225,7 +2225,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
             body={'id': 'doc2',
                   'key': 'value2'},
             pre_trigger_include='t2',
-            content_response_on_write_disabled=False
+            response_payload_on_write_disabled=False
         )
         self.assertEqual(document_2_1['id'],
                          'doc2',
@@ -2235,7 +2235,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
                   'prop': 'empty',
                   'key': 'value2'},
             pre_trigger_include='t3',
-            content_response_on_write_disabled=False)
+            response_payload_on_write_disabled=False)
         self.assertEqual(document_2_2['id'], 'doc3t3')
 
         triggers_3 = list(collection3.scripts.list_triggers())
@@ -2244,7 +2244,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
             collection3.create_item(
                 body={'id': 'Docoptype', 'key': 'value2'},
                 post_trigger_include='triggerOpType',
-                content_response_on_write_disabled=False
+                response_payload_on_write_disabled=False
             )
 
         db.delete_container(collection1)
@@ -2463,7 +2463,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
         read_container = created_db.get_container_client(created_properties)
         self.assertEqual(read_container.id, created_container.id)
 
-        created_item = created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'}, content_response_on_write_disabled=False)
+        created_item = created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'}, response_payload_on_write_disabled=False)
 
         # read item with id
         read_item = created_container.read_item(item=created_item['id'], partition_key=created_item['pk'])
@@ -2574,7 +2574,7 @@ class TestCRUDOperationsContentResponseOnWriteDisabled(unittest.TestCase):
 
         # add items for partition key 2
 
-        pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), content_response_on_write_disabled=False)
+        pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), response_payload_on_write_disabled=False)
 
         # delete all items for partition key 1
         created_collection.delete_all_items_by_partition_key(partition_key1)

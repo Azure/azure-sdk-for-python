@@ -519,7 +519,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
-        content_response_on_write_disabled: Optional[bool] = None,
+        response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Replaces the specified item if it exists in the container.
@@ -541,7 +541,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool content_response_on_write_disabled: Indicates whether service should be instructed to skip sending response payloads.    
+        :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip sending 
+            response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
+            when also not specified there from client-level kwargs.  
         :returns: A dict representing the item after replace went through or if content-response on write is disabled None.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
@@ -562,8 +564,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
-        if content_response_on_write_disabled is not None:
-            kwargs['content_response_on_write_disabled'] = content_response_on_write_disabled    
+        if response_payload_on_write_disabled is not None:
+            kwargs['response_payload_on_write_disabled'] = response_payload_on_write_disabled    
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
@@ -593,7 +595,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
-        content_response_on_write_disabled: Optional[bool] = None,
+        response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Insert or update the specified item.
@@ -614,7 +616,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool content_response_on_write_disabled: Indicates whether service should be instructed to skip sending response payloads.       
+        :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip sending 
+            response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
+            when also not specified there from client-level kwargs.   
         :returns: A dict representing the upserted item or if content-response on write is disabled None.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :rtype: Dict[str, Any]
@@ -633,8 +637,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
-        if content_response_on_write_disabled is not None:
-            kwargs['content_response_on_write_disabled'] = content_response_on_write_disabled       
+        if response_payload_on_write_disabled is not None:
+            kwargs['response_payload_on_write_disabled'] = response_payload_on_write_disabled       
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
@@ -668,7 +672,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
-        content_response_on_write_disabled: Optional[bool] = None,
+        response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Create an item in the container.
@@ -693,7 +697,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool content_response_on_write_disabled: Indicates whether service should be instructed to skip sending response payloads.       
+        :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip sending 
+            response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
+            when also not specified there from client-level kwargs.
         :returns: A dict representing the new item or if content-response on write is disabled None.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :rtype: Dict[str, Any]
@@ -712,8 +718,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
-        if content_response_on_write_disabled is not None:
-            kwargs['content_response_on_write_disabled'] = content_response_on_write_disabled
+        if response_payload_on_write_disabled is not None:
+            kwargs['response_payload_on_write_disabled'] = response_payload_on_write_disabled
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if populate_query_metrics:
@@ -743,7 +749,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
-        content_response_on_write_disabled: Optional[bool] = None,
+        response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """ Patches the specified item with the provided operations if it
@@ -768,7 +774,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool content_response_on_write_disabled: Indicates whether service should be instructed to skip sending response payloads.   
+        :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip sending 
+            response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
+            when also not specified there from client-level kwargs.
         :returns: A dict representing the item after the patch operations went through or if content-response on write is disabled None.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
@@ -786,8 +794,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
-        if content_response_on_write_disabled is not None:
-            kwargs['content_response_on_write_disabled'] = content_response_on_write_disabled       
+        if response_payload_on_write_disabled is not None:
+            kwargs['response_payload_on_write_disabled'] = response_payload_on_write_disabled       
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = self._set_partition_key(partition_key)

@@ -705,7 +705,7 @@ class TestCRUDOperations(unittest.TestCase):
                                'key': 'value',
                                'pk': 'pk'}
 
-        no_response = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, content_response_on_write_disabled=True)
+        no_response = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, response_payload_on_write_disabled=True)
         self.assertIsNone(no_response)
 
         created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True)
