@@ -4,6 +4,8 @@ This page can be linked using: [aka.ms/azsdk/python/deprecation-process](https:/
 
 This guide describes the step-by-step process for deprecating an `azure-*` package. You likely need to read this if you are a package owner and need to explain to your customers that the package should no longer be used.
 
+Note that a deprecated package is a signal to customers that they are *strongly encouraged* to stop using it and migrate to another package. The package is *still available* to install and is not unpublished, and we still have the ability to publish critical security fixes as necessary.
+
 The overall idea is that PyPI does not support an official deprecation logic. We concluded that the best way is:
 - Change the classifier as `Inactive`, to showcase in metadata that this package is longer worked on.
 - Add a disclaimer on the main Readme file to explain deprecation, and provide a migration guide as necessary.
