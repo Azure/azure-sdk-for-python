@@ -8,7 +8,6 @@ Install the Azure AI Evaluation library for Python with:
 
 ```bash
 pip install azure-ai-evaluation
-pip install azure-identity
 ```
 
 ## Key concepts
@@ -23,8 +22,6 @@ Users can create evaluator runs on the local machine as shown in the example bel
 import os
 from pprint import pprint
 
-from promptflow.core import AzureOpenAIModelConfiguration
-
 from azure.ai.evaluation import evaluate, RelevanceEvaluator, ViolenceEvaluator
 
 
@@ -34,12 +31,12 @@ def response_length(response, **kwargs):
 
 if __name__ == "__main__":
     # Built-in evaluators
-    # Initialize Azure OpenAI Connection
-    model_config = AzureOpenAIModelConfiguration(
-        azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
-        api_key=os.environ.get("AZURE_OPENAI_KEY"),
-        azure_deployment=os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
-    )
+    # Initialize Azure OpenAI Model Configuration
+    model_config = {
+        "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+        "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+        "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+    }
 
     # Initialzing Relevance Evaluator
     relevance_eval = RelevanceEvaluator(model_config)
@@ -217,8 +214,8 @@ if __name__ == "__main__":
     print("done!")
 ```
 
-Simulator expects the user to have a callback method that invokes their AI application.
-Here's a sample of a callback which invokes AsyncAzureOpenAI:
+Simulators allow users to generate synthentic data using their application. Simulator expects the user to have a callback method that invokes
+their AI application. Here's a sample of a callback which invokes AsyncAzureOpenAI:
 
 ```python
 from from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario

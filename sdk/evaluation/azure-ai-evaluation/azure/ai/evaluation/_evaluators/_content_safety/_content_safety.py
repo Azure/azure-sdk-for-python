@@ -5,6 +5,8 @@ from concurrent.futures import as_completed
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
+from azure.ai.evaluation._model_configurations import AzureAIProject
+
 try:
     from ._hate_unfairness import HateUnfairnessEvaluator
     from ._self_harm import SelfHarmEvaluator
@@ -23,7 +25,7 @@ class ContentSafetyEvaluator:
 
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type azure_ai_project: dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
         Default is True.
     :param credential: The credential for connecting to Azure AI project.
