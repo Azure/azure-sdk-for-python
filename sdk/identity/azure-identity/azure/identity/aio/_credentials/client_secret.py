@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import Optional, Any
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._internal import validate_tenant_id
@@ -60,8 +60,8 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
 
         await self._client.__aexit__()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         return await self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)

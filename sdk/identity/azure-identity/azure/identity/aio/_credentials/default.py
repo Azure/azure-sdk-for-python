@@ -4,9 +4,10 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, Optional, TYPE_CHECKING, Any, cast
+from typing import List, Optional, Any, cast
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
+from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
 from ..._constants import EnvironmentVariables
 from ..._internal import get_default_authority, normalize_authority, within_dac
 from .azure_cli import AzureCliCredential
@@ -19,8 +20,6 @@ from .shared_cache import SharedTokenCacheCredential
 from .vscode import VisualStudioCodeCredential
 from .workload_identity import WorkloadIdentityCredential
 
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -89,7 +88,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             :caption: Create a DefaultAzureCredential.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements, too-many-locals
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -134,7 +133,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
-        credentials = []  # type: List[AsyncTokenCredential]
+        credentials: List[AsyncSupportsTokenInfo] = []
+        within_dac.set(True)
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
         if not exclude_workload_identity_credential:
@@ -173,7 +173,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
             credentials.append(AzurePowerShellCredential(process_timeout=process_timeout))
         if not exclude_developer_cli_credential:
             credentials.append(AzureDeveloperCliCredential(process_timeout=process_timeout))
-
+        within_dac.set(False)
         super().__init__(*credentials)
 
     async def get_token(
@@ -196,8 +196,46 @@ class DefaultAzureCredential(ChainedTokenCredential):
           `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            return await self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            token = await cast(AsyncTokenCredential, self._successful_credential).get_token(
+                *scopes, claims=claims, tenant_id=tenant_id, **kwargs
+            )
+            _LOGGER.info(
+                "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
+            )
+            return token
+
         within_dac.set(True)
         token = await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
         within_dac.set(False)
         return token
+
+    async def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Asynchronously request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
+           `message` attribute listing each authentication attempt and its error message.
+        """
+        if self._successful_credential:
+            token_info = await cast(AsyncSupportsTokenInfo, self._successful_credential).get_token_info(
+                *scopes, options=options
+            )
+            _LOGGER.info(
+                "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
+            )
+            return token_info
+
+        within_dac.set(True)
+        token_info = await cast(AsyncSupportsTokenInfo, super()).get_token_info(*scopes, options=options)
+        within_dac.set(False)
+        return token_info

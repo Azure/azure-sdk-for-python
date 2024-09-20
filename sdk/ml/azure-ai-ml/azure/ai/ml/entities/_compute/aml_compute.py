@@ -180,7 +180,7 @@ class AmlCompute(Compute):
             name=rest_obj.name,
             id=rest_obj.id,
             description=prop.description,
-            location=rest_obj.location,
+            location=prop.compute_location if prop.compute_location else rest_obj.location,
             tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=(
