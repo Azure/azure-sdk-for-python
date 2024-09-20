@@ -15,62 +15,65 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     [Parameter(Mandatory=$true)]
     $LocatedPackages,
     [Parameter(Mandatory=$true)]
-    $diffObj
+    $diffObj,
+    [Parameter(Mandatory=$true)]
+    $AllPkgProps
   )
-
-  function Add-IfNotExist {
-    param (
-      [Parameter(Mandatory = $true)]
-      $IncomingPackageName,
-
-      [Parameter(Mandatory = $true)]
-      [ref]$List
-    )
-
-    # Check if an item with the same name already exists
-    if (-not $List.Value | Where-Object { $_.Name -eq $Name }) {
-      # Add the item if it doesn't exist
-      $List.Value += [PSCustomObject]@{ Name = $Name }
-    }
-  }
   $additionalValidationPackages = @()
-
-  Write-Host "We are in Get-python-AdditionalValidationPackagesFromPackageSet getting called."
 
   $toolChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("tool")}
   $engChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("eng")}
   $othersChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("scripts") -or $_.StartsWith("doc") -or $_.StartsWith("common") -or $_.StartsWith("conda") }
 
-  # todo triggers based on paths and not files
-  # tools/
-  #   azure-storage-blob
-  #   azure-servicebus
-  #   azure-eventhub
-  #   azure-data-table
-  #   azure-appconfig
-  #   azure-keyvault-keys
-  #   azure-identity
-  #   azure-mgmt-core
-  #   azure-core-experimental
-  #   azure-core-tracing-opentelemetry
-  #   azure-core-tracing-opencensus
-  #   azure-cosmos
-  #   azure-ai-documentintelligence
-  #   azure-ai-ml
-  #   azure-ai-inference
-  #   azure-ai-textanalytics
-  #   azure-ai-doctranslation
-  #   azure-mgmt-compute
-  #   azure-communication-chat
-  #   azure-communication-identity
+  if ($toolChanged) {
+    $additionalPackages = @(
+      "azure-storage-blob",
+      "azure-servicebus",
+      "azure-eventhub",
+      "azure-data-table",
+      "azure-appconfig",
+      "azure-keyvault-keys",
+      "azure-identity",
+      "azure-mgmt-core",
+      "azure-core-experimental",
+      "azure-core-tracing-opentelemetry",
+      "azure-core-tracing-opencensus",
+      "azure-cosmos",
+      "azure-ai-documentintelligence",
+      "azure-ai-ml",
+      "azure-ai-inference",
+      "azure-ai-textanalytics",
+      "azure-ai-doctranslation",
+      "azure-mgmt-compute",
+      "azure-communication-chat",
+      "azure-communication-identity"
+    ) | ForEach-Object { $AllPkgProps | Where-Object { $_.Name -eq $_.Name } | Select-Object -First 1 }
 
-  # eng/
-  #   azure-template
-  #   azure-core
+    $additionalValidationPackages += $additionalPackages
+  }
 
-  # scripts/, doc/, common/, conda/
-  #   azure-template
-  #   azure-core
+  if ($engChanged -or $othersChanged) {
+    $additionalPackages = @(
+      "azure-template",
+      "azure-core"
+    ) | ForEach-Object { $AllPkgProps | Where-Object { $_.Name -eq $_.Name } | Select-Object -First 1 }
+
+    $additionalValidationPackages += $additionalPackages
+  }
+
+  $uniqueResultSet = @()
+  foreach($pkg in $additionalPackages) {
+      if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
+          $uniqueResultSet += $pkg
+      }
+  }
+
+  Write-Host "Returning additional packages for validation: $($uniqueResultSet.Count)"
+  foreach($pkg in $uniqueResultSet) {
+      Write-Host "  - $($pkg.Name)"
+  }
+
+  return $uniqueResultSet
 }
 
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
