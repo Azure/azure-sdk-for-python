@@ -94,10 +94,10 @@ def _target_fn2(query):
 @pytest.mark.unittest
 class TestEvaluate:
     def test_evaluate_missing_data(self, mock_model_config):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(TypeError) as exc_info:
             evaluate(evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)})
 
-        assert "data must be provided for evaluation." in exc_info.value.args[0]
+        assert "evaluate() missing 1 required keyword-only argument: 'data'" in exc_info.value.args[0]
 
     def test_evaluate_evaluators_not_a_dict(self, mock_model_config):
         with pytest.raises(ValueError) as exc_info:
