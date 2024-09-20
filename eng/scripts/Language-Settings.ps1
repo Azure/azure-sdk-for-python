@@ -63,14 +63,15 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
 
   $uniqueResultSet = @()
   foreach($pkg in $additionalPackages) {
-      if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
-          $uniqueResultSet += $pkg
-      }
+    if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
+      $pkg.IncludedForValidation = $true
+      $uniqueResultSet += $pkg
+    }
   }
 
   Write-Host "Returning additional packages for validation: $($uniqueResultSet.Count)"
   foreach($pkg in $uniqueResultSet) {
-      Write-Host "  - $($pkg.Name)"
+    Write-Host "  - $($pkg.Name)"
   }
 
   return $uniqueResultSet
