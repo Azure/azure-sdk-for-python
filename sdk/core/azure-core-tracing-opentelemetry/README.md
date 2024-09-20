@@ -4,7 +4,7 @@
 
 ## Getting started
 
-You can enable distributes tracing in Azure client libraries by installing configuring the OpenTelemetry SDK.
+You can enable distributed tracing in Azure client libraries by configuring the OpenTelemetry SDK.
 OpenTelemetry is a popular open-source observability framework for generating, capturing, and collecting telemetry data for cloud-native software.
 
 There are two key concepts related to tracing: span and trace. A span represents a single operation in a trace. A span can represent an HTTP request,
@@ -40,7 +40,7 @@ with tracer.start_as_current_span(name="MyApplication"):
 
 The Azure Monitor OpenTelemetry Distro can be found in the [`azure-monitor-opentelemetry`](https://pypi.org/project/azure-monitor-opentelemetry) package.
 
-### Tracing with generic OpenTelemetry
+## Tracing with generic OpenTelemetry
 
 Check out your observability provider documentation on how to enable distributed tracing with OpenTelemetry
 or follow [OpenTelemetry Python documentation](https://opentelemetry.io/docs/languages/python/) on generic configuration.
@@ -54,7 +54,7 @@ In addition to common OpenTelemetry configuration, follow this steps to configur
    ```
 
   Now you can use Azure Core OpenTelemetry Tracing plugin for Python as usual with any SDKs that are compatible
-  with azure-core tracing. This includes (not exhaustive list), `azure-storage-blob`, `azure-keyvault-secrets`, `azure-eventhub`,` etc.
+  with azure-core tracing. This includes (not exhaustive list), `azure-storage-blob`, `azure-keyvault-secrets`, `azure-eventhub`, etc.
 
 2. Specify which tracing implementation Azure SDK should use in one of the following ways:
    - By setting `AZURE_SDK_TRACING_IMPLEMENTATION` environment variable to `opentelemetry`
