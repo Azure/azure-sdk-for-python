@@ -61,13 +61,13 @@ class ConnectionsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def _get_connections(  # pylint: disable=protected-access
+    async def _list(  # pylint: disable=protected-access
         self, **kwargs: Any
-    ) -> _models._models.ConnectionDetailsList:
+    ) -> _models._models.ConnectionsListResponse:
         """List the details of all the connections (not including their credentials).
 
-        :return: ConnectionDetailsList. The ConnectionDetailsList is compatible with MutableMapping
-        :rtype: ~azure.ai.client.models._models.ConnectionDetailsList
+        :return: ConnectionsListResponse. The ConnectionsListResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models._models.ConnectionsListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
@@ -81,7 +81,7 @@ class ConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ConnectionDetailsList] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[_models._models.ConnectionsListResponse] = kwargs.pop(  # pylint: disable=protected-access
             "cls", None
         )
 
@@ -119,7 +119,7 @@ class ConnectionsOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.ConnectionDetailsList, response.json()  # pylint: disable=protected-access
+                _models._models.ConnectionsListResponse, response.json()  # pylint: disable=protected-access
             )
 
         if cls:
@@ -128,11 +128,11 @@ class ConnectionsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def _get_connection_secrets(  # pylint: disable=protected-access
+    async def _list_secrets(  # pylint: disable=protected-access
         self, connection_name_in_url: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.ConnectionDetails: ...
+    ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
-    async def _get_connection_secrets(  # pylint: disable=protected-access
+    async def _list_secrets(  # pylint: disable=protected-access
         self,
         connection_name_in_url: str,
         *,
@@ -143,14 +143,14 @@ class ConnectionsOperations:
         api_version_in_body: str,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models._models.ConnectionDetails: ...
+    ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
-    async def _get_connection_secrets(  # pylint: disable=protected-access
+    async def _list_secrets(  # pylint: disable=protected-access
         self, connection_name_in_url: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.ConnectionDetails: ...
+    ) -> _models._models.ConnectionsListSecretsResponse: ...
 
     @distributed_trace_async
-    async def _get_connection_secrets(  # pylint: disable=protected-access
+    async def _list_secrets(  # pylint: disable=protected-access
         self,
         connection_name_in_url: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -161,7 +161,7 @@ class ConnectionsOperations:
         workspace_name: str = _Unset,
         api_version_in_body: str = _Unset,
         **kwargs: Any
-    ) -> _models._models.ConnectionDetails:
+    ) -> _models._models.ConnectionsListSecretsResponse:
         """Get the details of a single connection, includeing credential (if avaialble).
 
         :param connection_name_in_url: Connection Name. Required.
@@ -178,8 +178,8 @@ class ConnectionsOperations:
         :paramtype workspace_name: str
         :keyword api_version_in_body: The api version. Required.
         :paramtype api_version_in_body: str
-        :return: ConnectionDetails. The ConnectionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.client.models._models.ConnectionDetails
+        :return: ConnectionsListSecretsResponse. The ConnectionsListSecretsResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models._models.ConnectionsListSecretsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
@@ -194,7 +194,7 @@ class ConnectionsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.ConnectionDetails] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.ConnectionsListSecretsResponse] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         if body is _Unset:
             if connection_name is _Unset:
@@ -259,7 +259,7 @@ class ConnectionsOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(
-                _models._models.ConnectionDetails, response.json()  # pylint: disable=protected-access
+                _models._models.ConnectionsListSecretsResponse, response.json()  # pylint: disable=protected-access
             )
 
         if cls:

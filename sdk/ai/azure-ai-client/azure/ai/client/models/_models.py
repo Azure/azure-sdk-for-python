@@ -11,14 +11,14 @@ from typing import Dict, List, Literal, TYPE_CHECKING, Union
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
-from ._enums import AuthType
+from ._enums import AuthenticationType
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
-class ConnectionDetails(_model_base.Model):
+class ConnectionsListSecretsResponse(_model_base.Model):
     """to do.
 
 
@@ -32,15 +32,15 @@ class ConnectionDetails(_model_base.Model):
     """to do. Required."""
 
 
-class ConnectionDetailsList(_model_base.Model):
+class ConnectionsListResponse(_model_base.Model):
     """to do.
 
 
     :ivar value: to do. Required.
-    :vartype value: list[~azure.ai.client.models._models.ConnectionDetails]
+    :vartype value: list[~azure.ai.client.models._models.ConnectionsListSecretsResponse]
     """
 
-    value: List["_models._models.ConnectionDetails"] = rest_field()
+    value: List["_models._models.ConnectionsListSecretsResponse"] = rest_field()
     """to do. Required."""
 
 
@@ -53,13 +53,15 @@ class ConnectionProperties(_model_base.Model):
 
     :ivar auth_type: Authentication type of the connection target. Required. Known values are:
      "ApiKey", "AAD", and "SAS".
-    :vartype auth_type: str or ~azure.ai.client.models.AuthType
+    :vartype auth_type: str or ~azure.ai.client.models.AuthenticationType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     auth_type: str = rest_discriminator(name="authType")
     """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"AAD\",
      and \"SAS\"."""
+    
+    category: Union[str, "_models._enums.ConnectionType"] = rest_field()
 
 
 class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
@@ -71,14 +73,14 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     :vartype auth_type: str or ~azure.ai.client.models.AAD
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
      "Serverless".
-    :vartype category: str or ~azure.ai.client.models.ConnectionCategory
+    :vartype category: str or ~azure.ai.client.models.ConnectionType
     :ivar target: to do. Required.
     :vartype target: str
     """
 
-    auth_type: Literal[AuthType.AAD] = rest_discriminator(name="authType")  # type: ignore
+    auth_type: Literal[AuthenticationType.AAD] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. to do"""
-    category: Union[str, "_models._enums.ConnectionCategory"] = rest_field()
+    category: Union[str, "_models._enums.ConnectionType"] = rest_field()
     """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
     target: str = rest_field()
     """to do. Required."""
@@ -92,16 +94,16 @@ class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey
     :vartype auth_type: str or ~azure.ai.client.models.API_KEY
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
      "Serverless".
-    :vartype category: str or ~azure.ai.client.models.ConnectionCategory
+    :vartype category: str or ~azure.ai.client.models.ConnectionType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
     :vartype credentials: ~azure.ai.client.models._models.CredentialsApiKeyAuth
     :ivar target: to do. Required.
     :vartype target: str
     """
 
-    auth_type: Literal[AuthType.API_KEY] = rest_discriminator(name="authType")  # type: ignore
+    auth_type: Literal[AuthenticationType.API_KEY] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. to do"""
-    category: Union[str, "_models._enums.ConnectionCategory"] = rest_field()
+    category: Union[str, "_models._enums.ConnectionType"] = rest_field()
     """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
     credentials: "_models._models.CredentialsApiKeyAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
@@ -117,16 +119,16 @@ class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
     :vartype auth_type: str or ~azure.ai.client.models.SAS
     :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
      "Serverless".
-    :vartype category: str or ~azure.ai.client.models.ConnectionCategory
+    :vartype category: str or ~azure.ai.client.models.ConnectionType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
     :vartype credentials: ~azure.ai.client.models._models.CredentialsSASAuth
     :ivar target: to do. Required.
     :vartype target: str
     """
 
-    auth_type: Literal[AuthType.SAS] = rest_discriminator(name="authType")  # type: ignore
+    auth_type: Literal[AuthenticationType.SAS] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. to do"""
-    category: Union[str, "_models._enums.ConnectionCategory"] = rest_field()
+    category: Union[str, "_models._enums.ConnectionType"] = rest_field()
     """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
     credentials: "_models._models.CredentialsSASAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""

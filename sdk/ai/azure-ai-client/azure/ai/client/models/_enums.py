@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """to do."""
 
     API_KEY = "ApiKey"
@@ -21,7 +21,7 @@ class AuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """to do"""
 
 
-class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Category of the connection."""
 
     AZURE_OPEN_AI = "AzureOpenAI"
