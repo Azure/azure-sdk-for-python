@@ -46,7 +46,7 @@ if use_key_auth:
 
     print(f"\n\n===============> {completion.choices[0].message.content}\n\n")
 
-# Use AAD passthrough auth:
+# Use Entra ID passthrough auth:
 else:
 
     credential, endpoint = ai_client.connections.get_credential(connection_name=os.environ["AI_STUDIO_CONNECTION_1"])

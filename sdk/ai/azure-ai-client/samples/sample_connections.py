@@ -1,5 +1,7 @@
-import os
 import json
+
+
+import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import ConnectionType, AuthenticationType
 from openai import AzureOpenAI
@@ -15,18 +17,26 @@ ai_client = AzureAIClient(
     workspace_name=os.environ["AI_STUDIO_HUB"],
 )
 
+# You can list all connections, with or without their credentials
+connections = ai_client.connections.list(
+    connection_type=ConnectionType.AZURE_OPEN_AI, # Optional. Defaults to all types.
+    populate_secrets=True # Optional. Defaults to "False"
+)
+
+# Or you can get properties of a single connection
 connection = ai_client.connections.get(
-    connection_name=os.environ["AI_STUDIO_CONNECTION_2"], 
+    connection_name=os.environ["AI_STUDIO_CONNECTION_3"], 
     populate_secrets=True
 )
 
+"""
 # Remove trailing slash from the endpoint if exist
 connection.properties.target = (
     connection.properties.target[:-1] if connection.properties.target.endswith("/") else connection.properties.target
 )
 print(json.dumps(connection.as_dict(), indent=2))
 
-"""
+
 print(connection)
 print(json.dumps(connection.as_dict(), indent=2))
 exit()
@@ -40,8 +50,8 @@ print(json.dumps(connection.as_dict(), indent=2))
 
 
 connections = ai_client.connections.list(
-    connection_type=ConnectionType.AZURE_OPEN_AI,
-    populate_secrets=True
+    connection_type=ConnectionType.AZURE_OPEN_AI, # Optional
+    populate_secrets=True # Optional. Defaults to "False"
 )
 for connection in connections:
     print(json.dumps(connection.as_dict(), indent=2))
@@ -53,20 +63,22 @@ exit()
 if connection.properties.category == ConnectionType.AZURE_OPEN_AI:
 
     if connection.properties.auth_type == AuthenticationType.API_KEY:
+        print("====> Creating AzureOpenAI client using API key authentication")
         client = AzureOpenAI(
             api_key=connection.properties.credentials.key,
             azure_endpoint=connection.properties.target,
             api_version="2024-08-01-preview",
         )
-    elif connection.properties.auth_type == AuthenticationType.AAD:
+    elif connection.properties.auth_type == AuthenticationType.ENTRA_ID:
+        print("====> Creating AzureOpenAI client using Entra ID authentication")
         client = AzureOpenAI(
-            azure_ad_token_provider=get_bearer_token_provider(connection.token_credential, "https://cognitiveservices.azure.com/.default"),
-            azure_endpoint=connection.endpoint,
+            azure_ad_token_provider=get_bearer_token_provider(connection.properties.token_credential, "https://cognitiveservices.azure.com/.default"),
+            azure_endpoint=connection.properties.target,
             api_version="2024-08-01-preview",
         )
     elif connection.properties.auth_type == AuthenticationType.SAS:
-        # TODO
-        pass
+        # TODO - Not yet supported by the service. Expected next week.
+        exit()
 
     response = client.chat.completions.create(
         model="gpt-4o",
@@ -83,13 +95,21 @@ if connection.properties.category == ConnectionType.AZURE_OPEN_AI:
 elif connection.properties.category == ConnectionType.SERVERLESS:
 
     if connection.properties.auth_type == AuthenticationType.API_KEY:
+        print("====> Creating ChatCompletionsClient using API key authentication")
         client = ChatCompletionsClient(
            endpoint=connection.properties.target,
            credential=AzureKeyCredential(connection.properties.credentials.key)
         )
-    elif connection.properties.auth_type == AuthenticationType.AAD:
-        # TODO
-        pass
+    elif connection.properties.auth_type == AuthenticationType.ENTRA_ID:
+        # MaaS models do not yet support EntraID auth
+        print("====> Creating ChatCompletionsClient using Entra ID authentication")
+        client = ChatCompletionsClient(
+           endpoint=connection.properties.target,
+           credential=connection.properties.token_credential
+        )
+    elif connection.properties.auth_type == AuthenticationType.SAS:
+        # TODO - Not yet supported by the service. Expected next week.
+        exit()
 
     response = client.complete(
         messages=[

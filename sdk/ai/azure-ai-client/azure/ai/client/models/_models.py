@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Literal, TYPE_CHECKING, Union
+from typing import Dict, List, Literal, TYPE_CHECKING, Union, Callable
+from azure.core.credentials import AzureKeyCredential
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
@@ -52,13 +53,13 @@ class ConnectionProperties(_model_base.Model):
 
 
     :ivar auth_type: Authentication type of the connection target. Required. Known values are:
-     "ApiKey", "AAD", and "SAS".
+     "ApiKey", "EntraID", and "SAS".
     :vartype auth_type: str or ~azure.ai.client.models.AuthenticationType
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     auth_type: str = rest_discriminator(name="authType")
-    """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"AAD\",
+    """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"EntraId\",
      and \"SAS\"."""
     
     category: Union[str, "_models._enums.ConnectionType"] = rest_field()
@@ -78,12 +79,14 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     :vartype target: str
     """
 
-    auth_type: Literal[AuthenticationType.AAD] = rest_discriminator(name="authType")  # type: ignore
+    auth_type: Literal[AuthenticationType.ENTRA_ID] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. to do"""
     category: Union[str, "_models._enums.ConnectionType"] = rest_field()
     """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
     target: str = rest_field()
     """to do. Required."""
+
+    token_credential: "TokenCredential"
 
 
 class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey"):

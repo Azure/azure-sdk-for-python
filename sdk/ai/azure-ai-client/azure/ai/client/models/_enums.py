@@ -15,7 +15,7 @@ class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     API_KEY = "ApiKey"
     """to do"""
-    AAD = "AAD"
+    ENTRA_ID = "AAD"
     """to do"""
     SAS = "SAS"
     """to do"""

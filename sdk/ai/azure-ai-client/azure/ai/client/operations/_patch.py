@@ -6,8 +6,9 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Tuple, Union, Iterable
+from typing import List, Tuple, Union, Iterable, Callable
 from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.identity import get_bearer_token_provider
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ..models._enums import AuthenticationType, ConnectionType
 from ..models._models import ConnectionsListSecretsResponse, ConnectionsListResponse
@@ -32,6 +33,9 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 workspace_name=self._config.workspace_name,
                 api_version_in_body=self._config.api_version,
             )
+            if connection.properties.auth_type == AuthenticationType.ENTRA_ID:
+                connection.properties.token_credential = self._config.credential
+                return connection
             return connection
         else:
             internal_response: ConnectionsListResponse = self._list()
@@ -104,7 +108,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                 return credential, endpoint
             else:
                 raise ValueError("Unknown connection category `{response.properties.category}`.")
-        elif response.properties.auth_type == AuthenticationType.AAD:
+        elif response.properties.auth_type == AuthenticationType.ENTRA_ID:
             if response.properties.category == ConnectionType.AZURE_OPEN_AI:
                 credential = self._config.credential
                 return credential, endpoint
