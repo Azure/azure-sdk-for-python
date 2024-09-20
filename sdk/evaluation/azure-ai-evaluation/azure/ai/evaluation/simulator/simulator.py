@@ -112,13 +112,13 @@ class Simulator:
         """
         if num_queries > len(tasks):
             warnings.warn(
-                f"You have specified 'num_queries' > len('tasks') ({num_queries} < {len(tasks)}). 
-                All tasks will be used for generation and the remaining {num_queries - len(tasks)} lines will be simulated in task-free mode"
+                f"You have specified 'num_queries' > len('tasks') ({num_queries} < {len(tasks)}). "
+                f"All tasks will be used for generation and the remaining {num_queries - len(tasks)} lines will be simulated in task-free mode"
             )
         elif num_queries < len(tasks):
             warnings.warn(
-                f"You have specified 'num_queries' < len('tasks') ({num_queries} < {len(tasks)}). 
-                Only the first {num_queries} lines of the specified tasks will be simulated."
+                f"You have specified 'num_queries' < len('tasks') ({num_queries} < {len(tasks)}). "
+                f"Only the first {num_queries} lines of the specified tasks will be simulated."
             )
         num_queries = min(num_queries, len(tasks))
         max_conversation_turns *= 2  # account for both user and assistant turns
@@ -418,9 +418,9 @@ class Simulator:
 
         progress_bar = tqdm(
             total=total_turns,
-            desc="Generating simulations",
+            desc="Generating: ",
             ncols=100,
-            unit="messages",
+            unit="message",
         )
         all_conversations = []
 
@@ -444,7 +444,11 @@ class Simulator:
                     {
                         "messages": conversation,
                         "finish_reason": ["stop"],
-                        "context": f"Task: {task} Expected response: {response}",
+                        "context": {
+                            "task": task,
+                            "expected_response": response,
+                            "query": query,
+                        },
                         "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
                     }
                 )
@@ -487,10 +491,26 @@ class Simulator:
         :rtype: List[Dict[str, str]]
         """
         conversation_history = ConversationHistory()
-        user_turn = Turn(role=ConversationRole.USER, content=conversation_starter)
-        conversation_history.add_to_history(user_turn)
+        # user_turn = Turn(role=ConversationRole.USER, content=conversation_starter)
+        # conversation_history.add_to_history(user_turn)
 
         while conversation_history.get_length() < max_conversation_turns:
+            user_flow = self._load_user_simulation_flow(
+                user_simulator_prompty=user_simulator_prompty,
+                prompty_model_config=self._build_prompty_model_config(),
+                user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
+            )
+            conversation_starter_from_simulated_user = user_flow(
+                task=task, conversation_history=[{
+                    "role": "assistant",
+                    "content": conversation_starter,
+                    "your_task": "Act as the user and translate the content into a user query."
+                }]
+            )
+            if type(conversation_starter_from_simulated_user) == dict:
+                conversation_starter_from_simulated_user = conversation_starter_from_simulated_user["content"]
+            user_turn = Turn(role=ConversationRole.USER, content=conversation_starter_from_simulated_user)
+            conversation_history.add_to_history(user_turn)
             assistant_response = await self._get_target_response(
                 target=target, api_call_delay_sec=api_call_delay_sec, conversation_history=conversation_history
             )
