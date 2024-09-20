@@ -368,10 +368,10 @@ def evaluate(
         data will be run through target function and then results will be evaluated.
 
     :keyword data: Path to the data to be evaluated or passed to target if target is set.
-        Only .jsonl format files are supported.  `target` and `data` both cannot be None
+        Only .jsonl format files are supported.  `target` and `data` both cannot be None. Required.
     :paramtype data: str
     :keyword evaluators: Evaluators to be used for evaluation. It should be a dictionary with key as alias for evaluator
-        and value as the evaluator function.
+        and value as the evaluator function. Required.
     :paramtype evaluators: Dict[str, Callable]
     :keyword evaluation_name: Display name of the evaluation.
     :paramtype evaluation_name: Optional[str]
