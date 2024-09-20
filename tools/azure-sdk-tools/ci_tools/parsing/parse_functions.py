@@ -26,6 +26,7 @@ from pkg_resources import (
 from packaging.specifiers import SpecifierSet
 from setuptools import Extension
 
+from ci_tools.variables import str_to_bool
 
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
@@ -146,9 +147,11 @@ def get_config_setting(package_path: str, setting: str, default: Any = True) -> 
     pyproject.toml. If the input 'setting' does NOT exist, the provided default value will be returned.
     """
     # we should always take the override if one is present
-    override_value = os.getenv(f"{os.path.basename(package_path).upper()}_{setting.upper()}", None)
+    override_value = os.getenv(f"{os.path.basename(package_path).upper().replace('-','_')}_{setting.upper()}", None)
+
+    breakpoint()
     if override_value:
-        return override_value
+        return str_to_bool(override_value)
 
     # if no override, check for the config setting in the pyproject.toml
     config = get_build_config(package_path)
