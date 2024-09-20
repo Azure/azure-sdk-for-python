@@ -190,8 +190,9 @@ class ContainerProxy:
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """Create an item in the container.
 
         To update or replace an existing item, use the
@@ -216,8 +217,12 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
-        :returns: A dict representing the new item.
-        :rtype: Dict[str, Any]
+        :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip
+            sending response payloads. When not specified explicitly here, the default value will be determined from 
+            kwargs or when also not specified there from client-level kwargs.  
+        :returns: A dict representing the item after replace went through or if response payload on write is disabled
+            None.
+        :rtype: Optional[Dict[str, Any]]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -233,6 +238,8 @@ class ContainerProxy:
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if response_payload_on_write_disabled is not None:
+            kwargs['response_payload_on_write_disabled'] = response_payload_on_write_disabled
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if indexing_directive is not None:
@@ -552,8 +559,9 @@ class ContainerProxy:
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """Insert or update the specified item.
 
         If the item already exists in the container, it is replaced. If the item
@@ -574,8 +582,12 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
-        :returns: A dict representing the upserted item.
-        :rtype: Dict[str, Any]
+        :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip
+            sending response payloads. When not specified explicitly here, the default value will be determined from 
+            kwargs or when also not specified there from client-level kwargs.  
+        :returns: A dict representing the item after replace went through or if response payload on write is disabled
+            None.
+        :rtype: Optional[Dict[str, Any]]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -591,6 +603,8 @@ class ContainerProxy:
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if response_payload_on_write_disabled is not None:
+            kwargs['response_payload_on_write_disabled'] = response_payload_on_write_disabled
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         if self.container_link in self.__get_client_container_caches():
@@ -617,8 +631,9 @@ class ContainerProxy:
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """Replaces the specified item if it exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -641,8 +656,12 @@ class ContainerProxy:
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
             given id does not exist.
-        :returns: A dict representing the item after replace went through.
-        :rtype: Dict[str, Any]
+        :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip
+            sending response payloads. When not specified explicitly here, the default value will be determined from 
+            kwargs or when also not specified there from client-level kwargs.  
+        :returns: A dict representing the item after replace went through or if response payload on write is disabled
+            None.
+        :rtype: Optional[Dict[str, Any]]
         """
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
@@ -659,6 +678,8 @@ class ContainerProxy:
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if response_payload_on_write_disabled is not None:
+            kwargs['response_payload_on_write_disabled'] = response_payload_on_write_disabled
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         if self.container_link in self.__get_client_container_caches():
@@ -683,8 +704,9 @@ class ContainerProxy:
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        response_payload_on_write_disabled: Optional[bool] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Optional[Dict[str, Any]]:
         """ Patches the specified item with the provided operations if it
          exists in the container.
 
@@ -707,10 +729,14 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: A dict representing the item after the patch operations went through.
+        :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip
+            sending response payloads. When not specified explicitly here, the default value will be determined from 
+            kwargs or when also not specified there from client-level kwargs.  
+        :returns: A dict representing the item after replace went through or if response payload on write is disabled
+            None.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
-        :rtype: dict[str, Any]
+        :rtype: Optional[dict[str, Any]]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -724,6 +750,8 @@ class ContainerProxy:
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if response_payload_on_write_disabled is not None:
+            kwargs['response_payload_on_write_disabled'] = response_payload_on_write_disabled
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = await self._set_partition_key(partition_key)

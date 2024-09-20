@@ -89,7 +89,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey,response_payload_on_write_disabled=True)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, response_payload_on_write_disabled=True)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.logger = logging.getLogger("DisableResponseOnWriteTestLogger")
         cls.logger.setLevel(logging.DEBUG)

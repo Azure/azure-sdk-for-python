@@ -113,6 +113,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
             retry_backoff_factor=kwargs.pop('retry_backoff_factor', 0.8),
         )
     policy.ConnectionRetryConfiguration = connection_retry
+    policy.ResponsePayloadOnWriteDisabled = kwargs.pop('response_payload_on_write_disabled', False)
     return policy
 
 
@@ -156,7 +157,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Must be used along with a logger to work.
     :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
         level (to log all requests) or at a single request level. Requests will be logged at INFO level.
-
+    :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip sending 
+        response payloads.
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/examples_async.py
