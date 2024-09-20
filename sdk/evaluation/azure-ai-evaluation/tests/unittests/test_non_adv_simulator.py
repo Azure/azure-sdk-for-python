@@ -138,18 +138,3 @@ class TestNonAdvSimulator:
         assert len(result) == 2
         assert result[0]["content"] == "query"
         assert result[1]["content"] == "assistant_response"
-
-    @pytest.mark.asyncio
-    @patch('azure.ai.evaluation.simulator.Simulator._load_user_simulation_flow', new_callable=Mock)
-    async def test_build_user_simulation_response(self, mock_load_user_simulation_flow, valid_project):
-        simulator = Simulator(azure_ai_project=valid_project)
-        mock_load_user_simulation_flow.return_value = lambda task, conversation_history: {"content": "user_response"}
-
-        result = await simulator._build_user_simulation_response(
-            task="task",
-            conversation_history=[],
-            user_simulator_prompty=None,
-            user_simulator_prompty_kwargs={},
-        )
-
-        assert result == "user_response"

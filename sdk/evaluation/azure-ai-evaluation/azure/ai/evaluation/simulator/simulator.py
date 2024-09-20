@@ -112,7 +112,7 @@ class Simulator:
         """
         if num_queries > len(tasks):
             warnings.warn(
-                f"You have specified 'num_queries' > len('tasks') ({num_queries} < {len(tasks)}). "
+                f"You have specified 'num_queries' > len('tasks') ({num_queries} > {len(tasks)}). "
                 f"All tasks will be used for generation and the remaining {num_queries - len(tasks)} lines will be simulated in task-free mode"
             )
         elif num_queries < len(tasks):
@@ -520,17 +520,6 @@ class Simulator:
 
             if conversation_history.get_length() >= max_conversation_turns:
                 break
-
-            user_response = await self._build_user_simulation_response(
-                task=task,
-                conversation_history=conversation_history.to_list(),
-                user_simulator_prompty=user_simulator_prompty,
-                user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
-            )
-            await asyncio.sleep(api_call_delay_sec)
-            user_turn = Turn(role=ConversationRole.USER, content=user_response)
-            conversation_history.add_to_history(user_turn)
-            progress_bar.update(1)
 
         return conversation_history.to_list()
 
