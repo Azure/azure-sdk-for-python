@@ -4,7 +4,6 @@
 # noqa: E501
 # pylint: disable=E0401,E0611
 import asyncio
-import functools
 import logging
 import random
 from typing import Any, Callable, Dict, List, Optional
@@ -13,7 +12,6 @@ from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 from azure.identity import DefaultAzureCredential
 from tqdm import tqdm
 
-from promptflow._sdk._telemetry import ActivityType, monitor_operation
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._model_configurations import AzureAIProject
@@ -29,41 +27,11 @@ from ._model_tools import (
     RAIClient,
     TokenScope,
 )
+from ._tracing import monitor_adversarial_scenario
 from ._utils import JsonLineList
 from ._constants import SupportedLanguages
 
 logger = logging.getLogger(__name__)
-
-
-def monitor_adversarial_scenario(func) -> Callable:
-    """Monitor an adversarial scenario with logging
-
-    :param func: The function to be monitored
-    :type func: Callable
-    :return: The decorated function
-    :rtype: Callable
-    """
-
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        scenario = str(kwargs.get("scenario", None))
-        max_conversation_turns = kwargs.get("max_conversation_turns", None)
-        max_simulation_results = kwargs.get("max_simulation_results", None)
-        selected_language = kwargs.get("language", SupportedLanguages.English)
-        decorated_func = monitor_operation(
-            activity_name="adversarial.simulator.call",
-            activity_type=ActivityType.PUBLICAPI,
-            custom_dimensions={
-                "scenario": scenario,
-                "max_conversation_turns": max_conversation_turns,
-                "max_simulation_results": max_simulation_results,
-                "selected_language": selected_language,
-            },
-        )(func)
-
-        return decorated_func(*args, **kwargs)
-
-    return wrapper
 
 
 class AdversarialSimulator:
@@ -414,6 +382,7 @@ class AdversarialSimulator:
     def call_sync(
         self,
         *,
+        scenario: AdversarialScenario,
         max_conversation_turns: int,
         max_simulation_results: int,
         target: Callable,
@@ -423,6 +392,12 @@ class AdversarialSimulator:
         concurrent_async_task: int,
     ) -> List[Dict[str, Any]]:
         """Call the adversarial simulator synchronously.
+        :keyword scenario: Enum value specifying the adversarial scenario used for generating inputs.
+        example:
+
+         - :py:const:`azure.ai.evaluation.simulator.adversarial_scenario.AdversarialScenario.ADVERSARIAL_QA`
+         - :py:const:`azure.ai.evaluation.simulator.adversarial_scenario.AdversarialScenario.ADVERSARIAL_CONVERSATION`
+        :paramtype scenario: azure.ai.evaluation.simulator.adversarial_scenario.AdversarialScenario
 
         :keyword max_conversation_turns: The maximum number of conversation turns to simulate.
         :paramtype max_conversation_turns: int
@@ -448,6 +423,7 @@ class AdversarialSimulator:
             # Note: This approach might not be suitable in all contexts, especially with nested async calls
             future = asyncio.ensure_future(
                 self(
+                    scenario=scenario,
                     max_conversation_turns=max_conversation_turns,
                     max_simulation_results=max_simulation_results,
                     target=target,
@@ -462,6 +438,7 @@ class AdversarialSimulator:
         # If no event loop is running, use asyncio.run (Python 3.7+)
         return asyncio.run(
             self(
+                scenario=scenario,
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
                 target=target,
