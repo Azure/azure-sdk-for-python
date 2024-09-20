@@ -1,7 +1,7 @@
 import pytest
 
-from azure.ai.evaluation.evaluators import ContentSafetyChatEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation import ContentSafetyChatEvaluator
 
 
 @pytest.mark.usefixtures("mock_project_scope")
