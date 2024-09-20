@@ -69,7 +69,7 @@ setup(
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "pyyaml>=5.1.0",
         "msrest>=0.6.18",
-        "azure-core>=1.23.0",
+        "azure-core>=1.23.0,<=1.28.0",
         "azure-mgmt-core>=1.3.0",
         "marshmallow>=3.5",
         "jsonschema>=4.0.0",
