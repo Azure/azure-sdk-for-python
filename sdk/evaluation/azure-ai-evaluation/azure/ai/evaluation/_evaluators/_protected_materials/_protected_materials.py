@@ -4,6 +4,8 @@
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 
 class _AsyncProtectedMaterialsEvaluator:
@@ -27,7 +29,14 @@ class _AsyncProtectedMaterialsEvaluator:
         if not (query and query.strip() and query != "None") or not (
             response and response.strip() and response != "None"
         ):
-            raise ValueError("Both 'query' and 'response' must be non-empty strings.")
+            msg = "Both 'query' and 'response' must be non-empty strings."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                error_category=ErrorCategory.MISSING_FIELD,
+                error_blame=ErrorBlame.USER_ERROR,
+                error_target=ErrorTarget.PROTECTED_MATERIAL_EVALUATOR,
+            )
 
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(
@@ -47,7 +56,7 @@ class ProtectedMaterialsEvaluator:
 
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type azure_ai_project: dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
     :return: Whether or not protected material was found in the response, with AI-generated reasoning.

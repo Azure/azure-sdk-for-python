@@ -8,14 +8,15 @@ from typing import Dict, List, Union
 
 import numpy as np
 
-from promptflow.core import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
 from .._coherence import CoherenceEvaluator
 from .._fluency import FluencyEvaluator
 from .._groundedness import GroundednessEvaluator
+from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from .._relevance import RelevanceEvaluator
 from .retrieval import RetrievalChatEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 logger = logging.getLogger(__name__)
 
@@ -25,8 +26,8 @@ class ChatEvaluator:
     Initialize a chat evaluator configured for a specific Azure OpenAI model.
 
     :param model_config: Configuration for the Azure OpenAI model.
-    :type model_config: Union[~promptflow.core.AzureOpenAIModelConfiguration,
-        ~promptflow.core.OpenAIModelConfiguration]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
     :type eval_last_turn: bool
@@ -46,7 +47,7 @@ class ChatEvaluator:
             {"role": "assistant", "content": "2 + 2 = 4", "context": {
                 "citations": [
                         {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
-                        ]
+                    ]
                 }
             }
         ]
@@ -74,7 +75,7 @@ class ChatEvaluator:
 
     def __init__(
         self,
-        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        model_config: dict,
         eval_last_turn: bool = False,
         parallel: bool = True,
     ):
@@ -239,49 +240,99 @@ class ChatEvaluator:
 
     def _validate_conversation(self, conversation: List[Dict]):
         if conversation is None or not isinstance(conversation, list):
-            raise ValueError("'conversation' must be a list of dictionaries.")
+            msg = "conversation must be a list of dictionaries"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.CHAT_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
         expected_role = "user"
         for turn_num, turn in enumerate(conversation):
             one_based_turn_num = turn_num + 1
 
             if not isinstance(turn, dict):
-                raise ValueError(f"Each turn in 'conversation' must be a dictionary. Turn number: {one_based_turn_num}")
-
-            if "role" not in turn or "content" not in turn:
-                raise ValueError(
-                    f"Each turn in 'conversation' must have 'role' and 'content' keys. Turn number: "
-                    f"{one_based_turn_num}"
+                msg = f"Each turn in 'conversation' must be a dictionary. Turn number: {one_based_turn_num}"
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.CHAT_EVALUATOR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
                 )
 
+            if "role" not in turn or "content" not in turn:
+                msg = f"Each turn in 'conversation' must have 'role' and 'content' keys. Turn number: {one_based_turn_num}"
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.CHAT_EVALUATOR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
+                )
+            
             if turn["role"] != expected_role:
-                raise ValueError(
-                    f"Expected role {expected_role} but got {turn['role']}. Turn number: {one_based_turn_num}"
+                msg = f"Expected role {expected_role} but got {turn['role']}. Turn number: {one_based_turn_num}"
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.CHAT_EVALUATOR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
                 )
 
             if not isinstance(turn["content"], str):
-                raise ValueError(f"Content in each turn must be a string. Turn number: {one_based_turn_num}")
+                msg = f"Content in each turn must be a string. Turn number: {one_based_turn_num}"
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.CHAT_EVALUATOR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
+                )
 
             if turn["role"] == "assistant" and "context" in turn:
                 if not isinstance(turn["context"], dict):
-                    raise ValueError(
-                        f"Context in each assistant's turn must be a dictionary. Turn number: {one_based_turn_num}"
+                    msg = f"Context in each assistant's turn must be a dictionary. Turn number: {one_based_turn_num}"
+                    raise EvaluationException(
+                        message=msg,
+                        internal_message=msg,
+                        target=ErrorTarget.CHAT_EVALUATOR,
+                        category=ErrorCategory.INVALID_VALUE,
+                        blame=ErrorBlame.USER_ERROR,
                     )
 
                 if "citations" not in turn["context"]:
-                    raise ValueError(
-                        f"Context in each assistant's turn must have 'citations' key. Turn number:"
-                        f" {one_based_turn_num}"
+                    msg = f"Context in each assistant's turn must have 'citations' key. Turn number: {one_based_turn_num}"
+                    raise EvaluationException(
+                        message=msg,
+                        internal_message=msg,
+                        target=ErrorTarget.CHAT_EVALUATOR,
+                        category=ErrorCategory.MISSING_FIELD,
+                        blame=ErrorBlame.USER_ERROR,
                     )
 
                 if not isinstance(turn["context"]["citations"], list):
-                    raise ValueError(f"'citations' in context must be a list. Turn number: {one_based_turn_num}")
+                    msg = f"'citations' in context must be a list. Turn number: {one_based_turn_num}"
+                    raise EvaluationException(
+                        message=msg,
+                        internal_message=msg,
+                        target=ErrorTarget.CHAT_EVALUATOR,
+                        category=ErrorCategory.INVALID_VALUE,
+                        blame=ErrorBlame.USER_ERROR,
+                    )
 
                 for citation_num, citation in enumerate(turn["context"]["citations"]):
                     if not isinstance(citation, dict):
-                        raise ValueError(
-                            f"Each citation in 'citations' must be a dictionary. Turn number: {one_based_turn_num},"
-                            f" Citation number: {citation_num + 1}"
+                        msg = f"Each citation in 'citations' must be a dictionary. Turn number: {one_based_turn_num}, Citation number: {citation_num + 1}"
+                        raise EvaluationException(
+                            message=msg,
+                            internal_message=msg,
+                            target=ErrorTarget.CHAT_EVALUATOR,
+                            category=ErrorCategory.INVALID_VALUE,
+                            blame=ErrorBlame.USER_ERROR,
                         )
 
             # Toggle expected role for the next turn
@@ -289,4 +340,11 @@ class ChatEvaluator:
 
         # Ensure the conversation ends with an assistant's turn
         if expected_role != "user":
-            raise ValueError("The conversation must end with an assistant's turn.")
+            msg = "The conversation must end with an assistant's turn."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.CHAT_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )

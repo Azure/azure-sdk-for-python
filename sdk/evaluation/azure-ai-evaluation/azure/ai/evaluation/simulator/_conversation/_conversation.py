@@ -11,6 +11,7 @@ from azure.ai.evaluation.simulator._constants import SupportedLanguages
 
 from ..._http_utils import AsyncHttpPipeline
 from . import ConversationBot, ConversationTurn
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 def is_closing_message(response: Union[Dict, str], recursion_depth: int = 0) -> bool:
@@ -24,7 +25,14 @@ def is_closing_message(response: Union[Dict, str], recursion_depth: int = 0) -> 
     :rtype: bool
     """
     if recursion_depth > 10:
-        raise Exception("Exceeded max call depth in is_closing_message")  # pylint: disable=broad-exception-raised
+        msg = "Exceeded max call depth in is_closing_message"
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            error_category=ErrorCategory.INVALID_VALUE,
+            error_target=ErrorTarget.CONVERSATION,
+            error_blame=ErrorBlame.USER_ERROR,
+        )
 
     # recursively go through each inner dictionary in the JSON dict
     # and check if any value entry contains a closing message
