@@ -13,11 +13,10 @@ from azure.ai.formrecognizer._response_handlers import prepare_prebuilt_models
 from azure.ai.formrecognizer import FormRecognizerApiVersion
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import FormRecognizerPreparer
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from conftest import skip_flaky_test
 
-FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
+get_fr_client = functools.partial(get_async_client, FormRecognizerClient)
 
 
 class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
@@ -25,8 +24,8 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key), polling_interval=7)
+    async def test_polling_interval(self, **kwargs):
+        client = get_fr_client(polling_interval=7)
         assert client._client._config.polling_interval ==  7
 
         async with client:
@@ -39,9 +38,9 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_identity_document_url_transform_jpg(self, client):
+    async def test_identity_document_url_transform_jpg(self):
+        client = get_fr_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -77,9 +76,9 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_identity_document_jpg_include_field_elements(self, client):
+    async def test_identity_document_jpg_include_field_elements(self):
+        client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, include_field_elements=True)
 
@@ -101,9 +100,8 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     async def test_identity_document_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         async with client:
             initial_poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
             cont_token = initial_poller.continuation_token()
@@ -113,9 +111,8 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
             await initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     async def test_identity_document_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         with pytest.raises(ValueError) as e:
             async with client:
                 await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
@@ -123,9 +120,9 @@ class TestIdDocumentsFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_pages_kwarg_specified(self, client):
+    async def test_pages_kwarg_specified(self):
+        client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg, pages=["1"])
             assert '1' == poller._polling_method._initial_response.http_response.request.query['pages']

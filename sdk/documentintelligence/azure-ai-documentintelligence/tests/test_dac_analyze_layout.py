@@ -12,6 +12,7 @@ from azure.ai.documentintelligence.models import (
     DocumentAnalysisFeature,
     AnalyzeDocumentRequest,
     AnalyzeResultOperation,
+    AnalyzeOutputOption,
 )
 from testcase import DocumentIntelligenceTest
 from conftest import skip_flaky_test
@@ -173,7 +174,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         )
         self.assertDocumentStylesTransformCorrect(returned_model.styles, raw_analyze_result.styles)
 
-    @pytest.mark.live_test_only
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @DocumentIntelligenceClientPreparer()
@@ -195,7 +195,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         assert layout.tables[2].row_count == 24
         assert layout.tables[2].column_count == 5
 
-    @pytest.mark.live_test_only
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @DocumentIntelligenceClientPreparer()
@@ -218,7 +217,6 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         assert layout.tables[2].row_count == 24
         assert layout.tables[2].column_count == 5
 
-    @pytest.mark.live_test_only
     @skip_flaky_test
     @DocumentIntelligencePreparer()
     @DocumentIntelligenceClientPreparer()
@@ -256,3 +254,42 @@ class TestDACAnalyzeLayout(DocumentIntelligenceTest):
         )
         poller2.wait()
         assert poller2._polling_method._timeout == 7  # goes back to client default
+
+    @DocumentIntelligencePreparer()
+    @DocumentIntelligenceClientPreparer()
+    @recorded_by_proxy
+    def test_get_analyze_result_pdf(self, client):
+        with open(self.layout_sample, "rb") as fd:
+            document = fd.read()
+        poller = client.begin_analyze_document(
+            "prebuilt-read",
+            document,
+            content_type="application/octet-stream",
+            output=[AnalyzeOutputOption.PDF],
+        )
+        result = poller.result()
+        response = client.get_analyze_result_pdf(model_id=result.model_id, result_id=poller.details["operation_id"])
+        first_chunk_pdf_bytes = response.__next__()
+        assert first_chunk_pdf_bytes.startswith(b"%PDF-")  # A PDF's header is expected to be: %PDF-
+
+    @pytest.mark.live_test_only("Needs to remove sanitizer on figure id in request url.")
+    @DocumentIntelligencePreparer()
+    @DocumentIntelligenceClientPreparer()
+    @recorded_by_proxy
+    def test_get_analyze_result_figures(self, client):
+        with open(self.layout_sample, "rb") as fd:
+            document = fd.read()
+        poller = client.begin_analyze_document(
+            "prebuilt-layout",
+            document,
+            content_type="application/octet-stream",
+            output=[AnalyzeOutputOption.FIGURES],
+        )
+        result = poller.result()
+        assert result.figures is not None
+        figure_id = result.figures[0].id
+        response = client.get_analyze_result_figure(
+            model_id=result.model_id, result_id=poller.details["operation_id"], figure_id=figure_id
+        )
+        first_chunk_figure_bytes = response.__next__()
+        assert first_chunk_figure_bytes.startswith(b"\x89PNG")  # A PNG's header is expected to start with: ‰PNG

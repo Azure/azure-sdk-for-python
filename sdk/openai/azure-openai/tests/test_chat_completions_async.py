@@ -6,6 +6,8 @@
 import os
 import pytest
 import json
+from typing import List
+from pydantic import BaseModel
 import openai
 from devtools_testutils import AzureRecordedTestCase
 from conftest import (
@@ -864,7 +866,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             {"role": "user", "content": "What is the best time of year to pick pineapple?"}
         ]
         with pytest.raises(openai.BadRequestError) as e:
-            await client_async.chat.completions.create(messages=messages, **kwargs)
+            await client_async.chat.completions.create(messages=messages, model="gpt-4-1106-preview")
         err = e.value.body
         assert err["code"] == "content_filter"
         content_filter_result = err["innererror"]["content_filter_result"]
@@ -1185,3 +1187,43 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             assert logprob.token is not None
             assert logprob.logprob is not None
             assert logprob.bytes is not None
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_type, api_version", [(GPT_4_AZURE, PREVIEW), (GPT_4_OPENAI, "v1")])
+    async def test_chat_completion_structured_outputs(self, client_async, api_type, api_version, **kwargs):
+
+        class Step(BaseModel):
+            explanation: str
+            output: str
+
+        class MathResponse(BaseModel):
+            steps: List[Step]
+            final_answer: str
+
+        completion = await client_async.beta.chat.completions.parse(
+            messages=[
+                {"role": "system", "content": "You are a helpful math tutor. You only answer about math. Refuse to answer any other question."},
+                {"role": "user", "content": "solve 8x + 31 = 2"},
+            ],
+            response_format=MathResponse,
+            **kwargs,
+        )
+        assert completion.id
+        assert completion.object == "chat.completion"
+        assert completion.model
+        assert completion.created
+        assert completion.usage.completion_tokens is not None
+        assert completion.usage.prompt_tokens is not None
+        assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.content is not None
+        assert completion.choices[0].message.role
+        if completion.choices[0].message.parsed:
+            assert completion.choices[0].message.parsed.steps
+            for step in completion.choices[0].message.parsed.steps:
+                assert step.explanation
+                assert step.output
+            assert completion.choices[0].message.parsed.final_answer

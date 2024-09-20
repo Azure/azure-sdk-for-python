@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import platform
 import random
 import socket
 import threading
@@ -18,13 +17,11 @@ import pytest
 from unittest.mock import ANY, Mock, patch
 
 from helpers import (
-    build_aad_response,
-    build_id_token,
     get_discovery_response,
-    id_token_claims,
     mock_response,
     Request,
     validating_transport,
+    GET_TOKEN_METHODS,
 )
 
 
@@ -32,7 +29,8 @@ WEBBROWSER_OPEN = InteractiveBrowserCredential.__module__ + ".webbrowser.open"
 
 
 @pytest.mark.manual
-def test_browser_credential():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_browser_credential(get_token_method):
     transport = Mock(wraps=RequestsTransport())
     credential = InteractiveBrowserCredential(transport=transport)
     scope = "https://management.azure.com/.default"  # N.B. this is valid only in Public Cloud
@@ -45,15 +43,15 @@ def test_browser_credential():
 
     # credential should have a cached access token for the scope used in authenticate
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential should authenticate silently"))):
-        token = credential.get_token(scope)
+        token = getattr(credential, get_token_method)(scope)
     assert token.token
 
     credential = InteractiveBrowserCredential(transport=transport)
-    token = credential.get_token(scope)
+    token = getattr(credential, get_token_method)(scope)
     assert token.token
 
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential should authenticate silently"))):
-        second_token = credential.get_token(scope)
+        second_token = getattr(credential, get_token_method)(scope)
     assert second_token.token == token.token
 
     # every request should have the correct User-Agent
@@ -76,14 +74,16 @@ def test_tenant_id_validation():
             InteractiveBrowserCredential(tenant_id=tenant)
 
 
-def test_no_scopes():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_no_scopes(get_token_method):
     """The credential should raise when get_token is called with no scopes"""
 
     with pytest.raises(ValueError):
-        InteractiveBrowserCredential().get_token()
+        getattr(InteractiveBrowserCredential(), get_token_method)()
 
 
-def test_policies_configurable():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_policies_configurable(get_token_method):
     # the policy raises an exception so this test can run without authenticating i.e. opening a browser
     expected_message = "test_policies_configurable"
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock(side_effect=Exception(expected_message)))
@@ -91,13 +91,14 @@ def test_policies_configurable():
     credential = InteractiveBrowserCredential(policies=[policy])
 
     with pytest.raises(ClientAuthenticationError) as ex:
-        credential.get_token("scope")
+        getattr(credential, get_token_method)("scope")
 
     assert expected_message in ex.value.message
     assert policy.on_request.called
 
 
-def test_disable_automatic_authentication():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_disable_automatic_authentication(get_token_method):
     """When configured for strict silent auth, the credential should raise when silent auth fails"""
 
     transport = Mock(send=Mock(side_effect=Exception("no request should be sent")))
@@ -107,10 +108,11 @@ def test_disable_automatic_authentication():
 
     with patch(WEBBROWSER_OPEN, Mock(side_effect=Exception("credential shouldn't try interactive authentication"))):
         with pytest.raises(AuthenticationRequiredError):
-            credential.get_token("scope")
+            getattr(credential, get_token_method)("scope")
 
 
-def test_timeout():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_timeout(get_token_method):
     """get_token should raise ClientAuthenticationError when the server times out without receiving a redirect"""
 
     timeout = 0.01
@@ -133,11 +135,12 @@ def test_timeout():
 
     with patch(WEBBROWSER_OPEN, lambda _: True):
         with pytest.raises(ClientAuthenticationError) as ex:
-            credential.get_token("scope")
+            getattr(credential, get_token_method)("scope")
     assert "timed out" in ex.value.message.lower()
 
 
-def test_redirect_server():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_redirect_server(get_token_method):
     # binding a random port prevents races when running the test in parallel
     server = None
     hostname = "127.0.0.1"
@@ -167,7 +170,8 @@ def test_redirect_server():
     assert server.query_params[expected_param] == expected_value
 
 
-def test_no_browser():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_no_browser(get_token_method):
     """The credential should raise CredentialUnavailableError when it can't open a browser"""
 
     transport = validating_transport(requests=[Request()] * 2, responses=[get_discovery_response()] * 2)
@@ -176,10 +180,11 @@ def test_no_browser():
     )
     with patch(InteractiveBrowserCredential.__module__ + "._open_browser", lambda _: False):
         with pytest.raises(CredentialUnavailableError, match=r".*browser.*"):
-            credential.get_token("scope")
+            getattr(credential, get_token_method)("scope")
 
 
-def test_redirect_uri():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_redirect_uri(get_token_method):
     """The credential should configure the redirect server to use a given redirect_uri"""
 
     expected_hostname = "localhost"
@@ -192,7 +197,7 @@ def test_redirect_uri():
         client_credential="client_credential",
     )
     with pytest.raises(ClientAuthenticationError) as ex:
-        credential.get_token("scope")
+        getattr(credential, get_token_method)("scope")
 
     assert expected_message in ex.value.message
     server.assert_called_once_with(expected_hostname, expected_port, timeout=ANY)
@@ -206,17 +211,19 @@ def test_invalid_redirect_uri(redirect_uri):
         InteractiveBrowserCredential(redirect_uri=redirect_uri, client_credential="client_credential")
 
 
-def test_cannot_bind_port():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_cannot_bind_port(get_token_method):
     """get_token should raise CredentialUnavailableError when the redirect listener can't bind a port"""
 
     credential = InteractiveBrowserCredential(
         _server_class=Mock(side_effect=socket.error), client_credential="client_credential"
     )
     with pytest.raises(CredentialUnavailableError):
-        credential.get_token("scope")
+        getattr(credential, get_token_method)("scope")
 
 
-def test_cannot_bind_redirect_uri():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_cannot_bind_redirect_uri(get_token_method):
     """When a user specifies a redirect URI, the credential shouldn't attempt to bind another"""
 
     server = Mock(side_effect=socket.error)
@@ -225,6 +232,6 @@ def test_cannot_bind_redirect_uri():
     )
 
     with pytest.raises(CredentialUnavailableError):
-        credential.get_token("scope")
+        getattr(credential, get_token_method)("scope")
 
     server.assert_called_once_with("localhost", 42, timeout=ANY)

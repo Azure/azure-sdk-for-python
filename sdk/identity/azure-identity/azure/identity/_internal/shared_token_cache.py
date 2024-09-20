@@ -9,7 +9,7 @@ from typing import Any, Iterable, List, Mapping, Optional, cast, Dict
 from urllib.parse import urlparse
 import msal
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from .. import CredentialUnavailableError
 from .._constants import KnownAuthorities
 from .._internal import get_default_authority, normalize_authority, wrap_exceptions
@@ -228,7 +228,7 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
 
     def _get_cached_access_token(
         self, scopes: Iterable[str], account: CacheItem, is_cae: bool = False
-    ) -> Optional[AccessToken]:
+    ) -> Optional[AccessTokenInfo]:
         if "home_account_id" not in account:
             return None
 
@@ -241,8 +241,9 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
             )
             for token in cache_entries:
                 expires_on = int(token["expires_on"])
+                refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
                 if expires_on - 300 > int(time.time()):
-                    return AccessToken(token["secret"], expires_on)
+                    return AccessTokenInfo(token["secret"], expires_on, refresh_on=refresh_on)
         except Exception as ex:  # pylint:disable=broad-except
             message = "Error accessing cached data: {}".format(ex)
             raise CredentialUnavailableError(message=message) from ex
