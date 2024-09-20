@@ -1,6 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+from typing import Optional, Union
+
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+
 try:
     from . import constants
 except ImportError:
@@ -54,3 +59,22 @@ def nltk_tokenize(text: str) -> List[str]:
         tokens = nltk.word_tokenize(text)
 
     return list(tokens)
+
+
+def check_and_add_api_version_for_aoai_model_config(
+    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    default_api_version: str,
+) -> None:
+    if (
+        "azure_endpoint" in model_config or "azure_deployment" in model_config
+    ):
+        model_config["api_version"] = model_config.get("api_version", default_api_version)
+
+
+def check_and_add_user_agent_for_aoai_model_config(
+    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    prompty_model_config: dict,
+    user_agent: Optional[str] = None,
+) -> None:
+    if user_agent and ("azure_endpoint" in model_config or "azure_deployment" in model_config):
+        prompty_model_config["parameters"]["extra_headers"].update({"x-ms-useragent": user_agent})

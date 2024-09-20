@@ -28,8 +28,8 @@ def _get_file(name):
     return os.path.join(data_path, name)
 
 
-def answer_length(answer):
-    return len(answer)
+def answer_length(response):
+    return len(response)
 
 
 @pytest.fixture

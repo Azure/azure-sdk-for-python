@@ -15,6 +15,7 @@ from azure.core.credentials import TokenCredential
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.evaluation._http_utils import get_async_http_client
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 from .constants import (
     CommonConstants,
@@ -119,13 +120,13 @@ def generate_payload(normalized_user_text: str, metric: str) -> Dict:
     )
 
 
-async def submit_request(question: str, answer: str, metric: str, rai_svc_url: str, token: str) -> str:
+async def submit_request(query: str, response: str, metric: str, rai_svc_url: str, token: str) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
-    :param question: The question to evaluate.
-    :type question: str
-    :param answer: The answer to evaluate.
-    :type answer: str
+    :param query: The query to evaluate.
+    :type query: str
+    :param response: The response to evaluate.
+    :type response: str
     :param metric: The evaluation metric to use.
     :type metric: str
     :param rai_svc_url: The Responsible AI service URL.
@@ -135,7 +136,7 @@ async def submit_request(question: str, answer: str, metric: str, rai_svc_url: s
     :return: The operation ID.
     :rtype: str
     """
-    user_text = f"<Human>{question}</><System>{answer}</>"
+    user_text = f"<Human>{query}</><System>{response}</>"
     normalized_user_text = user_text.replace("'", '\\"')
     payload = generate_payload(normalized_user_text, metric)
 
@@ -327,11 +328,11 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
     return result
 
 
-async def _get_service_discovery_url(azure_ai_project: dict, token: str) -> str:
+async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: str) -> str:
     """Get the discovery service URL for the Azure AI project
 
     :param azure_ai_project: The Azure AI project details.
-    :type azure_ai_project: Dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param token: The Azure authentication token.
     :type token: str
     :return: The discovery service URL.
@@ -410,14 +411,14 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: str = None) -
 
 
 async def evaluate_with_rai_service(
-    question: str, answer: str, metric_name: str, project_scope: dict, credential: TokenCredential
+    query: str, response: str, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
 ):
-    """ "Evaluate the content safety of the answer using Responsible AI service
+    """ "Evaluate the content safety of the response using Responsible AI service
 
-       :param question: The question to evaluate.
-       :type question: str
-       :param answer: The answer to evaluate.
-       :type answer: str
+       :param query: The query to evaluate.
+       :type query: str
+       :param response: The response to evaluate.
+       :type response: str
        :param metric_name: The evaluation metric to use.
        :type metric_name: str
        :param project_scope: The Azure AI project scope details.
@@ -439,7 +440,7 @@ async def evaluate_with_rai_service(
     await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
 
     # Submit annotation request and fetch result
-    operation_id = await submit_request(question, answer, metric_name, rai_svc_url, token)
+    operation_id = await submit_request(query, response, metric_name, rai_svc_url, token)
     annotation_response = await fetch_result(operation_id, rai_svc_url, credential, token)
     result = parse_response(annotation_response, metric_name)
 

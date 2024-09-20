@@ -5,13 +5,13 @@
 from concurrent.futures import as_completed
 from typing import Union
 
-from promptflow.core import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
 from .._coherence import CoherenceEvaluator
 from .._f1_score import F1ScoreEvaluator
 from .._fluency import FluencyEvaluator
 from .._groundedness import GroundednessEvaluator
+from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from .._relevance import RelevanceEvaluator
 from .._similarity import SimilarityEvaluator
 
@@ -21,8 +21,8 @@ class QAEvaluator:
     Initialize a question-answer evaluator configured for a specific Azure OpenAI model.
 
     :param model_config: Configuration for the Azure OpenAI model.
-    :type model_config: Union[~promptflow.core.AzureOpenAIModelConfiguration,
-        ~promptflow.core.OpenAIModelConfiguration]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
     :return: A function that evaluates and generates metrics for "question-answering" scenario.
     :rtype: Callable
 
@@ -32,8 +32,8 @@ class QAEvaluator:
 
         eval_fn = QAEvaluator(model_config)
         result = qa_eval(
-            question="Tokyo is the capital of which country?",
-            answer="Japan",
+            query="Tokyo is the capital of which country?",
+            response="Japan",
             context="Tokyo is the capital of Japan.",
             ground_truth="Japan"
         )
@@ -53,7 +53,7 @@ class QAEvaluator:
     """
 
     def __init__(
-        self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], parallel: bool = True
+        self, model_config: dict, parallel: bool = True
     ):
         self._parallel = parallel
 
@@ -66,14 +66,14 @@ class QAEvaluator:
             F1ScoreEvaluator(),
         ]
 
-    def __call__(self, *, question: str, answer: str, context: str, ground_truth: str, **kwargs):
+    def __call__(self, *, query: str, response: str, context: str, ground_truth: str, **kwargs):
         """
         Evaluates question-answering scenario.
 
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword context: The context to be evaluated.
         :paramtype context: str
         :keyword ground_truth: The ground truth to be evaluated.
@@ -89,8 +89,8 @@ class QAEvaluator:
                 futures = {
                     executor.submit(
                         evaluator,
-                        question=question,
-                        answer=answer,
+                        query=query,
+                        response=response,
                         context=context,
                         ground_truth=ground_truth,
                         **kwargs
@@ -104,7 +104,7 @@ class QAEvaluator:
         else:
             for evaluator in self._evaluators:
                 result = evaluator(
-                    question=question, answer=answer, context=context, ground_truth=ground_truth, **kwargs
+                    query=query, response=response, context=context, ground_truth=ground_truth, **kwargs
                 )
                 results.update(result)
 

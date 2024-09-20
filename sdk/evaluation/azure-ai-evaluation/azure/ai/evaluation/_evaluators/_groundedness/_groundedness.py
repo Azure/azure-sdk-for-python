@@ -9,7 +9,13 @@ from typing import Union
 import numpy as np
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
-from promptflow.core import AsyncPrompty, AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from promptflow.core import AsyncPrompty
+
+from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from ..._common.utils import (
+    check_and_add_api_version_for_aoai_model_config,
+    check_and_add_user_agent_for_aoai_model_config,
+)
 
 try:
     from ..._user_agent import USER_AGENT
@@ -23,12 +29,8 @@ class _AsyncGroundednessEvaluator:
     LLM_CALL_TIMEOUT = 600
     DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
-    def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
-        if (
-            isinstance(model_config, AzureOpenAIModelConfiguration)
-            and (not hasattr(model_config, "api_version") or model_config.api_version) is None
-        ):
-            model_config.api_version = self.DEFAULT_OPEN_API_VERSION
+    def __init__(self, model_config: dict):
+        check_and_add_api_version_for_aoai_model_config(model_config, self.DEFAULT_OPEN_API_VERSION)
 
         prompty_model_config = {"configuration": model_config, "parameters": {"extra_headers": {}}}
 
@@ -36,23 +38,26 @@ class _AsyncGroundednessEvaluator:
         # https://github.com/encode/httpx/discussions/2959
         prompty_model_config["parameters"]["extra_headers"].update({"Connection": "close"})
 
-        if USER_AGENT and isinstance(model_config, AzureOpenAIModelConfiguration):
-            prompty_model_config["parameters"]["extra_headers"].update({"x-ms-useragent": USER_AGENT})
+        check_and_add_user_agent_for_aoai_model_config(
+            model_config,
+            prompty_model_config,
+            USER_AGENT,
+        )
 
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, "groundedness.prompty")
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
-    async def __call__(self, *, answer: str, context: str, **kwargs):
+    async def __call__(self, *, response: str, context: str, **kwargs):
         # Validate input parameters
-        answer = str(answer or "")
+        response = str(response or "")
         context = str(context or "")
 
-        if not answer.strip() or not context.strip():
-            raise ValueError("Both 'answer' and 'context' must be non-empty strings.")
+        if not response.strip() or not context.strip():
+            raise ValueError("Both 'response' and 'context' must be non-empty strings.")
 
         # Run the evaluation flow
-        llm_output = await self._flow(answer=answer, context=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs)
+        llm_output = await self._flow(response=response, context=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs)
 
         score = np.nan
         if llm_output:
@@ -68,8 +73,8 @@ class GroundednessEvaluator:
     Initialize a groundedness evaluator configured for a specific Azure OpenAI model.
 
     :param model_config: Configuration for the Azure OpenAI model.
-    :type model_config: Union[~promptflow.core.AzureOpenAIModelConfiguration,
-        ~promptflow.core.OpenAIModelConfiguration]
+    :type model_config: Union[~azure.ai.evalation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evalation.OpenAIModelConfiguration]
 
     **Usage**
 
@@ -77,7 +82,7 @@ class GroundednessEvaluator:
 
         eval_fn = GroundednessEvaluator(model_config)
         result = eval_fn(
-            answer="The capital of Japan is Tokyo.",
+            response="The capital of Japan is Tokyo.",
             context="Tokyo is Japan's capital, known for its blend of traditional culture \
                 and technological advancements.")
 
@@ -90,21 +95,21 @@ class GroundednessEvaluator:
         }
     """
 
-    def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
+    def __init__(self, model_config: dict):
         self._async_evaluator = _AsyncGroundednessEvaluator(model_config)
 
-    def __call__(self, *, answer: str, context: str, **kwargs):
+    def __call__(self, *, response: str, context: str, **kwargs):
         """
-        Evaluate groundedness of the answer in the context.
+        Evaluate groundedness of the response in the context.
 
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
-        :keyword context: The context in which the answer is evaluated.
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword context: The context in which the response is evaluated.
         :paramtype context: str
         :return: The groundedness score.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, answer=answer, context=context, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, response=response, context=context, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator
