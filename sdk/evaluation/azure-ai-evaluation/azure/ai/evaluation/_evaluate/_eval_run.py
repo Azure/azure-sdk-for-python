@@ -18,6 +18,7 @@ from azure.core.rest import HttpResponse
 from promptflow._sdk.entities import Run
 from azure.ai.evaluation._http_utils import get_http_client
 from azure.ai.evaluation._version import VERSION
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 LOGGER = logging.getLogger(__name__)
 
@@ -199,7 +200,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
 
         :param reason: Reason for run termination. Possible values are "FINISHED" "FAILED", and "KILLED"
         :type reason: str
-        :raises ValueError: Raised if the run is not in ("FINISHED", "FAILED", "KILLED")
+        :raises EvaluationException: Raised if the run is not in ("FINISHED", "FAILED", "KILLED")
         """
         if not self._check_state_and_log(
             "stop run", {RunStatus.BROKEN, RunStatus.NOT_STARTED, RunStatus.TERMINATED}, False
@@ -210,8 +211,12 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             self._status = RunStatus.TERMINATED
             return
         if reason not in ("FINISHED", "FAILED", "KILLED"):
-            raise ValueError(
-                f"Incorrect terminal status {reason}. " 'Valid statuses are "FINISHED", "FAILED" and "KILLED".'
+            raise EvaluationException(
+                message=f"Incorrect terminal status {reason}. Valid statuses are 'FINISHED', 'FAILED' and 'KILLED'.",
+                internal_message="Incorrect terminal status. Valid statuses are 'FINISHED', 'FAILED' and 'KILLED'",
+                target=ErrorTarget.EVAL_RUN,
+                category=ErrorCategory.FAILED_EXECUTION,
+                blame=ErrorBlame.UNKNOWN
             )
         url = f"https://{self._url_base}/mlflow/v2.0" f"{self._get_scope()}/api/2.0/mlflow/runs/update"
         body = {
@@ -337,14 +342,20 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :type bad_states: Set[RunStatus]
         :param should_raise: Should we raise an error if the bad state has been encountered
         :type should_raise: bool
-        :raises: RuntimeError if should_raise is True and invalid state was encountered.
+        :raises: ~azure.ai.evaluations._exceptions.EvaluationException if should_raise is True and invalid state was encountered.
         :return: Whether or not run is in the correct state.
         :rtype: bool
         """
         if self._status in bad_states:
             msg = f"Unable to {action} due to Run status={self._status}."
             if should_raise:
-                raise RuntimeError(msg)
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.EVAL_RUN,
+                    category=ErrorCategory.FAILED_EXECUTION,
+                    blame=ErrorBlame.UNKNOWN
+                )
             LOGGER.warning(msg)
             return False
         return True
