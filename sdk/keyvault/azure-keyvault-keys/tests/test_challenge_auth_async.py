@@ -510,14 +510,14 @@ async def test_cae():
 
     expected_content = b"a duck"
 
-    async def test_with_challenge(challenge, expected_claim):
+    async def test_with_challenge(claims_challenge, expected_claim):
         first_token = "first_token"
         expected_token = "expected_token"
         tenant = "tenant-id"
         endpoint = f"https://authority.net/{tenant}"
         resource = "https://vault.azure.net"
 
-        first_challenge = Mock(
+        kv_challenge = Mock(
             status_code=401,
             headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource={resource}'},
         )
@@ -528,10 +528,10 @@ async def test_cae():
         async def send(request):
             Requests.count += 1
             if Requests.count == 1:
-                # first request should be unauthorized and have no content
+                # first request should be unauthorized and have no content; triggers a KV challenge response
                 assert not request.body
                 assert request.headers["Content-Length"] == "0"
-                return first_challenge
+                return kv_challenge
             elif Requests.count == 2:
                 # second request should be authorized according to challenge and have the expected content
                 assert request.headers["Content-Length"]
@@ -543,13 +543,14 @@ async def test_cae():
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
                 assert first_token in request.headers["Authorization"]
-                return challenge
+                return claims_challenge
             elif Requests.count == 4:
                 # fourth request should include the required claims and correctly use context from the first challenge
+                # we return another KV challenge to verify that the policy doesn't try to handle this invalid flow
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
                 assert expected_token in request.headers["Authorization"]
-                return Mock(status_code=200)
+                return kv_challenge
             raise ValueError("unexpected request")
 
         async def get_token(*_, **kwargs):
@@ -582,9 +583,10 @@ async def test_cae():
     # Note that no resource or scope is necessarily proovided in a CAE challenge
     challenge = f'Bearer realm="", {url}, {cid}, {err}, claims="{claim_token}"'
 
-    challenge_response = Mock(status_code=401, headers={"WWW-Authenticate": challenge})
+    # get_token is called for the first KV challenge and CAE challenge, but not the second KV challenge
+    claims_challenge = Mock(status_code=401, headers={"WWW-Authenticate": challenge})
 
-    await test_with_challenge(challenge_response, claim)
+    await test_with_challenge(claims_challenge, claim)
 
 
 @pytest.mark.asyncio
@@ -594,14 +596,14 @@ async def test_cae_consecutive_challenges():
 
     expected_content = b"a duck"
 
-    async def test_with_challenge(challenge, expected_claim):
+    async def test_with_challenge(claims_challenge, expected_claim):
         first_token = "first_token"
         expected_token = "expected_token"
         tenant = "tenant-id"
         endpoint = f"https://authority.net/{tenant}"
         resource = "https://vault.azure.net"
 
-        first_challenge = Mock(
+        kv_challenge = Mock(
             status_code=401,
             headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource={resource}'},
         )
@@ -612,22 +614,23 @@ async def test_cae_consecutive_challenges():
         async def send(request):
             Requests.count += 1
             if Requests.count == 1:
-                # first request should be unauthorized and have no content
+                # first request should be unauthorized and have no content; triggers a KV challenge response
                 assert not request.body
                 assert request.headers["Content-Length"] == "0"
-                return first_challenge
+                return kv_challenge
             elif Requests.count == 2:
                 # second request will trigger a CAE challenge response in this test scenario
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
                 assert first_token in request.headers["Authorization"]
-                return challenge
+                return claims_challenge
             elif Requests.count == 3:
                 # third request should include the required claims and correctly use context from the first challenge
+                # we return another CAE challenge to verify that the policy will return consecutive CAE 401s to the user
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
                 assert expected_token in request.headers["Authorization"]
-                return Mock(status_code=200)
+                return claims_challenge
             raise ValueError("unexpected request")
 
         async def get_token(*_, **kwargs):
@@ -648,6 +651,7 @@ async def test_cae_consecutive_challenges():
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
 
+        # get_token is called for the KV challenge and first CAE challenge, but not the second CAE challenge
         assert credential.get_token.call_count == 2
 
     url = f'authorization_uri="{get_random_url()}"'
@@ -659,6 +663,6 @@ async def test_cae_consecutive_challenges():
     # Note that no resource or scope is necessarily proovided in a CAE challenge
     challenge = f'Bearer realm="", {url}, {cid}, {err}, claims="{claim_token}"'
 
-    challenge_response = Mock(status_code=401, headers={"WWW-Authenticate": challenge})
+    claims_challenge = Mock(status_code=401, headers={"WWW-Authenticate": challenge})
 
-    await test_with_challenge(challenge_response, claim)
+    await test_with_challenge(claims_challenge, claim)
