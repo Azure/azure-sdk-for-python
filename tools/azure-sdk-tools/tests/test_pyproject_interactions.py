@@ -62,7 +62,6 @@ def test_nonpresent_pyproject_update():
 @pytest.mark.parametrize(
     "check_name, environment_value, expected_result",
     [
-        # check is true
         ("mindependency", "true", True),
         ("mindependency", "false", False)
     ]
