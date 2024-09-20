@@ -4,6 +4,8 @@
 
 from typing import Any, Dict, Optional
 
+from azure.ai.evaluation._model_configurations import AzureAIProject
+
 from ._rai_client import RAIClient
 
 CONTENT_HARM_TEMPLATES_COLLECTION_KEY = set(
@@ -98,12 +100,12 @@ class AdversarialTemplateHandler:
     Adversarial template handler constructor.
 
     :param azure_ai_project: The Azure AI project.
-    :type azure_ai_project: Dict[str, Any]
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param rai_client: The RAI client.
     :type rai_client: ~azure.ai.evaluation.simulator._model_tools.RAIClient
     """
 
-    def __init__(self, azure_ai_project: Dict[str, Any], rai_client: RAIClient) -> None:
+    def __init__(self, azure_ai_project: AzureAIProject, rai_client: RAIClient) -> None:
         self.cached_templates_source = {}
         # self.template_env = JinjaEnvironment(loader=JinjaFileSystemLoader(searchpath=template_dir))
         self.azure_ai_project = azure_ai_project
