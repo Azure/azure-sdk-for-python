@@ -200,7 +200,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 name="python test",
                 instructions="You are a personal math tutor. Write and run code to answer math questions.",
                 tools=[{"type": "code_interpreter"}],
-                **kwargs,
+                model="gpt-4-1106-preview",
             )
             retrieved_assistant = await client_async.beta.assistants.retrieve(
                 assistant_id=assistant.id,
@@ -493,7 +493,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                 name="python test",
                 instructions="You are a personal math tutor. Write and run code to answer math questions.",
                 tools=[{"type": "code_interpreter"}],
-                **kwargs,
+                model="gpt-4-1106-preview",
             )
             thread = await client_async.beta.threads.create()
 
@@ -565,7 +565,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                         "vector_store_ids": [vector_store.id]
                     }
                 },
-                **kwargs
+                model="gpt-4-1106-preview"
             )
 
             run = await client_async.beta.threads.create_and_run_poll(
@@ -634,7 +634,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
                         }
                     }
                 ],
-                **kwargs,
+                model="gpt-4-1106-preview",
             )
 
             run = await client_async.beta.threads.create_and_run_poll(
@@ -717,7 +717,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             name="Math Tutor",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
-            **kwargs,
+            model="gpt-4-1106-preview",
         )
         try:
             thread = await client_async.beta.threads.create()
@@ -746,7 +746,7 @@ class TestAssistantsAsync(AzureRecordedTestCase):
             name="Math Tutor",
             instructions="You are a personal math tutor. Write and run code to answer math questions.",
             tools=[{"type": "code_interpreter"}],
-            **kwargs
+            model="gpt-4-1106-preview"
         )
 
         try:
