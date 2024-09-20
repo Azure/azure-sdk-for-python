@@ -5,6 +5,8 @@ from typing import Any, Dict, List
 import pytest
 from devtools_testutils import is_live
 
+from azure.ai.evaluation._exceptions import EvaluationException
+
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.azuretest
@@ -37,7 +39,7 @@ class TestAdvSimulator:
             return x
 
         simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
-        with pytest.raises(ValueError):
+        with pytest.raises(EvaluationException):
             asyncio.run(
                 simulator(
                     max_conversation_turns=1,
