@@ -53,26 +53,25 @@ class TestFeedRange:
                         "3c80b1b7310bb39f29cc4ea05bdd461f", True, False)
         setup["created_db"].delete_container(created_container)
 
-
     test_ranges = [(Range("", "FF", True, False),
-                    Range("3FFFFFFFFFFFFFFF", "7F", True, False),
+                    Range("3F", "7F", True, False),
                     True),
-                   (Range("3FFFFFFFFFFFFFFF", "7F", True, False),
+                   (Range("3F", "7F", True, False),
                     Range("", "FF", True, False),
                     False),
-                   (Range("3FFFFFFFFFFFFFFF", "7F", True, False),
+                   (Range("3F", "7F", True, False),
                     Range("", "5F", True, False),
                     False),
-                   (Range("3FFFFFFFFFFFFFFF", "7F", True, True),
-                    Range("3FFFFFFFFFFFFFFF", "7F", True, True),
+                   (Range("3F", "7F", True, True),
+                    Range("3F", "7F", True, True),
                     True),
-                   (Range("3FFFFFFFFFFFFFFF", "7F", False, True),
-                    Range("3FFFFFFFFFFFFFFF", "7F", True, True),
+                   (Range("3F", "7F", False, True),
+                    Range("3F", "7F", True, True),
                     False),
-                   (Range("3FFFFFFFFFFFFFFF", "7F", True, False),
-                    Range("3FFFFFFFFFFFFFFF", "7F", True, True),
+                   (Range("3F", "7F", True, False),
+                    Range("3F", "7F", True, True),
                     False),
-                   (Range("3FFFFFFFFFFFFFFF", "7F", True, False),
+                   (Range("3F", "7F", True, False),
                    Range("", "2F", True, False),
                    False)]
 

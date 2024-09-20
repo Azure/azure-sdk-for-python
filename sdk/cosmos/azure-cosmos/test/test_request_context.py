@@ -18,23 +18,23 @@ from test.test_config import TestConfig
 
 @pytest.fixture(scope="class")
 def setup():
-    if (TestFeedRange.masterKey == '[YOUR_KEY_HERE]' or
-            TestFeedRange.host == '[YOUR_ENDPOINT_HERE]'):
+    if (TestRequestContext.masterKey == '[YOUR_KEY_HERE]' or
+            TestRequestContext.host == '[YOUR_ENDPOINT_HERE]'):
         raise Exception(
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(TestFeedRange.host, TestConfig.credential),
-    created_db = test_client[0].get_database_client(TestFeedRange.TEST_DATABASE_ID)
+    test_client = cosmos_client.CosmosClient(TestRequestContext.host, TestConfig.credential),
+    created_db = test_client[0].get_database_client(TestRequestContext.TEST_DATABASE_ID)
     return {
         "created_db": created_db,
-        "created_collection": created_db.get_container_client(TestFeedRange.TEST_CONTAINER_ID)
+        "created_collection": created_db.get_container_client(TestRequestContext.TEST_CONTAINER_ID)
     }
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
-class TestFeedRange:
+class TestRequestContext:
     """Tests to verify methods for operations on feed ranges
     """
 
@@ -46,7 +46,7 @@ class TestFeedRange:
     test_operations = []
 
     #@pytest.mark.parametrize("operation", test_operations)
-    # test out all operations
+    # test out all operations and using response hook
     def test_crud_request_context(self, setup):
         keys_expected = ["session_token", "feed_range", "partitionKey"]
         item = {

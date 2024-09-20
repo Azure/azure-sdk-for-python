@@ -32,6 +32,7 @@ from urllib3.util.retry import Retry
 from azure.core import PipelineClient
 
 from ._change_feed.feed_range import FeedRange
+from ._session_token_helpers import is_compound_session_token, merge_session_tokens
 from ._vector_session_token import VectorSessionToken
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
@@ -68,6 +69,7 @@ from ._request_object import RequestObject
 from ._retry_utility import ConnectionRetryPolicy
 from ._routing import routing_map_provider, routing_range
 from .documents import ConnectionPolicy, DatabaseAccount
+from azure.cosmos._routing.routing_range import Range
 from .partition_key import (
     _Undefined,
     _Empty,
@@ -3338,64 +3340,118 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         target_feed_range_normalized = target_feed_range.get_normalized_range()
         # filter out tuples that overlap with target_feed_range and normalizes all the ranges
         overlapping_ranges = [(feed_range[0].get_normalized_range(), feed_range[1]) for feed_range in feed_ranges_to_session_tokens if
-                              feed_range[0].get_normalized_range().overlaps(target_feed_range_normalized)]
+                              Range.overlaps(target_feed_range_normalized, feed_range[0].get_normalized_range())]
         # Is there a feed_range that is a superset of some of the other feed_ranges excluding tuples
         # with compound session tokens?
         if overlapping_ranges == 0:
             raise ValueError('There were no overlapping feed ranges with the target.')
 
-
-        # Clean this up
-        for i in range(len(overlapping_ranges)):
-            for j in range(i + 1, len(overlapping_ranges)):
-                session_token = overlapping_ranges[i][1]
-                session_token_1 = overlapping_ranges[j][1]
-                if (not CosmosClientConnection.is_compound_session_token(session_token) and
-                        not CosmosClientConnection.is_compound_session_token(overlapping_ranges[j][1]) and
-                        overlapping_ranges[i][0] == overlapping_ranges[j][0]):
-                    session_token = CosmosClientConnection.merge_session_tokens(session_token, session_token_1)
-                    overlapping_ranges.append((overlapping_ranges[i][0], session_token))
-                    overlapping_ranges.remove(overlapping_ranges[i])
-                    overlapping_ranges.remove(overlapping_ranges[j])
-
-
         i = 0
-        session_token = ""
-        while i < len(overlapping_ranges):
-            feed_range_cmp, session_token_cmp = overlapping_ranges[i]
+        j = 1
+        while i < len(overlapping_ranges) and j < len(overlapping_ranges):
+            cur_feed_range = overlapping_ranges[i][0]
+            session_token = overlapping_ranges[i][1]
+            session_token_1 = overlapping_ranges[j][1]
+            if (not is_compound_session_token(session_token) and
+                    not is_compound_session_token(overlapping_ranges[j][1]) and
+                    cur_feed_range == overlapping_ranges[j][0]):
+                session_token = merge_session_tokens(session_token, session_token_1)
+                feed_ranges_to_remove = [overlapping_ranges[i], overlapping_ranges[j]]
+                for feed_range_to_remove in feed_ranges_to_remove:
+                    overlapping_ranges.remove(feed_range_to_remove)
+                overlapping_ranges.append((cur_feed_range, session_token))
+            else:
+                j += 1
+                if j == len(overlapping_ranges):
+                    i += 1
+                    j = i + 1
+
+
+        updated_session_token = ""
+        remaining_session_tokens = []
+        done_overlapping_ranges = []
+        while len(overlapping_ranges) != 0:
+            feed_range_cmp, session_token_cmp = overlapping_ranges[0]
+            if is_compound_session_token(session_token_cmp):
+                done_overlapping_ranges.append(overlapping_ranges[0])
+                overlapping_ranges.remove(overlapping_ranges[0])
+                continue
+            tokens_cmp = session_token_cmp.split(":")
+            vector_session_token_cmp = VectorSessionToken.create(tokens_cmp[1])
             subsets = []
-            for j in range(i + 1, len(overlapping_ranges)):
+            # creating subsets of feed ranges that are subsets of the current feed range
+            for j in range(1, len(overlapping_ranges)):
                 feed_range = overlapping_ranges[j][0]
-                session_token = overlapping_ranges[j][1]
-                if not CosmosClientConnection.is_compound_session_token(feed_range) and \
+                if not is_compound_session_token(overlapping_ranges[j][1]) and \
                         feed_range.is_subset(feed_range_cmp):
-                    subsets.append(overlapping_ranges[j])
-            for j in range(len(subsets)):
+                    subsets.append(overlapping_ranges[j] + (j,))
+
+            # go through subsets to see if can create current feed range from the subsets
+            not_found = True
+            j = 0
+            while not_found and j < len(subsets):
                 merged_range = subsets[j][0]
+                session_tokens = [subsets[j][1]]
+                merged_indices = [subsets[j][2]]
                 for k in range(len(subsets)):
                     if j == k:
                         continue
                     if merged_range.can_merge(subsets[k][0]):
                         merged_range = merged_range.merge(subsets[k][0])
+                        session_tokens.append(subsets[k][1])
+                        merged_indices.append(subsets[k][2])
                     if feed_range_cmp == merged_range:
-                        session_token = subsets[j][1]
-                        return session_token
+                        all_global_lsns_larger = True
+                        for session_token in session_tokens:
+                            tokens = session_token.split(":")
+                            vector_session_token = VectorSessionToken.create(tokens[1])
+                            if vector_session_token.global_lsn <  vector_session_token_cmp.global_lsn:
+                                all_global_lsns_larger = False
+                                break
+                        feed_ranges_to_remove = [overlapping_ranges[i] for i in merged_indices]
+                        for feed_range_to_remove in feed_ranges_to_remove:
+                            overlapping_ranges.remove(feed_range_to_remove)
+                        if all_global_lsns_larger:
+                            overlapping_ranges.append((merged_range, ','.join(map(str, session_tokens))))
+                            overlapping_ranges.remove(overlapping_ranges[0])
+                        not_found = False
+                        break
+                j += 1
 
-    @staticmethod
-    def merge_session_tokens(session_token1, session_token2):
-        token_pairs1 = session_token1.split(",")
-        pk_range_id1 = token_pairs1[0]
-        vector_session_token1 = VectorSessionToken.create(token_pairs1[1])
-        token_pairs2 = session_token2.split(",")
-        pk_range_id2 = token_pairs2[0]
-        vector_session_token2 = VectorSessionToken.create(token_pairs2[1])
-        pk_range_id = pk_range_id1
-        if pk_range_id1 != pk_range_id2:
-            pk_range_id = pk_range_id1 \
-                if vector_session_token1.global_lsn > vector_session_token2.global_lsn else pk_range_id2
-        vector_session_token = vector_session_token1.merge(vector_session_token2)
-        return pk_range_id + "," +  vector_session_token.session_token
+            done_overlapping_ranges.append(overlapping_ranges[0])
+            overlapping_ranges.remove(overlapping_ranges[0])
 
-    @staticmethod
-    def is_compound_session_token(session_token):
-       return "," in session_token
+        for _, session_token in done_overlapping_ranges:
+            # here break up session tokens that are compound
+            if is_compound_session_token(session_token):
+                tokens = session_token.split(",")
+                for token in tokens:
+                    remaining_session_tokens.append(token)
+            else:
+                remaining_session_tokens.append(session_token)
+
+        if len(remaining_session_tokens) == 1:
+            return remaining_session_tokens[0]
+        new_session_tokens = []
+        # merging any session tokens with same pkrangeid
+        for i in range(len(remaining_session_tokens)):
+            for j in range(i + 1, len(remaining_session_tokens)):
+                tokens1 = remaining_session_tokens[i].split(":")
+                tokens2 = remaining_session_tokens[j].split(":")
+                pk_range_id1 = tokens1[0]
+                pk_range_id2 = tokens2[0]
+                if pk_range_id1 == pk_range_id2:
+                    vector_session_token1 = VectorSessionToken.create(tokens1[1])
+                    vector_session_token2 = VectorSessionToken.create(tokens2[1])
+                    vector_session_token = vector_session_token1.merge(vector_session_token2)
+                    new_session_tokens.append(pk_range_id1 + ":" + vector_session_token.session_token)
+                    remaining_session_tokens.remove(remaining_session_tokens[i])
+                    remaining_session_tokens.remove(remaining_session_tokens[j])
+        new_session_tokens.extend(remaining_session_tokens)
+        for i in range(len(new_session_tokens)):
+            if i == len(new_session_tokens) - 1:
+                updated_session_token += new_session_tokens[i]
+            else:
+                updated_session_token += new_session_tokens[i] + ","
+
+        return updated_session_token

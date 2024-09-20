@@ -1372,7 +1372,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: a session token
         :rtype: str
         """
-        self.client_connection._get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range)
+        return self.client_connection._get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range)
 
     def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> FeedRange:
         """Gets the feed range for a given partition key.
