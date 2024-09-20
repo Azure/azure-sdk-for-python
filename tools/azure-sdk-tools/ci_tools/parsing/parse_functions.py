@@ -149,7 +149,6 @@ def get_config_setting(package_path: str, setting: str, default: Any = True) -> 
     # we should always take the override if one is present
     override_value = os.getenv(f"{os.path.basename(package_path).upper().replace('-','_')}_{setting.upper()}", None)
 
-    breakpoint()
     if override_value:
         return str_to_bool(override_value)
 
