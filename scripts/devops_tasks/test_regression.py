@@ -31,8 +31,8 @@ from git_helper import (
     clone_repo,
 )
 
-from ci_tools.functions import discover_targeted_packages, find_whl, parse_require
-from ci_tools.parsing import ParsedSetup
+from ci_tools.functions import discover_targeted_packages, find_whl
+from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.variables import str_to_bool
 
 AZURE_GLOB_STRING = "azure*"
