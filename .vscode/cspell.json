@@ -61,6 +61,7 @@
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/core/corehttp/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
+    "sdk/evaluation/azure-ai-evaluation/tests/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
@@ -244,6 +245,7 @@
     "guids",
     "hanaonazure",
     "hdinsight",
+    "healthdataaiservices",
     "heapq",
     "hexlify",
     "himds",
@@ -402,6 +404,7 @@
     "unpad",
     "unpadder",
     "unpartial",
+    "uniquifier",
     "unredacted",
     "unseekable",
     "unsubscriptable",
@@ -440,6 +443,7 @@
     "BUILDID",
     "documentdb",
     "chdir",
+    "radiculopathy",
     "reqs",
     "rgpy",
     "swaggertosdk",
@@ -1302,7 +1306,32 @@
         "mros",
         "Nify",
         "ctxt",
-        "wday"
+        "wday",
+        "dtype"
+      ]
+    },
+    {
+      "filename": "sdk/evaluation/azure-ai-evaluation/**",
+      "words": [
+        "raisvc",
+        "otel",
+        "otlp",
+        "aggr",
+        "mlflow",
+        "azureml",
+        "dcid",
+        "prompty",
+        "wsid",
+        "tkey",
+        "tparam",
+        "tqdm",
+        "ncols",
+        "datas",
+        "punkt",
+        "gleu",
+        "fmeasure",
+        "upia",
+        "xpia",
       ]
     },
     {
@@ -1815,7 +1844,12 @@
         "Nify",
         "loinc",
         "wday",
-        "SNOMED"
+        "SNOMED",
+        "lobulated",
+        "pericholecystic",
+        "craniocaudally",
+        "angiomyolipomas",
+        "Omnipaque"
       ]
     },
     {
@@ -1839,6 +1873,17 @@
       "filename": "sdk/face/azure-ai-vision-face/tests/**",
       "words": [
         "dcid"
+      ]
+    },
+    {
+      "filename": "sdk/healthdataaiservices/azure-health-deidentification/**",
+      "words": [
+        "deid",
+        "deidservices",
+        "deidentification",
+        "healthdataaiservices",
+        "deidentify",
+        "deidentified"
       ]
     }
   ],

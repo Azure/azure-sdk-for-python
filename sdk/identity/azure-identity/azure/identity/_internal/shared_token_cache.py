@@ -9,7 +9,7 @@ from typing import Any, Iterable, List, Mapping, Optional, cast, Dict
 from urllib.parse import urlparse
 import msal
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from .. import CredentialUnavailableError
 from .._constants import KnownAuthorities
 from .._internal import get_default_authority, normalize_authority, wrap_exceptions
@@ -157,9 +157,9 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         :rtype: list[CacheItem]
         """
 
-        cache = self._cae_cache if is_cae else self._cache
+        cache = cast(msal.TokenCache, self._cae_cache if is_cae else self._cache)
         items = []
-        for item in cache.find(credential_type):
+        for item in cache.search(credential_type):
             environment = item.get("environment")
             if environment in self._environment_aliases:
                 items.append(item)
@@ -228,21 +228,22 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
 
     def _get_cached_access_token(
         self, scopes: Iterable[str], account: CacheItem, is_cae: bool = False
-    ) -> Optional[AccessToken]:
+    ) -> Optional[AccessTokenInfo]:
         if "home_account_id" not in account:
             return None
 
-        cache = self._cae_cache if is_cae else self._cache
+        cache = cast(msal.TokenCache, self._cae_cache if is_cae else self._cache)
         try:
-            cache_entries = cache.find(
+            cache_entries = cache.search(
                 msal.TokenCache.CredentialType.ACCESS_TOKEN,
                 target=list(scopes),
                 query={"home_account_id": account["home_account_id"]},
             )
             for token in cache_entries:
                 expires_on = int(token["expires_on"])
+                refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
                 if expires_on - 300 > int(time.time()):
-                    return AccessToken(token["secret"], expires_on)
+                    return AccessTokenInfo(token["secret"], expires_on, refresh_on=refresh_on)
         except Exception as ex:  # pylint:disable=broad-except
             message = "Error accessing cached data: {}".format(ex)
             raise CredentialUnavailableError(message=message) from ex
@@ -253,9 +254,9 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
         if "home_account_id" not in account:
             return []
 
-        cache = self._cae_cache if is_cae else self._cache
+        cache = cast(msal.TokenCache, self._cae_cache if is_cae else self._cache)
         try:
-            cache_entries = cache.find(
+            cache_entries = cache.search(
                 msal.TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account["home_account_id"]}
             )
             return [token["secret"] for token in cache_entries if "secret" in token]

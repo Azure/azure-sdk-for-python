@@ -61,141 +61,77 @@ parameters:
   - name: GenerateApiReviewForManualOnly
     type: boolean
     default: false
-  - name: AdvancedBuild
-    type: boolean
-    default: false
 
 jobs:
+  - job: 'Build_Linux'
+    timeoutInMinutes: 90
 
-  - ${{ if eq(parameters['AdvancedBuild'], false) }}:
-    - job: 'Build'
-      timeoutInMinutes: 90
+    pool:
+      name: $(LINUXPOOL)
+      image: $(LINUXVMIMAGE)
+      os: linux
 
-      pool:
-        name: $(LINUXPOOL)
-        image: $(LINUXVMIMAGE)
-        os: linux
+    variables:
+      ComponentDetection.SourcePath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
 
-      steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-        parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    steps:
+    - template: /eng/pipelines/templates/steps/build.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        ArtifactSuffix: linux
+        Artifacts: ${{ parameters.Artifacts }}
 
-      - template: ../steps/build-package-artifacts.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-          TestPipeline: ${{ parameters.TestPipeline }}
-          Artifacts: ${{ parameters.Artifacts }}
+  - job: 'Build_Windows'
+    timeoutInMinutes: 90
 
-  - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-    - job: 'Build_Linux'
-      timeoutInMinutes: 90
+    pool:
+      name: $(WINDOWSPOOL)
+      image: $(WINDOWSVMIMAGE)
+      os: windows
 
-      pool:
-        name: $(LINUXPOOL)
-        image: $(LINUXVMIMAGE)
-        os: linux
+    variables:
+      ComponentDetection.SourcePath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
 
-      steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-        parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    steps:
+    - template: /eng/pipelines/templates/steps/build.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        ArtifactSuffix: windows
+        Artifacts: ${{ parameters.Artifacts }}
 
-      - template: ../steps/build-package-artifacts.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-          TestPipeline: ${{ parameters.TestPipeline }}
-          Artifacts: ${{ parameters.Artifacts }}
-          ArtifactSuffix: linux
-          UseVirtualEnvironment: false
+  - job: 'Build_MacOS'
+    timeoutInMinutes: 90
 
-    - job: 'Build_Windows'
-      timeoutInMinutes: 90
+    pool:
+      name: $(MACPOOL)
+      vmImage: $(MACVMIMAGE)
+      os: macOS
 
-      pool:
-        name: $(WINDOWSPOOL)
-        image: $(WINDOWSVMIMAGE)
-        os: windows
+    variables:
+      ComponentDetection.SourcePath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
 
-      steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-        parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
-      - template: ../steps/build-package-artifacts.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-          TestPipeline: ${{ parameters.TestPipeline }}
-          Artifacts: ${{ parameters.Artifacts }}
-          ArtifactSuffix: windows
-          UseVirtualEnvironment: false
-
-    - job: 'Build_MacOS'
-      timeoutInMinutes: 90
-
-      pool:
-        name: $(MACPOOL)
-        vmImage: $(MACVMIMAGE)
-        os: macOS
-
-      steps:
-      - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-        parameters:
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
-      - template: ../steps/build-package-artifacts.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-          TestPipeline: ${{ parameters.TestPipeline }}
-          Artifacts: ${{ parameters.Artifacts }}
-          ArtifactSuffix: mac
-          UseVirtualEnvironment: false
-
-    - job: 'CoalesceBuildArtifacts'
-      displayName: Combine Built Artifacts
-      dependsOn:
-        - 'Build_Linux'
-        - 'Build_Windows'
-        - 'Build_MacOS'
-      timeoutInMinutes: 90
-
-      pool:
-        name: $(LINUXPOOL)
-        image: $(LINUXVMIMAGE)
-        os: linux
-
-      steps:
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          artifactName: 'packages_windows'
-          targetPath: $(Build.ArtifactStagingDirectory)/packages
-
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          artifactName: 'packages_mac'
-          targetPath: $(Build.ArtifactStagingDirectory)/packages
-
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          artifactName: 'packages_linux'
-          targetPath: $(Build.ArtifactStagingDirectory)/packages
-
-      - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
-        parameters:
-          ArtifactPath: '$(Build.ArtifactStagingDirectory)/packages'
-          ArtifactName: 'packages'
+    steps:
+    - template: /eng/pipelines/templates/steps/build.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        TestPipeline: ${{ parameters.TestPipeline }}
+        ArtifactSuffix: mac
+        Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Build_Extended'
     displayName: Build Extended
     dependsOn:
-      - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-        - 'CoalesceBuildArtifacts'
-      - ${{ else }}:
-        - 'Build'
+      - 'Build_Linux'
+      - 'Build_Windows'
+      - 'Build_MacOS'
 
     timeoutInMinutes: 90
 
@@ -204,7 +140,12 @@ jobs:
       image: $(LINUXVMIMAGE)
       os: linux
 
+    variables:
+      ComponentDetection.SourcePath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
+
     steps:
+    - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+
     - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
@@ -218,7 +159,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Analyze'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
+    condition: and(succeeded(), ne(variables['Skip.Analyze'], 'true'))
 
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
@@ -272,10 +213,9 @@ jobs:
       OsVmImage: azsdk-pool-mms-ubuntu-2004-1espt
       Pool: azsdk-pool-mms-ubuntu-2004-general
       DependsOn:
-        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-          - 'CoalesceBuildArtifacts'
-        - ${{ else }}:
-          - 'Build'
+        - 'Build_Linux'
+        - 'Build_Windows'
+        - 'Build_MacOS'
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
@@ -327,10 +267,9 @@ jobs:
       CloudConfig:
         Cloud: Public
       DependsOn:
-        - ${{ if eq(parameters['AdvancedBuild'], true) }}:
-          - 'CoalesceBuildArtifacts'
-        - ${{ else }}:
-          - 'Build'
+        - 'Build_Linux'
+        - 'Build_Windows'
+        - 'Build_MacOS'
       AdditionalParameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ServiceDirectory: ${{ parameters.ServiceDirectory }}

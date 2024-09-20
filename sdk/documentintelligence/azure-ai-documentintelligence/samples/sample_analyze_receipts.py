@@ -27,10 +27,6 @@ USAGE:
 import os
 
 
-def format_price(price_dict):
-    return "".join([f"{p}" for p in price_dict.values()])
-
-
 def analyze_receipts():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -44,6 +40,9 @@ def analyze_receipts():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import AnalyzeResult
+
+    def _format_price(price_dict):
+        return "".join([f"{p}" for p in price_dict.values()])
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -92,23 +91,23 @@ def analyze_receipts():
                         item_total_price = item.get("valueObject").get("TotalPrice")
                         if item_total_price:
                             print(
-                                f"......Total Item Price: {format_price(item_total_price.get('valueCurrency'))} has confidence: "
+                                f"......Total Item Price: {_format_price(item_total_price.get('valueCurrency'))} has confidence: "
                                 f"{item_total_price.confidence}"
                             )
                 subtotal = receipt.fields.get("Subtotal")
                 if subtotal:
                     print(
-                        f"Subtotal: {format_price(subtotal.get('valueCurrency'))} has confidence: {subtotal.confidence}"
+                        f"Subtotal: {_format_price(subtotal.get('valueCurrency'))} has confidence: {subtotal.confidence}"
                     )
                 tax = receipt.fields.get("TotalTax")
                 if tax:
-                    print(f"Total tax: {format_price(tax.get('valueCurrency'))} has confidence: {tax.confidence}")
+                    print(f"Total tax: {_format_price(tax.get('valueCurrency'))} has confidence: {tax.confidence}")
                 tip = receipt.fields.get("Tip")
                 if tip:
-                    print(f"Tip: {format_price(tip.get('valueCurrency'))} has confidence: {tip.confidence}")
+                    print(f"Tip: {_format_price(tip.get('valueCurrency'))} has confidence: {tip.confidence}")
                 total = receipt.fields.get("Total")
                 if total:
-                    print(f"Total: {format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
+                    print(f"Total: {_format_price(total.get('valueCurrency'))} has confidence: {total.confidence}")
             print("--------------------------------------")
     # [END analyze_receipts]
 

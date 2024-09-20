@@ -5,37 +5,50 @@
 import os
 from unittest.mock import Mock, patch
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio._credentials.application import AzureApplicationCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 from urllib.parse import urlparse
 
-from helpers import build_aad_response, mock_response
+from helpers import build_aad_response, mock_response, GET_TOKEN_METHODS
 from helpers_async import get_completed_future
 
 
 @pytest.mark.asyncio
-async def test_iterates_only_once():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_iterates_only_once(get_token_method):
     """When a credential succeeds, AzureApplicationCredential should use that credential thereafter"""
 
-    expected_token = AccessToken("***", 42)
-    unavailable_credential = Mock(get_token=Mock(side_effect=CredentialUnavailableError(message="...")))
-    successful_credential = Mock(get_token=Mock(return_value=get_completed_future(expected_token)))
+    access_token = "***"
+    unavailable_credential = Mock(
+        spec_set=["get_token", "get_token_info"],
+        get_token=Mock(side_effect=CredentialUnavailableError(message="...")),
+        get_token_info=Mock(side_effect=CredentialUnavailableError(message="...")),
+    )
+    successful_credential = Mock(
+        spec_set=["get_token", "get_token_info"],
+        get_token=Mock(return_value=get_completed_future(AccessToken(access_token, 42))),
+        get_token_info=Mock(return_value=get_completed_future(AccessTokenInfo(access_token, 42))),
+    )
 
     credential = AzureApplicationCredential()
-    credential.credentials = [
+    credential.credentials = (
         unavailable_credential,
         successful_credential,
-        Mock(get_token=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token"))),
-    ]
+        Mock(
+            spec_set=["get_token", "get_token_info"],
+            get_token=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token")),
+            get_token_info=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token")),
+        ),
+    )
 
     for n in range(3):
-        token = await credential.get_token("scope")
-        assert token.token == expected_token.token
-        assert unavailable_credential.get_token.call_count == 1
-        assert successful_credential.get_token.call_count == n + 1
+        token = await getattr(credential, get_token_method)("scope")
+        assert token.token == access_token
+        assert getattr(unavailable_credential, get_token_method).call_count == 1
+        assert getattr(successful_credential, get_token_method).call_count == n + 1
 
 
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
@@ -76,7 +89,8 @@ def test_authority(authority):
 
 
 @pytest.mark.asyncio
-async def test_get_token():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_get_token(get_token_method):
     expected_token = "***"
 
     async def send(request, **kwargs):
@@ -88,7 +102,7 @@ async def test_get_token():
     with patch.dict("os.environ", {var: "..." for var in EnvironmentVariables.CLIENT_SECRET_VARS}, clear=True):
         credential = AzureApplicationCredential(transport=Mock(send=send))
 
-    token = await credential.get_token("scope")
+    token = await getattr(credential, get_token_method)("scope")
     assert token.token == expected_token
 
 

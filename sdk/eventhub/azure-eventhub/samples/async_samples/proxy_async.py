@@ -13,8 +13,9 @@ import os
 import asyncio
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient
 from azure.eventhub import EventData
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 HTTP_PROXY: Dict[str, Union[str, int]] = {
@@ -32,16 +33,18 @@ async def on_event(partition_context, event):
 
 
 async def main():
-    consumer_client = EventHubConsumerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
-        consumer_group='$Default',
+    consumer_client = EventHubConsumerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
+        consumer_group='$Default',
         http_proxy=HTTP_PROXY
     )
 
-    producer_client = EventHubProducerClient.from_connection_string(
-        conn_str=CONNECTION_STR,
+    producer_client = EventHubProducerClient(
+        fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
+        credential=DefaultAzureCredential(),
         http_proxy=HTTP_PROXY
     )
 

@@ -166,7 +166,7 @@ steps:
         azurePowerShellVersion: LatestVersion
         pwsh: true
         ScriptType: InlineScript
-        Inline: >-
+        Inline: |
           $account = (Get-AzContext).Account;
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
@@ -179,10 +179,10 @@ steps:
           }
           Write-Host (Get-Command python).Source
 
-          scripts/devops_tasks/dispatch_tox.py
-          "$(TargetingString)"
-          --service="${{ parameters.ServiceDirectory }}"
-          --toxenv="samples";
+          python scripts/devops_tasks/dispatch_tox.py "$(TargetingString)" `
+            --service="${{ parameters.ServiceDirectory }}" `
+            --toxenv="samples"
+
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
   - ${{ else }}:
@@ -209,10 +209,9 @@ steps:
       testRunTitle: '${{ parameters.ServiceDirectory }} ${{ parameters.CloudName }} $(Agent.JobName)'
       failTaskOnFailedTests: true
 
-  - task: PublishCodeCoverageResults@1
+  - task: PublishCodeCoverageResults@2
     displayName: 'Publish Code Coverage to DevOps'
     continueOnError: true
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
     inputs:
-      codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'

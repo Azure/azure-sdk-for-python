@@ -7,14 +7,14 @@ import base64
 import json
 import time
 from uuid import uuid4
-from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict
+from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict, cast
 
 from msal import TokenCache
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
 from .utils import get_default_authority, normalize_authority, resolve_tenant
 from .aadclient_certificate import AadClientCertificate
@@ -79,29 +79,29 @@ class AadClientBase(abc.ABC):
                 self._cae_cache = TokenCache()
             else:
                 self._cache = TokenCache()
-        return self._cae_cache if is_cae else self._cache
+        return cast(TokenCache, self._cae_cache if is_cae else self._cache)
 
-    def get_cached_access_token(self, scopes: Iterable[str], **kwargs: Any) -> Optional[AccessToken]:
+    def get_cached_access_token(self, scopes: Iterable[str], **kwargs: Any) -> Optional[AccessTokenInfo]:
         tenant = resolve_tenant(
             self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
 
         cache = self._get_cache(**kwargs)
-        tokens = cache.find(
+        for token in cache.search(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
             query={"client_id": self._client_id, "realm": tenant},
-        )
-        for token in tokens:
+        ):
             expires_on = int(token["expires_on"])
             if expires_on > int(time.time()):
-                return AccessToken(token["secret"], expires_on)
+                refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
+                return AccessTokenInfo(token["secret"], expires_on, refresh_on=refresh_on)
         return None
 
     def get_cached_refresh_tokens(self, scopes: Iterable[str], **kwargs) -> List[Dict]:
         # Assumes all cached refresh tokens belong to the same user
         cache = self._get_cache(**kwargs)
-        return cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
+        return list(cache.search(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes)))
 
     @abc.abstractmethod
     def obtain_token_by_authorization_code(self, scopes, code, redirect_uri, client_secret=None, **kwargs):
@@ -131,7 +131,7 @@ class AadClientBase(abc.ABC):
     def _build_pipeline(self, **kwargs):
         pass
 
-    def _process_response(self, response: PipelineResponse, request_time: int, **kwargs) -> AccessToken:
+    def _process_response(self, response: PipelineResponse, request_time: int, **kwargs) -> AccessTokenInfo:
         content = response.context.get(
             ContentDecodePolicy.CONTEXT_NAME
         ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
@@ -140,17 +140,21 @@ class AadClientBase(abc.ABC):
         if response.http_request.body.get("grant_type") == "refresh_token":
             if content.get("error") == "invalid_grant":
                 # the request's refresh token is invalid -> evict it from the cache
-                cache_entries = cache.find(
-                    TokenCache.CredentialType.REFRESH_TOKEN,
-                    query={"secret": response.http_request.body["refresh_token"]},
+                cache_entries = list(
+                    cache.search(
+                        TokenCache.CredentialType.REFRESH_TOKEN,
+                        query={"secret": response.http_request.body["refresh_token"]},
+                    )
                 )
                 for invalid_token in cache_entries:
                     cache.remove_rt(invalid_token)
             if "refresh_token" in content:
                 # Microsoft Entra ID returned a new refresh token -> update the cache entry
-                cache_entries = cache.find(
-                    TokenCache.CredentialType.REFRESH_TOKEN,
-                    query={"secret": response.http_request.body["refresh_token"]},
+                cache_entries = list(
+                    cache.search(
+                        TokenCache.CredentialType.REFRESH_TOKEN,
+                        query={"secret": response.http_request.body["refresh_token"]},
+                    )
                 )
                 # If the old token is in multiple cache entries, the cache is in a state we don't
                 # expect or know how to reason about, so we update nothing.
@@ -168,7 +172,13 @@ class AadClientBase(abc.ABC):
             _scrub_secrets(content)
             raise ClientAuthenticationError(message="Unexpected response from Microsoft Entra ID: {}".format(content))
 
-        token = AccessToken(content["access_token"], expires_on)
+        expires_in = int(content.get("expires_in") or expires_on - request_time)
+        if "refresh_in" not in content and expires_in >= 7200:
+            # MSAL TokenCache expects "refresh_in"
+            content["refresh_in"] = expires_in // 2
+
+        refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
+        token = AccessTokenInfo(content["access_token"], expires_on, refresh_on=refresh_on)
 
         # caching is the final step because 'add' mutates 'content'
         cache.add(

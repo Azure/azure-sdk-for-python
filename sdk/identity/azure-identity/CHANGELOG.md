@@ -1,14 +1,24 @@
 # Release History
 
-## 1.18.0b2 (Unreleased)
+## 1.18.0 (2024-09-19)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- All credentials now implement the `SupportsTokenInfo` or `AsyncSupportsTokenInfo` protocol. Each credential now has a `get_token_info` method which returns an `AccessTokenInfo` object. The `get_token_info` method is an alternative method to `get_token` that improves support for more complex authentication scenarios. ([#36882](https://github.com/Azure/azure-sdk-for-python/pull/36882))
+    - Information on when a token should be refreshed is now saved in `AccessTokenInfo` (if available).
 
 ### Other Changes
+
+- Added identity config validation to `ManagedIdentityCredential` to avoid non-deterministic states (e.g. both `resource_id` and `object_id` are specified). ([#36950](https://github.com/Azure/azure-sdk-for-python/pull/36950))
+- Additional validation was added for `ManagedIdentityCredential` in Azure Cloud Shell environments. ([#36438](https://github.com/Azure/azure-sdk-for-python/issues/36438))
+- Bumped minimum dependency on `azure-core` to `>=1.31.0`.
+
+## 1.18.0b2 (2024-08-09)
+
+### Features Added
+
+- Added support of `send_certificate_chain` keyword argument when using certs with the synchronous `OnBehalfOfCredential`. ([#36810](https://github.com/Azure/azure-sdk-for-python/pull/36810))
+- `AzurePowerShellCredential` now supports using secure strings when authenticating with PowerShell. ([#36653](https://github.com/Azure/azure-sdk-for-python/pull/36653))
 
 ## 1.18.0b1 (2024-07-16)
 

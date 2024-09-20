@@ -76,6 +76,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
         self.scheme = parsed_url.scheme
+        self._is_localhost = False
 
         if service not in ["blob", "queue", "file-share", "dfs"]:
             raise ValueError(f"Invalid service: {service}")
@@ -85,6 +86,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self.account_name = account[0] if len(account) > 1 else None
         if not self.account_name and parsed_url.netloc.startswith("localhost") \
                 or parsed_url.netloc.startswith("127.0.0.1"):
+            self._is_localhost = True
             self.account_name = parsed_url.path.strip("/")
 
         self.credential = _format_shared_key_credential(self.account_name, credential)
@@ -331,7 +333,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                     )
                     raise error
                 return iter(parts)
-            return parts
+            return parts  # type: ignore [no-any-return]
         except HttpResponseError as error:
             process_storage_error(error)
 

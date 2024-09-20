@@ -16,26 +16,19 @@ parameters:
     default: 'public/azure-sdk-for-python'
   - name: ArtifactSuffix
     type: string
-    default: ''
-  - name: UseVirtualEnvironment
-    type: boolean
-    default: true
+    default: 'linux'
 
-# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
-#     eng/pipelines/templates/jobs/ci.tests.yml
-#     eng/pipelines/templates/jobs/ci.yml
-#     eng/pipelines/templates/jobs/live.test.yml
+# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked wherever
+# package targeting needs to be resolved prior to doing any actual work, whether it be build, static analysis, or test.
 
-# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`. This variable
+# will be updated by PR diff detection as well.
 
-# The variable '$(ArtifactName)' is set at runtime by the strategy for the `Build` job.
-# Specifically, one of 3 values `linux`, `mac`, or `windows` will always be populated when invoked from `jobs/ci.yml`.
-
-# However, please note that this variable will not ALWAYS be set. If using `build-artifacts.yml`, ensure that this variable is set AT LEAST
-# to "linux", otherwise the primary tasks will not be run as expected. APIStub, Docs, etc are NOT run on machines that aren't linux.
+# In addition, the variable ENABLE_EXTENSION_BUILD is honored to enable builds on windows and mac if necessary.
 steps:
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
     inputs:
       versionSpec: $(PythonVersion)
 
@@ -52,30 +45,29 @@ steps:
     displayName: 'Tag scheduled builds'
     condition: and(eq(variables['Build.SourceBranchName'], variables['DefaultBranch']), eq(variables['Build.Reason'],'Schedule'))
 
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
+
   - template: /eng/pipelines/templates/steps/use-venv.yml
     parameters:
       VirtualEnvironmentName: "venv"
       Activate: false
-
-  - bash: |
-      source $(VENV_LOCATION)/bin/activate
-      which python
-      python -m pip install --force -r eng/ci_tools.txt
-      python -m pip freeze --all
-    displayName: 'Prep Environment Linux/Mac'
-    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
+      Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - pwsh: |
-      . $(VENV_LOCATION)/Scripts/Activate.ps1
+      $(VENV_ACTIVATION_SCRIPT)
       which python
       python -m pip install --force -r eng/ci_tools.txt
       python -m pip freeze --all
-    displayName: 'Prep Environment Windows'
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+    displayName: 'Prep Environment'
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - template: set-dev-build.yml@self
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - task: Powershell@2
     inputs:
@@ -87,7 +79,7 @@ steps:
       pwsh: true
       workingDirectory: $(Pipeline.Workspace)
     displayName: Update package properties with dev version
-    condition: and(succeeded(),eq(variables['SetDevVersion'],'true'))
+    condition: and(succeeded(), eq(variables['SetDevVersion'],'true'), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - script: |
       sudo apt-get update
@@ -96,22 +88,12 @@ steps:
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-  - bash: |
-      source $(VENV_LOCATION)/bin/activate
-      which python
-      sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
-    displayName: 'Generate Packages Linux/Mac'
-    condition: and(succeeded(), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))
-    timeoutInMinutes: 80
-    env:
-      CIBW_BUILD_VERBOSITY: 3
-
   - pwsh: |
-      . $(VENV_LOCATION)/Scripts/Activate.ps1
+      $(VENV_ACTIVATION_SCRIPT)
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --service=${{parameters.ServiceDirectory}} --inactive
-    displayName: 'Generate Packages Windows'
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'))
+    displayName: 'Generate Packages'
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
@@ -124,6 +106,15 @@ steps:
     condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Linux'))
 
   - ${{ parameters.BeforePublishSteps }}
+
+  # we need to publish an empty artifact. when publishing an empty artifact, let's ensure that there isn't anything to
+  # cause CG or SBOM generation to have to do actual work.
+  - pwsh: |
+      Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse `
+        | Where-Object { !($_.Name.EndsWith("CredScanSuppression.json")) -and ($_.PSIsContainer -ne $true) } `
+        | Remove-Item -Force -Recurse
+    displayName: Clean up repo
+    condition: and(succeeded(), ne(variables['ENABLE_EXTENSION_BUILD'], 'true'), ne('${{ parameters.ArtifactSuffix }}', 'linux'))
 
   - ${{ if eq(parameters.ArtifactSuffix, '') }}:
     - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml

@@ -61,6 +61,7 @@ from ._models_py3 import GatewaySettings
 from ._models_py3 import HardwareProfile
 from ._models_py3 import HostInfo
 from ._models_py3 import IPConfiguration
+from ._models_py3 import IpTag
 from ._models_py3 import KafkaRestProperties
 from ._models_py3 import LinuxOperatingSystemProfile
 from ._models_py3 import LocalizedName
@@ -124,6 +125,7 @@ from ._hd_insight_management_client_enums import FilterMode
 from ._hd_insight_management_client_enums import HDInsightClusterProvisioningState
 from ._hd_insight_management_client_enums import JsonWebKeyEncryptionAlgorithm
 from ._hd_insight_management_client_enums import OSType
+from ._hd_insight_management_client_enums import OutboundDependenciesManagedType
 from ._hd_insight_management_client_enums import PrivateEndpointConnectionProvisioningState
 from ._hd_insight_management_client_enums import PrivateIPAllocationMethod
 from ._hd_insight_management_client_enums import PrivateLink
@@ -193,6 +195,7 @@ __all__ = [
     "HardwareProfile",
     "HostInfo",
     "IPConfiguration",
+    "IpTag",
     "KafkaRestProperties",
     "LinuxOperatingSystemProfile",
     "LocalizedName",
@@ -255,6 +258,7 @@ __all__ = [
     "HDInsightClusterProvisioningState",
     "JsonWebKeyEncryptionAlgorithm",
     "OSType",
+    "OutboundDependenciesManagedType",
     "PrivateEndpointConnectionProvisioningState",
     "PrivateIPAllocationMethod",
     "PrivateLink",

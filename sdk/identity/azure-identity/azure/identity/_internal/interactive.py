@@ -9,10 +9,10 @@ import base64
 import json
 import logging
 import time
-from typing import Any, Optional, Iterable
+from typing import Any, Optional, Iterable, Dict
 from urllib.parse import urlparse
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.exceptions import ClientAuthenticationError
 
 from .msal_credentials import MsalCredential
@@ -95,7 +95,7 @@ class InteractiveCredential(MsalCredential, ABC):
         *,
         authentication_record: Optional[AuthenticationRecord] = None,
         disable_automatic_authentication: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._disable_automatic_authentication = disable_automatic_authentication
         self._auth_record = authentication_record
@@ -106,7 +106,7 @@ class InteractiveCredential(MsalCredential, ABC):
                 client_id=self._auth_record.client_id,
                 authority=self._auth_record.authority,
                 tenant_id=tenant_id,
-                **kwargs
+                **kwargs,
             )
         else:
             super(InteractiveCredential, self).__init__(**kwargs)
@@ -117,7 +117,7 @@ class InteractiveCredential(MsalCredential, ABC):
         claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         enable_cae: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -140,23 +140,74 @@ class InteractiveCredential(MsalCredential, ABC):
         :raises AuthenticationRequiredError: user interaction is necessary to acquire a token, and the credential is
             configured not to begin this automatically. Call :func:`authenticate` to begin interactive authentication.
         """
+        options: TokenRequestOptions = {}
+        if claims:
+            options["claims"] = claims
+        if tenant_id:
+            options["tenant_id"] = tenant_id
+        options["enable_cae"] = enable_cae
+
+        token_info = self._get_token_base(*scopes, options=options, base_method_name="get_token", **kwargs)
+        return AccessToken(token_info.token, token_info.expires_on)
+
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+
+        :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
+            required data, state, or platform support
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+            attribute gives a reason.
+        :raises AuthenticationRequiredError: user interaction is necessary to acquire a token, and the credential is
+            configured not to begin this automatically. Call :func:`authenticate` to begin interactive authentication.
+        """
+        return self._get_token_base(*scopes, options=options, base_method_name="get_token_info")
+
+    def _get_token_base(
+        self,
+        *scopes: str,
+        options: Optional[TokenRequestOptions] = None,
+        base_method_name: str = "get_token_info",
+        **kwargs: Any,
+    ) -> AccessTokenInfo:
         if not scopes:
-            message = "'get_token' requires at least one scope"
-            _LOGGER.warning("%s.get_token failed: %s", self.__class__.__name__, message)
+            message = f"'{base_method_name}' requires at least one scope"
+            _LOGGER.warning("%s.%s failed: %s", self.__class__.__name__, base_method_name, message)
             raise ValueError(message)
 
         allow_prompt = kwargs.pop("_allow_prompt", not self._disable_automatic_authentication)
+        options = options or {}
+        claims = options.get("claims")
+        tenant_id = options.get("tenant_id")
+        enable_cae = options.get("enable_cae", False)
+
+        # Check for arbitrary additional options to enable intermediary support for PoP tokens.
+        for key in options:
+            if key not in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
+                kwargs.setdefault(key, options[key])  # type: ignore
+
         try:
             token = self._acquire_token_silent(
                 *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
             )
-            _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
+            _LOGGER.info("%s.%s succeeded", self.__class__.__name__, base_method_name)
             return token
         except Exception as ex:  # pylint:disable=broad-except
             if not (isinstance(ex, AuthenticationRequiredError) and allow_prompt):
                 _LOGGER.warning(
-                    "%s.get_token failed: %s",
+                    "%s.%s failed: %s",
                     self.__class__.__name__,
+                    base_method_name,
                     ex,
                     exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
                 )
@@ -176,20 +227,27 @@ class InteractiveCredential(MsalCredential, ABC):
             self._auth_record = _build_auth_record(result)
         except Exception as ex:  # pylint:disable=broad-except
             _LOGGER.warning(
-                "%s.get_token failed: %s",
+                "%s.%s failed: %s",
                 self.__class__.__name__,
+                base_method_name,
                 ex,
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
             raise
 
-        _LOGGER.info("%s.get_token succeeded", self.__class__.__name__)
-        return AccessToken(result["access_token"], now + int(result["expires_in"]))
+        _LOGGER.info("%s.%s succeeded", self.__class__.__name__, base_method_name)
+        refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
+        return AccessTokenInfo(
+            result["access_token"],
+            now + int(result["expires_in"]),
+            token_type=result.get("token_type", "Bearer"),
+            refresh_on=refresh_on,
+        )
 
     def authenticate(
         self, *, scopes: Optional[Iterable[str]] = None, claims: Optional[str] = None, **kwargs: Any
     ) -> AuthenticationRecord:
-        """Interactively authenticate a user.
+        """Interactively authenticate a user. This method will always generate a challenge to the user.
 
         :keyword Iterable[str] scopes: scopes to request during authentication, such as those provided by
           :func:`AuthenticationRequiredError.scopes`. If provided, successful authentication will cache an access token
@@ -214,7 +272,7 @@ class InteractiveCredential(MsalCredential, ABC):
         return self._auth_record  # type: ignore
 
     @wrap_exceptions
-    def _acquire_token_silent(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def _acquire_token_silent(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         result = None
         claims = kwargs.get("claims")
         if self._auth_record:
@@ -226,7 +284,10 @@ class InteractiveCredential(MsalCredential, ABC):
                 now = int(time.time())
                 result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
                 if result and "access_token" in result and "expires_in" in result:
-                    return AccessToken(result["access_token"], now + int(result["expires_in"]))
+                    refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
+                    return AccessTokenInfo(
+                        result["access_token"], now + int(result["expires_in"]), refresh_on=refresh_on
+                    )
 
         # if we get this far, result is either None or the content of a Microsoft Entra ID error response
         if result:
@@ -235,5 +296,5 @@ class InteractiveCredential(MsalCredential, ABC):
         raise AuthenticationRequiredError(scopes, claims=claims)
 
     @abc.abstractmethod
-    def _request_token(self, *scopes, **kwargs):
+    def _request_token(self, *scopes, **kwargs) -> Dict:
         pass

@@ -19,8 +19,8 @@ variables:
   - group: Azure SDK Auto Release Pipeline Secrets
 
 jobs:
-- job: LiveTestPython38
-  displayName: Live Test Python 3.8
+- job: LiveTestPython310
+  displayName: Live Test Python 3.10
   timeoutInMinutes: 1500
   strategy:
     maxParallel: 5
@@ -31,7 +31,7 @@ jobs:
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.8'
+        versionSpec: '3.10'
         addToPath: true
         architecture: 'x64'
     - bash: |

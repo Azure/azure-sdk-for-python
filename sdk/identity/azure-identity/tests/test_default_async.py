@@ -6,7 +6,7 @@ import os
 from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import (
     AzurePowerShellCredential,
@@ -20,29 +20,42 @@ from azure.identity.aio import (
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-from helpers import mock_response, Request
+from helpers import mock_response, Request, GET_TOKEN_METHODS
 from helpers_async import async_validating_transport, get_completed_future, wrap_in_future
 from test_shared_cache_credential import build_aad_response, get_account_event, populated_cache
 
 
 @pytest.mark.asyncio
-async def test_iterates_only_once():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_iterates_only_once(get_token_method):
     """When a credential succeeds, DefaultAzureCredential should use that credential thereafter, ignoring the others"""
 
-    unavailable_credential = Mock(get_token=Mock(side_effect=CredentialUnavailableError(message="...")))
-    successful_credential = Mock(get_token=Mock(return_value=get_completed_future(AccessToken("***", 42))))
+    unavailable_credential = Mock(
+        spec_set=["get_token", "get_token_info"],
+        get_token=Mock(side_effect=CredentialUnavailableError(message="...")),
+        get_token_info=Mock(side_effect=CredentialUnavailableError(message="...")),
+    )
+    successful_credential = Mock(
+        spec_set=["get_token", "get_token_info"],
+        get_token=Mock(return_value=get_completed_future(AccessToken("***", 42))),
+        get_token_info=Mock(return_value=get_completed_future(AccessTokenInfo("***", 42))),
+    )
 
     credential = DefaultAzureCredential()
-    credential.credentials = [
+    credential.credentials = (
         unavailable_credential,
         successful_credential,
-        Mock(get_token=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token"))),
-    ]
+        Mock(
+            spec_set=["get_token", "get_token_info"],
+            get_token=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token")),
+            get_token_info=Mock(side_effect=Exception("iteration didn't stop after a credential provided a token")),
+        ),
+    )
 
     for n in range(3):
-        await credential.get_token("scope")
-        assert unavailable_credential.get_token.call_count == 1
-        assert successful_credential.get_token.call_count == n + 1
+        await getattr(credential, get_token_method)("scope")
+        assert getattr(unavailable_credential, get_token_method).call_count == 1
+        assert getattr(successful_credential, get_token_method).call_count == n + 1
 
 
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
@@ -138,7 +151,8 @@ def test_exclude_options():
 
 
 @pytest.mark.asyncio
-async def test_shared_cache_tenant_id():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_shared_cache_tenant_id(get_token_method):
     expected_access_token = "expected-access-token"
     refresh_token_a = "refresh-token-a"
     refresh_token_b = "refresh-token-b"
@@ -159,14 +173,14 @@ async def test_shared_cache_tenant_id():
     credential = get_credential_for_shared_cache_test(
         refresh_token_b, expected_access_token, cache, shared_cache_tenant_id=tenant_b
     )
-    token = await credential.get_token("scope")
+    token = await getattr(credential, get_token_method)("scope")
     assert token.token == expected_access_token
 
     # redundantly specifying shared_cache_username makes no difference
     credential = get_credential_for_shared_cache_test(
         refresh_token_b, expected_access_token, cache, shared_cache_tenant_id=tenant_b, shared_cache_username=upn
     )
-    token = await credential.get_token("scope")
+    token = await getattr(credential, get_token_method)("scope")
     assert token.token == expected_access_token
 
     # shared_cache_tenant_id should prevail over AZURE_TENANT_ID
@@ -174,18 +188,19 @@ async def test_shared_cache_tenant_id():
         credential = get_credential_for_shared_cache_test(
             refresh_token_b, expected_access_token, cache, shared_cache_tenant_id=tenant_b
         )
-    token = await credential.get_token("scope")
+    token = await getattr(credential, get_token_method)("scope")
     assert token.token == expected_access_token
 
     # AZURE_TENANT_ID should be used when shared_cache_tenant_id isn't specified
     with patch("os.environ", {EnvironmentVariables.AZURE_TENANT_ID: tenant_b}):
         credential = get_credential_for_shared_cache_test(refresh_token_b, expected_access_token, cache)
-    token = await credential.get_token("scope")
+    token = await getattr(credential, get_token_method)("scope")
     assert token.token == expected_access_token
 
 
 @pytest.mark.asyncio
-async def test_shared_cache_username():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_shared_cache_username(get_token_method):
     expected_access_token = "expected-access-token"
     refresh_token_a = "refresh-token-a"
     refresh_token_b = "refresh-token-b"
@@ -205,7 +220,7 @@ async def test_shared_cache_username():
     credential = get_credential_for_shared_cache_test(
         refresh_token_a, expected_access_token, cache, shared_cache_username=upn_a
     )
-    token = await credential.get_token("scope")
+    token = await getattr(credential, get_token_method)("scope")
     assert token.token == expected_access_token
 
     # shared_cache_username should prevail over AZURE_USERNAME
@@ -213,13 +228,13 @@ async def test_shared_cache_username():
         credential = get_credential_for_shared_cache_test(
             refresh_token_a, expected_access_token, cache, shared_cache_username=upn_a
         )
-    token = await credential.get_token("scope")
+    token = await getattr(credential, get_token_method)("scope")
     assert token.token == expected_access_token
 
     # AZURE_USERNAME should be used when shared_cache_username isn't specified
     with patch("os.environ", {EnvironmentVariables.AZURE_USERNAME: upn_b}):
         credential = get_credential_for_shared_cache_test(refresh_token_b, expected_access_token, cache)
-    token = await credential.get_token("scope")
+    token = await getattr(credential, get_token_method)("scope")
     assert token.token == expected_access_token
 
 
@@ -298,7 +313,7 @@ def test_process_timeout():
         assert kwargs["process_timeout"] == timeout
 
 
-def test_process_timeout():
+def test_process_timeout_default():
     """the credential should allow configuring a process timeout for Azure CLI and PowerShell by kwarg"""
 
     with patch(DefaultAzureCredential.__module__ + ".AzureCliCredential") as mock_cli_credential:
@@ -319,3 +334,13 @@ def test_unexpected_kwarg():
 def test_error_tenant_id():
     with pytest.raises(TypeError):
         DefaultAzureCredential(tenant_id="foo")
+
+
+def test_validate_cloud_shell_credential_in_dac():
+    MANAGED_IDENTITY_ENVIRON = "azure.identity.aio._credentials.managed_identity.os.environ"
+    with patch.dict(MANAGED_IDENTITY_ENVIRON, {EnvironmentVariables.MSI_ENDPOINT: "https://localhost"}, clear=True):
+        DefaultAzureCredential()
+        DefaultAzureCredential(managed_identity_client_id="foo")
+        DefaultAzureCredential(identity_config={"client_id": "foo"})
+        DefaultAzureCredential(identity_config={"object_id": "foo"})
+        DefaultAzureCredential(identity_config={"resource_id": "foo"})

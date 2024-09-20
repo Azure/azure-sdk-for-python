@@ -43,13 +43,6 @@ import os
 from collections import defaultdict
 
 
-def get_styled_text(styles, content):
-    # Iterate over the styles and merge the spans from each style.
-    spans = [span for style in styles for span in style.spans]
-    spans.sort(key=lambda span: span.offset)
-    return ",".join([content[span.offset : span.offset + span.length] for span in spans])
-
-
 def analyze_fonts():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -62,6 +55,12 @@ def analyze_fonts():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+
+    def _get_styled_text(styles, content):
+        # Iterate over the styles and merge the spans from each style.
+        spans = [span for style in styles for span in style.spans]
+        spans.sort(key=lambda span: span.offset)
+        return ",".join([content[span.offset : span.offset + span.length] for span in spans])
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -108,27 +107,27 @@ def analyze_fonts():
     print(f"Detected {len(similar_font_families)} font families:")
     for font_family, styles in similar_font_families.items():
         print(f"- Font family: '{font_family}'")
-        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+        print(f"  Text: '{_get_styled_text(styles, result.content)}'")
 
     print(f"\nDetected {len(font_styles)} font styles:")
     for font_style, styles in font_styles.items():
         print(f"- Font style: '{font_style}'")
-        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+        print(f"  Text: '{_get_styled_text(styles, result.content)}'")
 
     print(f"\nDetected {len(font_weights)} font weights:")
     for font_weight, styles in font_weights.items():
         print(f"- Font weight: '{font_weight}'")
-        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+        print(f"  Text: '{_get_styled_text(styles, result.content)}'")
 
     print(f"\nDetected {len(font_colors)} font colors:")
     for font_color, styles in font_colors.items():
         print(f"- Font color: '{font_color}'")
-        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+        print(f"  Text: '{_get_styled_text(styles, result.content)}'")
 
     print(f"\nDetected {len(font_background_colors)} font background colors:")
     for font_background_color, styles in font_background_colors.items():
         print(f"- Font background color: '{font_background_color}'")
-        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+        print(f"  Text: '{_get_styled_text(styles, result.content)}'")
 
     print("----------------------------------------")
     # [END analyze_fonts]

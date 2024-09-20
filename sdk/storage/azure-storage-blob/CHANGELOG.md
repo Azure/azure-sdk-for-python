@@ -1,6 +1,31 @@
 # Release History
 
-## 12.21.0 (2024-07-17)
+## 12.24.0b1 (Unreleased)
+
+### Features Added
+
+## 12.23.0 (2024-09-17)
+
+### Features Added
+- Stable release of features from 12.23.0b1
+
+### Bugs Fixed
+- Fixed an issue with batch APIs when using Azurite.
+
+## 12.23.0b1 (2024-08-07)
+
+### Features Added
+- Added support for service version 2024-11-04.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.30.0.
+
+## 12.22.0 (2024-08-06)
+
+### Other Changes
+- Updated type hints across the entire package and enabled MyPy to run during CI. Some public types may have been adjusted if they were previously erroneous or incomplete.
+
+## 12.21.0 (2024-07-18)
 
 ### Features Added
 - Stable release of features from 12.21.0b1

@@ -7,7 +7,7 @@ import os
 import sys
 from typing import cast, Any, Dict, Optional
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, TokenRequestOptions, AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
 from .._exceptions import CredentialUnavailableError
 from .._constants import AzureAuthorityHosts, AZURE_VSCODE_CLIENT_ID, EnvironmentVariables
@@ -139,7 +139,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         """Close the credential's transport session."""
         self.__exit__()
 
-    @log_get_token("VSCodeCredential")
+    @log_get_token
     def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
     ) -> AccessToken:
@@ -174,11 +174,42 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
                 raise CredentialUnavailableError(message=ex.message) from ex
         return super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+        :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
+          Studio Code.
+        """
+        if self._unavailable_reason:
+            error_message = (
+                self._unavailable_reason + "\n"
+                "Visit https://aka.ms/azsdk/python/identity/vscodecredential/troubleshoot"
+                " to troubleshoot this issue."
+            )
+            raise CredentialUnavailableError(message=error_message)
+        if within_dac.get():
+            try:
+                token = super().get_token_info(*scopes, options=options)
+                return token
+            except ClientAuthenticationError as ex:
+                raise CredentialUnavailableError(message=ex.message) from ex
+        return super().get_token_info(*scopes, options=options)
+
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
         self._client = cast(AadClient, self._client)
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         refresh_token = self._get_refresh_token()
         self._client = cast(AadClient, self._client)
         return self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)

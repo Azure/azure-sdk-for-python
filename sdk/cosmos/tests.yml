@@ -9,6 +9,7 @@ extends:
           SubscriptionConfigurations:
             - $(sub-config-azure-cloud-test-resources)
             - $(sub-config-cosmos-azure-cloud-test-resources)
+          ServiceConnection: azure-sdk-tests-cosmos
       MaxParallel: 6
       BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos
