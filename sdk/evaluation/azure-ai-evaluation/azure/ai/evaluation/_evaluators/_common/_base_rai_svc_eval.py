@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, List, Dict, override
+from typing import Dict
+from typing_extensions import override
 
 from abc import ABC
 
@@ -10,6 +11,7 @@ from typing import Dict
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation import AzureAIProject
 from ._base_eval import BaseQRCEval
 
 class BaseRaiServiceEval(BaseQRCEval):
@@ -17,7 +19,7 @@ class BaseRaiServiceEval(BaseQRCEval):
     This includes content safety evaluators, protected material evaluators, and others.
 
     param azure_ai_project: The scope of the Azure AI project.
-    type azure_ai_project: dict
+    type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     param credential: The credential for connecting to the Azure AI project.
     type credential: ~azure.core.credentials.TokenCredential
     param eval_last_turn: If True, only the last turn of the conversation will be evaluated, and no
@@ -28,25 +30,16 @@ class BaseRaiServiceEval(BaseQRCEval):
     """
 
 
-    def __init__(self, eval_metric: EvaluationMetrics, azure_ai_project: Dict, credential: TokenCredential, eval_last_turn: bool = False):
+    def __init__(self, eval_metric: EvaluationMetrics, azure_ai_project: AzureAIProject, credential: TokenCredential, eval_last_turn: bool = False):
         self._eval_metric = eval_metric
         self._eval_last_turn = eval_last_turn
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
     @override
-    async def _eval_qr(self, query: str, response: str) -> Dict:
-        """_summary_
-
-        Args:
-            query (str): _description_
-            response (str): _description_
-
-        Returns:
-            Dict: _description_
-        """
+    async def _eval_qr(self, query: str, response: str):
         return await evaluate_with_rai_service(
-            metric_name=self._eval_metric,
+            metric_name=self._eval_metric.value,
             query=query,
             response=response,
             project_scope=self._azure_ai_project,

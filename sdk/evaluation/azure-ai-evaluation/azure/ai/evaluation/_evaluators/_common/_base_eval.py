@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Callable
 
 from abc import ABC
 
 from typing import Dict, List
 
 import numpy as np
+from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 class BaseQRCEval(ABC):
     """Base class for all evaluators that are capable of accepting either a query and response as input,
@@ -24,59 +25,12 @@ class BaseQRCEval(ABC):
 
 
     def __init__(self, eval_last_turn: bool = False):
-        self._eval_last_turn = eval_last_turn
+        self._async_evaluator = _AsyncBaseEval(eval_last_turn=eval_last_turn, eval_qr=self._eval_qr, aggregate_results=self._aggregate_results)
 
     def __call__(self, query: Optional[str] = None, response: Optional[str] = None, conversation: Optional[List[Dict]] = None):
-        """_summary_
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, conversation=conversation)
 
-        Args:
-            query (Optional[str], optional): _description_. Defaults to None.
-            response (Optional[str], optional): _description_. Defaults to None.
-            conversation (Optional[List[Dict]], optional): _description_. Defaults to None.
-        """
-        if query is None and response is None and conversation is None:
-            pass # TODO exception
-        if query is not None and response is not None:
-            if conversation is not None:
-                pass # TODO another exception
-            return self._eval_qr(query, response)
-        elif conversation is not None:
-            # Extract queries, responses from conversation
-            queries = []
-            responses = []
-
-            if self._eval_last_turn:
-                # Process only the last two turns if _eval_last_turn is True
-                conversation_slice = conversation[-2:] if len(conversation) >= 2 else conversation
-            else:
-                conversation_slice = conversation
-
-            # Convert conversation slice into queries and responses.
-            # Assume that 'user' role is asking queries and 'assistant' role is responding.
-            for each_turn in conversation_slice:
-                role = each_turn["role"]
-                if role == "user":
-                    queries.append(each_turn["content"])
-                elif role == "assistant":
-                    responses.append(each_turn["content"])
-
-            # Evaluate each turn
-            per_turn_results = []
-            for turn_num in range(len(queries)):
-                per_turn_results.append(self._eval_qr(queries[turn_num], responses[turn_num]))
-
-            # Aggregate results if there was more than 1 conversation turn, otherwise
-            # Return the results directly.
-            if len(per_turn_results) > 1:
-                return self._aggregate_results(per_turn_results)
-            elif len(per_turn_results) == 1:
-                return per_turn_results[0]
-            else:
-                return {} # TODO should this be an exception instead
-        else:
-            raise NotImplementedError("Input type unrecognized by generic evaluator input parser.")
-
-    def _eval_qr(self, query: str, response: str) -> Dict:
+    async def _eval_qr(self, query: str, response: str):
         """_summary_
 
         Args:
@@ -116,3 +70,54 @@ class BaseQRCEval(ABC):
         aggregated["evaluation_per_turn"] = evaluation_per_turn
 
         return aggregated
+
+    def _to_async(self):
+        return self._async_evaluator
+class _AsyncBaseEval():
+    def __init__(self, eval_last_turn: bool = False, eval_qr: Callable = None, aggregate_results: Callable = None):
+        self._eval_last_turn = eval_last_turn
+        self._eval_qr = eval_qr
+        self._aggregate_results = aggregate_results
+
+    async def __call__(self, query: Optional[str] = None, response: Optional[str] = None, conversation: Optional[List[Dict]] = None):
+        if query is None and response is None and conversation is None:
+            pass # TODO exception
+        if query is not None and response is not None:
+            if conversation is not None:
+                pass # TODO another exception
+            return await self._eval_qr(query, response)
+        elif conversation is not None:
+            # Extract queries, responses from conversation
+            queries = []
+            responses = []
+
+            if self._eval_last_turn:
+                # Process only the last two turns if _eval_last_turn is True
+                conversation_slice = conversation[-2:] if len(conversation) >= 2 else conversation
+            else:
+                conversation_slice = conversation
+
+            # Convert conversation slice into queries and responses.
+            # Assume that 'user' role is asking queries and 'assistant' role is responding.
+            for each_turn in conversation_slice:
+                role = each_turn["role"]
+                if role == "user":
+                    queries.append(each_turn["content"])
+                elif role == "assistant":
+                    responses.append(each_turn["content"])
+
+            # Evaluate each turn
+            per_turn_results = []
+            for turn_num in range(len(queries)):
+                per_turn_results.append(await self._eval_qr(queries[turn_num], responses[turn_num]))
+
+            # Aggregate results if there was more than 1 conversation turn, otherwise
+            # Return the results directly.
+            if len(per_turn_results) > 1:
+                return self._aggregate_results(per_turn_results)
+            elif len(per_turn_results) == 1:
+                return per_turn_results[0]
+            else:
+                return {} # TODO should this be an exception instead
+        else:
+            raise NotImplementedError("Input type unrecognized by generic evaluator input parser.")
