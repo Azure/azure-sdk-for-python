@@ -9,6 +9,7 @@ from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
 from azure.ai.evaluation._user_agent import USER_AGENT
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._model_configurations import AzureAIProject
 
 from ._identity_manager import APITokenManager
@@ -72,7 +73,14 @@ class RAIClient:
             timeout=5,
         )
         if response.status_code != 200:
-            raise Exception("Failed to retrieve the discovery service URL")  # pylint: disable=broad-exception-raised
+            msg = f"Failed to retrieve the discovery service URL."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.RAI_CLIENT,
+                category=ErrorCategory.SERVICE_UNAVAILABLE,
+                blame=ErrorBlame.UNKNOWN,
+            )
         base_url = urlparse(response.json()["properties"]["discoveryUrl"])
         return f"{base_url.scheme}://{base_url.netloc}"
 
@@ -103,7 +111,14 @@ class RAIClient:
             elif type == "upia":
                 self.jailbreaks_dataset = await self.get(self.jailbreaks_json_endpoint)
             else:
-                raise ValueError("Invalid type, please provide either 'xpia' or 'upia'")
+                msg = f"Invalid jailbreak type: {type}. Supported types: ['xpia', 'upia']"
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
+                )
 
         return self.jailbreaks_dataset
 
@@ -112,7 +127,7 @@ class RAIClient:
 
         :param url: The url
         :type url: str
-        :raises ValueError: If the Azure safety evaluation service is not available in the current region
+        :raises EvaluationException: If the Azure safety evaluation service is not available in the current region
         :return: The response
         :rtype: Any
         """
@@ -131,7 +146,12 @@ class RAIClient:
         if response.status_code == 200:
             return response.json()
 
-        raise ValueError(
-            "Azure safety evaluation service is not available in your current region, "
-            "please go to https://aka.ms/azureaistudiosafetyeval to see which regions are supported"
+        msg = "Azure safety evaluation service is not available in your current region, "
+        "please go to https://aka.ms/azureaistudiosafetyeval to see which regions are supported"
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.RAI_CLIENT,
+            category=ErrorCategory.UNKNOWN,
+            blame=ErrorBlame.USER_ERROR,
         )

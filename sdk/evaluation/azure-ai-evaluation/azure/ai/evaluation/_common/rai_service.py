@@ -15,6 +15,7 @@ from azure.core.credentials import TokenCredential
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.evaluation._http_utils import get_async_http_client
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._model_configurations import AzureAIProject
 
 from .constants import (
@@ -72,15 +73,25 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
         )
 
     if response.status_code != 200:
-        raise Exception(  # pylint: disable=broad-exception-raised
-            f"RAI service is not available in this region. Status Code: {response.status_code}"
+        msg = f"RAI service is not available in this region. Status Code: {response.status_code}"
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.UNKNOWN,
+            category=ErrorCategory.SERVICE_UNAVAILABLE,
+            blame=ErrorBlame.USER_ERROR,
         )
 
     capabilities = response.json()
 
     if capability and capability not in capabilities:
-        raise Exception(  # pylint: disable=broad-exception-raised
-            f"Capability '{capability}' is not available in this region"
+        msg = f"Capability '{capability}' is not available in this region"
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.RAI_CLIENT,
+            category=ErrorCategory.SERVICE_UNAVAILABLE,
+            blame=ErrorBlame.USER_ERROR,
         )
 
 
@@ -337,7 +348,15 @@ async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: st
         )
 
     if response.status_code != 200:
-        raise Exception("Failed to retrieve the discovery service URL")  # pylint: disable=broad-exception-raised
+        msg = f"Failed to retrieve the discovery service URL."
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.RAI_CLIENT,
+            category=ErrorCategory.SERVICE_UNAVAILABLE,
+            blame=ErrorBlame.UNKNOWN,
+        )
+
     base_url = urlparse(response.json()["properties"]["discoveryUrl"])
     return f"{base_url.scheme}://{base_url.netloc}"
 

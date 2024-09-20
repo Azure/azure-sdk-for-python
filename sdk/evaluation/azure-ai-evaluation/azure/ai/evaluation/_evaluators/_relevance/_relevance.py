@@ -9,6 +9,7 @@ from typing import Union
 import numpy as np
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from promptflow.core import AsyncPrompty
 
 from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
@@ -55,7 +56,14 @@ class _AsyncRelevanceEvaluator:
         context = str(context or "")
 
         if not (query.strip() and response.strip() and context.strip()):
-            raise ValueError("'query', 'response' and 'context' must be non-empty strings.")
+            msg = "'query', 'response' and 'context' must be non-empty strings."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                error_category=ErrorCategory.MISSING_FIELD,
+                error_blame=ErrorBlame.USER_ERROR,
+                error_target=ErrorTarget.RELEVANCE_EVALUATOR,
+            )
 
         # Run the evaluation flow
         llm_output = await self._flow(

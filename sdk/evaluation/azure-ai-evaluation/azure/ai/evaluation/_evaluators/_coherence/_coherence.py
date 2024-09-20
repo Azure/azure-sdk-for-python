@@ -9,6 +9,7 @@ from typing import Union
 import numpy as np
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from promptflow.core import AsyncPrompty
 
 from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
@@ -54,7 +55,14 @@ class _AsyncCoherenceEvaluator:
         response = str(response or "")
 
         if not (query.strip() and response.strip()):
-            raise ValueError("Both 'query' and 'response' must be non-empty strings.")
+            msg = "Both 'query' and 'response' must be non-empty strings."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                error_category=ErrorCategory.INVALID_VALUE,
+                error_blame=ErrorBlame.USER_ERROR,
+                error_target=ErrorTarget.COHERENCE_EVALUATOR,
+            )
 
         # Run the evaluation flow
         llm_output = await self._flow(query=query, response=response, timeout=self.LLM_CALL_TIMEOUT, **kwargs)
