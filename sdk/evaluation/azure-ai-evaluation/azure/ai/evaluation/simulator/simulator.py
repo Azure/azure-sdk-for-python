@@ -195,10 +195,10 @@ class Simulator:
         """
         simulated_conversations = []
         progress_bar = tqdm(
-            total=len(conversation_turns) * max_conversation_turns,
-            desc="Simulating predefined conversations",
+            total=int(len(conversation_turns) * (max_conversation_turns/2)),
+            desc="Simulating with predefined conversation turns: ",
             ncols=100,
-            unit="conversations",
+            unit="messages",
         )
 
         for simulation in conversation_turns:
@@ -419,7 +419,7 @@ class Simulator:
         total_turns = len(query_responses) * max_conversation_turns
 
         progress_bar = tqdm(
-            total=total_turns,
+            total=int(total_turns/2),
             desc="Generating: ",
             ncols=100,
             unit="message",
