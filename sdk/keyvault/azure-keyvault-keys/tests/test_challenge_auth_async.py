@@ -580,7 +580,7 @@ async def test_cae():
     claim = '{"access_token": {"foo": "bar"}}'
     # Claim token is a string of the base64 encoding of the claim
     claim_token = base64.b64encode(claim.encode()).decode()
-    # Note that no resource or scope is necessarily proovided in a CAE challenge
+    # Note that no resource or scope is necessarily provided in a CAE challenge
     challenge = f'Bearer realm="", {url}, {cid}, {err}, claims="{claim_token}"'
 
     # get_token is called for the first KV challenge and CAE challenge, but not the second KV challenge
@@ -660,7 +660,7 @@ async def test_cae_consecutive_challenges():
     claim = '{"access_token": {"foo": "bar"}}'
     # Claim token is a string of the base64 encoding of the claim
     claim_token = base64.b64encode(claim.encode()).decode()
-    # Note that no resource or scope is necessarily proovided in a CAE challenge
+    # Note that no resource or scope is necessarily provided in a CAE challenge
     challenge = f'Bearer realm="", {url}, {cid}, {err}, claims="{claim_token}"'
 
     claims_challenge = Mock(status_code=401, headers={"WWW-Authenticate": challenge})

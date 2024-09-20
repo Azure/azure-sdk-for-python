@@ -17,8 +17,9 @@ protocol again.
 from copy import deepcopy
 import time
 from typing import Any, Awaitable, Callable, Optional, overload, TypeVar, Union
-from typing_extensions import ParamSpec
 from urllib.parse import urlparse
+
+from typing_extensions import ParamSpec
 
 from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
@@ -199,7 +200,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
                 # Use the old scope for CAE challenges. The parsing will succeed here since it did before
                 if challenge.claims and old_scope:
                     resource_domain = urlparse(old_scope).netloc
-                    challenge._parameters["scope"] = old_scope
+                    challenge._parameters["scope"] = old_scope  # pylint:disable=protected-access
                     challenge.tenant_id = old_tenant
                 else:
                     raise ValueError(f"The challenge contains invalid scope '{scope}'.")
