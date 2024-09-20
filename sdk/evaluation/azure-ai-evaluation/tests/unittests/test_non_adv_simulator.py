@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # flake8: noqa
+# type: ignore
 import asyncio
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
@@ -85,10 +86,10 @@ class TestNonAdvSimulator:
             target=AsyncMock(),
             max_conversation_turns=2,
             conversation_turns=conversation_turns,
-            user_simulator_prompty=None,
-            user_simulator_prompty_kwargs={},
             api_call_delay_sec=1,
             prompty_model_config={},
+            user_simulator_prompty=None,
+            user_simulator_prompty_kwargs={},
         )
 
         assert len(result) == 1
@@ -107,34 +108,24 @@ class TestNonAdvSimulator:
             query_responses=query_responses,
             max_conversation_turns=2,
             tasks=tasks,
-            user_simulator_prompty=None,
-            user_simulator_prompty_kwargs={},
             target=AsyncMock(),
             api_call_delay_sec=1,
+            user_simulator_prompty=None,
+            user_simulator_prompty_kwargs={},
         )
 
         assert len(result) == 1
         assert isinstance(result[0], JsonLineChatProtocol)
 
     @pytest.mark.asyncio
-    @patch('azure.ai.evaluation.simulator.Simulator._get_target_response', new_callable=AsyncMock)
-    @patch('azure.ai.evaluation.simulator.Simulator._build_user_simulation_response', new_callable=AsyncMock)
-    async def test_complete_conversation(self, mock_build_user_simulation_response, mock_get_target_response, valid_project):
+    async def test_call_with_both_conversation_turns_and_text_tasks(self, valid_project):
         simulator = Simulator(azure_ai_project=valid_project)
-        mock_get_target_response.return_value = "assistant_response"
-        mock_build_user_simulation_response.return_value = "user_response"
-
-        result = await simulator._complete_conversation(
-            conversation_starter="query",
-            max_conversation_turns=2,
-            task="task",
-            user_simulator_prompty=None,
-            user_simulator_prompty_kwargs={},
-            target=AsyncMock(),
-            api_call_delay_sec=1,
-            progress_bar=Mock(),
-        )
-
-        assert len(result) == 2
-        assert result[0]["content"] == "query"
-        assert result[1]["content"] == "assistant_response"
+        with pytest.raises(ValueError, match="Cannot specify both conversation_turns and text/tasks"):
+            await simulator(
+                target=AsyncMock(),
+                max_conversation_turns=2,
+                conversation_turns=[["user_turn"]],
+                text="some text",
+                tasks=[{"task": "task"}],
+                api_call_delay_sec=1,
+            )

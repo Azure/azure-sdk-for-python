@@ -78,12 +78,11 @@ class Simulator:
 
         :keyword target: The target function to call during the simulation.
         :paramtype target: callable
-        :keyword max_conversation_turns: Maximum number of conversation turns for the simulation.
-                                        Each turn consists of a user and an assistant message.
+        :keyword max_conversation_turns: Maximum number of conversation turns for the simulation. Each turn consists of a user and an assistant message.
         :paramtype max_conversation_turns: int
-        :keyword tasks: A list of user tasks, each represented as a list of strings.
+        :keyword tasks: A list of user tasks, each represented as a list of strings. Text should be relevant for the tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
         :paramtype tasks: List[str]
-        :keyword text: The initial input text for generating query responses.
+        :keyword text: The initial input text for generating query responses. Given that the same 'text' is provided for a list of tasks, one example use is to break down a user task into sub-tasks that can share the 'text' variable for context.
         :paramtype text: str
         :keyword num_queries: The number of queries to generate.
         :paramtype num_queries: int
@@ -103,13 +102,16 @@ class Simulator:
         :rtype: List[JsonLineChatProtocol]
 
         Return Value:
-        The method returns a list of JsonLineChatProtocol objects, which are essentially JSON lines where each line is a dictionary containing the query, response, and context.
+        The method returns a list of JsonLineChatProtocol objects, which are essentially a list of dictionaries where the dictionary contains the messages and context. Context includes all the metadata related to the conversation, such as the task, expected response, and query. The messages contain the conversation history, including the user and assistant messages.
 
         Modes:
         - Task-Free Mode: When only num_queries is specified and tasks is not, the method generates num_queries x max_conversation_turns lines of simulated data grounded in the context of the text.
         - Task-Specific Mode: When both num_queries and tasks are specified, the method generates lines of simulated data based on the tasks. If num_queries > len(tasks), the remaining lines are simulated in task-free mode. If num_queries < len(tasks), only the first num_queries tasks are used.
         - Conversation Starter Mode: When conversation_turns are specified, the method starts each conversation with the user-specified queries and then follows the conversation history for the remaining turns.
         """
+        if conversation_turns and (text or tasks):
+            raise ValueError("Cannot specify both conversation_turns and text/tasks")
+
         if num_queries > len(tasks):
             warnings.warn(
                 f"You have specified 'num_queries' > len('tasks') ({num_queries} > {len(tasks)}). "
