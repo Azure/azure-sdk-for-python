@@ -45,12 +45,12 @@ def get_harm_severity_level(harm_score: int) -> str:
 def ensure_nltk_data_downloaded():
     """Download NLTK data packages if not already downloaded."""
     with _nltk_data_download_lock:
-        # For international tokenizer
-        nltk.download("perluniprops")
-
-        # For word tokenizer
-        nltk.download("punkt")
-        nltk.download("punkt_tab")
+        try:
+            from nltk.tokenize.nist import NISTTokenizer
+        except LookupError:
+            nltk.download("perluniprops")
+            nltk.download("punkt")
+            nltk.download("punkt_tab")
 
 
 def nltk_tokenize(text: str) -> List[str]:
