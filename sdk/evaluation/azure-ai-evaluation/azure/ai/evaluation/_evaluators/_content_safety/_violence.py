@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from azure.ai.evaluation._common.constants import EvaluationMetrics
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 try:
     from ._content_safety_base import ContentSafetyEvaluatorBase
@@ -28,7 +29,7 @@ class ViolenceEvaluator:
 
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type azure_ai_project: dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
 
