@@ -47,7 +47,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
       "azure-mgmt-compute",
       "azure-communication-chat",
       "azure-communication-identity"
-    ) | ForEach-Object { $AllPkgProps | Where-Object { $_.Name -eq $_.Name } | Select-Object -First 1 }
+    ) | ForEach-Object { $me=$_; $AllPkgProps | Where-Object { $_.Name -eq $me } | Select-Object -First 1 }
 
     $additionalValidationPackages += $additionalPackages
   }
@@ -56,7 +56,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     $additionalPackages = @(
       "azure-template",
       "azure-core"
-    ) | ForEach-Object { $AllPkgProps | Where-Object { $_.Name -eq $_.Name } | Select-Object -First 1 }
+    ) | ForEach-Object { $me=$_; $AllPkgProps | Where-Object { $_.Name -eq $me } | Select-Object -First 1 }
 
     $additionalValidationPackages += $additionalPackages
   }
