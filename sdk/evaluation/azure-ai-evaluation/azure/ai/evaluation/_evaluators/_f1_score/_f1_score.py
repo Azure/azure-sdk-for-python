@@ -12,20 +12,20 @@ class _AsyncF1ScoreEvaluator:
     def __init__(self):
         pass
 
-    async def __call__(self, *, answer: str, ground_truth: str, **kwargs):
+    async def __call__(self, *, response: str, ground_truth: str, **kwargs):
         # Validate inputs
-        if not (answer and answer.strip() and answer != "None") or not (
+        if not (response and response.strip() and response != "None") or not (
             ground_truth and ground_truth.strip() and ground_truth != "None"
         ):
-            raise ValueError("Both 'answer' and 'ground_truth' must be non-empty strings.")
+            raise ValueError("Both 'response' and 'ground_truth' must be non-empty strings.")
 
         # Run f1 score computation.
-        f1_result = self._compute_f1_score(answer=answer, ground_truth=ground_truth)
+        f1_result = self._compute_f1_score(response=response, ground_truth=ground_truth)
 
         return {"f1_score": f1_result}
 
     @classmethod
-    def _compute_f1_score(cls, answer: str, ground_truth: str) -> str:
+    def _compute_f1_score(cls, response: str, ground_truth: str) -> str:
         import re
         import string
 
@@ -67,7 +67,7 @@ class _AsyncF1ScoreEvaluator:
 
             return white_space_fix(remove_articles(remove_punctuation(lower(text))))
 
-        prediction_tokens = normalize_text(answer)
+        prediction_tokens = normalize_text(response)
         reference_tokens = normalize_text(ground_truth)
         tokenizer = QASplitTokenizer()
         prediction_tokens = tokenizer(prediction_tokens)
@@ -97,7 +97,7 @@ class F1ScoreEvaluator:
 
         eval_fn = F1ScoreEvaluator()
         result = eval_fn(
-            answer="The capital of Japan is Tokyo.",
+            response="The capital of Japan is Tokyo.",
             ground_truth="Tokyo is Japan's capital, known for its blend of traditional culture \
                 and technological advancements.")
 
@@ -113,12 +113,12 @@ class F1ScoreEvaluator:
     def __init__(self):
         self._async_evaluator = _AsyncF1ScoreEvaluator()
 
-    def __call__(self, *, answer: str, ground_truth: str, **kwargs):
+    def __call__(self, *, response: str, ground_truth: str, **kwargs):
         """
         Evaluate F1 score.
 
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword ground_truth: The ground truth to be evaluated.
         :paramtype ground_truth: str
         :return: The F1 score.
@@ -126,7 +126,7 @@ class F1ScoreEvaluator:
         """
 
         return async_run_allowing_running_loop(
-            self._async_evaluator, answer=answer, ground_truth=ground_truth, **kwargs
+            self._async_evaluator, response=response, ground_truth=ground_truth, **kwargs
         )
 
     def _to_async(self):

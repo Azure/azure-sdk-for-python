@@ -12,6 +12,7 @@ import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
 from promptflow.client import PFClient
 
+from .._model_configurations import AzureAIProject
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EvaluationMetrics,
@@ -352,7 +353,7 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-@log_evaluate_activity
+# @log_evaluate_activity
 def evaluate(
     *,
     evaluation_name: Optional[str] = None,
@@ -360,7 +361,7 @@ def evaluate(
     data: Optional[str] = None,
     evaluators: Optional[Dict[str, Callable]] = None,
     evaluator_config: Optional[Dict[str, Dict[str, str]]] = None,
-    azure_ai_project: Optional[Dict] = None,
+    azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
     **kwargs,
 ):
@@ -386,7 +387,7 @@ def evaluate(
           the results will be saved to a file named `evaluation_results.json` in the folder.
     :paramtype output_path: Optional[str]
     :keyword azure_ai_project: Logs evaluation results to AI Studio if set.
-    :paramtype azure_ai_project: Optional[Dict]
+    :paramtype azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
     :return: Evaluation results.
     :rtype: dict
 
@@ -396,15 +397,14 @@ def evaluate(
 
     .. code-block:: python
 
-            from promptflow.core import AzureOpenAIModelConfiguration
             from azure.ai.evaluation import evaluate, RelevanceEvaluator, CoherenceEvaluator
 
 
-            model_config = AzureOpenAIModelConfiguration(
-                azure_endpoint=os.environ.get("AZURE_OPENAI_ENDPOINT"),
-                api_key=os.environ.get("AZURE_OPENAI_KEY"),
-                azure_deployment=os.environ.get("AZURE_OPENAI_DEPLOYMENT")
-            )
+            model_config = {
+                "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+                "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+                "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT")
+            }
 
             coherence_eval = CoherenceEvaluator(model_config=model_config)
             relevance_eval = RelevanceEvaluator(model_config=model_config)
@@ -418,13 +418,13 @@ def evaluate(
                 },
                 evaluator_config={
                     "coherence": {
-                        "answer": "${data.answer}",
-                        "question": "${data.question}"
+                        "response": "${data.response}",
+                        "query": "${data.query}"
                     },
                     "relevance": {
-                        "answer": "${data.answer}",
+                        "response": "${data.response}",
                         "context": "${data.context}",
-                        "question": "${data.question}"
+                        "query": "${data.query}"
                     }
                 }
             )
@@ -466,7 +466,7 @@ def _evaluate(  # pylint: disable=too-many-locals
     data: Optional[str] = None,
     evaluators: Optional[Dict[str, Callable]] = None,
     evaluator_config: Optional[Dict[str, Dict[str, str]]] = None,
-    azure_ai_project: Optional[Dict] = None,
+    azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
     **kwargs,
 ):

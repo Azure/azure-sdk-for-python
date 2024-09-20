@@ -10,6 +10,7 @@ from azure.identity import DefaultAzureCredential
 
 from promptflow._sdk._telemetry import ActivityType, monitor_operation
 from azure.ai.evaluation.simulator import AdversarialScenario
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
 from ._adversarial_simulator import AdversarialSimulator
@@ -50,17 +51,14 @@ class IndirectAttackSimulator:
     """
     Initializes the XPIA (cross domain prompt injected attack) jailbreak adversarial simulator with a project scope.
 
-    :param azure_ai_project: Dictionary defining the scope of the project. It must include the following keys:
-
-        * "subscription_id": Azure subscription ID.
-        * "resource_group_name": Name of the Azure resource group.
-        * "project_name": Name of the Azure Machine Learning workspace.
+    :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
+        name.
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
-    :type azure_ai_project: Dict[str, Any]
     """
 
-    def __init__(self, *, azure_ai_project: Dict[str, Any], credential=None):
+    def __init__(self, *, azure_ai_project: AzureAIProject, credential=None):
         """Constructor."""
         # check if azure_ai_project has the keys: subscription_id, resource_group_name, project_name, credential
         if not all(key in azure_ai_project for key in ["subscription_id", "resource_group_name", "project_name"]):
@@ -89,7 +87,7 @@ class IndirectAttackSimulator:
         if self.rai_client is None:
             raise ValueError("Simulation options require rai services but ai client is not provided.")
 
-    @monitor_adversarial_scenario
+    # @monitor_adversarial_scenario
     async def __call__(
         self,
         *,
@@ -152,7 +150,7 @@ class IndirectAttackSimulator:
                     'template_parameters': {},
                     'messages': [
                         {
-                            'content': '<jailbreak prompt> <adversarial question>',
+                            'content': '<jailbreak prompt> <adversarial query>',
                             'role': 'user'
                         },
                         {
