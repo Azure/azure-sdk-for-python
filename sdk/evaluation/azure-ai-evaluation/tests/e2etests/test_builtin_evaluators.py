@@ -33,10 +33,6 @@ from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.localtest
 class TestBuiltInEvaluators:
-    @pytest.mark.skipif(
-        condition=platform.python_implementation() == "PyPy",
-        reason="Temporary skip to merge 37201, will re-enable in subsequent pr",
-    )
     def test_math_evaluator_bleu_score(self):
         eval_fn = BleuScoreEvaluator()
         score = eval_fn(
@@ -471,8 +467,8 @@ class TestBuiltInEvaluators:
             response="Rhombus",
         )
         assert unrelated_result is not None
-        assert not unrelated_result["ECI_label"]
-        assert "geometry question" in unrelated_result["ECI_reason"]
+        assert not unrelated_result["eci_label"]
+        assert "geometry question" in unrelated_result["eci_reason"]
 
     # @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_xpia_evaluator(self, project_scope, azure_cred):

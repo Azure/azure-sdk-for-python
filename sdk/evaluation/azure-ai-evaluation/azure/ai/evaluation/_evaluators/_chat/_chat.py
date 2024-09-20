@@ -8,12 +8,12 @@ from typing import Dict, List, Union
 
 import numpy as np
 
-from promptflow.core import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
 from .._coherence import CoherenceEvaluator
 from .._fluency import FluencyEvaluator
 from .._groundedness import GroundednessEvaluator
+from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from .._relevance import RelevanceEvaluator
 from .retrieval import RetrievalChatEvaluator
 
@@ -25,8 +25,8 @@ class ChatEvaluator:
     Initialize a chat evaluator configured for a specific Azure OpenAI model.
 
     :param model_config: Configuration for the Azure OpenAI model.
-    :type model_config: Union[~promptflow.core.AzureOpenAIModelConfiguration,
-        ~promptflow.core.OpenAIModelConfiguration]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
     :type eval_last_turn: bool
@@ -46,7 +46,7 @@ class ChatEvaluator:
             {"role": "assistant", "content": "2 + 2 = 4", "context": {
                 "citations": [
                         {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
-                        ]
+                    ]
                 }
             }
         ]
@@ -74,7 +74,7 @@ class ChatEvaluator:
 
     def __init__(
         self,
-        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        model_config: dict,
         eval_last_turn: bool = False,
         parallel: bool = True,
     ):
