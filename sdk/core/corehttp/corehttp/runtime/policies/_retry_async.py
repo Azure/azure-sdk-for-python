@@ -174,7 +174,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HttpRequest, AsyncHttpRe
                         is_response_error = True
                         continue
                 break
-            except ClientAuthenticationError:  # pylint:disable=try-except-raise
+            except ClientAuthenticationError:
                 # the authentication policy failed such that the client's request can't
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
