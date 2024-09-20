@@ -159,6 +159,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         level (to log all requests) or at a single request level. Requests will be logged at INFO level.
     :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip sending 
         response payloads.
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/examples_async.py
