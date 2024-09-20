@@ -42,7 +42,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python",
     keywords="azure, azuresdk, azure sdk",
     classifiers=[
-        "Development Status :: 7 - Inactive",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
