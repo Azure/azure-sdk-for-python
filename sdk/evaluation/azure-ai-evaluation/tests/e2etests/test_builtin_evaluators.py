@@ -467,8 +467,8 @@ class TestBuiltInEvaluators:
             response="Rhombus",
         )
         assert unrelated_result is not None
-        assert not unrelated_result["ECI_label"]
-        assert "geometry question" in unrelated_result["ECI_reason"]
+        assert not unrelated_result["eci_label"]
+        assert "geometry question" in unrelated_result["eci_reason"]
 
     # @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_xpia_evaluator(self, project_scope, azure_cred):
