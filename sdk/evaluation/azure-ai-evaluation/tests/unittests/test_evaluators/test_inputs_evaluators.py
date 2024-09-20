@@ -9,23 +9,23 @@ class NonOptionalEval():
     def __init__(self):
         pass
 
-    def __call__(self, question, answer):
+    def __call__(self, query, response):
         return {"non_score": 0}
 
 class HalfOptionalEval():
     def __init__(self):
         pass
 
-    def __call__(self, question, *, answer = "default"):
-        return {"half_score": 0 if answer == "default" else 1}
+    def __call__(self, query, *, response = "default"):
+        return {"half_score": 0 if response == "default" else 1}
 
     
 class OptionalEval():
     def __init__(self):
         pass
 
-    def __call__(self, *, question = "default", answer = "default"):
-        return {"opt_score": (0 if question == "default" else 1) + (0 if answer == "default" else 2)}
+    def __call__(self, *, query = "default", response = "default"):
+        return {"opt_score": (0 if query == "default" else 1) + (0 if response == "default" else 2)}
     
 class NoInputEval():
     def __init__(self):
@@ -38,7 +38,7 @@ class EchoEval():
     def __init__(self):
         pass
 
-    def __call__(self, *, question = "default", answer = "default"):
-        return {"echo_question": question, "echo_answer": answer}
+    def __call__(self, *, query = "default", response = "default"):
+        return {"echo_query": query, "echo_response": response}
     
     

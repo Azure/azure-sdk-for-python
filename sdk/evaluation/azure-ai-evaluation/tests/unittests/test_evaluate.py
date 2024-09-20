@@ -94,13 +94,13 @@ def _target_fn2(query):
     return response
 
 def _new_answer_target():
-    return {"answer": "new answer"}
+    return {"response": "new response"}
 
-def _question_override_target(question):
-    return {"question": "new question"}
+def _question_override_target(query):
+    return {"query": "new query"}
 
-def _question_answer_override_target(question, answer):
-    return {"question": "new question", "answer": "new answer"}
+def _question_answer_override_target(query, response):
+    return {"query": "new query", "response": "new response"}
 
 
 @pytest.mark.usefixtures("mock_model_config")
@@ -559,7 +559,7 @@ class TestEvaluate:
                 },
             _use_pf_client=use_pf_client
             ) # type: ignore
-        assert exc_info._excinfo[1].__str__() == "Missing required inputs for evaluator non : ['answer']." # type: ignore
+        assert exc_info._excinfo[1].__str__() == "Missing required inputs for evaluator non : ['response']." # type: ignore
 
         # Variants with default answer work when only question is inputted
         only_question_results = evaluate(
@@ -592,8 +592,8 @@ class TestEvaluate:
             _use_pf_client=use_pf_client
         ) # type: ignore
 
-        assert target_answer_results['rows'][0]['outputs.echo.echo_question'] == 'How long is flight from Earth to LV-426?'
-        assert target_answer_results['rows'][0]['outputs.echo.echo_answer'] == 'new answer'
+        assert target_answer_results['rows'][0]['outputs.echo.echo_query'] == 'How long is flight from Earth to LV-426?'
+        assert target_answer_results['rows'][0]['outputs.echo.echo_response'] == 'new response'
 
         # Check that target replaces inputs from data (I.E. if both data and target have same output
         # the target output is sent to the evaluator.)
@@ -606,8 +606,8 @@ class TestEvaluate:
             _use_pf_client=use_pf_client
         ) # type: ignore
 
-        assert question_override_results['rows'][0]['outputs.echo.echo_question'] == "new question"
-        assert question_override_results['rows'][0]['outputs.echo.echo_answer'] == 'There is nothing good there.'
+        assert question_override_results['rows'][0]['outputs.echo.echo_query'] == "new query"
+        assert question_override_results['rows'][0]['outputs.echo.echo_response'] == 'There is nothing good there.'
 
         # Check that target can replace default and data inputs at the same time.
         double_override_results = evaluate(
@@ -618,5 +618,5 @@ class TestEvaluate:
             },
             _use_pf_client=use_pf_client
         ) # type: ignore
-        assert double_override_results['rows'][0]['outputs.echo.echo_question'] == "new question"
-        assert double_override_results['rows'][0]['outputs.echo.echo_answer'] == "new answer"
+        assert double_override_results['rows'][0]['outputs.echo.echo_query'] == "new query"
+        assert double_override_results['rows'][0]['outputs.echo.echo_response'] == "new response"
