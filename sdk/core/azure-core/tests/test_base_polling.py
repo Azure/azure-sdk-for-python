@@ -168,6 +168,23 @@ def polling_response():
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+def test_base_polling_empty_continuation_token(client, polling_response, http_request, http_response):
+    polling = polling_response(http_response, http_request)
+
+    continuation_token = polling.get_continuation_token()
+    assert isinstance(continuation_token, str)
+
+    with pytest.raises(ValueError, match="continuation token cannot be None or empty"):
+        polling_args = LROBasePolling.from_continuation_token(
+            '',
+            deserialization_callback="deserialization_callback",
+            client=client,
+        )
+    new_polling = LROBasePolling()
+    new_polling.initialize(*polling_args)
+
+
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
 def test_base_polling_continuation_token(client, polling_response, http_request, http_response):
     polling = polling_response(http_response, http_request)
 
