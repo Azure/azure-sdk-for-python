@@ -725,7 +725,7 @@ def _decrypt_message(
         unpadder = PKCS7(128).unpadder()
         decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())
 
-    elif encryption_data.encryption_agent.protocol in _ENCRYPTION_V2_PROTOCOLS:
+    elif encryption_data.encryption_agent.protocol in _ENCRYPTION_PROTOCOL_V2:
         block_info = encryption_data.encrypted_region_info
         if not block_info or not block_info.nonce_length:
             raise ValueError("Missing required metadata for decryption.")
