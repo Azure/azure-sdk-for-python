@@ -18,6 +18,9 @@ class BaseRaiServiceEval(BaseQRCEval):
     """Base class for all evaluators that require the use of the Azure AI RAI service for evaluation.
     This includes content safety evaluators, protected material evaluators, and others.
 
+    param eval_metric: The evaluation metric to be used for evaluation. This is used by the API call logic
+    to specify which evaluation to perform.
+    type eval_metric: ~azure.ai.evaluation._common.constants.EvaluationMetrics
     param azure_ai_project: The scope of the Azure AI project.
     type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     param credential: The credential for connecting to the Azure AI project.
