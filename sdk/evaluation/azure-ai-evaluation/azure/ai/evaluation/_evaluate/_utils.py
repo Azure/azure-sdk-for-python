@@ -171,6 +171,7 @@ def _apply_column_mapping(source_df: pd.DataFrame, mapping_config: dict, inplace
     :param inplace: If true, the source_df will be changed inplace.
     :type inplace: bool
     :return: The modified data frame.
+    :rtype: pd.DataFrame
     """
     result_df = source_df
 

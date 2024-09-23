@@ -6,7 +6,7 @@ import functools
 import inspect
 import json
 import logging
-from typing import Callable, Dict
+from typing import Callable, Dict, TypeVar
 
 import pandas as pd
 from promptflow._sdk.entities._flows import FlexFlow as flex_flow
@@ -14,11 +14,15 @@ from promptflow._sdk.entities._flows import Prompty as prompty_sdk
 from promptflow._sdk.entities._flows.dag import Flow as dag_flow
 from promptflow.client import PFClient
 from promptflow.core import Prompty as prompty_core
+from typing_extensions import ParamSpec
 
 from ..._user_agent import USER_AGENT
 from .._utils import _trace_destination_from_project_scope
 
 LOGGER = logging.getLogger(__name__)
+
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
 def _get_evaluator_type(evaluator: Dict[str, Callable]):
@@ -94,15 +98,17 @@ def _get_evaluator_properties(evaluator, evaluator_name):
 
 
 # cspell:ignore isna
-def log_evaluate_activity(func) -> None:
+def log_evaluate_activity(func: Callable[P, R]) -> Callable[P, R]:
     """Decorator to log evaluate activity
 
     :param func: The function to be decorated
     :type func: Callable
+    :returns: The decorated function
+    :rtype: Callable[P, R]
     """
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs) -> Callable:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
         from promptflow._sdk._telemetry import ActivityType, log_activity
         from promptflow._sdk._telemetry.telemetry import get_telemetry_logger
 

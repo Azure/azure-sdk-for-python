@@ -54,7 +54,11 @@ def ensure_nltk_data_downloaded():
 
 
 def nltk_tokenize(text: str) -> List[str]:
-    """Tokenize the input text using the NLTK tokenizer."""
+    """Tokenize the input text using the NLTK tokenizer.
+
+    :return: A list of tokens
+    :rtype: list[str]
+    """
     ensure_nltk_data_downloaded()
 
     if not text.isascii():
