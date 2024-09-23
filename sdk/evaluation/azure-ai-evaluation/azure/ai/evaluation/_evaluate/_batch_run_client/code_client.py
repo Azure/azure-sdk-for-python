@@ -4,6 +4,9 @@
 import inspect
 import json
 import logging
+import os
+from pathlib import Path
+from typing import Callable, Dict, Optional, Union
 
 import pandas as pd
 from promptflow.contracts.types import AttrDict
@@ -59,10 +62,12 @@ class CodeRun:
 class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
         self,
-    ):
+    ) -> None:
         self._thread_pool = ThreadPoolExecutor(thread_name_prefix="evaluators_thread")
 
-    def _calculate_metric(self, evaluator, input_df, column_mapping, evaluator_name):
+    def _calculate_metric(
+        self, evaluator: Callable, input_df: pd.DataFrame, column_mapping: Optional[Dict[str, str]], evaluator_name: str
+    ) -> pd.DataFrame:
         row_metric_futures = []
         row_metric_results = []
         input_df = _apply_column_mapping(input_df, column_mapping)
@@ -118,7 +123,14 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
             )
         return None
 
-    def run(self, flow, data, evaluator_name=None, column_mapping=None, **kwargs):  # pylint: disable=unused-argument
+    def run(
+        self,  # pylint: disable=unused-argument
+        flow: Callable,
+        data: Union[os.PathLike, Path, pd.DataFrame],
+        evaluator_name: Optional[str] = None,
+        column_mapping: Optional[Dict[str, str]] = None,
+        **kwargs,
+    ) -> CodeRun:
         input_df = data
         if not isinstance(input_df, pd.DataFrame):
             try:
@@ -145,11 +157,11 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
         run.aggregated_metrics = aggregation_future
         return run
 
-    def get_details(self, run, all_results=False):
+    def get_details(self, run: CodeRun, all_results: bool = False) -> pd.DataFrame:
         result_df = run.get_result_df(exclude_inputs=not all_results)
         return result_df
 
-    def get_metrics(self, run):
+    def get_metrics(self, run: CodeRun) -> Optional[None]:
         try:
             aggregated_metrics = run.get_aggregated_metrics()
             print("Aggregated metrics")

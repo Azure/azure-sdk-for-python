@@ -8,6 +8,7 @@ import re
 import tempfile
 from collections import namedtuple
 from pathlib import Path
+from typing import Dict
 
 import pandas as pd
 
@@ -159,7 +160,9 @@ def _write_output(path, data_dict):
         json.dump(data_dict, f)
 
 
-def _apply_column_mapping(source_df: pd.DataFrame, mapping_config: dict, inplace: bool = False) -> pd.DataFrame:
+def _apply_column_mapping(
+    source_df: pd.DataFrame, mapping_config: Dict[str, str], inplace: bool = False
+) -> pd.DataFrame:
     """
     Apply column mapping to source_df based on mapping_config.
 
@@ -167,7 +170,7 @@ def _apply_column_mapping(source_df: pd.DataFrame, mapping_config: dict, inplace
     :param source_df: the data frame to be changed.
     :type source_df: pd.DataFrame
     :param mapping_config: The configuration, containing column mapping.
-    :type mapping_config: dict.
+    :type mapping_config: Dict[str, str].
     :param inplace: If true, the source_df will be changed inplace.
     :type inplace: bool
     :return: The modified data frame.
