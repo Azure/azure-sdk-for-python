@@ -356,7 +356,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             The quota to be allotted.
         :keyword access_tier:
             Specifies the access tier of the share.
-            Possible values: 'TransactionOptimized', 'Hot', 'Cool'
+            Possible values: 'TransactionOptimized', 'Hot', 'Cool', 'Premium'
         :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
 
             .. versionadded:: 12.4.0
@@ -632,7 +632,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
 
         :keyword access_tier:
             Specifies the access tier of the share.
-            Possible values: 'TransactionOptimized', 'Hot', and 'Cool'
+            Possible values: 'TransactionOptimized', 'Hot', 'Cool', 'Premium'
         :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
         :keyword int quota:
             Specifies the maximum size of the share, in gigabytes.

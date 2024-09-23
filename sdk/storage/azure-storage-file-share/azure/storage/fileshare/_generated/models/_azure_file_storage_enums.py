@@ -109,6 +109,7 @@ class ShareAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRANSACTION_OPTIMIZED = "TransactionOptimized"
     HOT = "Hot"
     COOL = "Cool"
+    PREMIUM = "Premium"
 
 
 class ShareRootSquash(str, Enum, metaclass=CaseInsensitiveEnumMeta):
