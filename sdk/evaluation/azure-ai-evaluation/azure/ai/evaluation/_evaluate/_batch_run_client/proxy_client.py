@@ -53,8 +53,7 @@ class ProxyClient:
         if os.getenv("PF_EVALS_BATCH_USE_ASYNC", "true").lower() == "true":
             if hasattr(flow, "__call__") and inspect.iscoroutinefunction(flow.__call__):
                 return True
-            elif inspect.iscoroutinefunction(flow):
+            if inspect.iscoroutinefunction(flow):
                 return True
-            else:
-                return False
+            return False
         return False

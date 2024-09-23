@@ -28,16 +28,15 @@ def get_model_class_from_url(endpoint_url: str):
 
     if endpoint_path.endswith("chat/completions"):
         return OpenAIChatCompletionsModel
-    elif endpoint_path.endswith("completions"):
+    if endpoint_path.endswith("completions"):
         return OpenAICompletionsModel
-    else:
-        raise EvaluationException(
-            message=f"Unknown API type for endpoint {endpoint_url}",
-            internal_message="Unknown API type",
-            error_category=ErrorCategory.UNKNOWN_FIELD,
-            error_blame=ErrorBlame.USER_ERROR,
-            error_target=ErrorTarget.MODELS,
-        )
+    raise EvaluationException(
+        message=f"Unknown API type for endpoint {endpoint_url}",
+        internal_message="Unknown API type",
+        error_category=ErrorCategory.UNKNOWN_FIELD,
+        error_blame=ErrorBlame.USER_ERROR,
+        error_target=ErrorTarget.MODELS,
+    )
 
 
 # ===========================================================
