@@ -13,12 +13,6 @@ class EndpointNameSchema:
 
 
 @experimental
-class EndpointUriSchema:
-    uri = fields.Str(required=True)
-    key = fields.Str(required=True)
-
-
-@experimental
 class EndpointRequestSettingsSchema:
     request_batch_size = fields.Int()
     min_endpoint_success_ratio = fields.Number()
