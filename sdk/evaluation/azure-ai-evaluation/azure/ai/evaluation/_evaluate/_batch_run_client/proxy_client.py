@@ -25,7 +25,7 @@ class ProxyClient:
     def run(self, flow, data, column_mapping=None, **kwargs):
         flow_to_run = flow
         if hasattr(flow, "_to_async"):
-            flow_to_run = flow._to_async()
+            flow_to_run = flow._to_async()  # pylint: disable=protected-access
 
         batch_use_async = self._should_batch_use_async(flow_to_run)
         eval_future = self._thread_pool.submit(

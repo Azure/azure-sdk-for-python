@@ -165,7 +165,9 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             self._url_base = urlparse(self._tracking_uri).netloc
             if self._promptflow_run is not None:
                 self.info = RunInfo(
-                    self._promptflow_run.name, self._promptflow_run._experiment_name, self._promptflow_run.name
+                    self._promptflow_run.name,
+                    self._promptflow_run._experiment_name,  # pylint: disable=protected-access
+                    self._promptflow_run.name,
                 )
             else:
                 url = f"https://{self._url_base}/mlflow/v2.0" f"{self._get_scope()}/api/2.0/mlflow/runs/create"
@@ -282,7 +284,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         # is an optional dependency.
         from promptflow.azure._utils._token_cache import ArmTokenCache  # pylint: disable=import-error,no-name-in-module
 
-        return ArmTokenCache().get_token(self._ml_client._credential)
+        return ArmTokenCache().get_token(self._ml_client._credential)  # pylint: disable=protected-access
 
     def request_with_retry(
         self, url: str, method: str, json_dict: Dict[str, Any], headers: Optional[Dict[str, str]] = None
@@ -449,7 +451,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             return credential.account_key
         if hasattr(credential, "sas_token"):
             return credential.sas_token
-        return self._ml_client.datastores._credential
+        return self._ml_client.datastores._credential  # pylint: disable=protected-access
 
     def log_metric(self, key: str, value: float) -> None:
         """

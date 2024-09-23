@@ -571,7 +571,7 @@ def _evaluate(  # pylint: disable=too-many-locals
         user_agent=USER_AGENT,
     )
 
-    trace_destination = pf_client._config.get_trace_destination()
+    trace_destination = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
     target_run = None
     target_generated_columns = set()
 

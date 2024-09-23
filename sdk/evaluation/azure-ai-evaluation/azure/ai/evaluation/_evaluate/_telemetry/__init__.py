@@ -118,7 +118,7 @@ def log_evaluate_activity(func) -> None:
             user_agent=USER_AGENT,
         )
 
-        track_in_cloud = bool(pf_client._config.get_trace_destination())
+        track_in_cloud = bool(pf_client._config.get_trace_destination())  # pylint: disable=protected-access
         evaluate_target = bool(kwargs.get("target", None))
         evaluator_config = bool(kwargs.get("evaluator_config", None))
         custom_dimensions = {
