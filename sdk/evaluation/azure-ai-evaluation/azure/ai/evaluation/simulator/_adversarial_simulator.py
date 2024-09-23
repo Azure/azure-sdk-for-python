@@ -351,7 +351,10 @@ class AdversarialSimulator:
             )
 
         if role == ConversationRole.ASSISTANT:
-            dummy_model = lambda: None  # noqa: E731
+
+            def dummy_model() -> None:
+                return None
+
             dummy_model.name = "dummy_model"
             return CallbackConversationBot(
                 callback=target,
