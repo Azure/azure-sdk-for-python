@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0 (2024-09-22)
+## 2.0.0 (2024-09-23)
 
 ### Features Added
 
@@ -26,17 +26,6 @@
   - The model or publicly exposed class 'ReplicaList' was added in the current version
   - The model or publicly exposed class 'ServiceKind' was added in the current version
   - The model or publicly exposed class 'WebPubSubSocketIOSettings' was added in the current version
-
-### Breaking Changes
-
-  - The model or publicly exposed class 'CustomCertificate' had its instance variable 'system_data' deleted or renamed in the current version
-  - The model or publicly exposed class 'CustomDomain' had its instance variable 'system_data' deleted or renamed in the current version
-  - The model or publicly exposed class 'PrivateEndpointConnection' had its instance variable 'system_data' deleted or renamed in the current version
-  - The model or publicly exposed class 'SharedPrivateLinkResource' had its instance variable 'system_data' deleted or renamed in the current version
-  - The class 'TrackedResource' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
-  - The model or publicly exposed class 'WebPubSubHub' had its instance variable 'system_data' deleted or renamed in the current version
-  - The model or publicly exposed class 'WebPubSubResource' had its instance variable 'system_data' deleted or renamed in the current version
-  - The class 'WebPubSubResource' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
 
 ## 2.0.0b2 (2023-10-23)
 
