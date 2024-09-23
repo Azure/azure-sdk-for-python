@@ -357,7 +357,7 @@ def _trace_async_function(
                 # tracing events not supported in azure-core-tracing-opentelemetry
                 # so need to access the span instance directly
                 with span_impl_type.change_context(span.span_instance):
-                    _add_request_span_attributes(span, span_name, kwargs)
+                    _add_request_span_attributes(span, span_name, args, kwargs)
                     result = await function(*args, **kwargs)
                     if kwargs.get("stream") is True:
                         return _wrapped_stream(result, span)
@@ -395,7 +395,9 @@ def _inference_apis():
     sync_apis = (
         ("azure.ai.inference", "ChatCompletionsClient", "complete", TraceType.INFERENCE, "inference_chat_completions_complete"),
     )
-    async_apis = ()
+    async_apis = (
+        ("azure.ai.inference.aio", "ChatCompletionsClient", "complete", TraceType.INFERENCE, "inference_chat_completions_complete"),
+    )
     return sync_apis, async_apis
 
 
