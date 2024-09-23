@@ -129,7 +129,13 @@ class CodeClient:
                 ) from exc
 
             input_df = pd.DataFrame(json_data)
-        eval_future = self._thread_pool.submit(self._calculate_metric, flow, input_df, column_mapping, evaluator_name)
+        eval_future = self._thread_pool.submit(
+            self._calculate_metric,
+            evaluator=flow,
+            input_df=input_df,
+            column_mapping=column_mapping,
+            evaluator_name=evaluator_name,
+        )
         run = CodeRun(run=eval_future, input_data=data, evaluator_name=evaluator_name, aggregated_metrics=None)
         aggregation_future = self._thread_pool.submit(self._calculate_aggregations, evaluator=flow, run=run)
         run.aggregated_metrics = aggregation_future
