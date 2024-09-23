@@ -81,7 +81,7 @@ def _get_evaluator_properties(evaluator, evaluator_name):
             name = str(evaluator)
             pf_type = "Unknown"
     except Exception as e:  # pylint: disable=broad-exception-caught
-        LOGGER.debug(f"Failed to get evaluator properties: {e}")
+        LOGGER.debug("Failed to get evaluator properties: %s", e)
         name = str(evaluator)
         pf_type = "Unknown"
 
@@ -153,7 +153,7 @@ def log_evaluate_activity(func) -> None:
                         evaluator_info["failed_rows"] = failed_rows
                         evaluator_info["total_rows"] = total_rows
                     except Exception as e:  # pylint: disable=broad-exception-caught
-                        LOGGER.debug(f"Failed to collect evaluate failed row info for {evaluator_name}: {e}")
+                        LOGGER.debug("Failed to collect evaluate failed row info for %s: %s", evaluator_name, e)
                     evaluators_info.append(evaluator_info)
 
                 custom_dimensions = {"evaluators_info": json.dumps(evaluators_info)}
@@ -166,7 +166,7 @@ def log_evaluate_activity(func) -> None:
                 ):
                     pass
             except Exception as e:  # pylint: disable=broad-exception-caught
-                LOGGER.debug(f"Failed to collect evaluate usage info: {e}")
+                LOGGER.debug("Failed to collect evaluate usage info: %s", e)
 
             return result
 

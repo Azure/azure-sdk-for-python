@@ -89,7 +89,7 @@ class _AsyncRetrievalChatEvaluator:
 
             except Exception as e:  # pylint: disable=broad-exception-caught
                 logger.warning(
-                    f"Evaluator {self.__class__.__name__} failed for turn {turn_num + 1} with exception: {e}"
+                    "Evaluator %s failed for turn %s with exception: %s", self.__class__.__name__, turn_num + 1, e
                 )
 
                 per_turn_scores.append(np.nan)

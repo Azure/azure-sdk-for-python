@@ -40,13 +40,13 @@ class CodeRun:
                 else None
             )
         except Exception as ex:  # pylint: disable=broad-exception-caught
-            LOGGER.debug(f"Error calculating metrics for evaluator {self.evaluator_name}, failed with error {str(ex)}")
+            LOGGER.debug("Error calculating metrics for evaluator %s, failed with error %s", self.evaluator_name, ex)
             aggregated_metrics = None
 
         if not isinstance(aggregated_metrics, dict):
             LOGGER.warning(
-                f"Aggregated metrics for evaluator {self.evaluator_name}"
-                f" is not a dictionary will not be logged as metrics"
+                "Aggregated metrics for evaluator %s is not a dictionary will not be logged as metrics",
+                self.evaluator_name,
             )
 
         aggregated_metrics = aggregated_metrics if isinstance(aggregated_metrics, dict) else {}
@@ -110,7 +110,7 @@ class CodeClient:
                 return aggregated_output
         except Exception as ex:  # pylint: disable=broad-exception-caught
             LOGGER.warning(
-                f"Error calculating aggregations for evaluator {run.evaluator_name}," f" failed with error {str(ex)}"
+                "Error calculating aggregations for evaluator %s, failed with error %s", run.evaluator_name, ex
             )
         return None
 
@@ -145,6 +145,6 @@ class CodeClient:
             print("Aggregated metrics")
             print(aggregated_metrics)
         except Exception as ex:  # pylint: disable=broad-exception-caught
-            LOGGER.debug(f"Error calculating metrics for evaluator {run.evaluator_name}, failed with error {str(ex)}")
+            LOGGER.debug("Error calculating metrics for evaluator %s, failed with error %s", run.evaluator_name, ex)
             return None
         return aggregated_metrics

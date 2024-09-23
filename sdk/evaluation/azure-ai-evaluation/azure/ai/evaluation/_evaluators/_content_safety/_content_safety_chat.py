@@ -164,7 +164,10 @@ class ContentSafetyChatEvaluator:
             return score
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.warning(
-                f"Evaluator {evaluator.__class__.__name__} failed for turn {turn_num + 1} with exception: {e}"
+                "Evaluator %s failed for turn %s with exception: %s",
+                evaluator.__class__.__name__,
+                turn_num + 1,
+                e,
             )
             return {}
 

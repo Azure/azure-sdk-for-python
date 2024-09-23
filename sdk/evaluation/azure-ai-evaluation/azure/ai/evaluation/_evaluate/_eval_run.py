@@ -181,8 +181,10 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                 if response.status_code != 200:
                     self.info = RunInfo.generate(self._run_name)
                     LOGGER.warning(
-                        f"The run failed to start: {response.status_code}: {response.text()}."
-                        "The results will be saved locally, but will not be logged to Azure."
+                        "The run failed to start: %s: %s."
+                        "The results will be saved locally, but will not be logged to Azure.",
+                        response.status_code,
+                        response.text(),
                     )
                     self._status = RunStatus.BROKEN
                 else:
@@ -326,9 +328,10 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :type response: HttpResponse
         """
         LOGGER.warning(
-            f"Unable to {failed_op}, "
-            f"the request failed with status code {response.status_code}, "
-            f"{response.text()=}."
+            "Unable to %s, the request failed with status code %s, response.text()=%s.",
+            failed_op,
+            response.status_code,
+            response.text(),
         )
 
     def _check_state_and_log(self, action: str, bad_states: Set[RunStatus], should_raise: bool) -> bool:
