@@ -33,14 +33,6 @@ class TestModelClient(ModelClientTestBase):
 
     @classmethod
     def teardown_class(cls):
-        mode = 'a' if os.path.exists("teardown.txt") else 'w'
-
-        with open("teardown.txt", mode) as file:
-            # Get current timestamp
-            timestamp = datetime.datetime.now()
-            text = "Setting " + CONTENT_TRACING_ENV_VARIABLE + " to " + str(content_tracing_initial_value)
-            # Add timestamp to the start of the text and write to file
-            file.write(f'{timestamp}: {text}\n')
         if content_tracing_initial_value is not None:
             os.environ[CONTENT_TRACING_ENV_VARIABLE] = content_tracing_initial_value
 
@@ -1205,7 +1197,7 @@ class TestModelClient(ModelClientTestBase):
         expected_events = [
             {
                 "name": "gen_ai.system.message",
-                "timestamp": "",
+                "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
                     "gen_ai.event.content": "{\"role\": \"system\", \"content\": \"You are a helpful assistant.\"}"
@@ -1213,7 +1205,7 @@ class TestModelClient(ModelClientTestBase):
             },
             {
                 "name": "gen_ai.user.message",
-                "timestamp": "",
+                "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
                     "gen_ai.event.content": "{\"role\": \"user\", \"content\": \"What is the weather in Seattle?\"}"
@@ -1221,7 +1213,7 @@ class TestModelClient(ModelClientTestBase):
             },
             {
                 "name": "gen_ai.choice",
-                "timestamp": "",
+                "timestamp": "*",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
                     "gen_ai.event.content": "{\"message\": {\"content\": \"\", \"tool_calls\": [{\"function\": {\"arguments\": \"{\\\"city\\\":\\\"Seattle\\\"}\", \"call_id\": null, \"name\": \"get_weather\"}, \"id\": \"*\", \"type\": \"function\"}]}, \"finish_reason\": \"tool_calls\", \"index\": 0}"
@@ -1481,7 +1473,7 @@ class TestModelClient(ModelClientTestBase):
         expected_events = [
             {
                 "name": "gen_ai.system.message",
-                "timestamp": "*",
+                "timestamp": "",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
                     "gen_ai.event.content": "{\"role\": \"system\", \"content\": \"You are a helpful assistant.\"}"
@@ -1489,7 +1481,7 @@ class TestModelClient(ModelClientTestBase):
             },
             {
                 "name": "gen_ai.user.message",
-                "timestamp": "*",
+                "timestamp": "",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
                     "gen_ai.event.content": "{\"role\": \"user\", \"content\": \"What is the weather in Seattle?\"}"
@@ -1497,7 +1489,7 @@ class TestModelClient(ModelClientTestBase):
             },
             {
                 "name": "gen_ai.choice",
-                "timestamp": "*",
+                "timestamp": "",
                 "attributes": {
                     "gen_ai.system": "az.ai.inference",
                     "gen_ai.event.content": "{\"message\": {\"content\": \"\", \"tool_calls\": [{\"function\": {\"arguments\": \"{\\\"city\\\":\\\"Seattle\\\"}\", \"call_id\": null, \"name\": \"get_weather\"}, \"id\": \"*\", \"type\": \"function\"}]}, \"finish_reason\": \"tool_calls\", \"index\": 0}"
