@@ -221,8 +221,10 @@ def get_int_env_var(env_var_name: str, default_value: int) -> int:
     default value if the variable is not set or cannot be converted to an integer.
 
     :param env_var_name: The name of the environment variable you want to retrieve the value of
+    :type env_var_name: str
     :param default_value: The default value is the value that will be returned if the environment
-    variable is not found or if it cannot be converted to an integer
+        variable is not found or if it cannot be converted to an integer
+    :type default_value: int
     :return: an integer value.
     :rtype: int
     """

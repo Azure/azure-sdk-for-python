@@ -56,6 +56,8 @@ def ensure_nltk_data_downloaded():
 def nltk_tokenize(text: str) -> List[str]:
     """Tokenize the input text using the NLTK tokenizer.
 
+    :param text: The text to tokenize
+    :type text: str
     :return: A list of tokens
     :rtype: list[str]
     """

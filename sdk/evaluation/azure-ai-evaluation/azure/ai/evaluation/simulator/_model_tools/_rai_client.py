@@ -105,7 +105,11 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         return self.contentharm_parameters
 
     async def get_jailbreaks_dataset(self, type: str) -> Any:
-        "Get the jailbreaks dataset, if exists"
+        """Get the jailbreaks dataset, if exists
+
+        :param type: The dataset type. Should be one of 'xpia' or 'upia'
+        :type type: str
+        """
         if self.jailbreaks_dataset is None:
             if type == "xpia":
                 self.jailbreaks_dataset = await self.get(self.xpia_jailbreaks_json_endpoint)

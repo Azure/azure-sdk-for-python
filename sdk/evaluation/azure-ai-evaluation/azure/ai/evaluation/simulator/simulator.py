@@ -51,6 +51,7 @@ class Simulator:
         Validates the azure_ai_project configuration to ensure all required keys are present and have non-None values.
 
         :param azure_ai_project: The Azure AI project configuration dictionary.
+        :type azure_ai_project: Dict[str, Any]
         :raises ValueError: If required keys are missing or any of the values are None.
         """
         required_keys = ["subscription_id", "resource_group_name", "project_name"]
@@ -552,9 +553,13 @@ class Simulator:
         Builds a response from the user simulator based on the current conversation history.
 
         :param task: A string representing the task details.
+        :type task: str
         :param conversation_history: The current conversation history as a list of dictionaries.
+        :type conversation_history: List[Dict[str, Any]]
         :param user_simulator_prompty: Path to the user simulator prompty file.
+        :type user_simulator_prompty: Optional[str]
         :param user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
+        :type user_simulator_prompty_kwargs: Dict[str, Any]
         :return: The generated response content from the user simulator.
         :rtype: str
         :raises RuntimeError: If an error occurs during response generation.

@@ -58,8 +58,8 @@ class ConversationHistory:
         """
         Adds a turn to the conversation history.
 
-        Args:
-            turn (Turn): The conversation turn to add.
+        :param turn: The conversation turn to add.
+        :type turn: Turn
         """
         self.history.append(turn)
 

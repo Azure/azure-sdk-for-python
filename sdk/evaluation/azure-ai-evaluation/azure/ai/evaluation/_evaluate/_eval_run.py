@@ -8,8 +8,9 @@ import logging
 import os
 import posixpath
 import time
+import types
 import uuid
-from typing import Any, Dict, Optional, Set
+from typing import Any, Dict, Optional, Set, Type
 from urllib.parse import urlparse
 
 from promptflow._sdk.entities import Run
@@ -243,8 +244,21 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         self._start_run()
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_tb):
-        """The context manager exit call."""
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        exc_tb: Optional[types.TracebackType],
+    ) -> Optional[bool]:
+        """The context manager exit call.
+
+        :param exc_type: The exception type
+        :type exc_type: Optional[Type[BaseException]]
+        :param exc_value: The exception value
+        :type exc_value: Optional[BaseException]
+        :param exc_tb: The exception traceback
+        :type exc_tb: Optional[types.TracebackType]
+        """
         self._end_run("FINISHED")
 
     def get_run_history_uri(self) -> str:
