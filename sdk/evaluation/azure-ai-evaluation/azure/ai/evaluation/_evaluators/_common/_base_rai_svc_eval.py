@@ -11,7 +11,7 @@ from typing import Dict
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
-from azure.ai.evaluation import AzureAIProject
+from azure.ai.evaluation._model_configurations import AzureAIProject
 from ._base_eval import BaseQRCEval
 
 class BaseRaiServiceEval(BaseQRCEval):
@@ -32,17 +32,17 @@ class BaseRaiServiceEval(BaseQRCEval):
     type eval_last_turn: bool
     """
 
-
-    def __init__(self, eval_metric: EvaluationMetrics, azure_ai_project: AzureAIProject, credential: TokenCredential, eval_last_turn: bool = False):
+    @override
+    def __init__(self, eval_metric: EvaluationMetrics, azure_ai_project: bool, credential: TokenCredential, eval_last_turn: bool = False):
+        super().__init__(eval_last_turn=eval_last_turn)
         self._eval_metric = eval_metric
-        self._eval_last_turn = eval_last_turn
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
     @override
     async def _eval_qr(self, query: str, response: str):
         return await evaluate_with_rai_service(
-            metric_name=self._eval_metric.value,
+            metric_name=self._eval_metric,
             query=query,
             response=response,
             project_scope=self._azure_ai_project,
