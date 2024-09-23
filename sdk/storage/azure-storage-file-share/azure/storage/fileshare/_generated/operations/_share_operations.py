@@ -911,7 +911,7 @@ class ShareOperations:
         :param quota: Specifies the maximum size of the share, in gigabytes. Default value is None.
         :type quota: int
         :param access_tier: Specifies the access tier of the share. Known values are:
-         "TransactionOptimized", "Hot", and "Cool". Default value is None.
+         "TransactionOptimized", "Hot", "Cool", and "Premium". Default value is None.
         :type access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
         :param enabled_protocols: Protocols to enable on the share. Default value is None.
         :type enabled_protocols: str
@@ -1967,7 +1967,7 @@ class ShareOperations:
         :param quota: Specifies the maximum size of the share, in gigabytes. Default value is None.
         :type quota: int
         :param access_tier: Specifies the access tier of the share. Known values are:
-         "TransactionOptimized", "Hot", and "Cool". Default value is None.
+         "TransactionOptimized", "Hot", "Cool", and "Premium". Default value is None.
         :type access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
         :param root_squash: Root squash to set on the share.  Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
