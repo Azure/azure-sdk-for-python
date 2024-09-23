@@ -38,7 +38,7 @@ class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Volume is encrypted at rest with Platform managed key. It is the default encryption type."""
     ENCRYPTION_AT_REST_WITH_CUSTOMER_MANAGED_KEY = "EncryptionAtRestWithCustomerManagedKey"
     """Volume is encrypted at rest with Customer managed key that can be changed and revoked by a
-    #: customer."""
+    customer."""
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
