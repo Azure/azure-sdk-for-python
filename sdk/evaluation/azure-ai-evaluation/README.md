@@ -31,6 +31,8 @@ Evaluators are custom or prebuilt classes or functions that are designed to meas
 
 ## Examples
 
+### Evaluators
+
 Users can create evaluator runs on the local machine as shown in the example below:
 
 ```python
@@ -102,9 +104,13 @@ if __name__ == "__main__":
 
     pprint(result)
 ```
-## Simulator
+### Simulator
 
-Sample application prompty
+
+Simulators allow users to generate synthentic data using their application. Simulator expects the user to have a callback method that invokes
+their AI application.
+
+#### Simulating with a Prompty
 
 ```yaml
 ---
@@ -229,8 +235,7 @@ if __name__ == "__main__":
     print("done!")
 ```
 
-Simulators allow users to generate synthentic data using their application. Simulator expects the user to have a callback method that invokes
-their AI application. Here's a sample of a callback which invokes AsyncAzureOpenAI:
+#### AdversarialSimulator
 
 ```python
 from from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
@@ -298,7 +303,7 @@ async def callback(
     }
 
 ```
-### Adversarial QA:
+#### Adversarial QA:
 ```python
 scenario = AdversarialScenario.ADVERSARIAL_QA
 simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
@@ -314,7 +319,7 @@ outputs = asyncio.run(
 
 print(outputs.to_eval_qa_json_lines())
 ```
-### Direct Attack Simulator
+#### Direct Attack Simulator
 
 ```python
 scenario = AdversarialScenario.ADVERSARIAL_QA
