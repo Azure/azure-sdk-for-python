@@ -287,7 +287,8 @@ class Simulator:
         :return: The loaded flow for simulating user interactions.
         """
         if not user_simulator_prompty:
-            current_dir = os.path.dirname(__file__)
+
+            current_dir = os.getcwd()
             prompty_path = os.path.join(current_dir, "_prompty", "task_simulate.prompty")
             return load_flow(source=prompty_path, model=prompty_model_config)
         return load_flow(
@@ -364,11 +365,13 @@ class Simulator:
 
         try:
             query_responses = query_flow(text=text, num_queries=num_queries)
+            import pdb; pdb.set_trace()
             if type(query_responses) == dict:
                 keys = list(query_responses.keys())
                 return query_responses[keys[0]]
             return json.loads(query_responses)
         except Exception as e:
+            import pdb; pdb.set_trace()
             raise RuntimeError("Error generating query responses") from e
 
     def _load_query_generation_flow(
@@ -383,7 +386,7 @@ class Simulator:
         :return: The loaded flow for generating query responses.
         """
         if not query_response_generating_prompty:
-            current_dir = os.path.dirname(__file__)
+            current_dir = os.cwd()
             prompty_path = os.path.join(current_dir, "_prompty", "task_query_response.prompty")
             return load_flow(source=prompty_path, model=prompty_model_config)
         return load_flow(
