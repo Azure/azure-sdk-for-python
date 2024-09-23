@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0 (2024-09-23)
+## 2.0.0 (2024-09-23)
 
 ### Features Added
 
@@ -39,6 +39,14 @@
   - The 'HostPoolsOperations' method 'list_registration_tokens' was added in the current version
   - The model or publicly exposed class 'AppAttachPackageInfoOperations' was added in the current version
   - The model or publicly exposed class 'AppAttachPackageOperations' was added in the current version
+
+### Breaking Changes
+
+  - Parameter `location` of model `ApplicationGroup` is now required
+  - Parameter `location` of model `HostPool` is now required
+  - Parameter `location` of model `ResourceModelWithAllowedPropertySet` is now required
+  - Parameter `location` of model `ScalingPlan` is now required
+  - Parameter `location` of model `Workspace` is now required
 
 ## 1.1.0 (2023-10-23)
 
