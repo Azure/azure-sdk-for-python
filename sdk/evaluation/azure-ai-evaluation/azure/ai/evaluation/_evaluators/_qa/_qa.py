@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 
 from concurrent.futures import as_completed
-from typing import Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
@@ -11,7 +10,6 @@ from .._coherence import CoherenceEvaluator
 from .._f1_score import F1ScoreEvaluator
 from .._fluency import FluencyEvaluator
 from .._groundedness import GroundednessEvaluator
-from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from .._relevance import RelevanceEvaluator
 from .._similarity import SimilarityEvaluator
 

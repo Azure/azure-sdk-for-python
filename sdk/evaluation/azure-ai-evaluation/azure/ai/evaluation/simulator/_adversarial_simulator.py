@@ -8,16 +8,17 @@ import logging
 import random
 from typing import Any, Callable, Dict, List, Optional
 
-from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
-from azure.identity import DefaultAzureCredential
 from tqdm import tqdm
 
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator import AdversarialScenario
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
+from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
+from azure.identity import DefaultAzureCredential
 
+from ._constants import SupportedLanguages
 from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole
 from ._conversation._conversation import simulate_conversation
 from ._model_tools import (
@@ -27,9 +28,7 @@ from ._model_tools import (
     RAIClient,
     TokenScope,
 )
-from ._tracing import monitor_adversarial_scenario
 from ._utils import JsonLineList
-from ._constants import SupportedLanguages
 
 logger = logging.getLogger(__name__)
 

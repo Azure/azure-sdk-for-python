@@ -6,7 +6,6 @@ import logging
 import os
 
 import numpy as np
-
 from promptflow.client import PFClient
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 

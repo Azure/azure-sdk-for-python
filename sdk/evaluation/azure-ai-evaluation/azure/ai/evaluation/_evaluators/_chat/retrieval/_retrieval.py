@@ -6,14 +6,11 @@ import json
 import logging
 import os
 import re
-from typing import Union
 
 import numpy as np
-
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
-from ...._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from ...._common.utils import (
     check_and_add_api_version_for_aoai_model_config,
     check_and_add_user_agent_for_aoai_model_config,

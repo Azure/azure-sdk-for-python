@@ -12,10 +12,9 @@ from abc import ABC, abstractmethod
 from collections import deque
 from typing import Deque, Dict, List, Optional, Union
 from urllib.parse import urlparse
-import ast
 
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 from ._identity_manager import APITokenManager
 

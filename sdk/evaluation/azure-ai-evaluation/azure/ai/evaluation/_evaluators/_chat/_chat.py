@@ -4,19 +4,18 @@
 import json
 import logging
 from concurrent.futures import as_completed
-from typing import Dict, List, Union
+from typing import Dict, List
 
 import numpy as np
-
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from .._coherence import CoherenceEvaluator
 from .._fluency import FluencyEvaluator
 from .._groundedness import GroundednessEvaluator
-from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from .._relevance import RelevanceEvaluator
 from .retrieval import RetrievalChatEvaluator
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 logger = logging.getLogger(__name__)
 

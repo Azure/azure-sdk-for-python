@@ -4,15 +4,13 @@
 
 import os
 import re
-from typing import Union
 
 import numpy as np
-
 from promptflow._utils.async_utils import async_run_allowing_running_loop
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from promptflow.core import AsyncPrompty
 
-from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+
 from ..._common.utils import (
     check_and_add_api_version_for_aoai_model_config,
     check_and_add_user_agent_for_aoai_model_config,

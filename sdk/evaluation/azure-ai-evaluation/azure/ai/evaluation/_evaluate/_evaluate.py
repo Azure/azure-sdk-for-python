@@ -8,27 +8,26 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type
 
 import numpy as np
 import pandas as pd
-
 from promptflow._sdk._constants import LINE_NUMBER
 from promptflow.client import PFClient
 
-from .._model_configurations import AzureAIProject
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EvaluationMetrics,
     Prefixes,
     _InternalEvaluationMetrics,
 )
+from .._model_configurations import AzureAIProject
 from .._user_agent import USER_AGENT
 from ._batch_run_client import BatchRunContext, CodeClient, ProxyClient
-from ._telemetry import log_evaluate_activity
 from ._utils import (
     _apply_column_mapping,
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
     _write_output,
 )
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 # pylint: disable=line-too-long

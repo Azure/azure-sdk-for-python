@@ -3,19 +3,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import re
 import asyncio
+import importlib.resources as pkg_resources
 import json
 import os
-from typing import Any, Dict, List, Optional
+import re
 import warnings
-
-from tqdm import tqdm
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 from promptflow.client import load_flow
 from promptflow.core import AzureOpenAIModelConfiguration
-import importlib.resources as pkg_resources
-from pathlib import Path
+from tqdm import tqdm
 
 from .._user_agent import USER_AGENT
 from ._conversation.constants import ConversationRole

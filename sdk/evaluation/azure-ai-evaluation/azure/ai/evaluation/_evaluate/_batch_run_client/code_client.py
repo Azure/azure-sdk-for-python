@@ -6,11 +6,11 @@ import json
 import logging
 
 import pandas as pd
-
 from promptflow.contracts.types import AttrDict
-from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _has_aggregator, get_int_env_var, load_jsonl
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+
+from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _has_aggregator, get_int_env_var, load_jsonl
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from ..._constants import PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT
 

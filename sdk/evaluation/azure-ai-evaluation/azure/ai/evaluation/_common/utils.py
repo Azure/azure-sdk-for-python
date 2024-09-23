@@ -11,11 +11,11 @@ try:
 except ImportError:
     import constants
 
+import threading
 from typing import List
 
-import threading
-import numpy as np
 import nltk
+import numpy as np
 
 _nltk_data_download_lock = threading.Lock()
 

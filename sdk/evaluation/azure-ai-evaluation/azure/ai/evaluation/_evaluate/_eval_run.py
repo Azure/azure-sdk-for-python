@@ -12,13 +12,13 @@ import uuid
 from typing import Any, Dict, Optional, Set
 from urllib.parse import urlparse
 
-from azure.core.pipeline.policies import RetryPolicy
-from azure.core.rest import HttpResponse
-
 from promptflow._sdk.entities import Run
+
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_http_client
 from azure.ai.evaluation._version import VERSION
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.core.pipeline.policies import RetryPolicy
+from azure.core.rest import HttpResponse
 
 LOGGER = logging.getLogger(__name__)
 

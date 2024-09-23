@@ -2,15 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Any, Dict
+from typing import Any
 from urllib.parse import urljoin, urlparse
 
-from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
-
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
-from azure.ai.evaluation._user_agent import USER_AGENT
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._user_agent import USER_AGENT
+from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from ._identity_manager import APITokenManager
 

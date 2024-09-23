@@ -9,7 +9,6 @@ import logging
 from typing import Callable, Dict
 
 import pandas as pd
-
 from promptflow._sdk.entities._flows import FlexFlow as flex_flow
 from promptflow._sdk.entities._flows import Prompty as prompty_sdk
 from promptflow._sdk.entities._flows.dag import Flow as dag_flow

@@ -12,8 +12,8 @@ from pathlib import Path
 import pandas as pd
 
 from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, Prefixes
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 LOGGER = logging.getLogger(__name__)
 

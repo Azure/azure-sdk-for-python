@@ -11,12 +11,12 @@ from urllib.parse import urlparse
 
 import jwt
 import numpy as np
+
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._http_utils import get_async_http_client
+from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
 from azure.identity import DefaultAzureCredential
-
-from azure.ai.evaluation._http_utils import get_async_http_client
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from azure.ai.evaluation._model_configurations import AzureAIProject
 
 from .constants import (
     CommonConstants,
