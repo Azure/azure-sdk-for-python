@@ -436,10 +436,10 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
 # @log_evaluate_activity
 def evaluate(
     *,
+    data: str,
+    evaluators: Dict[str, Callable],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
-    data: Optional[str] = None,
-    evaluators: Optional[Dict[str, Callable]] = None,
     evaluator_config: Optional[Dict[str, Dict[str, str]]] = None,
     azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
@@ -448,16 +448,16 @@ def evaluate(
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
         data will be run through target function and then results will be evaluated.
 
+    :keyword data: Path to the data to be evaluated or passed to target if target is set.
+        Only .jsonl format files are supported.  `target` and `data` both cannot be None. Required.
+    :paramtype data: str
+    :keyword evaluators: Evaluators to be used for evaluation. It should be a dictionary with key as alias for evaluator
+        and value as the evaluator function. Required.
+    :paramtype evaluators: Dict[str, Callable]
     :keyword evaluation_name: Display name of the evaluation.
     :paramtype evaluation_name: Optional[str]
     :keyword target: Target to be evaluated. `target` and `data` both cannot be None
     :paramtype target: Optional[Callable]
-    :keyword data: Path to the data to be evaluated or passed to target if target is set.
-        Only .jsonl format files are supported.  `target` and `data` both cannot be None
-    :paramtype data: Optional[str]
-    :keyword evaluators: Evaluators to be used for evaluation. It should be a dictionary with key as alias for evaluator
-        and value as the evaluator function.
-    :paramtype evaluators: Optional[Dict[str, Callable]
     :keyword evaluator_config: Configuration for evaluators. The configuration should be a dictionary with evaluator
         names as keys and a dictionary of column mappings as values. The column mappings should be a dictionary with
         keys as the column names in the evaluator input and values as the column names in the input data or data

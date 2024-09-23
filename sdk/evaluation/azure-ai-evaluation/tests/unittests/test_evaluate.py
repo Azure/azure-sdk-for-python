@@ -107,12 +107,6 @@ def _question_answer_override_target(query, response):
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
 class TestEvaluate:
-    def test_evaluate_missing_data(self, mock_model_config):
-        with pytest.raises(EvaluationException) as exc_info:
-            evaluate(evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)})
-
-        assert "data parameter must be provided for evaluation." in exc_info.value.args[0]
-
     def test_evaluate_evaluators_not_a_dict(self, mock_model_config):
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(
