@@ -32,7 +32,7 @@ from azure.communication.email._api_versions import DEFAULT_VERSION
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     set_default_session_settings()
-    
+
     communication_connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING_EMAIL", "endpoint=https://someEndpoint/;accesskey=someAccessKeyw==")
     sender_address = os.getenv("SENDER_ADDRESS", "someSender@contoso.com")
     recipient_address = os.getenv("RECIPIENT_ADDRESS", "someRecipient@domain.com")
@@ -49,4 +49,5 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="x-ms-content-sha256", value="sanitized")
     add_header_regex_sanitizer(key="Operation-Location", value="https://someEndpoint/emails/operations/someId?api-version=" + DEFAULT_VERSION)
 
-    add_uri_regex_sanitizer(regex="emails/operations/.*\?", value="emails/operations/someId?")
+    add_uri_regex_sanitizer(regex="https://[^/]+/emails/operations/.*?api", value="https://someEndpoint/emails/operations/someId?api")
+    add_uri_regex_sanitizer(regex="https://[^/]+/emails:send\\?api", value="https://someEndpoint/emails:send?api")

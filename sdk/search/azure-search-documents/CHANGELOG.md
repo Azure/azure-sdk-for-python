@@ -1,6 +1,16 @@
 # Release History
 
-## 11.6.0b5 (2024-09-17)
+## 11.6.0b6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 11.6.0b5 (2024-09-19)
 
 ### Features Added
 

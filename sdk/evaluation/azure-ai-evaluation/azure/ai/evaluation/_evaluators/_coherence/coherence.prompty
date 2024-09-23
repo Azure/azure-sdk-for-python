@@ -18,9 +18,9 @@ model:
       type: text
 
 inputs:
-  question:
+  query:
     type: string
-  answer:
+  response:
     type: string
 
 ---
@@ -57,6 +57,6 @@ question: What can you tell me about climate change and its effects on the envir
 answer: Climate change has far-reaching effects on the environment. Rising temperatures result in the melting of polar ice caps, contributing to sea-level rise. Additionally, more frequent and severe weather events, such as hurricanes and heatwaves, can cause disruption to ecosystems and human societies alike.
 stars: 5
 
-question: {{question}}
-answer: {{answer}}
+question: {{query}}
+answer: {{response}}
 stars:

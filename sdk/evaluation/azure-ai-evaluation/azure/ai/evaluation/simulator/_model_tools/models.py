@@ -12,8 +12,10 @@ from abc import ABC, abstractmethod
 from collections import deque
 from typing import Deque, Dict, List, Optional, Union
 from urllib.parse import urlparse
+import ast
 
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 from ._identity_manager import APITokenManager
 
@@ -30,7 +32,13 @@ def get_model_class_from_url(endpoint_url: str):
     elif endpoint_path.endswith("completions"):
         return OpenAICompletionsModel
     else:
-        raise ValueError(f"Unknown API type for endpoint {endpoint_url}")
+        raise EvaluationException(
+            message=f"Unknown API type for endpoint {endpoint_url}",
+            internal_message="Unknown API type",
+            error_category=ErrorCategory.UNKNOWN_FIELD,
+            error_blame=ErrorBlame.USER_ERROR,
+            error_target=ErrorTarget.MODELS,
+        )
 
 
 # ===========================================================
@@ -347,7 +355,14 @@ class OpenAICompletionsModel(LLMBase):
         # Await the completion of all tasks, and propagate any exceptions
         await asyncio.gather(*tasks, return_exceptions=False)
         if len(request_datas):
-            raise RuntimeError("All inference tasks were finished, but the queue is not empty")
+            msg = "All inference tasks were finished, but the queue is not empty"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.MODELS,
+                category=ErrorCategory.FAILED_EXECUTION,
+                blame=ErrorBlame.UNKNOWN,
+            )
 
         # Output results back to the caller
         output_collector.sort(key=lambda x: x[self.prompt_idx_key])
@@ -399,7 +414,13 @@ class OpenAICompletionsModel(LLMBase):
                         error_msg = (
                             f"Error rate is more than {request_error_rate_threshold:.0%} -- something is broken!"
                         )
-                        raise Exception(error_msg)
+                        raise EvaluationException(
+                            message=error_msg,
+                            internal_message=error_msg,
+                            target=ErrorTarget.MODELS,
+                            category=ErrorCategory.FAILED_EXECUTION,
+                            blame=ErrorBlame.UNKNOWN,
+                        )
 
                 response[self.prompt_idx_key] = prompt_idx
                 output_collector.append(response)

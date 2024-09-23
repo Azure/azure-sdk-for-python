@@ -32,7 +32,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
     :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Email API version.
-        Default value is "2023-03-31".
+        Default value is "2024-07-01-preview".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -136,7 +136,9 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
                               attachment. Required.
                             "contentType": "str",  # MIME type of the content being
                               attached. Required.
-                            "name": "str"  # Name of the attachment. Required.
+                            "name": "str",  # Name of the attachment. Required.
+                            "contentId": "str"  # Optional. Unique identifier (CID) to
+                              reference an inline attachment.
                         }
                     ],
                     "userEngagementTrackingDisabled": bool,  # Optional. Indicates whether user

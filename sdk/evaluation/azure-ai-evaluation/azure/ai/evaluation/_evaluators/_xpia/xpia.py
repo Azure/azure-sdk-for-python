@@ -8,6 +8,8 @@ from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +21,7 @@ class IndirectAttackEvaluator:
 
     :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
         name.
-    :type azure_ai_project: dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
     :type eval_last_turn: bool
@@ -34,7 +36,7 @@ class IndirectAttackEvaluator:
         .. code-block:: python
 
             eval_fn = IndirectAttackEvaluator(model_config)
-            result = eval_fn(question="What is the capital of France?", answer="Paris.")
+            result = eval_fn(query="What is the capital of France?", response="Paris.")
 
         **Output format for question-answer pair**
 
@@ -57,23 +59,23 @@ class IndirectAttackEvaluator:
     def __call__(
         self,
         *,
-        question: Optional[str],
-        answer: Optional[str],
+        query: Optional[str],
+        response: Optional[str],
         **kwargs,
     ):
         """
         Evaluates content according to the presence of attacks injected into the conversation context to
         interrupt normal expected functionality by eliciting manipulated content, intrusion and attempting
         to gather information outside the scope of your AI system.
-        :keyword question: The question to be evaluated. Mutually exclusive with 'conversation'.
-        :paramtype question: Optional[str]
-        :keyword answer: The answer to be evaluated. Mutually exclusive with 'conversation'.
-        :paramtype answer: Optional[str]
+        :keyword query: The query to be evaluated. Mutually exclusive with 'conversation'.
+        :paramtype query: Optional[str]
+        :keyword response: The response to be evaluated. Mutually exclusive with 'conversation'.
+        :paramtype response: Optional[str]
         :return: The evaluation scores and reasoning.
         :rtype: dict
         """
 
-        return self._evaluator(question=question, answer=answer, **kwargs)
+        return self._evaluator(query=query, response=response, **kwargs)
 
 
 class _AsyncIndirectAttackEvaluator:
@@ -81,28 +83,35 @@ class _AsyncIndirectAttackEvaluator:
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
-    async def __call__(self, *, question: str, answer: str, **kwargs):
+    async def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :return: The evaluation score computation based on the metric (self.metric).
         :rtype: Any
         """
         # Validate inputs
         # Raises value error if failed, so execution alone signifies success.
-        if not (question and question.strip() and question != "None") or not (
-            answer and answer.strip() and answer != "None"
+        if not (query and query.strip() and query != "None") or not (
+            response and response.strip() and response != "None"
         ):
-            raise ValueError("Both 'question' and 'answer' must be non-empty strings.")
+            msg = "Both 'query' and 'response' must be non-empty strings."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                error_category=ErrorCategory.MISSING_FIELD,
+                error_blame=ErrorBlame.USER_ERROR,
+                error_target=ErrorTarget.INDIRECT_ATTACK_EVALUATOR,
+            )
 
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(
             metric_name=EvaluationMetrics.XPIA,
-            question=question,
-            answer=answer,
+            query=query,
+            response=response,
             project_scope=self._azure_ai_project,
             credential=self._credential,
         )
@@ -113,19 +122,19 @@ class _IndirectAttackEvaluator:
     def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncIndirectAttackEvaluator(azure_ai_project, credential)
 
-    def __call__(self, *, question: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates XPIA content.
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword context: The context to be evaluated.
         :paramtype context: str
         :return: The XPIA score.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, question=question, answer=answer, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator
