@@ -10,7 +10,7 @@ import os
 import re
 import warnings
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from promptflow.client import load_flow
 from promptflow.core import AzureOpenAIModelConfiguration
@@ -187,13 +187,20 @@ class Simulator:
         """
         Simulates conversations using predefined conversation turns.
 
-        :param target: The target function to call during each turn of the simulation.
-        :param max_conversation_turns: Maximum number of turns for the simulation.
-        :param conversation_turns: A list of predefined conversation turns.
-        :param user_simulator_prompty: Path to the user simulator prompty file.
-        :param user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :param api_call_delay_sec: Delay in seconds between API calls.
-        :param prompty_model_config: The configuration for the prompty model.
+        :keyword target: The target function to call during each turn of the simulation.
+        :paramtype target: Callable
+        :keyword max_conversation_turns: Maximum number of turns for the simulation.
+        :paramtype max_conversation_turns: int
+        :keyword conversation_turns: A list of predefined conversation turns.
+        :paramtype conversation_turns: List[List[str]]
+        :keyword user_simulator_prompty: Path to the user simulator prompty file.
+        :paramtype user_simulator_prompty: Optional[str]
+        :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
+        :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
+        :keyword api_call_delay_sec: Delay in seconds between API calls.
+        :paramtype api_call_delay_sec: float
+        :keyword prompty_model_config: The configuration for the prompty model.
+        :paramtype prompty_model_config: Dict[str, Any]
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]
         """
@@ -249,14 +256,22 @@ class Simulator:
         """
         Extends an ongoing conversation using a user simulator until the maximum number of turns is reached.
 
-        :param current_simulation: The current state of the conversation history.
-        :param max_conversation_turns: The maximum number of conversation turns.
-        :param user_simulator_prompty: Path to the user simulator prompty file.
-        :param user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :param api_call_delay_sec: Delay in seconds between API calls.
-        :param prompty_model_config: The configuration for the prompty model.
-        :param target: The target function to call for responses.
-        :param progress_bar: Progress bar for tracking simulation progress.
+        :keyword current_simulation: The current state of the conversation history.
+        :paramtype current_simulation: ConversationHistory,
+        :keyword max_conversation_turns: The maximum number of conversation turns.
+        :paramtype max_conversation_turns: int,
+        :keyword user_simulator_prompty: Path to the user simulator prompty file.
+        :paramtype user_simulator_prompty: Optional[str],
+        :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
+        :paramtype user_simulator_prompty_kwargs: Dict[str, Any],
+        :keyword api_call_delay_sec: Delay in seconds between API calls.
+        :paramtype api_call_delay_sec: float,
+        :keyword prompty_model_config: The configuration for the prompty model.
+        :paramtype prompty_model_config: Dict[str, Any],
+        :keyword target: The target function to call for responses.
+        :paramtype target: Callable,
+        :keyword progress_bar: Progress bar for tracking simulation progress.
+        :paramtype progress_bar: tqdm,
         """
         user_flow = self._load_user_simulation_flow(
             user_simulator_prompty=user_simulator_prompty,
@@ -280,14 +295,21 @@ class Simulator:
             progress_bar.update(1)
 
     def _load_user_simulation_flow(
-        self, *, user_simulator_prompty, prompty_model_config, user_simulator_prompty_kwargs
+        self,
+        *,
+        user_simulator_prompty: Union[str, os.PathLike],
+        prompty_model_config: Dict[str, Any],
+        user_simulator_prompty_kwargs: Dict[str, Any],
     ):
         """
         Loads the flow for simulating user interactions.
 
-        :param user_simulator_prompty: Path to the user simulator prompty file.
-        :param prompty_model_config: The configuration for the prompty model.
-        :param user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
+        :keyword user_simulator_prompty: Path to the user simulator prompty file.
+        :paramtype user_simulator_prompty: Union[str, os.PathLike]
+        :keyword prompty_model_config: The configuration for the prompty model.
+        :paramtype prompty_model_config: Dict[str, Any]
+        :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
+        :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
         :return: The loaded flow for simulating user interactions.
         """
         if not user_simulator_prompty:
@@ -309,7 +331,8 @@ class Simulator:
         """
         Parses the response from the prompty execution.
 
-        :param response: The raw response from the prompty.
+        :keyword response: The raw response from the prompty.
+        :paramtype str: str
         :return: A dictionary representing the parsed response content.
         :rtype: Dict[str, Any]
         :raises ValueError: If the response cannot be parsed.
@@ -356,11 +379,16 @@ class Simulator:
         """
         Generates query responses using the specified prompty configuration.
 
-        :param text: The input text for generating queries.
-        :param num_queries: The number of queries to generate.
-        :param query_response_generating_prompty: Path to the query response generating prompty file.
-        :param query_response_generating_prompty_kwargs: Additional keyword arguments for the query response generating prompty.
-        :param prompty_model_config: The configuration for the prompty model.
+        :keyword text: The input text for generating queries.
+        :paramtype text: str
+        :keyword num_queries: The number of queries to generate.
+        :paramtype num_queries: int
+        :keyword query_response_generating_prompty: Path to the query response generating prompty file.
+        :paramtype query_response_generating_prompty: Optional[str]
+        :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the query response generating prompty.
+        :paramtype query_response_generating_prompty_kwargs: Dict[str, Any]
+        :keyword prompty_model_config: The configuration for the prompty model.
+        :paramtype prompty_model_config: Dict[str, Any]
         :return: A list of query-response dictionaries.
         :rtype: List[Dict[str, str]]
         :raises RuntimeError: If an error occurs during query generation.
@@ -381,14 +409,21 @@ class Simulator:
             raise RuntimeError("Error generating query responses") from e
 
     def _load_query_generation_flow(
-        self, *, query_response_generating_prompty, prompty_model_config, query_response_generating_prompty_kwargs
+        self,
+        *,
+        query_response_generating_prompty: Union[str, os.PathLike],
+        prompty_model_config: Dict[str, Any],
+        query_response_generating_prompty_kwargs: Dict[str, Any],
     ):
         """
         Loads the flow for generating query responses.
 
-        :param query_response_generating_prompty: Path to the query response generating prompty file.
-        :param prompty_model_config: The configuration for the prompty model.
-        :param query_response_generating_prompty_kwargs: Additional keyword arguments for the flow.
+        :keyword query_response_generating_prompty: Path to the query response generating prompty file.
+        :paramtype query_response_generating_prompty: Union[str, os.PathLike]
+        :keyword prompty_model_config: The configuration for the prompty model.
+        :paramtype prompty_model_config: Dict[str, Any]
+        :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the flow.
+        :paramtype query_response_generating_prompty_kwargs: Dict[str, Any]
         :return: The loaded flow for generating query responses.
         """
         if not query_response_generating_prompty:
@@ -420,13 +455,20 @@ class Simulator:
         """
         Creates full conversations from query-response pairs.
 
-        :param query_responses: A list of query-response pairs.
-        :param max_conversation_turns: The maximum number of conversation turns.
-        :param tasks: A list of tasks for the simulation.
-        :param user_simulator_prompty: Path to the user simulator prompty file.
-        :param user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :param target: The target function to call for responses.
-        :param api_call_delay_sec: Delay in seconds between API calls.
+        :keyword query_responses: A list of query-response pairs.
+        :paramtype query_responses: List[Dict[str, str]]
+        :keyword max_conversation_turns: The maximum number of conversation turns.
+        :paramtype max_conversation_turns: int
+        :keyword tasks: A list of tasks for the simulation.
+        :paramtype tasks: List[Dict]
+        :keyword user_simulator_prompty: Path to the user simulator prompty file.
+        :paramtype user_simulator_prompty: Optional[str]
+        :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
+        :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
+        :keyword target: The target function to call for responses.
+        :paramtype target: Callable
+        :keyword api_call_delay_sec: Delay in seconds between API calls.
+        :paramtype api_call_delay_sec: float
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]
         """
@@ -583,9 +625,12 @@ class Simulator:
         """
         Retrieves the response from the target callback based on the current conversation history.
 
-        :param target: The target function to call for a response.
-        :param api_call_delay_sec: Delay in seconds before retrieving the response.
-        :param conversation_history: The current conversation history.
+        :keyword target: The target function to call for a response.
+        :paramtype target: Callable
+        :keyword api_call_delay_sec: Delay in seconds before retrieving the response.
+        :paramtype api_call_delay_sec: float
+        :keyword conversation_history: The current conversation history.
+        :paramtype conversation_history: ConversationHistory
         :return: The content of the response from the target.
         :rtype: str
         """
