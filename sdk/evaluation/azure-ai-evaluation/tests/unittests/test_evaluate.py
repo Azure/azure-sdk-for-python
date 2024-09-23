@@ -552,7 +552,7 @@ class TestEvaluate:
             assert first_row["outputs.no.no_score"] == 0
 
         # Variant with no default inputs fails on single input
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=questions_file,
                 evaluators={
