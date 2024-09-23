@@ -14,14 +14,17 @@ from tqdm import tqdm
 
 from promptflow.client import load_flow
 from promptflow.core import AzureOpenAIModelConfiguration
+import importlib.resources as pkg_resources
+from pathlib import Path
 
 from .._user_agent import USER_AGENT
 from ._conversation.constants import ConversationRole
-from ._helpers import ConversationHistory, Turn
+from ._helpers import ConversationHistory, Turn, experimental
 # from ._tracing import monitor_task_simulator
 from ._utils import JsonLineChatProtocol
 
 
+@experimental
 class Simulator:
     """
     Simulator for generating synthetic conversations.
@@ -287,9 +290,14 @@ class Simulator:
         :return: The loaded flow for simulating user interactions.
         """
         if not user_simulator_prompty:
-            current_dir = os.path.dirname(__file__)
-            prompty_path = os.path.join(current_dir, "_prompty", "task_simulate.prompty")
-            return load_flow(source=prompty_path, model=prompty_model_config)
+            package = 'azure.ai.evaluation.simulator._prompty'
+            resource_name = 'task_simulate.prompty'
+            try:
+                # Access the resource as a file path
+                with pkg_resources.path(package, resource_name) as prompty_path:
+                    return load_flow(source=str(prompty_path), model=prompty_model_config)
+            except FileNotFoundError:
+                raise f"Flow path for {resource_name} does not exist in package {package}."
         return load_flow(
             source=user_simulator_prompty,
             model=prompty_model_config,
@@ -383,9 +391,14 @@ class Simulator:
         :return: The loaded flow for generating query responses.
         """
         if not query_response_generating_prompty:
-            current_dir = os.path.dirname(__file__)
-            prompty_path = os.path.join(current_dir, "_prompty", "task_query_response.prompty")
-            return load_flow(source=prompty_path, model=prompty_model_config)
+            package = 'azure.ai.evaluation.simulator._prompty'
+            resource_name = 'task_query_response.prompty'
+            try:
+                # Access the resource as a file path
+                with pkg_resources.path(package, resource_name) as prompty_path:
+                    return load_flow(source=str(prompty_path), model=prompty_model_config)
+            except FileNotFoundError:
+                raise f"Flow path for {resource_name} does not exist in package {package}."
         return load_flow(
             source=query_response_generating_prompty,
             model=prompty_model_config,
