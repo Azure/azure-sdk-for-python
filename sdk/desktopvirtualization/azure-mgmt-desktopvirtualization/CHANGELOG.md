@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0 (2024-09-23)
+## 1.2.0 (2024-09-23)
 
 ### Features Added
 
@@ -39,30 +39,6 @@
   - The 'HostPoolsOperations' method 'list_registration_tokens' was added in the current version
   - The model or publicly exposed class 'AppAttachPackageInfoOperations' was added in the current version
   - The model or publicly exposed class 'AppAttachPackageOperations' was added in the current version
-
-### Breaking Changes
-
-  - The model or publicly exposed class 'Application' had its instance variable 'system_data' deleted or renamed in the current version
-  - The model or publicly exposed class 'ApplicationGroup' had its instance variable 'system_data' deleted or renamed in the current version
-  - The class 'ApplicationGroup' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
-  - The model or publicly exposed class 'Desktop' had its instance variable 'system_data' deleted or renamed in the current version
-  - The model or publicly exposed class 'HostPool' had its instance variable 'system_data' deleted or renamed in the current version
-  - The class 'HostPool' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
-  - The model or publicly exposed class 'MSIXPackage' had its instance variable 'system_data' deleted or renamed in the current version
-  - The model or publicly exposed class 'ResourceModelWithAllowedPropertySet' had its instance variable 'id' deleted or renamed in the current version
-  - The model or publicly exposed class 'ResourceModelWithAllowedPropertySet' had its instance variable 'name' deleted or renamed in the current version
-  - The model or publicly exposed class 'ResourceModelWithAllowedPropertySet' had its instance variable 'type' deleted or renamed in the current version
-  - The model or publicly exposed class 'ResourceModelWithAllowedPropertySet' had its instance variable 'location' deleted or renamed in the current version
-  - The model or publicly exposed class 'ResourceModelWithAllowedPropertySet' had its instance variable 'tags' deleted or renamed in the current version
-  - The class 'ResourceModelWithAllowedPropertySet' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
-  - The model or publicly exposed class 'ScalingPlan' had its instance variable 'system_data' deleted or renamed in the current version
-  - The class 'ScalingPlan' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
-  - The model or publicly exposed class 'ScalingPlanPersonalSchedule' had its instance variable 'system_data' deleted or renamed in the current version
-  - The model or publicly exposed class 'ScalingPlanPooledSchedule' had its instance variable 'system_data' deleted or renamed in the current version
-  - The model or publicly exposed class 'SessionHost' had its instance variable 'system_data' deleted or renamed in the current version
-  - The model or publicly exposed class 'UserSession' had its instance variable 'system_data' deleted or renamed in the current version
-  - The model or publicly exposed class 'Workspace' had its instance variable 'system_data' deleted or renamed in the current version
-  - The class 'Workspace' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
 
 ## 1.1.0 (2023-10-23)
 
