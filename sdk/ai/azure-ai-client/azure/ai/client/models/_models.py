@@ -86,8 +86,6 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     target: str = rest_field()
     """to do. Required."""
 
-    token_credential: "TokenCredential"
-
 
 class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey"):
     """Connection properties for connections with API key authentication.

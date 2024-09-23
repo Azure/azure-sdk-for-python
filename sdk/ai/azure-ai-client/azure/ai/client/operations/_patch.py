@@ -6,12 +6,73 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Tuple, Union, Iterable, Callable
-from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.identity import get_bearer_token_provider
+import base64
+import json
+from typing import List, Tuple, Union, Iterable, Any
+from datetime import datetime, timedelta
+#from zoneinfo import ZoneInfo
+from azure.core.credentials import AzureKeyCredential, TokenCredential, AccessToken
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
 from ..models._enums import AuthenticationType, ConnectionType
 from ..models._models import ConnectionsListSecretsResponse, ConnectionsListResponse
+from .._patch import AzureAIClient
+
+class SASTokenCredential(TokenCredential):
+    def __init__(
+            self,
+            *,
+            sas_token: str,
+            credential: TokenCredential,
+            subscription_id: str,
+            resource_group_name: str,
+            workspace_name: str,
+            connection_name: str
+        ):
+        self._sas_token = sas_token
+        self._credential = credential
+        self._subscription_id = subscription_id
+        self._resource_group_name = resource_group_name
+        self._workspace_name = workspace_name
+        self._connection_name = connection_name
+        self._expires_on = SASTokenCredential._get_expiration_date_from_token(self.sas_token)
+
+    @classmethod
+    def _get_expiration_date_from_token(jwt_token: str) -> datetime:
+        payload = jwt_token.split('.')[1]
+        padded_payload = payload + '=' * (4 - len(payload) % 4)  # Add padding if necessary
+        decoded_bytes = base64.urlsafe_b64decode(padded_payload)
+        decoded_str = decoded_bytes.decode('utf-8')
+        decoded_payload = json.loads(decoded_str)
+        expiration_date = decoded_payload.get('exp')
+        return datetime.fromtimestamp(expiration_date, datetime.timezone.utc)
+
+    def _refresh_token(self) -> None:
+        ai_client = AzureAIClient(
+            credential=self._credential,
+            subscription_id=self._subscription_id,
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+        )
+
+        connection = ai_client.connections.get(
+            connection_name=self._connection_name,
+            populate_secrets=True
+        )
+
+        self._sas_token = connection.properties.credentials.sas
+        self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
+
+    def get_token(
+            self,
+            *scopes: str,
+            claims: str | None = None,
+            tenant_id: str | None = None,
+            enable_cae: bool = False,
+            **kwargs: Any
+    ) -> AccessToken:
+        if self.expires_on < datetime.datetime.now(datetime.timezone.utc):
+            self._refresh_token()
+        return AccessToken(self.sas_token, self.expires_on.timestamp())
 
 
 class ConnectionsOperations(ConnectionsOperationsGenerated):
@@ -36,6 +97,16 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
             if connection.properties.auth_type == AuthenticationType.ENTRA_ID:
                 connection.properties.token_credential = self._config.credential
                 return connection
+            elif connection.properties.auth_type == AuthenticationType.SAS:
+                connection.properties.token_credentials = SASTokenCredential(
+                    sas_token=connection.properties.credentials.sas,
+                    credential=self._config.credential,
+                    subscription_id=self._config.subscription_id,
+                    resource_group_name=self._config.resource_group_name,
+                    workspace_name=self._config.workspace_name,
+                    connection_name=connection_name)
+                return connection
+
             return connection
         else:
             internal_response: ConnectionsListResponse = self._list()
@@ -69,57 +140,6 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
                    self.get(connection_name=connection.name, populate_secrets=True)
                )
             return filtered_connections_with_secrets
-
-    def get_credential(
-        self, *, connection_name: str | None = None, **kwargs
-    ) -> Tuple[Union[str, AzureKeyCredential, TokenCredential], str]:
-
-        if connection_name == "":
-            raise ValueError("connection_name cannot be an empty string.")
-        elif connection_name is None:
-            response = self._list()
-            if len(response.value) == 0:
-                raise ValueError("No connections found.")
-            elif len(response.value) == 1:
-                connection_name = response.value[0].name
-            else:
-                raise ValueError("There is more than one connection. Please specify the connection_name.")
-
-        response = self._list_secrets(
-            connection_name_in_url=connection_name,
-            connection_name=connection_name,
-            subscription_id=self._config.subscription_id,
-            resource_group_name=self._config.resource_group_name,
-            workspace_name=self._config.workspace_name,
-            api_version_in_body=self._config.api_version,
-        )
-
-        # Remove trailing slash from the endpoint if exist
-        endpoint: str = (
-            response.properties.target[:-1] if response.properties.target.endswith("/") else response.properties.target
-        )
-
-        if response.properties.auth_type == AuthenticationType.API_KEY:
-            if response.properties.category == ConnectionType.AZURE_OPEN_AI:
-                key: str = response.properties.credentials.key
-                return key, endpoint
-            elif response.properties.category == ConnectionType.SERVERLESS:
-                credential = AzureKeyCredential(response.properties.credentials.key)
-                return credential, endpoint
-            else:
-                raise ValueError("Unknown connection category `{response.properties.category}`.")
-        elif response.properties.auth_type == AuthenticationType.ENTRA_ID:
-            if response.properties.category == ConnectionType.AZURE_OPEN_AI:
-                credential = self._config.credential
-                return credential, endpoint
-            elif response.properties.category == ConnectionType.SERVERLESS:
-                raise ValueError("Serverless API does not support AAD authentication.")
-            else:
-                raise ValueError("Unknown connection category `{response.properties.category}`.")
-        # elif response.properties.auth_type == AuthenticationType.SAS:
-        #    credentials =
-        else:
-            raise ValueError("Unknown authentication type `{response.properties.auth_type}`.")
 
 
 __all__: List[str] = [

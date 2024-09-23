@@ -25,7 +25,7 @@ connections = ai_client.connections.list(
 
 # Or you can get properties of a single connection
 connection = ai_client.connections.get(
-    connection_name=os.environ["AI_STUDIO_CONNECTION_3"], 
+    connection_name=os.environ["AI_STUDIO_CONNECTION_1"], 
     populate_secrets=True
 )
 
