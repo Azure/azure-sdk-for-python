@@ -676,8 +676,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
     async def download_file(
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
-        *,
-        decompress: bool = True,
         **kwargs: Any
     ) -> StorageStreamDownloader:
         """Downloads a file to the StorageStreamDownloader. The readall() method must
@@ -751,7 +749,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             path='/'.join(self.file_path),
             share=self.share_name,
             lease_access_conditions=access_conditions,
-            decompress=decompress,
             cls=deserialize_file_stream,
             **kwargs
         )

@@ -740,8 +740,6 @@ class DataLakeFileClient(PathClient):
     def download_file(
         self, offset: Optional[int] = None,
         length: Optional[int] = None,
-        *,
-        decompress: bool = True,
         **kwargs: Any
     ) -> StorageStreamDownloader:
         """Downloads a file to the StorageStreamDownloader. The readall() method must
@@ -802,7 +800,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Return the downloaded data.
         """
-        downloader = self._blob_client.download_blob(offset=offset, length=length, decompress=decompress, **kwargs)
+        downloader = self._blob_client.download_blob(offset=offset, length=length, **kwargs)
         return StorageStreamDownloader(downloader)
 
     @distributed_trace
