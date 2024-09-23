@@ -228,7 +228,9 @@ class HttpRequestBackcompatMixin:
         super(HttpRequestBackcompatMixin, self).__setattr__(attr, value)
 
     @property
-    def _multipart_mixed_info(self) -> Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]]:
+    def _multipart_mixed_info(
+        self,
+    ) -> Optional[Tuple[Sequence[Any], Sequence[Any], str, Dict[str, Any]]]:
         """DEPRECATED: Information used to make multipart mixed requests.
         This is deprecated and will be removed in a later release.
 
