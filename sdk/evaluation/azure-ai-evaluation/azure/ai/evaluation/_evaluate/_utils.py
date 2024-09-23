@@ -223,7 +223,7 @@ def get_int_env_var(env_var_name, default_value=None):
     """
     try:
         return int(os.environ.get(env_var_name, default_value))
-    except Exception:
+    except ValueError:
         return default_value
 
 
