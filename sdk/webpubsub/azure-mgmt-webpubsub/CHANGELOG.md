@@ -29,6 +29,7 @@
 
 ### Breaking Changes
 
+  - The class 'TrackedResource' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
   - The class 'WebPubSubResource' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
 
 ## 2.0.0b2 (2023-10-23)
