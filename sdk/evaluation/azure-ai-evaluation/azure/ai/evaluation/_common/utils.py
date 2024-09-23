@@ -60,6 +60,7 @@ def nltk_tokenize(text: str) -> List[str]:
     if not text.isascii():
         # Use NISTTokenizer for international tokenization
         from nltk.tokenize.nist import NISTTokenizer
+
         tokens = NISTTokenizer().international_tokenize(text)
     else:
         # By default, use NLTK word tokenizer
@@ -72,9 +73,7 @@ def check_and_add_api_version_for_aoai_model_config(
     model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
     default_api_version: str,
 ) -> None:
-    if (
-        "azure_endpoint" in model_config or "azure_deployment" in model_config
-    ):
+    if "azure_endpoint" in model_config or "azure_deployment" in model_config:
         model_config["api_version"] = model_config.get("api_version", default_api_version)
 
 

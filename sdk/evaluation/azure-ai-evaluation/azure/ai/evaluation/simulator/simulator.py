@@ -20,6 +20,7 @@ from pathlib import Path
 from .._user_agent import USER_AGENT
 from ._conversation.constants import ConversationRole
 from ._helpers import ConversationHistory, Turn, experimental
+
 # from ._tracing import monitor_task_simulator
 from ._utils import JsonLineChatProtocol
 
@@ -198,7 +199,7 @@ class Simulator:
         """
         simulated_conversations = []
         progress_bar = tqdm(
-            total=int(len(conversation_turns) * (max_conversation_turns/2)),
+            total=int(len(conversation_turns) * (max_conversation_turns / 2)),
             desc="Simulating with predefined conversation turns: ",
             ncols=100,
             unit="messages",
@@ -290,8 +291,8 @@ class Simulator:
         :return: The loaded flow for simulating user interactions.
         """
         if not user_simulator_prompty:
-            package = 'azure.ai.evaluation.simulator._prompty'
-            resource_name = 'task_simulate.prompty'
+            package = "azure.ai.evaluation.simulator._prompty"
+            resource_name = "task_simulate.prompty"
             try:
                 # Access the resource as a file path
                 with pkg_resources.path(package, resource_name) as prompty_path:
@@ -315,12 +316,12 @@ class Simulator:
         """
         try:
             if type(response) == str:
-                response = response.replace('\u2019', "'").replace('\u2018', "'")
-                response = response.replace('\u201C', '"').replace('\u201D', '"')
-                
+                response = response.replace("\u2019", "'").replace("\u2018", "'")
+                response = response.replace("\u201C", '"').replace("\u201D", '"')
+
                 # Replace None with null
-                response = response.replace('None', 'null')
-                
+                response = response.replace("None", "null")
+
                 # Escape unescaped single quotes inside string values
                 def escape_single_quotes(match):
                     s = match.group(0)
@@ -391,8 +392,8 @@ class Simulator:
         :return: The loaded flow for generating query responses.
         """
         if not query_response_generating_prompty:
-            package = 'azure.ai.evaluation.simulator._prompty'
-            resource_name = 'task_query_response.prompty'
+            package = "azure.ai.evaluation.simulator._prompty"
+            resource_name = "task_query_response.prompty"
             try:
                 # Access the resource as a file path
                 with pkg_resources.path(package, resource_name) as prompty_path:
@@ -432,7 +433,7 @@ class Simulator:
         total_turns = len(query_responses) * max_conversation_turns
 
         progress_bar = tqdm(
-            total=int(total_turns/2),
+            total=int(total_turns / 2),
             desc="Generating: ",
             ncols=100,
             unit="message",
@@ -516,11 +517,14 @@ class Simulator:
                 user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
             )
             conversation_starter_from_simulated_user = user_flow(
-                task=task, conversation_history=[{
-                    "role": "assistant",
-                    "content": conversation_starter,
-                    "your_task": "Act as the user and translate the content into a user query."
-                }]
+                task=task,
+                conversation_history=[
+                    {
+                        "role": "assistant",
+                        "content": conversation_starter,
+                        "your_task": "Act as the user and translate the content into a user query.",
+                    }
+                ],
             )
             if type(conversation_starter_from_simulated_user) == dict:
                 conversation_starter_from_simulated_user = conversation_starter_from_simulated_user["content"]

@@ -9,7 +9,7 @@ import numpy as np
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
-from azure.ai.evaluation._model_configurations import AzureAIProject 
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 try:
     from ._hate_unfairness import HateUnfairnessEvaluator

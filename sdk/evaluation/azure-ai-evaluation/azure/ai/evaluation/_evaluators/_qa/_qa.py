@@ -52,9 +52,7 @@ class QAEvaluator:
         }
     """
 
-    def __init__(
-        self, model_config: dict, parallel: bool = True
-    ):
+    def __init__(self, model_config: dict, parallel: bool = True):
         self._parallel = parallel
 
         self._evaluators = [
@@ -88,12 +86,7 @@ class QAEvaluator:
             with ThreadPoolExecutor() as executor:
                 futures = {
                     executor.submit(
-                        evaluator,
-                        query=query,
-                        response=response,
-                        context=context,
-                        ground_truth=ground_truth,
-                        **kwargs
+                        evaluator, query=query, response=response, context=context, ground_truth=ground_truth, **kwargs
                     ): evaluator
                     for evaluator in self._evaluators
                 }
@@ -103,9 +96,7 @@ class QAEvaluator:
                     results.update(future.result())
         else:
             for evaluator in self._evaluators:
-                result = evaluator(
-                    query=query, response=response, context=context, ground_truth=ground_truth, **kwargs
-                )
+                result = evaluator(query=query, response=response, context=context, ground_truth=ground_truth, **kwargs)
                 results.update(result)
 
         return results

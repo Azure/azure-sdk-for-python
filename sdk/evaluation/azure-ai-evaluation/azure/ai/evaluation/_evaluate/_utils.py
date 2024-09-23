@@ -33,16 +33,16 @@ def extract_workspace_triad_from_trace_provider(trace_provider: str):  # pylint:
     match = re.match(AZURE_WORKSPACE_REGEX_FORMAT, trace_provider)
     if not match or len(match.groups()) != 5:
         raise EvaluationException(
-                message="Malformed trace provider string, expected azureml://subscriptions/<subscription_id>/"
-                "resourceGroups/<resource_group>/providers/Microsoft.MachineLearningServices/"
-                f"workspaces/<workspace_name>, got {trace_provider}",
-                internal_message="Malformed trace provider string, expected azureml://subscriptions/<subscription_id>/"
-                "resourceGroups/<resource_group>/providers/Microsoft.MachineLearningServices/"
-                "workspaces/<workspace_name>,",
-                target=ErrorTarget.UNKNOWN,
-                category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.UNKNOWN,
-            )
+            message="Malformed trace provider string, expected azureml://subscriptions/<subscription_id>/"
+            "resourceGroups/<resource_group>/providers/Microsoft.MachineLearningServices/"
+            f"workspaces/<workspace_name>, got {trace_provider}",
+            internal_message="Malformed trace provider string, expected azureml://subscriptions/<subscription_id>/"
+            "resourceGroups/<resource_group>/providers/Microsoft.MachineLearningServices/"
+            "workspaces/<workspace_name>,",
+            target=ErrorTarget.UNKNOWN,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.UNKNOWN,
+        )
     subscription_id = match.group(1)
     resource_group_name = match.group(3)
     workspace_name = match.group(5)
