@@ -6,7 +6,7 @@ from typing import Any, List, Optional, Type
 
 import pytest
 
-from azure.ai.evaluation import evaluators
+import azure.ai.evaluation as evaluators
 
 
 @pytest.fixture
@@ -18,7 +18,7 @@ def data_file():
 def get_evaluators_from_module(namespace: Any, exceptions: Optional[List[str]] = None) -> List[Type]:
     evaluators = []
     for name, obj in inspect.getmembers(namespace):
-        if inspect.isclass(obj) and not issubclass(obj, Enum):
+        if inspect.isclass(obj) and not issubclass(obj, Enum) and not issubclass(obj, dict):
             if exceptions and name in exceptions:
                 continue
             evaluators.append(obj)
@@ -39,7 +39,7 @@ class TestSaveEval:
 
     def test_load_and_run_evaluators(self, tmpdir, pf_client, data_file) -> None:
         """Test regular evaluator saving."""
-        from azure.ai.evaluation.evaluators import F1ScoreEvaluator
+        from azure.ai.evaluation import F1ScoreEvaluator
 
         pf_client.flows.save(F1ScoreEvaluator, path=tmpdir)
         run = pf_client.run(tmpdir, data=data_file)

@@ -2,7 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from azure.ai.evaluation.evaluators import FluencyEvaluator
+from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation import FluencyEvaluator
 
 
 async def fluency_async_mock():
@@ -16,7 +17,7 @@ class TestBuiltInEvaluators:
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
         fluency_eval._async_evaluator._flow = MagicMock(return_value=fluency_async_mock())
 
-        score = fluency_eval(question="What is the capital of Japan?", answer="The capital of Japan is Tokyo.")
+        score = fluency_eval(query="What is the capital of Japan?", response="The capital of Japan is Tokyo.")
 
         assert score is not None
         assert score["gpt_fluency"] == 1
@@ -25,7 +26,7 @@ class TestBuiltInEvaluators:
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
         fluency_eval._async_evaluator._flow = MagicMock(return_value=fluency_async_mock())
 
-        score = fluency_eval(question={"foo": 1}, answer={"bar": "2"})
+        score = fluency_eval(query={"foo": 1}, response={"bar": "2"})
 
         assert score is not None
         assert score["gpt_fluency"] == 1
@@ -34,12 +35,12 @@ class TestBuiltInEvaluators:
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
         fluency_eval._async_evaluator._flow = MagicMock(return_value=fluency_async_mock())
 
-        with pytest.raises(ValueError) as exc_info:
-            fluency_eval(question="What is the capital of Japan?", answer=None)
+        with pytest.raises(EvaluationException) as exc_info:
+            fluency_eval(query="What is the capital of Japan?", response=None)
 
-        assert "Both 'question' and 'answer' must be non-empty strings." in exc_info.value.args[0]
+        assert "Both 'query' and 'response' must be non-empty strings." in exc_info.value.args[0]
 
-        with pytest.raises(ValueError) as exc_info:
-            fluency_eval(question="What is the capital of Japan?", answer="")
+        with pytest.raises(EvaluationException) as exc_info:
+            fluency_eval(query="What is the capital of Japan?", response="")
 
-        assert "Both 'question' and 'answer' must be non-empty strings." in exc_info.value.args[0]
+        assert "Both 'query' and 'response' must be non-empty strings." in exc_info.value.args[0]
