@@ -386,7 +386,7 @@ class Simulator:
         :return: The loaded flow for generating query responses.
         """
         if not query_response_generating_prompty:
-            current_dir = os.cwd()
+            current_dir = os.getcwd()
             prompty_path = os.path.join(current_dir, "_prompty", "task_query_response.prompty")
             return load_flow(source=prompty_path, model=prompty_model_config)
         return load_flow(
