@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, Prefixes
+from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, DefaultOpenEncoding, Prefixes
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
@@ -50,7 +50,7 @@ def extract_workspace_triad_from_trace_provider(trace_provider: str):  # pylint:
 
 
 def load_jsonl(path):
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding=DefaultOpenEncoding.READ) as f:
         return [json.loads(line) for line in f.readlines()]
 
 
@@ -99,7 +99,7 @@ def _log_metrics_and_instance_results(
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_path = os.path.join(tmpdir, artifact_name)
 
-            with open(tmp_path, "w", encoding="utf-8") as f:
+            with open(tmp_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 f.write(instance_results.to_json(orient="records", lines=True))
 
             ev_run.log_artifact(tmpdir, artifact_name)
@@ -155,7 +155,7 @@ def _write_output(path, data_dict):
     if os.path.isdir(path):
         p = p / DEFAULT_EVALUATION_RESULTS_FILE_NAME
 
-    with open(p, "w") as f:
+    with open(p, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         json.dump(data_dict, f)
 
 
