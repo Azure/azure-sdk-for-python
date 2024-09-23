@@ -43,7 +43,7 @@ def build_email_get_send_result_request(operation_id: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-03-31"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_email_send_request(**kwargs: Any) -> HttpRequest:
         "client_request_id", _headers.pop("x-ms-client-request-id", None)
     )  # type: Optional[str]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2023-03-31"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -329,7 +329,9 @@ class EmailOperations:
                               attachment. Required.
                             "contentType": "str",  # MIME type of the content being
                               attached. Required.
-                            "name": "str"  # Name of the attachment. Required.
+                            "name": "str",  # Name of the attachment. Required.
+                            "contentId": "str"  # Optional. Unique identifier (CID) to
+                              reference an inline attachment.
                         }
                     ],
                     "headers": {

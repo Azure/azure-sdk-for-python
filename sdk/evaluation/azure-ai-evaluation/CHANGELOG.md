@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b1 (Unreleased)
+## 1.0.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b1 (2024-09-20)
 
 ### Breaking Changes
 
@@ -9,7 +19,6 @@
 - The parameter name `project_scope` in content safety evaluators have been renamed to `azure_ai_project` for consistency with evaluate API and simulators.
 - Model configurations classes are now of type `TypedDict` and are exposed in the `azure.ai.evaluation` module instead of coming from `promptflow.core`.  
 - Updated the parameter names for `question` and `answer` in built-in evaluators to more generic terms: `query` and `response`.
-
 
 ### Features Added
 

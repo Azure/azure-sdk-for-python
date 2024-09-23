@@ -28,6 +28,7 @@ from ._utils import (
     _trace_destination_from_project_scope,
     _write_output,
 )
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 # pylint: disable=line-too-long
@@ -93,6 +94,7 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
     handled_metrics = [
         EvaluationMetrics.PROTECTED_MATERIAL,
         _InternalEvaluationMetrics.ECI,
+        EvaluationMetrics.XPIA,
     ]
     label_cols = []
     for col in df.columns:
@@ -159,44 +161,111 @@ def _validate_input_data_for_evaluator(evaluator, evaluator_name, df_data, is_ta
     missing_inputs = [col for col in required_inputs if col not in df_data.columns]
     if missing_inputs:
         if not is_target_fn:
-            raise ValueError(f"Missing required inputs for evaluator {evaluator_name} : {missing_inputs}.")
-        raise ValueError(f"Missing required inputs for target : {missing_inputs}.")
+            msg = f"Missing required inputs for evaluator {evaluator_name} : {missing_inputs}."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
+            )
+        msg = f"Missing required inputs for target : {missing_inputs}."
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.MISSING_FIELD,
+            blame=ErrorBlame.USER_ERROR,
+        )
 
 
 def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name):
     if data is None:
-        raise ValueError("data must be provided for evaluation.")
+        msg = "data parameter must be provided for evaluation."
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.MISSING_FIELD,
+            blame=ErrorBlame.USER_ERROR,
+        )
 
     if target is not None:
         if not callable(target):
-            raise ValueError("target must be a callable function.")
+            msg = "target parameter must be a callable function."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
     if data is not None:
         if not isinstance(data, str):
-            raise ValueError("data must be a string.")
+            msg = "data parameter must be a string."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
     if evaluators is not None:
         if not isinstance(evaluators, dict):
-            raise ValueError("evaluators must be a dictionary.")
+            msg = "evaluators parameter must be a dictionary."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
     if output_path is not None:
         if not isinstance(output_path, str):
-            raise ValueError("output_path must be a string.")
+            msg = "output_path parameter must be a string."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
     if azure_ai_project is not None:
         if not isinstance(azure_ai_project, Dict):
-            raise ValueError("azure_ai_project must be a Dict.")
+            msg = "azure_ai_project parameter must be a dictionary."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
     if evaluation_name is not None:
         if not isinstance(evaluation_name, str):
-            raise ValueError("evaluation_name must be a string.")
+            msg = "evaluation_name parameter must be a string."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
     try:
         initial_data_df = pd.read_json(data, lines=True)
     except Exception as e:
-        raise ValueError(
-            f"Failed to load data from {data}. Please validate it is a valid jsonl data. Error: {str(e)}."
-        ) from e
+        raise EvaluationException(
+                message=f"Failed to load data from {data}. Confirm that it is valid jsonl data. Error: {str(e)}.",
+                internal_message="Failed to load data. Confirm that it is valid jsonl data.",
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            ) from e
 
     return initial_data_df
 
@@ -218,11 +287,18 @@ def _validate_columns(
     :type target: Optional[Callable]
     :param evaluator_config: The configuration for evaluators.
     :type evaluator_config: Dict[str, Dict[str, str]]
-    :raises ValueError: If column starts from "__outputs." while target is defined.
+    :raises EvaluationException: If column starts from "__outputs." while target is defined.
     """
     if target:
         if any(c.startswith(Prefixes.TSG_OUTPUTS) for c in df.columns):
-            raise ValueError("The column cannot start from " f'"{Prefixes.TSG_OUTPUTS}" if target was defined.')
+            msg = "The column cannot start from " f'"{Prefixes.TSG_OUTPUTS}" if target was defined.'
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
         # If the target function is given, it may return
         # several columns and hence we cannot check the availability of columns
         # without knowing target function semantics.
@@ -318,9 +394,13 @@ def _process_evaluator_config(evaluator_config: Dict[str, Dict[str, str]]) -> Di
                 for map_to_key, map_value in mapping_config.items():
                     # Check if there's any unexpected reference other than ${target.} or ${data.}
                     if unexpected_references.search(map_value):
-                        raise ValueError(
-                            "Unexpected references detected in 'evaluator_config'. "
-                            "Ensure only ${target.} and ${data.} are used."
+                        msg = "Unexpected references detected in 'evaluator_config'. Ensure only ${target.} and ${data.} are used."
+                        raise EvaluationException(
+                            message=msg,
+                            internal_message=msg,
+                            target=ErrorTarget.EVALUATE,
+                            category=ErrorCategory.INVALID_VALUE,
+                            blame=ErrorBlame.USER_ERROR,
                         )
 
                     # Replace ${target.} with ${run.outputs.}
@@ -353,7 +433,7 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-@log_evaluate_activity
+# @log_evaluate_activity
 def evaluate(
     *,
     evaluation_name: Optional[str] = None,
@@ -454,7 +534,13 @@ def evaluate(
                 "    if __name__ == '__main__':\n"
                 "        evaluate(...)"
             )
-            raise RuntimeError(error_message) from e
+            raise EvaluationException(
+                message=error_message,
+                internal_message=error_message,
+                target=ErrorTarget.EVALUATE,
+                category=ErrorCategory.FAILED_EXECUTION,
+                blame=ErrorBlame.UNKNOWN,
+            ) from e
 
         raise e
 
@@ -487,20 +573,21 @@ def _evaluate(  # pylint: disable=too-many-locals
     )
 
     trace_destination = pf_client._config.get_trace_destination()
-
     target_run = None
-
     target_generated_columns = set()
+
+    # Create default configuration for evaluators that directly maps
+    # input data names to keyword inputs of the same name in the evaluators.
+    if not evaluator_config:
+        evaluator_config = {}
+    if "default" not in evaluator_config:
+        evaluator_config["default"] = {}
+
+    # If target is set, apply 1-1 column mapping from target outputs to evaluator inputs
     if data is not None and target is not None:
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
             target, data, pf_client, input_data_df, evaluation_name, _run_name=kwargs.get("_run_name")
         )
-
-        # Make sure, the default is always in the configuration.
-        if not evaluator_config:
-            evaluator_config = {}
-        if "default" not in evaluator_config:
-            evaluator_config["default"] = {}
 
         for evaluator_name, mapping in evaluator_config.items():
             mapped_to_values = set(mapping.values())
@@ -518,6 +605,16 @@ def _evaluate(  # pylint: disable=too-many-locals
         # everything we need for evaluators.
         _validate_columns(input_data_df, evaluators, target=None, evaluator_config=evaluator_config)
 
+    # Apply 1-1 mapping from input data to evaluator inputs, excluding values already assigned
+    # via target mapping.
+    # If both the data and the output dictionary of the target function
+    # have the same column, then the target function value is used.
+    if input_data_df is not None:
+        for col in input_data_df.columns:
+            # Ignore columns added by target mapping. These are formatted as "__outputs.<column_name>"
+            # Also ignore columns that are already in config, since they've been covered by target mapping.
+            if not col.startswith(Prefixes.TSG_OUTPUTS) and col not in evaluator_config["default"].keys():
+                evaluator_config["default"][col] = f"${{data.{col}}}"
     # Batch Run
     evaluators_info = {}
     use_pf_client = kwargs.get("_use_pf_client", True)
@@ -586,7 +683,6 @@ def _evaluate(  # pylint: disable=too-many-locals
     result_df = pd.concat([input_data_df, evaluators_result_df], axis=1, verify_integrity=True)
     metrics = _aggregate_metrics(evaluators_result_df, evaluators)
     metrics.update(evaluators_metric)
-
     studio_url = _log_metrics_and_instance_results(
         metrics,
         result_df,
