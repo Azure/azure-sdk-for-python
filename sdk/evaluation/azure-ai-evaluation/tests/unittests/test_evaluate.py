@@ -23,6 +23,7 @@ from azure.ai.evaluation import (
     GroundednessEvaluator,
     ProtectedMaterialEvaluator,
 )
+from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
 
@@ -94,53 +95,53 @@ def _target_fn2(query):
 @pytest.mark.unittest
 class TestEvaluate:
     def test_evaluate_missing_data(self, mock_model_config):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)})
 
-        assert "data must be provided for evaluation." in exc_info.value.args[0]
+        assert "data parameter must be provided for evaluation." in exc_info.value.args[0]
 
     def test_evaluate_evaluators_not_a_dict(self, mock_model_config):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data="data",
                 evaluators=[GroundednessEvaluator(model_config=mock_model_config)],
             )
 
-        assert "evaluators must be a dictionary." in exc_info.value.args[0]
+        assert "evaluators parameter must be a dictionary." in exc_info.value.args[0]
 
     def test_evaluate_invalid_data(self, mock_model_config):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=123,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
             )
 
-        assert "data must be a string." in exc_info.value.args[0]
+        assert "data parameter must be a string." in exc_info.value.args[0]
 
     def test_evaluate_invalid_jsonl_data(self, mock_model_config, invalid_jsonl_file):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=invalid_jsonl_file,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
             )
 
         assert "Failed to load data from " in exc_info.value.args[0]
-        assert "Please validate it is a valid jsonl data" in exc_info.value.args[0]
+        assert "Confirm that it is valid jsonl data." in exc_info.value.args[0]
 
     def test_evaluate_missing_required_inputs(self, missing_columns_jsonl_file):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(data=missing_columns_jsonl_file, evaluators={"g": F1ScoreEvaluator()})
 
         assert "Missing required inputs for evaluator g : ['ground_truth']." in exc_info.value.args[0]
 
     def test_evaluate_missing_required_inputs_target(self, questions_wrong_file):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(data=questions_wrong_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
         assert "Missing required inputs for target : ['query']." in exc_info.value.args[0]
 
     def test_wrong_target(self, questions_file):
         """Test error, when target function does not generate required column."""
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             # target_fn will generate the "response", but not ground truth.
             evaluate(data=questions_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
 
@@ -149,7 +150,7 @@ class TestEvaluate:
     def test_target_raises_on_outputs(self):
         """Test we are raising exception if the output is column is present in the input."""
         data = _get_file("questions_answers_outputs.jsonl")
-        with pytest.raises(ValueError) as cm:
+        with pytest.raises(EvaluationException) as cm:
             evaluate(
                 data=data,
                 target=_target_fn,
@@ -314,7 +315,7 @@ class TestEvaluate:
 
     def test_evaluate_invalid_evaluator_config(self, mock_model_config, evaluate_test_data_jsonl_file):
         # Invalid source reference
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=evaluate_test_data_jsonl_file,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
@@ -401,7 +402,7 @@ class TestEvaluate:
         )
         mock_evaluate.side_effect = RuntimeError(err_msg)
 
-        with pytest.raises(RuntimeError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=evaluate_test_data_jsonl_file,
                 evaluators={"f1_score": F1ScoreEvaluator()},
@@ -467,8 +468,8 @@ class TestEvaluate:
 
     def test_label_based_aggregation(self):
         data = {
-            "eci.ECI_label": [True, False, True, False, True],
-            "eci.ECI_reasoning": ["a", "b", "c", "d", "e"],
+            "eci.eci_label": [True, False, True, False, True],
+            "eci.eci_reasoning": ["a", "b", "c", "d", "e"],
             "protected_material.protected_material_label": [False, False, False, False, True],
             "protected_material.protected_material_reasoning": ["f", "g", "h", "i", "j"],
             "unknown.unaccounted_label": [True, False, False, False, True],
@@ -482,11 +483,11 @@ class TestEvaluate:
         aggregation = _aggregate_metrics(data_df, evaluators)
         # ECI and PM labels should be replaced with defect rates, unaccounted should not
         assert len(aggregation) == 3
-        assert "eci.ECI_label" not in aggregation
+        assert "eci.eci_label" not in aggregation
         assert "protected_material.protected_material_label" not in aggregation
         assert aggregation["unknown.unaccounted_label"] == 0.4
 
-        assert aggregation["eci.ECI_defect_rate"] == 0.6
+        assert aggregation["eci.eci_defect_rate"] == 0.6
         assert aggregation["protected_material.protected_material_defect_rate"] == 0.2
         assert "unaccounted_defect_rate" not in aggregation
 

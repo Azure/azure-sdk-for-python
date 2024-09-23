@@ -1,5 +1,6 @@
 import pytest
 
+from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation import ChatEvaluator
 
 
@@ -49,7 +50,7 @@ class TestChatEvaluator:
         chat_eval._non_rag_evaluators = []
         chat_eval._rag_evaluators = []
 
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(EvaluationException) as e:
             chat_eval(conversation=conversation)
         assert str(e.value) == "Each turn in 'conversation' must have 'role' and 'content' keys. Turn number: 2"
 
@@ -64,7 +65,7 @@ class TestChatEvaluator:
         chat_eval._non_rag_evaluators = []
         chat_eval._rag_evaluators = []
 
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(EvaluationException) as e:
             chat_eval(conversation=conversation)
         assert str(e.value) == "Expected role user but got assistant. Turn number: 3"
 
@@ -78,7 +79,7 @@ class TestChatEvaluator:
         chat_eval._non_rag_evaluators = []
         chat_eval._rag_evaluators = []
 
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(EvaluationException) as e:
             chat_eval(conversation=conversation)
         assert str(e.value) == "'citations' in context must be a list. Turn number: 2"
 

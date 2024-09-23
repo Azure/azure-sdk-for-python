@@ -10,6 +10,7 @@ import pandas as pd
 from promptflow.contracts.types import AttrDict
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _has_aggregator, get_int_env_var, load_jsonl
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 from ..._constants import PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT
 
@@ -119,8 +120,12 @@ class CodeClient:
             try:
                 json_data = load_jsonl(data)
             except json.JSONDecodeError as exc:
-                raise ValueError(
-                    f"Failed to parse data as JSON: {data}. Please provide a valid json lines data."
+                raise EvaluationException(
+                    message = f"Failed to parse data as JSON: {data}. Provide valid json lines data.",
+                    internal_message="Failed to parse data as JSON",
+                    target=ErrorTarget.CODE_CLIENT,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
                 ) from exc
 
             input_df = pd.DataFrame(json_data)

@@ -4,7 +4,6 @@
 # noqa: E501
 # pylint: disable=E0401,E0611
 import asyncio
-import functools
 import logging
 import random
 from typing import Any, Callable, Dict, List, Optional
@@ -13,8 +12,8 @@ from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 from azure.identity import DefaultAzureCredential
 from tqdm import tqdm
 
-from promptflow._sdk._telemetry import ActivityType, monitor_operation
 from azure.ai.evaluation._http_utils import get_async_http_client
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator import AdversarialScenario
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
@@ -28,41 +27,11 @@ from ._model_tools import (
     RAIClient,
     TokenScope,
 )
+from ._tracing import monitor_adversarial_scenario
 from ._utils import JsonLineList
 from ._constants import SupportedLanguages
 
 logger = logging.getLogger(__name__)
-
-
-def monitor_adversarial_scenario(func) -> Callable:
-    """Monitor an adversarial scenario with logging
-
-    :param func: The function to be monitored
-    :type func: Callable
-    :return: The decorated function
-    :rtype: Callable
-    """
-
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        scenario = str(kwargs.get("scenario", None))
-        max_conversation_turns = kwargs.get("max_conversation_turns", None)
-        max_simulation_results = kwargs.get("max_simulation_results", None)
-        selected_language = kwargs.get("language", SupportedLanguages.English)
-        decorated_func = monitor_operation(
-            activity_name="adversarial.simulator.call",
-            activity_type=ActivityType.PUBLICAPI,
-            custom_dimensions={
-                "scenario": scenario,
-                "max_conversation_turns": max_conversation_turns,
-                "max_simulation_results": max_simulation_results,
-                "selected_language": selected_language,
-            },
-        )(func)
-
-        return decorated_func(*args, **kwargs)
-
-    return wrapper
 
 
 class AdversarialSimulator:
@@ -80,10 +49,24 @@ class AdversarialSimulator:
         """Constructor."""
         # check if azure_ai_project has the keys: subscription_id, resource_group_name and project_name
         if not all(key in azure_ai_project for key in ["subscription_id", "resource_group_name", "project_name"]):
-            raise ValueError("azure_ai_project must contain keys: subscription_id, resource_group_name, project_name")
+            msg = "azure_ai_project must contain keys: subscription_id, resource_group_name, project_name"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
+            )
         # check the value of the keys in azure_ai_project is not none
         if not all(azure_ai_project[key] for key in ["subscription_id", "resource_group_name", "project_name"]):
-            raise ValueError("subscription_id, resource_group_name and project_name must not be None")
+            msg = "subscription_id, resource_group_name and project_name cannot be None"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
+            )
         if "credential" not in azure_ai_project and not credential:
             credential = DefaultAzureCredential()
         elif "credential" in azure_ai_project:
@@ -101,7 +84,14 @@ class AdversarialSimulator:
 
     def _ensure_service_dependencies(self):
         if self.rai_client is None:
-            raise ValueError("Simulation options require rai services but ai client is not provided.")
+            msg = "RAI service is required for simulation, but an RAI client was not provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
     # @monitor_adversarial_scenario
     async def __call__(
@@ -203,7 +193,14 @@ class AdversarialSimulator:
             scenario in AdversarialScenario.__members__.values()
             or scenario in _UnstableAdversarialScenario.__members__.values()
         ):
-            raise ValueError("Invalid adversarial scenario")
+            msg = f"Invalid scenario: {scenario}. Supported scenarios are: {AdversarialScenario.__members__.values()}"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
         self._ensure_service_dependencies()
         templates = await self.adversarial_template_handler._get_content_harm_template_collections(scenario.value)
         concurrent_async_task = min(concurrent_async_task, 1000)
@@ -385,6 +382,7 @@ class AdversarialSimulator:
     def call_sync(
         self,
         *,
+        scenario: AdversarialScenario,
         max_conversation_turns: int,
         max_simulation_results: int,
         target: Callable,
@@ -394,6 +392,12 @@ class AdversarialSimulator:
         concurrent_async_task: int,
     ) -> List[Dict[str, Any]]:
         """Call the adversarial simulator synchronously.
+        :keyword scenario: Enum value specifying the adversarial scenario used for generating inputs.
+        example:
+
+         - :py:const:`azure.ai.evaluation.simulator.adversarial_scenario.AdversarialScenario.ADVERSARIAL_QA`
+         - :py:const:`azure.ai.evaluation.simulator.adversarial_scenario.AdversarialScenario.ADVERSARIAL_CONVERSATION`
+        :paramtype scenario: azure.ai.evaluation.simulator.adversarial_scenario.AdversarialScenario
 
         :keyword max_conversation_turns: The maximum number of conversation turns to simulate.
         :paramtype max_conversation_turns: int
@@ -419,6 +423,7 @@ class AdversarialSimulator:
             # Note: This approach might not be suitable in all contexts, especially with nested async calls
             future = asyncio.ensure_future(
                 self(
+                    scenario=scenario,
                     max_conversation_turns=max_conversation_turns,
                     max_simulation_results=max_simulation_results,
                     target=target,
@@ -433,6 +438,7 @@ class AdversarialSimulator:
         # If no event loop is running, use asyncio.run (Python 3.7+)
         return asyncio.run(
             self(
+                scenario=scenario,
                 max_conversation_turns=max_conversation_turns,
                 max_simulation_results=max_simulation_results,
                 target=target,
