@@ -6,8 +6,10 @@ from enum import Enum
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from rouge_score import rouge_scorer
 
+from azure.core import CaseInsensitiveEnumMeta
 
-class RougeType(str, Enum):
+
+class RougeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Enumeration of ROUGE (Recall-Oriented Understudy for Gisting Evaluation) types.
     """
