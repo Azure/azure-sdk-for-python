@@ -100,7 +100,8 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._is_closed = False
         self._on_link_state_change = kwargs.get("on_link_state_change")
         self._on_attach = kwargs.get("on_attach")
-        self._error = None
+        self._error: Optional[AMQPLinkError] = None
+        self.total_link_credit = self.link_credit
 
     async def __aenter__(self) -> "Link":
         await self.attach()
@@ -244,6 +245,11 @@ class Link:  # pylint: disable=too-many-instance-attributes
             self._error = error_cls(condition=frame[2][0], description=frame[2][1], info=frame[2][2])
             await self._set_state(LinkState.ERROR)
         else:
+            if self.state != LinkState.DETACH_SENT:
+                # Handle the case of when the remote side detaches without sending an error.
+                # We should detach as per the spec but then retry connecting
+                self._error = AMQPLinkError(condition=ErrorCondition.UnknownError,
+                                          description="Link detached unexpectedly.", retryable=True)
             await self._set_state(LinkState.DETACHED)
 
     async def attach(self) -> None:
@@ -268,5 +274,19 @@ class Link:  # pylint: disable=too-many-instance-attributes
             await self._set_state(LinkState.DETACHED)
 
     async def flow(self, *, link_credit: Optional[int] = None, **kwargs) -> None:
-        self.current_link_credit = link_credit if link_credit is not None else self.link_credit
-        await self._outgoing_flow(**kwargs)
+        # Given the desired link credit `link_credit`, the link credit sent via
+        # FlowFrame is calculated as follows: The link credit to flow on the wire
+        # `self.current_link_credit` is the desired link credit `link_credit`
+        # minus the current link credit on the wire `self.total_link_credit`.
+        self.current_link_credit = link_credit - self.total_link_credit \
+            if link_credit is not None else self.link_credit
+
+        # If the link credit to flow is greater than 0 (i.e the desired link credit
+        # is greater than the current link credit on the wire), then we will send a
+        # flow to issue more link credit. Otherwise link credit on the wire is sufficient.
+        if self.current_link_credit > 0:
+            # Calculate the total link credit on the wire, by adding the credit
+            # we will flow to the total link credit.
+            self.total_link_credit = self.current_link_credit + self.total_link_credit \
+                if link_credit is not None else self.link_credit
+            await self._outgoing_flow(**kwargs)

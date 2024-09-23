@@ -7,7 +7,6 @@
 
 import os
 import json
-import jsondiff
 import pytest
 from breaking_changes_checker.changelog_tracker import ChangelogTracker, BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
@@ -18,9 +17,8 @@ def test_changelog_flag():
         stable = json.load(fd)
     with open(os.path.join(os.path.dirname(__file__), "examples", "code-reports", "content-safety", "current.json"), "r") as fd:
         current = json.load(fd)
-    diff = jsondiff.diff(stable, current)
 
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) > 0
@@ -34,6 +32,7 @@ def test_new_class_property_added():
         "azure.ai.contentsafety": {
             "class_nodes": {
                 "AnalyzeTextResult": {
+                    "type": None,
                     "methods": {},
                     "properties": {
                         "blocklists_match": "Optional",
@@ -49,6 +48,7 @@ def test_new_class_property_added():
         "azure.ai.contentsafety": {
             "class_nodes": {
                 "AnalyzeTextResult": {
+                    "type": None,
                     "methods": {},
                     "properties": {
                         "blocklists_match": "Optional",
@@ -59,8 +59,7 @@ def test_new_class_property_added():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -128,8 +127,7 @@ def test_async_cleanup_check():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-mgmt-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-mgmt-contentsafety")
     bc.run_checks()
 
     # Should only have 1 breaking change reported instead of 2
@@ -148,6 +146,7 @@ def test_new_class_property_added_init():
         "azure.ai.contentsafety": {
             "class_nodes": {
                 "AnalyzeTextResult": {
+                    "type": None,
                     "methods": {
                         "__init__": {
                             "parameters": {
@@ -181,6 +180,7 @@ def test_new_class_property_added_init():
         "azure.ai.contentsafety": {
             "class_nodes": {
                 "AnalyzeTextResult": {
+                    "type": None,
                     "methods": {
                         "__init__": {
                             "parameters": {
@@ -209,8 +209,7 @@ def test_new_class_property_added_init():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -281,8 +280,7 @@ def test_new_class_property_added_init_only():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -370,8 +368,7 @@ def test_new_class_method_parameter_added():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-ai-contentsafety")
+    bc = ChangelogTracker(stable, current, "azure-ai-contentsafety")
     bc.run_checks()
 
     assert len(bc.features_added) == 1
@@ -397,6 +394,7 @@ def test_added_operation_group():
         "azure.contoso": {
             "class_nodes": {
                 "ContosoClient": {
+                    "type": None,
                     "methods": {},
                     "properties": {
                         "bar": {
@@ -412,6 +410,7 @@ def test_added_operation_group():
         "azure.contoso": {
             "class_nodes": {
                 "ContosoClient": {
+                    "type": None,
                     "methods": {},
                     "properties": {
                         "bar": {
@@ -429,8 +428,7 @@ def test_added_operation_group():
         }
     }
 
-    diff = jsondiff.diff(stable, current)
-    bc = ChangelogTracker(stable, current, diff, "azure-contoso")
+    bc = ChangelogTracker(stable, current, "azure-contoso")
     bc.run_checks()
 
     assert len(bc.features_added) == 2
@@ -438,6 +436,56 @@ def test_added_operation_group():
     assert msg == ChangelogTracker.ADDED_OPERATION_GROUP_MSG
     assert args == ['azure.contoso', 'ContosoClient', 'foo']
     msg, _, *args = bc.features_added[1]
+    assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
+
+
+def test_ignore_changes():
+    stable = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {
+                        "bar": {
+                            "attr_type": "str"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    current = {
+        "azure.contoso": {
+            "class_nodes": {
+                "ContosoClient": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {
+                        "bar": {
+                            "attr_type": "str"
+                        },
+                        "foo": {
+                            "attr_type": "DeviceGroupsOperations"
+                        },
+                        "zip": {
+                            "attr_type": "bool"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    IGNORE = {
+        "azure-contoso": [("AddedOperationGroup", "*", "ContosoClient", "foo")]
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso", ignore=IGNORE)
+    bc.run_checks()
+    bc.report_changes()
+    assert len(bc.features_added) == 1
+    msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
 
 
@@ -449,11 +497,61 @@ def test_async_features_added_cleanup():
     ]
 
     # create dummy BreakingChangesTracker instance
-    ct = ChangelogTracker({}, {}, {}, "azure-contoso")
+    ct = ChangelogTracker({}, {}, "azure-contoso")
     ct.features_added = features_added
 
-    ct.run_async_changelog_cleanup()
+    ct.run_async_cleanup(ct.features_added)
 
     assert len(ct.features_added) == 2
     assert ct.features_added[0] == ("Message", "AddedClient", "azure.contoso", "FooClient", "foo")
     assert ct.features_added[1] == ("Message", "AddedClassMethod", "azure.contoso", "FooClient", "from_connection_string")
+
+
+def test_new_enum_added():
+    current = {
+        "azure.contoso.widgetmanager": {
+            "class_nodes": {
+                "WidgetEnum": {
+                    "type": "Enum",
+                    "methods": {},
+                    "properties": {
+                        "a": "a",
+                        "b": "b",
+                    }
+                },
+                "ManagerEnum": {
+                    "type": "Enum",
+                    "methods": {},
+                    "properties": {
+                        "foo": "foo",
+                        "bar": "bar",
+                    }
+                },
+            }
+        }
+    }
+
+    stable = {
+        "azure.contoso.widgetmanager": {
+            "class_nodes": {
+                "ManagerEnum": {
+                    "type": "Enum",
+                    "methods": {},
+                    "properties": {
+                        "foo": "foo",
+                    }
+                },
+            }
+        }
+    }
+
+    bc = ChangelogTracker(stable, current, "azure-contoso-widgetmanager")
+    bc.run_checks()
+
+    assert len(bc.features_added) == 2
+    msg, _, *args = bc.features_added[0]
+    assert msg == ChangelogTracker.ADDED_ENUM_MEMBER_MSG
+    assert args == ['azure.contoso.widgetmanager', 'ManagerEnum', 'bar']
+    msg, _, *args = bc.features_added[1]
+    assert msg == ChangelogTracker.ADDED_ENUM_MSG
+    assert args == ['azure.contoso.widgetmanager', 'WidgetEnum']

@@ -1,12 +1,26 @@
 # Release History
 
-## 1.0.0b29 (Unreleased)
+## 1.0.0b30 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fix setting custom `TracerProvider` bug
+    ([#37469](https://github.com/Azure/azure-sdk-for-python/pull/37469))
+
+### Other Changes
+
+## 1.0.0b29 (2024-09-10)
+
+### Features Added
+
+- Allow passing in of custom `TracerProvider` for `AzureMonitorTraceExporter`
+    ([#36363](https://github.com/Azure/azure-sdk-for-python/pull/36363))
+- Support AAD Auth for live metrics
+    ([#37258](https://github.com/Azure/azure-sdk-for-python/pull/37258))
 
 ### Other Changes
 

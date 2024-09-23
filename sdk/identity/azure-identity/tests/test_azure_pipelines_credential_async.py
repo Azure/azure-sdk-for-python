@@ -11,6 +11,8 @@ from azure.identity import CredentialUnavailableError
 from azure.identity._credentials.azure_pipelines import SYSTEM_OIDCREQUESTURI
 from azure.identity.aio import AzurePipelinesCredential, ChainedTokenCredential, ClientAssertionCredential
 
+from helpers import GET_TOKEN_METHODS
+
 
 def test_azure_pipelines_credential_initialize():
     system_access_token = "token"
@@ -57,7 +59,8 @@ async def test_azure_pipelines_credential_context_manager():
 
 
 @pytest.mark.asyncio
-async def test_azure_pipelines_credential_missing_system_env_var():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_azure_pipelines_credential_missing_system_env_var(get_token_method):
     credential = AzurePipelinesCredential(
         system_access_token="token",
         client_id="client-id",
@@ -67,12 +70,13 @@ async def test_azure_pipelines_credential_missing_system_env_var():
 
     with patch.dict("os.environ", {}, clear=True):
         with pytest.raises(CredentialUnavailableError) as ex:
-            await credential.get_token("scope")
+            await getattr(credential, get_token_method)("scope")
         assert f"Missing value for the {SYSTEM_OIDCREQUESTURI} environment variable" in str(ex.value)
 
 
 @pytest.mark.asyncio
-async def test_azure_pipelines_credential_in_chain():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_azure_pipelines_credential_in_chain(get_token_method):
     mock_credential = AsyncMock()
 
     with patch.dict("os.environ", {}, clear=True):
@@ -85,13 +89,14 @@ async def test_azure_pipelines_credential_in_chain():
             ),
             mock_credential,
         )
-        await chain_credential.get_token("scope")
-        assert mock_credential.get_token.called
+        await getattr(chain_credential, get_token_method)("scope")
+        assert getattr(mock_credential, get_token_method).called
 
 
 @pytest.mark.asyncio
 @pytest.mark.live_test_only("Requires Azure Pipelines environment with configured service connection")
-async def test_azure_pipelines_credential_authentication():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+async def test_azure_pipelines_credential_authentication(get_token_method):
     system_access_token = os.environ.get("SYSTEM_ACCESSTOKEN", "")
     service_connection_id = os.environ.get("AZURE_SERVICE_CONNECTION_ID", "")
     tenant_id = os.environ.get("AZURE_SERVICE_CONNECTION_TENANT_ID", "")
@@ -109,6 +114,6 @@ async def test_azure_pipelines_credential_authentication():
         service_connection_id=service_connection_id,
     )
 
-    token = await credential.get_token(scope)
+    token = await getattr(credential, get_token_method)(scope)
     assert token.token
     assert isinstance(token.expires_on, int)

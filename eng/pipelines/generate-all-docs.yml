@@ -8,7 +8,7 @@ jobs:
 
     variables:
       skipComponentGovernanceDetection: true
-    
+
     timeoutInMinutes: 120
 
     pool:
@@ -21,7 +21,6 @@ jobs:
           versionSpec: '$(PythonVersion)'
 
       - script: |
-          python -m pip install setuptools==58.3.0
           python -m pip install -r eng/ci_tools.txt
         displayName: 'Prep Environment'
 
@@ -35,5 +34,5 @@ jobs:
 
       - task: PublishPipelineArtifact@0
         inputs:
-          artifactName: 'documentation' 
+          artifactName: 'documentation'
           targetPath: '$(Build.SourcesDirectory)/_docs'

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.billing import BillingManagementClient
 
 """
@@ -30,13 +31,13 @@ def main():
     )
 
     response = client.transactions.list_by_invoice(
-        billing_account_name="{billingAccountName}",
-        invoice_name="{invoiceName}",
+        billing_account_name="00000000-0000-0000-0000-000000000000:00000000-0000-0000-0000-000000000000_2019-05-31",
+        invoice_name="G123456789",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/billing/resource-manager/Microsoft.Billing/stable/2020-05-01/examples/TransactionsListByInvoice.json
+# x-ms-original-file: specification/billing/resource-manager/Microsoft.Billing/stable/2024-04-01/examples/transactionsListByInvoice.json
 if __name__ == "__main__":
     main()

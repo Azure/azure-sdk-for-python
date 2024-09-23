@@ -238,7 +238,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
 
         self._current_ctxt_manager = trace.use_span(self._span_instance, end_on_exit=True)
         if self._current_ctxt_manager:
-            self._current_ctxt_manager.__enter__()  # pylint: disable=no-member
+            self._current_ctxt_manager.__enter__()
         return self
 
     def __exit__(self, exception_type, exception_value, traceback) -> None:
@@ -248,7 +248,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
             error_type = f"{module}.{exception_type.__qualname__}" if module else exception_type.__qualname__
             self.add_attribute(_ERROR_SPAN_ATTRIBUTE, error_type)
         if self._current_ctxt_manager:
-            self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)  # pylint: disable=no-member
+            self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)
             self._current_ctxt_manager = None
         for token in self._context_tokens:
             context.detach(token)

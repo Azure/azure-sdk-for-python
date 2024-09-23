@@ -1,3 +1,9 @@
+# --------------------------------------------------------------------------
+#
+# Copyright (c) Microsoft Corporation. All rights reserved.
+#
+# The MIT License (MIT)
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the ""Software""), to
 # deal in the Software without restriction, including without limitation the
@@ -22,11 +28,12 @@ import functools
 import pytest
 import json
 
-from azure.schemaregistry import SchemaRegistryClient
+from azure.schemaregistry import SchemaRegistryClient, SchemaFormat
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
+from mock_transport import MockResponse, MockTransport
 
 # TODO: add protobuf env var for live testing when protobuf changes have been rolled out
 is_livetest = str(os.getenv("AZURE_TEST_RUN_LIVE")).lower()
@@ -426,3 +433,72 @@ class TestSchemaRegistry(AzureRecordedTestCase):
             versions.append(version)
 
         assert len(versions) > 0
+
+    def test_get_schema_unknown_content_type(self, **kwargs):
+
+        # test known content type first
+        avro_schema_id = "avro_schema_id_123"
+        avro_schema_name = "avro_name"
+        avro_group_name = "avro_group"
+        avro_schema_version = "1"
+        avro_content_type = "application/json; serialization=Avro"
+        transport = MockTransport(response=MockResponse(
+            schema_id=avro_schema_id,
+            schema_name=avro_schema_name,
+            schema_group_name=avro_group_name,
+            schema_version=avro_schema_version,
+            content_type=avro_content_type,
+        ))
+        mock_fqn = f"schemaregistry_fqn"
+        credential = self.get_credential(SchemaRegistryClient)
+        mock_client = SchemaRegistryClient(
+            fully_qualified_namespace=mock_fqn, credential=credential, transport=transport
+        )
+
+        with mock_client:
+
+            # content type should return SchemaFormat enum
+            schema = mock_client.get_schema(avro_schema_id)
+            assert schema.properties.format == SchemaFormat.AVRO
+
+            # get unknown schema with content type of format "application/json; serialization=<format>"
+            foo_schema_id = "foo_schema_id_123"
+            foo_schema_name = "foo_name"
+            foo_group_name = "foo_group"
+            foo_schema_version = "1"
+            foo_content_type = "application/json; serialization=Foo"
+            transport._response = MockResponse(
+                schema_id=foo_schema_id,
+                schema_name=foo_schema_name,
+                schema_group_name=foo_group_name,
+                schema_version=foo_schema_version,
+                content_type=foo_content_type,
+            )
+            # get unknown schema by id should return format of the content type string
+            schema = mock_client.get_schema(foo_schema_id)
+            assert schema.properties.format == foo_content_type
+            # get unknown schema by version should return format of the content type string
+            schema = mock_client.get_schema(group_name=foo_group_name, name=foo_schema_name, version=foo_schema_version)
+            assert schema.properties.format == foo_content_type
+
+            # get unknown schema with content type of format "contenttype/<unknown>"
+            bar_schema_id = "bar_schema_id_123"
+            bar_schema_name = "bar_name"
+            bar_group_name = "bar_group"
+            bar_schema_version = "1"
+            bar_content_type = "contenttype/bar"
+            transport._response = MockResponse(
+                schema_id=bar_schema_id,
+                schema_name=bar_schema_name,
+                schema_group_name=bar_group_name,
+                schema_version=bar_schema_version,
+                content_type=bar_content_type,
+            )
+            schema = mock_client.get_schema(bar_schema_id)
+
+            # get unknown schema by id should return format of the content type string
+            schema = mock_client.get_schema(bar_schema_id)
+            assert schema.properties.format == bar_content_type
+            # get unknown schema by version should return format of the content type string
+            schema = mock_client.get_schema(group_name=bar_group_name, name=bar_schema_name, version=bar_schema_version)
+            assert schema.properties.format == bar_content_type
