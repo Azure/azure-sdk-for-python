@@ -13,7 +13,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class ProxyRun:
-    def __init__(self, run, **kwargs):
+    def __init__(self, run, **kwargs):  # pylint: disable=unused-argument
         self.run = run
 
 

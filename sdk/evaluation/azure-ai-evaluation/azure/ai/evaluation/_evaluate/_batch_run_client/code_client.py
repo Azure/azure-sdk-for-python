@@ -18,7 +18,9 @@ LOGGER = logging.getLogger(__name__)
 
 
 class CodeRun:
-    def __init__(self, run, input_data, evaluator_name=None, aggregated_metrics=None, **kwargs):
+    def __init__(
+        self, run, input_data, evaluator_name=None, aggregated_metrics=None, **kwargs  # pylint: disable=unused-argument
+    ):
         self.run = run
         self.evaluator_name = evaluator_name if evaluator_name is not None else ""
         self.input_data = input_data
@@ -114,7 +116,7 @@ class CodeClient:
             )
         return None
 
-    def run(self, flow, data, evaluator_name=None, column_mapping=None, **kwargs):
+    def run(self, flow, data, evaluator_name=None, column_mapping=None, **kwargs):  # pylint: disable=unused-argument
         input_df = data
         if not isinstance(input_df, pd.DataFrame):
             try:
