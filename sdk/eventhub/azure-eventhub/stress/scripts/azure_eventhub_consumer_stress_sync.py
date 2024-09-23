@@ -89,12 +89,6 @@ parser.add_argument("--print_console", help="print to console", action="store_tr
 parser.add_argument("--log_filename", help="log file name", type=str)
 parser.add_argument("--uamqp_mode", help="Flag for uamqp or pyamqp", action="store_true")
 parser.add_argument("--debug_level", help="Flag for setting a debug level, can be Info, Debug, Warning, Error or Critical", type=str, default="Error")
-parser.add_argument("--max_logfile_size", help="Maximum log file size in KB before logs are rotated. Default is 10000 KB.", type=int, default=10000)
-parser.add_argument("--logfile_backup_count", help="""New log files will successively be created up the backup count in reverse chronological, where *.log.1 is the most recent."""
-    """Logs are always written to the base log file - when it gets filled up, it is closed and renamed to <base.log>.1. Default is 2000.""",
-    type=int,
-    default=2000
-)
 
 
 args = parser.parse_args()
@@ -109,8 +103,6 @@ logfilepath = f"{logdir}/{log_filename}"
 LOGGER = get_logger(
     logfilepath,
     "stress_receive_sync",
-    max_logfile_size=args.max_logfile_size,
-    logfile_backup_count=args.logfile_backup_count,
     level=debug_level,
     print_console=print_console
 )

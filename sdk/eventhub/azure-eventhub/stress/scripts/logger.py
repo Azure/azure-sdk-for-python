@@ -6,14 +6,13 @@
 import os
 import sys
 import logging
-from logging.handlers import RotatingFileHandler
+from logging.handlers import TimedRotatingFileHandler
 
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 
 
-def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None,
-                    log_file_max_bytes=20 * 1024 * 1024, log_file_backup_count=3):
+def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_console=False, log_format=None):
     logger = logging.getLogger(logger_name)
     logger.setLevel(level)
     formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
@@ -24,8 +23,8 @@ def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_consol
             console_handler.setFormatter(formatter)
             logger.addHandler(console_handler)
     else:
-        file_handler = RotatingFileHandler(log_filename, maxBytes=10000 * 1000, 
-                                    backupCount=2000)
+        # rotated hourly, keeps all files since backupCount defaults to 0
+        file_handler = TimedRotatingFileHandler(log_filename, when='H')
         if not logger.handlers:
             file_handler.setFormatter(formatter)
             logger.addHandler(file_handler)
@@ -36,8 +35,6 @@ def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_consol
 def get_logger(
     log_filename,
     logger_name,
-    max_logfile_size=10000,
-    logfile_backup_count=2000,
     level=logging.ERROR,
     print_console=False,
     log_format=None,
@@ -51,10 +48,9 @@ def get_logger(
 
     formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(funcName)s(%(lineno)d) %(message)s')
 
-    file_handler = RotatingFileHandler(
+    file_handler = TimedRotatingFileHandler(
         log_filename,
-        maxBytes=max_logfile_size * 1000,
-        backupCount=logfile_backup_count
+        when='H',
     )
     file_handler.setFormatter(formatter)
     eventhub_logger.addHandler(file_handler)
