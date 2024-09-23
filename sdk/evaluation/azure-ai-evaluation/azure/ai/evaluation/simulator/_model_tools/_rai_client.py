@@ -20,7 +20,7 @@ if "RAI_SVC_URL" in os.environ:
     print(f"Found RAI_SVC_URL in environment variable, using {api_url} for the service endpoint.")
 
 
-class RAIClient:
+class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
     """Client for the Responsible AI Service
 
     :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
@@ -30,7 +30,9 @@ class RAIClient:
     :type token_manage: ~azure.ai.evaluation.simulator._model_tools._identity_manager.APITokenManager
     """
 
-    def __init__(self, azure_ai_project: AzureAIProject, token_manager: APITokenManager) -> None:
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+        self, azure_ai_project: AzureAIProject, token_manager: APITokenManager
+    ) -> None:
         self.azure_ai_project = azure_ai_project
         self.token_manager = token_manager
 

@@ -56,8 +56,10 @@ class CodeRun:
         return aggregated_metrics
 
 
-class CodeClient:
-    def __init__(self):
+class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+        self,
+    ):
         self._thread_pool = ThreadPoolExecutor(thread_name_prefix="evaluators_thread")
 
     def _calculate_metric(self, evaluator, input_df, column_mapping, evaluator_name):

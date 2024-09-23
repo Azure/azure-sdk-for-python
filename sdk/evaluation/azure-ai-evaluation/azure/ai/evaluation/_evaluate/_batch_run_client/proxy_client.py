@@ -17,8 +17,10 @@ class ProxyRun:
         self.run = run
 
 
-class ProxyClient:
-    def __init__(self, pf_client: PFClient):
+class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+        self, pf_client: PFClient
+    ):
         self._pf_client = pf_client
         self._thread_pool = ThreadPoolExecutor(thread_name_prefix="evaluators_thread")
 
