@@ -405,10 +405,11 @@ class ChangeFeedStateV2(ChangeFeedState):
         change_feed_start_from = (
             ChangeFeedStartFromInternal.from_start_time(change_feed_state_context.get("startTime")))
 
-        assert feed_range is not None
-        return cls(
-            container_link=container_link,
-            container_rid=collection_rid,
-            feed_range=feed_range,
-            change_feed_start_from=change_feed_start_from,
-            continuation=None)
+        if feed_range is not None:
+            return cls(
+                container_link=container_link,
+                container_rid=collection_rid,
+                feed_range=feed_range,
+                change_feed_start_from=change_feed_start_from,
+                continuation=None)
+        raise RuntimeError("feed_range is empty")

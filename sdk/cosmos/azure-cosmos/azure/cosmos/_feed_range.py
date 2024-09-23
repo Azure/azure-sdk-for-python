@@ -32,18 +32,6 @@ class FeedRange(ABC):
     """Represents a single feed range in an Azure Cosmos DB SQL API container.
 
     """
-
-    def to_string(self) -> str:
-        """
-        Get a json representation of the feed range.
-        The returned json string can be used to create a new feed range from it.
-
-        :return: A json representation of the feed range.
-        :rtype: str
-        """
-
-        return self._to_base64_encoded_string()
-
     @staticmethod
     def from_string(json_str: str) -> 'FeedRange':
         """
@@ -76,7 +64,7 @@ class FeedRange(ABC):
         # Convert the Base64 bytes to a string
         return base64_bytes.decode('utf-8')
 
-class FeedRangeEpk (FeedRange):
+class FeedRangeEpk(FeedRange):
     type_property_name = "Range"
 
     def __init__(self, feed_range: Range) -> None:
@@ -84,6 +72,18 @@ class FeedRangeEpk (FeedRange):
             raise ValueError("feed_range cannot be None")
 
         self._feed_range = feed_range
+        self._base64_encoded_string = None
+
+    def __str__(self) -> str:
+        """Get a json representation of the feed range.
+           The returned json string can be used to create a new feed range from it.
+
+        :return: A json representation of the feed range.
+        """
+        if self._base64_encoded_string is None:
+            self._base64_encoded_string = self._to_base64_encoded_string()
+
+        return self._base64_encoded_string
 
     def _to_dict(self) -> Dict[str, Any]:
         return {
@@ -95,7 +95,7 @@ class FeedRangeEpk (FeedRange):
 
     @classmethod
     def _from_json(cls, data: Dict[str, Any]) -> 'FeedRange':
-        if data.get(cls.type_property_name):
-            feed_range = Range.ParseFromDict(data.get(cls.type_property_name))
-            return cls(feed_range)
-        raise ValueError(f"Can not parse FeedRangeEPK from the json, there is no property {cls.type_property_name}")
+        try:
+            return cls(Range.ParseFromDict(data[cls.type_property_name]))
+        except KeyError as e:
+            raise ValueError(f"Can not parse FeedRangeEPK from the json, there is no property {cls.type_property_name}") from e
