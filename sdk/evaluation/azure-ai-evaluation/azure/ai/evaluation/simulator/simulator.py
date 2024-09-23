@@ -19,11 +19,12 @@ from pathlib import Path
 
 from .._user_agent import USER_AGENT
 from ._conversation.constants import ConversationRole
-from ._helpers import ConversationHistory, Turn
+from ._helpers import ConversationHistory, Turn, experimental
 # from ._tracing import monitor_task_simulator
 from ._utils import JsonLineChatProtocol
 
 
+@experimental
 class Simulator:
     """
     Simulator for generating synthetic conversations.
@@ -59,6 +60,7 @@ class Simulator:
             raise ValueError("subscription_id, resource_group_name, and project_name must not be None")
 
     # @monitor_task_simulator
+    @experimental
     async def __call__(
         self,
         *,
