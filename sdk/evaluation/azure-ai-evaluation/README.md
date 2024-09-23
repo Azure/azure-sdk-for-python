@@ -371,7 +371,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/evaluation/azure-ai-evaluation
 [evaluation_pypi]: https://pypi.org/project/azure-ai-evaluation/
 [evaluation_ref_docs]: https://learn.microsoft.com/python/api/azure-ai-evaluation/?view=azure-python
-[evaluation_samples]: https://github.com/Azure/azureml-examples/tree/main/sdk/python
+[evaluation_samples]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios
 [product_documentation]: https://docs.microsoft.com/azure/machine-learning/
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
