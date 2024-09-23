@@ -616,7 +616,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         length: Optional[int] = None,
         *,
         encoding: Union[str, None] = None,
-        decompress: bool = True,
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
@@ -733,7 +732,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             config=self._config,
             sdk_moniker=self._sdk_moniker,
             client=self._client,
-            decompress=decompress,
             **kwargs
         )
         downloader = StorageStreamDownloader(**options)
