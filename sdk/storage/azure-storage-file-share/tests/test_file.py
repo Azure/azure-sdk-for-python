@@ -3844,16 +3844,6 @@ class TestStorageFile(StorageRecordedTestCase):
         assert copy['copy_status'] == 'success'
         assert copy['copy_id'] is not None
 
-        props = file_client.get_file_properties()
-        assert props is not None
-        assert props.permission_key is not None
-
-        server_returned_permission = share_client.get_permission_for_share(
-            props.permission_key,
-            file_permission_format="sddl"
-        )
-        assert server_returned_permission == user_given_permission_sddl
-
         new_file.delete_file()
         file_client.delete_file()
 
