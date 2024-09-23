@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 from typing_extensions import override
 from azure.ai.evaluation._common.constants import EvaluationMetrics
+from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import BaseRaiServiceEval
 
 
@@ -41,5 +42,5 @@ class SelfHarmEvaluator(BaseRaiServiceEval):
     """
 
     @override
-    def __init__(self, azure_ai_project: dict, credential=None, eval_last_turn: bool = False):
+    def __init__(self, azure_ai_project: AzureAIProject, credential=None, eval_last_turn: bool = False):
         return super().__init__(eval_metric=EvaluationMetrics.SELF_HARM, azure_ai_project=azure_ai_project, credential=credential, eval_last_turn=eval_last_turn)
