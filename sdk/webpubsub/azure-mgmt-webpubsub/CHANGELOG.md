@@ -27,6 +27,10 @@
   - The model or publicly exposed class 'ServiceKind' was added in the current version
   - The model or publicly exposed class 'WebPubSubSocketIOSettings' was added in the current version
 
+### Breaking Changes
+
+  - The class 'WebPubSubResource' method '__init__' had default value 'None' removed from its parameter 'location' in the current version
+
 ## 2.0.0b2 (2023-10-23)
 
 ### Features Added
