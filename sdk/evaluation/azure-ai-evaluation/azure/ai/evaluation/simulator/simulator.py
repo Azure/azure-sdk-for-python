@@ -60,7 +60,6 @@ class Simulator:
             raise ValueError("subscription_id, resource_group_name, and project_name must not be None")
 
     # @monitor_task_simulator
-    @experimental
     async def __call__(
         self,
         *,
