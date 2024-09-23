@@ -9,8 +9,7 @@ import pytest
 import requests
 from ci_tools.variables import in_ci
 
-from azure.ai.evaluation.evaluate import evaluate
-from azure.ai.evaluation.evaluators import (
+from azure.ai.evaluation import (
     ContentSafetyEvaluator,
     F1ScoreEvaluator,
     FluencyEvaluator,
@@ -30,24 +29,24 @@ def questions_file():
     return os.path.join(data_path, "questions.jsonl")
 
 
-def answer_evaluator(answer):
-    return {"length": len(answer)}
+def answer_evaluator(response):
+    return {"length": len(response)}
 
 
-def answer_evaluator_int(answer):
-    return len(answer)
+def answer_evaluator_int(response):
+    return len(response)
 
 
-def answer_evaluator_int_dict(answer):
-    return {42: len(answer)}
+def answer_evaluator_int_dict(response):
+    return {42: len(response)}
 
 
-def answer_evaluator_json(answer):
-    return json.dumps({"length": len(answer)})
+def answer_evaluator_json(response):
+    return json.dumps({"length": len(response)})
 
 
-def question_evaluator(question):
-    return {"length": len(question)}
+def question_evaluator(query):
+    return {"length": len(query)}
 
 
 def _get_run_from_run_history(flow_run_id, ml_client, project_scope):
@@ -293,12 +292,12 @@ class TestEvaluate:
             None,
             {"default": {}},
             {"default": {}, "question_ev": {}},
-            {"default": {"question": "${target.question}"}},
-            {"default": {"question": "${data.question}"}},
-            {"default": {}, "question_ev": {"question": "${data.question}"}},
-            {"default": {}, "question_ev": {"question": "${target.question}"}},
-            {"default": {}, "question_ev": {"another_question": "${target.question}"}},
-            {"default": {"another_question": "${target.question}"}},
+            {"default": {"query": "${target.query}"}},
+            {"default": {"query": "${data.query}"}},
+            {"default": {}, "question_ev": {"query": "${data.query}"}},
+            {"default": {}, "question_ev": {"query": "${target.query}"}},
+            {"default": {}, "question_ev": {"another_question": "${target.query}"}},
+            {"default": {"another_question": "${target.query}"}},
         ],
     )
     def test_evaluate_another_questions(self, questions_file, evaluation_config):
@@ -315,18 +314,18 @@ class TestEvaluate:
             evaluator_config=evaluation_config,
         )
         row_result_df = pd.DataFrame(result["rows"])
-        assert "outputs.answer" in row_result_df.columns
-        assert "inputs.question" in row_result_df.columns
-        assert "outputs.question" in row_result_df.columns
+        assert "outputs.response" in row_result_df.columns
+        assert "inputs.query" in row_result_df.columns
+        assert "outputs.query" in row_result_df.columns
         assert "outputs.question_ev.length" in row_result_df.columns
-        question = "outputs.question"
+        query = "outputs.query"
 
         mapping = None
         if evaluation_config:
             mapping = evaluation_config.get("question_ev", evaluation_config.get("default", None))
-        if mapping and ("another_question" in mapping or mapping["question"] == "${data.question}"):
-            question = "inputs.question"
-        expected = list(row_result_df[question].str.len())
+        if mapping and ("another_question" in mapping or mapping["query"] == "${data.query}"):
+            query = "inputs.query"
+        expected = list(row_result_df[query].str.len())
         assert expected == list(row_result_df["outputs.question_ev.length"])
 
     @pytest.mark.parametrize(
@@ -335,18 +334,18 @@ class TestEvaluate:
             (
                 {
                     "f1_score": {
-                        "answer": "${data.context}",
+                        "response": "${data.context}",
                         "ground_truth": "${data.ground_truth}",
                     },
                     "answer": {
-                        "answer": "${target.response}",
+                        "response": "${target.response}",
                     },
                 }
             ),
             (
                 {
                     "default": {
-                        "answer": "${target.response}",
+                        "response": "${target.response}",
                         "ground_truth": "${data.ground_truth}",
                     },
                 }

@@ -1,5 +1,12 @@
 # Release History
 
+## 1.1.0 (2024-09-23)
+
+### Features Added
+
+  - Model VolumeGroupProperties has a new parameter enforce_data_integrity_check_for_iscsi
+  - Model VolumeGroupUpdateProperties has a new parameter enforce_data_integrity_check_for_iscsi
+
 ## 1.0.0 (2024-01-25)
 
 ### Features Added
