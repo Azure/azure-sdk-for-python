@@ -84,8 +84,11 @@ class ShareOperations:
         paid_bursting_enabled: Optional[bool] = None,
         paid_bursting_max_bandwidth_mibps: Optional[int] = None,
         paid_bursting_max_iops: Optional[int] = None,
+        share_provisioned_iops: Optional[int] = None,
+        share_provisioned_bandwidth_mibps: Optional[int] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Creates a new share under the specified account. If the share with the same name already
         exists, the operation fails.
 
@@ -120,6 +123,15 @@ class ShareOperations:
          the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
          None.
         :type paid_bursting_max_iops: int
+        :param share_provisioned_iops: Optional. The provisioned IOPS of the share. If this is not
+         specified, compute the recommended IOPS of the share using the formula for a share in this
+         media tier (SSD/HDD as appropriate). The provisioned IOPS of the share is always explicitly
+         stored on the share object, even if the recommendation formula is used. Default value is None.
+        :type share_provisioned_iops: int
+        :param share_provisioned_bandwidth_mibps: Optional. The provisioned throughput of the share. If
+         this is not specified, compute the recommended throughput of the share using the formula for a
+         share in this media tier (SSD/HDD as appropriate). Default value is None.
+        :type share_provisioned_bandwidth_mibps: int
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -150,6 +162,8 @@ class ShareOperations:
             paid_bursting_enabled=paid_bursting_enabled,
             paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
             paid_bursting_max_iops=paid_bursting_max_iops,
+            share_provisioned_iops=share_provisioned_iops,
+            share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
@@ -176,6 +190,16 @@ class ShareOperations:
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-share-quota"] = self._deserialize("int", response.headers.get("x-ms-share-quota"))
+        response_headers["x-ms-share-provisioned-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-provisioned-iops")
+        )
+        response_headers["x-ms-share-provisioned-bandwidth-mibps"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-provisioned-bandwidth-mibps")
+        )
+        response_headers["x-ms-share-included-burst-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-included-burst-iops")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -188,6 +212,7 @@ class ShareOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Returns all user-defined metadata and system properties for the specified share or share
         snapshot. The data returned does not include the share's list of files.
 
@@ -297,6 +322,18 @@ class ShareOperations:
         response_headers["x-ms-share-paid-bursting-max-bandwidth-mibps"] = self._deserialize(
             "int", response.headers.get("x-ms-share-paid-bursting-max-bandwidth-mibps")
         )
+        response_headers["x-ms-share-included-burst-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-included-burst-iops")
+        )
+        response_headers["x-ms-share-max-burst-credits-for-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-max-burst-credits-for-iops")
+        )
+        response_headers["x-ms-share-next-allowed-provisioned-iops-downgrade-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-share-next-allowed-provisioned-iops-downgrade-time")
+        )
+        response_headers["x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -310,6 +347,7 @@ class ShareOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Operation marks the specified share or share snapshot for deletion. The share or share snapshot
         and any files contained within it are later deleted during garbage collection.
 
@@ -378,6 +416,12 @@ class ShareOperations:
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-share-usage-bytes"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-usage-bytes")
+        )
+        response_headers["x-ms-share-snapshot-usage-bytes"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-snapshot-usage-bytes")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -392,6 +436,7 @@ class ShareOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
@@ -487,6 +532,7 @@ class ShareOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
@@ -575,6 +621,7 @@ class ShareOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
@@ -668,6 +715,7 @@ class ShareOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
@@ -757,6 +805,7 @@ class ShareOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Lease Share operation establishes and manages a lock on a share, or the specified snapshot
         for set and delete share operations.
 
@@ -854,6 +903,7 @@ class ShareOperations:
     async def create_snapshot(  # pylint: disable=inconsistent-return-statements
         self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Creates a read-only snapshot of a share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -928,6 +978,7 @@ class ShareOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Create a permission (a security descriptor).
 
         :param share_permission: A permission (a security descriptor) at the share level. Required.
@@ -954,6 +1005,7 @@ class ShareOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Create a permission (a security descriptor).
 
         :param share_permission: A permission (a security descriptor) at the share level. Required.
@@ -975,6 +1027,7 @@ class ShareOperations:
     async def create_permission(  # pylint: disable=inconsistent-return-statements
         self, share_permission: Union[_models.SharePermission, IO[bytes]], timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Create a permission (a security descriptor).
 
         :param share_permission: A permission (a security descriptor) at the share level. Is either a
@@ -1059,6 +1112,7 @@ class ShareOperations:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> _models.SharePermission:
+        # pylint: disable=line-too-long
         """Returns the permission (security descriptor) for a given key.
 
         :param file_permission_key: Key of the permission to be set for the directory/file. Required.
@@ -1143,9 +1197,12 @@ class ShareOperations:
         paid_bursting_enabled: Optional[bool] = None,
         paid_bursting_max_bandwidth_mibps: Optional[int] = None,
         paid_bursting_max_iops: Optional[int] = None,
+        share_provisioned_iops: Optional[int] = None,
+        share_provisioned_bandwidth_mibps: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Sets properties for the specified share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1174,6 +1231,15 @@ class ShareOperations:
          the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
          None.
         :type paid_bursting_max_iops: int
+        :param share_provisioned_iops: Optional. The provisioned IOPS of the share. If this is not
+         specified, compute the recommended IOPS of the share using the formula for a share in this
+         media tier (SSD/HDD as appropriate). The provisioned IOPS of the share is always explicitly
+         stored on the share object, even if the recommendation formula is used. Default value is None.
+        :type share_provisioned_iops: int
+        :param share_provisioned_bandwidth_mibps: Optional. The provisioned throughput of the share. If
+         this is not specified, compute the recommended throughput of the share using the formula for a
+         share in this media tier (SSD/HDD as appropriate). Default value is None.
+        :type share_provisioned_bandwidth_mibps: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: None or the result of cls(response)
@@ -1210,6 +1276,8 @@ class ShareOperations:
             paid_bursting_enabled=paid_bursting_enabled,
             paid_bursting_max_bandwidth_mibps=paid_bursting_max_bandwidth_mibps,
             paid_bursting_max_iops=paid_bursting_max_iops,
+            share_provisioned_iops=share_provisioned_iops,
+            share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
@@ -1237,6 +1305,28 @@ class ShareOperations:
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-share-quota"] = self._deserialize("int", response.headers.get("x-ms-share-quota"))
+        response_headers["x-ms-share-provisioned-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-provisioned-iops")
+        )
+        response_headers["x-ms-share-provisioned-bandwidth-mibps"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-provisioned-bandwidth-mibps")
+        )
+        response_headers["x-ms-share-included-burst-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-included-burst-iops")
+        )
+        response_headers["x-ms-share-max-burst-credits-for-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-max-burst-credits-for-iops")
+        )
+        response_headers["x-ms-share-next-allowed-quota-downgrade-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-share-next-allowed-quota-downgrade-time")
+        )
+        response_headers["x-ms-share-next-allowed-provisioned-iops-downgrade-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-share-next-allowed-provisioned-iops-downgrade-time")
+        )
+        response_headers["x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"] = self._deserialize(
+            "rfc-1123", response.headers.get("x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -1249,6 +1339,7 @@ class ShareOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Sets one or more user-defined name-value pairs for the specified share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1327,6 +1418,7 @@ class ShareOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> List[_models.SignedIdentifier]:
+        # pylint: disable=line-too-long
         """Returns information about stored access policies specified on the share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1406,6 +1498,7 @@ class ShareOperations:
         share_acl: Optional[List[_models.SignedIdentifier]] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Sets a stored access policy for use with shared access signatures.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1492,6 +1585,7 @@ class ShareOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> _models.ShareStats:
+        # pylint: disable=line-too-long
         """Retrieves statistics related to the share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1572,6 +1666,7 @@ class ShareOperations:
         deleted_share_version: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Restores a previously deleted Share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1644,6 +1739,19 @@ class ShareOperations:
         )
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-share-quota"] = self._deserialize("int", response.headers.get("x-ms-share-quota"))
+        response_headers["x-ms-share-provisioned-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-provisioned-iops")
+        )
+        response_headers["x-ms-share-provisioned-bandwidth-mibps"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-provisioned-bandwidth-mibps")
+        )
+        response_headers["x-ms-share-included-burst-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-included-burst-iops")
+        )
+        response_headers["x-ms-share-max-burst-credits-for-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-max-burst-credits-for-iops")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore

@@ -187,6 +187,7 @@ class ServiceOperations:
     def set_properties(  # pylint: disable=inconsistent-return-statements
         self, storage_service_properties: _models.StorageServiceProperties, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Sets properties for a storage account's File service endpoint, including properties for Storage
         Analytics metrics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -254,6 +255,7 @@ class ServiceOperations:
 
     @distributed_trace
     def get_properties(self, timeout: Optional[int] = None, **kwargs: Any) -> _models.StorageServiceProperties:
+        # pylint: disable=line-too-long
         """Gets the properties of a storage account's File service, including properties for Storage
         Analytics metrics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -326,6 +328,7 @@ class ServiceOperations:
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> _models.ListSharesResponse:
+        # pylint: disable=line-too-long
         """The List Shares Segment operation returns a list of the shares and share snapshots under the
         specified account.
 
