@@ -39,7 +39,7 @@ def assistants_v2_aoai_quickstart() -> None:
 
   client = AzureOpenAI(
       azure_ad_token_provider=token_provider,
-      api_version=os.getenv("API_VERSION_GA"),
+      api_version=os.getenv("GA"),
       azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
       )
 
