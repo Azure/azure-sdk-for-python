@@ -2,6 +2,9 @@
 
 ## 1.21.0 (unreleased)
 
+### Other Changes
+- Added dependency on `azure-monitor-opentelemetry`.
+
 ## 1.20.0 (2024-09-10)
 
 ### Features Added

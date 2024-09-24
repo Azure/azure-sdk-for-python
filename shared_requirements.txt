@@ -74,3 +74,4 @@ numpy
 jsonpath-ng
 nltk
 rouge-score
+azure-monitor-opentelemetry
