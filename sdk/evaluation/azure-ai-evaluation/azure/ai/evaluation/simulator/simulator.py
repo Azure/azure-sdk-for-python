@@ -318,8 +318,8 @@ class Simulator:
                 # Access the resource as a file path
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
-            except FileNotFoundError:
-                raise f"Flow path for {resource_name} does not exist in package {package}."
+            except FileNotFoundError as e:
+                raise f"Flow path for {resource_name} does not exist in package {package}." from e
         return load_flow(
             source=user_simulator_prompty,
             model=prompty_model_config,
@@ -432,8 +432,8 @@ class Simulator:
                 # Access the resource as a file path
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
-            except FileNotFoundError:
-                raise f"Flow path for {resource_name} does not exist in package {package}."
+            except FileNotFoundError as e:
+                raise f"Flow path for {resource_name} does not exist in package {package}." from e
         return load_flow(
             source=query_response_generating_prompty,
             model=prompty_model_config,
