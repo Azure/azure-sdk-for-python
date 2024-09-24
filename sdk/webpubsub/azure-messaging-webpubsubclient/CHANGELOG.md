@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-- clean useless warnings in log
+- Clean useless warnings in log
 
 ## 1.1.0 (2024-04-24)
 
