@@ -348,7 +348,7 @@ async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: st
         )
 
     if response.status_code != 200:
-        msg = f"Failed to retrieve the discovery service URL."
+        msg = "Failed to retrieve the discovery service URL."
         raise EvaluationException(
             message=msg,
             internal_message=msg,

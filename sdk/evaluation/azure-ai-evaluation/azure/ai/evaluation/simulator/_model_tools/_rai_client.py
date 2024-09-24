@@ -74,7 +74,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             timeout=5,
         )
         if response.status_code != 200:
-            msg = f"Failed to retrieve the discovery service URL."
+            msg = "Failed to retrieve the discovery service URL."
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,
