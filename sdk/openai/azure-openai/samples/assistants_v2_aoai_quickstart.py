@@ -8,7 +8,7 @@
 FILE: assistants_v2_aoai_quickstart.py
 
 DESCRIPTION:
-    This sample demonstrates how to get started with Assistants (v2) using the official OpenAI SDK for Python.
+    This sample demonstrates how to get started with Assistants (v2) using the official OpenAI library for Python.
 
 USAGE:
     python assistants_v2_aoai_quickstart.py
@@ -29,7 +29,7 @@ import os
 os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZ_OPENAI_ENDPOINT")
 os.environ["AZURE_OPENAI_DEPLOYMENT"] = "gpt-4-1106-preview"
 
-def assistants_aoai_quickstart() -> None:
+def assistants_v2_aoai_quickstart() -> None:
   #[START assistant_setup]
   import os
   from azure.identity import DefaultAzureCredential, get_bearer_token_provider
@@ -76,4 +76,4 @@ def assistants_aoai_quickstart() -> None:
   #[END run_assistant]
 
 if __name__ == "__main__":
-  assistants_aoai_quickstart()
+  assistants_v2_aoai_quickstart()
