@@ -48,7 +48,6 @@
   - Added model `SystemData`
   - Added enum `VirtualMachineProvisioningState`
   - Added enum `WorkloadNetworkProvisioningState`
-  - Model `WorkloadNetworksOperations` added method `list_public_ips`
   - Added model `IscsiPathsOperations`
 
 ### Breaking Changes
@@ -71,7 +70,7 @@
   - Deleted or renamed model `ServiceSpecification`
   - Deleted or renamed model `WorkloadNetworkName`
   - Method `WorkloadNetworksOperations.get` deleted or renamed its parameter `workload_network_name` of kind `positional_or_keyword`
-  - Deleted or renamed method `WorkloadNetworksOperations.list_public_i_ps`
+  - Model WorkloadNetworksOperations renamed its instance variable `list_public_i_ps` to `list_public_ips`
 
 ## 9.0.0b1 (2024-06-28)
 
