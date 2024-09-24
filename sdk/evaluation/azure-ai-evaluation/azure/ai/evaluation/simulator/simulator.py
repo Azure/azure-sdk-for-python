@@ -338,7 +338,7 @@ class Simulator:
         :raises ValueError: If the response cannot be parsed.
         """
         try:
-            if type(response) == str:
+            if isinstance(response, str):
                 response = response.replace("\u2019", "'").replace("\u2018", "'")
                 response = response.replace("\u201C", '"').replace("\u201D", '"')
 
@@ -401,7 +401,7 @@ class Simulator:
 
         try:
             query_responses = query_flow(text=text, num_queries=num_queries)
-            if type(query_responses) == dict:
+            if isinstance(query_responses, dict):
                 keys = list(query_responses.keys())
                 return query_responses[keys[0]]
             return json.loads(query_responses)
@@ -568,7 +568,7 @@ class Simulator:
                     }
                 ],
             )
-            if type(conversation_starter_from_simulated_user) == dict:
+            if isinstance(conversation_starter_from_simulated_user, dict):
                 conversation_starter_from_simulated_user = conversation_starter_from_simulated_user["content"]
             user_turn = Turn(role=ConversationRole.USER, content=conversation_starter_from_simulated_user)
             conversation_history.add_to_history(user_turn)
