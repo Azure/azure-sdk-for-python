@@ -54,11 +54,11 @@
 ### Breaking Changes
 
   - Model `Operation` deleted or renamed its instance variable `properties`
-  - Method `PrivateCloud.__init__` removed default value `None` from its parameter `location`
+  - Parameter `location` of model `PrivateCloud` is now required
   - Method `PrivateCloud.__init__` parameter `internet` changed default value from `str` to `none`
-  - Method `PrivateCloudIdentity.__init__` removed default value `None` from its parameter `type`
+  - Parameter `type` of model `PrivateCloudIdentity` is now required
   - Method `PrivateCloudUpdate.__init__` parameter `internet` changed default value from `str` to `none`
-  - Method `TrackedResource.__init__` removed default value `None` from its parameter `location`
+  - Parameter `location` of model `TrackedResource` is now required
   - Deleted or renamed model `ClusterProperties`
   - Deleted or renamed model `CommonClusterProperties`
   - Deleted or renamed model `LogSpecification`
