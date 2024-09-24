@@ -6,7 +6,6 @@
 from logging import getLogger
 import json
 import time
-import random
 from dataclasses import dataclass
 from typing import Tuple, Union, Dict, List, Any, Optional, Mapping
 from typing_extensions import Self
@@ -19,13 +18,19 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
 )
+from ._client_manager_base import (
+    _ConfigurationClientWrapperBase,
+    ConfigurationClientManagerBase,
+    FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL,
+    MINIMAL_CLIENT_REFRESH_INTERVAL,
+)
 from ._models import SettingSelector
 from ._constants import FEATURE_FLAG_PREFIX
+from ._discovery import find_auto_failover_endpoints
 
 
 @dataclass
-class ConfigurationClientWrapper:
-    endpoint: str
+class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     _client: AzureAppConfigurationClient
     backoff_end_time: float = 0
     failed_attempts: int = 0
@@ -42,7 +47,7 @@ class ConfigurationClientWrapper:
         **kwargs
     ) -> Self:
         """
-        Creates a new instance of the ConfigurationClientWrapper class, using the provided credential to authenticate
+        Creates a new instance of the _ConfigurationClientWrapper class, using the provided credential to authenticate
         requests.
 
         :param str endpoint: The endpoint of the App Configuration store
@@ -50,8 +55,8 @@ class ConfigurationClientWrapper:
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
         :param int retry_backoff_max: The maximum backoff time for retries
-        :return: A new instance of the ConfigurationClientWrapper class
-        :rtype: ConfigurationClientWrapper
+        :return: A new instance of the _ConfigurationClientWrapper class
+        :rtype: _ConfigurationClientWrapper
         """
         return cls(
             endpoint,
@@ -70,7 +75,7 @@ class ConfigurationClientWrapper:
         cls, endpoint: str, connection_string: str, user_agent: str, retry_total: int, retry_backoff_max: int, **kwargs
     ) -> Self:
         """
-        Creates a new instance of the ConfigurationClientWrapper class, using the provided connection string to
+        Creates a new instance of the _ConfigurationClientWrapper class, using the provided connection string to
         authenticate requests.
 
         :param str endpoint: The endpoint of the App Configuration store
@@ -78,8 +83,8 @@ class ConfigurationClientWrapper:
         :param str user_agent: The user agent string to use for the request
         :param int retry_total: The total number of retries to allow for requests
         :param int retry_backoff_max: The maximum backoff time for retries
-        :return: A new instance of the ConfigurationClientWrapper class
-        :rtype: ConfigurationClientWrapper
+        :return: A new instance of the _ConfigurationClientWrapper class
+        :rtype: _ConfigurationClientWrapper
         """
         return cls(
             endpoint,
@@ -153,21 +158,33 @@ class ConfigurationClientWrapper:
     @distributed_trace
     def load_feature_flags(
         self, feature_flag_selectors: List[SettingSelector], feature_flag_refresh_enabled: bool, **kwargs
-    ) -> Tuple[List[FeatureFlagConfigurationSetting], Dict[Tuple[str, str], str]]:
+    ) -> Tuple[List[FeatureFlagConfigurationSetting], Dict[Tuple[str, str], str], Dict[str, bool]]:
         feature_flag_sentinel_keys = {}
         loaded_feature_flags = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
+        endpoint = self._client._impl._config.endpoint  # pylint: disable=protected-access
+        filters_used: Dict[str, bool] = {}
         for select in feature_flag_selectors:
             feature_flags = self._client.list_configuration_settings(
                 key_filter=FEATURE_FLAG_PREFIX + select.key_filter, label_filter=select.label_filter, **kwargs
             )
             for feature_flag in feature_flags:
-                loaded_feature_flags.append(json.loads(feature_flag.value))
+                if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
+                    # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
+                    # mistake, so we should ignore it.
+                    continue
+
+                feature_flag_value = json.loads(feature_flag.value)
+
+                self._feature_flag_telemetry(endpoint, feature_flag, feature_flag_value)
+                self._feature_flag_appconfig_telemetry(feature_flag, filters_used)
+
+                loaded_feature_flags.append(feature_flag_value)
 
                 if feature_flag_refresh_enabled:
                     feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
-        return loaded_feature_flags, feature_flag_sentinel_keys
+        return loaded_feature_flags, feature_flag_sentinel_keys, filters_used
 
     @distributed_trace
     def refresh_configuration_settings(
@@ -207,7 +224,7 @@ class ConfigurationClientWrapper:
         feature_flag_selectors: List[SettingSelector],
         headers: Dict[str, str],
         **kwargs
-    ) -> Tuple[bool, Optional[Dict[Tuple[str, str], str]], Optional[List[Any]]]:
+    ) -> Tuple[bool, Optional[Dict[Tuple[str, str], str]], Optional[List[Any]], Dict[str, bool]]:
         """
         Gets the refreshed feature flags if they have changed.
 
@@ -217,17 +234,17 @@ class ConfigurationClientWrapper:
 
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value of the feature flag sentinel keys. The third item is the updated feature flags.
-        :rtype: Tuple[bool, Union[Dict[Tuple[str, str], str], None], Union[List[Dict[str, str]], None]]
+        :rtype: Tuple[bool, Union[Dict[Tuple[str, str], str], None], Union[List[Dict[str, str]], None, Dict[str, bool]]
         """
         feature_flag_sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = dict(refresh_on)
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
             if changed:
-                feature_flags, feature_flag_sentinel_keys = self.load_feature_flags(
-                    feature_flag_selectors, True, **kwargs
+                feature_flags, feature_flag_sentinel_keys, filters_used = self.load_feature_flags(
+                    feature_flag_selectors, True, headers=headers, **kwargs
                 )
-                return True, feature_flag_sentinel_keys, feature_flags
-        return False, None, None
+                return True, feature_flag_sentinel_keys, feature_flags, filters_used
+        return False, None, None, {}
 
     @distributed_trace
     def get_configuration_setting(self, key: str, label: str, **kwargs) -> ConfigurationSetting:
@@ -264,49 +281,112 @@ class ConfigurationClientWrapper:
         self._client.__exit__(*args)
 
 
-class ConfigurationClientManager:
-    def __init__(self, min_backoff_sec: int, max_backoff_sec: int):
-        self._replica_clients: List[ConfigurationClientWrapper] = []
-        self._min_backoff_sec = min_backoff_sec
-        self._max_backoff_sec = max_backoff_sec
+class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disable=too-many-instance-attributes
+    def __init__(
+        self,
+        connection_string: Optional[str],
+        endpoint: str,
+        credential: Optional["TokenCredential"],
+        user_agent: str,
+        retry_total,
+        retry_backoff_max,
+        replica_discovery_enabled,
+        min_backoff_sec,
+        max_backoff_sec,
+        **kwargs
+    ):
+        super(ConfigurationClientManager, self).__init__(
+            endpoint,
+            user_agent,
+            retry_total,
+            retry_backoff_max,
+            replica_discovery_enabled,
+            min_backoff_sec,
+            max_backoff_sec,
+            **kwargs
+        )
+        self._original_connection_string = connection_string
+        self._credential = credential
 
-    def set_clients(self, replica_clients: List[ConfigurationClientWrapper]):
-        self._replica_clients.clear()
-        self._replica_clients.extend(replica_clients)
+        if connection_string and endpoint:
+            self._replica_clients.append(
+                _ConfigurationClientWrapper.from_connection_string(
+                    endpoint, connection_string, user_agent, retry_total, retry_backoff_max, **self._args
+                )
+            )
+            self._setup_failover_endpoints()
+            return
+        if endpoint and credential:
+            self._replica_clients.append(
+                _ConfigurationClientWrapper.from_credential(
+                    endpoint, credential, user_agent, retry_total, retry_backoff_max, **self._args
+                )
+            )
+            self._setup_failover_endpoints()
+            return
+        raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
 
-    def get_active_clients(self):
-        active_clients = []
-        for client in self._replica_clients:
-            if client.is_active():
-                active_clients.append(client)
-        return active_clients
+    def refresh_clients(self):
+        if not self._replica_discovery_enabled:
+            return
+        if self._next_update_time > time.time():
+            return
+        self._setup_failover_endpoints()
 
-    def backoff(self, client: ConfigurationClientWrapper):
+    def _setup_failover_endpoints(self):
+        failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
+
+        if failover_endpoints is None:
+            # SRV record not found, so we should refresh after a longer interval
+            self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
+            return
+
+        if len(failover_endpoints) == 0:
+            # No failover endpoints in SRV record.
+            self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
+            return
+
+        new_clients = [self._replica_clients[0]]  # Keep the original client
+        for failover_endpoint in failover_endpoints:
+            found_client = False
+            for client in self._replica_clients:
+                if client.endpoint == failover_endpoint:
+                    new_clients.append(client)
+                    found_client = True
+                    break
+            if not found_client:
+                if self._original_connection_string:
+                    failover_connection_string = self._original_connection_string.replace(
+                        self._original_endpoint, failover_endpoint
+                    )
+                    new_clients.append(
+                        _ConfigurationClientWrapper.from_connection_string(
+                            failover_endpoint,
+                            failover_connection_string,
+                            self._user_agent,
+                            self._retry_total,
+                            self._retry_backoff_max,
+                            **self._args
+                        )
+                    )
+                else:
+                    new_clients.append(
+                        _ConfigurationClientWrapper.from_credential(
+                            failover_endpoint,
+                            self._credential,
+                            self._user_agent,
+                            self._retry_total,
+                            self._retry_backoff_max,
+                            **self._args
+                        )
+                    )
+        self._replica_clients = new_clients
+        self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
+
+    def backoff(self, client: _ConfigurationClientWrapper):
         client.failed_attempts += 1
         backoff_time = self._calculate_backoff(client.failed_attempts)
         client.backoff_end_time = (time.time() * 1000) + backoff_time
-
-    def get_client_count(self):
-        return len(self._replica_clients)
-
-    def _calculate_backoff(self, attempts: int) -> float:
-        max_attempts = 63
-        ms_per_second = 1000  # 1 Second in milliseconds
-
-        min_backoff_milliseconds = self._min_backoff_sec * ms_per_second
-        max_backoff_milliseconds = self._max_backoff_sec * ms_per_second
-
-        if self._max_backoff_sec <= self._min_backoff_sec:
-            return min_backoff_milliseconds
-
-        calculated_milliseconds = max(1, min_backoff_milliseconds) * (1 << min(attempts, max_attempts))
-
-        if calculated_milliseconds > max_backoff_milliseconds or calculated_milliseconds <= 0:
-            calculated_milliseconds = max_backoff_milliseconds
-
-        return min_backoff_milliseconds + (
-            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)
-        )
 
     def __eq__(self, other):
         if len(self._replica_clients) != len(other._replica_clients):

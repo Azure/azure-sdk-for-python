@@ -40,7 +40,10 @@ class AsyncPollingMethod(Generic[PollingReturnType_co]):
     """ABC class for polling method."""
 
     def initialize(
-        self, client: Any, initial_response: Any, deserialization_callback: DeserializationCallbackType
+        self,
+        client: Any,
+        initial_response: Any,
+        deserialization_callback: DeserializationCallbackType,
     ) -> None:
         raise NotImplementedError("This method needs to be implemented")
 
@@ -69,7 +72,7 @@ class AsyncPollingMethod(Generic[PollingReturnType_co]):
 class AsyncNoPolling(_SansIONoPolling[PollingReturnType_co], AsyncPollingMethod[PollingReturnType_co]):
     """An empty async poller that returns the deserialized initial response."""
 
-    async def run(self) -> None:  # pylint:disable=invalid-overridden-method
+    async def run(self) -> None:
         """Empty run, no polling.
         Just override initial run to add "async"
         """

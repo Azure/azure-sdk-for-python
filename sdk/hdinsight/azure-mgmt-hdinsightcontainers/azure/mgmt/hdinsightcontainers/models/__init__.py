@@ -14,14 +14,21 @@ from ._models_py3 import CatalogOptions
 from ._models_py3 import Cluster
 from ._models_py3 import ClusterAKSPatchVersionUpgradeProperties
 from ._models_py3 import ClusterAccessProfile
+from ._models_py3 import ClusterAksPatchUpgradeHistoryProperties
+from ._models_py3 import ClusterAvailableInPlaceUpgradeProperties
 from ._models_py3 import ClusterAvailableUpgrade
 from ._models_py3 import ClusterAvailableUpgradeAksPatchUpgradeProperties
 from ._models_py3 import ClusterAvailableUpgradeHotfixUpgradeProperties
 from ._models_py3 import ClusterAvailableUpgradeList
+from ._models_py3 import ClusterAvailableUpgradePatchVersionUpgradeProperties
 from ._models_py3 import ClusterAvailableUpgradeProperties
 from ._models_py3 import ClusterComponentsItem
 from ._models_py3 import ClusterConfigFile
+from ._models_py3 import ClusterHotfixUpgradeHistoryProperties
 from ._models_py3 import ClusterHotfixUpgradeProperties
+from ._models_py3 import ClusterHotfixUpgradeRollbackHistoryProperties
+from ._models_py3 import ClusterInPlaceUpgradeHistoryProperties
+from ._models_py3 import ClusterInPlaceUpgradeProperties
 from ._models_py3 import ClusterInstanceViewProperties
 from ._models_py3 import ClusterInstanceViewPropertiesStatus
 from ._models_py3 import ClusterInstanceViewResult
@@ -31,13 +38,22 @@ from ._models_py3 import ClusterInstanceViewsResult
 from ._models_py3 import ClusterJob
 from ._models_py3 import ClusterJobList
 from ._models_py3 import ClusterJobProperties
+from ._models_py3 import ClusterLibrary
+from ._models_py3 import ClusterLibraryList
+from ._models_py3 import ClusterLibraryManagementOperation
+from ._models_py3 import ClusterLibraryManagementOperationProperties
+from ._models_py3 import ClusterLibraryProperties
 from ._models_py3 import ClusterListResult
 from ._models_py3 import ClusterLogAnalyticsApplicationLogs
 from ._models_py3 import ClusterLogAnalyticsProfile
 from ._models_py3 import ClusterPatch
 from ._models_py3 import ClusterPatchProperties
+from ._models_py3 import ClusterPatchVersionUpgradeHistoryProperties
+from ._models_py3 import ClusterPatchVersionUpgradeProperties
+from ._models_py3 import ClusterPatchVersionUpgradeRollbackHistoryProperties
 from ._models_py3 import ClusterPool
 from ._models_py3 import ClusterPoolAKSPatchVersionUpgradeProperties
+from ._models_py3 import ClusterPoolAksPatchUpgradeHistoryProperties
 from ._models_py3 import ClusterPoolAvailableUpgrade
 from ._models_py3 import ClusterPoolAvailableUpgradeAksPatchUpgradeProperties
 from ._models_py3 import ClusterPoolAvailableUpgradeList
@@ -48,6 +64,7 @@ from ._models_py3 import ClusterPoolListResult
 from ._models_py3 import ClusterPoolLogAnalyticsProfile
 from ._models_py3 import ClusterPoolNetworkProfile
 from ._models_py3 import ClusterPoolNodeOsImageUpdateProperties
+from ._models_py3 import ClusterPoolNodeOsUpgradeHistoryProperties
 from ._models_py3 import ClusterPoolProfile
 from ._models_py3 import ClusterPoolResourceProperties
 from ._models_py3 import ClusterPoolResourcePropertiesAksClusterProfile
@@ -56,6 +73,9 @@ from ._models_py3 import ClusterPoolResourcePropertiesComputeProfile
 from ._models_py3 import ClusterPoolResourcePropertiesLogAnalyticsProfile
 from ._models_py3 import ClusterPoolResourcePropertiesNetworkProfile
 from ._models_py3 import ClusterPoolUpgrade
+from ._models_py3 import ClusterPoolUpgradeHistory
+from ._models_py3 import ClusterPoolUpgradeHistoryListResult
+from ._models_py3 import ClusterPoolUpgradeHistoryProperties
 from ._models_py3 import ClusterPoolUpgradeProperties
 from ._models_py3 import ClusterPoolVersion
 from ._models_py3 import ClusterPoolVersionProperties
@@ -69,7 +89,12 @@ from ._models_py3 import ClusterResourceProperties
 from ._models_py3 import ClusterServiceConfig
 from ._models_py3 import ClusterServiceConfigsProfile
 from ._models_py3 import ClusterUpgrade
+from ._models_py3 import ClusterUpgradeHistory
+from ._models_py3 import ClusterUpgradeHistoryListResult
+from ._models_py3 import ClusterUpgradeHistoryProperties
 from ._models_py3 import ClusterUpgradeProperties
+from ._models_py3 import ClusterUpgradeRollback
+from ._models_py3 import ClusterUpgradeRollbackProperties
 from ._models_py3 import ClusterVersion
 from ._models_py3 import ClusterVersionProperties
 from ._models_py3 import ClusterVersionsListResult
@@ -90,9 +115,13 @@ from ._models_py3 import FlinkProfile
 from ._models_py3 import FlinkStorageProfile
 from ._models_py3 import HiveCatalogOption
 from ._models_py3 import IdentityProfile
+from ._models_py3 import IpTag
 from ._models_py3 import KafkaConnectivityEndpoints
 from ._models_py3 import KafkaProfile
 from ._models_py3 import LoadBasedConfig
+from ._models_py3 import ManagedIdentityProfile
+from ._models_py3 import ManagedIdentitySpec
+from ._models_py3 import MavenLibraryProperties
 from ._models_py3 import NameAvailabilityParameters
 from ._models_py3 import NameAvailabilityResult
 from ._models_py3 import NodeProfile
@@ -100,6 +129,7 @@ from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import ProxyResource
+from ._models_py3 import PyPiLibraryProperties
 from ._models_py3 import RangerAdminSpec
 from ._models_py3 import RangerAdminSpecDatabase
 from ._models_py3 import RangerAuditSpec
@@ -141,9 +171,15 @@ from ._models_py3 import WebConnectivityEndpoint
 from ._hd_insight_containers_mgmt_client_enums import Action
 from ._hd_insight_containers_mgmt_client_enums import ActionType
 from ._hd_insight_containers_mgmt_client_enums import AutoscaleType
+from ._hd_insight_containers_mgmt_client_enums import Category
 from ._hd_insight_containers_mgmt_client_enums import ClusterAvailableUpgradeType
 from ._hd_insight_containers_mgmt_client_enums import ClusterPoolAvailableUpgradeType
+from ._hd_insight_containers_mgmt_client_enums import ClusterPoolUpgradeHistoryType
+from ._hd_insight_containers_mgmt_client_enums import ClusterPoolUpgradeHistoryUpgradeResultType
 from ._hd_insight_containers_mgmt_client_enums import ClusterPoolUpgradeType
+from ._hd_insight_containers_mgmt_client_enums import ClusterUpgradeHistorySeverityType
+from ._hd_insight_containers_mgmt_client_enums import ClusterUpgradeHistoryType
+from ._hd_insight_containers_mgmt_client_enums import ClusterUpgradeHistoryUpgradeResultType
 from ._hd_insight_containers_mgmt_client_enums import ClusterUpgradeType
 from ._hd_insight_containers_mgmt_client_enums import ComparisonOperator
 from ._hd_insight_containers_mgmt_client_enums import ContentEncoding
@@ -155,6 +191,8 @@ from ._hd_insight_containers_mgmt_client_enums import DbConnectionAuthentication
 from ._hd_insight_containers_mgmt_client_enums import DeploymentMode
 from ._hd_insight_containers_mgmt_client_enums import JobType
 from ._hd_insight_containers_mgmt_client_enums import KeyVaultObjectType
+from ._hd_insight_containers_mgmt_client_enums import LibraryManagementAction
+from ._hd_insight_containers_mgmt_client_enums import ManagedIdentityType
 from ._hd_insight_containers_mgmt_client_enums import MetastoreDbConnectionAuthenticationMode
 from ._hd_insight_containers_mgmt_client_enums import Origin
 from ._hd_insight_containers_mgmt_client_enums import OutboundType
@@ -163,6 +201,8 @@ from ._hd_insight_containers_mgmt_client_enums import RangerUsersyncMode
 from ._hd_insight_containers_mgmt_client_enums import ScaleActionType
 from ._hd_insight_containers_mgmt_client_enums import ScheduleDay
 from ._hd_insight_containers_mgmt_client_enums import Severity
+from ._hd_insight_containers_mgmt_client_enums import Status
+from ._hd_insight_containers_mgmt_client_enums import Type
 from ._hd_insight_containers_mgmt_client_enums import UpgradeMode
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -177,14 +217,21 @@ __all__ = [
     "Cluster",
     "ClusterAKSPatchVersionUpgradeProperties",
     "ClusterAccessProfile",
+    "ClusterAksPatchUpgradeHistoryProperties",
+    "ClusterAvailableInPlaceUpgradeProperties",
     "ClusterAvailableUpgrade",
     "ClusterAvailableUpgradeAksPatchUpgradeProperties",
     "ClusterAvailableUpgradeHotfixUpgradeProperties",
     "ClusterAvailableUpgradeList",
+    "ClusterAvailableUpgradePatchVersionUpgradeProperties",
     "ClusterAvailableUpgradeProperties",
     "ClusterComponentsItem",
     "ClusterConfigFile",
+    "ClusterHotfixUpgradeHistoryProperties",
     "ClusterHotfixUpgradeProperties",
+    "ClusterHotfixUpgradeRollbackHistoryProperties",
+    "ClusterInPlaceUpgradeHistoryProperties",
+    "ClusterInPlaceUpgradeProperties",
     "ClusterInstanceViewProperties",
     "ClusterInstanceViewPropertiesStatus",
     "ClusterInstanceViewResult",
@@ -194,13 +241,22 @@ __all__ = [
     "ClusterJob",
     "ClusterJobList",
     "ClusterJobProperties",
+    "ClusterLibrary",
+    "ClusterLibraryList",
+    "ClusterLibraryManagementOperation",
+    "ClusterLibraryManagementOperationProperties",
+    "ClusterLibraryProperties",
     "ClusterListResult",
     "ClusterLogAnalyticsApplicationLogs",
     "ClusterLogAnalyticsProfile",
     "ClusterPatch",
     "ClusterPatchProperties",
+    "ClusterPatchVersionUpgradeHistoryProperties",
+    "ClusterPatchVersionUpgradeProperties",
+    "ClusterPatchVersionUpgradeRollbackHistoryProperties",
     "ClusterPool",
     "ClusterPoolAKSPatchVersionUpgradeProperties",
+    "ClusterPoolAksPatchUpgradeHistoryProperties",
     "ClusterPoolAvailableUpgrade",
     "ClusterPoolAvailableUpgradeAksPatchUpgradeProperties",
     "ClusterPoolAvailableUpgradeList",
@@ -211,6 +267,7 @@ __all__ = [
     "ClusterPoolLogAnalyticsProfile",
     "ClusterPoolNetworkProfile",
     "ClusterPoolNodeOsImageUpdateProperties",
+    "ClusterPoolNodeOsUpgradeHistoryProperties",
     "ClusterPoolProfile",
     "ClusterPoolResourceProperties",
     "ClusterPoolResourcePropertiesAksClusterProfile",
@@ -219,6 +276,9 @@ __all__ = [
     "ClusterPoolResourcePropertiesLogAnalyticsProfile",
     "ClusterPoolResourcePropertiesNetworkProfile",
     "ClusterPoolUpgrade",
+    "ClusterPoolUpgradeHistory",
+    "ClusterPoolUpgradeHistoryListResult",
+    "ClusterPoolUpgradeHistoryProperties",
     "ClusterPoolUpgradeProperties",
     "ClusterPoolVersion",
     "ClusterPoolVersionProperties",
@@ -232,7 +292,12 @@ __all__ = [
     "ClusterServiceConfig",
     "ClusterServiceConfigsProfile",
     "ClusterUpgrade",
+    "ClusterUpgradeHistory",
+    "ClusterUpgradeHistoryListResult",
+    "ClusterUpgradeHistoryProperties",
     "ClusterUpgradeProperties",
+    "ClusterUpgradeRollback",
+    "ClusterUpgradeRollbackProperties",
     "ClusterVersion",
     "ClusterVersionProperties",
     "ClusterVersionsListResult",
@@ -253,9 +318,13 @@ __all__ = [
     "FlinkStorageProfile",
     "HiveCatalogOption",
     "IdentityProfile",
+    "IpTag",
     "KafkaConnectivityEndpoints",
     "KafkaProfile",
     "LoadBasedConfig",
+    "ManagedIdentityProfile",
+    "ManagedIdentitySpec",
+    "MavenLibraryProperties",
     "NameAvailabilityParameters",
     "NameAvailabilityResult",
     "NodeProfile",
@@ -263,6 +332,7 @@ __all__ = [
     "OperationDisplay",
     "OperationListResult",
     "ProxyResource",
+    "PyPiLibraryProperties",
     "RangerAdminSpec",
     "RangerAdminSpecDatabase",
     "RangerAuditSpec",
@@ -303,9 +373,15 @@ __all__ = [
     "Action",
     "ActionType",
     "AutoscaleType",
+    "Category",
     "ClusterAvailableUpgradeType",
     "ClusterPoolAvailableUpgradeType",
+    "ClusterPoolUpgradeHistoryType",
+    "ClusterPoolUpgradeHistoryUpgradeResultType",
     "ClusterPoolUpgradeType",
+    "ClusterUpgradeHistorySeverityType",
+    "ClusterUpgradeHistoryType",
+    "ClusterUpgradeHistoryUpgradeResultType",
     "ClusterUpgradeType",
     "ComparisonOperator",
     "ContentEncoding",
@@ -317,6 +393,8 @@ __all__ = [
     "DeploymentMode",
     "JobType",
     "KeyVaultObjectType",
+    "LibraryManagementAction",
+    "ManagedIdentityType",
     "MetastoreDbConnectionAuthenticationMode",
     "Origin",
     "OutboundType",
@@ -325,6 +403,8 @@ __all__ = [
     "ScaleActionType",
     "ScheduleDay",
     "Severity",
+    "Status",
+    "Type",
     "UpgradeMode",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

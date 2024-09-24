@@ -2,11 +2,11 @@
 
 ## 0.6.0 (2021-12-02)
 
-**Features**
+### Features Added
 
   - Add support for Face Recognition Quality Score.
 
-**Breaking changes**
+### Breaking Changes
 
   - Various operations that previously accepted an optional name parameter
     are now required.
