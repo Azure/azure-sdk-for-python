@@ -27,10 +27,7 @@ from process_monitor import ProcessMonitor
 
 PRINT_CONSOLE = True
 SEND_LOGFILE_NAME = os.environ.get("DEBUG_SHARE") + "sender.log"
-_send_logger = get_logger(SEND_LOGFILE_NAME, "stress_test", logging.ERROR)
 RECV_LOGFILE_NAME = os.environ.get("DEBUG_SHARE") + "receiver.log"
-_recv_logger = get_logger(RECV_LOGFILE_NAME, "stress_test", logging.ERROR)
-
 
 class ReceiveType:
     push = "push"
@@ -116,6 +113,8 @@ class StressTestRunner:
             "fake_test_name"
         )
         self.logging_level = logging_level
+        self.send_logger = get_logger(SEND_LOGFILE_NAME, "stress_test", self.logging_level)
+        self.recv_logger = get_logger(RECV_LOGFILE_NAME, "stress_test", self.logging_level)
         self.send_process_monitor = process_monitor or ProcessMonitor(
             "monitor_{}".format(SEND_LOGFILE_NAME),
             "test_stress_queues",
@@ -202,18 +201,18 @@ class StressTestRunner:
             return message
 
     def _send(self, sender, end_time):
-        self._schedule_interval_logger(end_time, _send_logger, "Sender " + str(self))
+        self._schedule_interval_logger(end_time, self.send_logger, "Sender " + str(self))
         try:
-            _send_logger.debug("Starting send loop")
+            self.send_logger.debug("Starting send loop")
             # log sender
-            _send_logger.debug("Sender: {}".format(sender))
+            self.send_logger.debug("Sender: {}".format(sender))
             with sender:
                 while end_time > datetime.utcnow() and not self._should_stop:
                     try:
                         message = self._construct_message()
                         if self.send_session_id != None:
                             message.session_id = self.send_session_id
-                        _send_logger.debug("Sending message: {}".format(message))
+                        self.send_logger.debug("Sending message: {}".format(message))
                         sender.send_messages(message)
                         self.azure_monitor_metric.record_messages_cpu_memory(
                             self.send_batch_size,
@@ -227,7 +226,7 @@ class StressTestRunner:
                         self.on_send(self._state, message, sender)
           
                     except Exception as e:
-                        _send_logger.exception("Exception during send: {}".format(e))
+                        self.send_logger.exception("Exception during send: {}".format(e))
                         self.azure_monitor_metric.record_error(e)
                         self._state.exceptions.append(e)
                         if self.fail_on_exception:
@@ -236,14 +235,14 @@ class StressTestRunner:
             self._state.timestamp = datetime.utcnow()
             return self._state
         except Exception as e:
-            _send_logger.exception("Exception in sender: {}".format(e))
+            self.send_logger.exception("Exception in sender: {}".format(e))
             self._should_stop = True
             raise
 
     def _receive(self, receiver, end_time):
-        self._schedule_interval_logger(end_time, _recv_logger, "Receiver " + str(self))
+        self._schedule_interval_logger(end_time, self.recv_logger, "Receiver " + str(self))
         # log receiver
-        _recv_logger.debug("Receiver: {}".format(receiver))
+        self.recv_logger.debug("Receiver: {}".format(receiver))
         try:
             with receiver:
                 while end_time > datetime.utcnow() and not self._should_stop:
@@ -261,7 +260,7 @@ class StressTestRunner:
 
                         for message in batch:
                             # log reciever
-                            _recv_logger.debug("Received message: {}".format(message))
+                            self.recv_logger.debug("Received message: {}".format(message))
                             self.on_receive(self._state, message, receiver)
                             try:
                                 if self.should_complete_messages:
@@ -281,7 +280,7 @@ class StressTestRunner:
                             )
                         self.post_receive(self._state, receiver)
                     except Exception as e:
-                        _recv_logger.exception("Exception during receive: {}".format(e))
+                        self.recv_logger.exception("Exception during receive: {}".format(e))
                         self._state.exceptions.append(e)
                         self.azure_monitor_metric.record_error(e)
                         if self.fail_on_exception:
@@ -290,7 +289,7 @@ class StressTestRunner:
             return self._state
         except Exception as e:
             self.azure_monitor_metric.record_error(e)
-            _recv_logger.exception("Exception in receiver {}".format(e))
+            self.recv_logger.exception("Exception in receiver {}".format(e))
             self._should_stop = True
             raise
 
@@ -304,7 +303,7 @@ class StressTestRunner:
         with self.send_process_monitor, self.recv_process_monitor:
             with concurrent.futures.ThreadPoolExecutor(max_workers=4) as proc_pool:
                 if self.senders:
-                    _send_logger.info("STARTING PROC POOL")
+                    self.send_logger.info("STARTING PROC POOL")
                     senders = [
                         proc_pool.submit(self._send, sender, end_time)
                         for sender in self.senders
@@ -312,18 +311,18 @@ class StressTestRunner:
                 else:
                     senders = []
                 if self.receivers:
-                    _recv_logger.info("STARTING PROC POOL")
+                    self.recv_logger.info("STARTING PROC POOL")
                     receivers = [
                         proc_pool.submit(self._receive, receiver, end_time)
                         for receiver in self.receivers
                     ]
                 else:
-                    _recv_logger.info("STARTING PROC POOL")
+                    self.recv_logger.info("STARTING PROC POOL")
                     receivers = []
                 result = StressTestResults()
                 for each in concurrent.futures.as_completed(senders + receivers):
-                    _send_logger.info("SOMETHING FINISHED")
-                    _recv_logger.info("SOMETHING FINISHED")
+                    self.send_logger.info("SOMETHING FINISHED")
+                    self.recv_logger.info("SOMETHING FINISHED")
                     if each in senders:
                         result.state_by_sender[each] = each.result()
                     if each in receivers:
@@ -336,7 +335,7 @@ class StressTestRunner:
                             self.senders, concurrent.futures.as_completed(senders)
                         )
                     }
-                    _send_logger.info("Got receiver results")
+                    self.send_logger.info("Got receiver results")
                     result.total_sent = sum(
                         [r.total_sent for r in result.state_by_sender.values()]
                     )
@@ -347,13 +346,13 @@ class StressTestRunner:
                             self.receivers, concurrent.futures.as_completed(receivers)
                         )
                     }
-                    _recv_logger.info("Got receiver results")
+                    self.recv_logger.info("Got receiver results")
                     result.total_received = sum(
                         [r.total_received for r in result.state_by_receiver.values()]
                     )
                 result.time_elapsed = end_time - start_time
-                _send_logger.critical("Stress test completed.  Results:\n{}".format(result))
-                _recv_logger.critical("Stress test completed.  Results:\n{}".format(result))
+                self.send_logger.critical("Stress test completed.  Results:\n{}".format(result))
+                self.recv_logger.critical("Stress test completed.  Results:\n{}".format(result))
                 return result
 
 
@@ -399,7 +398,7 @@ class StressTestRunnerAsync(StressTestRunner):
         )
 
     async def _send_async(self, sender, end_time):
-        self._schedule_interval_logger(end_time, "Sender " + str(self))
+        self._schedule_interval_logger(end_time, self.send_logger, "Sender " + str(self))
         try:
             async with sender:
                 while end_time > datetime.utcnow() and not self._should_stop:
@@ -419,7 +418,7 @@ class StressTestRunnerAsync(StressTestRunner):
                             self._state.total_sent += 1
                         self.on_send(self._state, message, sender)
                     except Exception as e:
-                        _send_logger.exception("Exception during send: {}".format(e))
+                        self.send_logger.exception("Exception during send: {}".format(e))
                         self.azure_monitor_metric.record_error(e)
                         self._state.exceptions.append(e)
                         if self.fail_on_exception:
@@ -428,7 +427,7 @@ class StressTestRunnerAsync(StressTestRunner):
             self._state.timestamp = datetime.utcnow()
             return self._state
         except Exception as e:
-            _send_logger.exception("Exception in sender: {}".format(e))
+            self.send_logger.exception("Exception in sender: {}".format(e))
             self._should_stop = True
             raise
 
@@ -449,7 +448,7 @@ class StressTestRunnerAsync(StressTestRunner):
         )
 
     async def _receive_async(self, receiver, end_time):
-        self._schedule_interval_logger(end_time, "Receiver " + str(self))
+        self._schedule_interval_logger(end_time, self.recv_logger, "Receiver " + str(self))
         try:
             async with receiver:
                 while end_time > datetime.utcnow() and not self._should_stop:
@@ -474,7 +473,7 @@ class StressTestRunnerAsync(StressTestRunner):
                                 )
                         self.post_receive(self._state, receiver)
                     except Exception as e:
-                        _recv_logger.exception("Exception during receive: {}".format(e))
+                        self.recv_logger.exception("Exception during receive: {}".format(e))
                         self._state.exceptions.append(e)
                         self.azure_monitor_metric.record_error(e)
                         if self.fail_on_exception:
@@ -483,7 +482,7 @@ class StressTestRunnerAsync(StressTestRunner):
             return self._state
         except Exception as e:
             self.azure_monitor_metric.record_error(e)
-            _recv_logger.exception("Exception in receiver {}".format(e))
+            self.recv_logger.exception("Exception in receiver {}".format(e))
             self._should_stop = True
             raise
 
@@ -525,12 +524,12 @@ class StressTestRunnerAsync(StressTestRunner):
                 result.state_by_receiver = {
                     r: f.result() for r, f in zip(self.receivers, receive_tasks)
                 }
-                _recv_logger.info("got receiver results")
+                self.recv_logger.info("got receiver results")
 
                 result.total_received = sum(
                     [r.total_received for r in result.state_by_receiver.values()]
                 )
             result.time_elapsed = end_time - start_time
-            _send_logger.critical("Stress test completed.  Results:\n{}".format(result))
-            _recv_logger.critical("Stress test completed.  Results:\n{}".format(result))
+            self.send_logger.critical("Stress test completed.  Results:\n{}".format(result))
+            self.recv_logger.critical("Stress test completed.  Results:\n{}".format(result))
             return result
