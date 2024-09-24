@@ -26,17 +26,13 @@ def valid_project():
     return {
         "subscription_id": "test_subscription",
         "resource_group_name": "test_resource_group",
-        "project_name": "test_project"
+        "project_name": "test_project",
     }
 
 
 @pytest.fixture()
 def invalid_project():
-    return {
-        "subscription_id": None,
-        "resource_group_name": "test_resource_group",
-        "project_name": "test_project"
-    }
+    return {"subscription_id": None, "resource_group_name": "test_resource_group", "project_name": "test_project"}
 
 
 @pytest.mark.unittest
@@ -64,7 +60,9 @@ class TestNonAdvSimulator:
 
     def test_validate_project_config_none_values(self):
         with pytest.raises(ValueError):
-            Simulator._validate_project_config({"subscription_id": None, "resource_group_name": "test", "project_name": "test"})
+            Simulator._validate_project_config(
+                {"subscription_id": None, "resource_group_name": "test", "project_name": "test"}
+            )
 
     def test_build_prompty_model_config(self, valid_project):
         simulator = Simulator(azure_ai_project=valid_project)
@@ -72,11 +70,12 @@ class TestNonAdvSimulator:
         assert "configuration" in config
         assert config["configuration"] == valid_project
 
-
     @pytest.mark.asyncio
-    @patch('azure.ai.evaluation.simulator.Simulator._get_target_response', new_callable=AsyncMock)
-    @patch('azure.ai.evaluation.simulator.Simulator._extend_conversation_with_simulator', new_callable=AsyncMock)
-    async def test_simulate_with_predefined_turns(self, mock_extend_conversation_with_simulator, mock_get_target_response, valid_project):
+    @patch("azure.ai.evaluation.simulator.Simulator._get_target_response", new_callable=AsyncMock)
+    @patch("azure.ai.evaluation.simulator.Simulator._extend_conversation_with_simulator", new_callable=AsyncMock)
+    async def test_simulate_with_predefined_turns(
+        self, mock_extend_conversation_with_simulator, mock_get_target_response, valid_project
+    ):
         simulator = Simulator(azure_ai_project=valid_project)
         mock_get_target_response.return_value = "assistant_response"
         mock_extend_conversation_with_simulator.return_value = None
@@ -96,7 +95,7 @@ class TestNonAdvSimulator:
         assert isinstance(result[0], list)
 
     @pytest.mark.asyncio
-    @patch('azure.ai.evaluation.simulator.Simulator._complete_conversation', new_callable=AsyncMock)
+    @patch("azure.ai.evaluation.simulator.Simulator._complete_conversation", new_callable=AsyncMock)
     async def test_create_conversations_from_query_responses(self, mock_complete_conversation, valid_project):
         simulator = Simulator(azure_ai_project=valid_project)
         mock_complete_conversation.return_value = [{"role": "user", "content": "query"}]

@@ -75,9 +75,9 @@ if __name__ == "__main__":
 
     # Initialize Project Scope
     azure_ai_project = {
-        "subscription_id": "e0fd569c-e34a-4249-8c24-e8d723c7f054",
-        "resource_group_name": "rg-test",
-        "project_name": "project-test",
+        "subscription_id": <subscription_id>,
+        "resource_group_name": <resource_group_name>,
+        "project_name": <project_name>
     }
 
     violence_eval = ViolenceEvaluator(azure_ai_project)
@@ -150,7 +150,7 @@ Application code:
 import json
 import asyncio
 from typing import Any, Dict, List, Optional
-from azure.ai.evaluation.synthetic import Simulator
+from azure.ai.evaluation.simulator import Simulator
 from promptflow.client import load_flow
 from azure.identity import DefaultAzureCredential
 import os
@@ -158,8 +158,7 @@ import os
 azure_ai_project = {
     "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
     "resource_group_name": os.environ.get("RESOURCE_GROUP"),
-    "project_name": os.environ.get("PROJECT_NAME"),
-    "credential": DefaultAzureCredential(),
+    "project_name": os.environ.get("PROJECT_NAME")
 }
 
 import wikipedia
@@ -236,7 +235,7 @@ if __name__ == "__main__":
     print("done!")
 ```
 
-#### AdversarialSimulator
+#### Adversarial Simulator
 
 ```python
 from from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
@@ -304,7 +303,9 @@ async def callback(
     }
 
 ```
-#### Adversarial QA:
+
+#### Adversarial QA
+
 ```python
 scenario = AdversarialScenario.ADVERSARIAL_QA
 simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())

@@ -11,8 +11,8 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import jinja2
 
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 from .._model_tools import LLMBase, OpenAIChatCompletionsModel
 from .constants import ConversationRole

@@ -6,7 +6,8 @@ from collections import Counter
 from typing import List
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 
 class _AsyncF1ScoreEvaluator:
