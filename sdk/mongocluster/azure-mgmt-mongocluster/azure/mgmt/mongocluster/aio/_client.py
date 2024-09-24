@@ -23,6 +23,7 @@ from .operations import (
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinksOperations,
+    ReplicasOperations,
 )
 
 if TYPE_CHECKING:
@@ -45,6 +46,8 @@ class MongoClusterMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
      azure.mgmt.mongocluster.aio.operations.PrivateEndpointConnectionsOperations
     :ivar private_links: PrivateLinksOperations operations
     :vartype private_links: azure.mgmt.mongocluster.aio.operations.PrivateLinksOperations
+    :ivar replicas: ReplicasOperations operations
+    :vartype replicas: azure.mgmt.mongocluster.aio.operations.ReplicasOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -52,7 +55,7 @@ class MongoClusterMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-03-01-preview". Note that overriding this default value may result in unsupported
+     "2024-06-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -66,8 +69,9 @@ class MongoClusterMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
+        _endpoint = "{endpoint}"
         self._config = MongoClusterMgmtClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential, subscription_id=subscription_id, base_url=base_url, **kwargs
         )
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -87,7 +91,7 @@ class MongoClusterMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -99,6 +103,7 @@ class MongoClusterMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_links = PrivateLinksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
@@ -121,7 +126,11 @@ class MongoClusterMgmtClient:  # pylint: disable=client-accepts-api-version-keyw
         """
 
         request_copy = deepcopy(request)
-        request_copy.url = self._client.format_url(request_copy.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     async def close(self) -> None:
