@@ -1,10 +1,12 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2024-09-24)
 
 ### Features Added
 
 ### Breaking Changes
+
+- `data` and `evaluators` are now required keywords in `evaluate`.
 
 ### Bugs Fixed
 
@@ -19,7 +21,6 @@
 - The parameter name `project_scope` in content safety evaluators have been renamed to `azure_ai_project` for consistency with evaluate API and simulators.
 - Model configurations classes are now of type `TypedDict` and are exposed in the `azure.ai.evaluation` module instead of coming from `promptflow.core`.  
 - Updated the parameter names for `question` and `answer` in built-in evaluators to more generic terms: `query` and `response`.
-- `data` and `evaluators` are now required keywords in `evaluate`.
 
 ### Features Added
 
