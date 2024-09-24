@@ -491,7 +491,6 @@ def _generate_encryption_data_dict(
     :rtype: Dict[str, Any]
     """
     # Encrypt the cek.
-    wrapped_cek = bytes()
     if version == _ENCRYPTION_PROTOCOL_V1:
         wrapped_cek = kek.wrap_key(cek)
     # For V2, we include the encryption version in the wrapped key.
@@ -499,6 +498,8 @@ def _generate_encryption_data_dict(
         # We must pad the version to 8 bytes for AES Keywrap algorithms
         to_wrap = _ENCRYPTION_PROTOCOL_V2.encode().ljust(8, b'\0') + cek
         wrapped_cek = kek.wrap_key(to_wrap)
+    else:
+        raise ValueError("Invalid encryption version specified.")
 
     # Build the encryption_data dict.
     # Use OrderedDict to comply with Java's ordering requirement.

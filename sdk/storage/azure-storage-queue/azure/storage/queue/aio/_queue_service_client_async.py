@@ -422,10 +422,8 @@ class QueueServiceClient(  # type: ignore [misc]
                 :dedent: 8
                 :caption: Get the queue client.
         """
-        queue_name = ""
         if isinstance(queue, QueueProperties):
-            if queue.name is not None:
-                queue_name = queue.name
+            queue_name = queue.name
         else:
             queue_name = queue
 
