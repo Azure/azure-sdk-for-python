@@ -16,8 +16,7 @@
 ### Breaking Changes
 
 - Changed the parameter of `create_liveness_with_verify_session` from model `CreateLivenessSessionContent` to `CreateLivenessWithVerifySessionContent`.
-
-### Bugs Fixed
+- Changed the enum value of `FaceDetectionModel`, `FaceRecognitionModel`, `LivenessModel` and `Versions`.
 
 ### Other Changes
 
