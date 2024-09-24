@@ -97,8 +97,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Create a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.indexers.create(indexer, **kwargs)
-        return result
+        patched_indexer = indexer._to_generated()  # pylint:disable=protected-access
+        result = await self._client.indexers.create(patched_indexer, **kwargs)
+        return cast(SearchIndexer, SearchIndexer._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def create_or_update_indexer(
@@ -128,6 +129,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         error_map, access_condition = get_access_conditions(indexer, match_condition)
         kwargs.update(access_condition)
         name = indexer.name
+        patched_indexer = indexer._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexers.create_or_update(
             indexer_name=name,
             indexer=indexer,
@@ -137,7 +139,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             disable_cache_reprocessing_change_detection=disable_cache_reprocessing_change_detection,
             **kwargs
         )
-        return result
+        return cast(SearchIndexer, SearchIndexer._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def get_indexer(self, name: str, **kwargs: Any) -> SearchIndexer:

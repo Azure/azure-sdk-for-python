@@ -135,6 +135,7 @@ class SearchIndexerSkillset(_serialization.Model):
                 custom_skills.append(skill)
         assert len(skillset.skills) == len(custom_skills)
         kwargs = skillset.as_dict()
+        # pylint:disable=protected-access
         kwargs["encryption_key"] = SearchResourceEncryptionKey._from_generated(skillset.encryption_key)
         kwargs["skills"] = custom_skills
         return cls(**kwargs)
