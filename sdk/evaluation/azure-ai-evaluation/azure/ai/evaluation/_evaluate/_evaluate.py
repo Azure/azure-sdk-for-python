@@ -577,10 +577,8 @@ def _evaluate(  # pylint: disable=too-many-locals
 
     # Create default configuration for evaluators that directly maps
     # input data names to keyword inputs of the same name in the evaluators.
-    if not evaluator_config:
-        evaluator_config = {}
-    if "default" not in evaluator_config:
-        evaluator_config["default"] = {}
+    evaluator_config = evaluator_config or {}
+    evaluator_config.setdefault("default", {})
 
     # If target is set, apply 1-1 column mapping from target outputs to evaluator inputs
     if data is not None and target is not None:
