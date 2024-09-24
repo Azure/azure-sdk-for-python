@@ -54,9 +54,7 @@
 
   - Model `Operation` deleted or renamed its instance variable `properties`
   - Parameter `location` of model `PrivateCloud` is now required
-  - Method `PrivateCloud.__init__` parameter `internet` changed default value from `str` to `none`
   - Parameter `type` of model `PrivateCloudIdentity` is now required
-  - Method `PrivateCloudUpdate.__init__` parameter `internet` changed default value from `str` to `none`
   - Parameter `location` of model `TrackedResource` is now required
   - Deleted or renamed model `ClusterProperties`
   - Deleted or renamed model `CommonClusterProperties`
