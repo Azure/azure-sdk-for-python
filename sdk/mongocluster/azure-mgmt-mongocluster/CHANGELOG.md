@@ -15,12 +15,8 @@
   - Model `MongoClusterProperties` added property `preview_features`
   - Model `MongoClusterProperties` added property `replica`
   - Model `MongoClusterProperties` added property `infrastructure_version`
-  - Model `MongoClusterRestoreParameters` added method `point_in_time_utc`
-  - Model `MongoClusterRestoreParameters` added property `point_in_time_utc`
   - Model `MongoClusterUpdateProperties` added method `preview_features`
   - Model `MongoClusterUpdateProperties` added property `preview_features`
-  - Model `NodeGroupSpec` added method `disk_size_gb`
-  - Model `NodeGroupSpec` added property `disk_size_gb`
   - Added model `MongoClusterReplicaParameters`
   - Added enum `PreviewFeature`
   - Added enum `PromoteMode`
@@ -35,10 +31,8 @@
 
 ### Breaking Changes
 
-  - Model `MongoClusterRestoreParameters` deleted or renamed its instance variable `point_in_time_u_t_c`
-  - Deleted or renamed method `MongoClusterRestoreParameters.point_in_time_u_t_c`
-  - Model `NodeGroupSpec` deleted or renamed its instance variable `disk_size_g_b`
-  - Deleted or renamed method `NodeGroupSpec.disk_size_g_b`
+  - Model `MongoClusterRestoreParameters` renamed its instance variable `point_in_time_u_t_c` to `point_in_time_utc`
+  - Model `NodeGroupSpec` renamed its instance variable `disk_size_g_b` to `disk_size_gb`
   - OperationDisplay.__init__ had all overloads removed
 
 ## 1.0.0b1 (2024-07-01)
