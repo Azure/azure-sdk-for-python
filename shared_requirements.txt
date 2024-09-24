@@ -68,3 +68,8 @@ yarl
 azure-identity
 openai
 dnspython
+promptflow-core
+promptflow-devkit
+numpy
+nltk
+rouge-score

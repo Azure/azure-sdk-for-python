@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.privatedns import PrivateDnsManagementClient
 
 """
@@ -29,15 +30,14 @@ def main():
         subscription_id="subscriptionId",
     )
 
-    response = client.record_sets.delete(
+    client.record_sets.delete(
         resource_group_name="resourceGroup1",
         private_zone_name="privatezone1.com",
         record_type="MX",
         relative_record_set_name="recordMX",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/privatedns/resource-manager/Microsoft.Network/stable/2020-06-01/examples/RecordSetMXDelete.json
+# x-ms-original-file: specification/privatedns/resource-manager/Microsoft.Network/stable/2024-06-01/examples/RecordSetMXDelete.json
 if __name__ == "__main__":
     main()

@@ -61,6 +61,7 @@
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/core/corehttp/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
+    "sdk/evaluation/azure-ai-evaluation/tests/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
@@ -1305,7 +1306,32 @@
         "mros",
         "Nify",
         "ctxt",
-        "wday"
+        "wday",
+        "dtype"
+      ]
+    },
+    {
+      "filename": "sdk/evaluation/azure-ai-evaluation/**",
+      "words": [
+        "raisvc",
+        "otel",
+        "otlp",
+        "aggr",
+        "mlflow",
+        "azureml",
+        "dcid",
+        "prompty",
+        "wsid",
+        "tkey",
+        "tparam",
+        "tqdm",
+        "ncols",
+        "datas",
+        "punkt",
+        "gleu",
+        "fmeasure",
+        "upia",
+        "xpia",
       ]
     },
     {

@@ -6,7 +6,7 @@ import os
 import uuid
 import datetime
 from devtools_testutils.perfstress_tests import PerfStressTest
-from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import get_credential
 from azure.ai.translation.document import DocumentTranslationClient
 from azure.ai.translation.document.aio import DocumentTranslationClient as AsyncDocumentTranslationClient
 from azure.storage.blob.aio import ContainerClient, BlobServiceClient
@@ -36,16 +36,15 @@ class TranslationPerfStressTest(PerfStressTest):
 
         # test related env vars
         endpoint = os.environ["TRANSLATION_DOCUMENT_TEST_ENDPOINT"]
-        key = os.environ["TRANSLATION_DOCUMENT_TEST_API_KEY"]
         self.storage_name = os.environ["TRANSLATION_DOCUMENT_STORAGE_NAME"]
         self.storage_key = os.environ["TRANSLATION_DOCUMENT_STORAGE_KEY"]
         self.storage_endpoint = "https://" + self.storage_name + ".blob.core.windows.net/"
         self.source_container_name = "source-perf-" + str(uuid.uuid4())
         self.target_container_name = "target-perf-" + str(uuid.uuid4())
 
-        self.service_client = DocumentTranslationClient(endpoint, AzureKeyCredential(key), **self._client_kwargs)
+        self.service_client = DocumentTranslationClient(endpoint, get_credential(), **self._client_kwargs)
         self.async_service_client = AsyncDocumentTranslationClient(
-            endpoint, AzureKeyCredential(key), **self._client_kwargs
+            endpoint, get_credential(), **self._client_kwargs
         )
 
     async def create_source_container(self):
