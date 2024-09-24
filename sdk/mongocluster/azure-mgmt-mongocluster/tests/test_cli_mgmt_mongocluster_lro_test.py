@@ -1,3 +1,4 @@
+import pytest
 from azure.mgmt.mongocluster import MongoClusterMgmtClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
