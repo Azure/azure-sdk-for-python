@@ -4,7 +4,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "westus2"
 Mongo_Cluster_Name = "pythontestmongocluster"
 
-
+@pytest.mark.live_test_only
 class TestMgmtMongoCluster(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
