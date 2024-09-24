@@ -10,7 +10,7 @@ import os
 import re
 import warnings
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
 from promptflow.client import load_flow
 from promptflow.core import AzureOpenAIModelConfiguration
@@ -63,7 +63,7 @@ class Simulator:
     async def __call__(
         self,
         *,
-        target: callable,
+        target: Callable,
         max_conversation_turns: int = 5,
         tasks: List[Dict] = [],
         text: str = "",
@@ -80,7 +80,7 @@ class Simulator:
         Generates synthetic conversations based on provided parameters.
 
         :keyword target: The target function to call during the simulation.
-        :paramtype target: callable
+        :paramtype target: Callable
         :keyword max_conversation_turns: Maximum number of conversation turns for the simulation. Each turn consists of a user and an assistant message.
         :paramtype max_conversation_turns: int
         :keyword tasks: A list of user tasks, each represented as a list of strings. Text should be relevant for the tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
@@ -175,7 +175,7 @@ class Simulator:
     async def _simulate_with_predefined_turns(
         self,
         *,
-        target: callable,
+        target: Callable,
         max_conversation_turns: int,
         conversation_turns: List[List[str]],
         user_simulator_prompty: Optional[str],
@@ -242,7 +242,7 @@ class Simulator:
         user_simulator_prompty_kwargs: Dict[str, Any],
         api_call_delay_sec: float,
         prompty_model_config: Dict[str, Any],
-        target: callable,
+        target: Callable,
         progress_bar: tqdm,
     ):
         """
@@ -413,7 +413,7 @@ class Simulator:
         tasks: List[Dict],
         user_simulator_prompty: Optional[str],
         user_simulator_prompty_kwargs: Dict[str, Any],
-        target: callable,
+        target: Callable,
         api_call_delay_sec: float,
     ) -> List[JsonLineChatProtocol]:
         """
@@ -479,7 +479,7 @@ class Simulator:
         task: str,
         user_simulator_prompty: Optional[str],
         user_simulator_prompty_kwargs: Dict[str, Any],
-        target: callable,
+        target: Callable,
         api_call_delay_sec: float,
         progress_bar: tqdm,
     ) -> List[Dict[str, str]]:
@@ -497,7 +497,7 @@ class Simulator:
         :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
         :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
         :keyword target: The target function to call for responses.
-        :paramtype target: callable
+        :paramtype target: Callable
         :keyword api_call_delay_sec: Delay in seconds between API calls.
         :paramtype api_call_delay_sec: float
         :keyword progress_bar: Progress bar for tracking simulation progress.
@@ -573,7 +573,7 @@ class Simulator:
             raise RuntimeError("Error building user simulation response") from e
 
     async def _get_target_response(
-        self, *, target: callable, api_call_delay_sec: float, conversation_history: ConversationHistory
+        self, *, target: Callable, api_call_delay_sec: float, conversation_history: ConversationHistory
     ) -> str:
         """
         Retrieves the response from the target callback based on the current conversation history.
