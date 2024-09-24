@@ -330,7 +330,7 @@ class TestEvaluate:
             evaluate(
                 data=evaluate_test_data_jsonl_file,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
-                evaluator_config={"g": {column_mapping: {"query": "${foo.query}"}}},
+                evaluator_config={"g": {"column_mapping": {"query": "${foo.query}"}}},
             )
 
         assert (

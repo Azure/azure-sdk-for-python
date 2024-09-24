@@ -609,7 +609,7 @@ def _evaluate(  # pylint: disable=too-many-locals
 
         # After we have generated all columns we can check if we have
         # everything we need for evaluators.
-        _validate_columns(input_data_df, evaluators, target=None, evaluator_config=column_mapping)
+        _validate_columns(input_data_df, evaluators, target=None, column_mapping=column_mapping)
 
     # Apply 1-1 mapping from input data to evaluator inputs, excluding values already assigned
     # via target mapping.
