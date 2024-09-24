@@ -216,7 +216,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                 internal_message="Incorrect terminal status. Valid statuses are 'FINISHED', 'FAILED' and 'KILLED'",
                 target=ErrorTarget.EVAL_RUN,
                 category=ErrorCategory.FAILED_EXECUTION,
-                blame=ErrorBlame.UNKNOWN
+                blame=ErrorBlame.UNKNOWN,
             )
         url = f"https://{self._url_base}/mlflow/v2.0" f"{self._get_scope()}/api/2.0/mlflow/runs/update"
         body = {
@@ -354,7 +354,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                     internal_message=msg,
                     target=ErrorTarget.EVAL_RUN,
                     category=ErrorCategory.FAILED_EXECUTION,
-                    blame=ErrorBlame.UNKNOWN
+                    blame=ErrorBlame.UNKNOWN,
                 )
             LOGGER.warning(msg)
             return False

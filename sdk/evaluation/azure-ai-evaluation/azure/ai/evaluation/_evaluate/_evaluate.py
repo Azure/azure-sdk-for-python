@@ -260,12 +260,12 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
         initial_data_df = pd.read_json(data, lines=True)
     except Exception as e:
         raise EvaluationException(
-                message=f"Failed to load data from {data}. Confirm that it is valid jsonl data. Error: {str(e)}.",
-                internal_message="Failed to load data. Confirm that it is valid jsonl data.",
-                target=ErrorTarget.EVALUATE,
-                category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.USER_ERROR,
-            ) from e
+            message=f"Failed to load data from {data}. Confirm that it is valid jsonl data. Error: {str(e)}.",
+            internal_message="Failed to load data. Confirm that it is valid jsonl data.",
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        ) from e
 
     return initial_data_df
 

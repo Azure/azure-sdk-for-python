@@ -272,7 +272,7 @@ class ChatEvaluator:
                     category=ErrorCategory.INVALID_VALUE,
                     blame=ErrorBlame.USER_ERROR,
                 )
-            
+
             if turn["role"] != expected_role:
                 msg = f"Expected role {expected_role} but got {turn['role']}. Turn number: {one_based_turn_num}"
                 raise EvaluationException(
@@ -305,7 +305,9 @@ class ChatEvaluator:
                     )
 
                 if "citations" not in turn["context"]:
-                    msg = f"Context in each assistant's turn must have 'citations' key. Turn number: {one_based_turn_num}"
+                    msg = (
+                        f"Context in each assistant's turn must have 'citations' key. Turn number: {one_based_turn_num}"
+                    )
                     raise EvaluationException(
                         message=msg,
                         internal_message=msg,

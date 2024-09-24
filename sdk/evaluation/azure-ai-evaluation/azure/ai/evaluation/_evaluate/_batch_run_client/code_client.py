@@ -121,7 +121,7 @@ class CodeClient:
                 json_data = load_jsonl(data)
             except json.JSONDecodeError as exc:
                 raise EvaluationException(
-                    message = f"Failed to parse data as JSON: {data}. Provide valid json lines data.",
+                    message=f"Failed to parse data as JSON: {data}. Provide valid json lines data.",
                     internal_message="Failed to parse data as JSON",
                     target=ErrorTarget.CODE_CLIENT,
                     category=ErrorCategory.INVALID_VALUE,
