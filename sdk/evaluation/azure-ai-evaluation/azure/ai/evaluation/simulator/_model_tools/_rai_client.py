@@ -151,8 +151,10 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         if response.status_code == 200:
             return response.json()
 
-        msg = "Azure safety evaluation service is not available in your current region, "
-        "please go to https://aka.ms/azureaistudiosafetyeval to see which regions are supported"
+        msg = (
+            "Azure safety evaluation service is not available in your current region, "
+            + "please go to https://aka.ms/azureaistudiosafetyeval to see which regions are supported"
+        )
         raise EvaluationException(
             message=msg,
             internal_message=msg,
