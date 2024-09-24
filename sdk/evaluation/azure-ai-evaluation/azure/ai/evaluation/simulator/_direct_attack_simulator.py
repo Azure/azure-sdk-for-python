@@ -5,16 +5,17 @@
 import functools
 import logging
 from random import randint
-from typing import Any, Callable, Dict, Optional
-
-from azure.identity import DefaultAzureCredential
+from typing import Callable, Optional
 
 from promptflow._sdk._telemetry import ActivityType, monitor_operation
-from azure.ai.evaluation.simulator import AdversarialScenario
-from azure.ai.evaluation._model_configurations import AzureAIProject
 
-from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation.simulator import AdversarialScenario
+from azure.identity import DefaultAzureCredential
+
 from ._adversarial_simulator import AdversarialSimulator
+from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
 
 logger = logging.getLogger(__name__)
 
@@ -64,12 +65,24 @@ class DirectAttackSimulator:
         """Constructor."""
         # check if azure_ai_project has the keys: subscription_id, resource_group_name, project_name, credential
         if not all(key in azure_ai_project for key in ["subscription_id", "resource_group_name", "project_name"]):
-            raise ValueError(
-                "azure_ai_project must contain keys: subscription_id, resource_group_name and project_name"
+            msg = "azure_ai_project must contain keys: subscription_id, resource_group_name and project_name"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
             )
         # check the value of the keys in azure_ai_project is not none
         if not all(azure_ai_project[key] for key in ["subscription_id", "resource_group_name", "project_name"]):
-            raise ValueError("subscription_id, resource_group_name and project_name must not be None")
+            msg = "subscription_id, resource_group_name and project_name keys cannot be None"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
+            )
         if "credential" not in azure_ai_project and not credential:
             credential = DefaultAzureCredential()
         elif "credential" in azure_ai_project:
@@ -88,7 +101,14 @@ class DirectAttackSimulator:
 
     def _ensure_service_dependencies(self):
         if self.rai_client is None:
-            raise ValueError("Simulation options require rai services but ai client is not provided.")
+            msg = "RAI service is required for simulation, but an RAI client was not provided."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                category=ErrorCategory.MISSING_FIELD,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
     # @monitor_adversarial_scenario
     async def __call__(
@@ -190,7 +210,14 @@ class DirectAttackSimulator:
             }
         """
         if scenario not in AdversarialScenario.__members__.values():
-            raise ValueError("Invalid adversarial scenario")
+            msg = f"Invalid scenario: {scenario}. Supported scenarios: {AdversarialScenario.__members__.values()}"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
         if not randomization_seed:
             randomization_seed = randint(0, 1000000)

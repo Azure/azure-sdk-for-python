@@ -9,7 +9,7 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from pkg_resources import Requirement
 
-from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER
+from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER, str_to_bool
 from ci_tools.parsing import ParsedSetup, get_config_setting
 from pypi_tools.pypi import PyPIClient
 
@@ -140,20 +140,6 @@ def compare_python_version(version_spec: str) -> bool:
         spec_set = SpecifierSet(version_spec)
 
     return current_sys_version in spec_set
-
-
-def str_to_bool(input_string: str) -> bool:
-    """
-    Takes a boolean string representation and returns a bool type value.
-    """
-    if isinstance(input_string, bool):
-        return input_string
-    elif input_string.lower() in ("true", "t", "1"):
-        return True
-    elif input_string.lower() in ("false", "f", "0"):
-        return False
-    else:
-        return False
 
 
 def generate_difference(original_packages: List[str], filtered_packages: List[str]):

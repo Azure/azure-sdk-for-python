@@ -11,6 +11,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import jinja2
 
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 
 from .._model_tools import LLMBase, OpenAIChatCompletionsModel
@@ -279,7 +280,14 @@ class CallbackConversationBot(ConversationBot):
                 "id": None,
             }
         except Exception as exc:
-            raise TypeError("User provided callback do not conform to chat protocol standard.") from exc
+            msg = "User provided callback does not conform to chat protocol standard."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.CALLBACK_CONVERSATION_BOT,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            ) from exc
 
         self.logger.info("Parsed callback response")
 

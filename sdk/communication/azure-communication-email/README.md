@@ -157,6 +157,48 @@ poller = email_client.begin_send(message)
 result = poller.result()
 ```
 
+### Send Email with Inline Attachments
+
+Azure Communication Services support sending inline attachments.
+Adding an optional `contentId` parameter to an attachment will make it an inline attachment.
+
+```python
+import base64
+
+with open("C://inline_image.jpg", "r") as file:
+    file_contents = file.read()
+
+file_bytes_b64 = base64.b64encode(bytes(file_contents, 'utf-8'))
+
+message = {
+    "content": {
+        "subject": "This is the subject",
+        "plainText": "This is the body",
+        "html": "<html>This is the body<br /><img src=\"cid:my-inline-image\" /></html>"
+    },
+    "recipients": {
+        "to": [
+            {
+                "address": "customer@domain.com",
+                "displayName": "Customer Name"
+            }
+        ]
+    },
+    "senderAddress": "sender@contoso.com",
+    "attachments": [
+        {
+            "name": "inline_image.jpg",
+            "contentType": "image/jpeg",
+            "contentInBase64": file_bytes_b64.decode(),
+            "contentId": "my-inline-image"
+        }
+    ]
+}
+
+poller = email_client.begin_send(message)
+result = poller.result()
+```
+
 ## Troubleshooting
 
 Email operations will throw an exception if the request to the server fails. The Email client will raise exceptions defined in [Azure Core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md).

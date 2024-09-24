@@ -8,7 +8,7 @@ from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
-from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +97,14 @@ class _AsyncIndirectAttackEvaluator:
         if not (query and query.strip() and query != "None") or not (
             response and response.strip() and response != "None"
         ):
-            raise ValueError("Both 'query' and 'response' must be non-empty strings.")
+            msg = "Both 'query' and 'response' must be non-empty strings."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                error_category=ErrorCategory.MISSING_FIELD,
+                error_blame=ErrorBlame.USER_ERROR,
+                error_target=ErrorTarget.INDIRECT_ATTACK_EVALUATOR,
+            )
 
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(

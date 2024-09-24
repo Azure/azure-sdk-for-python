@@ -1,6 +1,12 @@
 # Release History
 
-## 1.0.0b1 (2024-20-09)
+## 1.0.0b2 (2024-09-24)
+
+### Breaking Changes
+
+- `data` and `evaluators` are now required keywords in `evaluate`.
+
+## 1.0.0b1 (2024-09-20)
 
 ### Breaking Changes
 

@@ -5,15 +5,23 @@
 # -------------------------------------------------------------------------
 import time
 from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Union, cast
-from azure.core.credentials import TokenCredential, SupportsTokenInfo, TokenRequestOptions, TokenProvider
+from azure.core.credentials import (
+    TokenCredential,
+    SupportsTokenInfo,
+    TokenRequestOptions,
+    TokenProvider,
+)
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.pipeline.transport import (
+    HttpResponse as LegacyHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+)
 from azure.core.rest import HttpResponse, HttpRequest
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+
     from azure.core.credentials import (
         AccessToken,
         AccessTokenInfo,
@@ -88,7 +96,7 @@ class _BearerTokenCredentialPolicyBase:
             options: TokenRequestOptions = {}
             # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
             for key in list(kwargs.keys()):
-                if key in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
+                if key in TokenRequestOptions.__annotations__:  # pylint: disable=no-member
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
             self._token = cast(SupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)
@@ -145,7 +153,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         self.on_request(request)
         try:
             response = self.next.send(request)
-        except Exception:  # pylint:disable=broad-except
+        except Exception:
             self.on_exception(request)
             raise
 
@@ -162,14 +170,16 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
                     try:
                         response = self.next.send(request)
                         self.on_response(request, response)
-                    except Exception:  # pylint:disable=broad-except
+                    except Exception:
                         self.on_exception(request)
                         raise
 
         return response
 
     def on_challenge(
-        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> bool:
         """Authorize request according to an authentication challenge
 
@@ -184,7 +194,9 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         return False
 
     def on_response(
-        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> None:
         """Executed after the request comes back from the next policy.
 
@@ -247,7 +259,11 @@ class AzureSasCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     :raises: ValueError or TypeError
     """
 
-    def __init__(self, credential: "AzureSasCredential", **kwargs: Any) -> None:  # pylint: disable=unused-argument
+    def __init__(
+        self,  # pylint: disable=unused-argument
+        credential: "AzureSasCredential",
+        **kwargs: Any,
+    ) -> None:
         super(AzureSasCredentialPolicy, self).__init__()
         if not credential:
             raise ValueError("credential can not be None")

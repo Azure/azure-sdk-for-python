@@ -1,5 +1,18 @@
 import os
 
+def str_to_bool(input_string: str) -> bool:
+    """
+    Takes a boolean string representation and returns a bool type value.
+    """
+    if isinstance(input_string, bool):
+        return input_string
+    elif input_string.lower() in ("true", "t", "1"):
+        return True
+    elif input_string.lower() in ("false", "f", "0"):
+        return False
+    else:
+        return False
+
 
 def discover_repo_root(input_repo: str = None):
     """

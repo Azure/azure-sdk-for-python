@@ -5,8 +5,6 @@ from concurrent.futures import as_completed
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
-from azure.ai.evaluation._model_configurations import AzureAIProject
-
 try:
     from ._hate_unfairness import HateUnfairnessEvaluator
     from ._self_harm import SelfHarmEvaluator
