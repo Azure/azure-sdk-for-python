@@ -12,7 +12,7 @@ import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from promptflow.client import load_flow
-from promptflow.core import AzureOpenAIModelConfiguration
+from promptflow.core import AzureOpenAIModelConfiguration, Flow
 from tqdm import tqdm
 
 from .._user_agent import USER_AGENT
@@ -299,7 +299,7 @@ class Simulator:
         user_simulator_prompty: Union[str, os.PathLike],
         prompty_model_config: Dict[str, Any],
         user_simulator_prompty_kwargs: Dict[str, Any],
-    ):
+    ) -> Flow:
         """
         Loads the flow for simulating user interactions.
 
@@ -310,6 +310,7 @@ class Simulator:
         :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
         :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
         :return: The loaded flow for simulating user interactions.
+        :rtype: Flow
         """
         if not user_simulator_prompty:
             package = "azure.ai.evaluation.simulator._prompty"
@@ -413,7 +414,7 @@ class Simulator:
         query_response_generating_prompty: Union[str, os.PathLike],
         prompty_model_config: Dict[str, Any],
         query_response_generating_prompty_kwargs: Dict[str, Any],
-    ):
+    ) -> Flow:
         """
         Loads the flow for generating query responses.
 
@@ -424,6 +425,7 @@ class Simulator:
         :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the flow.
         :paramtype query_response_generating_prompty_kwargs: Dict[str, Any]
         :return: The loaded flow for generating query responses.
+        :rtype: Flow
         """
         if not query_response_generating_prompty:
             package = "azure.ai.evaluation.simulator._prompty"

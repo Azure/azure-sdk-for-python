@@ -19,6 +19,8 @@ def monitor_adversarial_scenario(activity_name: str = "adversarial.simulator.cal
 
     :param activity_name: The name of the activity to monitor.
     :type activity_name: str
+    :returns: A decorator
+    :rtype: Callable[[Callable], Callable]
     """
 
     def decorator(func: Callable[P, R]) -> Callable[P, R]:
@@ -27,6 +29,8 @@ def monitor_adversarial_scenario(activity_name: str = "adversarial.simulator.cal
 
         :param func: The function to be decorated.
         :type func: Callable[P, R]
+        :returns: The decorated function
+        :rtype: Callable[P, R]
         """
 
         @functools.wraps(func)
@@ -59,6 +63,8 @@ def monitor_task_simulator(func: Callable[P, R]) -> Callable[P, R]:
 
     :param func: The function to be decorated.
     :type func: Callable[P, R]
+    :returns: The decorated function
+    :rtype: Callable[P, R]
     """
 
     @functools.wraps(func)

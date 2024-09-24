@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 # pylint: disable=C0103,C0114,C0116
 from dataclasses import dataclass
-from typing import Union
+from typing import Dict, List, Optional, Union
 
 from azure.ai.evaluation.simulator._conversation.constants import ConversationRole
 
@@ -20,12 +20,12 @@ class Turn:
     content: str
     context: str = None
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Optional[str]]:
         """
         Convert the conversation turn to a dictionary.
 
-        Returns:
-            dict: A dictionary representation of the conversation turn.
+        :returns: A dictionary representation of the conversation turn.
+        :rtype: Dict[str, Optional[str]]
         """
         return {
             "role": self.role.value if isinstance(self.role, ConversationRole) else self.role,
@@ -34,12 +34,6 @@ class Turn:
         }
 
     def __repr__(self):
-        """
-        Return the string representation of the conversation turn.
-
-        Returns:
-            str: A string representation of the conversation turn.
-        """
         return f"Turn(role={self.role}, content={self.content})"
 
 
@@ -52,7 +46,7 @@ class ConversationHistory:
         """
         Initializes the conversation history with an empty list of turns.
         """
-        self.history = []
+        self.history: List[Turn] = []
 
     def add_to_history(self, turn: Turn):
         """
@@ -63,31 +57,19 @@ class ConversationHistory:
         """
         self.history.append(turn)
 
-    def to_list(self):
+    def to_list(self) -> List[Dict[str, str]]:
         """
         Converts the conversation history to a list of dictionaries.
 
-        Returns:
-            list: A list of dictionaries representing the conversation turns.
+        :returns: A list of dictionaries representing the conversation turns.
+        :rtype: List[Dict[str, str]]
         """
         return [turn.to_dict() for turn in self.history]
 
     def __len__(self) -> int:
-        """
-        Returns the length of the conversation.
-
-        Returns:
-            int: The number of turns in the conversation history.
-        """
         return len(self.history)
 
     def __repr__(self):
-        """
-        Returns the string representation of the conversation history.
-
-        Returns:
-            str: A string representation of the conversation history.
-        """
         for turn in self.history:
             print(turn)
         return ""
