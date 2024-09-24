@@ -1,15 +1,15 @@
 {
-  "commit": "abd5157cf12219dcd693b6d8edd5334281110af5",
+  "commit": "e79d9ef3e065f2dcb6bd1db51e29c62a99dff5cb",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.15.0",
+    "@autorest/python@6.19.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/containerservice/resource-manager/Microsoft.ContainerService/aks/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.15.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/containerservice/resource-manager/Microsoft.ContainerService/aks/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/containerservice/resource-manager/Microsoft.ContainerService/aks/readme.md",
   "package-2024-05": "2024-07-10 04:37:35 +0800 794e29ee5f8eca63ce0ddf007c60da7df37baaad stable/2024-05-01/managedClusters.json",
-  "package-preview-2024-04": "2024-06-21 12:06:23 +0800 7cc354fc7e405ea867e434deca8c79801beadc4a preview/2024-04-02-preview/managedClusters.json",
+  "package-preview-2024-04": "2024-08-27 19:55:39 -0700 4bc9b37173bd5fe0ed19f21edfb8a195e89caaf6 preview/2024-04-02-preview/managedClusters.json",
   "package-preview-2024-03": "2024-06-09 11:57:40 -0400 c2f037e49f15654488a8cd67b9154c76611b7229 preview/2024-03-02-preview/managedClusters.json",
   "package-2024-02": "2024-03-25 11:19:05 +0800 c9216e204f4e4c7a61af263f387ddad028a173aa stable/2024-02-01/managedClusters.json",
   "package-preview-2024-02": "2024-03-27 16:39:21 +0800 8429152fd329f40b2b77e51d6c74921dd12af122 preview/2024-02-02-preview/managedClusters.json",
@@ -86,5 +86,8 @@
   "package-2018-08-preview-only": "2023-02-15 15:17:59 +0800 67527326606bd3c71700e2b96ff3c9ce9e655e29 preview/2018-08-01-preview/managedClusters.json",
   "package-2018-03-only": "2023-02-15 15:17:59 +0800 67527326606bd3c71700e2b96ff3c9ce9e655e29 stable/2018-03-31/managedClusters.json",
   "package-2019-09-preview-only": "2023-02-15 15:17:59 +0800 67527326606bd3c71700e2b96ff3c9ce9e655e29 preview/2019-09-30/openShiftManagedClusters.json",
-  "package-2017-07": "2023-02-15 15:17:59 +0800 67527326606bd3c71700e2b96ff3c9ce9e655e29 stable/2017-07-01/containerService.json"
+  "package-2017-07": "2023-02-15 15:17:59 +0800 67527326606bd3c71700e2b96ff3c9ce9e655e29 stable/2017-07-01/containerService.json",
+  "package-2024-07": "2024-08-31 00:06:43 +0800 d6be8f199982997f0a94e3e9bbbe8b2f7e304f7d stable/2024-07-01/managedClusters.json",
+  "package-preview-2024-06": "2024-08-27 19:55:39 -0700 4bc9b37173bd5fe0ed19f21edfb8a195e89caaf6 preview/2024-06-02-preview/managedClusters.json",
+  "package-preview-2024-05": "2024-08-27 19:55:39 -0700 4bc9b37173bd5fe0ed19f21edfb8a195e89caaf6 preview/2024-05-02-preview/managedClusters.json"
 }
