@@ -361,7 +361,8 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :type bad_states: Set[RunStatus]
         :param should_raise: Should we raise an error if the bad state has been encountered
         :type should_raise: bool
-        :raises: ~azure.ai.evaluations._exceptions.EvaluationException if should_raise is True and invalid state was encountered.
+        :raises: ~azure.ai.evaluations._exceptions.EvaluationException if should_raise is True
+             and invalid state was encountered.
         :return: Whether or not run is in the correct state.
         :rtype: bool
         """

@@ -263,7 +263,10 @@ class ChatEvaluator:
                 )
 
             if "role" not in turn or "content" not in turn:
-                msg = f"Each turn in 'conversation' must have 'role' and 'content' keys. Turn number: {one_based_turn_num}"
+                msg = (
+                    "Each turn in 'conversation' must have 'role' and 'content' keys. "
+                    + f"Turn number: {one_based_turn_num}"
+                )
                 raise EvaluationException(
                     message=msg,
                     internal_message=msg,
@@ -327,7 +330,10 @@ class ChatEvaluator:
 
                 for citation_num, citation in enumerate(turn["context"]["citations"]):
                     if not isinstance(citation, dict):
-                        msg = f"Each citation in 'citations' must be a dictionary. Turn number: {one_based_turn_num}, Citation number: {citation_num + 1}"
+                        msg = (
+                            "Each citation in 'citations' must be a dictionary. "
+                            + f"Turn number: {one_based_turn_num}, Citation number: {citation_num + 1}"
+                        )
                         raise EvaluationException(
                             message=msg,
                             internal_message=msg,

@@ -237,7 +237,10 @@ class ContentSafetyChatEvaluator:
                 )
 
             if "role" not in turn or "content" not in turn:
-                msg = f"Each turn in 'conversation' must have 'role' and 'content' keys. Turn number: {one_based_turn_num}"
+                msg = (
+                    "Each turn in 'conversation' must have 'role' and 'content' keys. "
+                    + f"Turn number: {one_based_turn_num}"
+                )
                 raise EvaluationException(
                     message=msg,
                     internal_message=msg,
