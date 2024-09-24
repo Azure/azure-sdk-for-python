@@ -8,27 +8,26 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type
 
 import numpy as np
 import pandas as pd
-
 from promptflow._sdk._constants import LINE_NUMBER
 from promptflow.client import PFClient
 
-from .._model_configurations import AzureAIProject
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EvaluationMetrics,
     Prefixes,
     _InternalEvaluationMetrics,
 )
+from .._model_configurations import AzureAIProject
 from .._user_agent import USER_AGENT
 from ._batch_run_client import BatchRunContext, CodeClient, ProxyClient
-from ._telemetry import log_evaluate_activity
 from ._utils import (
     _apply_column_mapping,
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
     _write_output,
 )
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 # pylint: disable=line-too-long
@@ -572,16 +571,14 @@ def _evaluate(  # pylint: disable=too-many-locals
         user_agent=USER_AGENT,
     )
 
-    trace_destination = pf_client._config.get_trace_destination()
+    trace_destination = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
     target_run = None
     target_generated_columns = set()
 
     # Create default configuration for evaluators that directly maps
     # input data names to keyword inputs of the same name in the evaluators.
-    if not evaluator_config:
-        evaluator_config = {}
-    if "default" not in evaluator_config:
-        evaluator_config["default"] = {}
+    evaluator_config = evaluator_config or {}
+    evaluator_config.setdefault("default", {})
 
     # If target is set, apply 1-1 column mapping from target outputs to evaluator inputs
     if data is not None and target is not None:

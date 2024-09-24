@@ -80,10 +80,13 @@ class JsonLineChatProtocol(dict):
         """
         return json.dumps(self)
 
-    def to_eval_qa_json_lines(self):
+    def to_eval_qa_json_lines(self) -> str:
         """
         Converts the object to a string of JSON lines suitable for evaluation in a Q&A format.
         The object is expected to be a dictionary with 'messages' key.
+
+        :returns: A json lines document
+        :rtype: str
         """
         user_message = None
         assistant_message = None

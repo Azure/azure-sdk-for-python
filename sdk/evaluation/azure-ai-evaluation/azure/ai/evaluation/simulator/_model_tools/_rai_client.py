@@ -2,15 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Any, Dict
+from typing import Any
 from urllib.parse import urljoin, urlparse
 
-from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
-
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
-from azure.ai.evaluation._user_agent import USER_AGENT
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._user_agent import USER_AGENT
+from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from ._identity_manager import APITokenManager
 
@@ -21,7 +20,7 @@ if "RAI_SVC_URL" in os.environ:
     print(f"Found RAI_SVC_URL in environment variable, using {api_url} for the service endpoint.")
 
 
-class RAIClient:
+class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
     """Client for the Responsible AI Service
 
     :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
@@ -31,7 +30,9 @@ class RAIClient:
     :type token_manage: ~azure.ai.evaluation.simulator._model_tools._identity_manager.APITokenManager
     """
 
-    def __init__(self, azure_ai_project: AzureAIProject, token_manager: APITokenManager) -> None:
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+        self, azure_ai_project: AzureAIProject, token_manager: APITokenManager
+    ) -> None:
         self.azure_ai_project = azure_ai_project
         self.token_manager = token_manager
 
@@ -73,7 +74,7 @@ class RAIClient:
             timeout=5,
         )
         if response.status_code != 200:
-            msg = f"Failed to retrieve the discovery service URL."
+            msg = "Failed to retrieve the discovery service URL."
             raise EvaluationException(
                 message=msg,
                 internal_message=msg,
@@ -104,7 +105,11 @@ class RAIClient:
         return self.contentharm_parameters
 
     async def get_jailbreaks_dataset(self, type: str) -> Any:
-        "Get the jailbreaks dataset, if exists"
+        """Get the jailbreaks dataset, if exists
+
+        :param type: The dataset type. Should be one of 'xpia' or 'upia'
+        :type type: str
+        """
         if self.jailbreaks_dataset is None:
             if type == "xpia":
                 self.jailbreaks_dataset = await self.get(self.xpia_jailbreaks_json_endpoint)
@@ -146,8 +151,10 @@ class RAIClient:
         if response.status_code == 200:
             return response.json()
 
-        msg = "Azure safety evaluation service is not available in your current region, "
-        "please go to https://aka.ms/azureaistudiosafetyeval to see which regions are supported"
+        msg = (
+            "Azure safety evaluation service is not available in your current region, "
+            + "please go to https://aka.ms/azureaistudiosafetyeval to see which regions are supported"
+        )
         raise EvaluationException(
             message=msg,
             internal_message=msg,
