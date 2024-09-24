@@ -6,10 +6,7 @@ from typing import Optional, Union
 
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
-try:
-    from . import constants
-except ImportError:
-    import constants
+from . import constants
 
 import threading
 from typing import List
