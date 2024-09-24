@@ -75,7 +75,7 @@ def nltk_tokenize(text: str) -> List[str]:
     return list(tokens)
 
 
-def check_and_add_api_version_for_aoai_model_config(
+def ensure_api_version_in_aoai_model_config(
     model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
     default_api_version: str,
 ) -> None:
@@ -83,7 +83,7 @@ def check_and_add_api_version_for_aoai_model_config(
         model_config["api_version"] = model_config.get("api_version", default_api_version)
 
 
-def check_and_add_user_agent_for_aoai_model_config(
+def ensure_user_agent_in_aoai_model_config(
     model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
     prompty_model_config: dict,
     user_agent: Optional[str] = None,

@@ -12,8 +12,8 @@ from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
 from ...._common.utils import (
-    check_and_add_api_version_for_aoai_model_config,
-    check_and_add_user_agent_for_aoai_model_config,
+    ensure_api_version_in_aoai_model_config,
+    ensure_user_agent_in_aoai_model_config,
 )
 
 logger = logging.getLogger(__name__)
@@ -31,7 +31,7 @@ class _AsyncRetrievalChatEvaluator:
     DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
     def __init__(self, model_config: dict):
-        check_and_add_api_version_for_aoai_model_config(model_config, self.DEFAULT_OPEN_API_VERSION)
+        ensure_api_version_in_aoai_model_config(model_config, self.DEFAULT_OPEN_API_VERSION)
 
         prompty_model_config = {"configuration": model_config, "parameters": {"extra_headers": {}}}
 
@@ -39,7 +39,7 @@ class _AsyncRetrievalChatEvaluator:
         # https://github.com/encode/httpx/discussions/2959
         prompty_model_config["parameters"]["extra_headers"].update({"Connection": "close"})
 
-        check_and_add_user_agent_for_aoai_model_config(
+        ensure_user_agent_in_aoai_model_config(
             model_config,
             prompty_model_config,
             USER_AGENT,
