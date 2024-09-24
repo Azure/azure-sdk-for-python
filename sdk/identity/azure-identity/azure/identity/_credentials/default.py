@@ -24,7 +24,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class DefaultAzureCredential(ChainedTokenCredential):
-    """A credential capable of handling most Azure SDK authentication scenarios. See 
+    """A credential capable of handling most Azure SDK authentication scenarios. See
     https://aka.ms/azsdk/python/identity/credential-chains#usage-guidance-for-defaultazurecredential.
 
     The identity it uses depends on the environment. When an access token is needed, it requests one using these
