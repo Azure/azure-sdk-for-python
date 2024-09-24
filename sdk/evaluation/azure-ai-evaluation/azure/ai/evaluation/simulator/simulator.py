@@ -9,7 +9,6 @@ import json
 import os
 import re
 import warnings
-from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from promptflow.client import load_flow

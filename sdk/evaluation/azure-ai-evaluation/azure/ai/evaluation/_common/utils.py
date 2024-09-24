@@ -46,7 +46,7 @@ def ensure_nltk_data_downloaded():
     """Download NLTK data packages if not already downloaded."""
     with _nltk_data_download_lock:
         try:
-            from nltk.tokenize.nist import NISTTokenizer
+            from nltk.tokenize.nist import NISTTokenizer  # pylint: disable=unused-import
         except LookupError:
             nltk.download("perluniprops")
             nltk.download("punkt")
