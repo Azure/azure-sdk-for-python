@@ -1,5 +1,12 @@
 # Release History
 
+## 32.1.0 (2024-10-20)
+
+### Features Added
+
+  - Model AgentPoolGPUProfile has a new parameter driver_type
+  - Operation AgentPoolsOperations.begin_delete has a new optional parameter ignore_pod_disruption_budget
+
 ## 32.0.0 (2024-09-12)
 
 ### Features Added
