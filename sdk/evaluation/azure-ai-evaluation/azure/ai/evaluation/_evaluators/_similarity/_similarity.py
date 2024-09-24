@@ -11,10 +11,7 @@ from promptflow.core import AsyncPrompty
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
-from ..._common.utils import (
-    ensure_api_version_in_aoai_model_config,
-    ensure_user_agent_in_aoai_model_config,
-)
+from ..._common.utils import ensure_api_version_in_aoai_model_config, ensure_user_agent_in_aoai_model_config
 
 try:
     from ..._user_agent import USER_AGENT

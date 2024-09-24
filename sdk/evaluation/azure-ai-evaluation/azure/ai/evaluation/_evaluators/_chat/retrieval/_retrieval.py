@@ -11,10 +11,7 @@ import numpy as np
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
-from ...._common.utils import (
-    ensure_api_version_in_aoai_model_config,
-    ensure_user_agent_in_aoai_model_config,
-)
+from ...._common.utils import ensure_api_version_in_aoai_model_config, ensure_user_agent_in_aoai_model_config
 
 logger = logging.getLogger(__name__)
 

@@ -2,17 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, Union
+import threading
+from typing import List, Optional, Union
+
+import nltk
+import numpy as np
 
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from . import constants
-
-import threading
-from typing import List
-
-import nltk
-import numpy as np
 
 _nltk_data_download_lock = threading.Lock()
 
