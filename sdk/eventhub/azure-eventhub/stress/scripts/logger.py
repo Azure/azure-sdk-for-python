@@ -23,8 +23,12 @@ def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_consol
             console_handler.setFormatter(formatter)
             logger.addHandler(console_handler)
     else:
-        # rotated hourly, keeps all files since backupCount defaults to 0
-        file_handler = TimedRotatingFileHandler(log_filename, when='H')
+        # rotated hourly if small file, o/w rotated bi-hourly
+        if level == logging.DEBUG or level == logging.INFO:
+            time = 30
+        else:
+            time = 60
+        file_handler = TimedRotatingFileHandler(log_filename, when='M', time=time, utc=True)
         if not logger.handlers:
             file_handler.setFormatter(formatter)
             logger.addHandler(file_handler)
@@ -48,10 +52,12 @@ def get_logger(
 
     formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(funcName)s(%(lineno)d) %(message)s')
 
-    file_handler = TimedRotatingFileHandler(
-        log_filename,
-        when='H',
-    )
+    # rotated hourly if small file, o/w rotated bi-hourly
+    if level == logging.DEBUG or level == logging.INFO:
+        time = 30
+    else:
+        time = 60
+    file_handler = TimedRotatingFileHandler(log_filename, when='M', time=time, utc=True)
     file_handler.setFormatter(formatter)
     eventhub_logger.addHandler(file_handler)
     uamqp_logger.addHandler(file_handler)
