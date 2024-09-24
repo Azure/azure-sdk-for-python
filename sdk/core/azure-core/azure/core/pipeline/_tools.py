@@ -52,7 +52,9 @@ def await_result(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
     return result
 
 
-def is_rest(obj: object) -> TypeGuard[Union[HttpRequest, HttpResponse, AsyncHttpResponse]]:
+def is_rest(
+    obj: object,
+) -> TypeGuard[Union[HttpRequest, HttpResponse, AsyncHttpResponse]]:
     """Return whether a request or a response is a rest request / response.
 
     Checking whether the response has the object content can sometimes result

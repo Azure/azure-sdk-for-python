@@ -102,8 +102,14 @@ steps:
   - pwsh: |
       Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)" -Filter GovCompDisc* | % { Write-Host "Removing $($_.FullName)"; Remove-Item $_ }
       Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)" -Filter ScanTelemetry* | % { Write-Host "Removing $($_.FullName)"; Remove-Item $_ }
-      Remove-Item -Recurse -Force -Path "$(Build.ArtifactStagingDirectory)/bcde-output"
-      Remove-Item -Recurse -Force -Path "$(Build.ArtifactStagingDirectory)/_manifest"
+
+      if (Test-Path -Path "$(Build.ArtifactStagingDirectory)/bcde-output") {
+        Remove-Item -Recurse -Force -Path "$(Build.ArtifactStagingDirectory)/bcde-output"
+      }
+
+      if (Test-Path -Path "$(Build.ArtifactStagingDirectory)/_manifest") {
+        Remove-Item -Recurse -Force -Path "$(Build.ArtifactStagingDirectory)/_manifest"
+      }
     displayName: Clean up Artifact Directory
 
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml

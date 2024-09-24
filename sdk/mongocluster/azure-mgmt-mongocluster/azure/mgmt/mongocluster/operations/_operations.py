@@ -18,6 +18,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -32,6 +34,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 from .. import models as _models
 from .._model_base import SdkJSONEncoder, _deserialize
 from .._serialization import Serializer
+from .._validation import api_version_validation
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -49,7 +52,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +73,7 @@ def build_mongo_clusters_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +102,7 @@ def build_mongo_clusters_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -130,7 +133,7 @@ def build_mongo_clusters_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +163,7 @@ def build_mongo_clusters_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -188,7 +191,7 @@ def build_mongo_clusters_list_by_resource_group_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -213,7 +216,7 @@ def build_mongo_clusters_list_request(subscription_id: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -239,7 +242,7 @@ def build_mongo_clusters_list_connection_strings_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -268,7 +271,7 @@ def build_mongo_clusters_check_name_availability_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -291,13 +294,44 @@ def build_mongo_clusters_check_name_availability_request(  # pylint: disable=nam
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_mongo_clusters_promote_request(
+    resource_group_name: str, mongo_cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/mongoClusters/{mongoClusterName}/promote"  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "mongoClusterName": _SERIALIZER.url("mongo_cluster_name", mongo_cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_firewall_rules_get_request(
     resource_group_name: str, mongo_cluster_name: str, firewall_rule_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -327,7 +361,7 @@ def build_firewall_rules_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -358,7 +392,7 @@ def build_firewall_rules_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -387,7 +421,7 @@ def build_firewall_rules_list_by_mongo_cluster_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -415,7 +449,7 @@ def build_private_endpoint_connections_list_by_mongo_cluster_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -447,7 +481,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -483,7 +517,7 @@ def build_private_endpoint_connections_create_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -520,7 +554,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -551,11 +585,39 @@ def build_private_links_list_by_mongo_cluster_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/mongoClusters/{mongoClusterName}/privateLinkResources"  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "mongoClusterName": _SERIALIZER.url("mongo_cluster_name", mongo_cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_replicas_list_by_parent_request(
+    resource_group_name: str, mongo_cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-06-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/mongoClusters/{mongoClusterName}/replicas"  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -591,36 +653,22 @@ class Operations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "actionType": "str",
-                    "display": {
-                        "description": "str",
-                        "operation": "str",
-                        "provider": "str",
-                        "resource": "str"
-                    },
-                    "isDataAction": bool,
-                    "name": "str",
-                    "origin": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -636,7 +684,12 @@ class Operations:
                     headers=_headers,
                     params=_params,
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -651,7 +704,12 @@ class Operations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             return _request
 
@@ -699,6 +757,9 @@ class MongoClustersOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def get(self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any) -> _models.MongoCluster:
         """Gets information about a mongo cluster.
 
@@ -710,83 +771,8 @@ class MongoClustersOperations:
         :return: MongoCluster. The MongoCluster is compatible with MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.MongoCluster
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -807,7 +793,10 @@ class MongoClustersOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -818,7 +807,10 @@ class MongoClustersOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -833,6 +825,9 @@ class MongoClustersOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
@@ -840,7 +835,7 @@ class MongoClustersOperations:
         resource: Union[_models.MongoCluster, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -871,7 +866,10 @@ class MongoClustersOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -881,19 +879,19 @@ class MongoClustersOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.iter_bytes()
-
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -927,153 +925,6 @@ class MongoClustersOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                resource = {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
-
-                # response body for status code(s): 200, 201
-                response == {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -1103,81 +954,6 @@ class MongoClustersOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200, 201
-                response == {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -1207,84 +983,12 @@ class MongoClustersOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200, 201
-                response == {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def begin_create_or_update(
         self,
         resource_group_name: str,
@@ -1307,153 +1011,6 @@ class MongoClustersOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                resource = {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
-
-                # response body for status code(s): 200, 201
-                response == {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -1484,8 +1041,14 @@ class MongoClustersOperations:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1501,6 +1064,9 @@ class MongoClustersOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def _update_initial(
         self,
         resource_group_name: str,
@@ -1508,7 +1074,7 @@ class MongoClustersOperations:
         properties: Union[_models.MongoClusterUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1539,7 +1105,10 @@ class MongoClustersOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -1549,20 +1118,20 @@ class MongoClustersOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.iter_bytes()
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1596,103 +1165,6 @@ class MongoClustersOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                properties = {
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "publicNetworkAccess": "str",
-                        "serverVersion": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200, 202
-                response == {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -1722,81 +1194,6 @@ class MongoClustersOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200, 202
-                response == {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -1826,84 +1223,12 @@ class MongoClustersOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200, 202
-                response == {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def begin_update(
         self,
         resource_group_name: str,
@@ -1926,103 +1251,6 @@ class MongoClustersOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                properties = {
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "publicNetworkAccess": "str",
-                        "serverVersion": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200, 202
-                response == {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -2053,8 +1281,14 @@ class MongoClustersOperations:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2070,8 +1304,11 @@ class MongoClustersOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def _delete_initial(self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2092,7 +1329,10 @@ class MongoClustersOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -2102,7 +1342,10 @@ class MongoClustersOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2112,10 +1355,7 @@ class MongoClustersOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 204:
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2123,6 +1363,9 @@ class MongoClustersOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def begin_delete(self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a mongo cluster.
 
@@ -2158,8 +1401,14 @@ class MongoClustersOperations:
             if cls:
                 return cls(pipeline_response, None, {})  # type: ignore
 
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2174,6 +1423,9 @@ class MongoClustersOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.MongoCluster"]:
         """List all the mongo clusters in a given resource group.
 
@@ -2183,88 +1435,13 @@ class MongoClustersOperations:
         :return: An iterator like instance of MongoCluster
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.MongoCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.MongoCluster]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2282,7 +1459,12 @@ class MongoClustersOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -2297,7 +1479,12 @@ class MongoClustersOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             return _request
 
@@ -2327,94 +1514,22 @@ class MongoClustersOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def list(self, **kwargs: Any) -> Iterable["_models.MongoCluster"]:
         """List all the mongo clusters in a given subscription.
 
         :return: An iterator like instance of MongoCluster
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.MongoCluster]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "location": "str",
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "administratorLogin": "str",
-                        "administratorLoginPassword": "str",
-                        "clusterStatus": "str",
-                        "connectionString": "str",
-                        "createMode": "str",
-                        "earliestRestoreTime": "str",
-                        "nodeGroupSpecs": [
-                            {
-                                "diskSizeGB": 0,
-                                "enableHa": bool,
-                                "kind": "str",
-                                "nodeCount": 0,
-                                "sku": "str"
-                            }
-                        ],
-                        "privateEndpointConnections": [
-                            {
-                                "id": "str",
-                                "name": "str",
-                                "properties": {
-                                    "privateLinkServiceConnectionState": {
-                                        "actionsRequired": "str",
-                                        "description": "str",
-                                        "status": "str"
-                                    },
-                                    "groupIds": [
-                                        "str"
-                                    ],
-                                    "privateEndpoint": {
-                                        "id": "str"
-                                    },
-                                    "provisioningState": "str"
-                                },
-                                "systemData": {
-                                    "createdAt": "2020-02-20 00:00:00",
-                                    "createdBy": "str",
-                                    "createdByType": "str",
-                                    "lastModifiedAt": "2020-02-20 00:00:00",
-                                    "lastModifiedBy": "str",
-                                    "lastModifiedByType": "str"
-                                },
-                                "type": "str"
-                            }
-                        ],
-                        "provisioningState": "str",
-                        "publicNetworkAccess": "str",
-                        "restoreParameters": {
-                            "pointInTimeUTC": "2020-02-20 00:00:00",
-                            "sourceResourceId": "str"
-                        },
-                        "serverVersion": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.MongoCluster]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2431,7 +1546,12 @@ class MongoClustersOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -2446,7 +1566,12 @@ class MongoClustersOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             return _request
 
@@ -2476,6 +1601,9 @@ class MongoClustersOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def list_connection_strings(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> _models.ListConnectionStringsResult:
@@ -2491,21 +1619,8 @@ class MongoClustersOperations:
          MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.ListConnectionStringsResult
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "connectionStrings": [
-                        {
-                            "connectionString": "str",
-                            "description": "str"
-                        }
-                    ]
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2526,7 +1641,10 @@ class MongoClustersOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -2537,7 +1655,10 @@ class MongoClustersOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2563,7 +1684,7 @@ class MongoClustersOperations:
     ) -> _models.CheckNameAvailabilityResponse:
         """Check if mongo cluster name is available for use.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The CheckAvailability request. Required.
         :type body: ~azure.mgmt.mongocluster.models.CheckNameAvailabilityRequest
@@ -2574,22 +1695,6 @@ class MongoClustersOperations:
          MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "name": "str",
-                    "type": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "message": "str",
-                    "nameAvailable": bool,
-                    "reason": "str"
-                }
         """
 
     @overload
@@ -2598,7 +1703,7 @@ class MongoClustersOperations:
     ) -> _models.CheckNameAvailabilityResponse:
         """Check if mongo cluster name is available for use.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The CheckAvailability request. Required.
         :type body: JSON
@@ -2609,16 +1714,6 @@ class MongoClustersOperations:
          MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "message": "str",
-                    "nameAvailable": bool,
-                    "reason": "str"
-                }
         """
 
     @overload
@@ -2627,7 +1722,7 @@ class MongoClustersOperations:
     ) -> _models.CheckNameAvailabilityResponse:
         """Check if mongo cluster name is available for use.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The CheckAvailability request. Required.
         :type body: IO[bytes]
@@ -2638,25 +1733,18 @@ class MongoClustersOperations:
          MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "message": "str",
-                    "nameAvailable": bool,
-                    "reason": "str"
-                }
         """
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def check_name_availability(
         self, location: str, body: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
         """Check if mongo cluster name is available for use.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The CheckAvailability request. Is one of the following types:
          CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
@@ -2665,24 +1753,8 @@ class MongoClustersOperations:
          MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.CheckNameAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "name": "str",
-                    "type": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "message": "str",
-                    "nameAvailable": bool,
-                    "reason": "str"
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2712,7 +1784,10 @@ class MongoClustersOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -2723,7 +1798,10 @@ class MongoClustersOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2737,6 +1815,254 @@ class MongoClustersOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2024-06-01-preview",
+        params_added_on={
+            "2024-06-01-preview": [
+                "base_url",
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "mongo_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+    )
+    def _promote_initial(
+        self,
+        resource_group_name: str,
+        mongo_cluster_name: str,
+        body: Union[_models.PromoteReplicaRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_mongo_clusters_promote_request(
+            resource_group_name=resource_group_name,
+            mongo_cluster_name=mongo_cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.ErrorResponse, response.json())
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_promote(
+        self,
+        resource_group_name: str,
+        mongo_cluster_name: str,
+        body: _models.PromoteReplicaRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Promotes a replica mongo cluster to a primary role.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :type mongo_cluster_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.mongocluster.models.PromoteReplicaRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_promote(
+        self,
+        resource_group_name: str,
+        mongo_cluster_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Promotes a replica mongo cluster to a primary role.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :type mongo_cluster_name: str
+        :param body: The content of the action request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_promote(
+        self,
+        resource_group_name: str,
+        mongo_cluster_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Promotes a replica mongo cluster to a primary role.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :type mongo_cluster_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-06-01-preview",
+        params_added_on={
+            "2024-06-01-preview": [
+                "base_url",
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "mongo_cluster_name",
+                "content_type",
+                "accept",
+            ]
+        },
+    )
+    def begin_promote(
+        self,
+        resource_group_name: str,
+        mongo_cluster_name: str,
+        body: Union[_models.PromoteReplicaRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Promotes a replica mongo cluster to a primary role.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :type mongo_cluster_name: str
+        :param body: The content of the action request. Is one of the following types:
+         PromoteReplicaRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.mongocluster.models.PromoteReplicaRequest or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._promote_initial(
+                resource_group_name=resource_group_name,
+                mongo_cluster_name=mongo_cluster_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
 class FirewallRulesOperations:
@@ -2757,6 +2083,9 @@ class FirewallRulesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def get(
         self, resource_group_name: str, mongo_cluster_name: str, firewall_rule_name: str, **kwargs: Any
     ) -> _models.FirewallRule:
@@ -2772,31 +2101,8 @@ class FirewallRulesOperations:
         :return: FirewallRule. The FirewallRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.FirewallRule
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "endIpAddress": "str",
-                        "startIpAddress": "str",
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2818,7 +2124,10 @@ class FirewallRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -2829,7 +2138,10 @@ class FirewallRulesOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -2844,6 +2156,9 @@ class FirewallRulesOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
@@ -2852,7 +2167,7 @@ class FirewallRulesOperations:
         resource: Union[_models.FirewallRule, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2884,7 +2199,10 @@ class FirewallRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -2894,23 +2212,20 @@ class FirewallRulesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201, 202]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 201:
-            deserialized = response.iter_bytes()
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2946,49 +2261,6 @@ class FirewallRulesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.FirewallRule]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                resource = {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "endIpAddress": "str",
-                        "startIpAddress": "str",
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
-
-                # response body for status code(s): 200, 201, 202
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "endIpAddress": "str",
-                        "startIpAddress": "str",
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -3020,29 +2292,6 @@ class FirewallRulesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.FirewallRule]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200, 201, 202
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "endIpAddress": "str",
-                        "startIpAddress": "str",
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -3074,32 +2323,12 @@ class FirewallRulesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.FirewallRule]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200, 201, 202
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "endIpAddress": "str",
-                        "startIpAddress": "str",
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def begin_create_or_update(
         self,
         resource_group_name: str,
@@ -3124,49 +2353,6 @@ class FirewallRulesOperations:
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.FirewallRule]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                resource = {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "endIpAddress": "str",
-                        "startIpAddress": "str",
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
-
-                # response body for status code(s): 200, 201, 202
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "endIpAddress": "str",
-                        "startIpAddress": "str",
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -3198,8 +2384,14 @@ class FirewallRulesOperations:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -3215,10 +2407,13 @@ class FirewallRulesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def _delete_initial(
         self, resource_group_name: str, mongo_cluster_name: str, firewall_rule_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3240,7 +2435,10 @@ class FirewallRulesOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -3250,7 +2448,10 @@ class FirewallRulesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -3260,10 +2461,7 @@ class FirewallRulesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 204:
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3271,6 +2469,9 @@ class FirewallRulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def begin_delete(
         self, resource_group_name: str, mongo_cluster_name: str, firewall_rule_name: str, **kwargs: Any
     ) -> LROPoller[None]:
@@ -3311,8 +2512,14 @@ class FirewallRulesOperations:
             if cls:
                 return cls(pipeline_response, None, {})  # type: ignore
 
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -3327,6 +2534,9 @@ class FirewallRulesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def list_by_mongo_cluster(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> Iterable["_models.FirewallRule"]:
@@ -3340,36 +2550,13 @@ class FirewallRulesOperations:
         :return: An iterator like instance of FirewallRule
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.FirewallRule]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "endIpAddress": "str",
-                        "startIpAddress": "str",
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.FirewallRule]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3388,7 +2575,12 @@ class FirewallRulesOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -3403,7 +2595,12 @@ class FirewallRulesOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             return _request
 
@@ -3451,6 +2648,9 @@ class PrivateEndpointConnectionsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def list_by_mongo_cluster(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> Iterable["_models.PrivateEndpointConnectionResource"]:
@@ -3465,45 +2665,13 @@ class PrivateEndpointConnectionsOperations:
         :rtype:
          ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.PrivateEndpointConnectionResource]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "privateLinkServiceConnectionState": {
-                            "actionsRequired": "str",
-                            "description": "str",
-                            "status": "str"
-                        },
-                        "groupIds": [
-                            "str"
-                        ],
-                        "privateEndpoint": {
-                            "id": "str"
-                        },
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.PrivateEndpointConnectionResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3522,7 +2690,12 @@ class PrivateEndpointConnectionsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -3537,7 +2710,12 @@ class PrivateEndpointConnectionsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             return _request
 
@@ -3567,6 +2745,9 @@ class PrivateEndpointConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def get(
         self, resource_group_name: str, mongo_cluster_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> _models.PrivateEndpointConnectionResource:
@@ -3584,40 +2765,8 @@ class PrivateEndpointConnectionsOperations:
          with MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.PrivateEndpointConnectionResource
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "privateLinkServiceConnectionState": {
-                            "actionsRequired": "str",
-                            "description": "str",
-                            "status": "str"
-                        },
-                        "groupIds": [
-                            "str"
-                        ],
-                        "privateEndpoint": {
-                            "id": "str"
-                        },
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3639,7 +2788,10 @@ class PrivateEndpointConnectionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -3650,7 +2802,10 @@ class PrivateEndpointConnectionsOperations:
 
         if response.status_code not in [200]:
             if _stream:
-                response.read()  # Load the body in memory and close the socket
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -3665,6 +2820,9 @@ class PrivateEndpointConnectionsOperations:
 
         return deserialized  # type: ignore
 
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def _create_initial(
         self,
         resource_group_name: str,
@@ -3673,7 +2831,7 @@ class PrivateEndpointConnectionsOperations:
         resource: Union[_models.PrivateEndpointConnectionResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3705,7 +2863,10 @@ class PrivateEndpointConnectionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -3715,23 +2876,20 @@ class PrivateEndpointConnectionsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201, 202]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 201:
-            deserialized = response.iter_bytes()
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3769,67 +2927,6 @@ class PrivateEndpointConnectionsOperations:
         :rtype:
          ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.PrivateEndpointConnectionResource]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                resource = {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "privateLinkServiceConnectionState": {
-                            "actionsRequired": "str",
-                            "description": "str",
-                            "status": "str"
-                        },
-                        "groupIds": [
-                            "str"
-                        ],
-                        "privateEndpoint": {
-                            "id": "str"
-                        },
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
-
-                # response body for status code(s): 202, 200, 201
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "privateLinkServiceConnectionState": {
-                            "actionsRequired": "str",
-                            "description": "str",
-                            "status": "str"
-                        },
-                        "groupIds": [
-                            "str"
-                        ],
-                        "privateEndpoint": {
-                            "id": "str"
-                        },
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -3863,38 +2960,6 @@ class PrivateEndpointConnectionsOperations:
         :rtype:
          ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.PrivateEndpointConnectionResource]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202, 200, 201
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "privateLinkServiceConnectionState": {
-                            "actionsRequired": "str",
-                            "description": "str",
-                            "status": "str"
-                        },
-                        "groupIds": [
-                            "str"
-                        ],
-                        "privateEndpoint": {
-                            "id": "str"
-                        },
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @overload
@@ -3928,41 +2993,12 @@ class PrivateEndpointConnectionsOperations:
         :rtype:
          ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.PrivateEndpointConnectionResource]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 202, 200, 201
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "privateLinkServiceConnectionState": {
-                            "actionsRequired": "str",
-                            "description": "str",
-                            "status": "str"
-                        },
-                        "groupIds": [
-                            "str"
-                        ],
-                        "privateEndpoint": {
-                            "id": "str"
-                        },
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def begin_create(
         self,
         resource_group_name: str,
@@ -3990,67 +3026,6 @@ class PrivateEndpointConnectionsOperations:
         :rtype:
          ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.PrivateEndpointConnectionResource]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                resource = {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "privateLinkServiceConnectionState": {
-                            "actionsRequired": "str",
-                            "description": "str",
-                            "status": "str"
-                        },
-                        "groupIds": [
-                            "str"
-                        ],
-                        "privateEndpoint": {
-                            "id": "str"
-                        },
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
-
-                # response body for status code(s): 202, 200, 201
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "privateLinkServiceConnectionState": {
-                            "actionsRequired": "str",
-                            "description": "str",
-                            "status": "str"
-                        },
-                        "groupIds": [
-                            "str"
-                        ],
-                        "privateEndpoint": {
-                            "id": "str"
-                        },
-                        "provisioningState": "str"
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
@@ -4086,8 +3061,14 @@ class PrivateEndpointConnectionsOperations:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
 
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -4103,10 +3084,13 @@ class PrivateEndpointConnectionsOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def _delete_initial(
         self, resource_group_name: str, mongo_cluster_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4128,7 +3112,10 @@ class PrivateEndpointConnectionsOperations:
             headers=_headers,
             params=_params,
         )
-        _request.url = self._client.format_url(_request.url)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -4138,7 +3125,10 @@ class PrivateEndpointConnectionsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204]:
-            response.read()  # Load the body in memory and close the socket
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -4148,10 +3138,7 @@ class PrivateEndpointConnectionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-            deserialized = response.iter_bytes()
-
-        if response.status_code == 204:
-            deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4159,6 +3146,9 @@ class PrivateEndpointConnectionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def begin_delete(
         self, resource_group_name: str, mongo_cluster_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> LROPoller[None]:
@@ -4200,8 +3190,14 @@ class PrivateEndpointConnectionsOperations:
             if cls:
                 return cls(pipeline_response, None, {})  # type: ignore
 
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -4234,6 +3230,9 @@ class PrivateLinksOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2024-06-01-preview": ["base_url"]},
+    )
     def list_by_mongo_cluster(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> Iterable["_models.PrivateLinkResource"]:
@@ -4247,40 +3246,13 @@ class PrivateLinksOperations:
         :return: An iterator like instance of PrivateLinkResource
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.PrivateLinkResource]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "properties": {
-                        "groupId": "str",
-                        "requiredMembers": [
-                            "str"
-                        ],
-                        "requiredZoneNames": [
-                            "str"
-                        ]
-                    },
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str"
-                    },
-                    "type": "str"
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         cls: ClsType[List[_models.PrivateLinkResource]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4299,7 +3271,12 @@ class PrivateLinksOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -4314,13 +3291,142 @@ class PrivateLinksOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request.url = self._client.format_url(_request.url)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(List[_models.PrivateLinkResource], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _deserialize(_models.ErrorResponse, response.json())
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class ReplicasOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.mongocluster.MongoClusterMgmtClient`'s
+        :attr:`replicas` attribute.
+    """
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2024-06-01-preview",
+        params_added_on={
+            "2024-06-01-preview": [
+                "base_url",
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "mongo_cluster_name",
+                "accept",
+            ]
+        },
+    )
+    def list_by_parent(
+        self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
+    ) -> Iterable["_models.Replica"]:
+        """List all the replicas for the mongo cluster.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :type mongo_cluster_name: str
+        :return: An iterator like instance of Replica
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.Replica]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Replica]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_replicas_list_by_parent_request(
+                    resource_group_name=resource_group_name,
+                    mongo_cluster_name=mongo_cluster_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Replica], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
