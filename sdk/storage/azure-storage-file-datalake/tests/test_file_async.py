@@ -1531,6 +1531,34 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         await fc.get_file_properties()
         await fc.upload_data(data, overwrite=True)
 
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    async def test_download_file_decompress(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = await self._create_file_and_return_client()
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        decompressed_data = b"hello from gzip"
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        await file_client.upload_data(
+            data=compressed_data,
+            length=len(compressed_data),
+            overwrite=True,
+            content_settings=content_settings
+        )
+
+        file_data = await file_client.download_file(decompress=True)
+        result = await file_data.readall()
+        assert result == decompressed_data
+
+        file_data = await file_client.download_file(decompress=False)
+        result = await file_data.readall()
+        assert result == compressed_data
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

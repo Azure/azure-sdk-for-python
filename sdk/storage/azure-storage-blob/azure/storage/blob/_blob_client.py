@@ -704,6 +704,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             the timeout will apply to each call individually.
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
+        :keyword bool decompress: If True, any compressed content, identified by the Content-Type header, will be
+            decompressed automatically before being returned. Default value is True.
         :returns: A streaming object (StorageStreamDownloader)
         :rtype: ~azure.storage.blob.StorageStreamDownloader
 
@@ -738,7 +740,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             config=self._config,
             sdk_moniker=self._sdk_moniker,
             client=self._client,
-            **kwargs)
+            **kwargs
+        )
         return StorageStreamDownloader(**options)
 
     @distributed_trace
