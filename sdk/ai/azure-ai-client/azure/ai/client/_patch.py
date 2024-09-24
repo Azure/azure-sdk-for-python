@@ -7,11 +7,14 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
+import logging
 import base64
 import json
 from typing import List, Tuple, Union
 from azure.core.credentials import TokenCredential, AccessToken
 from ._client import Client as ClientGenerated
+
+logger = logging.getLogger(__name__)
 
 # This is only done to rename the client. Can we do this in TypeSpec?
 class AzureAIClient(ClientGenerated):
@@ -35,6 +38,7 @@ class SASTokenCredential(TokenCredential):
         self._workspace_name = workspace_name
         self._connection_name = connection_name
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
+        logger.debug("[SASTokenCredential.__init__] Exit. Given token expires on %s.", self._expires_on)
 
     @classmethod
     def _get_expiration_date_from_token(cls, jwt_token: str) -> datetime:
@@ -45,10 +49,9 @@ class SASTokenCredential(TokenCredential):
         decoded_payload = json.loads(decoded_str)
         expiration_date = decoded_payload.get('exp')
         return datetime.datetime.fromtimestamp(expiration_date, datetime.timezone.utc)
-        #return datetime.datetime.utcfromtimestamp(expiration_date)
-        #return datetime.fromtimestamp(expiration_date, datetime.timezone.utc)
 
     def _refresh_token(self) -> None:
+        logger.debug("[SASTokenCredential._refresh_token] Enter")
         ai_client = ClientGenerated(
             credential=self._credential,
             subscription_id=self._subscription_id,
@@ -63,11 +66,13 @@ class SASTokenCredential(TokenCredential):
 
         self._sas_token = connection.properties.credentials.sas
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
+        logger.debug("[SASTokenCredential._refresh_token] Exit. New token expires on %s.", self._expires_on)
 
     def get_token(self) -> AccessToken:
-        if self.expires_on < datetime.datetime.now(datetime.timezone.utc):
+        logger.debug("SASTokenCredential.get_token] Enter")
+        if self._expires_on < datetime.datetime.now(datetime.timezone.utc):
             self._refresh_token()
-        return AccessToken(self.sas_token, self.expires_on.timestamp())
+        return AccessToken(self._sas_token, self._expires_on.timestamp())
 
 
 __all__: List[str] = [
