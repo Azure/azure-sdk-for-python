@@ -177,7 +177,7 @@ class StressTestRunner:
                 logger.critical(
                     "{} RECURRENT STATUS: {}".format(description, self._state)
                 )
-                self._schedule_interval_logger(end_time, description, interval_seconds)
+                self._schedule_interval_logger(end_time, logger, process_monitor, description, interval_seconds)
 
         t = threading.Timer(interval_seconds, _do_interval_logging)
         t.start()
@@ -201,7 +201,7 @@ class StressTestRunner:
             return message
 
     def _send(self, sender, end_time):
-        self._schedule_interval_logger(end_time, self.send_logger, "Sender " + str(self))
+        self._schedule_interval_logger(end_time, self.send_logger, self.send_process_monitor, "Sender " + str(self))
         try:
             self.send_logger.debug("Starting send loop")
             # log sender
@@ -240,7 +240,7 @@ class StressTestRunner:
             raise
 
     def _receive(self, receiver, end_time):
-        self._schedule_interval_logger(end_time, self.recv_logger, "Receiver " + str(self))
+        self._schedule_interval_logger(end_time, self.recv_logger, self.recv_process_monitor, "Receiver " + str(self))
         # log receiver
         self.recv_logger.debug("Receiver: {}".format(receiver))
         try:
@@ -398,7 +398,7 @@ class StressTestRunnerAsync(StressTestRunner):
         )
 
     async def _send_async(self, sender, end_time):
-        self._schedule_interval_logger(end_time, self.send_logger, "Sender " + str(self))
+        self._schedule_interval_logger(end_time, self.send_logger, self.send_process_monitor, "Sender " + str(self))
         try:
             async with sender:
                 while end_time > datetime.utcnow() and not self._should_stop:
@@ -409,8 +409,8 @@ class StressTestRunnerAsync(StressTestRunner):
                         await sender.send_messages(message)
                         self.azure_monitor_metric.record_messages_cpu_memory(
                             self.send_batch_size,
-                            self.process_monitor.cpu_usage_percent,
-                            self.process_monitor.memory_usage_percent,
+                            self.send_process_monitor.cpu_usage_percent,
+                            self.send_process_monitor.memory_usage_percent,
                         )
                         if self.send_batch_size:
                             self._state.total_sent += self.send_batch_size
@@ -448,7 +448,7 @@ class StressTestRunnerAsync(StressTestRunner):
         )
 
     async def _receive_async(self, receiver, end_time):
-        self._schedule_interval_logger(end_time, self.recv_logger, "Receiver " + str(self))
+        self._schedule_interval_logger(end_time, self.recv_logger, self.recv_process_monitor, "Receiver " + str(self))
         try:
             async with receiver:
                 while end_time > datetime.utcnow() and not self._should_stop:
