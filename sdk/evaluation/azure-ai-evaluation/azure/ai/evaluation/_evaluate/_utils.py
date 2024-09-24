@@ -8,12 +8,13 @@ import re
 import tempfile
 from collections import namedtuple
 from pathlib import Path
+from typing import Dict
 
 import pandas as pd
 
-from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, Prefixes
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, DefaultOpenEncoding, Prefixes
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 LOGGER = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ def extract_workspace_triad_from_trace_provider(trace_provider: str):  # pylint:
 
 
 def load_jsonl(path):
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding=DefaultOpenEncoding.READ) as f:
         return [json.loads(line) for line in f.readlines()]
 
 
@@ -99,7 +100,7 @@ def _log_metrics_and_instance_results(
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_path = os.path.join(tmpdir, artifact_name)
 
-            with open(tmp_path, "w", encoding="utf-8") as f:
+            with open(tmp_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 f.write(instance_results.to_json(orient="records", lines=True))
 
             ev_run.log_artifact(tmpdir, artifact_name)
@@ -155,11 +156,13 @@ def _write_output(path, data_dict):
     if os.path.isdir(path):
         p = p / DEFAULT_EVALUATION_RESULTS_FILE_NAME
 
-    with open(p, "w") as f:
+    with open(p, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         json.dump(data_dict, f)
 
 
-def _apply_column_mapping(source_df: pd.DataFrame, mapping_config: dict, inplace: bool = False) -> pd.DataFrame:
+def _apply_column_mapping(
+    source_df: pd.DataFrame, mapping_config: Dict[str, str], inplace: bool = False
+) -> pd.DataFrame:
     """
     Apply column mapping to source_df based on mapping_config.
 
@@ -167,10 +170,11 @@ def _apply_column_mapping(source_df: pd.DataFrame, mapping_config: dict, inplace
     :param source_df: the data frame to be changed.
     :type source_df: pd.DataFrame
     :param mapping_config: The configuration, containing column mapping.
-    :type mapping_config: dict.
+    :type mapping_config: Dict[str, str].
     :param inplace: If true, the source_df will be changed inplace.
     :type inplace: bool
     :return: The modified data frame.
+    :rtype: pd.DataFrame
     """
     result_df = source_df
 
@@ -211,19 +215,22 @@ def _has_aggregator(evaluator):
     return hasattr(evaluator, "__aggregate__")
 
 
-def get_int_env_var(env_var_name, default_value=None):
+def get_int_env_var(env_var_name: str, default_value: int) -> int:
     """
-    The function `get_int_env_var` retrieves an integer environment variable value, with an optional
+    The function `get_int_env_var` retrieves an integer environment variable value, with a
     default value if the variable is not set or cannot be converted to an integer.
 
     :param env_var_name: The name of the environment variable you want to retrieve the value of
+    :type env_var_name: str
     :param default_value: The default value is the value that will be returned if the environment
-    variable is not found or if it cannot be converted to an integer
+        variable is not found or if it cannot be converted to an integer
+    :type default_value: int
     :return: an integer value.
+    :rtype: int
     """
     try:
-        return int(os.environ.get(env_var_name, default_value))
-    except Exception:
+        return int(os.environ[env_var_name])
+    except (ValueError, KeyError):
         return default_value
 
 
