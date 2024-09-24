@@ -223,7 +223,7 @@ class Simulator:
                 current_simulation.add_to_history(assistant_turn)
                 progress_bar.update(1)  # Update progress bar for both user and assistant turns
 
-            if current_simulation.get_length() < max_conversation_turns:
+            if len(current_simulation) < max_conversation_turns:
                 await self._extend_conversation_with_simulator(
                     current_simulation=current_simulation,
                     max_conversation_turns=max_conversation_turns,
@@ -278,7 +278,7 @@ class Simulator:
             user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
         )
 
-        while current_simulation.get_length() < max_conversation_turns:
+        while len(current_simulation) < max_conversation_turns:
             user_response_content = user_flow(
                 task="Continue the conversation", conversation_history=current_simulation.to_list()
             )
@@ -551,7 +551,7 @@ class Simulator:
         # user_turn = Turn(role=ConversationRole.USER, content=conversation_starter)
         # conversation_history.add_to_history(user_turn)
 
-        while conversation_history.get_length() < max_conversation_turns:
+        while len(conversation_history) < max_conversation_turns:
             user_flow = self._load_user_simulation_flow(
                 user_simulator_prompty=user_simulator_prompty,
                 prompty_model_config=self._build_prompty_model_config(),
@@ -578,7 +578,7 @@ class Simulator:
             conversation_history.add_to_history(assistant_turn)
             progress_bar.update(1)
 
-            if conversation_history.get_length() >= max_conversation_turns:
+            if len(conversation_history) >= max_conversation_turns:
                 break
 
         return conversation_history.to_list()

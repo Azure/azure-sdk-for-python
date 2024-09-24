@@ -72,7 +72,7 @@ class ConversationHistory:
         """
         return [turn.to_dict() for turn in self.history]
 
-    def get_length(self):
+    def __len__(self) -> int:
         """
         Returns the length of the conversation.
 
