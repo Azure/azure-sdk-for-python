@@ -329,6 +329,10 @@
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
 
+# ServiceLabel: %Operator Nexus - Network Cloud
+# PRLabel: %Operator Nexus - Network Cloud
+/sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
+
 # ServiceLabel: %Purview
 # PRLabel: %Purview
 /sdk/purview/                                                        @yifan-zhou922
@@ -841,11 +845,13 @@
 /eng/common/                                                         @Azure/azure-sdk-eng
 /.github/workflows/                                                  @Azure/azure-sdk-eng
 
+/.config/1espt/                                                      @benbp @weshaggard
+
 /tools/                                                              @scbedd @mccoyp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312 @kristapratico
 /eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
 
 # Add approvers for typespec-python emitter version updates

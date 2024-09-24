@@ -302,10 +302,12 @@ def record_test_result(
             pipeline.update({type: CheckStatus(status="succeeded")})
     elif task["result"] == "failed":
         pipeline.update({type: CheckStatus(status="failed")})
-        pipeline[type]["log"] = task["log"]["url"]
+        if task["log"]:
+            pipeline[type]["log"] = task["log"].get("url")
     elif pipeline.get(type, {}).get("status") != "failed":
         pipeline.update({type: CheckStatus(status=task["result"])})
-        pipeline[type]["log"] = task["log"]["url"]
+        if task["log"]:
+            pipeline[type]["log"] = task["log"].get("url")
 
 
 def record_all_pipeline(

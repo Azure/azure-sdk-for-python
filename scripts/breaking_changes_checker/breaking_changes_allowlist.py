@@ -5,8 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from _models import RegexSuppression
 
-RUN_BREAKING_CHANGES_PACKAGES = ["azure-mgmt-*"]
+RUN_BREAKING_CHANGES_PACKAGES = ["azure-mgmt-*", "azure-ai-contentsafety", "azure-ai-vision-face"]
 
 
 # See Readme for ignore format
@@ -16,6 +17,7 @@ IGNORE_BREAKING_CHANGES = {
         # Changes due to latest dpg design + need to support overloads in this tool
         ("ChangedParameterOrdering", "*", "*", "__init__"),
         # Changes due to latest dpg design
+        ("RemovedOrRenamedClass", "*", RegexSuppression(".*ListResult$")),
         ("ChangedParameterKind", "*", "*", "*", "top"),
         ("ChangedParameterKind", "*", "*", "*", "filter"),
         ("ChangedParameterKind", "*", "*", "*", "skip"),
@@ -33,9 +35,22 @@ IGNORE_BREAKING_CHANGES = {
         ("RemovedOrRenamedPositionalParam", "*", "*", "as_dict"),
         ("RemovedFunctionKwargs", "*", "*", "as_dict"),
         # operation group can't be instantiated independently so don't need check for it
-        ("RemovedOrRenamedPositionalParam", "*", "__init__", "client", "positional_or_keyword"),
-        ("RemovedOrRenamedPositionalParam", "*", "__init__", "config", "positional_or_keyword"),
-        ("RemovedOrRenamedPositionalParam", "*", "__init__", "serializer", "positional_or_keyword"),
-        ("RemovedOrRenamedPositionalParam", "*", "__init__", "deserializer", "positional_or_keyword"),
+        ("RemovedOrRenamedPositionalParam", "*", "*", "__init__", "client"),
+        ("RemovedOrRenamedPositionalParam", "*", "*", "__init__", "config"),
+        ("RemovedOrRenamedPositionalParam", "*", "*", "__init__", "serializer"),
+        ("RemovedOrRenamedPositionalParam", "*", "*", "__init__", "deserializer"),
+        # compared with msrest model, new DPG model is inherited from dict so we shall ignore some methods(e.g get/keys/items/values/...)
+        ("AddedClassMethod", "*", "*", "clear"),
+        ("AddedClassMethod", "*", "*", "copy"),
+        ("AddedClassMethod", "*", "*", "get"),
+        ("AddedClassMethod", "*", "*", "items"),
+        ("AddedClassMethod", "*", "*", "keys"),
+        ("AddedClassMethod", "*", "*", "pop"),
+        ("AddedClassMethod", "*", "*", "popitem"),
+        ("AddedClassMethod", "*", "*", "setdefault"),
+        ("AddedClassMethod", "*", "*", "update"),
+        ("AddedClassMethod", "*", "*", "values"),
+        ("AddedClassMethodParameter", "*", "*", "args", "__init__"),
+        ("AddedClassMethodParameter", "*", "*", "exclude_readonly", "as_dict"),
     ]
 }

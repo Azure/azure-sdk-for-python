@@ -71,6 +71,9 @@ jobs:
       image: $(LINUXVMIMAGE)
       os: linux
 
+    variables:
+      ComponentDetection.SourcePath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
+
     steps:
     - template: /eng/pipelines/templates/steps/build.yml
       parameters:
@@ -89,6 +92,9 @@ jobs:
       image: $(WINDOWSVMIMAGE)
       os: windows
 
+    variables:
+      ComponentDetection.SourcePath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
+
     steps:
     - template: /eng/pipelines/templates/steps/build.yml
       parameters:
@@ -106,6 +112,9 @@ jobs:
       name: $(MACPOOL)
       vmImage: $(MACVMIMAGE)
       os: macOS
+
+    variables:
+      ComponentDetection.SourcePath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
 
     steps:
     - template: /eng/pipelines/templates/steps/build.yml
@@ -131,6 +140,9 @@ jobs:
       image: $(LINUXVMIMAGE)
       os: linux
 
+    variables:
+      ComponentDetection.SourcePath: '$(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}'
+
     steps:
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -147,7 +159,7 @@ jobs:
         Artifacts: ${{ parameters.Artifacts }}
 
   - job: 'Analyze'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
+    condition: and(succeeded(), ne(variables['Skip.Analyze'], 'true'))
 
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
