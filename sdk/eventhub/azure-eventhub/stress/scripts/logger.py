@@ -28,7 +28,7 @@ def get_base_logger(log_filename, logger_name, level=logging.ERROR, print_consol
             time = 30
         else:
             time = 60
-        file_handler = TimedRotatingFileHandler(log_filename, when='M', time=time, utc=True)
+        file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
         if not logger.handlers:
             file_handler.setFormatter(formatter)
             logger.addHandler(file_handler)
@@ -57,7 +57,7 @@ def get_logger(
         time = 30
     else:
         time = 60
-    file_handler = TimedRotatingFileHandler(log_filename, when='M', time=time, utc=True)
+    file_handler = TimedRotatingFileHandler(log_filename, when='M', interval=time, utc=True)
     file_handler.setFormatter(formatter)
     eventhub_logger.addHandler(file_handler)
     uamqp_logger.addHandler(file_handler)
