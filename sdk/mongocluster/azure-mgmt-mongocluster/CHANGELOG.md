@@ -28,7 +28,6 @@
 
   - Model `MongoClusterRestoreParameters` renamed its instance variable `point_in_time_u_t_c` to `point_in_time_utc`
   - Model `NodeGroupSpec` renamed its instance variable `disk_size_g_b` to `disk_size_gb`
-  - OperationDisplay.__init__ had all overloads removed
 
 ## 1.0.0b1 (2024-07-01)
 
