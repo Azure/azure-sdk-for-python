@@ -72,6 +72,9 @@ PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
         "aiohttp": "3.8.6",
         "six": "1.16.0",
         "requests": "2.30.0"
+    },
+    ">=3.13.0": {
+        "typing-extensions": "4.12.0",
     }
 }
 
