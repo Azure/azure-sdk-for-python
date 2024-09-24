@@ -20,6 +20,37 @@
 - Model configurations classes are now of type `TypedDict` and are exposed in the `azure.ai.evaluation` module instead of coming from `promptflow.core`.  
 - Updated the parameter names for `question` and `answer` in built-in evaluators to more generic terms: `query` and `response`.
 - `data` and `evaluators` are now required keywords in `evaluate`.
+- `evaluator_config` maps in `evaluate` evaluator name to a dictionary `EvaluatorConfig`, which is a `TypedDict`. The `column_mapping` between`data` and evaluator field names should now be specified inside this new dictionary:
+
+Before:
+```python
+evaluate(
+    ...,
+    evaluator_config={
+        "hate_unfairness": {
+            "query": "${data.question}",
+            "response": "${data.answer}",
+        }
+    },
+    ...
+)
+```
+
+After
+```python
+evaluate(
+    ...,
+    evaluator_config={
+        "hate_unfairness": {
+            "column_mapping": {
+                "query": "${data.question}",
+                "response": "${data.answer}",
+             }
+        }
+    },
+    ...
+)
+```
 
 ### Features Added
 
