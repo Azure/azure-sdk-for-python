@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.2 (Unreleased)
+## 1.6.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,16 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- Added AAD auth samples to distro
+    ([#37352](https://github.com/Azure/azure-sdk-for-python/pull/37352))
+
+## 1.6.2 (2024-09-05)
+
+### Bugs Fixed
+
+- Update OTel sdk and instrumentations to fix fastapi bug
+    ([#37206](https://github.com/Azure/azure-sdk-for-python/pull/37206))
 
 ## 1.6.1 (2024-07-30)
 

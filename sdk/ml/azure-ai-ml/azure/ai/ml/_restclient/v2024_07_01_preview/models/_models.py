@@ -26,7 +26,7 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -41,10 +41,12 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -52,16 +54,18 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     """
 
     _validation = {
@@ -74,14 +78,16 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
     }
 
     _subtype_map = {
@@ -95,7 +101,7 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -110,36 +116,42 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         """
         super(WorkspaceConnectionPropertiesV2, self).__init__(**kwargs)
         self.auth_type = None  # type: Optional[str]
         self.category = kwargs.get('category', None)
         self.created_by_workspace_arm_id = None
+        self.error = kwargs.get('error', None)
         self.expiry_time = kwargs.get('expiry_time', None)
         self.group = None
         self.is_shared_to_all = kwargs.get('is_shared_to_all', None)
-        self.target = kwargs.get('target', None)
         self.metadata = kwargs.get('metadata', None)
+        self.pe_requirement = kwargs.get('pe_requirement', None)
+        self.pe_status = kwargs.get('pe_status', None)
         self.shared_user_list = kwargs.get('shared_user_list', None)
-        self.value = kwargs.get('value', None)
-        self.value_format = kwargs.get('value_format', None)
+        self.target = kwargs.get('target', None)
+        self.use_workspace_managed_identity = kwargs.get('use_workspace_managed_identity', None)
 
 
 class AADAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
@@ -155,7 +167,7 @@ class AADAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -170,10 +182,12 @@ class AADAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -181,16 +195,18 @@ class AADAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     """
 
     _validation = {
@@ -203,14 +219,16 @@ class AADAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
     }
 
     def __init__(
@@ -220,7 +238,7 @@ class AADAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -235,23 +253,27 @@ class AADAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         """
         super(AADAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
         self.auth_type = 'AAD'  # type: str
@@ -270,7 +292,7 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -285,10 +307,12 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -296,16 +320,18 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     :ivar credentials:
     :vartype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionAccessKey
     """
@@ -320,14 +346,16 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionAccessKey'},
     }
 
@@ -338,7 +366,7 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -353,29 +381,62 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         :keyword credentials:
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionAccessKey
         """
         super(AccessKeyAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
         self.auth_type = 'AccessKey'  # type: str
         self.credentials = kwargs.get('credentials', None)
+
+
+class AccountApiKeys(msrest.serialization.Model):
+    """AccountApiKeys.
+
+    :ivar key1:
+    :vartype key1: str
+    :ivar key2:
+    :vartype key2: str
+    """
+
+    _attribute_map = {
+        'key1': {'key': 'key1', 'type': 'str'},
+        'key2': {'key': 'key2', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword key1:
+        :paramtype key1: str
+        :keyword key2:
+        :paramtype key2: str
+        """
+        super(AccountApiKeys, self).__init__(**kwargs)
+        self.key1 = kwargs.get('key1', None)
+        self.key2 = kwargs.get('key2', None)
 
 
 class AccountKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
@@ -391,7 +452,7 @@ class AccountKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropert
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -406,10 +467,12 @@ class AccountKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropert
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -417,17 +480,19 @@ class AccountKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropert
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
-    :ivar credentials:
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
+    :ivar credentials: Account key object for workspace connection credential.
     :vartype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionAccountKey
     """
 
@@ -441,14 +506,16 @@ class AccountKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropert
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionAccountKey'},
     }
 
@@ -459,7 +526,7 @@ class AccountKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropert
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -474,24 +541,28 @@ class AccountKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropert
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
-        :keyword credentials:
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
+        :keyword credentials: Account key object for workspace connection credential.
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionAccountKey
         """
@@ -1903,7 +1974,7 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -1918,10 +1989,12 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -1929,16 +2002,18 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     :ivar credentials: Api key object for workspace connection credential.
     :vartype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionApiKey
     """
@@ -1953,14 +2028,16 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionApiKey'},
     }
 
@@ -1971,7 +2048,7 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -1986,23 +2063,27 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         :keyword credentials: Api key object for workspace connection credential.
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionApiKey
         """
@@ -4581,7 +4662,7 @@ class BayesianSamplingAlgorithm(SamplingAlgorithm):
 
 
 class BindOptions(msrest.serialization.Model):
-    """Describes the bind options for the container.
+    """BindOptions.
 
     :ivar propagation: Type of Bind Option.
     :vartype propagation: str
@@ -4709,6 +4790,53 @@ class BuildContext(msrest.serialization.Model):
         super(BuildContext, self).__init__(**kwargs)
         self.context_uri = kwargs['context_uri']
         self.dockerfile_path = kwargs.get('dockerfile_path', "Dockerfile")
+
+
+class CapacityConfig(msrest.serialization.Model):
+    """The capacity configuration.
+
+    :ivar minimum: The minimum capacity.
+    :vartype minimum: int
+    :ivar maximum: The maximum capacity.
+    :vartype maximum: int
+    :ivar step: The minimal incremental between allowed values for capacity.
+    :vartype step: int
+    :ivar default: The default capacity.
+    :vartype default: int
+    :ivar allowed_values: The array of allowed values for capacity.
+    :vartype allowed_values: list[int]
+    """
+
+    _attribute_map = {
+        'minimum': {'key': 'minimum', 'type': 'int'},
+        'maximum': {'key': 'maximum', 'type': 'int'},
+        'step': {'key': 'step', 'type': 'int'},
+        'default': {'key': 'default', 'type': 'int'},
+        'allowed_values': {'key': 'allowedValues', 'type': '[int]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword minimum: The minimum capacity.
+        :paramtype minimum: int
+        :keyword maximum: The maximum capacity.
+        :paramtype maximum: int
+        :keyword step: The minimal incremental between allowed values for capacity.
+        :paramtype step: int
+        :keyword default: The default capacity.
+        :paramtype default: int
+        :keyword allowed_values: The array of allowed values for capacity.
+        :paramtype allowed_values: list[int]
+        """
+        super(CapacityConfig, self).__init__(**kwargs)
+        self.minimum = kwargs.get('minimum', None)
+        self.maximum = kwargs.get('maximum', None)
+        self.step = kwargs.get('step', None)
+        self.default = kwargs.get('default', None)
+        self.allowed_values = kwargs.get('allowed_values', None)
 
 
 class DataDriftMetricThresholdBase(msrest.serialization.Model):
@@ -5842,6 +5970,98 @@ class CodeVersionResourceArmPaginatedResult(msrest.serialization.Model):
         self.value = kwargs.get('value', None)
 
 
+class CognitiveServiceEndpointDeploymentResourceProperties(msrest.serialization.Model):
+    """CognitiveServiceEndpointDeploymentResourceProperties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar model: Required. Model used for the endpoint deployment.
+    :vartype model: ~azure.mgmt.machinelearningservices.models.EndpointDeploymentModel
+    :ivar rai_policy_name: The name of RAI policy.
+    :vartype rai_policy_name: str
+    :ivar version_upgrade_option: Deployment model version upgrade option. Possible values include:
+     "OnceNewDefaultVersionAvailable", "OnceCurrentVersionExpired", "NoAutoUpgrade".
+    :vartype version_upgrade_option: str or
+     ~azure.mgmt.machinelearningservices.models.DeploymentModelVersionUpgradeOption
+    """
+
+    _validation = {
+        'model': {'required': True},
+    }
+
+    _attribute_map = {
+        'model': {'key': 'model', 'type': 'EndpointDeploymentModel'},
+        'rai_policy_name': {'key': 'raiPolicyName', 'type': 'str'},
+        'version_upgrade_option': {'key': 'versionUpgradeOption', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword model: Required. Model used for the endpoint deployment.
+        :paramtype model: ~azure.mgmt.machinelearningservices.models.EndpointDeploymentModel
+        :keyword rai_policy_name: The name of RAI policy.
+        :paramtype rai_policy_name: str
+        :keyword version_upgrade_option: Deployment model version upgrade option. Possible values
+         include: "OnceNewDefaultVersionAvailable", "OnceCurrentVersionExpired", "NoAutoUpgrade".
+        :paramtype version_upgrade_option: str or
+         ~azure.mgmt.machinelearningservices.models.DeploymentModelVersionUpgradeOption
+        """
+        super(CognitiveServiceEndpointDeploymentResourceProperties, self).__init__(**kwargs)
+        self.model = kwargs['model']
+        self.rai_policy_name = kwargs.get('rai_policy_name', None)
+        self.version_upgrade_option = kwargs.get('version_upgrade_option', None)
+
+
+class CognitiveServicesSku(msrest.serialization.Model):
+    """CognitiveServicesSku.
+
+    :ivar capacity:
+    :vartype capacity: int
+    :ivar family:
+    :vartype family: str
+    :ivar name:
+    :vartype name: str
+    :ivar size:
+    :vartype size: str
+    :ivar tier:
+    :vartype tier: str
+    """
+
+    _attribute_map = {
+        'capacity': {'key': 'capacity', 'type': 'int'},
+        'family': {'key': 'family', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'size': {'key': 'size', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword capacity:
+        :paramtype capacity: int
+        :keyword family:
+        :paramtype family: str
+        :keyword name:
+        :paramtype name: str
+        :keyword size:
+        :paramtype size: str
+        :keyword tier:
+        :paramtype tier: str
+        """
+        super(CognitiveServicesSku, self).__init__(**kwargs)
+        self.capacity = kwargs.get('capacity', None)
+        self.family = kwargs.get('family', None)
+        self.name = kwargs.get('name', None)
+        self.size = kwargs.get('size', None)
+        self.tier = kwargs.get('tier', None)
+
+
 class Collection(msrest.serialization.Model):
     """Collection.
 
@@ -6616,6 +6836,32 @@ class ComputeInstanceApplication(msrest.serialization.Model):
         self.endpoint_uri = kwargs.get('endpoint_uri', None)
 
 
+class ComputeInstanceAutologgerSettings(msrest.serialization.Model):
+    """Specifies settings for autologger.
+
+    :ivar mlflow_autologger: Indicates whether mlflow autologger is enabled for notebooks. Possible
+     values include: "Enabled", "Disabled".
+    :vartype mlflow_autologger: str or ~azure.mgmt.machinelearningservices.models.MlflowAutologger
+    """
+
+    _attribute_map = {
+        'mlflow_autologger': {'key': 'mlflowAutologger', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword mlflow_autologger: Indicates whether mlflow autologger is enabled for notebooks.
+         Possible values include: "Enabled", "Disabled".
+        :paramtype mlflow_autologger: str or
+         ~azure.mgmt.machinelearningservices.models.MlflowAutologger
+        """
+        super(ComputeInstanceAutologgerSettings, self).__init__(**kwargs)
+        self.mlflow_autologger = kwargs.get('mlflow_autologger', None)
+
+
 class ComputeInstanceConnectivityEndpoints(msrest.serialization.Model):
     """Defines all connectivity endpoints and properties for an ComputeInstance.
 
@@ -6804,6 +7050,8 @@ class ComputeInstanceDataMount(msrest.serialization.Model):
     :vartype mount_name: str
     :ivar mount_action: Mount Action. Possible values include: "Mount", "Unmount".
     :vartype mount_action: str or ~azure.mgmt.machinelearningservices.models.MountAction
+    :ivar mount_mode: Mount Mode. Possible values include: "ReadOnly", "ReadWrite".
+    :vartype mount_mode: str or ~azure.mgmt.machinelearningservices.models.MountMode
     :ivar created_by: who this data mount created by.
     :vartype created_by: str
     :ivar mount_path: Path of this data mount.
@@ -6822,6 +7070,7 @@ class ComputeInstanceDataMount(msrest.serialization.Model):
         'source_type': {'key': 'sourceType', 'type': 'str'},
         'mount_name': {'key': 'mountName', 'type': 'str'},
         'mount_action': {'key': 'mountAction', 'type': 'str'},
+        'mount_mode': {'key': 'mountMode', 'type': 'str'},
         'created_by': {'key': 'createdBy', 'type': 'str'},
         'mount_path': {'key': 'mountPath', 'type': 'str'},
         'mount_state': {'key': 'mountState', 'type': 'str'},
@@ -6842,6 +7091,8 @@ class ComputeInstanceDataMount(msrest.serialization.Model):
         :paramtype mount_name: str
         :keyword mount_action: Mount Action. Possible values include: "Mount", "Unmount".
         :paramtype mount_action: str or ~azure.mgmt.machinelearningservices.models.MountAction
+        :keyword mount_mode: Mount Mode. Possible values include: "ReadOnly", "ReadWrite".
+        :paramtype mount_mode: str or ~azure.mgmt.machinelearningservices.models.MountMode
         :keyword created_by: who this data mount created by.
         :paramtype created_by: str
         :keyword mount_path: Path of this data mount.
@@ -6859,6 +7110,7 @@ class ComputeInstanceDataMount(msrest.serialization.Model):
         self.source_type = kwargs.get('source_type', None)
         self.mount_name = kwargs.get('mount_name', None)
         self.mount_action = kwargs.get('mount_action', None)
+        self.mount_mode = kwargs.get('mount_mode', None)
         self.created_by = kwargs.get('created_by', None)
         self.mount_path = kwargs.get('mount_path', None)
         self.mount_state = kwargs.get('mount_state', None)
@@ -6899,12 +7151,13 @@ class ComputeInstanceLastOperation(msrest.serialization.Model):
     """The last operation on ComputeInstance.
 
     :ivar operation_name: Name of the last operation. Possible values include: "Create", "Start",
-     "Stop", "Restart", "Reimage", "Delete".
+     "Stop", "Restart", "Resize", "Reimage", "Delete".
     :vartype operation_name: str or ~azure.mgmt.machinelearningservices.models.OperationName
     :ivar operation_time: Time of the last operation.
     :vartype operation_time: ~datetime.datetime
     :ivar operation_status: Operation status. Possible values include: "InProgress", "Succeeded",
-     "CreateFailed", "StartFailed", "StopFailed", "RestartFailed", "ReimageFailed", "DeleteFailed".
+     "CreateFailed", "StartFailed", "StopFailed", "RestartFailed", "ResizeFailed", "ReimageFailed",
+     "DeleteFailed".
     :vartype operation_status: str or ~azure.mgmt.machinelearningservices.models.OperationStatus
     :ivar operation_trigger: Trigger of operation. Possible values include: "User", "Schedule",
      "IdleShutdown".
@@ -6924,13 +7177,13 @@ class ComputeInstanceLastOperation(msrest.serialization.Model):
     ):
         """
         :keyword operation_name: Name of the last operation. Possible values include: "Create",
-         "Start", "Stop", "Restart", "Reimage", "Delete".
+         "Start", "Stop", "Restart", "Resize", "Reimage", "Delete".
         :paramtype operation_name: str or ~azure.mgmt.machinelearningservices.models.OperationName
         :keyword operation_time: Time of the last operation.
         :paramtype operation_time: ~datetime.datetime
         :keyword operation_status: Operation status. Possible values include: "InProgress",
-         "Succeeded", "CreateFailed", "StartFailed", "StopFailed", "RestartFailed", "ReimageFailed",
-         "DeleteFailed".
+         "Succeeded", "CreateFailed", "StartFailed", "StopFailed", "RestartFailed", "ResizeFailed",
+         "ReimageFailed", "DeleteFailed".
         :paramtype operation_status: str or ~azure.mgmt.machinelearningservices.models.OperationStatus
         :keyword operation_trigger: Trigger of operation. Possible values include: "User", "Schedule",
          "IdleShutdown".
@@ -6960,6 +7213,9 @@ class ComputeInstanceProperties(msrest.serialization.Model):
      value: "Shared".
     :vartype application_sharing_policy: str or
      ~azure.mgmt.machinelearningservices.models.ApplicationSharingPolicy
+    :ivar autologger_settings: Specifies settings for autologger.
+    :vartype autologger_settings:
+     ~azure.mgmt.machinelearningservices.models.ComputeInstanceAutologgerSettings
     :ivar ssh_settings: Specifies policy and settings for SSH access.
     :vartype ssh_settings: ~azure.mgmt.machinelearningservices.models.ComputeInstanceSshSettings
     :ivar custom_services: List of Custom Services added to the compute.
@@ -6980,13 +7236,24 @@ class ComputeInstanceProperties(msrest.serialization.Model):
     :ivar errors: Collection of errors encountered on this ComputeInstance.
     :vartype errors: list[~azure.mgmt.machinelearningservices.models.ErrorResponse]
     :ivar state: The current state of this ComputeInstance. Possible values include: "Creating",
-     "CreateFailed", "Deleting", "Running", "Restarting", "JobRunning", "SettingUp", "SetupFailed",
-     "Starting", "Stopped", "Stopping", "UserSettingUp", "UserSetupFailed", "Unknown", "Unusable".
+     "CreateFailed", "Deleting", "Running", "Restarting", "Resizing", "JobRunning", "SettingUp",
+     "SetupFailed", "Starting", "Stopped", "Stopping", "UserSettingUp", "UserSetupFailed",
+     "Unknown", "Unusable".
     :vartype state: str or ~azure.mgmt.machinelearningservices.models.ComputeInstanceState
     :ivar compute_instance_authorization_type: The Compute Instance Authorization type. Available
      values are personal (default). Possible values include: "personal". Default value: "personal".
     :vartype compute_instance_authorization_type: str or
      ~azure.mgmt.machinelearningservices.models.ComputeInstanceAuthorizationType
+    :ivar enable_os_patching: Enable Auto OS Patching. Possible values are: true, false.
+    :vartype enable_os_patching: bool
+    :ivar enable_root_access: Enable root access. Possible values are: true, false.
+    :vartype enable_root_access: bool
+    :ivar enable_sso: Enable SSO (single sign on). Possible values are: true, false.
+    :vartype enable_sso: bool
+    :ivar release_quota_on_stop: Release quota if compute instance stopped. Possible values are:
+     true - release quota if compute instance stopped. false - don't release quota when compute
+     instance stopped.
+    :vartype release_quota_on_stop: bool
     :ivar personal_compute_instance_settings: Settings for a personal compute instance.
     :vartype personal_compute_instance_settings:
      ~azure.mgmt.machinelearningservices.models.PersonalComputeInstanceSettings
@@ -6997,6 +7264,9 @@ class ComputeInstanceProperties(msrest.serialization.Model):
      ~azure.mgmt.machinelearningservices.models.ComputeInstanceLastOperation
     :ivar schedules: The list of schedules to be applied on the computes.
     :vartype schedules: ~azure.mgmt.machinelearningservices.models.ComputeSchedules
+    :ivar idle_time_before_shutdown: Stops compute instance after user defined period of
+     inactivity. Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
+    :vartype idle_time_before_shutdown: str
     :ivar enable_node_public_ip: Enable or disable node public IP address provisioning. Possible
      values are: Possible values are: true - Indicates that the compute nodes will have public IPs
      provisioned. false - Indicates that the compute nodes will have a private endpoint and no
@@ -7030,6 +7300,7 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
         'application_sharing_policy': {'key': 'applicationSharingPolicy', 'type': 'str'},
+        'autologger_settings': {'key': 'autologgerSettings', 'type': 'ComputeInstanceAutologgerSettings'},
         'ssh_settings': {'key': 'sshSettings', 'type': 'ComputeInstanceSshSettings'},
         'custom_services': {'key': 'customServices', 'type': '[CustomService]'},
         'os_image_metadata': {'key': 'osImageMetadata', 'type': 'ImageMetadata'},
@@ -7039,10 +7310,15 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         'errors': {'key': 'errors', 'type': '[ErrorResponse]'},
         'state': {'key': 'state', 'type': 'str'},
         'compute_instance_authorization_type': {'key': 'computeInstanceAuthorizationType', 'type': 'str'},
+        'enable_os_patching': {'key': 'enableOSPatching', 'type': 'bool'},
+        'enable_root_access': {'key': 'enableRootAccess', 'type': 'bool'},
+        'enable_sso': {'key': 'enableSSO', 'type': 'bool'},
+        'release_quota_on_stop': {'key': 'releaseQuotaOnStop', 'type': 'bool'},
         'personal_compute_instance_settings': {'key': 'personalComputeInstanceSettings', 'type': 'PersonalComputeInstanceSettings'},
         'setup_scripts': {'key': 'setupScripts', 'type': 'SetupScripts'},
         'last_operation': {'key': 'lastOperation', 'type': 'ComputeInstanceLastOperation'},
         'schedules': {'key': 'schedules', 'type': 'ComputeSchedules'},
+        'idle_time_before_shutdown': {'key': 'idleTimeBeforeShutdown', 'type': 'str'},
         'enable_node_public_ip': {'key': 'enableNodePublicIp', 'type': 'bool'},
         'containers': {'key': 'containers', 'type': '[ComputeInstanceContainer]'},
         'data_disks': {'key': 'dataDisks', 'type': '[ComputeInstanceDataDisk]'},
@@ -7066,6 +7342,9 @@ class ComputeInstanceProperties(msrest.serialization.Model):
          value: "Shared".
         :paramtype application_sharing_policy: str or
          ~azure.mgmt.machinelearningservices.models.ApplicationSharingPolicy
+        :keyword autologger_settings: Specifies settings for autologger.
+        :paramtype autologger_settings:
+         ~azure.mgmt.machinelearningservices.models.ComputeInstanceAutologgerSettings
         :keyword ssh_settings: Specifies policy and settings for SSH access.
         :paramtype ssh_settings: ~azure.mgmt.machinelearningservices.models.ComputeInstanceSshSettings
         :keyword custom_services: List of Custom Services added to the compute.
@@ -7075,6 +7354,16 @@ class ComputeInstanceProperties(msrest.serialization.Model):
          "personal".
         :paramtype compute_instance_authorization_type: str or
          ~azure.mgmt.machinelearningservices.models.ComputeInstanceAuthorizationType
+        :keyword enable_os_patching: Enable Auto OS Patching. Possible values are: true, false.
+        :paramtype enable_os_patching: bool
+        :keyword enable_root_access: Enable root access. Possible values are: true, false.
+        :paramtype enable_root_access: bool
+        :keyword enable_sso: Enable SSO (single sign on). Possible values are: true, false.
+        :paramtype enable_sso: bool
+        :keyword release_quota_on_stop: Release quota if compute instance stopped. Possible values are:
+         true - release quota if compute instance stopped. false - don't release quota when compute
+         instance stopped.
+        :paramtype release_quota_on_stop: bool
         :keyword personal_compute_instance_settings: Settings for a personal compute instance.
         :paramtype personal_compute_instance_settings:
          ~azure.mgmt.machinelearningservices.models.PersonalComputeInstanceSettings
@@ -7082,6 +7371,9 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         :paramtype setup_scripts: ~azure.mgmt.machinelearningservices.models.SetupScripts
         :keyword schedules: The list of schedules to be applied on the computes.
         :paramtype schedules: ~azure.mgmt.machinelearningservices.models.ComputeSchedules
+        :keyword idle_time_before_shutdown: Stops compute instance after user defined period of
+         inactivity. Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
+        :paramtype idle_time_before_shutdown: str
         :keyword enable_node_public_ip: Enable or disable node public IP address provisioning. Possible
          values are: Possible values are: true - Indicates that the compute nodes will have public IPs
          provisioned. false - Indicates that the compute nodes will have a private endpoint and no
@@ -7092,6 +7384,7 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         self.vm_size = kwargs.get('vm_size', None)
         self.subnet = kwargs.get('subnet', None)
         self.application_sharing_policy = kwargs.get('application_sharing_policy', "Shared")
+        self.autologger_settings = kwargs.get('autologger_settings', None)
         self.ssh_settings = kwargs.get('ssh_settings', None)
         self.custom_services = kwargs.get('custom_services', None)
         self.os_image_metadata = None
@@ -7101,10 +7394,15 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         self.errors = None
         self.state = None
         self.compute_instance_authorization_type = kwargs.get('compute_instance_authorization_type', "personal")
+        self.enable_os_patching = kwargs.get('enable_os_patching', False)
+        self.enable_root_access = kwargs.get('enable_root_access', True)
+        self.enable_sso = kwargs.get('enable_sso', True)
+        self.release_quota_on_stop = kwargs.get('release_quota_on_stop', False)
         self.personal_compute_instance_settings = kwargs.get('personal_compute_instance_settings', None)
         self.setup_scripts = kwargs.get('setup_scripts', None)
         self.last_operation = None
         self.schedules = kwargs.get('schedules', None)
+        self.idle_time_before_shutdown = kwargs.get('idle_time_before_shutdown', None)
         self.enable_node_public_ip = kwargs.get('enable_node_public_ip', None)
         self.containers = None
         self.data_disks = None
@@ -7334,7 +7632,7 @@ class ComputeResource(Resource, ComputeResourceSchema):
 
 
 class ComputeRuntimeDto(msrest.serialization.Model):
-    """Compute runtime config for feature store type workspace.
+    """ComputeRuntimeDto.
 
     :ivar spark_runtime_version:
     :vartype spark_runtime_version: str
@@ -7562,10 +7860,315 @@ class ContentSafety(msrest.serialization.Model):
         self.content_safety_status = kwargs['content_safety_status']
 
 
+class EndpointDeploymentResourceProperties(msrest.serialization.Model):
+    """EndpointDeploymentResourceProperties.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ContentSafetyEndpointDeploymentResourceProperties, OpenAIEndpointDeploymentResourceProperties, SpeechEndpointDeploymentResourceProperties, ManagedOnlineEndpointDeploymentResourceProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar failure_reason: The failure reason if the creation failed.
+    :vartype failure_reason: str
+    :ivar provisioning_state: Read-only provision state status property. Possible values include:
+     "NotStarted", "Failed", "Creating", "Updating", "Succeeded", "Deleting", "Accepted",
+     "Canceled", "Scaling", "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.DefaultResourceProvisioningState
+    :ivar type: Required. Kind of the deployment.Constant filled by server.
+    :vartype type: str
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'type': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'Azure.ContentSafety': 'ContentSafetyEndpointDeploymentResourceProperties', 'Azure.OpenAI': 'OpenAIEndpointDeploymentResourceProperties', 'Azure.Speech': 'SpeechEndpointDeploymentResourceProperties', 'managedOnlineEndpoint': 'ManagedOnlineEndpointDeploymentResourceProperties'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword failure_reason: The failure reason if the creation failed.
+        :paramtype failure_reason: str
+        """
+        super(EndpointDeploymentResourceProperties, self).__init__(**kwargs)
+        self.failure_reason = kwargs.get('failure_reason', None)
+        self.provisioning_state = None
+        self.type = None  # type: Optional[str]
+
+
+class ContentSafetyEndpointDeploymentResourceProperties(EndpointDeploymentResourceProperties, CognitiveServiceEndpointDeploymentResourceProperties):
+    """ContentSafetyEndpointDeploymentResourceProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar model: Required. Model used for the endpoint deployment.
+    :vartype model: ~azure.mgmt.machinelearningservices.models.EndpointDeploymentModel
+    :ivar rai_policy_name: The name of RAI policy.
+    :vartype rai_policy_name: str
+    :ivar version_upgrade_option: Deployment model version upgrade option. Possible values include:
+     "OnceNewDefaultVersionAvailable", "OnceCurrentVersionExpired", "NoAutoUpgrade".
+    :vartype version_upgrade_option: str or
+     ~azure.mgmt.machinelearningservices.models.DeploymentModelVersionUpgradeOption
+    :ivar failure_reason: The failure reason if the creation failed.
+    :vartype failure_reason: str
+    :ivar provisioning_state: Read-only provision state status property. Possible values include:
+     "NotStarted", "Failed", "Creating", "Updating", "Succeeded", "Deleting", "Accepted",
+     "Canceled", "Scaling", "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.DefaultResourceProvisioningState
+    :ivar type: Required. Kind of the deployment.Constant filled by server.
+    :vartype type: str
+    """
+
+    _validation = {
+        'model': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'type': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'model': {'key': 'model', 'type': 'EndpointDeploymentModel'},
+        'rai_policy_name': {'key': 'raiPolicyName', 'type': 'str'},
+        'version_upgrade_option': {'key': 'versionUpgradeOption', 'type': 'str'},
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword model: Required. Model used for the endpoint deployment.
+        :paramtype model: ~azure.mgmt.machinelearningservices.models.EndpointDeploymentModel
+        :keyword rai_policy_name: The name of RAI policy.
+        :paramtype rai_policy_name: str
+        :keyword version_upgrade_option: Deployment model version upgrade option. Possible values
+         include: "OnceNewDefaultVersionAvailable", "OnceCurrentVersionExpired", "NoAutoUpgrade".
+        :paramtype version_upgrade_option: str or
+         ~azure.mgmt.machinelearningservices.models.DeploymentModelVersionUpgradeOption
+        :keyword failure_reason: The failure reason if the creation failed.
+        :paramtype failure_reason: str
+        """
+        super(ContentSafetyEndpointDeploymentResourceProperties, self).__init__(**kwargs)
+        self.model = kwargs['model']
+        self.rai_policy_name = kwargs.get('rai_policy_name', None)
+        self.version_upgrade_option = kwargs.get('version_upgrade_option', None)
+        self.type = 'Azure.ContentSafety'  # type: str
+        self.failure_reason = kwargs.get('failure_reason', None)
+        self.provisioning_state = None
+
+
+class EndpointResourceProperties(msrest.serialization.Model):
+    """EndpointResourceProperties.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ContentSafetyEndpointResourceProperties, OpenAIEndpointResourceProperties, SpeechEndpointResourceProperties, ManagedOnlineEndpointResourceProperties, ServerlessEndpointResourceProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar associated_resource_id: Byo resource id for creating the built-in model service
+     endpoints.
+    :vartype associated_resource_id: str
+    :ivar deployments: Deployments info.
+    :vartype deployments:
+     list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+    :ivar endpoint_type: Required. Type of the endpoint.Constant filled by server. Possible values
+     include: "Azure.OpenAI", "Azure.Speech", "Azure.ContentSafety", "Azure.Llama",
+     "managedOnlineEndpoint", "serverlessEndpoint".
+    :vartype endpoint_type: str or ~azure.mgmt.machinelearningservices.models.EndpointType
+    :ivar endpoint_uri: Uri of the endpoint.
+    :vartype endpoint_uri: str
+    :ivar failure_reason: The failure reason if the creation failed.
+    :vartype failure_reason: str
+    :ivar location: Location of the endpoint.
+     Since input dto and when parse endpoint resource share the same contract
+     this Location field is just for parse the endpoint resource info
+     we won't let customer specify the endpoint resource location since we will create it the same
+     location as workspace.
+    :vartype location: str
+    :ivar name: Name of the endpoint.
+    :vartype name: str
+    :ivar provisioning_state: Read-only provision state status property. Possible values include:
+     "NotStarted", "Failed", "Creating", "Updating", "Succeeded", "Deleting", "Accepted",
+     "Canceled", "Scaling", "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.DefaultResourceProvisioningState
+    :ivar should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+     endpoint or a OneKeyV2 AI services account endpoint.
+    :vartype should_create_ai_services_endpoint: bool
+    """
+
+    _validation = {
+        'endpoint_type': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'associated_resource_id': {'key': 'associatedResourceId', 'type': 'str'},
+        'deployments': {'key': 'deployments', 'type': '[EndpointDeploymentResourcePropertiesBasicResource]'},
+        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
+        'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'should_create_ai_services_endpoint': {'key': 'shouldCreateAiServicesEndpoint', 'type': 'bool'},
+    }
+
+    _subtype_map = {
+        'endpoint_type': {'Azure.ContentSafety': 'ContentSafetyEndpointResourceProperties', 'Azure.OpenAI': 'OpenAIEndpointResourceProperties', 'Azure.Speech': 'SpeechEndpointResourceProperties', 'managedOnlineEndpoint': 'ManagedOnlineEndpointResourceProperties', 'serverlessEndpoint': 'ServerlessEndpointResourceProperties'}
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword associated_resource_id: Byo resource id for creating the built-in model service
+         endpoints.
+        :paramtype associated_resource_id: str
+        :keyword deployments: Deployments info.
+        :paramtype deployments:
+         list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+        :keyword endpoint_uri: Uri of the endpoint.
+        :paramtype endpoint_uri: str
+        :keyword failure_reason: The failure reason if the creation failed.
+        :paramtype failure_reason: str
+        :keyword location: Location of the endpoint.
+         Since input dto and when parse endpoint resource share the same contract
+         this Location field is just for parse the endpoint resource info
+         we won't let customer specify the endpoint resource location since we will create it the same
+         location as workspace.
+        :paramtype location: str
+        :keyword name: Name of the endpoint.
+        :paramtype name: str
+        :keyword should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+         endpoint or a OneKeyV2 AI services account endpoint.
+        :paramtype should_create_ai_services_endpoint: bool
+        """
+        super(EndpointResourceProperties, self).__init__(**kwargs)
+        self.associated_resource_id = kwargs.get('associated_resource_id', None)
+        self.deployments = kwargs.get('deployments', None)
+        self.endpoint_type = None  # type: Optional[str]
+        self.endpoint_uri = kwargs.get('endpoint_uri', None)
+        self.failure_reason = kwargs.get('failure_reason', None)
+        self.location = kwargs.get('location', None)
+        self.name = kwargs.get('name', None)
+        self.provisioning_state = None
+        self.should_create_ai_services_endpoint = kwargs.get('should_create_ai_services_endpoint', None)
+
+
+class ContentSafetyEndpointResourceProperties(EndpointResourceProperties):
+    """ContentSafetyEndpointResourceProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar associated_resource_id: Byo resource id for creating the built-in model service
+     endpoints.
+    :vartype associated_resource_id: str
+    :ivar deployments: Deployments info.
+    :vartype deployments:
+     list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+    :ivar endpoint_type: Required. Type of the endpoint.Constant filled by server. Possible values
+     include: "Azure.OpenAI", "Azure.Speech", "Azure.ContentSafety", "Azure.Llama",
+     "managedOnlineEndpoint", "serverlessEndpoint".
+    :vartype endpoint_type: str or ~azure.mgmt.machinelearningservices.models.EndpointType
+    :ivar endpoint_uri: Uri of the endpoint.
+    :vartype endpoint_uri: str
+    :ivar failure_reason: The failure reason if the creation failed.
+    :vartype failure_reason: str
+    :ivar location: Location of the endpoint.
+     Since input dto and when parse endpoint resource share the same contract
+     this Location field is just for parse the endpoint resource info
+     we won't let customer specify the endpoint resource location since we will create it the same
+     location as workspace.
+    :vartype location: str
+    :ivar name: Name of the endpoint.
+    :vartype name: str
+    :ivar provisioning_state: Read-only provision state status property. Possible values include:
+     "NotStarted", "Failed", "Creating", "Updating", "Succeeded", "Deleting", "Accepted",
+     "Canceled", "Scaling", "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.DefaultResourceProvisioningState
+    :ivar should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+     endpoint or a OneKeyV2 AI services account endpoint.
+    :vartype should_create_ai_services_endpoint: bool
+    """
+
+    _validation = {
+        'endpoint_type': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'associated_resource_id': {'key': 'associatedResourceId', 'type': 'str'},
+        'deployments': {'key': 'deployments', 'type': '[EndpointDeploymentResourcePropertiesBasicResource]'},
+        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
+        'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'should_create_ai_services_endpoint': {'key': 'shouldCreateAiServicesEndpoint', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword associated_resource_id: Byo resource id for creating the built-in model service
+         endpoints.
+        :paramtype associated_resource_id: str
+        :keyword deployments: Deployments info.
+        :paramtype deployments:
+         list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+        :keyword endpoint_uri: Uri of the endpoint.
+        :paramtype endpoint_uri: str
+        :keyword failure_reason: The failure reason if the creation failed.
+        :paramtype failure_reason: str
+        :keyword location: Location of the endpoint.
+         Since input dto and when parse endpoint resource share the same contract
+         this Location field is just for parse the endpoint resource info
+         we won't let customer specify the endpoint resource location since we will create it the same
+         location as workspace.
+        :paramtype location: str
+        :keyword name: Name of the endpoint.
+        :paramtype name: str
+        :keyword should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+         endpoint or a OneKeyV2 AI services account endpoint.
+        :paramtype should_create_ai_services_endpoint: bool
+        """
+        super(ContentSafetyEndpointResourceProperties, self).__init__(**kwargs)
+        self.endpoint_type = 'Azure.ContentSafety'  # type: str
+
+
 class CosmosDbSettings(msrest.serialization.Model):
     """CosmosDbSettings.
 
-    :ivar collections_throughput: The throughput of the collections in cosmosdb database.
+    :ivar collections_throughput:
     :vartype collections_throughput: int
     """
 
@@ -7578,7 +8181,7 @@ class CosmosDbSettings(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword collections_throughput: The throughput of the collections in cosmosdb database.
+        :keyword collections_throughput:
         :paramtype collections_throughput: int
         """
         super(CosmosDbSettings, self).__init__(**kwargs)
@@ -7900,7 +8503,7 @@ Use Metadata property bag for ApiVersion and other metadata fields.
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -7915,10 +8518,12 @@ Use Metadata property bag for ApiVersion and other metadata fields.
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -7926,16 +8531,18 @@ Use Metadata property bag for ApiVersion and other metadata fields.
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     :ivar credentials: Custom Keys credential object.
     :vartype credentials: ~azure.mgmt.machinelearningservices.models.CustomKeys
     """
@@ -7950,14 +8557,16 @@ Use Metadata property bag for ApiVersion and other metadata fields.
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'CustomKeys'},
     }
 
@@ -7968,7 +8577,7 @@ Use Metadata property bag for ApiVersion and other metadata fields.
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -7983,23 +8592,27 @@ Use Metadata property bag for ApiVersion and other metadata fields.
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         :keyword credentials: Custom Keys credential object.
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.CustomKeys
         """
@@ -8446,6 +9059,8 @@ class CustomService(msrest.serialization.Model):
     :vartype endpoints: list[~azure.mgmt.machinelearningservices.models.Endpoint]
     :ivar volumes: Configuring the volumes for the container.
     :vartype volumes: list[~azure.mgmt.machinelearningservices.models.VolumeDefinition]
+    :ivar kernel: Describes the jupyter kernel settings for the image if its a custom environment.
+    :vartype kernel: ~azure.mgmt.machinelearningservices.models.JupyterKernelConfig
     """
 
     _attribute_map = {
@@ -8456,6 +9071,7 @@ class CustomService(msrest.serialization.Model):
         'docker': {'key': 'docker', 'type': 'Docker'},
         'endpoints': {'key': 'endpoints', 'type': '[Endpoint]'},
         'volumes': {'key': 'volumes', 'type': '[VolumeDefinition]'},
+        'kernel': {'key': 'kernel', 'type': 'JupyterKernelConfig'},
     }
 
     def __init__(
@@ -8479,6 +9095,9 @@ class CustomService(msrest.serialization.Model):
         :paramtype endpoints: list[~azure.mgmt.machinelearningservices.models.Endpoint]
         :keyword volumes: Configuring the volumes for the container.
         :paramtype volumes: list[~azure.mgmt.machinelearningservices.models.VolumeDefinition]
+        :keyword kernel: Describes the jupyter kernel settings for the image if its a custom
+         environment.
+        :paramtype kernel: ~azure.mgmt.machinelearningservices.models.JupyterKernelConfig
         """
         super(CustomService, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
@@ -8488,6 +9107,7 @@ class CustomService(msrest.serialization.Model):
         self.docker = kwargs.get('docker', None)
         self.endpoints = kwargs.get('endpoints', None)
         self.volumes = kwargs.get('volumes', None)
+        self.kernel = kwargs.get('kernel', None)
 
 
 class CustomTargetLags(TargetLags):
@@ -9859,36 +10479,40 @@ class DestinationAsset(msrest.serialization.Model):
 class DiagnoseRequestProperties(msrest.serialization.Model):
     """DiagnoseRequestProperties.
 
-    :ivar udr: Setting for diagnosing user defined routing.
-    :vartype udr: dict[str, any]
-    :ivar nsg: Setting for diagnosing network security group.
-    :vartype nsg: dict[str, any]
-    :ivar resource_lock: Setting for diagnosing resource lock.
-    :vartype resource_lock: dict[str, any]
-    :ivar dns_resolution: Setting for diagnosing dns resolution.
-    :vartype dns_resolution: dict[str, any]
-    :ivar storage_account: Setting for diagnosing dependent storage account.
-    :vartype storage_account: dict[str, any]
-    :ivar key_vault: Setting for diagnosing dependent key vault.
-    :vartype key_vault: dict[str, any]
-    :ivar container_registry: Setting for diagnosing dependent container registry.
-    :vartype container_registry: dict[str, any]
     :ivar application_insights: Setting for diagnosing dependent application insights.
     :vartype application_insights: dict[str, any]
+    :ivar container_registry: Setting for diagnosing dependent container registry.
+    :vartype container_registry: dict[str, any]
+    :ivar dns_resolution: Setting for diagnosing dns resolution.
+    :vartype dns_resolution: dict[str, any]
+    :ivar key_vault: Setting for diagnosing dependent key vault.
+    :vartype key_vault: dict[str, any]
+    :ivar nsg: Setting for diagnosing network security group.
+    :vartype nsg: dict[str, any]
     :ivar others: Setting for diagnosing unclassified category of problems.
     :vartype others: dict[str, any]
+    :ivar required_resource_providers: Setting for diagnosing the presence of required resource
+     providers in the workspace.
+    :vartype required_resource_providers: dict[str, any]
+    :ivar resource_lock: Setting for diagnosing resource lock.
+    :vartype resource_lock: dict[str, any]
+    :ivar storage_account: Setting for diagnosing dependent storage account.
+    :vartype storage_account: dict[str, any]
+    :ivar udr: Setting for diagnosing user defined routing.
+    :vartype udr: dict[str, any]
     """
 
     _attribute_map = {
-        'udr': {'key': 'udr', 'type': '{object}'},
-        'nsg': {'key': 'nsg', 'type': '{object}'},
-        'resource_lock': {'key': 'resourceLock', 'type': '{object}'},
-        'dns_resolution': {'key': 'dnsResolution', 'type': '{object}'},
-        'storage_account': {'key': 'storageAccount', 'type': '{object}'},
-        'key_vault': {'key': 'keyVault', 'type': '{object}'},
-        'container_registry': {'key': 'containerRegistry', 'type': '{object}'},
         'application_insights': {'key': 'applicationInsights', 'type': '{object}'},
+        'container_registry': {'key': 'containerRegistry', 'type': '{object}'},
+        'dns_resolution': {'key': 'dnsResolution', 'type': '{object}'},
+        'key_vault': {'key': 'keyVault', 'type': '{object}'},
+        'nsg': {'key': 'nsg', 'type': '{object}'},
         'others': {'key': 'others', 'type': '{object}'},
+        'required_resource_providers': {'key': 'requiredResourceProviders', 'type': '{object}'},
+        'resource_lock': {'key': 'resourceLock', 'type': '{object}'},
+        'storage_account': {'key': 'storageAccount', 'type': '{object}'},
+        'udr': {'key': 'udr', 'type': '{object}'},
     }
 
     def __init__(
@@ -9896,35 +10520,39 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword udr: Setting for diagnosing user defined routing.
-        :paramtype udr: dict[str, any]
-        :keyword nsg: Setting for diagnosing network security group.
-        :paramtype nsg: dict[str, any]
-        :keyword resource_lock: Setting for diagnosing resource lock.
-        :paramtype resource_lock: dict[str, any]
-        :keyword dns_resolution: Setting for diagnosing dns resolution.
-        :paramtype dns_resolution: dict[str, any]
-        :keyword storage_account: Setting for diagnosing dependent storage account.
-        :paramtype storage_account: dict[str, any]
-        :keyword key_vault: Setting for diagnosing dependent key vault.
-        :paramtype key_vault: dict[str, any]
-        :keyword container_registry: Setting for diagnosing dependent container registry.
-        :paramtype container_registry: dict[str, any]
         :keyword application_insights: Setting for diagnosing dependent application insights.
         :paramtype application_insights: dict[str, any]
+        :keyword container_registry: Setting for diagnosing dependent container registry.
+        :paramtype container_registry: dict[str, any]
+        :keyword dns_resolution: Setting for diagnosing dns resolution.
+        :paramtype dns_resolution: dict[str, any]
+        :keyword key_vault: Setting for diagnosing dependent key vault.
+        :paramtype key_vault: dict[str, any]
+        :keyword nsg: Setting for diagnosing network security group.
+        :paramtype nsg: dict[str, any]
         :keyword others: Setting for diagnosing unclassified category of problems.
         :paramtype others: dict[str, any]
+        :keyword required_resource_providers: Setting for diagnosing the presence of required resource
+         providers in the workspace.
+        :paramtype required_resource_providers: dict[str, any]
+        :keyword resource_lock: Setting for diagnosing resource lock.
+        :paramtype resource_lock: dict[str, any]
+        :keyword storage_account: Setting for diagnosing dependent storage account.
+        :paramtype storage_account: dict[str, any]
+        :keyword udr: Setting for diagnosing user defined routing.
+        :paramtype udr: dict[str, any]
         """
         super(DiagnoseRequestProperties, self).__init__(**kwargs)
-        self.udr = kwargs.get('udr', None)
-        self.nsg = kwargs.get('nsg', None)
-        self.resource_lock = kwargs.get('resource_lock', None)
-        self.dns_resolution = kwargs.get('dns_resolution', None)
-        self.storage_account = kwargs.get('storage_account', None)
-        self.key_vault = kwargs.get('key_vault', None)
-        self.container_registry = kwargs.get('container_registry', None)
         self.application_insights = kwargs.get('application_insights', None)
+        self.container_registry = kwargs.get('container_registry', None)
+        self.dns_resolution = kwargs.get('dns_resolution', None)
+        self.key_vault = kwargs.get('key_vault', None)
+        self.nsg = kwargs.get('nsg', None)
         self.others = kwargs.get('others', None)
+        self.required_resource_providers = kwargs.get('required_resource_providers', None)
+        self.resource_lock = kwargs.get('resource_lock', None)
+        self.storage_account = kwargs.get('storage_account', None)
+        self.udr = kwargs.get('udr', None)
 
 
 class DiagnoseResponseResult(msrest.serialization.Model):
@@ -10075,7 +10703,7 @@ class DiagnoseResult(msrest.serialization.Model):
 class DiagnoseWorkspaceParameters(msrest.serialization.Model):
     """Parameters to diagnose a workspace.
 
-    :ivar value: Value of Parameters.
+    :ivar value:
     :vartype value: ~azure.mgmt.machinelearningservices.models.DiagnoseRequestProperties
     """
 
@@ -10088,7 +10716,7 @@ class DiagnoseWorkspaceParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword value: Value of Parameters.
+        :keyword value:
         :paramtype value: ~azure.mgmt.machinelearningservices.models.DiagnoseRequestProperties
         """
         super(DiagnoseWorkspaceParameters, self).__init__(**kwargs)
@@ -10131,7 +10759,7 @@ class DistributionConfiguration(msrest.serialization.Model):
 
 
 class Docker(msrest.serialization.Model):
-    """Docker container configuration.
+    """Docker.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -10203,52 +10831,6 @@ class DockerCredential(DataReferenceCredential):
         self.user_name = kwargs.get('user_name', None)
 
 
-class EncryptionKeyVaultProperties(msrest.serialization.Model):
-    """EncryptionKeyVaultProperties.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar key_vault_arm_id: Required. The ArmId of the keyVault where the customer owned encryption
-     key is present.
-    :vartype key_vault_arm_id: str
-    :ivar key_identifier: Required. Key vault uri to access the encryption key.
-    :vartype key_identifier: str
-    :ivar identity_client_id: For future use - The client id of the identity which will be used to
-     access key vault.
-    :vartype identity_client_id: str
-    """
-
-    _validation = {
-        'key_vault_arm_id': {'required': True},
-        'key_identifier': {'required': True},
-    }
-
-    _attribute_map = {
-        'key_vault_arm_id': {'key': 'keyVaultArmId', 'type': 'str'},
-        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
-        'identity_client_id': {'key': 'identityClientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword key_vault_arm_id: Required. The ArmId of the keyVault where the customer owned
-         encryption key is present.
-        :paramtype key_vault_arm_id: str
-        :keyword key_identifier: Required. Key vault uri to access the encryption key.
-        :paramtype key_identifier: str
-        :keyword identity_client_id: For future use - The client id of the identity which will be used
-         to access key vault.
-        :paramtype identity_client_id: str
-        """
-        super(EncryptionKeyVaultProperties, self).__init__(**kwargs)
-        self.key_vault_arm_id = kwargs['key_vault_arm_id']
-        self.key_identifier = kwargs['key_identifier']
-        self.identity_client_id = kwargs.get('identity_client_id', None)
-
-
 class EncryptionKeyVaultUpdateProperties(msrest.serialization.Model):
     """EncryptionKeyVaultUpdateProperties.
 
@@ -10283,25 +10865,39 @@ class EncryptionProperty(msrest.serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar cosmos_db_resource_id: The byok cosmosdb account that customer brings to store customer's
+     data
+     with encryption.
+    :vartype cosmos_db_resource_id: str
+    :ivar identity: Identity to be used with the keyVault.
+    :vartype identity: ~azure.mgmt.machinelearningservices.models.IdentityForCmk
+    :ivar key_vault_properties: Required. KeyVault details to do the encryption.
+    :vartype key_vault_properties: ~azure.mgmt.machinelearningservices.models.KeyVaultProperties
+    :ivar search_account_resource_id: The byok search account that customer brings to store
+     customer's data
+     with encryption.
+    :vartype search_account_resource_id: str
     :ivar status: Required. Indicates whether or not the encryption is enabled for the workspace.
      Possible values include: "Enabled", "Disabled".
     :vartype status: str or ~azure.mgmt.machinelearningservices.models.EncryptionStatus
-    :ivar identity: The identity that will be used to access the key vault for encryption at rest.
-    :vartype identity: ~azure.mgmt.machinelearningservices.models.IdentityForCmk
-    :ivar key_vault_properties: Required. Customer Key vault properties.
-    :vartype key_vault_properties:
-     ~azure.mgmt.machinelearningservices.models.EncryptionKeyVaultProperties
+    :ivar storage_account_resource_id: The byok storage account that customer brings to store
+     customer's data
+     with encryption.
+    :vartype storage_account_resource_id: str
     """
 
     _validation = {
-        'status': {'required': True},
         'key_vault_properties': {'required': True},
+        'status': {'required': True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
+        'cosmos_db_resource_id': {'key': 'cosmosDbResourceId', 'type': 'str'},
         'identity': {'key': 'identity', 'type': 'IdentityForCmk'},
-        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'EncryptionKeyVaultProperties'},
+        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
+        'search_account_resource_id': {'key': 'searchAccountResourceId', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'storage_account_resource_id': {'key': 'storageAccountResourceId', 'type': 'str'},
     }
 
     def __init__(
@@ -10309,20 +10905,33 @@ class EncryptionProperty(msrest.serialization.Model):
         **kwargs
     ):
         """
+        :keyword cosmos_db_resource_id: The byok cosmosdb account that customer brings to store
+         customer's data
+         with encryption.
+        :paramtype cosmos_db_resource_id: str
+        :keyword identity: Identity to be used with the keyVault.
+        :paramtype identity: ~azure.mgmt.machinelearningservices.models.IdentityForCmk
+        :keyword key_vault_properties: Required. KeyVault details to do the encryption.
+        :paramtype key_vault_properties: ~azure.mgmt.machinelearningservices.models.KeyVaultProperties
+        :keyword search_account_resource_id: The byok search account that customer brings to store
+         customer's data
+         with encryption.
+        :paramtype search_account_resource_id: str
         :keyword status: Required. Indicates whether or not the encryption is enabled for the
          workspace. Possible values include: "Enabled", "Disabled".
         :paramtype status: str or ~azure.mgmt.machinelearningservices.models.EncryptionStatus
-        :keyword identity: The identity that will be used to access the key vault for encryption at
-         rest.
-        :paramtype identity: ~azure.mgmt.machinelearningservices.models.IdentityForCmk
-        :keyword key_vault_properties: Required. Customer Key vault properties.
-        :paramtype key_vault_properties:
-         ~azure.mgmt.machinelearningservices.models.EncryptionKeyVaultProperties
+        :keyword storage_account_resource_id: The byok storage account that customer brings to store
+         customer's data
+         with encryption.
+        :paramtype storage_account_resource_id: str
         """
         super(EncryptionProperty, self).__init__(**kwargs)
-        self.status = kwargs['status']
+        self.cosmos_db_resource_id = kwargs.get('cosmos_db_resource_id', None)
         self.identity = kwargs.get('identity', None)
         self.key_vault_properties = kwargs['key_vault_properties']
+        self.search_account_resource_id = kwargs.get('search_account_resource_id', None)
+        self.status = kwargs['status']
+        self.storage_account_resource_id = kwargs.get('storage_account_resource_id', None)
 
 
 class EncryptionUpdateProperties(msrest.serialization.Model):
@@ -10357,7 +10966,7 @@ class EncryptionUpdateProperties(msrest.serialization.Model):
 
 
 class Endpoint(msrest.serialization.Model):
-    """Describes the endpoint configuration for the container.
+    """Endpoint.
 
     :ivar protocol: Protocol over which communication will happen over this endpoint. Possible
      values include: "tcp", "udp", "http". Default value: "tcp".
@@ -10473,6 +11082,600 @@ class EndpointAuthToken(msrest.serialization.Model):
         self.expiry_time_utc = kwargs.get('expiry_time_utc', 0)
         self.refresh_after_time_utc = kwargs.get('refresh_after_time_utc', 0)
         self.token_type = kwargs.get('token_type', None)
+
+
+class EndpointDeploymentModel(msrest.serialization.Model):
+    """EndpointDeploymentModel.
+
+    :ivar format: Model format.
+    :vartype format: str
+    :ivar name: Model name.
+    :vartype name: str
+    :ivar source: Optional. Deployment model source ARM resource ID.
+    :vartype source: str
+    :ivar version: Model version.
+    :vartype version: str
+    """
+
+    _attribute_map = {
+        'format': {'key': 'format', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword format: Model format.
+        :paramtype format: str
+        :keyword name: Model name.
+        :paramtype name: str
+        :keyword source: Optional. Deployment model source ARM resource ID.
+        :paramtype source: str
+        :keyword version: Model version.
+        :paramtype version: str
+        """
+        super(EndpointDeploymentModel, self).__init__(**kwargs)
+        self.format = kwargs.get('format', None)
+        self.name = kwargs.get('name', None)
+        self.source = kwargs.get('source', None)
+        self.version = kwargs.get('version', None)
+
+
+class EndpointDeploymentResourcePropertiesBasicResource(Resource):
+    """EndpointDeploymentResourcePropertiesBasicResource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar properties: Required.
+    :vartype properties:
+     ~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'EndpointDeploymentResourceProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword properties: Required.
+        :paramtype properties:
+         ~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourceProperties
+        """
+        super(EndpointDeploymentResourcePropertiesBasicResource, self).__init__(**kwargs)
+        self.properties = kwargs['properties']
+
+
+class EndpointDeploymentResourcePropertiesBasicResourceArmPaginatedResult(msrest.serialization.Model):
+    """EndpointDeploymentResourcePropertiesBasicResourceArmPaginatedResult.
+
+    :ivar next_link:
+    :vartype next_link: str
+    :ivar value:
+    :vartype value:
+     list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[EndpointDeploymentResourcePropertiesBasicResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword next_link:
+        :paramtype next_link: str
+        :keyword value:
+        :paramtype value:
+         list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+        """
+        super(EndpointDeploymentResourcePropertiesBasicResourceArmPaginatedResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get('value', None)
+
+
+class EndpointKeys(msrest.serialization.Model):
+    """EndpointKeys.
+
+    :ivar keys: Dictionary of Keys for the endpoint.
+    :vartype keys: ~azure.mgmt.machinelearningservices.models.AccountApiKeys
+    """
+
+    _attribute_map = {
+        'keys': {'key': 'keys', 'type': 'AccountApiKeys'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword keys: Dictionary of Keys for the endpoint.
+        :paramtype keys: ~azure.mgmt.machinelearningservices.models.AccountApiKeys
+        """
+        super(EndpointKeys, self).__init__(**kwargs)
+        self.keys = kwargs.get('keys', None)
+
+
+class EndpointModelDeprecationProperties(msrest.serialization.Model):
+    """EndpointModelDeprecationProperties.
+
+    :ivar fine_tune: The datetime of deprecation of the fineTune Model.
+    :vartype fine_tune: ~datetime.datetime
+    :ivar inference: The datetime of deprecation of the inference Model.
+    :vartype inference: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        'fine_tune': {'key': 'fineTune', 'type': 'iso-8601'},
+        'inference': {'key': 'inference', 'type': 'iso-8601'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword fine_tune: The datetime of deprecation of the fineTune Model.
+        :paramtype fine_tune: ~datetime.datetime
+        :keyword inference: The datetime of deprecation of the inference Model.
+        :paramtype inference: ~datetime.datetime
+        """
+        super(EndpointModelDeprecationProperties, self).__init__(**kwargs)
+        self.fine_tune = kwargs.get('fine_tune', None)
+        self.inference = kwargs.get('inference', None)
+
+
+class EndpointModelProperties(msrest.serialization.Model):
+    """Endpoint Model properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar capabilities: The capabilities.
+    :vartype capabilities: dict[str, str]
+    :ivar deprecation:
+    :vartype deprecation:
+     ~azure.mgmt.machinelearningservices.models.EndpointModelDeprecationProperties
+    :ivar finetune_capabilities: The capabilities for finetune models.
+    :vartype finetune_capabilities: dict[str, str]
+    :ivar format: Deployment model format.
+    :vartype format: str
+    :ivar is_default_version: If the model is default version.
+    :vartype is_default_version: bool
+    :ivar lifecycle_status: Model lifecycle status. Possible values include: "GenerallyAvailable",
+     "Preview".
+    :vartype lifecycle_status: str or
+     ~azure.mgmt.machinelearningservices.models.ModelLifecycleStatus
+    :ivar max_capacity: The max capacity.
+    :vartype max_capacity: int
+    :ivar name: Deployment model name.
+    :vartype name: str
+    :ivar skus: The list of Model Sku.
+    :vartype skus: list[~azure.mgmt.machinelearningservices.models.EndpointModelSkuProperties]
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar version: Optional. Deployment model version. If version is not specified, a default
+     version will be assigned. The default version is different for different models and might
+     change when there is new version available for a model. Default version for a model could be
+     found from list models API.
+    :vartype version: str
+    """
+
+    _validation = {
+        'system_data': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'capabilities': {'key': 'capabilities', 'type': '{str}'},
+        'deprecation': {'key': 'deprecation', 'type': 'EndpointModelDeprecationProperties'},
+        'finetune_capabilities': {'key': 'finetuneCapabilities', 'type': '{str}'},
+        'format': {'key': 'format', 'type': 'str'},
+        'is_default_version': {'key': 'isDefaultVersion', 'type': 'bool'},
+        'lifecycle_status': {'key': 'lifecycleStatus', 'type': 'str'},
+        'max_capacity': {'key': 'maxCapacity', 'type': 'int'},
+        'name': {'key': 'name', 'type': 'str'},
+        'skus': {'key': 'skus', 'type': '[EndpointModelSkuProperties]'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'version': {'key': 'version', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword capabilities: The capabilities.
+        :paramtype capabilities: dict[str, str]
+        :keyword deprecation:
+        :paramtype deprecation:
+         ~azure.mgmt.machinelearningservices.models.EndpointModelDeprecationProperties
+        :keyword finetune_capabilities: The capabilities for finetune models.
+        :paramtype finetune_capabilities: dict[str, str]
+        :keyword format: Deployment model format.
+        :paramtype format: str
+        :keyword is_default_version: If the model is default version.
+        :paramtype is_default_version: bool
+        :keyword lifecycle_status: Model lifecycle status. Possible values include:
+         "GenerallyAvailable", "Preview".
+        :paramtype lifecycle_status: str or
+         ~azure.mgmt.machinelearningservices.models.ModelLifecycleStatus
+        :keyword max_capacity: The max capacity.
+        :paramtype max_capacity: int
+        :keyword name: Deployment model name.
+        :paramtype name: str
+        :keyword skus: The list of Model Sku.
+        :paramtype skus: list[~azure.mgmt.machinelearningservices.models.EndpointModelSkuProperties]
+        :keyword version: Optional. Deployment model version. If version is not specified, a default
+         version will be assigned. The default version is different for different models and might
+         change when there is new version available for a model. Default version for a model could be
+         found from list models API.
+        :paramtype version: str
+        """
+        super(EndpointModelProperties, self).__init__(**kwargs)
+        self.capabilities = kwargs.get('capabilities', None)
+        self.deprecation = kwargs.get('deprecation', None)
+        self.finetune_capabilities = kwargs.get('finetune_capabilities', None)
+        self.format = kwargs.get('format', None)
+        self.is_default_version = kwargs.get('is_default_version', None)
+        self.lifecycle_status = kwargs.get('lifecycle_status', None)
+        self.max_capacity = kwargs.get('max_capacity', None)
+        self.name = kwargs.get('name', None)
+        self.skus = kwargs.get('skus', None)
+        self.system_data = None
+        self.version = kwargs.get('version', None)
+
+
+class EndpointModels(msrest.serialization.Model):
+    """EndpointModels.
+
+    :ivar next_link: The link to the next page constructed using the continuationToken.  If null,
+     there are no additional pages.
+    :vartype next_link: str
+    :ivar value: List of models.
+    :vartype value: list[~azure.mgmt.machinelearningservices.models.EndpointModelProperties]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[EndpointModelProperties]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword next_link: The link to the next page constructed using the continuationToken.  If
+         null, there are no additional pages.
+        :paramtype next_link: str
+        :keyword value: List of models.
+        :paramtype value: list[~azure.mgmt.machinelearningservices.models.EndpointModelProperties]
+        """
+        super(EndpointModels, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get('value', None)
+
+
+class EndpointModelSkuCapacityProperties(msrest.serialization.Model):
+    """EndpointModelSkuCapacityProperties.
+
+    :ivar default: The default capacity.
+    :vartype default: int
+    :ivar maximum: The maximum capacity.
+    :vartype maximum: int
+    """
+
+    _attribute_map = {
+        'default': {'key': 'default', 'type': 'int'},
+        'maximum': {'key': 'maximum', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword default: The default capacity.
+        :paramtype default: int
+        :keyword maximum: The maximum capacity.
+        :paramtype maximum: int
+        """
+        super(EndpointModelSkuCapacityProperties, self).__init__(**kwargs)
+        self.default = kwargs.get('default', None)
+        self.maximum = kwargs.get('maximum', None)
+
+
+class EndpointModelSkuProperties(msrest.serialization.Model):
+    """EndpointModelSkuProperties.
+
+    :ivar capacity:
+    :vartype capacity:
+     ~azure.mgmt.machinelearningservices.models.EndpointModelSkuCapacityProperties
+    :ivar connection_ids: The list of ARM id for the connection support this SKU.
+    :vartype connection_ids: list[str]
+    :ivar deprecation_date: The datetime of deprecation of the model SKU.
+    :vartype deprecation_date: ~datetime.datetime
+    :ivar name: The name of the model SKU.
+    :vartype name: str
+    :ivar rate_limits:
+    :vartype rate_limits:
+     list[~azure.mgmt.machinelearningservices.models.EndpointModelSkuRateLimitProperties]
+    :ivar usage_name: The usage name of the model SKU.
+    :vartype usage_name: str
+    """
+
+    _attribute_map = {
+        'capacity': {'key': 'capacity', 'type': 'EndpointModelSkuCapacityProperties'},
+        'connection_ids': {'key': 'connectionIds', 'type': '[str]'},
+        'deprecation_date': {'key': 'deprecationDate', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
+        'rate_limits': {'key': 'rateLimits', 'type': '[EndpointModelSkuRateLimitProperties]'},
+        'usage_name': {'key': 'usageName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword capacity:
+        :paramtype capacity:
+         ~azure.mgmt.machinelearningservices.models.EndpointModelSkuCapacityProperties
+        :keyword connection_ids: The list of ARM id for the connection support this SKU.
+        :paramtype connection_ids: list[str]
+        :keyword deprecation_date: The datetime of deprecation of the model SKU.
+        :paramtype deprecation_date: ~datetime.datetime
+        :keyword name: The name of the model SKU.
+        :paramtype name: str
+        :keyword rate_limits:
+        :paramtype rate_limits:
+         list[~azure.mgmt.machinelearningservices.models.EndpointModelSkuRateLimitProperties]
+        :keyword usage_name: The usage name of the model SKU.
+        :paramtype usage_name: str
+        """
+        super(EndpointModelSkuProperties, self).__init__(**kwargs)
+        self.capacity = kwargs.get('capacity', None)
+        self.connection_ids = kwargs.get('connection_ids', None)
+        self.deprecation_date = kwargs.get('deprecation_date', None)
+        self.name = kwargs.get('name', None)
+        self.rate_limits = kwargs.get('rate_limits', None)
+        self.usage_name = kwargs.get('usage_name', None)
+
+
+class EndpointModelSkuRateLimitProperties(msrest.serialization.Model):
+    """EndpointModelSkuRateLimitProperties.
+
+    :ivar count: The count value of Call Rate Limit.
+    :vartype count: float
+    :ivar renewal_period: The renewal period in seconds of Call Rate Limit.
+    :vartype renewal_period: float
+    :ivar rules: The call rate limit for the model.
+    :vartype rules:
+     list[~azure.mgmt.machinelearningservices.models.EndpointModelSkuRateLimitRuleProperties]
+    """
+
+    _attribute_map = {
+        'count': {'key': 'count', 'type': 'float'},
+        'renewal_period': {'key': 'renewalPeriod', 'type': 'float'},
+        'rules': {'key': 'rules', 'type': '[EndpointModelSkuRateLimitRuleProperties]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword count: The count value of Call Rate Limit.
+        :paramtype count: float
+        :keyword renewal_period: The renewal period in seconds of Call Rate Limit.
+        :paramtype renewal_period: float
+        :keyword rules: The call rate limit for the model.
+        :paramtype rules:
+         list[~azure.mgmt.machinelearningservices.models.EndpointModelSkuRateLimitRuleProperties]
+        """
+        super(EndpointModelSkuRateLimitProperties, self).__init__(**kwargs)
+        self.count = kwargs.get('count', None)
+        self.renewal_period = kwargs.get('renewal_period', None)
+        self.rules = kwargs.get('rules', None)
+
+
+class EndpointModelSkuRateLimitRulePatternProperties(msrest.serialization.Model):
+    """EndpointModelSkuRateLimitRulePatternProperties.
+
+    :ivar method:
+    :vartype method: str
+    :ivar path:
+    :vartype path: str
+    """
+
+    _attribute_map = {
+        'method': {'key': 'method', 'type': 'str'},
+        'path': {'key': 'path', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword method:
+        :paramtype method: str
+        :keyword path:
+        :paramtype path: str
+        """
+        super(EndpointModelSkuRateLimitRulePatternProperties, self).__init__(**kwargs)
+        self.method = kwargs.get('method', None)
+        self.path = kwargs.get('path', None)
+
+
+class EndpointModelSkuRateLimitRuleProperties(msrest.serialization.Model):
+    """EndpointModelSkuRateLimitRuleProperties.
+
+    :ivar count:
+    :vartype count: float
+    :ivar dynamic_throttling_enabled: If the dynamic throttling is enabled.
+    :vartype dynamic_throttling_enabled: bool
+    :ivar key:
+    :vartype key: str
+    :ivar match_patterns:
+    :vartype match_patterns:
+     list[~azure.mgmt.machinelearningservices.models.EndpointModelSkuRateLimitRulePatternProperties]
+    :ivar min_count:
+    :vartype min_count: float
+    :ivar renewal_period:
+    :vartype renewal_period: float
+    """
+
+    _attribute_map = {
+        'count': {'key': 'count', 'type': 'float'},
+        'dynamic_throttling_enabled': {'key': 'dynamicThrottlingEnabled', 'type': 'bool'},
+        'key': {'key': 'key', 'type': 'str'},
+        'match_patterns': {'key': 'matchPatterns', 'type': '[EndpointModelSkuRateLimitRulePatternProperties]'},
+        'min_count': {'key': 'minCount', 'type': 'float'},
+        'renewal_period': {'key': 'renewalPeriod', 'type': 'float'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword count:
+        :paramtype count: float
+        :keyword dynamic_throttling_enabled: If the dynamic throttling is enabled.
+        :paramtype dynamic_throttling_enabled: bool
+        :keyword key:
+        :paramtype key: str
+        :keyword match_patterns:
+        :paramtype match_patterns:
+         list[~azure.mgmt.machinelearningservices.models.EndpointModelSkuRateLimitRulePatternProperties]
+        :keyword min_count:
+        :paramtype min_count: float
+        :keyword renewal_period:
+        :paramtype renewal_period: float
+        """
+        super(EndpointModelSkuRateLimitRuleProperties, self).__init__(**kwargs)
+        self.count = kwargs.get('count', None)
+        self.dynamic_throttling_enabled = kwargs.get('dynamic_throttling_enabled', None)
+        self.key = kwargs.get('key', None)
+        self.match_patterns = kwargs.get('match_patterns', None)
+        self.min_count = kwargs.get('min_count', None)
+        self.renewal_period = kwargs.get('renewal_period', None)
+
+
+class EndpointResourcePropertiesBasicResource(Resource):
+    """EndpointResourcePropertiesBasicResource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar properties: Required.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.EndpointResourceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'EndpointResourceProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword properties: Required.
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.EndpointResourceProperties
+        """
+        super(EndpointResourcePropertiesBasicResource, self).__init__(**kwargs)
+        self.properties = kwargs['properties']
+
+
+class EndpointResourcePropertiesBasicResourceArmPaginatedResult(msrest.serialization.Model):
+    """EndpointResourcePropertiesBasicResourceArmPaginatedResult.
+
+    :ivar next_link:
+    :vartype next_link: str
+    :ivar value:
+    :vartype value:
+     list[~azure.mgmt.machinelearningservices.models.EndpointResourcePropertiesBasicResource]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[EndpointResourcePropertiesBasicResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword next_link:
+        :paramtype next_link: str
+        :keyword value:
+        :paramtype value:
+         list[~azure.mgmt.machinelearningservices.models.EndpointResourcePropertiesBasicResource]
+        """
+        super(EndpointResourcePropertiesBasicResourceArmPaginatedResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get('value', None)
 
 
 class EndpointScheduleAction(ScheduleActionBase):
@@ -10662,7 +11865,7 @@ class EnvironmentContainerResourceArmPaginatedResult(msrest.serialization.Model)
 
 
 class EnvironmentVariable(msrest.serialization.Model):
-    """Environment Variables for the container.
+    """EnvironmentVariable.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
@@ -11126,11 +12329,11 @@ class ExternalFQDNResponse(msrest.serialization.Model):
     """ExternalFQDNResponse.
 
     :ivar value:
-    :vartype value: list[~azure.mgmt.machinelearningservices.models.FQDNEndpoints]
+    :vartype value: list[~azure.mgmt.machinelearningservices.models.FQDNEndpointsPropertyBag]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FQDNEndpoints]'},
+        'value': {'key': 'value', 'type': '[FQDNEndpointsPropertyBag]'},
     }
 
     def __init__(
@@ -11139,7 +12342,7 @@ class ExternalFQDNResponse(msrest.serialization.Model):
     ):
         """
         :keyword value:
-        :paramtype value: list[~azure.mgmt.machinelearningservices.models.FQDNEndpoints]
+        :paramtype value: list[~azure.mgmt.machinelearningservices.models.FQDNEndpointsPropertyBag]
         """
         super(ExternalFQDNResponse, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
@@ -12141,9 +13344,9 @@ class FeaturestoreEntityVersionResourceArmPaginatedResult(msrest.serialization.M
 
 
 class FeatureStoreSettings(msrest.serialization.Model):
-    """Settings for feature store type workspace.
+    """FeatureStoreSettings.
 
-    :ivar compute_runtime: Compute runtime config for feature store type workspace.
+    :ivar compute_runtime:
     :vartype compute_runtime: ~azure.mgmt.machinelearningservices.models.ComputeRuntimeDto
     :ivar offline_store_connection_name:
     :vartype offline_store_connection_name: str
@@ -12162,7 +13365,7 @@ class FeatureStoreSettings(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword compute_runtime: Compute runtime config for feature store type workspace.
+        :keyword compute_runtime:
         :paramtype compute_runtime: ~azure.mgmt.machinelearningservices.models.ComputeRuntimeDto
         :keyword offline_store_connection_name:
         :paramtype offline_store_connection_name: str
@@ -12832,29 +14035,6 @@ class FQDNEndpointDetail(msrest.serialization.Model):
 class FQDNEndpoints(msrest.serialization.Model):
     """FQDNEndpoints.
 
-    :ivar properties:
-    :vartype properties: ~azure.mgmt.machinelearningservices.models.FQDNEndpointsProperties
-    """
-
-    _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'FQDNEndpointsProperties'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        :keyword properties:
-        :paramtype properties: ~azure.mgmt.machinelearningservices.models.FQDNEndpointsProperties
-        """
-        super(FQDNEndpoints, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
-
-
-class FQDNEndpointsProperties(msrest.serialization.Model):
-    """FQDNEndpointsProperties.
-
     :ivar category:
     :vartype category: str
     :ivar endpoints:
@@ -12876,9 +14056,32 @@ class FQDNEndpointsProperties(msrest.serialization.Model):
         :keyword endpoints:
         :paramtype endpoints: list[~azure.mgmt.machinelearningservices.models.FQDNEndpoint]
         """
-        super(FQDNEndpointsProperties, self).__init__(**kwargs)
+        super(FQDNEndpoints, self).__init__(**kwargs)
         self.category = kwargs.get('category', None)
         self.endpoints = kwargs.get('endpoints', None)
+
+
+class FQDNEndpointsPropertyBag(msrest.serialization.Model):
+    """Property bag for FQDN endpoints result.
+
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.FQDNEndpoints
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'FQDNEndpoints'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.FQDNEndpoints
+        """
+        super(FQDNEndpointsPropertyBag, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
 
 
 class OutboundRule(msrest.serialization.Model):
@@ -12887,11 +14090,15 @@ class OutboundRule(msrest.serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: FqdnOutboundRule, PrivateEndpointOutboundRule, ServiceTagOutboundRule.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
      Possible values include: "Required", "Recommended", "UserDefined", "Dependency".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+    :ivar parent_rule_names:
+    :vartype parent_rule_names: list[str]
     :ivar status: Type of a managed network Outbound Rule of a machine learning workspace. Possible
      values include: "Inactive", "Active".
     :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
@@ -12902,11 +14109,13 @@ class OutboundRule(msrest.serialization.Model):
     """
 
     _validation = {
+        'parent_rule_names': {'readonly': True},
         'type': {'required': True},
     }
 
     _attribute_map = {
         'category': {'key': 'category', 'type': 'str'},
+        'parent_rule_names': {'key': 'parentRuleNames', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
@@ -12929,6 +14138,7 @@ class OutboundRule(msrest.serialization.Model):
         """
         super(OutboundRule, self).__init__(**kwargs)
         self.category = kwargs.get('category', None)
+        self.parent_rule_names = None
         self.status = kwargs.get('status', None)
         self.type = None  # type: Optional[str]
 
@@ -12936,11 +14146,15 @@ class OutboundRule(msrest.serialization.Model):
 class FqdnOutboundRule(OutboundRule):
     """FQDN Outbound Rule for the managed network of a machine learning workspace.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
      Possible values include: "Required", "Recommended", "UserDefined", "Dependency".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+    :ivar parent_rule_names:
+    :vartype parent_rule_names: list[str]
     :ivar status: Type of a managed network Outbound Rule of a machine learning workspace. Possible
      values include: "Inactive", "Active".
     :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
@@ -12953,11 +14167,13 @@ class FqdnOutboundRule(OutboundRule):
     """
 
     _validation = {
+        'parent_rule_names': {'readonly': True},
         'type': {'required': True},
     }
 
     _attribute_map = {
         'category': {'key': 'category', 'type': 'str'},
+        'parent_rule_names': {'key': 'parentRuleNames', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'destination': {'key': 'destination', 'type': 'str'},
@@ -13289,10 +14505,10 @@ class IdAssetReference(AssetReferenceBase):
 
 
 class IdentityForCmk(msrest.serialization.Model):
-    """Identity that will be used to access key vault for encryption at rest.
+    """Identity object used for encryption.
 
-    :ivar user_assigned_identity: The ArmId of the user assigned identity that will be used to
-     access the customer managed key vault.
+    :ivar user_assigned_identity: UserAssignedIdentity to be used to fetch the encryption key from
+     keyVault.
     :vartype user_assigned_identity: str
     """
 
@@ -13305,8 +14521,8 @@ class IdentityForCmk(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword user_assigned_identity: The ArmId of the user assigned identity that will be used to
-         access the customer managed key vault.
+        :keyword user_assigned_identity: UserAssignedIdentity to be used to fetch the encryption key
+         from keyVault.
         :paramtype user_assigned_identity: str
         """
         super(IdentityForCmk, self).__init__(**kwargs)
@@ -13339,22 +14555,26 @@ class IdleShutdownSetting(msrest.serialization.Model):
 
 
 class Image(msrest.serialization.Model):
-    """Describes the Image Specifications.
+    """Image.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, any]
     :ivar type: Type of the image. Possible values are: docker - For docker images. azureml - For
-     AzureML images. Possible values include: "docker", "azureml". Default value: "docker".
+     AzureML Environment images (custom and curated). Possible values include: "docker", "azureml".
+     Default value: "docker".
     :vartype type: str or ~azure.mgmt.machinelearningservices.models.ImageType
-    :ivar reference: Image reference.
+    :ivar reference: Image reference URL if type is docker. Environment name if type is azureml.
     :vartype reference: str
+    :ivar version: Version of image being used. If latest then skip this field.
+    :vartype version: str
     """
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'type': {'key': 'type', 'type': 'str'},
         'reference': {'key': 'reference', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
     }
 
     def __init__(
@@ -13366,15 +14586,19 @@ class Image(msrest.serialization.Model):
          collection.
         :paramtype additional_properties: dict[str, any]
         :keyword type: Type of the image. Possible values are: docker - For docker images. azureml -
-         For AzureML images. Possible values include: "docker", "azureml". Default value: "docker".
+         For AzureML Environment images (custom and curated). Possible values include: "docker",
+         "azureml". Default value: "docker".
         :paramtype type: str or ~azure.mgmt.machinelearningservices.models.ImageType
-        :keyword reference: Image reference.
+        :keyword reference: Image reference URL if type is docker. Environment name if type is azureml.
         :paramtype reference: str
+        :keyword version: Version of image being used. If latest then skip this field.
+        :paramtype version: str
         """
         super(Image, self).__init__(**kwargs)
         self.additional_properties = kwargs.get('additional_properties', None)
         self.type = kwargs.get('type', "docker")
         self.reference = kwargs.get('reference', None)
+        self.version = kwargs.get('version', None)
 
 
 class ImageVertical(msrest.serialization.Model):
@@ -13946,6 +15170,8 @@ class ImageLimitSettings(msrest.serialization.Model):
 class ImageMetadata(msrest.serialization.Model):
     """Returns metadata about the operating system image for this compute instance.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar current_image_version: Specifies the current operating system image version this compute
      instance is running on.
     :vartype current_image_version: str
@@ -13954,12 +15180,19 @@ class ImageMetadata(msrest.serialization.Model):
     :ivar is_latest_os_image_version: Specifies whether this compute instance is running on the
      latest operating system image.
     :vartype is_latest_os_image_version: bool
+    :ivar os_patching_status: Metadata about the os patching.
+    :vartype os_patching_status: ~azure.mgmt.machinelearningservices.models.OsPatchingStatus
     """
+
+    _validation = {
+        'os_patching_status': {'readonly': True},
+    }
 
     _attribute_map = {
         'current_image_version': {'key': 'currentImageVersion', 'type': 'str'},
         'latest_image_version': {'key': 'latestImageVersion', 'type': 'str'},
         'is_latest_os_image_version': {'key': 'isLatestOsImageVersion', 'type': 'bool'},
+        'os_patching_status': {'key': 'osPatchingStatus', 'type': 'OsPatchingStatus'},
     }
 
     def __init__(
@@ -13980,6 +15213,7 @@ class ImageMetadata(msrest.serialization.Model):
         self.current_image_version = kwargs.get('current_image_version', None)
         self.latest_image_version = kwargs.get('latest_image_version', None)
         self.is_latest_os_image_version = kwargs.get('is_latest_os_image_version', None)
+        self.os_patching_status = None
 
 
 class ImageModelDistributionSettings(msrest.serialization.Model):
@@ -16223,6 +17457,85 @@ class JobService(msrest.serialization.Model):
         self.status = None
 
 
+class JupyterKernelConfig(msrest.serialization.Model):
+    """Jupyter kernel configuration.
+
+    :ivar argv: Argument to the the runtime.
+    :vartype argv: list[str]
+    :ivar display_name: Display name of the kernel.
+    :vartype display_name: str
+    :ivar language: Language of the kernel [Example value: python].
+    :vartype language: str
+    """
+
+    _attribute_map = {
+        'argv': {'key': 'argv', 'type': '[str]'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'language': {'key': 'language', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword argv: Argument to the the runtime.
+        :paramtype argv: list[str]
+        :keyword display_name: Display name of the kernel.
+        :paramtype display_name: str
+        :keyword language: Language of the kernel [Example value: python].
+        :paramtype language: str
+        """
+        super(JupyterKernelConfig, self).__init__(**kwargs)
+        self.argv = kwargs.get('argv', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.language = kwargs.get('language', None)
+
+
+class KeyVaultProperties(msrest.serialization.Model):
+    """Customer Key vault properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar identity_client_id: Currently, we support only SystemAssigned MSI.
+     We need this when we support UserAssignedIdentities.
+    :vartype identity_client_id: str
+    :ivar key_identifier: Required. KeyVault key identifier to encrypt the data.
+    :vartype key_identifier: str
+    :ivar key_vault_arm_id: Required. KeyVault Arm Id that contains the data encryption key.
+    :vartype key_vault_arm_id: str
+    """
+
+    _validation = {
+        'key_identifier': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+        'key_vault_arm_id': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'identity_client_id': {'key': 'identityClientId', 'type': 'str'},
+        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
+        'key_vault_arm_id': {'key': 'keyVaultArmId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword identity_client_id: Currently, we support only SystemAssigned MSI.
+         We need this when we support UserAssignedIdentities.
+        :paramtype identity_client_id: str
+        :keyword key_identifier: Required. KeyVault key identifier to encrypt the data.
+        :paramtype key_identifier: str
+        :keyword key_vault_arm_id: Required. KeyVault Arm Id that contains the data encryption key.
+        :paramtype key_vault_arm_id: str
+        """
+        super(KeyVaultProperties, self).__init__(**kwargs)
+        self.identity_client_id = kwargs.get('identity_client_id', None)
+        self.key_identifier = kwargs['key_identifier']
+        self.key_vault_arm_id = kwargs['key_vault_arm_id']
+
+
 class KubernetesSchema(msrest.serialization.Model):
     """Kubernetes Compute Schema.
 
@@ -16803,9 +18116,9 @@ class ListNotebookKeysResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar primary_access_key:
+    :ivar primary_access_key: The primary access key of the Notebook.
     :vartype primary_access_key: str
-    :ivar secondary_access_key:
+    :ivar secondary_access_key: The secondary access key of the Notebook.
     :vartype secondary_access_key: str
     """
 
@@ -16835,7 +18148,7 @@ class ListStorageAccountKeysResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar user_storage_key:
+    :ivar user_storage_key: The access key of the storage.
     :vartype user_storage_key: str
     """
 
@@ -16895,11 +18208,7 @@ class ListWorkspaceKeysResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar user_storage_key:
-    :vartype user_storage_key: str
-    :ivar user_storage_resource_id:
-    :vartype user_storage_resource_id: str
-    :ivar app_insights_instrumentation_key:
+    :ivar app_insights_instrumentation_key: The access key of the workspace app insights.
     :vartype app_insights_instrumentation_key: str
     :ivar container_registry_credentials:
     :vartype container_registry_credentials:
@@ -16907,22 +18216,24 @@ class ListWorkspaceKeysResult(msrest.serialization.Model):
     :ivar notebook_access_keys:
     :vartype notebook_access_keys:
      ~azure.mgmt.machinelearningservices.models.ListNotebookKeysResult
+    :ivar user_storage_arm_id: The arm Id key of the workspace storage.
+    :vartype user_storage_arm_id: str
+    :ivar user_storage_key: The access key of the workspace storage.
+    :vartype user_storage_key: str
     """
 
     _validation = {
-        'user_storage_key': {'readonly': True},
-        'user_storage_resource_id': {'readonly': True},
         'app_insights_instrumentation_key': {'readonly': True},
-        'container_registry_credentials': {'readonly': True},
-        'notebook_access_keys': {'readonly': True},
+        'user_storage_arm_id': {'readonly': True},
+        'user_storage_key': {'readonly': True},
     }
 
     _attribute_map = {
-        'user_storage_key': {'key': 'userStorageKey', 'type': 'str'},
-        'user_storage_resource_id': {'key': 'userStorageResourceId', 'type': 'str'},
         'app_insights_instrumentation_key': {'key': 'appInsightsInstrumentationKey', 'type': 'str'},
         'container_registry_credentials': {'key': 'containerRegistryCredentials', 'type': 'RegistryListCredentialsResult'},
         'notebook_access_keys': {'key': 'notebookAccessKeys', 'type': 'ListNotebookKeysResult'},
+        'user_storage_arm_id': {'key': 'userStorageArmId', 'type': 'str'},
+        'user_storage_key': {'key': 'userStorageKey', 'type': 'str'},
     }
 
     def __init__(
@@ -16930,13 +18241,19 @@ class ListWorkspaceKeysResult(msrest.serialization.Model):
         **kwargs
     ):
         """
+        :keyword container_registry_credentials:
+        :paramtype container_registry_credentials:
+         ~azure.mgmt.machinelearningservices.models.RegistryListCredentialsResult
+        :keyword notebook_access_keys:
+        :paramtype notebook_access_keys:
+         ~azure.mgmt.machinelearningservices.models.ListNotebookKeysResult
         """
         super(ListWorkspaceKeysResult, self).__init__(**kwargs)
-        self.user_storage_key = None
-        self.user_storage_resource_id = None
         self.app_insights_instrumentation_key = None
-        self.container_registry_credentials = None
-        self.notebook_access_keys = None
+        self.container_registry_credentials = kwargs.get('container_registry_credentials', None)
+        self.notebook_access_keys = kwargs.get('notebook_access_keys', None)
+        self.user_storage_arm_id = None
+        self.user_storage_key = None
 
 
 class ListWorkspaceQuotas(msrest.serialization.Model):
@@ -17115,7 +18432,7 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -17130,10 +18447,12 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -17141,16 +18460,18 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     :ivar credentials:
     :vartype credentials:
      ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionManagedIdentity
@@ -17166,14 +18487,16 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionManagedIdentity'},
     }
 
@@ -17184,7 +18507,7 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -17199,23 +18522,27 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionManagedIdentity
@@ -17362,10 +18689,14 @@ class ManagedNetworkSettings(msrest.serialization.Model):
     :ivar status: Status of the Provisioning for the managed network of a machine learning
      workspace.
     :vartype status: ~azure.mgmt.machinelearningservices.models.ManagedNetworkProvisionStatus
+    :ivar changeable_isolation_modes:
+    :vartype changeable_isolation_modes: list[str or
+     ~azure.mgmt.machinelearningservices.models.IsolationMode]
     """
 
     _validation = {
         'network_id': {'readonly': True},
+        'changeable_isolation_modes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -17373,6 +18704,7 @@ class ManagedNetworkSettings(msrest.serialization.Model):
         'network_id': {'key': 'networkId', 'type': 'str'},
         'outbound_rules': {'key': 'outboundRules', 'type': '{OutboundRule}'},
         'status': {'key': 'status', 'type': 'ManagedNetworkProvisionStatus'},
+        'changeable_isolation_modes': {'key': 'changeableIsolationModes', 'type': '[str]'},
     }
 
     def __init__(
@@ -17395,6 +18727,7 @@ class ManagedNetworkSettings(msrest.serialization.Model):
         self.network_id = None
         self.outbound_rules = kwargs.get('outbound_rules', None)
         self.status = kwargs.get('status', None)
+        self.changeable_isolation_modes = None
 
 
 class ManagedOnlineDeployment(OnlineDeploymentProperties):
@@ -17523,6 +18856,240 @@ class ManagedOnlineDeployment(OnlineDeploymentProperties):
         """
         super(ManagedOnlineDeployment, self).__init__(**kwargs)
         self.endpoint_compute_type = 'Managed'  # type: str
+
+
+class ManagedOnlineEndpointDeploymentResourceProperties(EndpointDeploymentResourceProperties):
+    """ManagedOnlineEndpointDeploymentResourceProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar failure_reason: The failure reason if the creation failed.
+    :vartype failure_reason: str
+    :ivar provisioning_state: Read-only provision state status property. Possible values include:
+     "NotStarted", "Failed", "Creating", "Updating", "Succeeded", "Deleting", "Accepted",
+     "Canceled", "Scaling", "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.DefaultResourceProvisioningState
+    :ivar type: Required. Kind of the deployment.Constant filled by server.
+    :vartype type: str
+    :ivar endpoint_compute_type: Enum to determine endpoint compute type. Possible values include:
+     "Managed", "Kubernetes", "AzureMLCompute".
+    :vartype endpoint_compute_type: str or
+     ~azure.mgmt.machinelearningservices.models.EndpointComputeType
+    :ivar model:
+    :vartype model: str
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'type': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'endpoint_compute_type': {'key': 'endpointComputeType', 'type': 'str'},
+        'model': {'key': 'model', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword failure_reason: The failure reason if the creation failed.
+        :paramtype failure_reason: str
+        :keyword endpoint_compute_type: Enum to determine endpoint compute type. Possible values
+         include: "Managed", "Kubernetes", "AzureMLCompute".
+        :paramtype endpoint_compute_type: str or
+         ~azure.mgmt.machinelearningservices.models.EndpointComputeType
+        :keyword model:
+        :paramtype model: str
+        """
+        super(ManagedOnlineEndpointDeploymentResourceProperties, self).__init__(**kwargs)
+        self.type = 'managedOnlineEndpoint'  # type: str
+        self.endpoint_compute_type = kwargs.get('endpoint_compute_type', None)
+        self.model = kwargs.get('model', None)
+
+
+class ManagedOnlineEndpointResourceProperties(EndpointResourceProperties):
+    """ManagedOnlineEndpointResourceProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar associated_resource_id: Byo resource id for creating the built-in model service
+     endpoints.
+    :vartype associated_resource_id: str
+    :ivar deployments: Deployments info.
+    :vartype deployments:
+     list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+    :ivar endpoint_type: Required. Type of the endpoint.Constant filled by server. Possible values
+     include: "Azure.OpenAI", "Azure.Speech", "Azure.ContentSafety", "Azure.Llama",
+     "managedOnlineEndpoint", "serverlessEndpoint".
+    :vartype endpoint_type: str or ~azure.mgmt.machinelearningservices.models.EndpointType
+    :ivar endpoint_uri: Uri of the endpoint.
+    :vartype endpoint_uri: str
+    :ivar failure_reason: The failure reason if the creation failed.
+    :vartype failure_reason: str
+    :ivar location: Location of the endpoint.
+     Since input dto and when parse endpoint resource share the same contract
+     this Location field is just for parse the endpoint resource info
+     we won't let customer specify the endpoint resource location since we will create it the same
+     location as workspace.
+    :vartype location: str
+    :ivar name: Name of the endpoint.
+    :vartype name: str
+    :ivar provisioning_state: Read-only provision state status property. Possible values include:
+     "NotStarted", "Failed", "Creating", "Updating", "Succeeded", "Deleting", "Accepted",
+     "Canceled", "Scaling", "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.DefaultResourceProvisioningState
+    :ivar should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+     endpoint or a OneKeyV2 AI services account endpoint.
+    :vartype should_create_ai_services_endpoint: bool
+    :ivar auth_mode: Enum to determine endpoint authentication mode. Possible values include:
+     "AMLToken", "Key", "AADToken".
+    :vartype auth_mode: str or ~azure.mgmt.machinelearningservices.models.EndpointAuthMode
+    :ivar compute:
+    :vartype compute: str
+    :ivar description:
+    :vartype description: str
+    :ivar mirror_traffic: Dictionary of :code:`<integer>`.
+    :vartype mirror_traffic: dict[str, int]
+    :ivar scoring_uri:
+    :vartype scoring_uri: str
+    :ivar traffic: Dictionary of :code:`<integer>`.
+    :vartype traffic: dict[str, int]
+    """
+
+    _validation = {
+        'endpoint_type': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'associated_resource_id': {'key': 'associatedResourceId', 'type': 'str'},
+        'deployments': {'key': 'deployments', 'type': '[EndpointDeploymentResourcePropertiesBasicResource]'},
+        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
+        'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'should_create_ai_services_endpoint': {'key': 'shouldCreateAiServicesEndpoint', 'type': 'bool'},
+        'auth_mode': {'key': 'authMode', 'type': 'str'},
+        'compute': {'key': 'compute', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'mirror_traffic': {'key': 'mirrorTraffic', 'type': '{int}'},
+        'scoring_uri': {'key': 'scoringUri', 'type': 'str'},
+        'traffic': {'key': 'traffic', 'type': '{int}'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword associated_resource_id: Byo resource id for creating the built-in model service
+         endpoints.
+        :paramtype associated_resource_id: str
+        :keyword deployments: Deployments info.
+        :paramtype deployments:
+         list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+        :keyword endpoint_uri: Uri of the endpoint.
+        :paramtype endpoint_uri: str
+        :keyword failure_reason: The failure reason if the creation failed.
+        :paramtype failure_reason: str
+        :keyword location: Location of the endpoint.
+         Since input dto and when parse endpoint resource share the same contract
+         this Location field is just for parse the endpoint resource info
+         we won't let customer specify the endpoint resource location since we will create it the same
+         location as workspace.
+        :paramtype location: str
+        :keyword name: Name of the endpoint.
+        :paramtype name: str
+        :keyword should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+         endpoint or a OneKeyV2 AI services account endpoint.
+        :paramtype should_create_ai_services_endpoint: bool
+        :keyword auth_mode: Enum to determine endpoint authentication mode. Possible values include:
+         "AMLToken", "Key", "AADToken".
+        :paramtype auth_mode: str or ~azure.mgmt.machinelearningservices.models.EndpointAuthMode
+        :keyword compute:
+        :paramtype compute: str
+        :keyword description:
+        :paramtype description: str
+        :keyword mirror_traffic: Dictionary of :code:`<integer>`.
+        :paramtype mirror_traffic: dict[str, int]
+        :keyword scoring_uri:
+        :paramtype scoring_uri: str
+        :keyword traffic: Dictionary of :code:`<integer>`.
+        :paramtype traffic: dict[str, int]
+        """
+        super(ManagedOnlineEndpointResourceProperties, self).__init__(**kwargs)
+        self.endpoint_type = 'managedOnlineEndpoint'  # type: str
+        self.auth_mode = kwargs.get('auth_mode', None)
+        self.compute = kwargs.get('compute', None)
+        self.description = kwargs.get('description', None)
+        self.mirror_traffic = kwargs.get('mirror_traffic', None)
+        self.scoring_uri = kwargs.get('scoring_uri', None)
+        self.traffic = kwargs.get('traffic', None)
+
+
+class ManagedResourceGroupAssignedIdentities(msrest.serialization.Model):
+    """Details for managed resource group assigned identities.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: Identity principal Id.
+    :vartype principal_id: str
+    """
+
+    _validation = {
+        'principal_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'principal_id': {'key': 'principalId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(ManagedResourceGroupAssignedIdentities, self).__init__(**kwargs)
+        self.principal_id = None
+
+
+class ManagedResourceGroupSettings(msrest.serialization.Model):
+    """Managed resource group settings.
+
+    :ivar assigned_identities: List of assigned identities for the managed resource group.
+    :vartype assigned_identities:
+     list[~azure.mgmt.machinelearningservices.models.ManagedResourceGroupAssignedIdentities]
+    """
+
+    _attribute_map = {
+        'assigned_identities': {'key': 'assignedIdentities', 'type': '[ManagedResourceGroupAssignedIdentities]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword assigned_identities: List of assigned identities for the managed resource group.
+        :paramtype assigned_identities:
+         list[~azure.mgmt.machinelearningservices.models.ManagedResourceGroupAssignedIdentities]
+        """
+        super(ManagedResourceGroupSettings, self).__init__(**kwargs)
+        self.assigned_identities = kwargs.get('assigned_identities', None)
 
 
 class ManagedServiceIdentity(msrest.serialization.Model):
@@ -18911,7 +20478,7 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -18926,10 +20493,12 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -18937,16 +20506,18 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     """
 
     _validation = {
@@ -18959,14 +20530,16 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
     }
 
     def __init__(
@@ -18976,7 +20549,7 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -18991,23 +20564,27 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         """
         super(NoneAuthTypeWorkspaceConnectionProperties, self).__init__(**kwargs)
         self.auth_type = 'None'  # type: str
@@ -19047,44 +20624,44 @@ class NotebookAccessTokenResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar notebook_resource_id:
-    :vartype notebook_resource_id: str
-    :ivar host_name:
-    :vartype host_name: str
-    :ivar public_dns:
-    :vartype public_dns: str
     :ivar access_token:
     :vartype access_token: str
-    :ivar token_type:
-    :vartype token_type: str
     :ivar expires_in:
     :vartype expires_in: int
+    :ivar host_name:
+    :vartype host_name: str
+    :ivar notebook_resource_id:
+    :vartype notebook_resource_id: str
+    :ivar public_dns:
+    :vartype public_dns: str
     :ivar refresh_token:
     :vartype refresh_token: str
     :ivar scope:
     :vartype scope: str
+    :ivar token_type:
+    :vartype token_type: str
     """
 
     _validation = {
-        'notebook_resource_id': {'readonly': True},
-        'host_name': {'readonly': True},
-        'public_dns': {'readonly': True},
         'access_token': {'readonly': True},
-        'token_type': {'readonly': True},
         'expires_in': {'readonly': True},
+        'host_name': {'readonly': True},
+        'notebook_resource_id': {'readonly': True},
+        'public_dns': {'readonly': True},
         'refresh_token': {'readonly': True},
         'scope': {'readonly': True},
+        'token_type': {'readonly': True},
     }
 
     _attribute_map = {
-        'notebook_resource_id': {'key': 'notebookResourceId', 'type': 'str'},
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'public_dns': {'key': 'publicDns', 'type': 'str'},
         'access_token': {'key': 'accessToken', 'type': 'str'},
-        'token_type': {'key': 'tokenType', 'type': 'str'},
         'expires_in': {'key': 'expiresIn', 'type': 'int'},
+        'host_name': {'key': 'hostName', 'type': 'str'},
+        'notebook_resource_id': {'key': 'notebookResourceId', 'type': 'str'},
+        'public_dns': {'key': 'publicDns', 'type': 'str'},
         'refresh_token': {'key': 'refreshToken', 'type': 'str'},
         'scope': {'key': 'scope', 'type': 'str'},
+        'token_type': {'key': 'tokenType', 'type': 'str'},
     }
 
     def __init__(
@@ -19094,14 +20671,14 @@ class NotebookAccessTokenResult(msrest.serialization.Model):
         """
         """
         super(NotebookAccessTokenResult, self).__init__(**kwargs)
-        self.notebook_resource_id = None
-        self.host_name = None
-        self.public_dns = None
         self.access_token = None
-        self.token_type = None
         self.expires_in = None
+        self.host_name = None
+        self.notebook_resource_id = None
+        self.public_dns = None
         self.refresh_token = None
         self.scope = None
+        self.token_type = None
 
 
 class NotebookPreparationError(msrest.serialization.Model):
@@ -19138,17 +20715,20 @@ class NotebookResourceInfo(msrest.serialization.Model):
 
     :ivar fqdn:
     :vartype fqdn: str
-    :ivar resource_id: the data plane resourceId that used to initialize notebook component.
-    :vartype resource_id: str
+    :ivar is_private_link_enabled:
+    :vartype is_private_link_enabled: bool
     :ivar notebook_preparation_error: The error that occurs when preparing notebook.
     :vartype notebook_preparation_error:
      ~azure.mgmt.machinelearningservices.models.NotebookPreparationError
+    :ivar resource_id: the data plane resourceId that used to initialize notebook component.
+    :vartype resource_id: str
     """
 
     _attribute_map = {
         'fqdn': {'key': 'fqdn', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'is_private_link_enabled': {'key': 'isPrivateLinkEnabled', 'type': 'bool'},
         'notebook_preparation_error': {'key': 'notebookPreparationError', 'type': 'NotebookPreparationError'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
     }
 
     def __init__(
@@ -19158,16 +20738,19 @@ class NotebookResourceInfo(msrest.serialization.Model):
         """
         :keyword fqdn:
         :paramtype fqdn: str
-        :keyword resource_id: the data plane resourceId that used to initialize notebook component.
-        :paramtype resource_id: str
+        :keyword is_private_link_enabled:
+        :paramtype is_private_link_enabled: bool
         :keyword notebook_preparation_error: The error that occurs when preparing notebook.
         :paramtype notebook_preparation_error:
          ~azure.mgmt.machinelearningservices.models.NotebookPreparationError
+        :keyword resource_id: the data plane resourceId that used to initialize notebook component.
+        :paramtype resource_id: str
         """
         super(NotebookResourceInfo, self).__init__(**kwargs)
         self.fqdn = kwargs.get('fqdn', None)
-        self.resource_id = kwargs.get('resource_id', None)
+        self.is_private_link_enabled = kwargs.get('is_private_link_enabled', None)
         self.notebook_preparation_error = kwargs.get('notebook_preparation_error', None)
+        self.resource_id = kwargs.get('resource_id', None)
 
 
 class NotificationSetting(msrest.serialization.Model):
@@ -19362,7 +20945,7 @@ class OAuth2AuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -19377,10 +20960,12 @@ class OAuth2AuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -19388,16 +20973,18 @@ class OAuth2AuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     :ivar credentials: ClientId and ClientSecret are required. Other properties are optional
      depending on each OAuth2 provider's implementation.
     :vartype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionOAuth2
@@ -19413,14 +21000,16 @@ class OAuth2AuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionOAuth2'},
     }
 
@@ -19431,7 +21020,7 @@ class OAuth2AuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -19446,23 +21035,27 @@ class OAuth2AuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         :keyword credentials: ClientId and ClientSecret are required. Other properties are optional
          depending on each OAuth2 provider's implementation.
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionOAuth2
@@ -19970,6 +21563,159 @@ class OnlineRequestSettings(msrest.serialization.Model):
         self.request_timeout = kwargs.get('request_timeout', "PT5S")
 
 
+class OpenAIEndpointDeploymentResourceProperties(EndpointDeploymentResourceProperties, CognitiveServiceEndpointDeploymentResourceProperties):
+    """OpenAIEndpointDeploymentResourceProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar model: Required. Model used for the endpoint deployment.
+    :vartype model: ~azure.mgmt.machinelearningservices.models.EndpointDeploymentModel
+    :ivar rai_policy_name: The name of RAI policy.
+    :vartype rai_policy_name: str
+    :ivar version_upgrade_option: Deployment model version upgrade option. Possible values include:
+     "OnceNewDefaultVersionAvailable", "OnceCurrentVersionExpired", "NoAutoUpgrade".
+    :vartype version_upgrade_option: str or
+     ~azure.mgmt.machinelearningservices.models.DeploymentModelVersionUpgradeOption
+    :ivar failure_reason: The failure reason if the creation failed.
+    :vartype failure_reason: str
+    :ivar provisioning_state: Read-only provision state status property. Possible values include:
+     "NotStarted", "Failed", "Creating", "Updating", "Succeeded", "Deleting", "Accepted",
+     "Canceled", "Scaling", "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.DefaultResourceProvisioningState
+    :ivar type: Required. Kind of the deployment.Constant filled by server.
+    :vartype type: str
+    """
+
+    _validation = {
+        'model': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'type': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'model': {'key': 'model', 'type': 'EndpointDeploymentModel'},
+        'rai_policy_name': {'key': 'raiPolicyName', 'type': 'str'},
+        'version_upgrade_option': {'key': 'versionUpgradeOption', 'type': 'str'},
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword model: Required. Model used for the endpoint deployment.
+        :paramtype model: ~azure.mgmt.machinelearningservices.models.EndpointDeploymentModel
+        :keyword rai_policy_name: The name of RAI policy.
+        :paramtype rai_policy_name: str
+        :keyword version_upgrade_option: Deployment model version upgrade option. Possible values
+         include: "OnceNewDefaultVersionAvailable", "OnceCurrentVersionExpired", "NoAutoUpgrade".
+        :paramtype version_upgrade_option: str or
+         ~azure.mgmt.machinelearningservices.models.DeploymentModelVersionUpgradeOption
+        :keyword failure_reason: The failure reason if the creation failed.
+        :paramtype failure_reason: str
+        """
+        super(OpenAIEndpointDeploymentResourceProperties, self).__init__(**kwargs)
+        self.model = kwargs['model']
+        self.rai_policy_name = kwargs.get('rai_policy_name', None)
+        self.version_upgrade_option = kwargs.get('version_upgrade_option', None)
+        self.type = 'Azure.OpenAI'  # type: str
+        self.failure_reason = kwargs.get('failure_reason', None)
+        self.provisioning_state = None
+
+
+class OpenAIEndpointResourceProperties(EndpointResourceProperties):
+    """OpenAIEndpointResourceProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar associated_resource_id: Byo resource id for creating the built-in model service
+     endpoints.
+    :vartype associated_resource_id: str
+    :ivar deployments: Deployments info.
+    :vartype deployments:
+     list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+    :ivar endpoint_type: Required. Type of the endpoint.Constant filled by server. Possible values
+     include: "Azure.OpenAI", "Azure.Speech", "Azure.ContentSafety", "Azure.Llama",
+     "managedOnlineEndpoint", "serverlessEndpoint".
+    :vartype endpoint_type: str or ~azure.mgmt.machinelearningservices.models.EndpointType
+    :ivar endpoint_uri: Uri of the endpoint.
+    :vartype endpoint_uri: str
+    :ivar failure_reason: The failure reason if the creation failed.
+    :vartype failure_reason: str
+    :ivar location: Location of the endpoint.
+     Since input dto and when parse endpoint resource share the same contract
+     this Location field is just for parse the endpoint resource info
+     we won't let customer specify the endpoint resource location since we will create it the same
+     location as workspace.
+    :vartype location: str
+    :ivar name: Name of the endpoint.
+    :vartype name: str
+    :ivar provisioning_state: Read-only provision state status property. Possible values include:
+     "NotStarted", "Failed", "Creating", "Updating", "Succeeded", "Deleting", "Accepted",
+     "Canceled", "Scaling", "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.DefaultResourceProvisioningState
+    :ivar should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+     endpoint or a OneKeyV2 AI services account endpoint.
+    :vartype should_create_ai_services_endpoint: bool
+    """
+
+    _validation = {
+        'endpoint_type': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'associated_resource_id': {'key': 'associatedResourceId', 'type': 'str'},
+        'deployments': {'key': 'deployments', 'type': '[EndpointDeploymentResourcePropertiesBasicResource]'},
+        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
+        'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'should_create_ai_services_endpoint': {'key': 'shouldCreateAiServicesEndpoint', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword associated_resource_id: Byo resource id for creating the built-in model service
+         endpoints.
+        :paramtype associated_resource_id: str
+        :keyword deployments: Deployments info.
+        :paramtype deployments:
+         list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+        :keyword endpoint_uri: Uri of the endpoint.
+        :paramtype endpoint_uri: str
+        :keyword failure_reason: The failure reason if the creation failed.
+        :paramtype failure_reason: str
+        :keyword location: Location of the endpoint.
+         Since input dto and when parse endpoint resource share the same contract
+         this Location field is just for parse the endpoint resource info
+         we won't let customer specify the endpoint resource location since we will create it the same
+         location as workspace.
+        :paramtype location: str
+        :keyword name: Name of the endpoint.
+        :paramtype name: str
+        :keyword should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+         endpoint or a OneKeyV2 AI services account endpoint.
+        :paramtype should_create_ai_services_endpoint: bool
+        """
+        super(OpenAIEndpointResourceProperties, self).__init__(**kwargs)
+        self.endpoint_type = 'Azure.OpenAI'  # type: str
+
+
 class Operation(msrest.serialization.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
@@ -20101,8 +21847,59 @@ class OperationListResult(msrest.serialization.Model):
         self.next_link = None
 
 
+class OsPatchingStatus(msrest.serialization.Model):
+    """Returns metadata about the os patching.
+
+    :ivar patch_status: The os patching status. Possible values include: "CompletedWithWarnings",
+     "Failed", "InProgress", "Succeeded", "Unknown".
+    :vartype patch_status: str or ~azure.mgmt.machinelearningservices.models.PatchStatus
+    :ivar latest_patch_time: Time of the latest os patching.
+    :vartype latest_patch_time: str
+    :ivar reboot_pending: Specifies whether this compute instance is pending for reboot to finish
+     os patching.
+    :vartype reboot_pending: bool
+    :ivar scheduled_reboot_time: Time of scheduled reboot.
+    :vartype scheduled_reboot_time: str
+    :ivar os_patching_errors: Collection of errors encountered when doing os patching.
+    :vartype os_patching_errors: list[~azure.mgmt.machinelearningservices.models.ErrorResponse]
+    """
+
+    _attribute_map = {
+        'patch_status': {'key': 'patchStatus', 'type': 'str'},
+        'latest_patch_time': {'key': 'latestPatchTime', 'type': 'str'},
+        'reboot_pending': {'key': 'rebootPending', 'type': 'bool'},
+        'scheduled_reboot_time': {'key': 'scheduledRebootTime', 'type': 'str'},
+        'os_patching_errors': {'key': 'osPatchingErrors', 'type': '[ErrorResponse]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword patch_status: The os patching status. Possible values include:
+         "CompletedWithWarnings", "Failed", "InProgress", "Succeeded", "Unknown".
+        :paramtype patch_status: str or ~azure.mgmt.machinelearningservices.models.PatchStatus
+        :keyword latest_patch_time: Time of the latest os patching.
+        :paramtype latest_patch_time: str
+        :keyword reboot_pending: Specifies whether this compute instance is pending for reboot to
+         finish os patching.
+        :paramtype reboot_pending: bool
+        :keyword scheduled_reboot_time: Time of scheduled reboot.
+        :paramtype scheduled_reboot_time: str
+        :keyword os_patching_errors: Collection of errors encountered when doing os patching.
+        :paramtype os_patching_errors: list[~azure.mgmt.machinelearningservices.models.ErrorResponse]
+        """
+        super(OsPatchingStatus, self).__init__(**kwargs)
+        self.patch_status = kwargs.get('patch_status', None)
+        self.latest_patch_time = kwargs.get('latest_patch_time', None)
+        self.reboot_pending = kwargs.get('reboot_pending', None)
+        self.scheduled_reboot_time = kwargs.get('scheduled_reboot_time', None)
+        self.os_patching_errors = kwargs.get('os_patching_errors', None)
+
+
 class OutboundRuleBasicResource(Resource):
-    """Outbound Rule Basic Resource for the managed network of a machine learning workspace.
+    """OutboundRuleBasicResource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -20598,7 +22395,7 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -20613,10 +22410,12 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -20624,16 +22423,18 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     :ivar credentials:
     :vartype credentials:
      ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPersonalAccessToken
@@ -20649,14 +22450,16 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionPersonalAccessToken'},
     }
 
@@ -20667,7 +22470,7 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -20682,23 +22485,27 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPersonalAccessToken
@@ -21089,22 +22896,23 @@ class PrivateEndpointConnection(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
-    :ivar identity: The identity of the resource.
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
     :vartype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
-    :ivar location: Specifies the location of the resource.
+    :ivar location: Same as workspace location.
     :vartype location: str
-    :ivar tags: A set of tags. Contains resource tags defined as key/value pairs.
-    :vartype tags: dict[str, str]
-    :ivar sku: The sku of the workspace.
+    :ivar sku: Optional. This field is required to be implemented by the RP because AML is
+     supporting more than one tier.
     :vartype sku: ~azure.mgmt.machinelearningservices.models.Sku
-    :ivar private_endpoint: The resource of private end point.
-    :vartype private_endpoint: ~azure.mgmt.machinelearningservices.models.PrivateEndpoint
-    :ivar private_link_service_connection_state: A collection of information about the state of the
-     connection between service consumer and provider.
+    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar private_endpoint: The Private Endpoint resource.
+    :vartype private_endpoint:
+     ~azure.mgmt.machinelearningservices.models.WorkspacePrivateEndpointResource
+    :ivar private_link_service_connection_state: The connection state.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.machinelearningservices.models.PrivateLinkServiceConnectionState
-    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
-     Possible values include: "Succeeded", "Creating", "Deleting", "Failed".
+    :ivar provisioning_state: The current provisioning state. Possible values include: "Succeeded",
+     "Creating", "Deleting", "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnectionProvisioningState
     """
@@ -21114,7 +22922,6 @@ class PrivateEndpointConnection(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -21124,9 +22931,9 @@ class PrivateEndpointConnection(Resource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'WorkspacePrivateEndpointResource'},
         'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
@@ -21136,29 +22943,34 @@ class PrivateEndpointConnection(Resource):
         **kwargs
     ):
         """
-        :keyword identity: The identity of the resource.
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
         :paramtype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
-        :keyword location: Specifies the location of the resource.
+        :keyword location: Same as workspace location.
         :paramtype location: str
-        :keyword tags: A set of tags. Contains resource tags defined as key/value pairs.
-        :paramtype tags: dict[str, str]
-        :keyword sku: The sku of the workspace.
+        :keyword sku: Optional. This field is required to be implemented by the RP because AML is
+         supporting more than one tier.
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
-        :keyword private_endpoint: The resource of private end point.
-        :paramtype private_endpoint: ~azure.mgmt.machinelearningservices.models.PrivateEndpoint
-        :keyword private_link_service_connection_state: A collection of information about the state of
-         the connection between service consumer and provider.
+        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword private_endpoint: The Private Endpoint resource.
+        :paramtype private_endpoint:
+         ~azure.mgmt.machinelearningservices.models.WorkspacePrivateEndpointResource
+        :keyword private_link_service_connection_state: The connection state.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.machinelearningservices.models.PrivateLinkServiceConnectionState
+        :keyword provisioning_state: The current provisioning state. Possible values include:
+         "Succeeded", "Creating", "Deleting", "Failed".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnectionProvisioningState
         """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
         self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
+        self.tags = kwargs.get('tags', None)
         self.private_endpoint = kwargs.get('private_endpoint', None)
         self.private_link_service_connection_state = kwargs.get('private_link_service_connection_state', None)
-        self.provisioning_state = None
+        self.provisioning_state = kwargs.get('provisioning_state', None)
 
 
 class PrivateEndpointConnectionListResult(msrest.serialization.Model):
@@ -21230,11 +23042,15 @@ class PrivateEndpointDestination(msrest.serialization.Model):
 class PrivateEndpointOutboundRule(OutboundRule):
     """Private Endpoint Outbound Rule for the managed network of a machine learning workspace.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
      Possible values include: "Required", "Recommended", "UserDefined", "Dependency".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+    :ivar parent_rule_names:
+    :vartype parent_rule_names: list[str]
     :ivar status: Type of a managed network Outbound Rule of a machine learning workspace. Possible
      values include: "Inactive", "Active".
     :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
@@ -21245,17 +23061,22 @@ class PrivateEndpointOutboundRule(OutboundRule):
     :ivar destination: Private Endpoint destination for a Private Endpoint Outbound Rule for the
      managed network of a machine learning workspace.
     :vartype destination: ~azure.mgmt.machinelearningservices.models.PrivateEndpointDestination
+    :ivar fqdns:
+    :vartype fqdns: list[str]
     """
 
     _validation = {
+        'parent_rule_names': {'readonly': True},
         'type': {'required': True},
     }
 
     _attribute_map = {
         'category': {'key': 'category', 'type': 'str'},
+        'parent_rule_names': {'key': 'parentRuleNames', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'destination': {'key': 'destination', 'type': 'PrivateEndpointDestination'},
+        'fqdns': {'key': 'fqdns', 'type': '[str]'},
     }
 
     def __init__(
@@ -21272,10 +23093,13 @@ class PrivateEndpointOutboundRule(OutboundRule):
         :keyword destination: Private Endpoint destination for a Private Endpoint Outbound Rule for the
          managed network of a machine learning workspace.
         :paramtype destination: ~azure.mgmt.machinelearningservices.models.PrivateEndpointDestination
+        :keyword fqdns:
+        :paramtype fqdns: list[str]
         """
         super(PrivateEndpointOutboundRule, self).__init__(**kwargs)
         self.type = 'PrivateEndpoint'  # type: str
         self.destination = kwargs.get('destination', None)
+        self.fqdns = kwargs.get('fqdns', None)
 
 
 class PrivateEndpointResource(PrivateEndpoint):
@@ -21326,14 +23150,15 @@ class PrivateLinkResource(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
-    :ivar identity: The identity of the resource.
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
     :vartype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
-    :ivar location: Specifies the location of the resource.
+    :ivar location: Same as workspace location.
     :vartype location: str
-    :ivar tags: A set of tags. Contains resource tags defined as key/value pairs.
-    :vartype tags: dict[str, str]
-    :ivar sku: The sku of the workspace.
+    :ivar sku: Optional. This field is required to be implemented by the RP because AML is
+     supporting more than one tier.
     :vartype sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
     :ivar group_id: The private link resource group id.
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
@@ -21347,8 +23172,6 @@ class PrivateLinkResource(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'system_data': {'readonly': True},
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
     }
 
     _attribute_map = {
@@ -21358,8 +23181,8 @@ class PrivateLinkResource(Resource):
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'group_id': {'key': 'properties.groupId', 'type': 'str'},
         'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
         'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
@@ -21370,31 +23193,36 @@ class PrivateLinkResource(Resource):
         **kwargs
     ):
         """
-        :keyword identity: The identity of the resource.
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
         :paramtype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
-        :keyword location: Specifies the location of the resource.
+        :keyword location: Same as workspace location.
         :paramtype location: str
-        :keyword tags: A set of tags. Contains resource tags defined as key/value pairs.
-        :paramtype tags: dict[str, str]
-        :keyword sku: The sku of the workspace.
+        :keyword sku: Optional. This field is required to be implemented by the RP because AML is
+         supporting more than one tier.
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
+        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword group_id: The private link resource group id.
+        :paramtype group_id: str
+        :keyword required_members: The private link resource required member names.
+        :paramtype required_members: list[str]
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
         """
         super(PrivateLinkResource, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
         self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
-        self.group_id = None
-        self.required_members = None
+        self.tags = kwargs.get('tags', None)
+        self.group_id = kwargs.get('group_id', None)
+        self.required_members = kwargs.get('required_members', None)
         self.required_zone_names = kwargs.get('required_zone_names', None)
 
 
 class PrivateLinkResourceListResult(msrest.serialization.Model):
     """A list of private link resources.
 
-    :ivar value: Array of private link resources.
+    :ivar value:
     :vartype value: list[~azure.mgmt.machinelearningservices.models.PrivateLinkResource]
     """
 
@@ -21407,7 +23235,7 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword value: Array of private link resources.
+        :keyword value:
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.PrivateLinkResource]
         """
         super(PrivateLinkResourceListResult, self).__init__(**kwargs)
@@ -21417,22 +23245,21 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
 class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """A collection of information about the state of the connection between service consumer and provider.
 
-    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
-     of the service. Possible values include: "Pending", "Approved", "Rejected", "Disconnected",
-     "Timeout".
-    :vartype status: str or
-     ~azure.mgmt.machinelearningservices.models.PrivateEndpointServiceConnectionStatus
-    :ivar description: The reason for approval/rejection of the connection.
-    :vartype description: str
-    :ivar actions_required: A message indicating if changes on the service provider require any
-     updates on the consumer.
+    :ivar actions_required: Some RP chose "None". Other RPs use this for region expansion.
     :vartype actions_required: str
+    :ivar description: User-defined message that, per NRP doc, may be used for approval-related
+     message.
+    :vartype description: str
+    :ivar status: Connection status of the service consumer with the service provider. Possible
+     values include: "Approved", "Pending", "Rejected", "Disconnected", "Timeout".
+    :vartype status: str or
+     ~azure.mgmt.machinelearningservices.models.EndpointServiceConnectionStatus
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
         'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(
@@ -21440,21 +23267,20 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
-         owner of the service. Possible values include: "Pending", "Approved", "Rejected",
-         "Disconnected", "Timeout".
-        :paramtype status: str or
-         ~azure.mgmt.machinelearningservices.models.PrivateEndpointServiceConnectionStatus
-        :keyword description: The reason for approval/rejection of the connection.
-        :paramtype description: str
-        :keyword actions_required: A message indicating if changes on the service provider require any
-         updates on the consumer.
+        :keyword actions_required: Some RP chose "None". Other RPs use this for region expansion.
         :paramtype actions_required: str
+        :keyword description: User-defined message that, per NRP doc, may be used for approval-related
+         message.
+        :paramtype description: str
+        :keyword status: Connection status of the service consumer with the service provider. Possible
+         values include: "Approved", "Pending", "Rejected", "Disconnected", "Timeout".
+        :paramtype status: str or
+         ~azure.mgmt.machinelearningservices.models.EndpointServiceConnectionStatus
         """
         super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.description = kwargs.get('description', None)
         self.actions_required = kwargs.get('actions_required', None)
+        self.description = kwargs.get('description', None)
+        self.status = kwargs.get('status', None)
 
 
 class ProbeSettings(msrest.serialization.Model):
@@ -21633,6 +23459,473 @@ class QuotaUpdateParameters(msrest.serialization.Model):
         super(QuotaUpdateParameters, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.location = kwargs.get('location', None)
+
+
+class RaiBlocklistConfig(msrest.serialization.Model):
+    """Azure OpenAI blocklist config.
+
+    :ivar blocking: If blocking would occur.
+    :vartype blocking: bool
+    :ivar blocklist_name: Name of ContentFilter.
+    :vartype blocklist_name: str
+    """
+
+    _attribute_map = {
+        'blocking': {'key': 'blocking', 'type': 'bool'},
+        'blocklist_name': {'key': 'blocklistName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword blocking: If blocking would occur.
+        :paramtype blocking: bool
+        :keyword blocklist_name: Name of ContentFilter.
+        :paramtype blocklist_name: str
+        """
+        super(RaiBlocklistConfig, self).__init__(**kwargs)
+        self.blocking = kwargs.get('blocking', None)
+        self.blocklist_name = kwargs.get('blocklist_name', None)
+
+
+class RaiBlocklistItemBulkRequest(msrest.serialization.Model):
+    """The Cognitive Services RaiBlocklist Item request body.
+
+    :ivar name:
+    :vartype name: str
+    :ivar properties: Properties of Cognitive Services RaiBlocklist Item.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.RaiBlocklistItemProperties
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'RaiBlocklistItemProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword name:
+        :paramtype name: str
+        :keyword properties: Properties of Cognitive Services RaiBlocklist Item.
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.RaiBlocklistItemProperties
+        """
+        super(RaiBlocklistItemBulkRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.properties = kwargs.get('properties', None)
+
+
+class RaiBlocklistItemProperties(msrest.serialization.Model):
+    """RAI Custom Blocklist Item properties.
+
+    :ivar is_regex: If the pattern is a regex pattern.
+    :vartype is_regex: bool
+    :ivar pattern: Pattern to match against.
+    :vartype pattern: str
+    """
+
+    _attribute_map = {
+        'is_regex': {'key': 'isRegex', 'type': 'bool'},
+        'pattern': {'key': 'pattern', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword is_regex: If the pattern is a regex pattern.
+        :paramtype is_regex: bool
+        :keyword pattern: Pattern to match against.
+        :paramtype pattern: str
+        """
+        super(RaiBlocklistItemProperties, self).__init__(**kwargs)
+        self.is_regex = kwargs.get('is_regex', None)
+        self.pattern = kwargs.get('pattern', None)
+
+
+class RaiBlocklistItemPropertiesBasicResource(Resource):
+    """RaiBlocklistItemPropertiesBasicResource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar properties: Required. RAI Custom Blocklist Item properties.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.RaiBlocklistItemProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'RaiBlocklistItemProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. RAI Custom Blocklist Item properties.
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.RaiBlocklistItemProperties
+        """
+        super(RaiBlocklistItemPropertiesBasicResource, self).__init__(**kwargs)
+        self.properties = kwargs['properties']
+
+
+class RaiBlocklistItemPropertiesBasicResourceArmPaginatedResult(msrest.serialization.Model):
+    """RaiBlocklistItemPropertiesBasicResourceArmPaginatedResult.
+
+    :ivar next_link:
+    :vartype next_link: str
+    :ivar value:
+    :vartype value:
+     list[~azure.mgmt.machinelearningservices.models.RaiBlocklistItemPropertiesBasicResource]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[RaiBlocklistItemPropertiesBasicResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword next_link:
+        :paramtype next_link: str
+        :keyword value:
+        :paramtype value:
+         list[~azure.mgmt.machinelearningservices.models.RaiBlocklistItemPropertiesBasicResource]
+        """
+        super(RaiBlocklistItemPropertiesBasicResourceArmPaginatedResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get('value', None)
+
+
+class RaiBlocklistProperties(msrest.serialization.Model):
+    """RAI Custom Blocklist properties.
+
+    :ivar description: Description of the block list.
+    :vartype description: str
+    """
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword description: Description of the block list.
+        :paramtype description: str
+        """
+        super(RaiBlocklistProperties, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+
+
+class RaiBlocklistPropertiesBasicResource(Resource):
+    """RaiBlocklistPropertiesBasicResource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar properties: Required. RAI Custom Blocklist properties.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.RaiBlocklistProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'RaiBlocklistProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. RAI Custom Blocklist properties.
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.RaiBlocklistProperties
+        """
+        super(RaiBlocklistPropertiesBasicResource, self).__init__(**kwargs)
+        self.properties = kwargs['properties']
+
+
+class RaiBlocklistPropertiesBasicResourceArmPaginatedResult(msrest.serialization.Model):
+    """RaiBlocklistPropertiesBasicResourceArmPaginatedResult.
+
+    :ivar next_link:
+    :vartype next_link: str
+    :ivar value:
+    :vartype value:
+     list[~azure.mgmt.machinelearningservices.models.RaiBlocklistPropertiesBasicResource]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[RaiBlocklistPropertiesBasicResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword next_link:
+        :paramtype next_link: str
+        :keyword value:
+        :paramtype value:
+         list[~azure.mgmt.machinelearningservices.models.RaiBlocklistPropertiesBasicResource]
+        """
+        super(RaiBlocklistPropertiesBasicResourceArmPaginatedResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get('value', None)
+
+
+class RaiPolicyContentFilter(msrest.serialization.Model):
+    """Azure OpenAI Content Filter.
+
+    :ivar allowed_content_level: Level at which content is filtered. Possible values include:
+     "Low", "Medium", "High".
+    :vartype allowed_content_level: str or
+     ~azure.mgmt.machinelearningservices.models.AllowedContentLevel
+    :ivar blocking: If blocking would occur.
+    :vartype blocking: bool
+    :ivar enabled: If the ContentFilter is enabled.
+    :vartype enabled: bool
+    :ivar name: Name of ContentFilter.
+    :vartype name: str
+    :ivar source: Content source to apply the Content Filters. Possible values include: "Prompt",
+     "Completion".
+    :vartype source: str or ~azure.mgmt.machinelearningservices.models.RaiPolicyContentSource
+    """
+
+    _attribute_map = {
+        'allowed_content_level': {'key': 'allowedContentLevel', 'type': 'str'},
+        'blocking': {'key': 'blocking', 'type': 'bool'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+        'name': {'key': 'name', 'type': 'str'},
+        'source': {'key': 'source', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword allowed_content_level: Level at which content is filtered. Possible values include:
+         "Low", "Medium", "High".
+        :paramtype allowed_content_level: str or
+         ~azure.mgmt.machinelearningservices.models.AllowedContentLevel
+        :keyword blocking: If blocking would occur.
+        :paramtype blocking: bool
+        :keyword enabled: If the ContentFilter is enabled.
+        :paramtype enabled: bool
+        :keyword name: Name of ContentFilter.
+        :paramtype name: str
+        :keyword source: Content source to apply the Content Filters. Possible values include:
+         "Prompt", "Completion".
+        :paramtype source: str or ~azure.mgmt.machinelearningservices.models.RaiPolicyContentSource
+        """
+        super(RaiPolicyContentFilter, self).__init__(**kwargs)
+        self.allowed_content_level = kwargs.get('allowed_content_level', None)
+        self.blocking = kwargs.get('blocking', None)
+        self.enabled = kwargs.get('enabled', None)
+        self.name = kwargs.get('name', None)
+        self.source = kwargs.get('source', None)
+
+
+class RaiPolicyProperties(msrest.serialization.Model):
+    """Azure OpenAI Content Filters properties.
+
+    :ivar base_policy_name: Name of the base Content Filters.
+    :vartype base_policy_name: str
+    :ivar completion_blocklists:
+    :vartype completion_blocklists:
+     list[~azure.mgmt.machinelearningservices.models.RaiBlocklistConfig]
+    :ivar content_filters:
+    :vartype content_filters:
+     list[~azure.mgmt.machinelearningservices.models.RaiPolicyContentFilter]
+    :ivar mode: Content Filters mode. Possible values include: "Default", "Deferred", "Blocking".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.RaiPolicyMode
+    :ivar prompt_blocklists:
+    :vartype prompt_blocklists: list[~azure.mgmt.machinelearningservices.models.RaiBlocklistConfig]
+    :ivar type: Content Filters policy type. Possible values include: "UserManaged",
+     "SystemManaged".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.RaiPolicyType
+    """
+
+    _attribute_map = {
+        'base_policy_name': {'key': 'basePolicyName', 'type': 'str'},
+        'completion_blocklists': {'key': 'completionBlocklists', 'type': '[RaiBlocklistConfig]'},
+        'content_filters': {'key': 'contentFilters', 'type': '[RaiPolicyContentFilter]'},
+        'mode': {'key': 'mode', 'type': 'str'},
+        'prompt_blocklists': {'key': 'promptBlocklists', 'type': '[RaiBlocklistConfig]'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword base_policy_name: Name of the base Content Filters.
+        :paramtype base_policy_name: str
+        :keyword completion_blocklists:
+        :paramtype completion_blocklists:
+         list[~azure.mgmt.machinelearningservices.models.RaiBlocklistConfig]
+        :keyword content_filters:
+        :paramtype content_filters:
+         list[~azure.mgmt.machinelearningservices.models.RaiPolicyContentFilter]
+        :keyword mode: Content Filters mode. Possible values include: "Default", "Deferred",
+         "Blocking".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.RaiPolicyMode
+        :keyword prompt_blocklists:
+        :paramtype prompt_blocklists:
+         list[~azure.mgmt.machinelearningservices.models.RaiBlocklistConfig]
+        :keyword type: Content Filters policy type. Possible values include: "UserManaged",
+         "SystemManaged".
+        :paramtype type: str or ~azure.mgmt.machinelearningservices.models.RaiPolicyType
+        """
+        super(RaiPolicyProperties, self).__init__(**kwargs)
+        self.base_policy_name = kwargs.get('base_policy_name', None)
+        self.completion_blocklists = kwargs.get('completion_blocklists', None)
+        self.content_filters = kwargs.get('content_filters', None)
+        self.mode = kwargs.get('mode', None)
+        self.prompt_blocklists = kwargs.get('prompt_blocklists', None)
+        self.type = kwargs.get('type', None)
+
+
+class RaiPolicyPropertiesBasicResource(Resource):
+    """Azure OpenAI Content Filters resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar properties: Required. Azure OpenAI Content Filters properties.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.RaiPolicyProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'RaiPolicyProperties'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. Azure OpenAI Content Filters properties.
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.RaiPolicyProperties
+        """
+        super(RaiPolicyPropertiesBasicResource, self).__init__(**kwargs)
+        self.properties = kwargs['properties']
+
+
+class RaiPolicyPropertiesBasicResourceArmPaginatedResult(msrest.serialization.Model):
+    """Azure OpenAI Content Filters resource list.
+
+    :ivar next_link:
+    :vartype next_link: str
+    :ivar value:
+    :vartype value:
+     list[~azure.mgmt.machinelearningservices.models.RaiPolicyPropertiesBasicResource]
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[RaiPolicyPropertiesBasicResource]'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword next_link:
+        :paramtype next_link: str
+        :keyword value:
+        :paramtype value:
+         list[~azure.mgmt.machinelearningservices.models.RaiPolicyPropertiesBasicResource]
+        """
+        super(RaiPolicyPropertiesBasicResourceArmPaginatedResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get('value', None)
 
 
 class RandomSamplingAlgorithm(SamplingAlgorithm):
@@ -21896,6 +24189,29 @@ class RegenerateEndpointKeysRequest(msrest.serialization.Model):
         self.key_value = kwargs.get('key_value', None)
 
 
+class RegenerateServiceAccountKeyContent(msrest.serialization.Model):
+    """RegenerateServiceAccountKeyContent.
+
+    :ivar key_name: Possible values include: "Key1", "Key2".
+    :vartype key_name: str or ~azure.mgmt.machinelearningservices.models.ServiceAccountKeyName
+    """
+
+    _attribute_map = {
+        'key_name': {'key': 'keyName', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword key_name: Possible values include: "Key1", "Key2".
+        :paramtype key_name: str or ~azure.mgmt.machinelearningservices.models.ServiceAccountKeyName
+        """
+        super(RegenerateServiceAccountKeyContent, self).__init__(**kwargs)
+        self.key_name = kwargs.get('key_name', None)
+
+
 class Registry(TrackedResource):
     """Registry.
 
@@ -21932,6 +24248,9 @@ class Registry(TrackedResource):
     :ivar managed_resource_group: ResourceId of the managed RG if the registry has system created
      resources.
     :vartype managed_resource_group: ~azure.mgmt.machinelearningservices.models.ArmResourceId
+    :ivar managed_resource_group_settings: Managed resource group specific settings.
+    :vartype managed_resource_group_settings:
+     ~azure.mgmt.machinelearningservices.models.ManagedResourceGroupSettings
     :ivar ml_flow_registry_uri: MLFlow Registry URI for the Registry.
     :vartype ml_flow_registry_uri: str
     :ivar registry_private_endpoint_connections: Private endpoint connections info used for pending
@@ -21967,6 +24286,7 @@ class Registry(TrackedResource):
         'discovery_url': {'key': 'properties.discoveryUrl', 'type': 'str'},
         'intellectual_property_publisher': {'key': 'properties.intellectualPropertyPublisher', 'type': 'str'},
         'managed_resource_group': {'key': 'properties.managedResourceGroup', 'type': 'ArmResourceId'},
+        'managed_resource_group_settings': {'key': 'properties.managedResourceGroupSettings', 'type': 'ManagedResourceGroupSettings'},
         'ml_flow_registry_uri': {'key': 'properties.mlFlowRegistryUri', 'type': 'str'},
         'registry_private_endpoint_connections': {'key': 'properties.registryPrivateEndpointConnections', 'type': '[RegistryPrivateEndpointConnection]'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
@@ -21996,6 +24316,9 @@ class Registry(TrackedResource):
         :keyword managed_resource_group: ResourceId of the managed RG if the registry has system
          created resources.
         :paramtype managed_resource_group: ~azure.mgmt.machinelearningservices.models.ArmResourceId
+        :keyword managed_resource_group_settings: Managed resource group specific settings.
+        :paramtype managed_resource_group_settings:
+         ~azure.mgmt.machinelearningservices.models.ManagedResourceGroupSettings
         :keyword ml_flow_registry_uri: MLFlow Registry URI for the Registry.
         :paramtype ml_flow_registry_uri: str
         :keyword registry_private_endpoint_connections: Private endpoint connections info used for
@@ -22016,6 +24339,7 @@ class Registry(TrackedResource):
         self.discovery_url = kwargs.get('discovery_url', None)
         self.intellectual_property_publisher = kwargs.get('intellectual_property_publisher', None)
         self.managed_resource_group = kwargs.get('managed_resource_group', None)
+        self.managed_resource_group_settings = kwargs.get('managed_resource_group_settings', None)
         self.ml_flow_registry_uri = kwargs.get('ml_flow_registry_uri', None)
         self.registry_private_endpoint_connections = kwargs.get('registry_private_endpoint_connections', None)
         self.public_network_access = kwargs.get('public_network_access', None)
@@ -22027,12 +24351,12 @@ class RegistryListCredentialsResult(msrest.serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar location:
+    :ivar location: The location of the workspace ACR.
     :vartype location: str
-    :ivar username:
-    :vartype username: str
     :ivar passwords:
     :vartype passwords: list[~azure.mgmt.machinelearningservices.models.Password]
+    :ivar username: The username of the workspace ACR.
+    :vartype username: str
     """
 
     _validation = {
@@ -22042,8 +24366,8 @@ class RegistryListCredentialsResult(msrest.serialization.Model):
 
     _attribute_map = {
         'location': {'key': 'location', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
         'passwords': {'key': 'passwords', 'type': '[Password]'},
+        'username': {'key': 'username', 'type': 'str'},
     }
 
     def __init__(
@@ -22056,8 +24380,8 @@ class RegistryListCredentialsResult(msrest.serialization.Model):
         """
         super(RegistryListCredentialsResult, self).__init__(**kwargs)
         self.location = None
-        self.username = None
         self.passwords = kwargs.get('passwords', None)
+        self.username = None
 
 
 class RegistryPartialManagedServiceIdentity(ManagedServiceIdentity):
@@ -22187,7 +24511,7 @@ class RegistryPrivateLinkServiceConnectionState(msrest.serialization.Model):
      message.
     :vartype description: str
     :ivar status: Connection status of the service consumer with the service provider. Possible
-     values include: "Approved", "Pending", "Rejected", "Disconnected".
+     values include: "Approved", "Pending", "Rejected", "Disconnected", "Timeout".
     :vartype status: str or
      ~azure.mgmt.machinelearningservices.models.EndpointServiceConnectionStatus
     """
@@ -22209,7 +24533,7 @@ class RegistryPrivateLinkServiceConnectionState(msrest.serialization.Model):
          message.
         :paramtype description: str
         :keyword status: Connection status of the service consumer with the service provider. Possible
-         values include: "Approved", "Pending", "Rejected", "Disconnected".
+         values include: "Approved", "Pending", "Rejected", "Disconnected", "Timeout".
         :paramtype status: str or
          ~azure.mgmt.machinelearningservices.models.EndpointServiceConnectionStatus
         """
@@ -22535,6 +24859,29 @@ class RequestLogging(msrest.serialization.Model):
         self.capture_headers = kwargs.get('capture_headers', None)
 
 
+class ResizeSchema(msrest.serialization.Model):
+    """Schema for Compute Instance resize.
+
+    :ivar target_vm_size: The name of the virtual machine size.
+    :vartype target_vm_size: str
+    """
+
+    _attribute_map = {
+        'target_vm_size': {'key': 'targetVMSize', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword target_vm_size: The name of the virtual machine size.
+        :paramtype target_vm_size: str
+        """
+        super(ResizeSchema, self).__init__(**kwargs)
+        self.target_vm_size = kwargs.get('target_vm_size', None)
+
+
 class ResourceId(msrest.serialization.Model):
     """Represents a resource ID. For example, for a subnet, it is the resource URL for the subnet.
 
@@ -22774,7 +25121,7 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -22789,10 +25136,12 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -22800,16 +25149,18 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     :ivar credentials:
     :vartype credentials:
      ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionSharedAccessSignature
@@ -22825,14 +25176,16 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionSharedAccessSignature'},
     }
 
@@ -22843,7 +25196,7 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -22858,23 +25211,27 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionSharedAccessSignature
@@ -23289,7 +25646,7 @@ class ScheduleResourceArmPaginatedResult(msrest.serialization.Model):
 class ScriptReference(msrest.serialization.Model):
     """Script reference.
 
-    :ivar script_source: The storage source of the script: workspace.
+    :ivar script_source: The storage source of the script: inline, workspace.
     :vartype script_source: str
     :ivar script_data: The location of scripts in the mounted volume.
     :vartype script_data: str
@@ -23311,7 +25668,7 @@ class ScriptReference(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword script_source: The storage source of the script: workspace.
+        :keyword script_source: The storage source of the script: inline, workspace.
         :paramtype script_source: str
         :keyword script_data: The location of scripts in the mounted volume.
         :paramtype script_data: str
@@ -23500,6 +25857,139 @@ class ServerlessEndpoint(TrackedResource):
         self.sku = kwargs.get('sku', None)
 
 
+class ServerlessEndpointCapacityReservation(msrest.serialization.Model):
+    """ServerlessEndpointCapacityReservation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar capacity_reservation_group_id: Required.
+    :vartype capacity_reservation_group_id: str
+    :ivar endpoint_reserved_capacity:
+    :vartype endpoint_reserved_capacity: int
+    """
+
+    _validation = {
+        'capacity_reservation_group_id': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'capacity_reservation_group_id': {'key': 'capacityReservationGroupId', 'type': 'str'},
+        'endpoint_reserved_capacity': {'key': 'endpointReservedCapacity', 'type': 'int'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword capacity_reservation_group_id: Required.
+        :paramtype capacity_reservation_group_id: str
+        :keyword endpoint_reserved_capacity:
+        :paramtype endpoint_reserved_capacity: int
+        """
+        super(ServerlessEndpointCapacityReservation, self).__init__(**kwargs)
+        self.capacity_reservation_group_id = kwargs['capacity_reservation_group_id']
+        self.endpoint_reserved_capacity = kwargs.get('endpoint_reserved_capacity', None)
+
+
+class ServerlessEndpointContentSafety(msrest.serialization.Model):
+    """ServerlessEndpointContentSafety.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar content_safety_status: Required. Specifies the status of content safety. Possible values
+     include: "Enabled", "Disabled".
+    :vartype content_safety_status: str or
+     ~azure.mgmt.machinelearningservices.models.ContentSafetyStatus
+    """
+
+    _validation = {
+        'content_safety_status': {'required': True},
+    }
+
+    _attribute_map = {
+        'content_safety_status': {'key': 'contentSafetyStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword content_safety_status: Required. Specifies the status of content safety. Possible
+         values include: "Enabled", "Disabled".
+        :paramtype content_safety_status: str or
+         ~azure.mgmt.machinelearningservices.models.ContentSafetyStatus
+        """
+        super(ServerlessEndpointContentSafety, self).__init__(**kwargs)
+        self.content_safety_status = kwargs['content_safety_status']
+
+
+class ServerlessEndpointInferenceEndpoint(msrest.serialization.Model):
+    """ServerlessEndpointInferenceEndpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar headers: Dictionary of :code:`<string>`.
+    :vartype headers: dict[str, str]
+    :ivar uri: Required.
+    :vartype uri: str
+    """
+
+    _validation = {
+        'headers': {'readonly': True},
+        'uri': {'required': True},
+    }
+
+    _attribute_map = {
+        'headers': {'key': 'headers', 'type': '{str}'},
+        'uri': {'key': 'uri', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword uri: Required.
+        :paramtype uri: str
+        """
+        super(ServerlessEndpointInferenceEndpoint, self).__init__(**kwargs)
+        self.headers = None
+        self.uri = kwargs['uri']
+
+
+class ServerlessEndpointModelSettings(msrest.serialization.Model):
+    """ServerlessEndpointModelSettings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar model_id: Required.
+    :vartype model_id: str
+    """
+
+    _validation = {
+        'model_id': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'model_id': {'key': 'modelId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword model_id: Required.
+        :paramtype model_id: str
+        """
+        super(ServerlessEndpointModelSettings, self).__init__(**kwargs)
+        self.model_id = kwargs['model_id']
+
+
 class ServerlessEndpointProperties(msrest.serialization.Model):
     """ServerlessEndpointProperties.
 
@@ -23579,6 +26069,163 @@ class ServerlessEndpointProperties(msrest.serialization.Model):
         self.provisioning_state = None
 
 
+class ServerlessEndpointResourceProperties(EndpointResourceProperties):
+    """ServerlessEndpointResourceProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar associated_resource_id: Byo resource id for creating the built-in model service
+     endpoints.
+    :vartype associated_resource_id: str
+    :ivar deployments: Deployments info.
+    :vartype deployments:
+     list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+    :ivar endpoint_type: Required. Type of the endpoint.Constant filled by server. Possible values
+     include: "Azure.OpenAI", "Azure.Speech", "Azure.ContentSafety", "Azure.Llama",
+     "managedOnlineEndpoint", "serverlessEndpoint".
+    :vartype endpoint_type: str or ~azure.mgmt.machinelearningservices.models.EndpointType
+    :ivar endpoint_uri: Uri of the endpoint.
+    :vartype endpoint_uri: str
+    :ivar failure_reason: The failure reason if the creation failed.
+    :vartype failure_reason: str
+    :ivar location: Location of the endpoint.
+     Since input dto and when parse endpoint resource share the same contract
+     this Location field is just for parse the endpoint resource info
+     we won't let customer specify the endpoint resource location since we will create it the same
+     location as workspace.
+    :vartype location: str
+    :ivar name: Name of the endpoint.
+    :vartype name: str
+    :ivar provisioning_state: Read-only provision state status property. Possible values include:
+     "NotStarted", "Failed", "Creating", "Updating", "Succeeded", "Deleting", "Accepted",
+     "Canceled", "Scaling", "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.DefaultResourceProvisioningState
+    :ivar should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+     endpoint or a OneKeyV2 AI services account endpoint.
+    :vartype should_create_ai_services_endpoint: bool
+    :ivar auth_mode: Possible values include: "Key".
+    :vartype auth_mode: str or
+     ~azure.mgmt.machinelearningservices.models.ServerlessInferenceEndpointAuthMode
+    :ivar capacity_reservation:
+    :vartype capacity_reservation:
+     ~azure.mgmt.machinelearningservices.models.ServerlessEndpointCapacityReservation
+    :ivar content_safety:
+    :vartype content_safety:
+     ~azure.mgmt.machinelearningservices.models.ServerlessEndpointContentSafety
+    :ivar endpoint_state: State of the Serverless Endpoint. Possible values include: "Unknown",
+     "Creating", "Deleting", "Suspending", "Reinstating", "Online", "Suspended", "CreationFailed",
+     "DeletionFailed".
+    :vartype endpoint_state: str or
+     ~azure.mgmt.machinelearningservices.models.ServerlessEndpointState
+    :ivar inference_endpoint:
+    :vartype inference_endpoint:
+     ~azure.mgmt.machinelearningservices.models.ServerlessEndpointInferenceEndpoint
+    :ivar marketplace_subscription_id:
+    :vartype marketplace_subscription_id: str
+    :ivar metadata: Anything.
+    :vartype metadata: any
+    :ivar model_settings:
+    :vartype model_settings:
+     ~azure.mgmt.machinelearningservices.models.ServerlessEndpointModelSettings
+    :ivar offer:
+    :vartype offer: ~azure.mgmt.machinelearningservices.models.ServerlessOffer
+    """
+
+    _validation = {
+        'endpoint_type': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'associated_resource_id': {'key': 'associatedResourceId', 'type': 'str'},
+        'deployments': {'key': 'deployments', 'type': '[EndpointDeploymentResourcePropertiesBasicResource]'},
+        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
+        'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'should_create_ai_services_endpoint': {'key': 'shouldCreateAiServicesEndpoint', 'type': 'bool'},
+        'auth_mode': {'key': 'authMode', 'type': 'str'},
+        'capacity_reservation': {'key': 'capacityReservation', 'type': 'ServerlessEndpointCapacityReservation'},
+        'content_safety': {'key': 'contentSafety', 'type': 'ServerlessEndpointContentSafety'},
+        'endpoint_state': {'key': 'endpointState', 'type': 'str'},
+        'inference_endpoint': {'key': 'inferenceEndpoint', 'type': 'ServerlessEndpointInferenceEndpoint'},
+        'marketplace_subscription_id': {'key': 'marketplaceSubscriptionId', 'type': 'str'},
+        'metadata': {'key': 'metadata', 'type': 'object'},
+        'model_settings': {'key': 'modelSettings', 'type': 'ServerlessEndpointModelSettings'},
+        'offer': {'key': 'offer', 'type': 'ServerlessOffer'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword associated_resource_id: Byo resource id for creating the built-in model service
+         endpoints.
+        :paramtype associated_resource_id: str
+        :keyword deployments: Deployments info.
+        :paramtype deployments:
+         list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+        :keyword endpoint_uri: Uri of the endpoint.
+        :paramtype endpoint_uri: str
+        :keyword failure_reason: The failure reason if the creation failed.
+        :paramtype failure_reason: str
+        :keyword location: Location of the endpoint.
+         Since input dto and when parse endpoint resource share the same contract
+         this Location field is just for parse the endpoint resource info
+         we won't let customer specify the endpoint resource location since we will create it the same
+         location as workspace.
+        :paramtype location: str
+        :keyword name: Name of the endpoint.
+        :paramtype name: str
+        :keyword should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+         endpoint or a OneKeyV2 AI services account endpoint.
+        :paramtype should_create_ai_services_endpoint: bool
+        :keyword auth_mode: Possible values include: "Key".
+        :paramtype auth_mode: str or
+         ~azure.mgmt.machinelearningservices.models.ServerlessInferenceEndpointAuthMode
+        :keyword capacity_reservation:
+        :paramtype capacity_reservation:
+         ~azure.mgmt.machinelearningservices.models.ServerlessEndpointCapacityReservation
+        :keyword content_safety:
+        :paramtype content_safety:
+         ~azure.mgmt.machinelearningservices.models.ServerlessEndpointContentSafety
+        :keyword endpoint_state: State of the Serverless Endpoint. Possible values include: "Unknown",
+         "Creating", "Deleting", "Suspending", "Reinstating", "Online", "Suspended", "CreationFailed",
+         "DeletionFailed".
+        :paramtype endpoint_state: str or
+         ~azure.mgmt.machinelearningservices.models.ServerlessEndpointState
+        :keyword inference_endpoint:
+        :paramtype inference_endpoint:
+         ~azure.mgmt.machinelearningservices.models.ServerlessEndpointInferenceEndpoint
+        :keyword marketplace_subscription_id:
+        :paramtype marketplace_subscription_id: str
+        :keyword metadata: Anything.
+        :paramtype metadata: any
+        :keyword model_settings:
+        :paramtype model_settings:
+         ~azure.mgmt.machinelearningservices.models.ServerlessEndpointModelSettings
+        :keyword offer:
+        :paramtype offer: ~azure.mgmt.machinelearningservices.models.ServerlessOffer
+        """
+        super(ServerlessEndpointResourceProperties, self).__init__(**kwargs)
+        self.endpoint_type = 'serverlessEndpoint'  # type: str
+        self.auth_mode = kwargs.get('auth_mode', None)
+        self.capacity_reservation = kwargs.get('capacity_reservation', None)
+        self.content_safety = kwargs.get('content_safety', None)
+        self.endpoint_state = kwargs.get('endpoint_state', None)
+        self.inference_endpoint = kwargs.get('inference_endpoint', None)
+        self.marketplace_subscription_id = kwargs.get('marketplace_subscription_id', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.model_settings = kwargs.get('model_settings', None)
+        self.offer = kwargs.get('offer', None)
+
+
 class ServerlessEndpointTrackedResourceArmPaginatedResult(msrest.serialization.Model):
     """A paginated list of ServerlessEndpoint entities.
 
@@ -23648,10 +26295,46 @@ class ServerlessInferenceEndpoint(msrest.serialization.Model):
         self.uri = kwargs['uri']
 
 
+class ServerlessOffer(msrest.serialization.Model):
+    """ServerlessOffer.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar offer_name: Required.
+    :vartype offer_name: str
+    :ivar publisher: Required.
+    :vartype publisher: str
+    """
+
+    _validation = {
+        'offer_name': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+        'publisher': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'offer_name': {'key': 'offerName', 'type': 'str'},
+        'publisher': {'key': 'publisher', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword offer_name: Required.
+        :paramtype offer_name: str
+        :keyword publisher: Required.
+        :paramtype publisher: str
+        """
+        super(ServerlessOffer, self).__init__(**kwargs)
+        self.offer_name = kwargs['offer_name']
+        self.publisher = kwargs['publisher']
+
+
 class ServiceManagedResourcesSettings(msrest.serialization.Model):
     """ServiceManagedResourcesSettings.
 
-    :ivar cosmos_db: The settings for the service managed cosmosdb account.
+    :ivar cosmos_db:
     :vartype cosmos_db: ~azure.mgmt.machinelearningservices.models.CosmosDbSettings
     """
 
@@ -23664,7 +26347,7 @@ class ServiceManagedResourcesSettings(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword cosmos_db: The settings for the service managed cosmosdb account.
+        :keyword cosmos_db:
         :paramtype cosmos_db: ~azure.mgmt.machinelearningservices.models.CosmosDbSettings
         """
         super(ServiceManagedResourcesSettings, self).__init__(**kwargs)
@@ -23684,7 +26367,7 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -23699,10 +26382,12 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -23710,16 +26395,18 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     :ivar credentials:
     :vartype credentials:
      ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionServicePrincipal
@@ -23735,14 +26422,16 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionServicePrincipal'},
     }
 
@@ -23753,7 +26442,7 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -23768,23 +26457,27 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionServicePrincipal
@@ -23895,8 +26588,6 @@ class ServicePrincipalDatastoreSecrets(DatastoreSecrets):
 class ServiceTagDestination(msrest.serialization.Model):
     """Service Tag destination for a Service Tag Outbound Rule for the managed network of a machine learning workspace.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar action: The action enum for networking rule. Possible values include: "Allow", "Deny".
     :vartype action: str or ~azure.mgmt.machinelearningservices.models.RuleAction
     :ivar address_prefixes: Optional, if provided, the ServiceTag property will be ignored.
@@ -23908,10 +26599,6 @@ class ServiceTagDestination(msrest.serialization.Model):
     :ivar service_tag:
     :vartype service_tag: str
     """
-
-    _validation = {
-        'address_prefixes': {'readonly': True},
-    }
 
     _attribute_map = {
         'action': {'key': 'action', 'type': 'str'},
@@ -23928,6 +26615,8 @@ class ServiceTagDestination(msrest.serialization.Model):
         """
         :keyword action: The action enum for networking rule. Possible values include: "Allow", "Deny".
         :paramtype action: str or ~azure.mgmt.machinelearningservices.models.RuleAction
+        :keyword address_prefixes: Optional, if provided, the ServiceTag property will be ignored.
+        :paramtype address_prefixes: list[str]
         :keyword port_ranges:
         :paramtype port_ranges: str
         :keyword protocol:
@@ -23937,7 +26626,7 @@ class ServiceTagDestination(msrest.serialization.Model):
         """
         super(ServiceTagDestination, self).__init__(**kwargs)
         self.action = kwargs.get('action', None)
-        self.address_prefixes = None
+        self.address_prefixes = kwargs.get('address_prefixes', None)
         self.port_ranges = kwargs.get('port_ranges', None)
         self.protocol = kwargs.get('protocol', None)
         self.service_tag = kwargs.get('service_tag', None)
@@ -23946,11 +26635,15 @@ class ServiceTagDestination(msrest.serialization.Model):
 class ServiceTagOutboundRule(OutboundRule):
     """Service Tag Outbound Rule for the managed network of a machine learning workspace.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
      Possible values include: "Required", "Recommended", "UserDefined", "Dependency".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+    :ivar parent_rule_names:
+    :vartype parent_rule_names: list[str]
     :ivar status: Type of a managed network Outbound Rule of a machine learning workspace. Possible
      values include: "Inactive", "Active".
     :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
@@ -23964,11 +26657,13 @@ class ServiceTagOutboundRule(OutboundRule):
     """
 
     _validation = {
+        'parent_rule_names': {'readonly': True},
         'type': {'required': True},
     }
 
     _attribute_map = {
         'category': {'key': 'category', 'type': 'str'},
+        'parent_rule_names': {'key': 'parentRuleNames', 'type': '[str]'},
         'status': {'key': 'status', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'destination': {'key': 'destination', 'type': 'ServiceTagDestination'},
@@ -24022,23 +26717,22 @@ class SharedPrivateLinkResource(msrest.serialization.Model):
 
     :ivar name: Unique name of the private link.
     :vartype name: str
-    :ivar private_link_resource_id: The resource id that private link links to.
-    :vartype private_link_resource_id: str
-    :ivar group_id: The private link resource group id.
+    :ivar group_id: group id of the private link.
     :vartype group_id: str
+    :ivar private_link_resource_id: the resource id that private link links to.
+    :vartype private_link_resource_id: str
     :ivar request_message: Request message.
     :vartype request_message: str
-    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
-     of the service. Possible values include: "Pending", "Approved", "Rejected", "Disconnected",
-     "Timeout".
+    :ivar status: Connection status of the service consumer with the service provider. Possible
+     values include: "Approved", "Pending", "Rejected", "Disconnected", "Timeout".
     :vartype status: str or
-     ~azure.mgmt.machinelearningservices.models.PrivateEndpointServiceConnectionStatus
+     ~azure.mgmt.machinelearningservices.models.EndpointServiceConnectionStatus
     """
 
     _attribute_map = {
         'name': {'key': 'name', 'type': 'str'},
-        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
         'group_id': {'key': 'properties.groupId', 'type': 'str'},
+        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
         'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
         'status': {'key': 'properties.status', 'type': 'str'},
     }
@@ -24050,22 +26744,21 @@ class SharedPrivateLinkResource(msrest.serialization.Model):
         """
         :keyword name: Unique name of the private link.
         :paramtype name: str
-        :keyword private_link_resource_id: The resource id that private link links to.
-        :paramtype private_link_resource_id: str
-        :keyword group_id: The private link resource group id.
+        :keyword group_id: group id of the private link.
         :paramtype group_id: str
+        :keyword private_link_resource_id: the resource id that private link links to.
+        :paramtype private_link_resource_id: str
         :keyword request_message: Request message.
         :paramtype request_message: str
-        :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
-         owner of the service. Possible values include: "Pending", "Approved", "Rejected",
-         "Disconnected", "Timeout".
+        :keyword status: Connection status of the service consumer with the service provider. Possible
+         values include: "Approved", "Pending", "Rejected", "Disconnected", "Timeout".
         :paramtype status: str or
-         ~azure.mgmt.machinelearningservices.models.PrivateEndpointServiceConnectionStatus
+         ~azure.mgmt.machinelearningservices.models.EndpointServiceConnectionStatus
         """
         super(SharedPrivateLinkResource, self).__init__(**kwargs)
         self.name = kwargs.get('name', None)
-        self.private_link_resource_id = kwargs.get('private_link_resource_id', None)
         self.group_id = kwargs.get('group_id', None)
+        self.private_link_resource_id = kwargs.get('private_link_resource_id', None)
         self.request_message = kwargs.get('request_message', None)
         self.status = kwargs.get('status', None)
 
@@ -24607,6 +27300,159 @@ class SparkResourceConfiguration(msrest.serialization.Model):
         super(SparkResourceConfiguration, self).__init__(**kwargs)
         self.instance_type = kwargs.get('instance_type', None)
         self.runtime_version = kwargs.get('runtime_version', "3.1")
+
+
+class SpeechEndpointDeploymentResourceProperties(EndpointDeploymentResourceProperties, CognitiveServiceEndpointDeploymentResourceProperties):
+    """SpeechEndpointDeploymentResourceProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar model: Required. Model used for the endpoint deployment.
+    :vartype model: ~azure.mgmt.machinelearningservices.models.EndpointDeploymentModel
+    :ivar rai_policy_name: The name of RAI policy.
+    :vartype rai_policy_name: str
+    :ivar version_upgrade_option: Deployment model version upgrade option. Possible values include:
+     "OnceNewDefaultVersionAvailable", "OnceCurrentVersionExpired", "NoAutoUpgrade".
+    :vartype version_upgrade_option: str or
+     ~azure.mgmt.machinelearningservices.models.DeploymentModelVersionUpgradeOption
+    :ivar failure_reason: The failure reason if the creation failed.
+    :vartype failure_reason: str
+    :ivar provisioning_state: Read-only provision state status property. Possible values include:
+     "NotStarted", "Failed", "Creating", "Updating", "Succeeded", "Deleting", "Accepted",
+     "Canceled", "Scaling", "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.DefaultResourceProvisioningState
+    :ivar type: Required. Kind of the deployment.Constant filled by server.
+    :vartype type: str
+    """
+
+    _validation = {
+        'model': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'type': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'model': {'key': 'model', 'type': 'EndpointDeploymentModel'},
+        'rai_policy_name': {'key': 'raiPolicyName', 'type': 'str'},
+        'version_upgrade_option': {'key': 'versionUpgradeOption', 'type': 'str'},
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword model: Required. Model used for the endpoint deployment.
+        :paramtype model: ~azure.mgmt.machinelearningservices.models.EndpointDeploymentModel
+        :keyword rai_policy_name: The name of RAI policy.
+        :paramtype rai_policy_name: str
+        :keyword version_upgrade_option: Deployment model version upgrade option. Possible values
+         include: "OnceNewDefaultVersionAvailable", "OnceCurrentVersionExpired", "NoAutoUpgrade".
+        :paramtype version_upgrade_option: str or
+         ~azure.mgmt.machinelearningservices.models.DeploymentModelVersionUpgradeOption
+        :keyword failure_reason: The failure reason if the creation failed.
+        :paramtype failure_reason: str
+        """
+        super(SpeechEndpointDeploymentResourceProperties, self).__init__(**kwargs)
+        self.model = kwargs['model']
+        self.rai_policy_name = kwargs.get('rai_policy_name', None)
+        self.version_upgrade_option = kwargs.get('version_upgrade_option', None)
+        self.type = 'Azure.Speech'  # type: str
+        self.failure_reason = kwargs.get('failure_reason', None)
+        self.provisioning_state = None
+
+
+class SpeechEndpointResourceProperties(EndpointResourceProperties):
+    """SpeechEndpointResourceProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar associated_resource_id: Byo resource id for creating the built-in model service
+     endpoints.
+    :vartype associated_resource_id: str
+    :ivar deployments: Deployments info.
+    :vartype deployments:
+     list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+    :ivar endpoint_type: Required. Type of the endpoint.Constant filled by server. Possible values
+     include: "Azure.OpenAI", "Azure.Speech", "Azure.ContentSafety", "Azure.Llama",
+     "managedOnlineEndpoint", "serverlessEndpoint".
+    :vartype endpoint_type: str or ~azure.mgmt.machinelearningservices.models.EndpointType
+    :ivar endpoint_uri: Uri of the endpoint.
+    :vartype endpoint_uri: str
+    :ivar failure_reason: The failure reason if the creation failed.
+    :vartype failure_reason: str
+    :ivar location: Location of the endpoint.
+     Since input dto and when parse endpoint resource share the same contract
+     this Location field is just for parse the endpoint resource info
+     we won't let customer specify the endpoint resource location since we will create it the same
+     location as workspace.
+    :vartype location: str
+    :ivar name: Name of the endpoint.
+    :vartype name: str
+    :ivar provisioning_state: Read-only provision state status property. Possible values include:
+     "NotStarted", "Failed", "Creating", "Updating", "Succeeded", "Deleting", "Accepted",
+     "Canceled", "Scaling", "Disabled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.DefaultResourceProvisioningState
+    :ivar should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+     endpoint or a OneKeyV2 AI services account endpoint.
+    :vartype should_create_ai_services_endpoint: bool
+    """
+
+    _validation = {
+        'endpoint_type': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'associated_resource_id': {'key': 'associatedResourceId', 'type': 'str'},
+        'deployments': {'key': 'deployments', 'type': '[EndpointDeploymentResourcePropertiesBasicResource]'},
+        'endpoint_type': {'key': 'endpointType', 'type': 'str'},
+        'endpoint_uri': {'key': 'endpointUri', 'type': 'str'},
+        'failure_reason': {'key': 'failureReason', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'should_create_ai_services_endpoint': {'key': 'shouldCreateAiServicesEndpoint', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword associated_resource_id: Byo resource id for creating the built-in model service
+         endpoints.
+        :paramtype associated_resource_id: str
+        :keyword deployments: Deployments info.
+        :paramtype deployments:
+         list[~azure.mgmt.machinelearningservices.models.EndpointDeploymentResourcePropertiesBasicResource]
+        :keyword endpoint_uri: Uri of the endpoint.
+        :paramtype endpoint_uri: str
+        :keyword failure_reason: The failure reason if the creation failed.
+        :paramtype failure_reason: str
+        :keyword location: Location of the endpoint.
+         Since input dto and when parse endpoint resource share the same contract
+         this Location field is just for parse the endpoint resource info
+         we won't let customer specify the endpoint resource location since we will create it the same
+         location as workspace.
+        :paramtype location: str
+        :keyword name: Name of the endpoint.
+        :paramtype name: str
+        :keyword should_create_ai_services_endpoint: Whether the proxy (non-byo) endpoint is a regular
+         endpoint or a OneKeyV2 AI services account endpoint.
+        :paramtype should_create_ai_services_endpoint: bool
+        """
+        super(SpeechEndpointResourceProperties, self).__init__(**kwargs)
+        self.endpoint_type = 'Azure.Speech'  # type: str
 
 
 class SslConfiguration(msrest.serialization.Model):
@@ -25879,7 +28725,7 @@ NLP - Natural Language Processing.
 
 
 class TmpfsOptions(msrest.serialization.Model):
-    """Describes the tmpfs options for the container.
+    """TmpfsOptions.
 
     :ivar size: Mention the Tmpfs size.
     :vartype size: int
@@ -26807,7 +29653,7 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
      "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
      "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
      "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -26822,10 +29668,12 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
      "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
      "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
      "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-     "Serverless", "AIServices".
+     "Serverless".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar created_by_workspace_arm_id:
     :vartype created_by_workspace_arm_id: str
+    :ivar error:
+    :vartype error: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
     :ivar group: Group based on connection category. Possible values include: "Azure", "AzureAI",
@@ -26833,16 +29681,18 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     :vartype group: str or ~azure.mgmt.machinelearningservices.models.ConnectionGroup
     :ivar is_shared_to_all:
     :vartype is_shared_to_all: bool
-    :ivar target:
-    :vartype target: str
     :ivar metadata: Store user metadata for this connection.
     :vartype metadata: dict[str, str]
+    :ivar pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+    :vartype pe_requirement: str or ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+    :ivar pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+    :vartype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
     :ivar shared_user_list:
     :vartype shared_user_list: list[str]
-    :ivar value: Value details of the workspace connection.
-    :vartype value: str
-    :ivar value_format: format for the workspace connection value. Possible values include: "JSON".
-    :vartype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+    :ivar target:
+    :vartype target: str
+    :ivar use_workspace_managed_identity:
+    :vartype use_workspace_managed_identity: bool
     :ivar credentials:
     :vartype credentials:
      ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionUsernamePassword
@@ -26858,14 +29708,16 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'error': {'key': 'error', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
         'group': {'key': 'group', 'type': 'str'},
         'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
-        'target': {'key': 'target', 'type': 'str'},
         'metadata': {'key': 'metadata', 'type': '{str}'},
+        'pe_requirement': {'key': 'peRequirement', 'type': 'str'},
+        'pe_status': {'key': 'peStatus', 'type': 'str'},
         'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
-        'value': {'key': 'value', 'type': 'str'},
-        'value_format': {'key': 'valueFormat', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'use_workspace_managed_identity': {'key': 'useWorkspaceManagedIdentity', 'type': 'bool'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionUsernamePassword'},
     }
 
@@ -26876,7 +29728,7 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
-         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI", "AIServices",
          "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureBlob", "AzureOneLake", "CosmosDb",
          "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
          "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
@@ -26891,23 +29743,27 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
          "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
          "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
          "WebTable", "Xero", "Zoho", "GenericContainerRegistry", "OpenAI", "Serp", "BingLLMSearch",
-         "Serverless", "AIServices".
+         "Serverless".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword error:
+        :paramtype error: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
         :keyword is_shared_to_all:
         :paramtype is_shared_to_all: bool
-        :keyword target:
-        :paramtype target: str
         :keyword metadata: Store user metadata for this connection.
         :paramtype metadata: dict[str, str]
+        :keyword pe_requirement: Possible values include: "Required", "NotRequired", "NotApplicable".
+        :paramtype pe_requirement: str or
+         ~azure.mgmt.machinelearningservices.models.ManagedPERequirement
+        :keyword pe_status: Possible values include: "Inactive", "Active", "NotApplicable".
+        :paramtype pe_status: str or ~azure.mgmt.machinelearningservices.models.ManagedPEStatus
         :keyword shared_user_list:
         :paramtype shared_user_list: list[str]
-        :keyword value: Value details of the workspace connection.
-        :paramtype value: str
-        :keyword value_format: format for the workspace connection value. Possible values include:
-         "JSON".
-        :paramtype value_format: str or ~azure.mgmt.machinelearningservices.models.ValueFormat
+        :keyword target:
+        :paramtype target: str
+        :keyword use_workspace_managed_identity:
+        :paramtype use_workspace_managed_identity: bool
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionUsernamePassword
@@ -27329,7 +30185,7 @@ class VirtualMachineSshCredentials(msrest.serialization.Model):
 
 
 class VolumeDefinition(msrest.serialization.Model):
-    """Describes the volume configuration for the container.
+    """VolumeDefinition.
 
     :ivar type: Type of Volume Definition. Possible Values: bind,volume,tmpfs,npipe. Possible
      values include: "bind", "volume", "tmpfs", "npipe". Default value: "bind".
@@ -27397,7 +30253,7 @@ class VolumeDefinition(msrest.serialization.Model):
 
 
 class VolumeOptions(msrest.serialization.Model):
-    """Describes the volume options for the container.
+    """VolumeOptions.
 
     :ivar nocopy: Indicate whether volume is nocopy.
     :vartype nocopy: bool
@@ -27435,101 +30291,128 @@ class Workspace(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
-    :ivar identity: The identity of the resource.
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
     :vartype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
     :ivar kind:
     :vartype kind: str
-    :ivar location: Specifies the location of the resource.
+    :ivar location:
     :vartype location: str
-    :ivar tags: A set of tags. Contains resource tags defined as key/value pairs.
-    :vartype tags: dict[str, str]
-    :ivar sku: The sku of the workspace.
+    :ivar sku: Optional. This field is required to be implemented by the RP because AML is
+     supporting more than one tier.
     :vartype sku: ~azure.mgmt.machinelearningservices.models.Sku
-    :ivar workspace_id: The immutable id associated with this workspace.
-    :vartype workspace_id: str
-    :ivar description: The description of this workspace.
-    :vartype description: str
-    :ivar friendly_name: The friendly name for this workspace. This name in mutable.
-    :vartype friendly_name: str
-    :ivar key_vault: ARM id of the key vault associated with this workspace. This cannot be changed
-     once the workspace has been created.
-    :vartype key_vault: str
+    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar allow_public_access_when_behind_vnet: The flag to indicate whether to allow public access
+     when behind VNet.
+    :vartype allow_public_access_when_behind_vnet: bool
+    :ivar allow_role_assignment_on_rg: The flag to indicate whether we will do role assignment for
+     the workspace MSI on resource group level.
+    :vartype allow_role_assignment_on_rg: bool
     :ivar application_insights: ARM id of the application insights associated with this workspace.
     :vartype application_insights: str
+    :ivar associated_workspaces:
+    :vartype associated_workspaces: list[str]
+    :ivar container_registries:
+    :vartype container_registries: list[str]
     :ivar container_registry: ARM id of the container registry associated with this workspace.
     :vartype container_registry: str
-    :ivar storage_account: ARM id of the storage account associated with this workspace. This
-     cannot be changed once the workspace has been created.
-    :vartype storage_account: str
+    :ivar description: The description of this workspace.
+    :vartype description: str
     :ivar discovery_url: Url for the discovery service to identify regional endpoints for machine
      learning experimentation services.
     :vartype discovery_url: str
+    :ivar enable_data_isolation:
+    :vartype enable_data_isolation: bool
+    :ivar enable_service_side_cmk_encryption:
+    :vartype enable_service_side_cmk_encryption: bool
+    :ivar enable_simplified_cmk: Flag to tell if simplified CMK should be enabled for this
+     workspace.
+    :vartype enable_simplified_cmk: bool
+    :ivar enable_software_bill_of_materials: Flag to tell if SoftwareBillOfMaterials should be
+     enabled for this workspace.
+    :vartype enable_software_bill_of_materials: bool
+    :ivar encryption:
+    :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionProperty
+    :ivar existing_workspaces:
+    :vartype existing_workspaces: list[str]
+    :ivar feature_store_settings: Settings for feature store type workspace.
+    :vartype feature_store_settings:
+     ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+    :ivar friendly_name: The friendly name for this workspace. This name in mutable.
+    :vartype friendly_name: str
+    :ivar hbi_workspace: The flag to signal HBI data in the workspace and reduce diagnostic data
+     collected by the service.
+    :vartype hbi_workspace: bool
+    :ivar hub_resource_id:
+    :vartype hub_resource_id: str
+    :ivar image_build_compute: The compute name for image build.
+    :vartype image_build_compute: str
+    :ivar ip_allowlist: The list of IPv4  addresses that are allowed to access the workspace.
+    :vartype ip_allowlist: list[str]
+    :ivar key_vault: ARM id of the key vault associated with this workspace. This cannot be changed
+     once the workspace has been created.
+    :vartype key_vault: str
+    :ivar key_vaults:
+    :vartype key_vaults: list[str]
+    :ivar managed_network: Managed Network settings for a machine learning workspace.
+    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
+    :ivar ml_flow_tracking_uri: The URI associated with this workspace that machine learning flow
+     must point at to set up tracking.
+    :vartype ml_flow_tracking_uri: str
+    :ivar notebook_info: The notebook info of Azure ML workspace.
+    :vartype notebook_info: ~azure.mgmt.machinelearningservices.models.NotebookResourceInfo
+    :ivar primary_user_assigned_identity: The user assigned identity resource id that represents
+     the workspace identity.
+    :vartype primary_user_assigned_identity: str
+    :ivar private_endpoint_connections: The list of private endpoint connections in the workspace.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection]
+    :ivar private_link_count: Count of private connections in the workspace.
+    :vartype private_link_count: int
     :ivar provisioning_state: The current deployment state of workspace resource. The
      provisioningState is to indicate states for resource provisioning. Possible values include:
      "Unknown", "Updating", "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.machinelearningservices.models.ProvisioningState
-    :ivar encryption: The encryption settings of Azure ML workspace.
-    :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionProperty
-    :ivar hbi_workspace: The flag to signal HBI data in the workspace and reduce diagnostic data
-     collected by the service.
-    :vartype hbi_workspace: bool
-    :ivar service_provisioned_resource_group: The name of the managed resource group created by
-     workspace RP in customer subscription if the workspace is CMK workspace.
-    :vartype service_provisioned_resource_group: str
-    :ivar private_link_count: Count of private connections in the workspace.
-    :vartype private_link_count: int
-    :ivar image_build_compute: The compute name for image build.
-    :vartype image_build_compute: str
-    :ivar allow_public_access_when_behind_vnet: The flag to indicate whether to allow public access
-     when behind VNet.
-    :vartype allow_public_access_when_behind_vnet: bool
     :ivar public_network_access: Whether requests from Public Network are allowed. Possible values
      include: "Enabled", "Disabled".
     :vartype public_network_access: str or
-     ~azure.mgmt.machinelearningservices.models.PublicNetworkAccess
-    :ivar private_endpoint_connections: The list of private endpoint connections in the workspace.
-    :vartype private_endpoint_connections:
-     list[~azure.mgmt.machinelearningservices.models.PrivateEndpointConnection]
-    :ivar serverless_compute_settings: Settings for serverless compute created in the workspace.
+     ~azure.mgmt.machinelearningservices.models.PublicNetworkAccessType
+    :ivar serverless_compute_settings: Settings for serverless compute in a workspace.
     :vartype serverless_compute_settings:
      ~azure.mgmt.machinelearningservices.models.ServerlessComputeSettings
+    :ivar service_managed_resources_settings: The service managed resource settings.
+    :vartype service_managed_resources_settings:
+     ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
+    :ivar service_provisioned_resource_group: The name of the managed resource group created by
+     workspace RP in customer subscription if the workspace is CMK workspace.
+    :vartype service_provisioned_resource_group: str
     :ivar shared_private_link_resources: The list of shared private link resources in this
      workspace.
     :vartype shared_private_link_resources:
      list[~azure.mgmt.machinelearningservices.models.SharedPrivateLinkResource]
-    :ivar notebook_info: The notebook info of Azure ML workspace.
-    :vartype notebook_info: ~azure.mgmt.machinelearningservices.models.NotebookResourceInfo
-    :ivar service_managed_resources_settings: The service managed resource settings.
-    :vartype service_managed_resources_settings:
-     ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
-    :ivar primary_user_assigned_identity: The user assigned identity resource id that represents
-     the workspace identity.
-    :vartype primary_user_assigned_identity: str
-    :ivar tenant_id: The tenant id associated with this workspace.
-    :vartype tenant_id: str
+    :ivar soft_delete_retention_in_days: Retention time in days after workspace get soft deleted.
+    :vartype soft_delete_retention_in_days: int
+    :ivar storage_account: ARM id of the storage account associated with this workspace. This
+     cannot be changed once the workspace has been created.
+    :vartype storage_account: str
+    :ivar storage_accounts:
+    :vartype storage_accounts: list[str]
     :ivar storage_hns_enabled: If the storage associated with the workspace has hierarchical
      namespace(HNS) enabled.
     :vartype storage_hns_enabled: bool
-    :ivar ml_flow_tracking_uri: The URI associated with this workspace that machine learning flow
-     must point at to set up tracking.
-    :vartype ml_flow_tracking_uri: str
+    :ivar system_datastores_auth_mode: The auth mode used for accessing the system datastores of
+     the workspace.
+    :vartype system_datastores_auth_mode: str
+    :ivar tenant_id: The tenant id associated with this workspace.
+    :vartype tenant_id: str
     :ivar v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided by
      the v2 API.
     :vartype v1_legacy_mode: bool
-    :ivar managed_network: Managed Network settings for a machine learning workspace.
-    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
-    :ivar feature_store_settings: Settings for feature store type workspace.
-    :vartype feature_store_settings:
-     ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
-    :ivar associated_workspaces:
-    :vartype associated_workspaces: list[str]
-    :ivar enable_data_isolation:
-    :vartype enable_data_isolation: bool
-    :ivar hub_resource_id:
-    :vartype hub_resource_id: str
     :ivar workspace_hub_config: WorkspaceHub's configuration object.
     :vartype workspace_hub_config: ~azure.mgmt.machinelearningservices.models.WorkspaceHubConfig
+    :ivar workspace_id: The immutable id associated with this workspace.
+    :vartype workspace_id: str
     """
 
     _validation = {
@@ -27537,15 +30420,15 @@ class Workspace(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'system_data': {'readonly': True},
-        'workspace_id': {'readonly': True},
+        'ml_flow_tracking_uri': {'readonly': True},
+        'notebook_info': {'readonly': True},
+        'private_endpoint_connections': {'readonly': True},
+        'private_link_count': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'service_provisioned_resource_group': {'readonly': True},
-        'private_link_count': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
-        'notebook_info': {'readonly': True},
-        'tenant_id': {'readonly': True},
         'storage_hns_enabled': {'readonly': True},
-        'ml_flow_tracking_uri': {'readonly': True},
+        'tenant_id': {'readonly': True},
+        'workspace_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -27556,40 +30439,51 @@ class Workspace(Resource):
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
         'kind': {'key': 'kind', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
-        'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'key_vault': {'key': 'properties.keyVault', 'type': 'str'},
-        'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
-        'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
-        'storage_account': {'key': 'properties.storageAccount', 'type': 'str'},
-        'discovery_url': {'key': 'properties.discoveryUrl', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
-        'hbi_workspace': {'key': 'properties.hbiWorkspace', 'type': 'bool'},
-        'service_provisioned_resource_group': {'key': 'properties.serviceProvisionedResourceGroup', 'type': 'str'},
-        'private_link_count': {'key': 'properties.privateLinkCount', 'type': 'int'},
-        'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'allow_public_access_when_behind_vnet': {'key': 'properties.allowPublicAccessWhenBehindVnet', 'type': 'bool'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'serverless_compute_settings': {'key': 'properties.serverlessComputeSettings', 'type': 'ServerlessComputeSettings'},
-        'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
-        'notebook_info': {'key': 'properties.notebookInfo', 'type': 'NotebookResourceInfo'},
-        'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
-        'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'storage_hns_enabled': {'key': 'properties.storageHnsEnabled', 'type': 'bool'},
-        'ml_flow_tracking_uri': {'key': 'properties.mlFlowTrackingUri', 'type': 'str'},
-        'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
-        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
-        'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
+        'allow_role_assignment_on_rg': {'key': 'properties.allowRoleAssignmentOnRG', 'type': 'bool'},
+        'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
         'associated_workspaces': {'key': 'properties.associatedWorkspaces', 'type': '[str]'},
+        'container_registries': {'key': 'properties.containerRegistries', 'type': '[str]'},
+        'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'discovery_url': {'key': 'properties.discoveryUrl', 'type': 'str'},
         'enable_data_isolation': {'key': 'properties.enableDataIsolation', 'type': 'bool'},
+        'enable_service_side_cmk_encryption': {'key': 'properties.enableServiceSideCMKEncryption', 'type': 'bool'},
+        'enable_simplified_cmk': {'key': 'properties.enableSimplifiedCmk', 'type': 'bool'},
+        'enable_software_bill_of_materials': {'key': 'properties.enableSoftwareBillOfMaterials', 'type': 'bool'},
+        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperty'},
+        'existing_workspaces': {'key': 'properties.existingWorkspaces', 'type': '[str]'},
+        'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
+        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'hbi_workspace': {'key': 'properties.hbiWorkspace', 'type': 'bool'},
         'hub_resource_id': {'key': 'properties.hubResourceId', 'type': 'str'},
+        'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
+        'ip_allowlist': {'key': 'properties.ipAllowlist', 'type': '[str]'},
+        'key_vault': {'key': 'properties.keyVault', 'type': 'str'},
+        'key_vaults': {'key': 'properties.keyVaults', 'type': '[str]'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
+        'ml_flow_tracking_uri': {'key': 'properties.mlFlowTrackingUri', 'type': 'str'},
+        'notebook_info': {'key': 'properties.notebookInfo', 'type': 'NotebookResourceInfo'},
+        'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        'private_link_count': {'key': 'properties.privateLinkCount', 'type': 'int'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'serverless_compute_settings': {'key': 'properties.serverlessComputeSettings', 'type': 'ServerlessComputeSettings'},
+        'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
+        'service_provisioned_resource_group': {'key': 'properties.serviceProvisionedResourceGroup', 'type': 'str'},
+        'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
+        'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
+        'storage_account': {'key': 'properties.storageAccount', 'type': 'str'},
+        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[str]'},
+        'storage_hns_enabled': {'key': 'properties.storageHnsEnabled', 'type': 'bool'},
+        'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+        'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
         'workspace_hub_config': {'key': 'properties.workspaceHubConfig', 'type': 'WorkspaceHubConfig'},
+        'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
     }
 
     def __init__(
@@ -27597,75 +30491,103 @@ class Workspace(Resource):
         **kwargs
     ):
         """
-        :keyword identity: The identity of the resource.
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
         :paramtype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
         :keyword kind:
         :paramtype kind: str
-        :keyword location: Specifies the location of the resource.
+        :keyword location:
         :paramtype location: str
-        :keyword tags: A set of tags. Contains resource tags defined as key/value pairs.
-        :paramtype tags: dict[str, str]
-        :keyword sku: The sku of the workspace.
+        :keyword sku: Optional. This field is required to be implemented by the RP because AML is
+         supporting more than one tier.
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
-        :keyword description: The description of this workspace.
-        :paramtype description: str
-        :keyword friendly_name: The friendly name for this workspace. This name in mutable.
-        :paramtype friendly_name: str
-        :keyword key_vault: ARM id of the key vault associated with this workspace. This cannot be
-         changed once the workspace has been created.
-        :paramtype key_vault: str
-        :keyword application_insights: ARM id of the application insights associated with this
-         workspace.
-        :paramtype application_insights: str
-        :keyword container_registry: ARM id of the container registry associated with this workspace.
-        :paramtype container_registry: str
-        :keyword storage_account: ARM id of the storage account associated with this workspace. This
-         cannot be changed once the workspace has been created.
-        :paramtype storage_account: str
-        :keyword discovery_url: Url for the discovery service to identify regional endpoints for
-         machine learning experimentation services.
-        :paramtype discovery_url: str
-        :keyword encryption: The encryption settings of Azure ML workspace.
-        :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionProperty
-        :keyword hbi_workspace: The flag to signal HBI data in the workspace and reduce diagnostic data
-         collected by the service.
-        :paramtype hbi_workspace: bool
-        :keyword image_build_compute: The compute name for image build.
-        :paramtype image_build_compute: str
+        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
         :keyword allow_public_access_when_behind_vnet: The flag to indicate whether to allow public
          access when behind VNet.
         :paramtype allow_public_access_when_behind_vnet: bool
+        :keyword allow_role_assignment_on_rg: The flag to indicate whether we will do role assignment
+         for the workspace MSI on resource group level.
+        :paramtype allow_role_assignment_on_rg: bool
+        :keyword application_insights: ARM id of the application insights associated with this
+         workspace.
+        :paramtype application_insights: str
+        :keyword associated_workspaces:
+        :paramtype associated_workspaces: list[str]
+        :keyword container_registries:
+        :paramtype container_registries: list[str]
+        :keyword container_registry: ARM id of the container registry associated with this workspace.
+        :paramtype container_registry: str
+        :keyword description: The description of this workspace.
+        :paramtype description: str
+        :keyword discovery_url: Url for the discovery service to identify regional endpoints for
+         machine learning experimentation services.
+        :paramtype discovery_url: str
+        :keyword enable_data_isolation:
+        :paramtype enable_data_isolation: bool
+        :keyword enable_service_side_cmk_encryption:
+        :paramtype enable_service_side_cmk_encryption: bool
+        :keyword enable_simplified_cmk: Flag to tell if simplified CMK should be enabled for this
+         workspace.
+        :paramtype enable_simplified_cmk: bool
+        :keyword enable_software_bill_of_materials: Flag to tell if SoftwareBillOfMaterials should be
+         enabled for this workspace.
+        :paramtype enable_software_bill_of_materials: bool
+        :keyword encryption:
+        :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionProperty
+        :keyword existing_workspaces:
+        :paramtype existing_workspaces: list[str]
+        :keyword feature_store_settings: Settings for feature store type workspace.
+        :paramtype feature_store_settings:
+         ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+        :keyword friendly_name: The friendly name for this workspace. This name in mutable.
+        :paramtype friendly_name: str
+        :keyword hbi_workspace: The flag to signal HBI data in the workspace and reduce diagnostic data
+         collected by the service.
+        :paramtype hbi_workspace: bool
+        :keyword hub_resource_id:
+        :paramtype hub_resource_id: str
+        :keyword image_build_compute: The compute name for image build.
+        :paramtype image_build_compute: str
+        :keyword ip_allowlist: The list of IPv4  addresses that are allowed to access the workspace.
+        :paramtype ip_allowlist: list[str]
+        :keyword key_vault: ARM id of the key vault associated with this workspace. This cannot be
+         changed once the workspace has been created.
+        :paramtype key_vault: str
+        :keyword key_vaults:
+        :paramtype key_vaults: list[str]
+        :keyword managed_network: Managed Network settings for a machine learning workspace.
+        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
+        :keyword primary_user_assigned_identity: The user assigned identity resource id that represents
+         the workspace identity.
+        :paramtype primary_user_assigned_identity: str
         :keyword public_network_access: Whether requests from Public Network are allowed. Possible
          values include: "Enabled", "Disabled".
         :paramtype public_network_access: str or
-         ~azure.mgmt.machinelearningservices.models.PublicNetworkAccess
-        :keyword serverless_compute_settings: Settings for serverless compute created in the workspace.
+         ~azure.mgmt.machinelearningservices.models.PublicNetworkAccessType
+        :keyword serverless_compute_settings: Settings for serverless compute in a workspace.
         :paramtype serverless_compute_settings:
          ~azure.mgmt.machinelearningservices.models.ServerlessComputeSettings
+        :keyword service_managed_resources_settings: The service managed resource settings.
+        :paramtype service_managed_resources_settings:
+         ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
         :keyword shared_private_link_resources: The list of shared private link resources in this
          workspace.
         :paramtype shared_private_link_resources:
          list[~azure.mgmt.machinelearningservices.models.SharedPrivateLinkResource]
-        :keyword service_managed_resources_settings: The service managed resource settings.
-        :paramtype service_managed_resources_settings:
-         ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
-        :keyword primary_user_assigned_identity: The user assigned identity resource id that represents
-         the workspace identity.
-        :paramtype primary_user_assigned_identity: str
+        :keyword soft_delete_retention_in_days: Retention time in days after workspace get soft
+         deleted.
+        :paramtype soft_delete_retention_in_days: int
+        :keyword storage_account: ARM id of the storage account associated with this workspace. This
+         cannot be changed once the workspace has been created.
+        :paramtype storage_account: str
+        :keyword storage_accounts:
+        :paramtype storage_accounts: list[str]
+        :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
+         the workspace.
+        :paramtype system_datastores_auth_mode: str
         :keyword v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided
          by the v2 API.
         :paramtype v1_legacy_mode: bool
-        :keyword managed_network: Managed Network settings for a machine learning workspace.
-        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
-        :keyword feature_store_settings: Settings for feature store type workspace.
-        :paramtype feature_store_settings:
-         ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
-        :keyword associated_workspaces:
-        :paramtype associated_workspaces: list[str]
-        :keyword enable_data_isolation:
-        :paramtype enable_data_isolation: bool
-        :keyword hub_resource_id:
-        :paramtype hub_resource_id: str
         :keyword workspace_hub_config: WorkspaceHub's configuration object.
         :paramtype workspace_hub_config: ~azure.mgmt.machinelearningservices.models.WorkspaceHubConfig
         """
@@ -27673,40 +30595,51 @@ class Workspace(Resource):
         self.identity = kwargs.get('identity', None)
         self.kind = kwargs.get('kind', None)
         self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
-        self.workspace_id = None
-        self.description = kwargs.get('description', None)
-        self.friendly_name = kwargs.get('friendly_name', None)
-        self.key_vault = kwargs.get('key_vault', None)
+        self.tags = kwargs.get('tags', None)
+        self.allow_public_access_when_behind_vnet = kwargs.get('allow_public_access_when_behind_vnet', None)
+        self.allow_role_assignment_on_rg = kwargs.get('allow_role_assignment_on_rg', None)
         self.application_insights = kwargs.get('application_insights', None)
-        self.container_registry = kwargs.get('container_registry', None)
-        self.storage_account = kwargs.get('storage_account', None)
-        self.discovery_url = kwargs.get('discovery_url', None)
-        self.provisioning_state = None
-        self.encryption = kwargs.get('encryption', None)
-        self.hbi_workspace = kwargs.get('hbi_workspace', False)
-        self.service_provisioned_resource_group = None
-        self.private_link_count = None
-        self.image_build_compute = kwargs.get('image_build_compute', None)
-        self.allow_public_access_when_behind_vnet = kwargs.get('allow_public_access_when_behind_vnet', False)
-        self.public_network_access = kwargs.get('public_network_access', None)
-        self.private_endpoint_connections = None
-        self.serverless_compute_settings = kwargs.get('serverless_compute_settings', None)
-        self.shared_private_link_resources = kwargs.get('shared_private_link_resources', None)
-        self.notebook_info = None
-        self.service_managed_resources_settings = kwargs.get('service_managed_resources_settings', None)
-        self.primary_user_assigned_identity = kwargs.get('primary_user_assigned_identity', None)
-        self.tenant_id = None
-        self.storage_hns_enabled = None
-        self.ml_flow_tracking_uri = None
-        self.v1_legacy_mode = kwargs.get('v1_legacy_mode', False)
-        self.managed_network = kwargs.get('managed_network', None)
-        self.feature_store_settings = kwargs.get('feature_store_settings', None)
         self.associated_workspaces = kwargs.get('associated_workspaces', None)
+        self.container_registries = kwargs.get('container_registries', None)
+        self.container_registry = kwargs.get('container_registry', None)
+        self.description = kwargs.get('description', None)
+        self.discovery_url = kwargs.get('discovery_url', None)
         self.enable_data_isolation = kwargs.get('enable_data_isolation', None)
+        self.enable_service_side_cmk_encryption = kwargs.get('enable_service_side_cmk_encryption', None)
+        self.enable_simplified_cmk = kwargs.get('enable_simplified_cmk', None)
+        self.enable_software_bill_of_materials = kwargs.get('enable_software_bill_of_materials', None)
+        self.encryption = kwargs.get('encryption', None)
+        self.existing_workspaces = kwargs.get('existing_workspaces', None)
+        self.feature_store_settings = kwargs.get('feature_store_settings', None)
+        self.friendly_name = kwargs.get('friendly_name', None)
+        self.hbi_workspace = kwargs.get('hbi_workspace', None)
         self.hub_resource_id = kwargs.get('hub_resource_id', None)
+        self.image_build_compute = kwargs.get('image_build_compute', None)
+        self.ip_allowlist = kwargs.get('ip_allowlist', None)
+        self.key_vault = kwargs.get('key_vault', None)
+        self.key_vaults = kwargs.get('key_vaults', None)
+        self.managed_network = kwargs.get('managed_network', None)
+        self.ml_flow_tracking_uri = None
+        self.notebook_info = None
+        self.primary_user_assigned_identity = kwargs.get('primary_user_assigned_identity', None)
+        self.private_endpoint_connections = None
+        self.private_link_count = None
+        self.provisioning_state = None
+        self.public_network_access = kwargs.get('public_network_access', None)
+        self.serverless_compute_settings = kwargs.get('serverless_compute_settings', None)
+        self.service_managed_resources_settings = kwargs.get('service_managed_resources_settings', None)
+        self.service_provisioned_resource_group = None
+        self.shared_private_link_resources = kwargs.get('shared_private_link_resources', None)
+        self.soft_delete_retention_in_days = kwargs.get('soft_delete_retention_in_days', None)
+        self.storage_account = kwargs.get('storage_account', None)
+        self.storage_accounts = kwargs.get('storage_accounts', None)
+        self.storage_hns_enabled = None
+        self.system_datastores_auth_mode = kwargs.get('system_datastores_auth_mode', None)
+        self.tenant_id = None
+        self.v1_legacy_mode = kwargs.get('v1_legacy_mode', None)
         self.workspace_hub_config = kwargs.get('workspace_hub_config', None)
+        self.workspace_id = None
 
 
 class WorkspaceConnectionAccessKey(msrest.serialization.Model):
@@ -27739,7 +30672,7 @@ class WorkspaceConnectionAccessKey(msrest.serialization.Model):
 
 
 class WorkspaceConnectionAccountKey(msrest.serialization.Model):
-    """WorkspaceConnectionAccountKey.
+    """Account key object for workspace connection credential.
 
     :ivar key:
     :vartype key: str
@@ -27787,15 +30720,15 @@ class WorkspaceConnectionApiKey(msrest.serialization.Model):
 class WorkspaceConnectionManagedIdentity(msrest.serialization.Model):
     """WorkspaceConnectionManagedIdentity.
 
-    :ivar resource_id:
-    :vartype resource_id: str
     :ivar client_id:
     :vartype client_id: str
+    :ivar resource_id:
+    :vartype resource_id: str
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
         'client_id': {'key': 'clientId', 'type': 'str'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
     }
 
     def __init__(
@@ -27803,14 +30736,14 @@ class WorkspaceConnectionManagedIdentity(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword resource_id:
-        :paramtype resource_id: str
         :keyword client_id:
         :paramtype client_id: str
+        :keyword resource_id:
+        :paramtype resource_id: str
         """
         super(WorkspaceConnectionManagedIdentity, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
         self.client_id = kwargs.get('client_id', None)
+        self.resource_id = kwargs.get('resource_id', None)
 
 
 class WorkspaceConnectionOAuth2(msrest.serialization.Model):
@@ -27962,22 +30895,16 @@ class WorkspaceConnectionPropertiesV2BasicResource(Resource):
 class WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult(msrest.serialization.Model):
     """WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
+    :ivar next_link:
+    :vartype next_link: str
     :ivar value:
     :vartype value:
      list[~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2BasicResource]
-    :ivar next_link:
-    :vartype next_link: str
     """
 
-    _validation = {
-        'next_link': {'readonly': True},
-    }
-
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkspaceConnectionPropertiesV2BasicResource]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[WorkspaceConnectionPropertiesV2BasicResource]'},
     }
 
     def __init__(
@@ -27985,13 +30912,15 @@ class WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult(msrest.seri
         **kwargs
     ):
         """
+        :keyword next_link:
+        :paramtype next_link: str
         :keyword value:
         :paramtype value:
          list[~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2BasicResource]
         """
         super(WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult, self).__init__(**kwargs)
+        self.next_link = kwargs.get('next_link', None)
         self.value = kwargs.get('value', None)
-        self.next_link = None
 
 
 class WorkspaceConnectionServicePrincipal(msrest.serialization.Model):
@@ -28052,22 +30981,16 @@ class WorkspaceConnectionSharedAccessSignature(msrest.serialization.Model):
         self.sas = kwargs.get('sas', None)
 
 
-class WorkspaceConnectionUsernamePassword(msrest.serialization.Model):
-    """WorkspaceConnectionUsernamePassword.
+class WorkspaceConnectionUpdateParameter(msrest.serialization.Model):
+    """The properties that the machine learning workspace connection will be updated with.
 
-    :ivar username:
-    :vartype username: str
-    :ivar password:
-    :vartype password: str
-    :ivar security_token: Optional, required by connections like SalesForce for extra security in
-     addition to UsernamePassword.
-    :vartype security_token: str
+    :ivar properties: The properties that the machine learning workspace connection will be updated
+     with.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2
     """
 
     _attribute_map = {
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'security_token': {'key': 'securityToken', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'WorkspaceConnectionPropertiesV2'},
     }
 
     def __init__(
@@ -28075,18 +30998,50 @@ class WorkspaceConnectionUsernamePassword(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword username:
-        :paramtype username: str
+        :keyword properties: The properties that the machine learning workspace connection will be
+         updated with.
+        :paramtype properties:
+         ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPropertiesV2
+        """
+        super(WorkspaceConnectionUpdateParameter, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class WorkspaceConnectionUsernamePassword(msrest.serialization.Model):
+    """WorkspaceConnectionUsernamePassword.
+
+    :ivar password:
+    :vartype password: str
+    :ivar security_token: Optional, required by connections like SalesForce for extra security in
+     addition to UsernamePassword.
+    :vartype security_token: str
+    :ivar username:
+    :vartype username: str
+    """
+
+    _attribute_map = {
+        'password': {'key': 'password', 'type': 'str'},
+        'security_token': {'key': 'securityToken', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
         :keyword password:
         :paramtype password: str
         :keyword security_token: Optional, required by connections like SalesForce for extra security
          in addition to UsernamePassword.
         :paramtype security_token: str
+        :keyword username:
+        :paramtype username: str
         """
         super(WorkspaceConnectionUsernamePassword, self).__init__(**kwargs)
-        self.username = kwargs.get('username', None)
         self.password = kwargs.get('password', None)
         self.security_token = kwargs.get('security_token', None)
+        self.username = kwargs.get('username', None)
 
 
 class WorkspaceHubConfig(msrest.serialization.Model):
@@ -28121,17 +31076,17 @@ class WorkspaceHubConfig(msrest.serialization.Model):
 class WorkspaceListResult(msrest.serialization.Model):
     """The result of a request to list machine learning workspaces.
 
+    :ivar next_link: The link to the next page constructed using the continuationToken.  If null,
+     there are no additional pages.
+    :vartype next_link: str
     :ivar value: The list of machine learning workspaces. Since this list may be incomplete, the
      nextLink field should be used to request the next list of machine learning workspaces.
     :vartype value: list[~azure.mgmt.machinelearningservices.models.Workspace]
-    :ivar next_link: The URI that can be used to request the next list of machine learning
-     workspaces.
-    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Workspace]'},
         'next_link': {'key': 'nextLink', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[Workspace]'},
     }
 
     def __init__(
@@ -28139,82 +31094,133 @@ class WorkspaceListResult(msrest.serialization.Model):
         **kwargs
     ):
         """
+        :keyword next_link: The link to the next page constructed using the continuationToken.  If
+         null, there are no additional pages.
+        :paramtype next_link: str
         :keyword value: The list of machine learning workspaces. Since this list may be incomplete, the
          nextLink field should be used to request the next list of machine learning workspaces.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.Workspace]
-        :keyword next_link: The URI that can be used to request the next list of machine learning
-         workspaces.
-        :paramtype next_link: str
         """
         super(WorkspaceListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
         self.next_link = kwargs.get('next_link', None)
+        self.value = kwargs.get('value', None)
+
+
+class WorkspacePrivateEndpointResource(msrest.serialization.Model):
+    """The Private Endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: e.g.
+     /subscriptions/{networkSubscriptionId}/resourceGroups/{rgName}/providers/Microsoft.Network/privateEndpoints/{privateEndpointName}.
+    :vartype id: str
+    :ivar subnet_arm_id: The subnetId that the private endpoint is connected to.
+    :vartype subnet_arm_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'subnet_arm_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'subnet_arm_id': {'key': 'subnetArmId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(WorkspacePrivateEndpointResource, self).__init__(**kwargs)
+        self.id = None
+        self.subnet_arm_id = None
 
 
 class WorkspaceUpdateParameters(msrest.serialization.Model):
     """The parameters for updating a machine learning workspace.
 
+    :ivar identity: Managed service identity (system assigned and/or user assigned identities).
+    :vartype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
+    :ivar sku: Optional. This field is required to be implemented by the RP because AML is
+     supporting more than one tier.
+    :vartype sku: ~azure.mgmt.machinelearningservices.models.Sku
     :ivar tags: A set of tags. The resource tags for the machine learning workspace.
     :vartype tags: dict[str, str]
-    :ivar sku: The sku of the workspace.
-    :vartype sku: ~azure.mgmt.machinelearningservices.models.Sku
-    :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
-    :ivar description: The description of this workspace.
-    :vartype description: str
-    :ivar friendly_name: The friendly name for this workspace.
-    :vartype friendly_name: str
-    :ivar image_build_compute: The compute name for image build.
-    :vartype image_build_compute: str
-    :ivar service_managed_resources_settings: The service managed resource settings.
-    :vartype service_managed_resources_settings:
-     ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
-    :ivar primary_user_assigned_identity: The user assigned identity resource id that represents
-     the workspace identity.
-    :vartype primary_user_assigned_identity: str
-    :ivar serverless_compute_settings: Settings for serverless compute created in the workspace.
-    :vartype serverless_compute_settings:
-     ~azure.mgmt.machinelearningservices.models.ServerlessComputeSettings
-    :ivar public_network_access: Whether requests from Public Network are allowed. Possible values
-     include: "Enabled", "Disabled".
-    :vartype public_network_access: str or
-     ~azure.mgmt.machinelearningservices.models.PublicNetworkAccess
+    :ivar allow_role_assignment_on_rg:
+    :vartype allow_role_assignment_on_rg: bool
     :ivar application_insights: ARM id of the application insights associated with this workspace.
     :vartype application_insights: str
     :ivar container_registry: ARM id of the container registry associated with this workspace.
     :vartype container_registry: str
+    :ivar description: The description of this workspace.
+    :vartype description: str
+    :ivar enable_data_isolation:
+    :vartype enable_data_isolation: bool
+    :ivar enable_software_bill_of_materials: Flag to tell if SoftwareBillOfMaterials should be
+     enabled for this workspace.
+    :vartype enable_software_bill_of_materials: bool
+    :ivar encryption:
+    :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
     :ivar feature_store_settings: Settings for feature store type workspace.
     :vartype feature_store_settings:
      ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+    :ivar friendly_name: The friendly name for this workspace. This name in mutable.
+    :vartype friendly_name: str
+    :ivar image_build_compute: The compute name for image build.
+    :vartype image_build_compute: str
+    :ivar ip_allowlist: The list of IPv4 addresses that are allowed to access the workspace.
+    :vartype ip_allowlist: list[str]
     :ivar managed_network: Managed Network settings for a machine learning workspace.
     :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
-    :ivar enable_data_isolation:
-    :vartype enable_data_isolation: bool
+    :ivar primary_user_assigned_identity: The user assigned identity resource id that represents
+     the workspace identity.
+    :vartype primary_user_assigned_identity: str
+    :ivar public_network_access: Whether requests from Public Network are allowed. Possible values
+     include: "Enabled", "Disabled".
+    :vartype public_network_access: str or
+     ~azure.mgmt.machinelearningservices.models.PublicNetworkAccessType
+    :ivar serverless_compute_settings: Settings for serverless compute in a workspace.
+    :vartype serverless_compute_settings:
+     ~azure.mgmt.machinelearningservices.models.ServerlessComputeSettings
+    :ivar service_managed_resources_settings: The service managed resource settings.
+    :vartype service_managed_resources_settings:
+     ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
+    :ivar soft_delete_retention_in_days: Retention time in days after workspace get soft deleted.
+    :vartype soft_delete_retention_in_days: int
+    :ivar system_datastores_auth_mode: The auth mode used for accessing the system datastores of
+     the workspace.
+    :vartype system_datastores_auth_mode: str
     :ivar v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided by
      the v2 API.
     :vartype v1_legacy_mode: bool
-    :ivar encryption:
-    :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
         'identity': {'key': 'identity', 'type': 'ManagedServiceIdentity'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
-        'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
-        'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
-        'serverless_compute_settings': {'key': 'properties.serverlessComputeSettings', 'type': 'ServerlessComputeSettings'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'allow_role_assignment_on_rg': {'key': 'properties.allowRoleAssignmentOnRG', 'type': 'bool'},
         'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
         'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
-        'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
-        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
+        'description': {'key': 'properties.description', 'type': 'str'},
         'enable_data_isolation': {'key': 'properties.enableDataIsolation', 'type': 'bool'},
-        'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
+        'enable_software_bill_of_materials': {'key': 'properties.enableSoftwareBillOfMaterials', 'type': 'bool'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionUpdateProperties'},
+        'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
+        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
+        'ip_allowlist': {'key': 'properties.ipAllowlist', 'type': '[str]'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
+        'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
+        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'serverless_compute_settings': {'key': 'properties.serverlessComputeSettings', 'type': 'ServerlessComputeSettings'},
+        'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
+        'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
+        'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
+        'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
     }
 
     def __init__(
@@ -28222,64 +31228,83 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
+        :keyword identity: Managed service identity (system assigned and/or user assigned identities).
+        :paramtype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
+        :keyword sku: Optional. This field is required to be implemented by the RP because AML is
+         supporting more than one tier.
+        :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
         :keyword tags: A set of tags. The resource tags for the machine learning workspace.
         :paramtype tags: dict[str, str]
-        :keyword sku: The sku of the workspace.
-        :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
-        :keyword identity: The identity of the resource.
-        :paramtype identity: ~azure.mgmt.machinelearningservices.models.ManagedServiceIdentity
-        :keyword description: The description of this workspace.
-        :paramtype description: str
-        :keyword friendly_name: The friendly name for this workspace.
-        :paramtype friendly_name: str
-        :keyword image_build_compute: The compute name for image build.
-        :paramtype image_build_compute: str
-        :keyword service_managed_resources_settings: The service managed resource settings.
-        :paramtype service_managed_resources_settings:
-         ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
-        :keyword primary_user_assigned_identity: The user assigned identity resource id that represents
-         the workspace identity.
-        :paramtype primary_user_assigned_identity: str
-        :keyword serverless_compute_settings: Settings for serverless compute created in the workspace.
-        :paramtype serverless_compute_settings:
-         ~azure.mgmt.machinelearningservices.models.ServerlessComputeSettings
-        :keyword public_network_access: Whether requests from Public Network are allowed. Possible
-         values include: "Enabled", "Disabled".
-        :paramtype public_network_access: str or
-         ~azure.mgmt.machinelearningservices.models.PublicNetworkAccess
+        :keyword allow_role_assignment_on_rg:
+        :paramtype allow_role_assignment_on_rg: bool
         :keyword application_insights: ARM id of the application insights associated with this
          workspace.
         :paramtype application_insights: str
         :keyword container_registry: ARM id of the container registry associated with this workspace.
         :paramtype container_registry: str
+        :keyword description: The description of this workspace.
+        :paramtype description: str
+        :keyword enable_data_isolation:
+        :paramtype enable_data_isolation: bool
+        :keyword enable_software_bill_of_materials: Flag to tell if SoftwareBillOfMaterials should be
+         enabled for this workspace.
+        :paramtype enable_software_bill_of_materials: bool
+        :keyword encryption:
+        :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
         :keyword feature_store_settings: Settings for feature store type workspace.
         :paramtype feature_store_settings:
          ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+        :keyword friendly_name: The friendly name for this workspace. This name in mutable.
+        :paramtype friendly_name: str
+        :keyword image_build_compute: The compute name for image build.
+        :paramtype image_build_compute: str
+        :keyword ip_allowlist: The list of IPv4 addresses that are allowed to access the workspace.
+        :paramtype ip_allowlist: list[str]
         :keyword managed_network: Managed Network settings for a machine learning workspace.
         :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
-        :keyword enable_data_isolation:
-        :paramtype enable_data_isolation: bool
+        :keyword primary_user_assigned_identity: The user assigned identity resource id that represents
+         the workspace identity.
+        :paramtype primary_user_assigned_identity: str
+        :keyword public_network_access: Whether requests from Public Network are allowed. Possible
+         values include: "Enabled", "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.machinelearningservices.models.PublicNetworkAccessType
+        :keyword serverless_compute_settings: Settings for serverless compute in a workspace.
+        :paramtype serverless_compute_settings:
+         ~azure.mgmt.machinelearningservices.models.ServerlessComputeSettings
+        :keyword service_managed_resources_settings: The service managed resource settings.
+        :paramtype service_managed_resources_settings:
+         ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
+        :keyword soft_delete_retention_in_days: Retention time in days after workspace get soft
+         deleted.
+        :paramtype soft_delete_retention_in_days: int
+        :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
+         the workspace.
+        :paramtype system_datastores_auth_mode: str
         :keyword v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided
          by the v2 API.
         :paramtype v1_legacy_mode: bool
-        :keyword encryption:
-        :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
         """
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
-        self.tags = kwargs.get('tags', None)
-        self.sku = kwargs.get('sku', None)
         self.identity = kwargs.get('identity', None)
-        self.description = kwargs.get('description', None)
-        self.friendly_name = kwargs.get('friendly_name', None)
-        self.image_build_compute = kwargs.get('image_build_compute', None)
-        self.service_managed_resources_settings = kwargs.get('service_managed_resources_settings', None)
-        self.primary_user_assigned_identity = kwargs.get('primary_user_assigned_identity', None)
-        self.serverless_compute_settings = kwargs.get('serverless_compute_settings', None)
-        self.public_network_access = kwargs.get('public_network_access', None)
+        self.sku = kwargs.get('sku', None)
+        self.tags = kwargs.get('tags', None)
+        self.allow_role_assignment_on_rg = kwargs.get('allow_role_assignment_on_rg', None)
         self.application_insights = kwargs.get('application_insights', None)
         self.container_registry = kwargs.get('container_registry', None)
-        self.feature_store_settings = kwargs.get('feature_store_settings', None)
-        self.managed_network = kwargs.get('managed_network', None)
+        self.description = kwargs.get('description', None)
         self.enable_data_isolation = kwargs.get('enable_data_isolation', None)
-        self.v1_legacy_mode = kwargs.get('v1_legacy_mode', None)
+        self.enable_software_bill_of_materials = kwargs.get('enable_software_bill_of_materials', None)
         self.encryption = kwargs.get('encryption', None)
+        self.feature_store_settings = kwargs.get('feature_store_settings', None)
+        self.friendly_name = kwargs.get('friendly_name', None)
+        self.image_build_compute = kwargs.get('image_build_compute', None)
+        self.ip_allowlist = kwargs.get('ip_allowlist', None)
+        self.managed_network = kwargs.get('managed_network', None)
+        self.primary_user_assigned_identity = kwargs.get('primary_user_assigned_identity', None)
+        self.public_network_access = kwargs.get('public_network_access', None)
+        self.serverless_compute_settings = kwargs.get('serverless_compute_settings', None)
+        self.service_managed_resources_settings = kwargs.get('service_managed_resources_settings', None)
+        self.soft_delete_retention_in_days = kwargs.get('soft_delete_retention_in_days', None)
+        self.system_datastores_auth_mode = kwargs.get('system_datastores_auth_mode', None)
+        self.v1_legacy_mode = kwargs.get('v1_legacy_mode', None)

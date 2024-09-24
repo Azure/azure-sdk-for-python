@@ -7,7 +7,7 @@ from typing import Any, Optional, Callable, Union, Dict
 
 import msal
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
 
 from .certificate import get_client_credential
@@ -48,6 +48,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
+    :keyword bool send_certificate_chain: If True when **client_certificate** is provided, the credential will send
+        the public certificate chain in the x5c header of each token request's JWT. This is required for Subject
+        Name/Issuer (SNI) authentication. Defaults to False.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
         to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
         This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
@@ -78,6 +81,8 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         client_secret: Optional[str] = None,
         client_assertion_func: Optional[Callable[[], str]] = None,
         user_assertion: str,
+        password: Optional[Union[bytes, str]] = None,
+        send_certificate_chain: bool = False,
         **kwargs: Any
     ) -> None:
         self._assertion = user_assertion
@@ -98,7 +103,10 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 raise ValueError('Specifying both "client_certificate" and "client_secret" is not valid.')
             try:
                 credential = get_client_credential(
-                    certificate_path=None, password=kwargs.pop("password", None), certificate_data=client_certificate
+                    certificate_path=None,
+                    password=password,
+                    certificate_data=client_certificate,
+                    send_certificate_chain=send_certificate_chain,
                 )
             except ValueError as ex:
                 # client_certificate isn't a valid cert.
@@ -115,7 +123,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         self._auth_record: Optional[AuthenticationRecord] = None
 
     @wrap_exceptions
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
         if self._auth_record:
             claims = kwargs.get("claims")
             app = self._get_app(**kwargs)
@@ -126,12 +134,15 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 now = int(time.time())
                 result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
                 if result and "access_token" in result and "expires_in" in result:
-                    return AccessToken(result["access_token"], now + int(result["expires_in"]))
+                    refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
+                    return AccessTokenInfo(
+                        result["access_token"], now + int(result["expires_in"]), refresh_on=refresh_on
+                    )
 
         return None
 
     @wrap_exceptions
-    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         app: msal.ConfidentialClientApplication = self._get_app(**kwargs)
         request_time = int(time.time())
         result = app.acquire_token_on_behalf_of(self._assertion, list(scopes), claims_challenge=kwargs.get("claims"))
@@ -145,4 +156,5 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         except ClientAuthenticationError:
             pass  # non-fatal; we'll use the assertion again next time instead of a refresh token
 
-        return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
+        refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
+        return AccessTokenInfo(result["access_token"], request_time + int(result["expires_in"]), refresh_on=refresh_on)

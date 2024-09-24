@@ -1412,6 +1412,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         """
         if len(blobs) == 0:
             return iter([])
+        if self._is_localhost:
+            kwargs['url_prepend'] = self.account_name
 
         reqs, options = _generate_delete_blobs_options(
             self._query_str,
@@ -1494,6 +1496,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :return: An iterator of responses, one for each blob in order
         :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
+        if self._is_localhost:
+            kwargs['url_prepend'] = self.account_name
         reqs, options = _generate_set_tiers_options(
             self._query_str,
             self.container_name,
@@ -1553,6 +1557,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :return: An iterator of responses, one for each blob in order
         :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
+        if self._is_localhost:
+            kwargs['url_prepend'] = self.account_name
         reqs, options = _generate_set_tiers_options(
             self._query_str,
             self.container_name,

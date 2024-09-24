@@ -4,7 +4,7 @@ extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: servicebus
-      TestTimeoutInMinutes: 480
+      TestTimeoutInMinutes: 960
       UseFederatedAuth: true
       BuildTargetingString: azure-servicebus*
       EnvVars:
@@ -30,8 +30,3 @@ extends:
           SubscriptionConfigurationFilePaths:
             - eng/common/TestResources/sub-config/AzureUsGovMsft.json
           Location: 'usgovarizona'
-        China:
-          ServiceConnection: china_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureChinaMsft.json
-          Location: 'chinanorth3'

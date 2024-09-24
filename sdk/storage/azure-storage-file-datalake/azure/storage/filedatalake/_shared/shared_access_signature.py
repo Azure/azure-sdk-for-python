@@ -107,8 +107,17 @@ class SharedAccessSignature(object):
         self.account_key = account_key
         self.x_ms_version = x_ms_version
 
-    def generate_account(self, services, resource_types, permission, expiry, start=None,
-                         ip=None, protocol=None, **kwargs) -> str:
+    def generate_account(
+        self, services,
+        resource_types,
+        permission,
+        expiry,
+        start=None,
+        ip=None,
+        protocol=None,
+        sts_hook=None,
+        **kwargs
+    ) -> str:
         '''
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service
@@ -152,6 +161,10 @@ class SharedAccessSignature(object):
         :keyword str encryption_scope:
             Optional. If specified, this is the encryption scope to use when sending requests
             authorized with this SAS URI.
+        :param sts_hook:
+            For debugging purposes only. If provided, the hook is called with the string to sign
+            that was used to generate the SAS.
+        :type sts_hook: Optional[Callable[[str], None]]
         :returns: The generated SAS token for the account.
         :rtype: str
         '''
@@ -161,12 +174,16 @@ class SharedAccessSignature(object):
         sas.add_encryption_scope(**kwargs)
         sas.add_account_signature(self.account_name, self.account_key)
 
+        if sts_hook is not None:
+            sts_hook(sas.string_to_sign)
+
         return sas.get_token()
 
 
 class _SharedAccessHelper(object):
     def __init__(self):
         self.query_dict = {}
+        self.string_to_sign = ""
 
     def _add_query(self, name, val):
         if val:
@@ -229,6 +246,7 @@ class _SharedAccessHelper(object):
 
         self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
                         sign_string(account_key, string_to_sign))
+        self.string_to_sign = string_to_sign
 
     def get_token(self) -> str:
         return '&'.join([f'{n}={url_quote(v)}' for n, v in self.query_dict.items() if v is not None])

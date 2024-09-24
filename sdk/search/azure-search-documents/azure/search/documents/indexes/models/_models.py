@@ -5,9 +5,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional, MutableMapping
+from typing import Any, List, Optional, MutableMapping, Dict, Callable
 from enum import Enum
+from typing_extensions import Self
 from azure.core import CaseInsensitiveEnumMeta
+from .._generated import _serialization
 from .._generated.models import (
     LexicalAnalyzer,
     LexicalTokenizer,
@@ -26,13 +28,17 @@ from .._generated.models import (
     AzureActiveDirectoryApplicationCredentials,
     CognitiveServicesAccount,
     SearchIndexerKnowledgeStore,
-    SearchIndexerIndexProjections,
+    SearchIndexerIndexProjection,
+    SearchIndexerDataContainer,
+    DataChangeDetectionPolicy,
+    DataDeletionDetectionPolicy,
+    SearchIndexerDataIdentity,
 )
 
 DELIMITER = "|"
 
 
-class SearchIndexerSkillset:
+class SearchIndexerSkillset(_serialization.Model):
     """A list of skills.
 
     All required parameters must be populated in order to send to Azure.
@@ -49,8 +55,8 @@ class SearchIndexerSkillset:
     :ivar knowledge_store: Definition of additional projections to Azure blob, table, or files, of
      enriched data.
     :vartype knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
-    :ivar index_projections: Definition of additional projections to secondary search index(es).
-    :vartype index_projections: ~azure.search.documents.indexes.models.SearchIndexerIndexProjections
+    :ivar index_projection: Definition of additional projections to secondary search index(es).
+    :vartype index_projection: ~azure.search.documents.indexes.models.SearchIndexerIndexProjection
     :ivar e_tag: The ETag of the skillset.
     :vartype e_tag: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -72,18 +78,18 @@ class SearchIndexerSkillset:
         description: Optional[str] = None,
         cognitive_services_account: Optional["CognitiveServicesAccount"] = None,
         knowledge_store: Optional["SearchIndexerKnowledgeStore"] = None,
-        index_projections: Optional["SearchIndexerIndexProjections"] = None,
+        index_projection: Optional["SearchIndexerIndexProjection"] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["SearchResourceEncryptionKey"] = None,
         **kwargs: Any
     ) -> None:
-        # pylint:disable=unused-argument
+        super().__init__(**kwargs)
         self.name = name
         self.description = description
         self.skills = skills
         self.cognitive_services_account = cognitive_services_account
         self.knowledge_store = knowledge_store
-        self.index_projections = index_projections
+        self.index_projection = index_projection
         self.e_tag = e_tag
         self.encryption_key = encryption_key
 
@@ -101,13 +107,15 @@ class SearchIndexerSkillset:
             skills=generated_skills,
             cognitive_services_account=getattr(self, "cognitive_services_account", None),
             knowledge_store=getattr(self, "knowledge_store", None),
-            index_projections=getattr(self, "index_projections", None),
+            index_projection=getattr(self, "index_projection", None),
             e_tag=getattr(self, "e_tag", None),
             encryption_key=getattr(self, "encryption_key", None),
         )
 
     @classmethod
-    def _from_generated(cls, skillset) -> "SearchIndexerSkillset":
+    def _from_generated(cls, skillset) -> Optional[Self]:
+        if not skillset:
+            return None
         custom_skills = []
         for skill in skillset.skills:
             skill_cls = type(skill)
@@ -131,7 +139,7 @@ class SearchIndexerSkillset:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndexerSkillset":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchIndexerSkillset instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -142,53 +150,46 @@ class SearchIndexerSkillset:
         """
         return cls._from_generated(_SearchIndexerSkillset.deserialize(data, content_type=content_type))
 
-    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
+        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "SearchIndexerSkillset":
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
+        By default consider key
+        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
+        and last_rest_key_case_insensitive_extractor)
+
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndexerSkillset instance
         :rtype: SearchIndexerSkillset
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchIndexerSkillset.from_dict(data, content_type=content_type))
-
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
+        return cls._from_generated(
+            _SearchIndexerSkillset.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+        )
 
 
 class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -428,7 +429,7 @@ class SentimentSkill(SearchIndexerSkill):
         return None
 
 
-class AnalyzeTextOptions:
+class AnalyzeTextOptions(_serialization.Model):
     """Specifies some text and analysis components used to break that text into tokens.
 
     All required parameters must be populated in order to send to Azure.
@@ -469,13 +470,24 @@ class AnalyzeTextOptions:
     :vartype char_filters: list[str]
     """
 
-    def __init__(self, **kwargs):
-        self.text = kwargs["text"]
-        self.analyzer_name = kwargs.get("analyzer_name", None)
-        self.tokenizer_name = kwargs.get("tokenizer_name", None)
-        self.normalizer_name = kwargs.get("normalizer_name", None)
-        self.token_filters = kwargs.get("token_filters", None)
-        self.char_filters = kwargs.get("char_filters", None)
+    def __init__(
+        self,
+        *,
+        text: str,
+        analyzer_name: Optional[str] = None,
+        tokenizer_name: Optional[str] = None,
+        normalizer_name: Optional[str] = None,
+        token_filters: Optional[List[str]] = None,
+        char_filters: Optional[List[str]] = None,
+        **kwargs
+    ):
+        super().__init__(**kwargs)
+        self.text = text
+        self.analyzer_name = analyzer_name
+        self.tokenizer_name = tokenizer_name
+        self.normalizer_name = normalizer_name
+        self.token_filters = token_filters
+        self.char_filters = char_filters
 
     def _to_analyze_request(self):
         return AnalyzeRequest(
@@ -488,7 +500,9 @@ class AnalyzeTextOptions:
         )
 
     @classmethod
-    def _from_analyze_request(cls, analyze_request) -> "AnalyzeTextOptions":
+    def _from_analyze_request(cls, analyze_request) -> Optional[Self]:
+        if not analyze_request:
+            return None
         return cls(
             text=analyze_request.text,
             analyzer_name=analyze_request.analyzer,
@@ -507,7 +521,7 @@ class AnalyzeTextOptions:
         return self._to_analyze_request().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "AnalyzeTextOptions":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a AnalyzeTextOptions instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -518,53 +532,46 @@ class AnalyzeTextOptions:
         """
         return cls._from_analyze_request(AnalyzeRequest.deserialize(data, content_type=content_type))
 
-    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_analyze_request().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return self._to_analyze_request().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
+        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "AnalyzeTextOptions":
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
+        By default consider key
+        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
+        and last_rest_key_case_insensitive_extractor)
+
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A AnalyzeTextOptions instance
         :rtype: AnalyzeTextOptions
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_analyze_request(AnalyzeRequest.from_dict(data, content_type=content_type))
-
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
+        return cls._from_analyze_request(
+            AnalyzeRequest.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+        )
 
 
 class CustomAnalyzer(LexicalAnalyzer):
@@ -597,20 +604,6 @@ class CustomAnalyzer(LexicalAnalyzer):
      filters are run in the order in which they are listed.
     :vartype char_filters: list[str]
     """
-
-    _validation = {
-        "odata_type": {"required": True},
-        "name": {"required": True},
-        "tokenizer_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "tokenizer_name": {"key": "tokenizerName", "type": "str"},
-        "token_filters": {"key": "tokenFilters", "type": "[str]"},
-        "char_filters": {"key": "charFilters", "type": "[str]"},
-    }
 
     def __init__(self, **kwargs):
         super(CustomAnalyzer, self).__init__(**kwargs)
@@ -780,7 +773,7 @@ class PatternTokenizer(LexicalTokenizer):
         )
 
 
-class SearchResourceEncryptionKey:
+class SearchResourceEncryptionKey(_serialization.Model):
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
     used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym maps.
 
@@ -804,12 +797,22 @@ class SearchResourceEncryptionKey:
     :vartype application_secret: str
     """
 
-    def __init__(self, **kwargs):
-        self.key_name = kwargs["key_name"]
-        self.key_version = kwargs["key_version"]
-        self.vault_uri = kwargs["vault_uri"]
-        self.application_id = kwargs.get("application_id", None)
-        self.application_secret = kwargs.get("application_secret", None)
+    def __init__(
+        self,
+        *,
+        key_name: str,
+        key_version: str,
+        vault_uri: str,
+        application_id: Optional[str] = None,
+        application_secret: Optional[str] = None,
+        **kwargs
+    ):
+        super().__init__(**kwargs)
+        self.key_name = key_name
+        self.key_version = key_version
+        self.vault_uri = vault_uri
+        self.application_id = application_id
+        self.application_secret = application_secret
 
     def _to_generated(self):
         if self.application_id and self.application_secret:
@@ -827,7 +830,7 @@ class SearchResourceEncryptionKey:
         )
 
     @classmethod
-    def _from_generated(cls, search_resource_encryption_key) -> Optional["SearchResourceEncryptionKey"]:
+    def _from_generated(cls, search_resource_encryption_key) -> Optional[Self]:
         if not search_resource_encryption_key:
             return None
         if search_resource_encryption_key.access_credentials:
@@ -853,7 +856,7 @@ class SearchResourceEncryptionKey:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional["SearchResourceEncryptionKey"]:
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchResourceEncryptionKey instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -865,56 +868,49 @@ class SearchResourceEncryptionKey:
             _SearchResourceEncryptionKey.deserialize(data, content_type=content_type)
         )
 
-    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
+        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> Optional["SearchResourceEncryptionKey"]:
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
+        By default consider key
+        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
+        and last_rest_key_case_insensitive_extractor)
+
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchResourceEncryptionKey instance
         :rtype: SearchResourceEncryptionKey
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchResourceEncryptionKey.from_dict(data, content_type=content_type))
-
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
+        return cls._from_generated(
+            _SearchResourceEncryptionKey.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+        )
 
 
-class SynonymMap:
+class SynonymMap(_serialization.Model):
     """Represents a synonym map definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -944,11 +940,20 @@ class SynonymMap:
 
     format = "solr"
 
-    def __init__(self, **kwargs):
-        self.name = kwargs["name"]
-        self.synonyms = kwargs["synonyms"]
-        self.encryption_key = kwargs.get("encryption_key", None)
-        self.e_tag = kwargs.get("e_tag", None)
+    def __init__(
+        self,
+        *,
+        name: str,
+        synonyms: List[str],
+        encryption_key: Optional[SearchResourceEncryptionKey] = None,
+        e_tag: Optional[str] = None,
+        **kwargs
+    ):
+        super().__init__(**kwargs)
+        self.name = name
+        self.synonyms = synonyms
+        self.encryption_key = encryption_key
+        self.e_tag = e_tag
 
     def _to_generated(self):
         return _SynonymMap(
@@ -961,7 +966,9 @@ class SynonymMap:
         )
 
     @classmethod
-    def _from_generated(cls, synonym_map) -> "SynonymMap":
+    def _from_generated(cls, synonym_map) -> Optional[Self]:
+        if not synonym_map:
+            return None
         return cls(
             name=synonym_map.name,
             synonyms=synonym_map.synonyms.split("\n"),
@@ -979,7 +986,7 @@ class SynonymMap:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SynonymMap":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SynonymMap instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -990,56 +997,49 @@ class SynonymMap:
         """
         return cls._from_generated(_SynonymMap.deserialize(data, content_type=content_type))
 
-    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
+        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "SynonymMap":
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
+        By default consider key
+        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
+        and last_rest_key_case_insensitive_extractor)
+
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SynonymMap instance
         :rtype: SynonymMap
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SynonymMap.from_dict(data, content_type=content_type))
-
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
+        return cls._from_generated(
+            _SynonymMap.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+        )
 
 
-class SearchIndexerDataSourceConnection:
+class SearchIndexerDataSourceConnection(_serialization.Model):
     """Represents a datasource connection definition, which can be used to configure an indexer.
 
     All required parameters must be populated in order to send to Azure.
@@ -1055,6 +1055,11 @@ class SearchIndexerDataSourceConnection:
     :vartype connection_string: str
     :ivar container: Required. The data container for the datasource connection.
     :vartype container: ~azure.search.documents.indexes.models.SearchIndexerDataContainer
+    :ivar identity: An explicit managed identity to use for this datasource. If not specified and
+     the connection string is a managed identity, the system-assigned managed identity is used. If
+     not specified, the value remains unchanged. If "none" is specified, the value of this property
+     is cleared.
+    :vartype identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
     :ivar data_change_detection_policy: The data change detection policy for the datasource connection.
     :vartype data_change_detection_policy: ~azure.search.documents.models.DataChangeDetectionPolicy
     :ivar data_deletion_detection_policy: The data deletion detection policy for the datasource connection.
@@ -1074,17 +1079,32 @@ class SearchIndexerDataSourceConnection:
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
-    def __init__(self, **kwargs):
-        self.name = kwargs["name"]
-        self.description = kwargs.get("description", None)
-        self.type = kwargs["type"]
-        self.connection_string = kwargs["connection_string"]
-        self.container = kwargs["container"]
-        self.data_change_detection_policy = kwargs.get("data_change_detection_policy", None)
-        self.data_deletion_detection_policy = kwargs.get("data_deletion_detection_policy", None)
-        self.e_tag = kwargs.get("e_tag", None)
-        self.encryption_key = kwargs.get("encryption_key", None)
-        self.identity = kwargs.get("identity", None)
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: Optional[str] = None,
+        type: str,
+        connection_string: str,
+        container: SearchIndexerDataContainer,
+        identity: Optional[SearchIndexerDataIdentity] = None,
+        data_change_detection_policy: Optional[DataChangeDetectionPolicy] = None,
+        data_deletion_detection_policy: Optional[DataDeletionDetectionPolicy] = None,
+        e_tag: Optional[str] = None,
+        encryption_key: Optional[SearchResourceEncryptionKey] = None,
+        **kwargs
+    ):
+        super().__init__(**kwargs)
+        self.name = name
+        self.description = description
+        self.type = type
+        self.connection_string = connection_string
+        self.container = container
+        self.identity = identity
+        self.data_change_detection_policy = data_change_detection_policy
+        self.data_deletion_detection_policy = data_deletion_detection_policy
+        self.e_tag = e_tag
+        self.encryption_key = encryption_key
 
     def _to_generated(self):
         if self.connection_string is None or self.connection_string == "":
@@ -1101,12 +1121,16 @@ class SearchIndexerDataSourceConnection:
             data_change_detection_policy=self.data_change_detection_policy,
             data_deletion_detection_policy=self.data_deletion_detection_policy,
             e_tag=self.e_tag,
-            encryption_key=self.encryption_key,
+            encryption_key=(
+                self.encryption_key._to_generated() if self.encryption_key else None  # pylint: disable=protected-access
+            ),
             identity=self.identity,
         )
 
     @classmethod
-    def _from_generated(cls, search_indexer_data_source) -> "SearchIndexerDataSourceConnection":
+    def _from_generated(cls, search_indexer_data_source) -> Optional[Self]:
+        if not search_indexer_data_source:
+            return None
         connection_string = (
             search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
         )
@@ -1119,7 +1143,13 @@ class SearchIndexerDataSourceConnection:
             data_change_detection_policy=search_indexer_data_source.data_change_detection_policy,
             data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
             e_tag=search_indexer_data_source.e_tag,
-            encryption_key=search_indexer_data_source.encryption_key,
+            encryption_key=(
+                SearchResourceEncryptionKey._from_generated(  # pylint: disable=protected-access
+                    search_indexer_data_source.encryption_key
+                )
+                if search_indexer_data_source.encryption_key
+                else None
+            ),
             identity=search_indexer_data_source.identity,
         )
 
@@ -1132,7 +1162,7 @@ class SearchIndexerDataSourceConnection:
         return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> "SearchIndexerDataSourceConnection":
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
         """Parse a str using the RestAPI syntax and return a SearchIndexerDataSourceConnection instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
@@ -1143,53 +1173,46 @@ class SearchIndexerDataSourceConnection:
         """
         return cls._from_generated(_SearchIndexerDataSource.deserialize(data, content_type=content_type))
 
-    def as_dict(self, keep_readonly: bool = True, **kwargs: Any) -> MutableMapping[str, Any]:
+    def as_dict(
+        self,
+        keep_readonly: bool = True,
+        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
+        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return self._to_generated().as_dict(  # type: ignore
+            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
+        )
 
     @classmethod
-    def from_dict(
+    def from_dict(  # type: ignore
         cls,
         data: Any,
+        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
         content_type: Optional[str] = None,
-    ) -> "SearchIndexerDataSourceConnection":
+    ) -> Optional[Self]:
         """Parse a dict using given key extractor return a model.
 
+        By default consider key
+        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
+        and last_rest_key_case_insensitive_extractor)
+
         :param dict data: A dict using RestAPI structure
+        :param Callable key_extractors: A callable that will extract a key from a dict
         :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndexerDataSourceConnection instance
         :rtype: SearchIndexerDataSourceConnection
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchIndexerDataSource.from_dict(data, content_type=content_type))
-
-    def __eq__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: True if all attributes are equal, else False
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
-
-    def __ne__(self, other: Any) -> bool:
-        """Compare objects by comparing all attributes.
-
-        :param Any other: the object to compare with
-        :returns: False if all attributes are equal, else True
-        :rtype: bool
-        """
-        return not self.__eq__(other)
-
-    def __str__(self) -> str:
-        return str(self.__dict__)
+        return cls._from_generated(
+            _SearchIndexerDataSource.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+        )
 
 
 def pack_analyzer(analyzer):
