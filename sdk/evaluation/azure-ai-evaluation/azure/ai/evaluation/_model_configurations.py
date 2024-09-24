@@ -25,3 +25,7 @@ class AzureAIProject(TypedDict):
     subscription_id: str
     resource_group_name: str
     project_name: str
+
+
+class EvaluatorConfig(TypedDict, total=False):
+    column_mapping: Dict[str, str]
