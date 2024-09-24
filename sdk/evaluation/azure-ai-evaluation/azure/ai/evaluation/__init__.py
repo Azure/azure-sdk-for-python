@@ -58,4 +58,5 @@ __all__ = [
     "AzureAIProject",
     "AzureOpenAIModelConfiguration",
     "OpenAIModelConfiguration",
+    "EvaluatorConfig",
 ]
