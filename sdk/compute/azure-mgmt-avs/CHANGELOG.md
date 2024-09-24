@@ -4,91 +4,71 @@
 
 ### Features Added
 
-  - Added operation WorkloadNetworksOperations.list_public_ips
-  - Added operation group IscsiPathsOperations
-  - Model Addon has a new parameter system_data
-  - Model CloudLink has a new parameter provisioning_state
-  - Model CloudLink has a new parameter system_data
-  - Model Cluster has a new parameter system_data
-  - Model Cluster has a new parameter vsan_datastore_name
-  - Model ClusterUpdate has a new parameter sku
-  - Model Datastore has a new parameter elastic_san_volume
-  - Model Datastore has a new parameter system_data
-  - Model Endpoints has a new parameter hcx_cloud_manager_ip
-  - Model Endpoints has a new parameter nsxt_manager_ip
-  - Model Endpoints has a new parameter vcenter_ip
-  - Model ExpressRouteAuthorization has a new parameter system_data
-  - Model GlobalReachConnection has a new parameter system_data
-  - Model HcxEnterpriseSite has a new parameter provisioning_state
-  - Model HcxEnterpriseSite has a new parameter system_data
-  - Model ManagementCluster has a new parameter vsan_datastore_name
-  - Model Operation has a new parameter action_type
-  - Model PlacementPolicy has a new parameter system_data
-  - Model PrivateCloud has a new parameter dns_zone_type
-  - Model PrivateCloud has a new parameter system_data
-  - Model PrivateCloud has a new parameter virtual_network_id
-  - Model PrivateCloudUpdate has a new parameter dns_zone_type
-  - Model PrivateCloudUpdate has a new parameter sku
-  - Model ProxyResource has a new parameter system_data
-  - Model Resource has a new parameter system_data
-  - Model ScriptCmdlet has a new parameter audience
-  - Model ScriptCmdlet has a new parameter provisioning_state
-  - Model ScriptCmdlet has a new parameter system_data
-  - Model ScriptExecution has a new parameter system_data
-  - Model ScriptPackage has a new parameter provisioning_state
-  - Model ScriptPackage has a new parameter system_data
-  - Model Sku has a new parameter capacity
-  - Model Sku has a new parameter family
-  - Model Sku has a new parameter size
-  - Model Sku has a new parameter tier
-  - Model TrackedResource has a new parameter system_data
-  - Model VirtualMachine has a new parameter provisioning_state
-  - Model VirtualMachine has a new parameter system_data
-  - Model WorkloadNetwork has a new parameter provisioning_state
-  - Model WorkloadNetwork has a new parameter system_data
-  - Model WorkloadNetworkDhcp has a new parameter system_data
-  - Model WorkloadNetworkDnsService has a new parameter system_data
-  - Model WorkloadNetworkDnsZone has a new parameter system_data
-  - Model WorkloadNetworkGateway has a new parameter provisioning_state
-  - Model WorkloadNetworkGateway has a new parameter system_data
-  - Model WorkloadNetworkPortMirroring has a new parameter system_data
-  - Model WorkloadNetworkPublicIP has a new parameter system_data
-  - Model WorkloadNetworkSegment has a new parameter system_data
-  - Model WorkloadNetworkVMGroup has a new parameter system_data
-  - Model WorkloadNetworkVirtualMachine has a new parameter provisioning_state
-  - Model WorkloadNetworkVirtualMachine has a new parameter system_data
+  - Client `AVSClient` added operation group `iscsi_paths`
+  - Model `CloudLink` added property `provisioning_state`
+  - Model `Cluster` added property `vsan_datastore_name`
+  - Model `ClusterUpdate` added property `sku`
+  - Model `Datastore` added property `elastic_san_volume`
+  - Model `Endpoints` added property `nsxt_manager_ip`
+  - Model `Endpoints` added property `vcenter_ip`
+  - Model `Endpoints` added property `hcx_cloud_manager_ip`
+  - Model `HcxEnterpriseSite` added property `provisioning_state`
+  - Model `ManagementCluster` added parameter `vsan_datastore_name` in method `__init__`
+  - Model `Operation` added property `action_type`
+  - Model `PrivateCloud` added property `virtual_network_id`
+  - Model `PrivateCloud` added property `dns_zone_type`
+  - Model `PrivateCloudUpdate` added property `sku`
+  - Model `PrivateCloudUpdate` added property `dns_zone_type`
+  - Model `Resource` added property `system_data`
+  - Model `ScriptCmdlet` added property `provisioning_state`
+  - Model `ScriptCmdlet` added property `audience`
+  - Model `ScriptPackage` added property `provisioning_state`
+  - Model `Sku` added property `tier`
+  - Model `Sku` added property `size`
+  - Model `Sku` added property `family`
+  - Model `Sku` added property `capacity`
+  - Model `VirtualMachine` added property `provisioning_state`
+  - Model `WorkloadNetworkGateway` added property `provisioning_state`
+  - Model `WorkloadNetworkVirtualMachine` added property `provisioning_state`
+  - Added enum `ActionType`
+  - Added enum `CloudLinkProvisioningState`
+  - Added enum `CreatedByType`
+  - Added enum `DnsZoneType`
+  - Added model `ElasticSanVolume`
+  - Added enum `HcxEnterpriseSiteProvisioningState`
+  - Added model `IscsiPath`
+  - Added model `IscsiPathListResult`
+  - Added enum `IscsiPathProvisioningState`
+  - Added model `OperationListResult`
+  - Added enum `Origin`
+  - Added enum `ScriptCmdletAudience`
+  - Added enum `ScriptCmdletProvisioningState`
+  - Added enum `ScriptPackageProvisioningState`
+  - Added enum `SkuTier`
+  - Added model `SystemData`
+  - Added enum `VirtualMachineProvisioningState`
+  - Added enum `WorkloadNetworkProvisioningState`
+  - Added model `IscsiPathsOperations`
 
 ### Breaking Changes
 
-  - Model Operation no longer has parameter properties
-  - Operation WorkloadNetworksOperations.get no longer has parameter workload_network_name
-  - Parameter location of model PrivateCloud is now required
-  - Parameter location of model TrackedResource is now required
-  - Parameter type of model PrivateCloudIdentity is now required
-  - Parameter value of model AddonList is now required
-  - Parameter value of model CloudLinkList is now required
-  - Parameter value of model ClusterList is now required
-  - Parameter value of model DatastoreList is now required
-  - Parameter value of model ExpressRouteAuthorizationList is now required
-  - Parameter value of model GlobalReachConnectionList is now required
-  - Parameter value of model HcxEnterpriseSiteList is now required
-  - Parameter value of model PlacementPoliciesList is now required
-  - Parameter value of model PrivateCloudList is now required
-  - Parameter value of model ScriptCmdletsList is now required
-  - Parameter value of model ScriptExecutionsList is now required
-  - Parameter value of model ScriptPackagesList is now required
-  - Parameter value of model VirtualMachinesList is now required
-  - Parameter value of model WorkloadNetworkDhcpList is now required
-  - Parameter value of model WorkloadNetworkDnsServicesList is now required
-  - Parameter value of model WorkloadNetworkDnsZonesList is now required
-  - Parameter value of model WorkloadNetworkGatewayList is now required
-  - Parameter value of model WorkloadNetworkList is now required
-  - Parameter value of model WorkloadNetworkPortMirroringList is now required
-  - Parameter value of model WorkloadNetworkPublicIPsList is now required
-  - Parameter value of model WorkloadNetworkSegmentsList is now required
-  - Parameter value of model WorkloadNetworkVMGroupsList is now required
-  - Parameter value of model WorkloadNetworkVirtualMachinesList is now required
-  - Removed operation WorkloadNetworksOperations.list_public_i_ps
+  - Model `Operation` deleted or renamed its instance variable `properties`
+  - Parameter `location` of model `PrivateCloud` is now required
+  - Parameter `type` of model `PrivateCloudIdentity` is now required
+  - Parameter `location` of model `TrackedResource` is now required
+  - Deleted or renamed model `ClusterProperties`
+  - Deleted or renamed model `CommonClusterProperties`
+  - Deleted or renamed model `LogSpecification`
+  - Deleted or renamed model `MetricDimension`
+  - Deleted or renamed model `MetricSpecification`
+  - Deleted or renamed model `OperationList`
+  - Deleted or renamed model `OperationProperties`
+  - Deleted or renamed model `PrivateCloudProperties`
+  - Deleted or renamed model `PrivateCloudUpdateProperties`
+  - Deleted or renamed model `ServiceSpecification`
+  - Deleted or renamed model `WorkloadNetworkName`
+  - Method `WorkloadNetworksOperations.get` deleted or renamed its parameter `workload_network_name` of kind `positional_or_keyword`
+  - Model WorkloadNetworksOperations renamed its instance variable `list_public_i_ps` to `list_public_ips`
 
 ## 9.0.0b1 (2024-06-28)
 
