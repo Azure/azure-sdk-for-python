@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import TypedDict
+from typing import Dict, TypedDict
 
 
 class AzureOpenAIModelConfigurationBase(TypedDict):
