@@ -13,11 +13,10 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
 from .._generated.models import (
     SkillNames,
-    SearchIndexer,
     SearchIndexerStatus,
     DocumentKeysOrIds,
 )
-from ..models import SearchIndexerSkillset, SearchIndexerDataSourceConnection
+from ..models import SearchIndexer, SearchIndexerSkillset, SearchIndexerDataSourceConnection
 from .._utils import (
     get_access_conditions,
     normalize_endpoint,

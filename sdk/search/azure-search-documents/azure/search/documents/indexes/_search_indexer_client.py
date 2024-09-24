@@ -12,7 +12,6 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated import SearchServiceClient as _SearchServiceClient
 from ._generated.models import (
     SkillNames,
-    SearchIndexer,
     SearchIndexerStatus,
     DocumentKeysOrIds,
 )
@@ -21,6 +20,7 @@ from ._utils import (
     normalize_endpoint,
 )
 from .models import (
+    SearchIndexer,
     SearchIndexerSkillset,
     EntityRecognitionSkillVersion,
     SearchIndexerDataSourceConnection,
