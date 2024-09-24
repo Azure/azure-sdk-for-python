@@ -5,7 +5,6 @@ We are excited to introduce the public preview of the Azure AI Evaluation SDK.
 [Source code][source_code]
 | [Package (PyPI)][evaluation_pypi]
 | [API reference documentation][evaluation_ref_docs]
-| [Product documentation][product_documentation]
 | [Samples][evaluation_samples]
 
 This package has been tested with Python 3.8, 3.9, 3.10, 3.11, and 3.12.
@@ -359,7 +358,6 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 ## Next steps
 
 - View our [samples][evaluation_samples].
-- View our [documentation][product_documentation]
 
 ## Contributing
 
@@ -373,9 +371,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/evaluation/azure-ai-evaluation
 [evaluation_pypi]: https://pypi.org/project/azure-ai-evaluation/
-[evaluation_ref_docs]: https://learn.microsoft.com/python/api/azure-ai-evaluation/?view=azure-python
+[evaluation_ref_docs]: https://learn.microsoft.com/en-us/python/api/azure-ai-evaluation/azure.ai.evaluation?view=azure-python-preview
 [evaluation_samples]: https://github.com/Azure-Samples/azureai-samples/tree/main/scenarios
-[product_documentation]: https://learn.microsoft.com/en-us/azure/ai-studio/how-to/develop/evaluate-sdk
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sdk_logging_docs]: https://docs.microsoft.com/azure/developer/python/azure-sdk-logging
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
