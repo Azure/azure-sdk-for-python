@@ -132,7 +132,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         patched_indexer = indexer._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexers.create_or_update(
             indexer_name=name,
-            indexer=indexer,
+            indexer=patched_indexer,
             prefer="return=representation",
             error_map=error_map,
             skip_indexer_reset_requirement_for_cache=skip_indexer_reset_requirement_for_cache,
@@ -161,7 +161,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexers.get(name, **kwargs)
-        return result
+        return cast(SearchIndexer, SearchIndexer._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def get_indexers(self, *, select: Optional[List[str]] = None, **kwargs) -> Sequence[SearchIndexer]:
@@ -188,7 +188,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             kwargs["select"] = ",".join(select)
         result = await self._client.indexers.list(**kwargs)
         assert result.indexers is not None  # Hint for mypy
-        return result.indexers
+        # pylint:disable=protected-access
+        return [cast(SearchIndexer, SearchIndexer._from_generated(index)) for index in result.indexers]
 
     @distributed_trace_async
     async def get_indexer_names(self, **kwargs) -> Sequence[str]:

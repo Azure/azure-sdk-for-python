@@ -166,7 +166,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexers.get(name, **kwargs)
-        return result
+        return cast(SearchIndexer, SearchIndexer._from_generated(result))  # pylint:disable=protected-access
 
     @distributed_trace
     def get_indexers(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> Sequence[SearchIndexer]:
@@ -193,7 +193,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             kwargs["select"] = ",".join(select)
         result = self._client.indexers.list(**kwargs)
         assert result.indexers is not None  # Hint for mypy
-        return result.indexers
+        # pylint:disable=protected-access
+        return [cast(SearchIndexer, SearchIndexer._from_generated(index)) for index in result.indexers]
 
     @distributed_trace
     def get_indexer_names(self, **kwargs: Any) -> Sequence[str]:
