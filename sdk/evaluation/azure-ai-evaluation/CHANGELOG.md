@@ -21,7 +21,7 @@
 - Updated the parameter names for `question` and `answer` in built-in evaluators to more generic terms: `query` and `response`.
 - `data` and `evaluators` are now required keywords in `evaluate`.
 - The `evaluator_config` parameter of `evaluate` now maps in evaluator name to a dictionary `EvaluatorConfig`, which is a `TypedDict`. The
-`column_mapping` between`data` and evaluator field names should now be specified inside this new dictionary:
+`column_mapping` between `data` or `target` and evaluator field names should now be specified inside this new dictionary:
 
 Before:
 ```python
