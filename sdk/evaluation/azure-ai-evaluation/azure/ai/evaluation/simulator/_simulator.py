@@ -411,7 +411,6 @@ class Simulator:
                 return query_responses[keys[0]]
             return json.loads(query_responses)
         except Exception as e:
-            import pdb; pdb.set_trace()
             raise RuntimeError("Error generating query responses") from e
 
     def _load_query_generation_flow(
