@@ -1,17 +1,11 @@
 # Release History
 
-## 1.0.0b30 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0b30 (2024-09-20)
 
 ### Bugs Fixed
 
 - Fix setting custom `TracerProvider` bug
     ([#37469](https://github.com/Azure/azure-sdk-for-python/pull/37469))
-
-### Other Changes
 
 ## 1.0.0b29 (2024-09-10)
 

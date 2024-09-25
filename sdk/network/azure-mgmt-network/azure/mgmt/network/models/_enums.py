@@ -1231,6 +1231,7 @@ class LoadBalancerSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a load balancer SKU."""
 
     REGIONAL = "Regional"
+    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 class NetworkInterfaceNicType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1252,12 +1253,14 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a public IP address SKU."""
 
     REGIONAL = "Regional"
+    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 class PublicIPPrefixSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a public IP prefix SKU."""
 
     REGIONAL = "Regional"
+    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 class VirtualNetworkGatewayConnectionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1396,6 +1399,8 @@ class ConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SECURITY_ADMIN = "SecurityAdmin"
     CONNECTIVITY = "Connectivity"
+    SECURITY_USER = "SecurityUser"
+    ROUTING = "Routing"
 
 class ConnectivityTopology(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Connectivity topology type."""
@@ -1685,7 +1690,7 @@ class FirewallPolicyIDPSSignatureSeverity(int, Enum, metaclass=CaseInsensitiveEn
 class Geo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Geo for CIDR advertising. Should be an Geo code."""
 
-    GLOBAL_ENUM = "GLOBAL"
+    GLOBAL = "GLOBAL"
     AFRI = "AFRI"
     APAC = "APAC"
     EURO = "EURO"
@@ -1694,6 +1699,7 @@ class Geo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ME = "ME"
     OCEANIA = "OCEANIA"
     AQ = "AQ"
+    GLOBAL_ENUM = "GLOBAL"
 
 class HubRoutingPreference(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The hub routing preference gateway types."""
@@ -1746,8 +1752,9 @@ class NextStep(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported next step behaviors after a rule is applied to a matched route."""
 
     UNKNOWN = "Unknown"
-    CONTINUE_ENUM = "Continue"
+    CONTINUE = "Continue"
     TERMINATE = "Terminate"
+    CONTINUE_ENUM = "Continue"
 
 class PacketCaptureTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Target type of the resource provided."""
@@ -1826,7 +1833,9 @@ class SlotType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STAGING = "Staging"
 
 class VirtualNetworkEncryptionEnforcement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """If the encrypted VNet allows VM that does not support encryption."""
+    """If the encrypted VNet allows VM that does not support encryption. This field is for future
+    support, AllowUnencrypted is the only supported value at general availability.
+    """
 
     DROP_UNENCRYPTED = "DropUnencrypted"
     ALLOW_UNENCRYPTED = "AllowUnencrypted"
@@ -1919,4 +1928,87 @@ class ProbeNoHealthyBackendsBehavior(str, Enum, metaclass=CaseInsensitiveEnumMet
     """No new flows will be sent to the backend pool."""
     ALL_PROBED_UP = "AllProbedUp"
     """When all backend instances are probed down, incoming packets will be sent to all instances."""
+
+class ApplicationGatewayWafRuleSensitivityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The string representation of the web application firewall rule sensitivity."""
+
+    NONE = "None"
+    LOW = "Low"
+    MEDIUM = "Medium"
+    HIGH = "High"
+
+class DisableBgpRoutePropagation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines whether BGP route propagation is enabled. Defaults to true."""
+
+    FALSE = "False"
+    TRUE = "True"
+
+class ExceptionEntryMatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The variable on which we evaluate the exception condition."""
+
+    REQUEST_URI = "RequestURI"
+    REMOTE_ADDR = "RemoteAddr"
+    REQUEST_HEADER = "RequestHeader"
+
+class ExceptionEntrySelectorMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """When the matchVariable points to a key-value pair (e.g, RequestHeader), this operates on the
+    selector.
+    """
+
+    EQUALS = "Equals"
+    CONTAINS = "Contains"
+    STARTS_WITH = "StartsWith"
+    ENDS_WITH = "EndsWith"
+
+class ExceptionEntryValueMatchOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operates on the allowed values for the matchVariable."""
+
+    EQUALS = "Equals"
+    CONTAINS = "Contains"
+    STARTS_WITH = "StartsWith"
+    ENDS_WITH = "EndsWith"
+    IP_MATCH = "IPMatch"
+
+class GroupMemberType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network Group member type."""
+
+    VIRTUAL_NETWORK = "VirtualNetwork"
+    SUBNET = "Subnet"
+
+class PrivateEndpointVNetPolicies(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Private Endpoint VNet Policies."""
+
+    DISABLED = "Disabled"
+    BASIC = "Basic"
+
+class ResiliencyModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Property to indicate if the Express Route Gateway has resiliency model of MultiHomed or
+    SingleHomed.
+    """
+
+    SINGLE_HOMED = "SingleHomed"
+    MULTI_HOMED = "MultiHomed"
+
+class RoutingRuleDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Routing rule destination type."""
+
+    ADDRESS_PREFIX = "AddressPrefix"
+    SERVICE_TAG = "ServiceTag"
+
+class RoutingRuleNextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Routing rule next hop type."""
+
+    INTERNET = "Internet"
+    NO_NEXT_HOP = "NoNextHop"
+    VIRTUAL_APPLIANCE = "VirtualAppliance"
+    VIRTUAL_NETWORK_GATEWAY = "VirtualNetworkGateway"
+    VNET_LOCAL = "VnetLocal"
+
+class SensitivityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the sensitivity for the rule."""
+
+    NONE = "None"
+    LOW = "Low"
+    MEDIUM = "Medium"
+    HIGH = "High"
 

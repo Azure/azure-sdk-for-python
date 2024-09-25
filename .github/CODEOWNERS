@@ -18,8 +18,6 @@
 # SDK
 ###########
 
-/.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kristapratico @Azure/azure-sdk-eng
-
 # Catch all
 /sdk/ @lmazuel
 
@@ -271,7 +269,7 @@
 # ServiceOwners: @azureml-github @Azure/azure-ml-sdk
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @paulshealy1 @achauhan-scc @kingernupur 
+/sdk/ml/                                                             @paulshealy1 @achauhan-scc @kingernupur
 
 # PRLabel: %ML-Local Endpoints
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @JustinFirsching
@@ -844,6 +842,9 @@
 /eng/                                                                @scbedd @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
 /.github/workflows/                                                  @Azure/azure-sdk-eng
+/.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kristapratico @Azure/azure-sdk-eng
+
+/.config/1espt/                                                      @benbp @weshaggard
 
 /tools/                                                              @scbedd @mccoyp
 

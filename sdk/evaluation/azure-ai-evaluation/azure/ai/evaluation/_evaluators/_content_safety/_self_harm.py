@@ -7,7 +7,6 @@ from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import BaseRaiServiceEval
 
 
-
 class SelfHarmEvaluator(BaseRaiServiceEval):
     """
     Initialize a self harm evaluator for self harm score.

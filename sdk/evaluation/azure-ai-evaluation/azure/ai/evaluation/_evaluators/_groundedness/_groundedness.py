@@ -1,10 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
-from calendar import c
 import os
-import re
 from typing import Dict, Optional
 from typing_extensions import override
 

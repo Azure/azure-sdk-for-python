@@ -86,5 +86,6 @@ setup(
     },
     package_data={
         "pytyped": ["py.typed"],
+        "azure.ai.evaluation.simulator._prompty": ["*.prompty"],
     },
 )

@@ -7,15 +7,9 @@ import re
 from typing import Dict, Optional
 from typing_extensions import override
 
-
 from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from azure.ai.evaluation._evaluators._common._base_context_flow_eval import _BaseContextFlowEval
-
-try:
-    from ..._user_agent import USER_AGENT
-except ImportError:
-    USER_AGENT = None
 
 
 class RelevanceEvaluator(_BaseContextFlowEval):
