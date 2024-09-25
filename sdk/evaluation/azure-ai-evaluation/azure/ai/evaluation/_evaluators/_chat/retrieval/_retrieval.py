@@ -11,7 +11,7 @@ import numpy as np
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
-from ..._common.utils import construct_prompty_model_config
+from ...._common.utils import construct_prompty_model_config
 
 logger = logging.getLogger(__name__)
 
