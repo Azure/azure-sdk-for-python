@@ -93,6 +93,7 @@ class StressTestRunner:
         azure_monitor_metric=None,
         process_monitor=None,
         logging_level=logging.ERROR,
+        transport_type=False,
     ):
         self.senders = senders
         self.receivers = receivers
@@ -113,7 +114,7 @@ class StressTestRunner:
         )
         self.logging_level = logging_level
         log_filename = LOGFILE_NAME
-        if self.args.transport_type == 1:
+        if transport_type:
             log_filename += "_ws.log"
         else:
             log_filename += ".log"
@@ -369,6 +370,7 @@ class StressTestRunnerAsync(StressTestRunner):
         azure_monitor_metric=None,
         process_monitor=None,
         logging_level=logging.ERROR,
+        transport_type=False,
     ):
         super(StressTestRunnerAsync, self).__init__(
             senders,
@@ -387,7 +389,8 @@ class StressTestRunnerAsync(StressTestRunner):
             fail_on_exception=fail_on_exception,
             azure_monitor_metric=azure_monitor_metric,
             process_monitor=process_monitor,
-            logging_level=logging_level
+            logging_level=logging_level,
+            transport_type=transport_type,
         )
 
     async def _send_async(self, sender, end_time):
