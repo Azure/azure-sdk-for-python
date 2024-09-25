@@ -178,6 +178,34 @@ def redirect_asyncio_requests_traffic() -> None:
 
 
 @pytest.fixture
+def simple_conversation():
+    return {
+        "messages" : [
+            {
+                "content": "What is the capital of France?",
+                "role": "user",
+                "context": "Customer wants to know the capital of France"
+            },
+            {
+                "content": "Paris",
+                "role": "assistant",
+                "context": "Paris is the capital of France"
+            },
+            {
+                "content": "What is the capital of Hawaii?",
+                "role": "user",
+                "context": "Customer wants to know the capital of Hawaii"
+            },
+            {
+                "content": "Honolulu",
+                "role": "assistant",
+                "context": "Honolulu is the capital of Hawaii"
+            }
+        ],
+        "context": "Global context"
+    }
+
+@pytest.fixture
 def redirect_openai_requests():
     """Route requests from the openai package to the test proxy."""
     config = TestProxyConfig(
