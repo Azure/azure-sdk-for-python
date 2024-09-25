@@ -113,14 +113,14 @@ class StressTestRunner:
             "fake_test_name"
         )
         self.logging_level = logging_level
-        log_filename = LOGFILE_NAME
+        logfile_name = LOGFILE_NAME
         if transport_type:
-            log_filename += "_ws.log"
+            logfile_name += "_ws.log"
         else:
-            log_filename += ".log"
-        self.logger = get_logger(LOGFILE_NAME, "stress_test", self.logging_level)
+            logfile_name += ".log"
+        self.logger = get_logger(logfile_name, "stress_test", self.logging_level)
         self.process_monitor = process_monitor or ProcessMonitor(
-            "monitor_{}".format(LOGFILE_NAME),
+            "monitor_{}".format(logfile_name),
             "test_stress_queues",
             print_console=PRINT_CONSOLE,
         )
