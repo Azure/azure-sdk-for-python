@@ -15,7 +15,7 @@ from azure.mgmt.mysqlflexibleservers import MySQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-mysqlflexibleservers
 # USAGE
-    python servers_list.py
+    python maintenance_policy_patch_opt_in_virtual_canary.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,14 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.servers.list()
-    for item in response:
-        print(item)
+    response = client.servers.begin_update(
+        resource_group_name="testrg",
+        server_name="mysqltestserver",
+        parameters={"properties": {"maintenancePolicy": {"patchStrategy": "VirtualCanary"}}},
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2024-06-01-preview/examples/ServersList.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2024-06-01-preview/examples/MaintenancePolicyPatchOptInVirtualCanary.json
 if __name__ == "__main__":
     main()
