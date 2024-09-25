@@ -1415,8 +1415,8 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
 
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
-        :returns: A SearchIndexerSkillset instance
-        :rtype: SearchIndexerSkillset
+        :returns: A SearchIndexer instance
+        :rtype: SearchIndexer
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(_SearchIndexer.deserialize(data, content_type=content_type))
