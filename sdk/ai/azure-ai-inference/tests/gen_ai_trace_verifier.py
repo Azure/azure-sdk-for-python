@@ -1,7 +1,7 @@
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # ------------------------------------
-import datetime
+import numbers
 import json
 from opentelemetry.sdk.trace import Span
 
@@ -28,7 +28,12 @@ class GenAiTraceVerifier:
                     return False                    
             else:
                 # Check if the attribute value matches the provided value
-                if attribute_value != "" and span.attributes[attribute_name] != attribute_value:
+                if attribute_value == "+":
+                    if not isinstance(span.attributes[attribute_name], numbers.Number):
+                        return False
+                    if span.attributes[attribute_name] < 0:
+                        return False
+                elif attribute_value != "" and span.attributes[attribute_name] != attribute_value:
                     return False
                 # Check if the attribute value in the span is not empty when the provided value is ""
                 elif attribute_value == "" and not span.attributes[attribute_name]:

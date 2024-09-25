@@ -459,89 +459,6 @@ TBD
 To generate embeddings for additional phrases, simply call `client.embed` multiple times using the same `client`.
 -->
 
-## Tracing
-
-The Azure AI Inferencing API Tracing library provides tracing for Azure AI Inference client library for Python. Refer to Installation chapter above for installation instructions.
-
-### Setup
-
-The environment variable AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED controls whether the actual message contents will be included in the traces or not. By default, the message contents are not include as part of the trace. Set the value of the environment variable to true (case insensitive) for the message contents to be included as part of the trace. Any other value will cause the message contents not to be traced.
-
-You also need to configure the tracing implementation in your code, like so:
-
-```
-from azure.core.settings import settings
-settings.tracing_implementation = "opentelemetry"
-```
-
-### Trace Exporter(s)
-
-In order for the traces to be captured, you need to setup the applicable trace exporters. The chosen exporter will be based on where you want the traces to be output. You can also implement your own exporter. The first example below shows how to setup an exporter to Azure Monitor.
-Please refer to [this](https://learn.microsoft.com/en-us/azure/azure-monitor/app/create-workspace-resource?tabs=bicep) documentation for more information about how to created Azure Monitor resource.
-Configure the APPLICATIONINSIGHTS_CONNECTION_STRING based on your Azure Monitor resource.
-
-```
-# Setup tracing to Azure Monitor
-from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
-trace.set_tracer_provider(TracerProvider())
-tracer = trace.get_tracer(__name__)
-span_processor = BatchSpanProcessor(
-    AzureMonitorTraceExporter.from_connection_string(
-        os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
-    )
-)
-trace.get_tracer_provider().add_span_processor(span_processor)
-```
-
-The following example shows how to setup tracing to console output.
-
-```
-# Setup tracing to console
-exporter = ConsoleSpanExporter()
-trace.set_tracer_provider(TracerProvider())
-tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
-```
-### Instrumentation
-
-Use the AIInferenceInstrumentor to instrument the Azure AI Inferencing API for LLM tracing, this will cause the LLM traces to be emitted from Azure AI Inferencing API.
-
-```
-from azure.core.tracing import AIInferenceApiInstrumentor
-# Instrument AI Inference API
-AIInferenceApiInstrumentor().instrument()
-```
-
-It is also possible to uninstrument the Azure AI Inferencing API by using the uninstrument call. After this call, the LLM traces will no longer be emitted by the Azure AI Inferencing API until instrument is called again.
-
-```
-AIInferenceApiInstrumentor().uninstrument()
-```
-
-### Tracing Your Own Functions
-The @tracer.start_as_current_span decorator can be used to trace your own functions. This will trace the function parameters and their values. You can also add further attributes to the span in the function implementation as demonstrated below. Note that you will have to setup the tracer in your code before using the decorator.
-
-```
-# The @tracer.start_as_current_span decorator will
-# trace the function call and enable adding additional attributes
-# to the span in the function implementation.
-@tracer.start_as_current_span("get_temperature")
-def get_temperature(city: str) -> str:
-
-    # Adding attributes to the current span
-    span = trace.get_current_span()
-    span.set_attribute("requested_city", city)
-
-    if city == "Seattle":
-        return "75"
-    elif city == "New York City":
-        return "80"
-    else:
-        return "Unavailable"
-
-
-```
-
 ## Troubleshooting
 
 ### Exceptions
@@ -624,6 +541,87 @@ To report issues with the client library, or request additional features, please
 ## Next steps
 
 * Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder, containing fully runnable Python code for doing inference using synchronous and asynchronous clients.
+
+## Tracing
+
+The Azure AI Inferencing API Tracing library provides tracing for Azure AI Inference client library for Python. Refer to Installation chapter above for installation instructions.
+
+### Setup
+
+The environment variable AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED controls whether the actual message contents will be recorded in the traces or not. By default, the message contents are not recorded as part of the trace. When message content recording is disabled any function call tool related function names, function parameter names and function parameter values are also not recorded in the trace. Set the value of the environment variable to "true" (case insensitive) for the message contents to be recorded as part of the trace. Any other value will cause the message contents not to be recorded.
+
+You also need to configure the tracing implementation in your code by setting `AZURE_SDK_TRACING_IMPLEMENTATION` to `opentelemetry` or configuring it in the code with the following snippet:
+
+<!-- SNIPPET:sample_chat_completions_with_tracing.trace_setting -->
+
+```python
+from azure.core.settings import settings
+settings.tracing_implementation = "opentelemetry"
+```
+
+<!-- END SNIPPET -->
+
+
+Please refer to [azure-core-tracing-documentation](https://learn.microsoft.com/python/api/overview/azure/core-tracing-opentelemetry-readme) for more information.
+
+### Trace Exporter(s)
+
+In order for the traces to be captured, you need to setup the applicable trace exporters. The chosen exporter will be based on where you want the traces to be output. You can also implement your own exporter. You can find more information [here](https://learn.microsoft.com/en-us/python/api/overview/azure/core-tracing-opentelemetry-readme?view=azure-python-preview).
+
+Please refer to [this](https://learn.microsoft.com/en-us/azure/azure-monitor/app/create-workspace-resource?tabs=bicep) documentation for more information about how to create Azure Monitor resource for the Azure Monitor exporter.
+
+### Instrumentation
+
+Use the AIInferenceInstrumentor to instrument the Azure AI Inferencing API for LLM tracing, this will cause the LLM traces to be emitted from Azure AI Inferencing API.
+
+<!-- SNIPPET:sample_chat_completions_with_tracing.instrument_inferencing -->
+
+```python
+from azure.core.tracing.ai.inference import AIInferenceInstrumentor
+# Instrument AI Inference API
+AIInferenceInstrumentor().instrument()
+```
+
+<!-- END SNIPPET -->
+
+
+It is also possible to uninstrument the Azure AI Inferencing API by using the uninstrument call. After this call, the LLM traces will no longer be emitted by the Azure AI Inferencing API until instrument is called again.
+
+<!-- SNIPPET:sample_chat_completions_with_tracing.uninstrument_inferencing -->
+
+```python
+AIInferenceInstrumentor().uninstrument()
+```
+
+<!-- END SNIPPET -->
+
+### Tracing Your Own Functions
+The @tracer.start_as_current_span decorator can be used to trace your own functions. This will trace the function parameters and their values. You can also add further attributes to the span in the function implementation as demonstrated below. Note that you will have to setup the tracer in your code before using the decorator. More information is available [here](https://opentelemetry.io/docs/languages/python/).
+
+<!-- SNIPPET:sample_chat_completions_with_tracing.trace_function -->
+
+```python
+from opentelemetry.trace import get_tracer
+tracer = get_tracer(__name__)
+
+# The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
+# to the span in the function implementation. Note that this will trace the function parameters and their values.
+@tracer.start_as_current_span("get_temperature")
+def get_temperature(city: str) -> str:
+
+    # Adding attributes to the current span
+    span = trace.get_current_span()
+    span.set_attribute("requested_city", city)
+
+    if city == "Seattle":
+        return "75"
+    elif city == "New York City":
+        return "80"
+    else:
+        return "Unavailable"
+```
+
+<!-- END SNIPPET -->
 
 ## Contributing
 

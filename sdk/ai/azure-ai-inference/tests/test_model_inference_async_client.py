@@ -18,7 +18,7 @@ from azure.core.settings import settings
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import AzureError, ServiceRequestError
 from azure.core.credentials import AzureKeyCredential
-from azure.core.tracing.ai.inference import AIInferenceApiInstrumentor
+from azure.core.tracing.ai.inference import AIInferenceInstrumentor
 from memory_trace_exporter import MemoryTraceExporter
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from opentelemetry import trace
@@ -718,7 +718,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_async_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
-        AIInferenceApiInstrumentor().instrument()
+        AIInferenceInstrumentor().instrument()
         response = await client.complete(
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
@@ -754,4 +754,4 @@ class TestModelAsyncClient(ModelClientTestBase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
-        AIInferenceApiInstrumentor().uninstrument()
+        AIInferenceInstrumentor().uninstrument()

@@ -16,7 +16,6 @@ from azure.ai.inference import models as _models
 from azure.core.tracing import AbstractSpan
 from azure.core.tracing import SpanKind
 from azure.core.settings import settings
-from azure.core.tracing.common import get_function_and_class_name
 from opentelemetry.trace import Status, StatusCode, Span
 
 _inference_traces_enabled: bool = False
@@ -278,7 +277,7 @@ def _trace_sync_function(
         if span_impl_type is None:
             return function(*args, **kwargs)
 
-        class_function_name = get_function_and_class_name(function, *args)
+        class_function_name = function.__qualname__
 
         if class_function_name.startswith("ChatCompletionsClient.complete"):
             if kwargs.get('model') is None:
@@ -343,7 +342,7 @@ def _trace_async_function(
         if span_impl_type is None:
             return function(*args, **kwargs)
 
-        class_function_name = get_function_and_class_name(function, *args)
+        class_function_name = function.__qualname__
 
         if class_function_name.startswith("ChatCompletionsClient.complete"):
             if kwargs.get('model') is None:
@@ -436,7 +435,7 @@ def available_inference_apis_and_injectors():
     yield from _generate_api_and_injector(_inference_api_list())
 
 
-def _inject_inference_api(enable_content_tracing: bool = False):
+def _instrument_inference(enable_content_tracing: bool = False):
     """This function modifies the methods of the Inference API classes to inject logic before calling the original methods.
     The original methods are stored as _original attributes of the methods.
     """
@@ -452,7 +451,7 @@ def _inject_inference_api(enable_content_tracing: bool = False):
             setattr(api, method, injector(getattr(api, method), trace_type, name))
 
 
-def _restore_inference_api():
+def _uninstrument_inference():
     """This function restores the original methods of the Inference API classes
     by assigning them back from the _original attributes of the modified methods.
     """

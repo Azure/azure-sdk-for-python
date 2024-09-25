@@ -69,6 +69,6 @@ setup(
     ],
     python_requires=">=3.8",
     extras_require={  
-        'trace': ['azure-core-tracing-opentelemetry', 'opentelemetry-sdk', 'azure-monitor-opentelemetry-exporter']  
+        'trace': ['azure-core-tracing-opentelemetry']  
     }
 )

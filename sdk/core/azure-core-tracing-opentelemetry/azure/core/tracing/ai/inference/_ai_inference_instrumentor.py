@@ -2,10 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from .azure_telemetry_instrumentor import AzureTelemetryInstrumentor
 
 
-class AIInferenceApiInstrumentor(AzureTelemetryInstrumentor):
+class AIInferenceInstrumentor:
     def __init__(self):
         super().__init__()
 
@@ -20,16 +19,16 @@ class AIInferenceApiInstrumentor(AzureTelemetryInstrumentor):
         
         var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
         enable_content_tracing = self.str_to_bool(var_value)
-        from ._ai_inference_api_instrumentor_impl import _inject_inference_api
-        _inject_inference_api(enable_content_tracing)
+        from ._ai_inference_instrumentor_impl import _instrument_inference
+        _instrument_inference(enable_content_tracing)
 
     def uninstrument(self):
         if not self.is_instrumented():
             raise RuntimeError("Not instrumented")
 
-        from ._ai_inference_api_instrumentor_impl import _restore_inference_api
-        _restore_inference_api()
+        from ._ai_inference_instrumentor_impl import _uninstrument_inference
+        _uninstrument_inference()
 
     def is_instrumented(self):
-        from ._ai_inference_api_instrumentor_impl import _is_instrumented
+        from ._ai_inference_instrumentor_impl import _is_instrumented
         return _is_instrumented()
