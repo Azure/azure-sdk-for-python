@@ -62,10 +62,16 @@ steps:
   - template: set-dev-build.yml
 
   - ${{ if eq(parameters.BuildDocs, 'true') }}:
-    - template: /eng/pipelines/templates/steps/run_sphinx.yml
-      parameters:
-        ServiceDirectory: "${{ parameters.ServiceDirectory }}"
-        WheelDirectory: "$(Build.ArtifactStagingDirectory)"
+    - task: PythonScript@0
+      displayName: 'Generate Docs'
+      condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
+      inputs:
+        scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+        arguments: >-
+          "$(TargetingString)"
+          --service="${{ parameters.ServiceDirectory }}"
+          --toxenv=sphinx
+          --wheel_dir="$(Build.ArtifactStagingDirectory)"
 
   - ${{ if eq(parameters.RunApiStubGen, 'true') }}:
     - template: /eng/pipelines/templates/steps/run_apistub.yml
