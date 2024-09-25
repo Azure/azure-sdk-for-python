@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -18,16 +19,18 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._dns_resource_reference_operations import build_get_by_target_resources_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -63,7 +66,6 @@ class DnsResourceReferenceOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DnsResourceReferenceResult or the result of cls(response)
         :rtype: ~azure.mgmt.dns.v2018_05_01.models.DnsResourceReferenceResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -71,16 +73,15 @@ class DnsResourceReferenceOperations:
 
     @overload
     async def get_by_target_resources(
-        self, parameters: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.DnsResourceReferenceResult:
         """Returns the DNS records specified by the referencing targetResourceIds.
 
         :param parameters: Properties for dns resource reference request. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DnsResourceReferenceResult or the result of cls(response)
         :rtype: ~azure.mgmt.dns.v2018_05_01.models.DnsResourceReferenceResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -88,22 +89,18 @@ class DnsResourceReferenceOperations:
 
     @distributed_trace_async
     async def get_by_target_resources(
-        self, parameters: Union[_models.DnsResourceReferenceRequest, IO], **kwargs: Any
+        self, parameters: Union[_models.DnsResourceReferenceRequest, IO[bytes]], **kwargs: Any
     ) -> _models.DnsResourceReferenceResult:
         """Returns the DNS records specified by the referencing targetResourceIds.
 
         :param parameters: Properties for dns resource reference request. Is either a
-         DnsResourceReferenceRequest type or a IO type. Required.
-        :type parameters: ~azure.mgmt.dns.v2018_05_01.models.DnsResourceReferenceRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
+         DnsResourceReferenceRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dns.v2018_05_01.models.DnsResourceReferenceRequest or IO[bytes]
         :return: DnsResourceReferenceResult or the result of cls(response)
         :rtype: ~azure.mgmt.dns.v2018_05_01.models.DnsResourceReferenceResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -126,22 +123,20 @@ class DnsResourceReferenceOperations:
         else:
             _json = self._serialize.body(parameters, "DnsResourceReferenceRequest")
 
-        request = build_get_by_target_resources_request(
+        _request = build_get_by_target_resources_request(
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.get_by_target_resources.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -150,13 +145,9 @@ class DnsResourceReferenceOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("DnsResourceReferenceResult", pipeline_response)
+        deserialized = self._deserialize("DnsResourceReferenceResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_by_target_resources.metadata = {
-        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Network/getDnsResourceReference"
-    }
+        return deserialized  # type: ignore
