@@ -33,7 +33,7 @@ EXPECTED_LOW_PRIO_CORE_QUOTA = 500
 EXPECTED_POOL_QUOTA = 100
 SECRET_FIELDS = ["primary", "secondary"]
 
-
+@pytest.mark.live_test_only
 class TestMgmtBatch(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
@@ -320,6 +320,7 @@ class TestMgmtBatch(AzureMgmtRecordedTestCase):
         response = self.mgmt_batch_client.certificate.begin_delete(resource_group.name, batch_account.name, certificate)
         assert response.result() is None
 
+    @pytest.mark.skip("model CloudServiceConfiguration deprecated")
     @pytest.mark.skipif(os.getenv('AZURE_TEST_RUN_LIVE') not in ('yes', 'true'), reason='only run live test')
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @SimpleBatchPreparer(location=AZURE_LOCATION)

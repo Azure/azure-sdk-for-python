@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.batch import BatchManagementClient
 
 """
@@ -14,7 +15,7 @@ from azure.mgmt.batch import BatchManagementClient
     pip install azure-identity
     pip install azure-mgmt-batch
 # USAGE
-    python pool_create_minimal_cloud_service_configuration.py
+    python pool_create_tags.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -35,15 +36,26 @@ def main():
         pool_name="testpool",
         parameters={
             "properties": {
-                "deploymentConfiguration": {"cloudServiceConfiguration": {"osFamily": "5"}},
-                "scaleSettings": {"fixedScale": {"targetDedicatedNodes": 3}},
-                "vmSize": "STANDARD_D4",
-            }
+                "deploymentConfiguration": {
+                    "virtualMachineConfiguration": {
+                        "imageReference": {
+                            "offer": "0001-com-ubuntu-server-jammy",
+                            "publisher": "Canonical",
+                            "sku": "22_04-lts",
+                            "version": "latest",
+                        },
+                        "nodeAgentSkuId": "batch.node.ubuntu 22.04",
+                    }
+                },
+                "scaleSettings": {"fixedScale": {"targetDedicatedNodes": 1, "targetLowPriorityNodes": 0}},
+                "vmSize": "Standard_d4s_v3",
+            },
+            "tags": {"TagName1": "TagValue1", "TagName2": "TagValue2"},
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2024-02-01/examples/PoolCreate_MinimalCloudServiceConfiguration.json
+# x-ms-original-file: specification/batch/resource-manager/Microsoft.Batch/stable/2024-07-01/examples/PoolCreate_Tags.json
 if __name__ == "__main__":
     main()
