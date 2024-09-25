@@ -334,7 +334,7 @@ class TestEvaluate:
             )
 
         assert (
-            "Unexpected references detected in 'evaluator_config'. Ensure only ${target.} and ${data.} are used."
+            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
             in exc_info.value.args[0]
         )
 
