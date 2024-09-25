@@ -14,16 +14,48 @@ The root directory of the staged artifacts. The PackageInfo files will be in the
 PackageInfo subdirectory. The whl files are going to be in the subdirectory which
 is the same as the artifact's name but artifact name in the file's name will have
  underscores instead of dashes.
+
+.PARAMETER RepoRoot
+The root of the directory. This will be used in combination with the paths of of
+the properties within each PackageInfo file to determine the full path to other relevant
+metadata...like ci.yml for instance.
 #>
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory = $True)]
     [string] $ArtifactStagingDirectory
 )
-
-$ArtifactsList = $ArtifactsList | Where-Object -Not "skipPublishDocMs"
+.  (Join-Path $PSScriptRoot ".." common scripts Helpers PSModule-Helpers.ps1)
+Install-ModuleIfNotInstalled "powershell-yaml" "0.4.1" | Import-Module
 
 . (Join-Path $PSScriptRoot ".." common scripts common.ps1)
+
+function ShouldPublish ($ServiceDirectory, $PackageName) {
+    $ciYmlPath = Join-Path $ServiceDirectory "ci.yml"
+
+    Write-Host $PackageName
+
+    if (Test-Path $ciYmlPath)
+    {
+        Write-Host $ciYmlPath
+        $ciYml = ConvertFrom-Yaml (Get-Content $ciYmlPath -Raw)
+
+        if ($ciYml.extends -and $ciYml.extends.parameters -and $ciYml.extends.parameters.Artifacts) {
+            $packagesBuildingDocs = $ciYml.extends.parameters.Artifacts `
+                | Where-Object { -not ($_["skipPublishDocMs"] -eq $true) }
+                | Select-Object -ExpandProperty name
+
+            if ($packagesBuildingDocs -contains $PackageName)
+            {
+                Write-Host $packagesBuildingDocs
+                return $true
+            }
+            else {
+                return $false
+            }
+        }
+    }
+}
 
 Write-Host "ArtifactStagingDirectory=$ArtifactStagingDirectory"
 if (-not (Test-Path -Path $ArtifactStagingDirectory)) {
@@ -37,7 +69,7 @@ $artifacts = Get-ChildItem -Path $packageInfoDirectory -File -Filter "*.json"
 $artifacts | Format-Table -Property Name | Out-String | Write-Host
 
 if (-not $artifacts) {
-    Write-Host "Zero artifacts were discovered, nothing to process. This can happen if skipPublishDocMs is set to true for all libraries being built."
+    Write-Host "Artifacts list is empty, nothing to process. This can happen if skipPublishDocMs is set to true for all libraries being built."
     exit 0
 }
 
@@ -52,13 +84,21 @@ foreach($packageInfoFile in $artifacts) {
     if ($packageInfo.DevVersion) {
       $version = $packageInfo.DevVersion
     }
+
+    if (-not (ShouldPublish -ServiceDirectory (Join-Path $RepoRoot "sdk" $packageInfo.ServiceDirectory) -PackageName $packageInfo.Name)) {
+        Write-Host "Skipping publishing docs for $($packageInfo.Name)"
+        continue
+    }
+
+
     # From the $packageInfo piece together the path to the javadoc jar file
     $WhlDir = Join-Path $ArtifactStagingDirectory $packageInfo.Name
     $WhlName = $packageInfo.Name.Replace("-","_")
     $WhlFile = Get-ChildItem -Path $WhlDir -File -Filter "$whlName-$version*.whl"
 
     if (!(Test-Path $WhlFile -PathType Leaf)) {
-        Write-Host "Whl file for, $($packageInfo.Name), was not found in $WhlDir. Unable to update package namespaces."
+        LogError "Whl file for, $($packageInfo.Name), was not found in $WhlDir. Please ensure that a .whl file is being produced for the library."
+        $foundError = $true
         continue
     }
     $namespaces = Get-NamespacesFromWhlFile $packageInfo.Name $version -PythonWhlFile $WhlFile

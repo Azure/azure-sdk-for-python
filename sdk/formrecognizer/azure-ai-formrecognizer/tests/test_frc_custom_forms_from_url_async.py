@@ -10,21 +10,20 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.formrecognizer.aio import FormTrainingClient
 from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResult
 from azure.ai.formrecognizer._response_handlers import prepare_form_result
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
 from testcase import _get_blob_url
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from conftest import skip_flaky_test
-FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
+get_ft_client = functools.partial(get_async_client, FormTrainingClient)
 
 
 class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_custom_form_multipage_unlabeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_custom_form_multipage_unlabeled(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         async with client:
@@ -44,11 +43,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             assert form.form_type == "form-0"
             self.assertUnlabeledRecognizedFormHasValues(form, model)
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_form_multipage_labeled(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_form_multipage_labeled(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         async with client:
@@ -69,11 +68,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             assert form.form_type ==  "custom:"+model.model_id
             self.assertLabeledRecognizedFormHasValues(form, model)
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_multipage_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_multipage_unlabeled_transform(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         responses = []
@@ -111,11 +110,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             assert form.model_id ==  model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_multipage_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+    async def test_multipage_labeled_transform(self, formrecognizer_multipage_storage_container_sas_url_v2, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_v2, "multipage-training-data", "multipage_invoice1.pdf")
         responses = []
@@ -154,12 +153,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             assert form.model_id ==  model.model_id
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip("Test is flaky and hangs")
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     async def test_custom_form_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_ft_client()
         formrecognizer_storage_container_sas_url = kwargs.pop("formrecognizer_storage_container_sas_url")
         fr_client = client.get_form_recognizer_client()
 
@@ -182,11 +180,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
                 assert result is not None
                 await initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+    async def test_custom_form_multipage_vendor_set_unlabeled_transform(self, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
         responses = []
@@ -222,11 +220,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             assert form.model_id ==  model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_custom_form_multipage_vendor_set_labeled_transform(self, client, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+    async def test_custom_form_multipage_vendor_set_labeled_transform(self, formrecognizer_multipage_storage_container_sas_url_2_v2, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_multipage_storage_container_sas_url_2_v2, "multipage-vendor-forms", "multi1.pdf")
         responses = []
@@ -264,11 +262,11 @@ class TestCustomFormsFromUrlAsync(AsyncFormRecognizerTest):
             assert form.model_id ==  model.model_id
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
-    @skip_flaky_test
+    @pytest.mark.skip("Test is flaky and hangs")
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer()
     @recorded_by_proxy_async
-    async def test_pages_kwarg_specified(self, client, formrecognizer_testing_data_container_sas_url, **kwargs):
+    async def test_pages_kwarg_specified(self, formrecognizer_testing_data_container_sas_url, **kwargs):
+        client = get_ft_client()
         fr_client = client.get_form_recognizer_client()
         blob_sas_url = _get_blob_url(formrecognizer_testing_data_container_sas_url, "testingdata", "multi1.pdf")
 

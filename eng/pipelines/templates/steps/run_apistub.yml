@@ -1,15 +1,15 @@
 parameters:
   ServiceDirectory: ''
   AdditionalTestArgs: ''
+  RunApiStub: true
 
-
-# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
-#     eng/pipelines/templates/jobs/ci.tests.yml
-#     eng/pipelines/templates/jobs/ci.yml
-#     eng/pipelines/templates/jobs/live.test.yml
-
-# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+# Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
+  - pwsh: |
+      Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL]https://pypi.python.org/simple"
+    displayName: Reset PIP Index For APIStubGen
+    condition: and(succeededOrFailed(), eq(variables['Skip.ApiStubGen'],'true'))
+
   - task: UsePythonVersion@0
     displayName: 'Use Python 3.10'
     inputs:
@@ -30,8 +30,8 @@ steps:
         "$(TargetingString)"
         ${{ parameters.AdditionalTestArgs }}
         -d "$(Build.ArtifactStagingDirectory)"
-        --mark_arg="${{ parameters.TestMarkArgument }}" 
-        --service="${{ parameters.ServiceDirectory }}" 
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
         --toxenv="apistub"
         --disablecov
         --filter-type="Omit_management"

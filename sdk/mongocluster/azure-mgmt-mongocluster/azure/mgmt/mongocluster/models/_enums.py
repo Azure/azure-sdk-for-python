@@ -48,6 +48,10 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Create a new mongo cluster."""
     POINT_IN_TIME_RESTORE = "PointInTimeRestore"
     """Create a mongo cluster from a restore point-in-time."""
+    GEO_REPLICA = "GeoReplica"
+    """Create a replica cluster in distinct geographic region from the source cluster."""
+    REPLICA = "Replica"
+    """Create a replica cluster in the same geographic region as the source cluster."""
 
 
 class MongoClusterStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -89,6 +93,14 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
+class PreviewFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Preview features that can be enabled on a mongo cluster."""
+
+    GEO_REPLICAS = "GeoReplicas"
+    """Enables geo replicas preview feature. The feature must be set at create-time on new cluster to
+    enable linking a geo-replica cluster to it."""
+
+
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state."""
 
@@ -111,6 +123,23 @@ class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiv
     """Connection approved"""
     REJECTED = "Rejected"
     """Connection Rejected"""
+
+
+class PromoteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode to apply to a promote operation."""
+
+    SWITCHOVER = "Switchover"
+    """Promotion will switch the current replica cluster to the primary role and the original primary
+    will be switched to a replica role, maintaining the replication link."""
+
+
+class PromoteOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The option to apply to a promote operation."""
+
+    FORCED = "Forced"
+    """Promote option forces the promotion without waiting for the replica to be caught up to the
+    primary. This can result in data-loss so should only be used during disaster recovery
+    scenarios."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -139,3 +168,32 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If set, mongo cluster can be accessed through private and public methods."""
     DISABLED = "Disabled"
     """If set, the private endpoints are the exclusive access method."""
+
+
+class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Replication role of the mongo cluster."""
+
+    PRIMARY = "Primary"
+    """The cluster is a primary replica."""
+    ASYNC_REPLICA = "AsyncReplica"
+    """The cluster is a local asynchronous replica."""
+    GEO_ASYNC_REPLICA = "GeoAsyncReplica"
+    """The cluster is a geo-asynchronous replica."""
+
+
+class ReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the replication link between the replica and source cluster."""
+
+    ACTIVE = "Active"
+    """Replication link is active."""
+    CATCHUP = "Catchup"
+    """Replica is catching-up with the primary. This can occur after the replica is created or after a
+    promotion is triggered."""
+    PROVISIONING = "Provisioning"
+    """Replica and replication link to the primary is being created."""
+    UPDATING = "Updating"
+    """Replication link is being updated due to a change on the replica or an upgrade."""
+    BROKEN = "Broken"
+    """Replication link is broken and the replica may need to be recreated."""
+    RECONFIGURING = "Reconfiguring"
+    """Replication link is re-configuring due to a promotion event."""

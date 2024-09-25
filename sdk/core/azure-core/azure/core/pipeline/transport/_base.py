@@ -506,7 +506,7 @@ class _HttpResponseBase:
         return "<{}: {} {}{}>".format(type(self).__name__, self.status_code, self.reason, content_type_str)
 
 
-class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
+class HttpResponse(_HttpResponseBase):
     def stream_download(self, pipeline: Pipeline[HttpRequest, "HttpResponse"], **kwargs: Any) -> Iterator[bytes]:
         """Generator for streaming request body data.
 

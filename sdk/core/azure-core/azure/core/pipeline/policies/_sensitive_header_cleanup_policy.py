@@ -25,7 +25,10 @@
 # --------------------------------------------------------------------------
 from typing import List, Optional, Any, TypeVar
 from azure.core.pipeline import PipelineRequest
-from azure.core.pipeline.transport import HttpRequest as LegacyHttpRequest, HttpResponse as LegacyHttpResponse
+from azure.core.pipeline.transport import (
+    HttpRequest as LegacyHttpRequest,
+    HttpResponse as LegacyHttpResponse,
+)
 from azure.core.rest import HttpRequest, HttpResponse
 from ._base import SansIOHTTPPolicy
 

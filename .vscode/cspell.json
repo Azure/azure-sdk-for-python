@@ -138,6 +138,7 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "msedge",
     "spinup",
     "cibuildwheel",
     "aoai",
@@ -261,6 +262,7 @@
     "iohttp",
     "IOHTTP",
     "IOLRO",
+    "incompat",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -1326,7 +1328,12 @@
         "tparam",
         "tqdm",
         "ncols",
-        "datas"
+        "datas",
+        "punkt",
+        "gleu",
+        "fmeasure",
+        "upia",
+        "xpia",
       ]
     },
     {

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.privatedns import PrivateDnsManagementClient
 
 """
@@ -31,13 +32,16 @@ def main():
 
     response = client.virtual_network_links.begin_update(
         resource_group_name="resourceGroup1",
-        private_zone_name="privatezone1.com",
+        private_zone_name="privatelink.contoso.com",
         virtual_network_link_name="virtualNetworkLink1",
-        parameters={"properties": {"registrationEnabled": True}, "tags": {"key2": "value2"}},
+        parameters={
+            "properties": {"registrationEnabled": True, "resolutionPolicy": "NxDomainRedirect"},
+            "tags": {"key2": "value2"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/privatedns/resource-manager/Microsoft.Network/stable/2020-06-01/examples/VirtualNetworkLinkPatch.json
+# x-ms-original-file: specification/privatedns/resource-manager/Microsoft.Network/stable/2024-06-01/examples/VirtualNetworkLinkPatch.json
 if __name__ == "__main__":
     main()

@@ -72,14 +72,14 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/pipelines/templates/steps/build.yml
+    - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestPipeline: ${{ parameters.TestPipeline }}
-        ArtifactSuffix: linux
         Artifacts: ${{ parameters.Artifacts }}
+        ArtifactSuffix: linux
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Build_Windows'
     timeoutInMinutes: 90
@@ -90,14 +90,14 @@ jobs:
       os: windows
 
     steps:
-    - template: /eng/pipelines/templates/steps/build.yml
+    - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestPipeline: ${{ parameters.TestPipeline }}
-        ArtifactSuffix: windows
         Artifacts: ${{ parameters.Artifacts }}
+        ArtifactSuffix: windows
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Build_MacOS'
     timeoutInMinutes: 90
@@ -108,14 +108,14 @@ jobs:
       os: macOS
 
     steps:
-    - template: /eng/pipelines/templates/steps/build.yml
+    - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
         TestPipeline: ${{ parameters.TestPipeline }}
-        ArtifactSuffix: mac
         Artifacts: ${{ parameters.Artifacts }}
+        ArtifactSuffix: mac
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
   - job: 'Build_Extended'
     displayName: Build Extended
@@ -134,9 +134,43 @@ jobs:
     steps:
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
+    - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+        IncludeIndirect: false
+
+    - template: /eng/pipelines/templates/steps/build-extended-artifacts.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
+        BuildDocs: false
+        RunApiStubGen: true
+        TestPipeline: ${{ parameters.TestPipeline }}
+        Artifacts: ${{ parameters.Artifacts }}
+
+  - job: 'Build_Documentation'
+    displayName: Build Docs
+    dependsOn:
+      - 'Build_Linux'
+      - 'Build_Windows'
+      - 'Build_MacOS'
+
+    timeoutInMinutes: 90
+
+    pool:
+      name: $(LINUXPOOL)
+      image: $(LINUXVMIMAGE)
+      os: linux
+
+    steps:
+    - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+
+    - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+        IncludeIndirect: false
 
     - template: ../steps/build-extended-artifacts.yml
       parameters:
@@ -145,9 +179,10 @@ jobs:
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
+        RunApiStubGen: false
 
   - job: 'Analyze'
-    condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))
+    condition: and(succeeded(), ne(variables['Skip.Analyze'], 'true'))
 
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
@@ -160,10 +195,6 @@ jobs:
       os: linux
 
     steps:
-    - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-      parameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
@@ -183,6 +214,12 @@ jobs:
       inputs:
         artifactName: 'packages_extended'
         targetPath: $(Build.ArtifactStagingDirectory)
+
+    - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
+      parameters:
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+        IncludeIndirect: false
 
     - template: ../steps/analyze.yml
       parameters:
@@ -207,6 +244,20 @@ jobs:
       MatrixConfigs: ${{ parameters.MatrixConfigs }}
       MatrixFilters: ${{ parameters.MatrixFilters }}
       MatrixReplace: ${{ parameters.MatrixReplace }}
+      PreGenerationSteps:
+
+        - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
+
+        - task: Powershell@2
+          inputs:
+            pwsh: true
+            filePath: eng/scripts/distribute-packages-to-matrix.ps1
+            arguments: >-
+              -PackageInfoFolder "$(Build.ArtifactStagingDirectory)/PackageInfo"
+              -PlatformMatrix "${{ parameters.MatrixConfigs[0].Path }}"
+          displayName: 'Distribute Packages to Matrix'
+          condition: and(eq(variables['Build.Reason'], 'PullRequest'), eq('${{ parameters.ServiceDirectory }}','auto'))
+
       CloudConfig:
         Cloud: Public
       AdditionalParameters:
@@ -241,15 +292,12 @@ jobs:
         - pwsh: |
             python -m pip install "./tools/azure-sdk-tools[build]"
           displayName: 'Prep Environment'
-        - template: /eng/pipelines/templates/steps/targeting-string-resolve.yml
-          parameters:
-            BuildTargetingString: ${{ parameters.BuildTargetingString }}
         - task: PythonScript@0
           displayName: 'Ensure service coverage'
           inputs:
             scriptPath: '$(Build.SourcesDirectory)/scripts/devops_tasks/update_regression_services.py'
             arguments: >-
-              "$(TargetingString)"
+              "azure*"
               --service="${{ parameters.ServiceDirectory }}"
               --json=$(Build.SourcesDirectory)/eng/pipelines/templates/stages/regression-job-matrix.json
       CloudConfig:
