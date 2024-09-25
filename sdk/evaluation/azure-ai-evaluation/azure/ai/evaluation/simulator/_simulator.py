@@ -41,7 +41,7 @@ class Simulator:
         """
         self._validate_project_config(azure_ai_project)
         self.azure_ai_project = azure_ai_project
-        self.azure_ai_project["api_version"] = "2024-02-15-preview"
+        self.azure_ai_project["api_version"] = "2024-06-01"
         self.credential = credential
 
     @staticmethod
@@ -129,6 +129,10 @@ class Simulator:
         max_conversation_turns *= 2  # account for both user and assistant turns
 
         prompty_model_config = self._build_prompty_model_config()
+
+        print("**********")
+        print(prompty_model_config)
+        print("**********")
 
         if conversation_turns:
             return await self._simulate_with_predefined_turns(
@@ -398,14 +402,16 @@ class Simulator:
             prompty_model_config=prompty_model_config,
             query_response_generating_prompty_kwargs=query_response_generating_prompty_kwargs,
         )
-
         try:
             query_responses = query_flow(text=text, num_queries=num_queries)
+            print(type(query_responses))
+            print(query_responses)
             if isinstance(query_responses, dict):
                 keys = list(query_responses.keys())
                 return query_responses[keys[0]]
             return json.loads(query_responses)
         except Exception as e:
+            import pdb; pdb.set_trace()
             raise RuntimeError("Error generating query responses") from e
 
     def _load_query_generation_flow(
@@ -436,6 +442,9 @@ class Simulator:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
             except FileNotFoundError as e:
                 raise f"Flow path for {resource_name} does not exist in package {package}." from e
+        print("**********")
+        print(prompty_model_config)
+        print("**********")
         return load_flow(
             source=query_response_generating_prompty,
             model=prompty_model_config,
