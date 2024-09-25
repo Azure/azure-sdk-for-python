@@ -12,11 +12,13 @@ from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from ._base_eval import BaseQRCEval
+from azure.ai.evaluation._evaluators._common._base_qrc_eval import BaseQRCEval
+from azure.ai.evaluation._exceptions import EvaluationException
 
 class BaseRaiServiceEval(BaseQRCEval):
     """Base class for all evaluators that require the use of the Azure AI RAI service for evaluation.
-    This includes content safety evaluators, protected material evaluators, and others.
+    This includes content safety evaluators, protected material evaluators, and others. These evaluators
+    are all assumed to be of the "query and reponse or conversation" input variety.
 
     param eval_metric: The evaluation metric to be used for evaluation. This is used by the API call logic
     to specify which evaluation to perform.
@@ -33,14 +35,24 @@ class BaseRaiServiceEval(BaseQRCEval):
     """
 
     @override
-    def __init__(self, eval_metric: EvaluationMetrics, azure_ai_project: bool, credential: TokenCredential, eval_last_turn: bool = False):
+    def __init__(self, eval_metric: EvaluationMetrics, azure_ai_project: AzureAIProject, credential: TokenCredential, eval_last_turn: bool = False):
         super().__init__(eval_last_turn=eval_last_turn)
         self._eval_metric = eval_metric
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
     @override
-    async def _eval_qr(self, query: str, response: str):
+    async def _do_eval(self, eval_input: Dict):
+        query = eval_input.get("query", None)
+        response = eval_input.get("response", None)
+        if query is None or response is None:
+            raise EvaluationException(
+                message="Not implemented",
+                internal_message=(
+                    "Reached query/response evaluation without supplying query or response." +
+                    " This should have failed earlier."
+                )
+            )
         return await evaluate_with_rai_service(
             metric_name=self._eval_metric,
             query=query,

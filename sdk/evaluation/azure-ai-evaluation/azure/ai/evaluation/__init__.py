@@ -7,7 +7,6 @@ from ._evaluators._bleu import BleuScoreEvaluator
 from ._evaluators._chat import ChatEvaluator
 from ._evaluators._coherence import CoherenceEvaluator
 from ._evaluators._content_safety import (
-    ContentSafetyChatEvaluator,
     ContentSafetyEvaluator,
     HateUnfairnessEvaluator,
     SelfHarmEvaluator,
@@ -46,7 +45,6 @@ __all__ = [
     "SelfHarmEvaluator",
     "HateUnfairnessEvaluator",
     "ContentSafetyEvaluator",
-    "ContentSafetyChatEvaluator",
     "IndirectAttackEvaluator",
     "BleuScoreEvaluator",
     "GleuScoreEvaluator",
