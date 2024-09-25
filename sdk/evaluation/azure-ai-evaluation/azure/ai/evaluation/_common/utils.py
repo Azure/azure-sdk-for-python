@@ -80,21 +80,6 @@ def parse_model_config_type(
         model_config["type"] = OPENAI_TYPE
 
 
-def ensure_api_version_in_aoai_model_config(
-    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-    default_api_version: str,
-) -> None:
-    model_config["api_version"] = model_config.get("api_version", default_api_version)
-
-
-def ensure_user_agent_in_prompty_model_config(
-    prompty_model_config: dict,
-    user_agent: Optional[str] = None,
-) -> None:
-    if user_agent:
-        prompty_model_config["parameters"]["extra_headers"].update({"x-ms-useragent": user_agent})
-
-
 def construct_prompty_model_config(
     model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
     default_api_version: str,
@@ -103,7 +88,7 @@ def construct_prompty_model_config(
     parse_model_config_type(model_config)
 
     if model_config["type"] == AZURE_OPENAI_TYPE:
-        ensure_api_version_in_aoai_model_config(model_config, default_api_version)
+        model_config["api_version"] = model_config.get("api_version", default_api_version)
 
     prompty_model_config = {"configuration": model_config, "parameters": {"extra_headers": {}}}
 
@@ -111,10 +96,7 @@ def construct_prompty_model_config(
     # https://github.com/encode/httpx/discussions/2959
     prompty_model_config["parameters"]["extra_headers"].update({"Connection": "close"})
 
-    if model_config["type"] == AZURE_OPENAI_TYPE:
-        ensure_user_agent_in_prompty_model_config(
-            prompty_model_config,
-            user_agent,
-        )
+    if model_config["type"] == AZURE_OPENAI_TYPE and user_agent:
+        prompty_model_config["parameters"]["extra_headers"].update({"x-ms-useragent": user_agent})
 
     return prompty_model_config
