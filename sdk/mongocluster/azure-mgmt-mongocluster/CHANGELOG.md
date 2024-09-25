@@ -4,26 +4,13 @@
 
 ### Features Added
 
-  - Model `ConnectionString` added method `name`
   - Model `ConnectionString` added property `name`
-  - Model `MongoClusterProperties` added method `administrator`
-  - Model `MongoClusterProperties` added method `backup`
-  - Model `MongoClusterProperties` added method `compute`
-  - Model `MongoClusterProperties` added method `high_availability`
-  - Model `MongoClusterProperties` added method `sharding`
-  - Model `MongoClusterProperties` added method `storage`
   - Model `MongoClusterProperties` added property `administrator`
   - Model `MongoClusterProperties` added property `high_availability`
   - Model `MongoClusterProperties` added property `storage`
   - Model `MongoClusterProperties` added property `sharding`
   - Model `MongoClusterProperties` added property `compute`
   - Model `MongoClusterProperties` added property `backup`
-  - Model `MongoClusterUpdateProperties` added method `administrator`
-  - Model `MongoClusterUpdateProperties` added method `backup`
-  - Model `MongoClusterUpdateProperties` added method `compute`
-  - Model `MongoClusterUpdateProperties` added method `high_availability`
-  - Model `MongoClusterUpdateProperties` added method `sharding`
-  - Model `MongoClusterUpdateProperties` added method `storage`
   - Model `MongoClusterUpdateProperties` added property `administrator`
   - Model `MongoClusterUpdateProperties` added property `high_availability`
   - Model `MongoClusterUpdateProperties` added property `storage`
@@ -44,16 +31,9 @@
   - Model `MongoClusterProperties` deleted or renamed its instance variable `administrator_login_password`
   - Model `MongoClusterProperties` deleted or renamed its instance variable `earliest_restore_time`
   - Model `MongoClusterProperties` deleted or renamed its instance variable `node_group_specs`
-  - Deleted or renamed method `MongoClusterProperties.administrator_login`
-  - Deleted or renamed method `MongoClusterProperties.administrator_login_password`
-  - Deleted or renamed method `MongoClusterProperties.earliest_restore_time`
-  - Deleted or renamed method `MongoClusterProperties.node_group_specs`
   - Model `MongoClusterUpdateProperties` deleted or renamed its instance variable `administrator_login`
   - Model `MongoClusterUpdateProperties` deleted or renamed its instance variable `administrator_login_password`
   - Model `MongoClusterUpdateProperties` deleted or renamed its instance variable `node_group_specs`
-  - Deleted or renamed method `MongoClusterUpdateProperties.administrator_login`
-  - Deleted or renamed method `MongoClusterUpdateProperties.administrator_login_password`
-  - Deleted or renamed method `MongoClusterUpdateProperties.node_group_specs`
   - Deleted or renamed model `NodeGroupSpec`
   - Deleted or renamed model `NodeKind`
 
