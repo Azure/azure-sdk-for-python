@@ -418,7 +418,6 @@ async def test_stress_queue_close_and_reopen(args):
         azure_monitor_metric=AzureMonitorMetric("test_stress_queue_close_and_reopen"),
         logging_level=LOGGING_LEVEL,
         transport_type=args.transport,
-        transport_type=args.transport,
     )
 
     result = await stress_test.run_async()
