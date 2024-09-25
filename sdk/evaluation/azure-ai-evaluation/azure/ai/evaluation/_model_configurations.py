@@ -4,28 +4,24 @@
 
 from typing import TypedDict
 
+from typing_extensions import NotRequired
 
-class AzureOpenAIModelConfigurationBase(TypedDict):
+
+class AzureOpenAIModelConfiguration(TypedDict, total=False):
+    """Model Configuration for Azure OpenAI"""
     type: Literal["azure_openai"]
     azure_deployment: str
     azure_endpoint: str
     api_key: str
+    api_version: NotRequired[str]
 
 
-class AzureOpenAIModelConfiguration(AzureOpenAIModelConfigurationBase, total=False):
-    """Model Configuration for Azure OpenAI"""
-    api_version: str
-
-
-class OpenAIModelConfigurationBase(TypedDict):
+class OpenAIModelConfiguration(TypedDict, total=False):
     type: Literal["openai"]
     api_key: str
     model: str
-
-
-class OpenAIModelConfiguration(OpenAIModelConfigurationBase, total=False):
-    base_url: str
-    organization: str
+    base_url: NotRequired[str]
+    organization: NotRequired[str]
 
 
 class AzureAIProject(TypedDict):
