@@ -26,7 +26,7 @@ from app_insights_metric import AbstractMonitorMetric
 from process_monitor import ProcessMonitor
 
 PRINT_CONSOLE = True
-LOGFILE_NAME = os.environ.get("DEBUG_SHARE") + "output.log"
+LOGFILE_NAME = os.environ.get("DEBUG_SHARE") + "output"
 
 class ReceiveType:
     push = "push"
@@ -112,6 +112,11 @@ class StressTestRunner:
             "fake_test_name"
         )
         self.logging_level = logging_level
+        log_filename = LOGFILE_NAME
+        if self.args.transport_type == 1:
+            log_filename += "_ws.log"
+        else:
+            log_filename += ".log"
         self.logger = get_logger(LOGFILE_NAME, "stress_test", self.logging_level)
         self.process_monitor = process_monitor or ProcessMonitor(
             "monitor_{}".format(LOGFILE_NAME),
