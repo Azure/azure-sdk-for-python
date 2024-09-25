@@ -383,9 +383,9 @@ class ShareProperties(DictMixin):
         self.paid_bursting_iops = kwargs.get('x-ms-share-paid-bursting-max-iops')
         self.included_burst_iops = kwargs.get('x-ms-share-included-burst-iops')
         self.max_burst_credits_for_iops = kwargs.get('x-ms-share-max-burst-credits-for-iops')
-        self.next_allowed_provisioned_iops_downgrade_time = (
+        self.next_allowed_provisioned_iops_downgrade_time = (  # pylint: disable=name-too-long
             kwargs.get('x-ms-share-next-allowed-provisioned-iops-downgrade-time'))
-        self.next_allowed_provisioned_bandwidth_downgrade_time = (
+        self.next_allowed_provisioned_bandwidth_downgrade_time = (  # pylint: disable=name-too-long
             kwargs.get('x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time'))
 
     @classmethod
@@ -417,9 +417,9 @@ class ShareProperties(DictMixin):
         props.paid_bursting_iops = generated.properties.paid_bursting_max_iops
         props.included_burst_iops = generated.properties.included_burst_iops
         props.max_burst_credits_for_iops = generated.properties.max_burst_credits_for_iops
-        props.next_allowed_provisioned_iops_downgrade_time = (
+        props.next_allowed_provisioned_iops_downgrade_time = (  # pylint: disable=name-too-long
             generated.properties.next_allowed_provisioned_iops_downgrade_time)
-        props.next_allowed_provisioned_bandwidth_downgrade_time = (
+        props.next_allowed_provisioned_bandwidth_downgrade_time = (  # pylint: disable=name-too-long
             generated.properties.next_allowed_provisioned_bandwidth_downgrade_time)
         return props
 
