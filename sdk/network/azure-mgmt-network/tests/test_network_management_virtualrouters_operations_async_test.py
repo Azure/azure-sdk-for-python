@@ -29,8 +29,8 @@ class TestNetworkManagementVirtualRoutersOperationsAsync(AzureMgmtRecordedTestCa
         assert result == []
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_list_by_subscription(self, resource_group):
         response = self.client.virtual_routers.list()
-        result = [r for r in response]
+        result = [r async for r in response]
         assert response
