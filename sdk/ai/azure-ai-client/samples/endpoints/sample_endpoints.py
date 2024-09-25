@@ -21,15 +21,19 @@ ai_client = AzureAIClient(
     logging_enable=True,
 )
 
+"""
 # You can list all connections, with or without their credentials
 endpoints = ai_client.endpoints.list(
     connection_type=ConnectionType.AZURE_OPEN_AI, # Optional. Defaults to all types.
     populate_secrets=True # Optional. Defaults to "False"
 )
 
+exit()
+"""
+
 # Or you can get properties of a single connection
 endpoint = ai_client.endpoints.get(
-    connection_name=os.environ["AI_STUDIO_CONNECTION_2"], 
+    connection_name=os.environ["AI_STUDIO_CONNECTION_1"], 
     populate_secrets=True
 )
 

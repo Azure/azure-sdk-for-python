@@ -107,7 +107,7 @@ class EndpointsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> _models.ConnectionsListResponse:
+    def _list(self, **kwargs: Any) -> _models.ConnectionsListResponse:
         """List the details of all the connections (not including their credentials).
 
         :return: ConnectionsListResponse. The ConnectionsListResponse is compatible with MutableMapping
@@ -168,7 +168,7 @@ class EndpointsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def list_secrets(
+    def _list_secrets(
         self, connection_name_in_url: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ConnectionsListSecretsResponse:
         """Get the details of a single connection, including credential (if available).
@@ -187,7 +187,7 @@ class EndpointsOperations:
         """
 
     @overload
-    def list_secrets(
+    def _list_secrets(
         self,
         connection_name_in_url: str,
         *,
@@ -224,7 +224,7 @@ class EndpointsOperations:
         """
 
     @overload
-    def list_secrets(
+    def _list_secrets(
         self, connection_name_in_url: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ConnectionsListSecretsResponse:
         """Get the details of a single connection, including credential (if available).
@@ -243,7 +243,7 @@ class EndpointsOperations:
         """
 
     @distributed_trace
-    def list_secrets(
+    def _list_secrets(
         self,
         connection_name_in_url: str,
         body: Union[JSON, IO[bytes]] = _Unset,

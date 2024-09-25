@@ -8,11 +8,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, Iterable
 #from zoneinfo import ZoneInfo
-from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
+from ._operations import EndpointsOperations as EndpointsOperationsGenerated
 from ..models._enums import AuthenticationType, ConnectionType
 from ..models._models import ConnectionsListSecretsResponse, ConnectionsListResponse
 
-class ConnectionsOperations(ConnectionsOperationsGenerated):
+class EndpointsOperations(EndpointsOperationsGenerated):
 
     def get(
         self,
@@ -81,7 +81,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
 
 
 __all__: List[str] = [
-    "ConnectionsOperations"
+    "EndpointsOperations"
 ]  # Add all objects you want publicly available to users at this package level
 
 
