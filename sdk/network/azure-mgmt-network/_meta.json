@@ -6,7 +6,7 @@
     "@autorest/python@6.19.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/network/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.13.19 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/network/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.19.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/network/resource-manager/readme.md",
   "package-2015-06split": "2019-06-13 02:17:06 +0300 f0f79bfa8191ac30cfb0f87665411769bd2063a6 Microsoft.Network/stable/2015-06-15/virtualNetworkGateway.json",
   "package-2017-10": "2019-06-13 02:23:37 +0300 e19543a6a361096e5ca11a42424a39025fd008fa Microsoft.Network/stable/2017-10-01/applicationGateway.json",
