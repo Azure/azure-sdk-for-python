@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import threading
-from typing import List, Optional, Union
+from typing import List, Union
 
 import nltk
 import numpy as np
@@ -83,7 +83,7 @@ def parse_model_config_type(
 def construct_prompty_model_config(
     model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
     default_api_version: str,
-    user_agent: str
+    user_agent: str,
 ) -> dict:
     parse_model_config_type(model_config)
 
