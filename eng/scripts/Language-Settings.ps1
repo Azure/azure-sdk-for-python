@@ -9,6 +9,74 @@ $PackageRepositoryUri = "https://pypi.org/project"
 ."$PSScriptRoot/docs/Docs-ToC.ps1"
 ."$PSScriptRoot/docs/Docs-Onboarding.ps1"
 
+
+function Get-python-AdditionalValidationPackagesFromPackageSet {
+  param(
+    [Parameter(Mandatory=$true)]
+    $LocatedPackages,
+    [Parameter(Mandatory=$true)]
+    $diffObj,
+    [Parameter(Mandatory=$true)]
+    $AllPkgProps
+  )
+  $additionalValidationPackages = @()
+
+  $toolChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("tool")}
+  $engChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("eng")}
+  $othersChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("scripts") -or $_.StartsWith("doc") -or $_.StartsWith("common") -or $_.StartsWith("conda") }
+
+  if ($toolChanged) {
+    $additionalPackages = @(
+      "azure-storage-blob",
+      "azure-servicebus",
+      "azure-eventhub",
+      "azure-data-table",
+      "azure-appconfig",
+      "azure-keyvault-keys",
+      "azure-identity",
+      "azure-mgmt-core",
+      "azure-core-experimental",
+      "azure-core-tracing-opentelemetry",
+      "azure-core-tracing-opencensus",
+      "azure-cosmos",
+      "azure-ai-documentintelligence",
+      "azure-ai-ml",
+      "azure-ai-inference",
+      "azure-ai-textanalytics",
+      "azure-ai-doctranslation",
+      "azure-mgmt-compute",
+      "azure-communication-chat",
+      "azure-communication-identity"
+    ) | ForEach-Object { $me=$_; $AllPkgProps | Where-Object { $_.Name -eq $me } | Select-Object -First 1 }
+
+    $additionalValidationPackages += $additionalPackages
+  }
+
+  if ($engChanged -or $othersChanged) {
+    $additionalPackages = @(
+      "azure-template",
+      "azure-core"
+    ) | ForEach-Object { $me=$_; $AllPkgProps | Where-Object { $_.Name -eq $me } | Select-Object -First 1 }
+
+    $additionalValidationPackages += $additionalPackages
+  }
+
+  $uniqueResultSet = @()
+  foreach($pkg in $additionalPackages) {
+    if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
+      $pkg.IncludedForValidation = $true
+      $uniqueResultSet += $pkg
+    }
+  }
+
+  Write-Host "Returning additional packages for validation: $($uniqueResultSet.Count)"
+  foreach($pkg in $uniqueResultSet) {
+    Write-Host "  - $($pkg.Name)"
+  }
+
+  return $uniqueResultSet
+}
+
 function Get-AllPackageInfoFromRepo ($serviceDirectory)
 {
   $allPackageProps = @()
@@ -35,6 +103,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     Pop-Location
   }
 
+
   foreach ($line in $allPkgPropLines)
   {
     $pkgInfo = ($line -Split " ")
@@ -42,6 +111,9 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     $packageVersion = $pkgInfo[1]
     $isNewSdk = ($pkgInfo[2] -eq "True")
     $pkgDirectoryPath = $pkgInfo[3]
+
+    $additionalValidationPackages = $pkgInfo[4] -Split ","
+
     $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
     if ($packageName -match "mgmt")
     {
@@ -55,6 +127,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     $pkgProp.IsNewSdk = $isNewSdk
     $pkgProp.SdkType = $sdkType
     $pkgProp.ArtifactName = $packageName
+    $pkgProp.AdditionalValidationPackages = $additionalValidationPackages
     $allPackageProps += $pkgProp
   }
   return $allPackageProps
