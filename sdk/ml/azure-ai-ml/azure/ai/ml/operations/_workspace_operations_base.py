@@ -95,7 +95,7 @@ class WorkspaceOperationsBase(ABC):
         
         from urllib.parse import urlparse
         parsed_url = urlparse(obj.ml_flow_tracking_uri)
-        host_url = parsed_url.netloc
+        host_url = "https://{}".format(parsed_url.netloc)
         v2_service_context['host_url'] = host_url
     
         # host_url=service_context._get_mlflow_url(),

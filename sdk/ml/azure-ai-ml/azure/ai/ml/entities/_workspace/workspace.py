@@ -317,7 +317,7 @@ class Workspace(Resource):
         return result
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace, v2_service_context: Optional[object]) -> Optional["Workspace"]:
+    def _from_rest_object(cls, rest_obj: RestWorkspace, v2_service_context: Optional[object] = None) -> Optional["Workspace"]:
 
         if not rest_obj:
             return None
