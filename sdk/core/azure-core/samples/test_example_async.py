@@ -23,7 +23,6 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import os
 from typing import Iterable, MutableSequence, Union
 import pytest
 from azure.core.pipeline import AsyncPipeline
