@@ -2,3 +2,4 @@
 -e ../azure-mgmt-network
 ../../identity/azure-identity
 azure-mgmt-resource<=21.1.0
+aiohttp
