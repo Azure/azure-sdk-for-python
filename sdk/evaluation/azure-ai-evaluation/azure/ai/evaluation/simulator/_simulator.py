@@ -129,11 +129,6 @@ class Simulator:
         max_conversation_turns *= 2  # account for both user and assistant turns
 
         prompty_model_config = self._build_prompty_model_config()
-
-        print("**********")
-        print(prompty_model_config)
-        print("**********")
-
         if conversation_turns:
             return await self._simulate_with_predefined_turns(
                 target=target,
@@ -404,8 +399,6 @@ class Simulator:
         )
         try:
             query_responses = query_flow(text=text, num_queries=num_queries)
-            print(type(query_responses))
-            print(query_responses)
             if isinstance(query_responses, dict):
                 keys = list(query_responses.keys())
                 return query_responses[keys[0]]
@@ -441,9 +434,6 @@ class Simulator:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
             except FileNotFoundError as e:
                 raise f"Flow path for {resource_name} does not exist in package {package}." from e
-        print("**********")
-        print(prompty_model_config)
-        print("**********")
         return load_flow(
             source=query_response_generating_prompty,
             model=prompty_model_config,
