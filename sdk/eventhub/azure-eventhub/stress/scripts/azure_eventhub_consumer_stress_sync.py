@@ -97,7 +97,11 @@ print_console = args.print_console or (os.environ.get("PRINT_CONSOLE") == "1")
 debug_level = getattr(logging, args.debug_level.upper(), logging.ERROR)
 
 
-log_filename = args.log_filename if args.log_filename else "consumer_sync.log"
+log_filename = args.log_filename if args.log_filename else "consumer_sync"
+if args.transport_type == 1:
+    log_filename += "_ws.log"
+else:
+    log_filename += ".log"
 logdir = os.environ.get("DEBUG_SHARE")
 logfilepath = f"{logdir}/{log_filename}"
 LOGGER = get_logger(
