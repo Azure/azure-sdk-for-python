@@ -25,7 +25,7 @@ class TestCosmosDBManagementRestorableSqlContainersOperationsAsync(AzureMgmtReco
         response = self.client.restorable_sql_containers.list(
             location="str",
             instance_id="str",
-            api_version="2024-08-15",
+            api_version="2024-09-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
