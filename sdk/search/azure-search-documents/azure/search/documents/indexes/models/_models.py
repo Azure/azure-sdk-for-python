@@ -1411,7 +1411,7 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
 
     @classmethod
     def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
-        """Parse a str using the RestAPI syntax and return a SearchIndexerSkillset instance.
+        """Parse a str using the RestAPI syntax and return a SearchIndexer instance.
 
         :param str data: A str using RestAPI structure. JSON by default.
         :param str content_type: JSON by default, set application/xml if XML.
