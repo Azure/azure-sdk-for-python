@@ -49,7 +49,7 @@ for endpoint in endpoints:
 # You can get the default endpoint of a particular "type" (note that since at the moment the service
 # does not have a notion of a default endpoint, this will return the first endpoint of that type):
 endpoint = ai_client.endpoints.get_default(
-    endpoint_type=EndpointType.AZURE_OPEN_AI, # Optional. Defaults to all types.
+    endpoint_type=EndpointType.AZURE_OPEN_AI, # Required.
     populate_secrets=True # Optional. Defaults to "False"
 )
 print("====> Get default Azure Open AI endpoint:")
@@ -57,7 +57,7 @@ print(endpoint)
 
 # You can get an endpoint by its name:
 endpoint = ai_client.endpoints.get(
-    endpoint_name=os.environ["AI_STUDIO_CONNECTION_1"], 
+    endpoint_name=os.environ["AI_STUDIO_CONNECTION_1"], # Required.
     populate_secrets=True
 )
 print("====> Print properties of a particular endpoint:")

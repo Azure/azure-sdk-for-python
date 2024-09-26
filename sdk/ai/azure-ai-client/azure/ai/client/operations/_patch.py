@@ -18,9 +18,11 @@ class EndpointsOperations(EndpointsOperationsGenerated):
     def get_default(
         self,
         *,
-        endpoint_type: EndpointType | None = None,
+        endpoint_type: EndpointType,
         populate_secrets: bool = False
     ) -> EndpointProperties:
+        if not endpoint_type:
+            raise ValueError("You must specify an endpoint type")
         endpoint_properties_list = self.list(endpoint_type=endpoint_type, populate_secrets=populate_secrets)
         # Since there is no notion of service default at the moment, always return the first one
         if len(endpoint_properties_list) > 0:
