@@ -138,7 +138,7 @@ jobs:
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
-        IncludeIndirect: false
+        IncludeIndirect: true
 
     - template: /eng/pipelines/templates/steps/build-extended-artifacts.yml
       parameters:
@@ -170,7 +170,7 @@ jobs:
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
-        IncludeIndirect: false
+        IncludeIndirect: true
 
     - template: ../steps/build-extended-artifacts.yml
       parameters:
