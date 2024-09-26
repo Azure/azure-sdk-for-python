@@ -3,12 +3,13 @@
 # ---------------------------------------------------------
 
 import threading
-from typing import List, Optional, Union
+from typing import List, Union
 
 import nltk
 import numpy as np
 
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
 
 from . import constants
 
@@ -70,18 +71,32 @@ def nltk_tokenize(text: str) -> List[str]:
     return list(tokens)
 
 
-def ensure_api_version_in_aoai_model_config(
+def parse_model_config_type(
     model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-    default_api_version: str,
 ) -> None:
     if "azure_endpoint" in model_config or "azure_deployment" in model_config:
+        model_config["type"] = AZURE_OPENAI_TYPE
+    else:
+        model_config["type"] = OPENAI_TYPE
+
+
+def construct_prompty_model_config(
+    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    default_api_version: str,
+    user_agent: str,
+) -> dict:
+    parse_model_config_type(model_config)
+
+    if model_config["type"] == AZURE_OPENAI_TYPE:
         model_config["api_version"] = model_config.get("api_version", default_api_version)
 
+    prompty_model_config = {"configuration": model_config, "parameters": {"extra_headers": {}}}
 
-def ensure_user_agent_in_aoai_model_config(
-    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-    prompty_model_config: dict,
-    user_agent: Optional[str] = None,
-) -> None:
-    if user_agent and ("azure_endpoint" in model_config or "azure_deployment" in model_config):
+    # Handle "RuntimeError: Event loop is closed" from httpx AsyncClient
+    # https://github.com/encode/httpx/discussions/2959
+    prompty_model_config["parameters"]["extra_headers"].update({"Connection": "close"})
+
+    if model_config["type"] == AZURE_OPENAI_TYPE and user_agent:
         prompty_model_config["parameters"]["extra_headers"].update({"x-ms-useragent": user_agent})
+
+    return prompty_model_config
