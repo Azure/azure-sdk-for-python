@@ -41,7 +41,7 @@ class Simulator:
         """
         self._validate_project_config(azure_ai_project)
         self.azure_ai_project = azure_ai_project
-        self.azure_ai_project["api_version"] = "2024-02-15-preview"
+        self.azure_ai_project["api_version"] = "2024-06-01"
         self.credential = credential
 
     @staticmethod
@@ -129,7 +129,6 @@ class Simulator:
         max_conversation_turns *= 2  # account for both user and assistant turns
 
         prompty_model_config = self._build_prompty_model_config()
-
         if conversation_turns:
             return await self._simulate_with_predefined_turns(
                 target=target,
@@ -234,8 +233,16 @@ class Simulator:
                     target=target,
                     progress_bar=progress_bar,
                 )
-
-            simulated_conversations.append(current_simulation.to_list())
+            simulated_conversations.append(
+                JsonLineChatProtocol(
+                    {
+                        "messages": current_simulation.to_list(),
+                        "finish_reason": ["stop"],
+                        "context": {},
+                        "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
+                    }
+                )
+            )
 
         progress_bar.close()
         return simulated_conversations
@@ -398,7 +405,6 @@ class Simulator:
             prompty_model_config=prompty_model_config,
             query_response_generating_prompty_kwargs=query_response_generating_prompty_kwargs,
         )
-
         try:
             query_responses = query_flow(text=text, num_queries=num_queries)
             if isinstance(query_responses, dict):
