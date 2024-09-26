@@ -441,6 +441,10 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
         return float(o)
     if isinstance(o, enum.Enum):
         return o.value
+    if isinstance(o, int):
+        if format == "str":
+            return str(o)
+        return o
     try:
         # First try datetime.datetime
         return _serialize_datetime(o, format)
@@ -660,6 +664,8 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, 
     rf: typing.Optional["_RestField"] = None,
 ) -> typing.Optional[typing.Callable[[typing.Any], typing.Any]]:
     if not annotation or annotation in [int, float]:
+        if annotation is int and rf and rf._format == "str":
+            return int
         return None
 
     # is it a type alias?

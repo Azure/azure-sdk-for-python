@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from nltk.translate.bleu_score import SmoothingFunction, sentence_bleu
-
 from promptflow._utils.async_utils import async_run_allowing_running_loop
+
 from azure.ai.evaluation._common.utils import nltk_tokenize
 
 
@@ -11,9 +11,9 @@ class _AsyncBleuScoreEvaluator:
     def __init__(self):
         pass
 
-    async def __call__(self, *, answer: str, ground_truth: str, **kwargs):
+    async def __call__(self, *, response: str, ground_truth: str, **kwargs):
         reference_tokens = nltk_tokenize(ground_truth)
-        hypothesis_tokens = nltk_tokenize(answer)
+        hypothesis_tokens = nltk_tokenize(response)
 
         # NIST Smoothing
         smoothing_function = SmoothingFunction().method4
@@ -39,7 +39,7 @@ class BleuScoreEvaluator:
 
         eval_fn = BleuScoreEvaluator()
         result = eval_fn(
-            answer="Tokyo is the capital of Japan.",
+            response="Tokyo is the capital of Japan.",
             ground_truth="The capital of Japan is Tokyo.")
 
     **Output format**
@@ -54,19 +54,19 @@ class BleuScoreEvaluator:
     def __init__(self):
         self._async_evaluator = _AsyncBleuScoreEvaluator()
 
-    def __call__(self, *, answer: str, ground_truth: str, **kwargs):
+    def __call__(self, *, response: str, ground_truth: str, **kwargs):
         """
-        Evaluate the BLEU score between the answer and the ground truth.
+        Evaluate the BLEU score between the response and the ground truth.
 
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword ground_truth: The ground truth to be compared against.
         :paramtype ground_truth: str
         :return: The BLEU score.
         :rtype: dict
         """
         return async_run_allowing_running_loop(
-            self._async_evaluator, answer=answer, ground_truth=ground_truth, **kwargs
+            self._async_evaluator, response=response, ground_truth=ground_truth, **kwargs
         )
 
     def _to_async(self):

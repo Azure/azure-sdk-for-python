@@ -59,21 +59,7 @@ The Azure Identity library focuses on OAuth authentication with Microsoft Entra 
 
 ### DefaultAzureCredential
 
-`DefaultAzureCredential` is appropriate for most applications that will run in Azure because it combines common production credentials with development credentials. `DefaultAzureCredential` attempts to authenticate via the following mechanisms, in this order, stopping when one succeeds:
-
->Note: `DefaultAzureCredential` is intended to simplify getting started with the library by handling common
->scenarios with reasonable default behaviors. Developers who want more control or whose scenario
->isn't served by the default settings should use other credential types.
-
-![DefaultAzureCredential authentication flow](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/identity/azure-identity/images/mermaidjs/DefaultAzureCredentialAuthFlow.svg)
-
-1. **Environment** - `DefaultAzureCredential` reads account information specified via [environment variables](#environment-variables "environment variables") and uses it to authenticate.
-1. **Workload Identity** - If the application is deployed to Azure Kubernetes Service with Managed Identity enabled, `DefaultAzureCredential` authenticates with it.
-1. **Managed Identity** - If the application is deployed to an Azure host with Managed Identity enabled, `DefaultAzureCredential` authenticates with it.
-1. **Azure CLI** - If a user signed in via the Azure CLI `az login` command, `DefaultAzureCredential` authenticates as that user.
-1. **Azure PowerShell** - If a user signed in via Azure PowerShell's `Connect-AzAccount` command, `DefaultAzureCredential` authenticates as that user.
-1. **Azure Developer CLI** - If the developer authenticated via the Azure Developer CLI `azd auth login` command, `DefaultAzureCredential` authenticates with that account.
-1. **Interactive browser** - If enabled, `DefaultAzureCredential` interactively authenticates a user via the default browser. This credential type is disabled by default.
+`DefaultAzureCredential` simplifies authentication while developing apps that deploy to Azure by combining credentials used in Azure hosting environments with credentials used in local development. For more information, see [DefaultAzureCredential overview][dac_overview].
 
 #### Continuation policy
 
@@ -118,7 +104,7 @@ DefaultAzureCredential(exclude_interactive_browser_credential=False)
 
 When enabled, `DefaultAzureCredential` falls back to interactively authenticating via the system's default web browser when no other credential is available.
 
-#### Specify a user-assigned managed identity for `DefaultAzureCredential`
+#### Specify a user-assigned managed identity with `DefaultAzureCredential`
 
 Many Azure hosts allow the assignment of a user-assigned managed identity. To configure `DefaultAzureCredential` to authenticate a user-assigned managed identity, use the `managed_identity_client_id` keyword argument:
 
@@ -130,20 +116,7 @@ Alternatively, set the environment variable `AZURE_CLIENT_ID` to the identity's 
 
 ### Define a custom authentication flow with `ChainedTokenCredential`
 
-`DefaultAzureCredential` is generally the quickest way to get started developing applications for Azure. For more advanced scenarios, [ChainedTokenCredential][chain_cred_ref] links multiple credential instances to be tried sequentially when authenticating. It tries each credential in turn until one provides a token or fails to authenticate due to an error.
-
-The following example demonstrates creating a credential that first attempts to authenticate using managed identity. The credential falls back to authenticating via the Azure CLI when a managed identity is unavailable. This example uses the `EventHubProducerClient` from the [azure-eventhub][azure_eventhub] client library.
-
-```python
-from azure.eventhub import EventHubProducerClient
-from azure.identity import AzureCliCredential, ChainedTokenCredential, ManagedIdentityCredential
-
-managed_identity = ManagedIdentityCredential()
-azure_cli = AzureCliCredential()
-credential_chain = ChainedTokenCredential(managed_identity, azure_cli)
-
-client = EventHubProducerClient(namespace, eventhub_name, credential_chain)
-```
+While `DefaultAzureCredential` is generally the quickest way to authenticate apps for Azure, you can create a customized chain of credentials to be considered. `ChainedTokenCredential` enables users to combine multiple credential instances to define a customized chain of credentials. For more information, see [ChainedTokenCredential overview][ctc_overview].
 
 ### Async credentials
 
@@ -395,6 +368,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [cli_cred_ref]: https://aka.ms/azsdk/python/identity/azclicredential
 [client_assertion_cred_ref]: https://aka.ms/azsdk/python/identity/clientassertioncredential
 [client_secret_cred_ref]: https://aka.ms/azsdk/python/identity/clientsecretcredential
+[ctc_overview]: https://aka.ms/azsdk/python/identity/credential-chains#chainedtokencredential-overview
+[dac_overview]: https://aka.ms/azsdk/python/identity/credential-chains#defaultazurecredential-overview
 [default_cred_ref]: https://aka.ms/azsdk/python/identity/defaultazurecredential
 [device_code_cred_ref]: https://aka.ms/azsdk/python/identity/devicecodecredential
 [environment_cred_ref]: https://aka.ms/azsdk/python/identity/environmentcredential

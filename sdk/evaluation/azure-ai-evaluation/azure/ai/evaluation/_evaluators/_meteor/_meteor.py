@@ -4,6 +4,7 @@
 import nltk
 from nltk.translate.meteor_score import meteor_score
 from promptflow._utils.async_utils import async_run_allowing_running_loop
+
 from azure.ai.evaluation._common.utils import nltk_tokenize
 
 
@@ -18,9 +19,9 @@ class _AsyncMeteorScoreEvaluator:
         except LookupError:
             nltk.download("wordnet")
 
-    async def __call__(self, *, ground_truth: str, answer: str, **kwargs):
+    async def __call__(self, *, ground_truth: str, response: str, **kwargs):
         reference_tokens = nltk_tokenize(ground_truth)
-        hypothesis_tokens = nltk_tokenize(answer)
+        hypothesis_tokens = nltk_tokenize(response)
 
         score = meteor_score(
             [reference_tokens],
@@ -62,7 +63,7 @@ class MeteorScoreEvaluator:
             gamma=0.5
         )
         result = eval_fn(
-            answer="Tokyo is the capital of Japan.",
+            response="Tokyo is the capital of Japan.",
             ground_truth="The capital of Japan is Tokyo.")
 
     **Output format**
@@ -77,19 +78,19 @@ class MeteorScoreEvaluator:
     def __init__(self, alpha: float = 0.9, beta: float = 3.0, gamma: float = 0.5):
         self._async_evaluator = _AsyncMeteorScoreEvaluator(alpha=alpha, beta=beta, gamma=gamma)
 
-    def __call__(self, *, ground_truth: str, answer: str, **kwargs):
+    def __call__(self, *, ground_truth: str, response: str, **kwargs):
         """
-        Evaluate the METEOR score between the answer and the ground truth.
+        Evaluate the METEOR score between the response and the ground truth.
 
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword ground_truth: The ground truth to be compared against.
         :paramtype ground_truth: str
         :return: The METEOR score.
         :rtype: dict
         """
         return async_run_allowing_running_loop(
-            self._async_evaluator, ground_truth=ground_truth, answer=answer, **kwargs
+            self._async_evaluator, ground_truth=ground_truth, response=response, **kwargs
         )
 
     def _to_async(self):

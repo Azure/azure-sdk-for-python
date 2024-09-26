@@ -11,10 +11,12 @@ from urllib.parse import urlparse
 
 import jwt
 import numpy as np
+
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._http_utils import get_async_http_client
+from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
 from azure.identity import DefaultAzureCredential
-
-from azure.ai.evaluation._http_utils import get_async_http_client
 
 from .constants import (
     CommonConstants,
@@ -71,15 +73,25 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
         )
 
     if response.status_code != 200:
-        raise Exception(  # pylint: disable=broad-exception-raised
-            f"RAI service is not available in this region. Status Code: {response.status_code}"
+        msg = f"RAI service is not available in this region. Status Code: {response.status_code}"
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.UNKNOWN,
+            category=ErrorCategory.SERVICE_UNAVAILABLE,
+            blame=ErrorBlame.USER_ERROR,
         )
 
     capabilities = response.json()
 
     if capability and capability not in capabilities:
-        raise Exception(  # pylint: disable=broad-exception-raised
-            f"Capability '{capability}' is not available in this region"
+        msg = f"Capability '{capability}' is not available in this region"
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.RAI_CLIENT,
+            category=ErrorCategory.SERVICE_UNAVAILABLE,
+            blame=ErrorBlame.USER_ERROR,
         )
 
 
@@ -119,13 +131,13 @@ def generate_payload(normalized_user_text: str, metric: str) -> Dict:
     )
 
 
-async def submit_request(question: str, answer: str, metric: str, rai_svc_url: str, token: str) -> str:
+async def submit_request(query: str, response: str, metric: str, rai_svc_url: str, token: str) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
 
-    :param question: The question to evaluate.
-    :type question: str
-    :param answer: The answer to evaluate.
-    :type answer: str
+    :param query: The query to evaluate.
+    :type query: str
+    :param response: The response to evaluate.
+    :type response: str
     :param metric: The evaluation metric to use.
     :type metric: str
     :param rai_svc_url: The Responsible AI service URL.
@@ -135,7 +147,7 @@ async def submit_request(question: str, answer: str, metric: str, rai_svc_url: s
     :return: The operation ID.
     :rtype: str
     """
-    user_text = f"<Human>{question}</><System>{answer}</>"
+    user_text = f"<Human>{query}</><System>{response}</>"
     normalized_user_text = user_text.replace("'", '\\"')
     payload = generate_payload(normalized_user_text, metric)
 
@@ -216,39 +228,25 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         response = response.replace("true", "True")
         parsed_response = literal_eval(response)
         result = {}
-        metric_prefix = _get_metric_prefix(metric_name)
         # Use label instead of score since these are assumed to be boolean results.
         # Use np.nan as null value since it's ignored by aggregations rather than treated as 0.
-        result[metric_prefix + "_label"] = parsed_response["label"] if "label" in parsed_response else np.nan
-        result[metric_prefix + "_reason"] = parsed_response["reasoning"] if "reasoning" in parsed_response else ""
+        result[metric_name + "_label"] = parsed_response["label"] if "label" in parsed_response else np.nan
+        result[metric_name + "_reason"] = parsed_response["reasoning"] if "reasoning" in parsed_response else ""
 
         if metric_name == EvaluationMetrics.XPIA:
             # Add "manipulated_content", "intrusion" and "information_gathering" to the result
             # if present else set them to np.nan
-            result[metric_prefix + "_manipulated_content"] = (
+            result[metric_name + "_manipulated_content"] = (
                 parsed_response["manipulated_content"] if "manipulated_content" in parsed_response else np.nan
             )
-            result[metric_prefix + "_intrusion"] = (
+            result[metric_name + "_intrusion"] = (
                 parsed_response["intrusion"] if "intrusion" in parsed_response else np.nan
             )
-            result[metric_prefix + "_information_gathering"] = (
+            result[metric_name + "_information_gathering"] = (
                 parsed_response["information_gathering"] if "information_gathering" in parsed_response else np.nan
             )
         return result
     return _parse_content_harm_response(batch_response, metric_name)
-
-
-def _get_metric_prefix(metric_name: str) -> str:
-    """Get the prefix for the evaluation metric. This is usually the metric name.
-
-    :param metric_name: The evaluation metric to use.
-    :type metric_name: str
-    :return: The prefix for the evaluation metric.
-    :rtype: str
-    """
-    if metric_name == _InternalEvaluationMetrics.ECI:
-        return "ECI"
-    return metric_name
 
 
 def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -> Dict:
@@ -327,11 +325,11 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
     return result
 
 
-async def _get_service_discovery_url(azure_ai_project: dict, token: str) -> str:
+async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: str) -> str:
     """Get the discovery service URL for the Azure AI project
 
     :param azure_ai_project: The Azure AI project details.
-    :type azure_ai_project: Dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param token: The Azure authentication token.
     :type token: str
     :return: The discovery service URL.
@@ -350,7 +348,15 @@ async def _get_service_discovery_url(azure_ai_project: dict, token: str) -> str:
         )
 
     if response.status_code != 200:
-        raise Exception("Failed to retrieve the discovery service URL")  # pylint: disable=broad-exception-raised
+        msg = "Failed to retrieve the discovery service URL."
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.RAI_CLIENT,
+            category=ErrorCategory.SERVICE_UNAVAILABLE,
+            blame=ErrorBlame.UNKNOWN,
+        )
+
     base_url = urlparse(response.json()["properties"]["discoveryUrl"])
     return f"{base_url.scheme}://{base_url.netloc}"
 
@@ -410,14 +416,14 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: str = None) -
 
 
 async def evaluate_with_rai_service(
-    question: str, answer: str, metric_name: str, project_scope: dict, credential: TokenCredential
+    query: str, response: str, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
 ):
-    """ "Evaluate the content safety of the answer using Responsible AI service
+    """ "Evaluate the content safety of the response using Responsible AI service
 
-       :param question: The question to evaluate.
-       :type question: str
-       :param answer: The answer to evaluate.
-       :type answer: str
+       :param query: The query to evaluate.
+       :type query: str
+       :param response: The response to evaluate.
+       :type response: str
        :param metric_name: The evaluation metric to use.
        :type metric_name: str
        :param project_scope: The Azure AI project scope details.
@@ -439,7 +445,7 @@ async def evaluate_with_rai_service(
     await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
 
     # Submit annotation request and fetch result
-    operation_id = await submit_request(question, answer, metric_name, rai_svc_url, token)
+    operation_id = await submit_request(query, response, metric_name, rai_svc_url, token)
     annotation_response = await fetch_result(operation_id, rai_svc_url, credential, token)
     result = parse_response(annotation_response, metric_name)
 

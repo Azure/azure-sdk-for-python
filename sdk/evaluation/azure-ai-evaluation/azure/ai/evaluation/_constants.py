@@ -19,6 +19,7 @@ class EvaluationMetrics:
     SELF_HARM = "self_harm"
     SEXUAL = "sexual"
     PROTECTED_MATERIAL = "protected_material"
+    XPIA = "xpia"
 
 
 class _InternalEvaluationMetrics:
@@ -36,6 +37,15 @@ class Prefixes:
     INPUTS = "inputs."
     OUTPUTS = "outputs."
     TSG_OUTPUTS = "__outputs."
+
+
+class DefaultOpenEncoding:
+    """Enum that captures SDK's default values for the encoding param of open(...)"""
+
+    READ = "utf-8-sig"
+    """SDK Default Encoding when reading a file"""
+    WRITE = "utf-8"
+    """SDK Default Encoding when writing a file"""
 
 
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"

@@ -2,8 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from promptflow._utils.async_utils import async_run_allowing_running_loop
+
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 
 class _AsyncProtectedMaterialsEvaluator:
@@ -11,29 +13,36 @@ class _AsyncProtectedMaterialsEvaluator:
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
-    async def __call__(self, *, question: str, answer: str, **kwargs):
+    async def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
 
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Any
         """
         # Validate inputs
         # Raises value error if failed, so execution alone signifies success.
-        if not (question and question.strip() and question != "None") or not (
-            answer and answer.strip() and answer != "None"
+        if not (query and query.strip() and query != "None") or not (
+            response and response.strip() and response != "None"
         ):
-            raise ValueError("Both 'question' and 'answer' must be non-empty strings.")
+            msg = "Both 'query' and 'response' must be non-empty strings."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                error_category=ErrorCategory.MISSING_FIELD,
+                error_blame=ErrorBlame.USER_ERROR,
+                error_target=ErrorTarget.PROTECTED_MATERIAL_EVALUATOR,
+            )
 
         # Run score computation based on supplied metric.
         result = await evaluate_with_rai_service(
             metric_name=EvaluationMetrics.PROTECTED_MATERIAL,
-            question=question,
-            answer=answer,
+            query=query,
+            response=response,
             project_scope=self._azure_ai_project,
             credential=self._credential,
         )
@@ -47,7 +56,7 @@ class ProtectedMaterialsEvaluator:
 
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type azure_ai_project: dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
     :return: Whether or not protected material was found in the response, with AI-generated reasoning.
@@ -63,7 +72,7 @@ class ProtectedMaterialsEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = ProtectedMaterialsEvaluator(azure_ai_project)
-        result = eval_fn(question="What is the capital of France?", answer="Paris.")
+        result = eval_fn(query="What is the capital of France?", response="Paris.")
 
     **Output format**
 
@@ -71,25 +80,25 @@ class ProtectedMaterialsEvaluator:
 
         {
             "label": "False",
-            "reasoning": "This question does not contain any protected material."
+            "reasoning": "This query does not contain any protected material."
         }
     """
 
     def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncProtectedMaterialsEvaluator(azure_ai_project, credential)
 
-    def __call__(self, *, question: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates protected materials content.
 
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :return: A dictionary containing a boolean label and reasoning.
         :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, question=question, answer=answer, **kwargs)
+        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
 
     def _to_async(self):
         return self._async_evaluator

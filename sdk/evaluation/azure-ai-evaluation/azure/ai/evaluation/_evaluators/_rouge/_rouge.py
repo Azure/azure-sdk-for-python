@@ -3,12 +3,13 @@
 # ---------------------------------------------------------
 from enum import Enum
 
+from promptflow._utils.async_utils import async_run_allowing_running_loop
 from rouge_score import rouge_scorer
 
-from promptflow._utils.async_utils import async_run_allowing_running_loop
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class RougeType(str, Enum):
+class RougeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Enumeration of ROUGE (Recall-Oriented Understudy for Gisting Evaluation) types.
     """
@@ -36,9 +37,9 @@ class _AsyncRougeScoreEvaluator:
     def __init__(self, rouge_type: RougeType):
         self._rouge_type = rouge_type
 
-    async def __call__(self, *, ground_truth: str, answer: str, **kwargs):
+    async def __call__(self, *, ground_truth: str, response: str, **kwargs):
         scorer = rouge_scorer.RougeScorer(rouge_types=[self._rouge_type])
-        metrics = scorer.score(ground_truth, answer)[self._rouge_type]
+        metrics = scorer.score(ground_truth, response)[self._rouge_type]
         return {
             "rouge_precision": metrics.precision,
             "rouge_recall": metrics.recall,
@@ -62,7 +63,7 @@ class RougeScoreEvaluator:
 
         eval_fn = RougeScoreEvaluator(rouge_type=RougeType.ROUGE_1)
         result = eval_fn(
-            answer="Tokyo is the capital of Japan.",
+            response="Tokyo is the capital of Japan.",
             ground_truth="The capital of Japan is Tokyo.")
 
     **Output format**
@@ -79,19 +80,19 @@ class RougeScoreEvaluator:
     def __init__(self, rouge_type: RougeType):
         self._async_evaluator = _AsyncRougeScoreEvaluator(rouge_type)
 
-    def __call__(self, *, ground_truth: str, answer: str, **kwargs):
+    def __call__(self, *, ground_truth: str, response: str, **kwargs):
         """
-        Evaluate the ROUGE score between the answer and the ground truth.
+        Evaluate the ROUGE score between the response and the ground truth.
 
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword ground_truth: The ground truth to be compared against.
         :paramtype ground_truth: str
         :return: The ROUGE score.
         :rtype: dict
         """
         return async_run_allowing_running_loop(
-            self._async_evaluator, ground_truth=ground_truth, answer=answer, **kwargs
+            self._async_evaluator, ground_truth=ground_truth, response=response, **kwargs
         )
 
     def _to_async(self):

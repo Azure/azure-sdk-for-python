@@ -3,6 +3,7 @@ from ._adversarial_simulator import AdversarialSimulator
 from ._constants import SupportedLanguages
 from ._direct_attack_simulator import DirectAttackSimulator
 from ._indirect_attack_simulator import IndirectAttackSimulator
+from ._simulator import Simulator
 
 __all__ = [
     "AdversarialSimulator",
@@ -10,4 +11,5 @@ __all__ = [
     "DirectAttackSimulator",
     "IndirectAttackSimulator",
     "SupportedLanguages",
+    "Simulator",
 ]

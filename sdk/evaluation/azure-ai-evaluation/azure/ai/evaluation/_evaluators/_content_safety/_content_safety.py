@@ -23,7 +23,7 @@ class ContentSafetyEvaluator:
 
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
-    :type azure_ai_project: dict
+    :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
         Default is True.
     :param credential: The credential for connecting to Azure AI project.
@@ -42,8 +42,8 @@ class ContentSafetyEvaluator:
         }
         eval_fn = ContentSafetyEvaluator(azure_ai_project)
         result = eval_fn(
-            question="What is the capital of France?",
-            answer="Paris.",
+            query="What is the capital of France?",
+            response="Paris.",
         )
 
     **Output format**
@@ -75,14 +75,14 @@ class ContentSafetyEvaluator:
             HateUnfairnessEvaluator(azure_ai_project, credential),
         ]
 
-    def __call__(self, *, question: str, answer: str, **kwargs):
+    def __call__(self, *, query: str, response: str, **kwargs):
         """
         Evaluates content-safety metrics for "question-answering" scenario.
 
-        :keyword question: The question to be evaluated.
-        :paramtype question: str
-        :keyword answer: The answer to be evaluated.
-        :paramtype answer: str
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
         :keyword parallel: Whether to evaluate in parallel.
         :paramtype parallel: bool
         :return: The scores for content-safety.
@@ -92,7 +92,7 @@ class ContentSafetyEvaluator:
         if self._parallel:
             with ThreadPoolExecutor() as executor:
                 futures = {
-                    executor.submit(evaluator, question=question, answer=answer, **kwargs): evaluator
+                    executor.submit(evaluator, query=query, response=response, **kwargs): evaluator
                     for evaluator in self._evaluators
                 }
 
@@ -100,7 +100,7 @@ class ContentSafetyEvaluator:
                     results.update(future.result())
         else:
             for evaluator in self._evaluators:
-                result = evaluator(question=question, answer=answer, **kwargs)
+                result = evaluator(query=query, response=response, **kwargs)
                 results.update(result)
 
         return results

@@ -5,6 +5,8 @@ from typing import Any, Dict, List
 import pytest
 from devtools_testutils import is_live
 
+from azure.ai.evaluation._exceptions import EvaluationException
+
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.azuretest
@@ -37,7 +39,7 @@ class TestAdvSimulator:
             return x
 
         simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
-        with pytest.raises(ValueError):
+        with pytest.raises(EvaluationException):
             asyncio.run(
                 simulator(
                     max_conversation_turns=1,
@@ -61,8 +63,8 @@ class TestAdvSimulator:
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
-            question = messages["messages"][0]["content"]
-            response_from_acs, temperature = question, 0.0
+            query = messages["messages"][0]["content"]
+            response_from_acs, temperature = query, 0.0
             formatted_response = {
                 "content": response_from_acs["result"],
                 "role": "assistant",
@@ -112,9 +114,9 @@ class TestAdvSimulator:
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -154,9 +156,9 @@ class TestAdvSimulator:
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -195,9 +197,9 @@ class TestAdvSimulator:
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -236,9 +238,9 @@ class TestAdvSimulator:
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -278,9 +280,9 @@ class TestAdvSimulator:
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -320,9 +322,9 @@ class TestAdvSimulator:
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -364,9 +366,9 @@ class TestAdvSimulator:
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -403,9 +405,9 @@ class TestAdvSimulator:
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -480,9 +482,9 @@ class TestAdvSimulator:
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -554,9 +556,9 @@ class TestAdvSimulator:
         async def callback(
             messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
         ) -> dict:
-            question = messages["messages"][0]["content"]
+            query = messages["messages"][0]["content"]
 
-            formatted_response = {"content": question, "role": "assistant"}
+            formatted_response = {"content": query, "role": "assistant"}
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
