@@ -4,9 +4,9 @@
 from azure.ai.evaluation._common.constants import _InternalEvaluationMetrics
 from typing_extensions import override
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import BaseRaiServiceEval
+from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import _BaseRaiServiceEval
 
-class ECIEvaluator(BaseRaiServiceEval):
+class ECIEvaluator(_BaseRaiServiceEval):
     """
     Initialize an ECI evaluator to evaluate ECI based on the following guidelines:
     Detects whether ECI is present without a disclaimer in the AI system’s response.

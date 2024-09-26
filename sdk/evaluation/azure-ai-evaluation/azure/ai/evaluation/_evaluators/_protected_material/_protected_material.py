@@ -4,11 +4,11 @@
 from typing_extensions import override
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import BaseRaiServiceEval
+from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import _BaseRaiServiceEval
 
 
 
-class ProtectedMaterialEvaluator(BaseRaiServiceEval):
+class ProtectedMaterialEvaluator(_BaseRaiServiceEval):
     """
     Initialize a protected material evaluator to detect whether protected material
     is present in your AI system's response. Outputs True or False with AI-generated reasoning.

@@ -14,7 +14,7 @@ from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
-class _BaseConversationEval(ABC):
+class _BaseEval(ABC):
     """Base class for all evaluators that are capable of accepting either a conversation as input.
     All such evaluators need to implement two functions of their own:
         - _convert_conversation_to_eval_input
@@ -214,7 +214,7 @@ class _AsyncBaseEval():
     """The asynchronous evaluator hidden underneath all evaluators. This makes generous use passing functions
     to ensure that no one ever needs to extend or otherwise modify this class directly. 
     """
-    def __init__(self, sync_eval: _BaseConversationEval):
+    def __init__(self, sync_eval: _BaseEval):
         self._sync_evaluator = sync_eval
 
     async def __call__(self, **kwargs):

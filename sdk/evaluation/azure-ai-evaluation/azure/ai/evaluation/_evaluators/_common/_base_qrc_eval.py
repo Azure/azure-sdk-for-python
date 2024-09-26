@@ -8,9 +8,9 @@ from typing_extensions import override
 from typing import Dict, List
 
 import numpy as np
-from azure.ai.evaluation._evaluators._common._base_eval import _BaseConversationEval
+from azure.ai.evaluation._evaluators._common._base_eval import _BaseEval
 
-class BaseQRCEval(_BaseConversationEval):
+class _BaseQRCEval(_BaseEval):
     """Base class for all evaluators that are capable of accepting either a query and response as input,
     in addition to a conversation. The only thing that most child classes will need to implement is the _eval_qr method
     to handle a single query/response dict. Although some might need to implement the _aggregate_results method.

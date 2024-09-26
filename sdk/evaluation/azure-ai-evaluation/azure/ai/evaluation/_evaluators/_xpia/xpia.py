@@ -6,12 +6,12 @@ import logging
 from typing_extensions import override
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import BaseRaiServiceEval
+from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import _BaseRaiServiceEval
 
 logger = logging.getLogger(__name__)
 
 
-class IndirectAttackEvaluator(BaseRaiServiceEval):
+class IndirectAttackEvaluator(_BaseRaiServiceEval):
     """A Cross-Domain Prompt Injection Attack (XPIA) jailbreak evaluator.
 
     Detect whether cross domain injected attacks are present in your AI system's response.

@@ -1,24 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-<<<<<<< HEAD
 from typing_extensions import override
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import BaseRaiServiceEval
-=======
-from promptflow._utils.async_utils import async_run_allowing_running_loop
-
-from azure.ai.evaluation._common.constants import EvaluationMetrics
-
-try:
-    from ._content_safety_base import ContentSafetyEvaluatorBase
-except ImportError:
-    from _content_safety_base import ContentSafetyEvaluatorBase
->>>>>>> main
+from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import _BaseRaiServiceEval
 
 
-class SexualEvaluator(BaseRaiServiceEval):
+class SexualEvaluator(_BaseRaiServiceEval):
     """
     Initialize a sexual evaluator for sexual score.
 
