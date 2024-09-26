@@ -4,7 +4,7 @@
 
 
 from functools import wraps
-from typing import Any, Awaitable, Callable, Dict, MutableMapping, Optional
+from typing import Any, Awaitable, Callable, Dict, MutableMapping, Optional, cast
 
 from typing_extensions import Self
 
@@ -145,14 +145,32 @@ class HttpPipeline(Pipeline):
         :param RedirectPolicy redirect_policy:
         """
         config = config or Configuration()
-        config.headers_policy = headers_policy or config.headers_policy or HeadersPolicy(**kwargs)
-        config.proxy_policy = proxy_policy or config.proxy_policy or ProxyPolicy(**kwargs)
-        config.redirect_policy = redirect_policy or config.redirect_policy or RedirectPolicy(**kwargs)
-        config.retry_policy = retry_policy or config.retry_policy or RetryPolicy(**kwargs)
-        config.custom_hook_policy = custom_hook_policy or config.custom_hook_policy or CustomHookPolicy(**kwargs)
-        config.logging_policy = logging_policy or config.logging_policy or NetworkTraceLoggingPolicy(**kwargs)
-        config.http_logging_policy = http_logging_policy or config.http_logging_policy or HttpLoggingPolicy(**kwargs)
-        config.user_agent_policy = user_agent_policy or config.user_agent_policy or UserAgentPolicy(**kwargs)
+        config.headers_policy = (
+            headers_policy or cast(Optional[HeadersPolicy], config.headers_policy) or HeadersPolicy(**kwargs)
+        )
+        config.proxy_policy = proxy_policy or cast(Optional[ProxyPolicy], config.proxy_policy) or ProxyPolicy(**kwargs)
+        config.redirect_policy = (
+            redirect_policy or cast(Optional[RedirectPolicy], config.redirect_policy) or RedirectPolicy(**kwargs)
+        )
+        config.retry_policy = retry_policy or cast(Optional[RetryPolicy], config.retry_policy) or RetryPolicy(**kwargs)
+        config.custom_hook_policy = (
+            custom_hook_policy
+            or cast(Optional[CustomHookPolicy], config.custom_hook_policy)
+            or CustomHookPolicy(**kwargs)
+        )
+        config.logging_policy = (
+            logging_policy
+            or cast(Optional[NetworkTraceLoggingPolicy], config.logging_policy)
+            or NetworkTraceLoggingPolicy(**kwargs)
+        )
+        config.http_logging_policy = (
+            http_logging_policy
+            or cast(Optional[HttpLoggingPolicy], config.http_logging_policy)
+            or HttpLoggingPolicy(**kwargs)
+        )
+        config.user_agent_policy = (
+            user_agent_policy or cast(Optional[UserAgentPolicy], config.user_agent_policy) or UserAgentPolicy(**kwargs)
+        )
         config.polling_interval = kwargs.get("polling_interval", 30)
 
         super().__init__(
@@ -166,7 +184,6 @@ class HttpPipeline(Pipeline):
                 config.proxy_policy,
                 config.redirect_policy,
                 config.retry_policy,
-                config.authentication_policy,
                 config.custom_hook_policy,
                 config.logging_policy,
             ],
@@ -280,14 +297,36 @@ class AsyncHttpPipeline(AsyncPipeline):
         :param AsyncRedirectPolicy redirect_policy:
         """
         config = config or Configuration()
-        config.headers_policy = headers_policy or config.headers_policy or HeadersPolicy(**kwargs)
-        config.proxy_policy = proxy_policy or config.proxy_policy or ProxyPolicy(**kwargs)
-        config.redirect_policy = redirect_policy or config.redirect_policy or AsyncRedirectPolicy(**kwargs)
-        config.retry_policy = retry_policy or config.retry_policy or AsyncRetryPolicy(**kwargs)
-        config.custom_hook_policy = custom_hook_policy or config.custom_hook_policy or CustomHookPolicy(**kwargs)
-        config.logging_policy = logging_policy or config.logging_policy or NetworkTraceLoggingPolicy(**kwargs)
-        config.http_logging_policy = http_logging_policy or config.http_logging_policy or HttpLoggingPolicy(**kwargs)
-        config.user_agent_policy = user_agent_policy or config.user_agent_policy or UserAgentPolicy(**kwargs)
+        config.headers_policy = (
+            headers_policy or cast(Optional[HeadersPolicy], config.headers_policy) or HeadersPolicy(**kwargs)
+        )
+        config.proxy_policy = proxy_policy or cast(Optional[ProxyPolicy], config.proxy_policy) or ProxyPolicy(**kwargs)
+        config.redirect_policy = (
+            redirect_policy
+            or cast(Optional[AsyncRedirectPolicy], config.redirect_policy)
+            or AsyncRedirectPolicy(**kwargs)
+        )
+        config.retry_policy = (
+            retry_policy or cast(Optional[AsyncRetryPolicy], config.retry_policy) or AsyncRetryPolicy(**kwargs)
+        )
+        config.custom_hook_policy = (
+            custom_hook_policy
+            or cast(Optional[CustomHookPolicy], config.custom_hook_policy)
+            or CustomHookPolicy(**kwargs)
+        )
+        config.logging_policy = (
+            logging_policy
+            or cast(Optional[NetworkTraceLoggingPolicy], config.logging_policy)
+            or NetworkTraceLoggingPolicy(**kwargs)
+        )
+        config.http_logging_policy = (
+            http_logging_policy
+            or cast(Optional[HttpLoggingPolicy], config.http_logging_policy)
+            or HttpLoggingPolicy(**kwargs)
+        )
+        config.user_agent_policy = (
+            user_agent_policy or cast(Optional[UserAgentPolicy], config.user_agent_policy) or UserAgentPolicy(**kwargs)
+        )
         config.polling_interval = kwargs.get("polling_interval", 30)
 
         super().__init__(
@@ -301,7 +340,6 @@ class AsyncHttpPipeline(AsyncPipeline):
                 config.proxy_policy,
                 config.redirect_policy,
                 config.retry_policy,
-                config.authentication_policy,
                 config.custom_hook_policy,
                 config.logging_policy,
             ],
