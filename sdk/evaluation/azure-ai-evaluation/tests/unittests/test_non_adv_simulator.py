@@ -41,7 +41,7 @@ class TestNonAdvSimulator:
     def test_init_valid_project(self, valid_project):
         simulator = Simulator(azure_ai_project=valid_project)
         assert simulator.azure_ai_project["subscription_id"] == "test_subscription"
-        assert simulator.azure_ai_project["api_version"] == "2024-02-15-preview"
+        assert simulator.azure_ai_project["api_version"] == "2024-06-01"
 
     def test_init_invalid_project(self, invalid_project):
         with pytest.raises(ValueError):
@@ -92,7 +92,7 @@ class TestNonAdvSimulator:
         )
 
         assert len(result) == 1
-        assert isinstance(result[0], list)
+        assert isinstance(result[0], JsonLineChatProtocol)
 
     @pytest.mark.asyncio
     @patch("azure.ai.evaluation.simulator.Simulator._complete_conversation", new_callable=AsyncMock)
