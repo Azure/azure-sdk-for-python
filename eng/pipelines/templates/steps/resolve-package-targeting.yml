@@ -21,17 +21,19 @@ steps:
           $setting = "$(BuildTargetingString)"
       }
       else {
-        if ("${{ parameters.IncludeIndirect }}" -eq "true") {
-          $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
+        if (Test-Path "${{ parameters.PackagePropertiesFolder }}") {
+          if ("${{ parameters.IncludeIndirect }}" -eq "true") {
+            $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
+                | ForEach-Object { $_.Name.Replace(".json", "") }
+          }
+          else {
+            $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
+              | Where-Object { (Get-Content -Raw $_ | ConvertFrom-Json).IncludedForValidation -eq $false } `
               | ForEach-Object { $_.Name.Replace(".json", "") }
-        }
-        else {
-          $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
-            | Where-Object { (Get-Content -Raw $_ | ConvertFrom-Json).IncludedForValidation -eq $false } `
-            | ForEach-Object { $_.Name.Replace(".json", "") }
-        }
+          }
 
-        $setting = $packageProperties -join ","
+          $setting = $packageProperties -join ","
+        }
       }
 
       Write-Host "##vso[task.setvariable variable=TargetingString;]$setting"

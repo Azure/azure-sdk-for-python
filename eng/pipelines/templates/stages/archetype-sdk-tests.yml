@@ -192,6 +192,7 @@ extends:
                             AdditionalParameters:
                               ServiceDirectory: ${{ parameters.ServiceDirectory }}
                               TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
+                              BuildTargetingString: "*"
                               PreSteps:
                                 - ${{ parameters.PlatformPreSteps }}
                                 - ${{ parameters.PreSteps }}
