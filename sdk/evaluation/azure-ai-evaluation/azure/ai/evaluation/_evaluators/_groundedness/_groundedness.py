@@ -5,7 +5,7 @@ import os
 from typing import Dict, List, Optional
 from typing_extensions import override
 
-from azure.ai.evaluation._evaluators._common._base_prompty_eval import _BasePromptyEval
+from azure.ai.evaluation._evaluators._common import _BasePromptyEval
 
 
 class GroundednessEvaluator(_BasePromptyEval):

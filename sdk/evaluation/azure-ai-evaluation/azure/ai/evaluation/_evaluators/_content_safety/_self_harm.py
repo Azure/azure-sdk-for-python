@@ -4,7 +4,8 @@
 from typing_extensions import override
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import _BaseRaiServiceEval
+from azure.ai.evaluation._evaluators._common import _BaseRaiServiceEval
+
 
 
 class SelfHarmEvaluator(_BaseRaiServiceEval):

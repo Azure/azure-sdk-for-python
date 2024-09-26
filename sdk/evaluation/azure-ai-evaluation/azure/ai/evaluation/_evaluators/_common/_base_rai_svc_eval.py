@@ -12,8 +12,8 @@ from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._evaluators._common._base_eval import _BaseEval
 from azure.ai.evaluation._exceptions import EvaluationException
+from . import _BaseEval
 
 class _BaseRaiServiceEval(_BaseEval):
     """Base class for all evaluators that require the use of the Azure AI RAI service for evaluation.

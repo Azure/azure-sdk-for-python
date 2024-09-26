@@ -21,7 +21,7 @@ try:
     from ..._user_agent import USER_AGENT
 except ImportError:
     USER_AGENT = None
-from azure.ai.evaluation._evaluators._common._base_eval import _BaseEval
+from . import _BaseEval
 
 class _BasePromptyEval(_BaseEval):
     """Base class for all evaluators that make use of context as an input. It's also assumed that such evaluators
