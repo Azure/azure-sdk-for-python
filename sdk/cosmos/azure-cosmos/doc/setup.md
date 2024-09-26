@@ -14,6 +14,7 @@ To build and develop locally, it is strongly recommended to fork and clone the r
 #### Add Interpreter
 Your Python interpreter might not be the right version(**Python 3.6+**). Change the Python versions in Pycharm.
 1. Add local interpreter
+
 ![Screenshot 2024-09-11 at 1 28 42 PM](https://github.com/user-attachments/assets/93b0815b-72e7-40ac-b865-c4f00c7627fa)
 
 2. Select the right interpreter version
@@ -22,15 +23,23 @@ Your Python interpreter might not be the right version(**Python 3.6+**). Change 
 #### Install dependent Packages
 1. On the bottom left tool bar, go to `Python Packages`
 2. Goto `Add Package` > `From Disk`
-3. Add Path to dependent packages
-   * pytest
-   * pyrebase
-   * aiohttp
+
+![Add package 1](https://github.com/user-attachments/assets/915883ff-f4bb-4a0b-94c0-eebeba740dc3)
+
+3. Add Path to dependent packages from disk
    * `/<PATH_TO_CLONED_REPO>/azure-sdk-for-python/sdk/cosmos/azure-cosmos`
      * azure-core
      * azure-cosmos
    * `/<PATH_TO_CLONED_REPO>/azure-sdk-for-python/sdk/identity/azure-identity`
    * `/<PATH_TO_CLONED_REPO>/azure-sdk-for-python/tools/azure-sdk-tools`
+
+![Add package 2](https://github.com/user-attachments/assets/8c97f03a-8c74-48b5-a194-457815f3260b)
+
+4. Add Path to dependent packages from `PyPl`
+   * pytest
+   * pyrebase
+   * aiohttp
+![Pytest install](https://github.com/user-attachments/assets/0c39d706-2c78-4e62-9b0a-9604d088c6f9)
 
 #### Run Cosmos DB Emulator
 Azure CosmosDB Emulator is required to run unit tests.
@@ -49,9 +58,14 @@ However, the emulator is not ready on MAC OSX yet. Please follow the instruction
 1. Open `test_config.py`
 2. Replace the default values of `ACCOUNT_KEY` and `ACCOUNT_HOST` to the values from Azure Cosmos DB account(Create new Cosmos DB account if you don't have any)
     - `ACCOUNT_KEY`: Primary key from the keys from `Settings` in Azure Cosmos DB account home
+![key](https://github.com/user-attachments/assets/db920127-ee80-4d8d-a79e-503e5ea629e3)
+
     - `ACCOUNT_HOST`: URI from the overview page of Azure Cosmos DB account
+![uri](https://github.com/user-attachments/assets/034a700d-47c7-41ee-90cd-afd534729d37)
+
 3. Update the usage of `credential` in the `setUpClass` in `test_query.py`
     - `cls.credential` -> `cls.config.masterKey`
+![Screenshot 2024-09-26 at 3 07 40 PM](https://github.com/user-attachments/assets/146cb09e-2123-4784-831b-4e731376ea92)
 
 To run aad tests, follow the steps below to create `RoleAssignment` that uses the `RoleDefinition`
 1. Save the following content into a JSON file named `expandedAction.json`
@@ -107,6 +121,12 @@ To run aad tests, follow the steps below to create `RoleAssignment` that uses th
     ```
 #### Run unit tests
 The unit tests can be ran by right-clicking a specific test file or specific test function in test files
+
+- Run all tests on a test file
+![Screenshot 2024-09-26 at 3 08 50 PM](https://github.com/user-attachments/assets/c47760fc-8302-4c52-8826-23c81d13b123)
+
+- Run a single test on a test file
+![Screenshot 2024-09-26 at 3 09 38 PM](https://github.com/user-attachments/assets/65d01c13-82b7-4485-9103-fd7b8bde71fb)
 
 <!-- LINKS -->
 [azure_sub]: https://azure.microsoft.com/free/
