@@ -66,12 +66,12 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
     """
 
     def __init__(self, credential: TokenCredential, *scopes: str, **kwargs: Any) -> None:
-        super(ChallengeAuthPolicy, self).__init__(credential, *scopes, **kwargs)
+        # Pass `enable_cae` so `enable_cae=True` is always passed to get_token
+        super(ChallengeAuthPolicy, self).__init__(credential, *scopes, enable_cae=True, **kwargs)
         self._credential: TokenCredential = credential
         self._token: Optional[AccessToken] = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
         self._request_copy: Optional[HttpRequest] = None
-        self._enable_cae = kwargs.pop("enable_cae", True)  # When True, `enable_cae=True` is always passed to get_token
 
     def send(self, request: PipelineRequest[HttpRequest]) -> PipelineResponse[HttpRequest, HttpResponse]:
         """Authorize request with a bearer token and send it to the next policy.
