@@ -16,7 +16,7 @@ from ._models import CredentialsApiKeyAuth
 from ._models import CredentialsSASAuth
 
 from ._enums import AuthenticationType
-from ._enums import ConnectionType
+from ._enums import EndpointType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -31,7 +31,7 @@ __all__ = [
     "CredentialsApiKeyAuth",
     "CredentialsSASAuth",
     "AuthenticationType",
-    "ConnectionType",
+    "EndpointType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

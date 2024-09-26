@@ -21,10 +21,12 @@ class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Shared Access Signature (SAS) authentication"""
 
 
-class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
     AZURE_OPEN_AI = "AzureOpenAI"
     """Azure OpenAI"""
     SERVERLESS = "Serverless"
     """Serverless API"""
+    AGENTS = "Agents"
+    """Agents"""
