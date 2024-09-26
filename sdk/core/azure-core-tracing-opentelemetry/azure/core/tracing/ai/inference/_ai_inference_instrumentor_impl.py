@@ -10,7 +10,7 @@ import json
 import logging
 from urllib.parse import urlparse
 from enum import Enum
-from typing import Any, Iterator, Callable, Optional, List, Tuple, Dict
+from typing import Any, Iterator, Callable, Optional, List, Tuple, Dict, Union
 from azure.ai.inference.aio import ChatCompletionsClient
 from azure.ai.inference import models as _models
 from azure.core.tracing import AbstractSpan
@@ -141,7 +141,7 @@ def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCom
         span.span_instance.add_event(name="gen_ai.choice", attributes=attributes)
 
 
-def _add_response_chat_attributes(span: AbstractSpan, result: _models.ChatCompletions | _models.StreamingChatCompletionsUpdate) -> None:
+def _add_response_chat_attributes(span: AbstractSpan,  result: Union[_models.ChatCompletions, _models.StreamingChatCompletionsUpdate]) -> None:
 
     _set_attributes(
         span,
