@@ -1,0 +1,66 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+# Contains a collection of functions that are used by evaluators to specify internal
+# logic, espcecially w.r.t to conversation -> input conversion.
+
+from typing import Dict, List, Func
+
+
+# TODO refactor to use inspection instead of bools to determine what inputs to use?
+def get_per_turn_converter(include_query: bool = True, include_response: bool = True, include_context: bool = True, eval_last_turn_only = False) -> Func:
+    """Convert a conversation into a list of inputs for this evaluator, producing one input per pair of
+    user/assistant conversation turns. User inputs become queries, assistant inputs become responses,
+    and the context - both global and per-turn - can be included as well. Any of these can be excluded as needed.
+
+    param conversation: The conversation to convert.
+    type conversation: Dict
+    return: A list of arbitrary values that are valid inputs for this evaluator's do_eval function.
+    rtype: List
+    """
+    
+    def converter(conversation: Dict) -> List:
+        messages = conversation['messages']
+        global_context = conversation.get('context', None)
+        # Extract queries, responses from conversation
+        queries = []
+        responses = []
+
+        # Convert conversation slice into queries and responses.
+        # Assume that 'user' role is asking queries and 'assistant' role is responding.
+        if eval_last_turn_only and len(messages) > 1:
+            messages = messages[-2:]
+
+        for each_turn in messages:
+            role = each_turn["role"]
+            if role == "user":
+                queries.append(each_turn)
+            elif role == "assistant":
+                responses.append(each_turn)
+        # TODO complain if len(queries) != len(responses)?
+        eval_inputs = []
+        for query, response in zip(queries, responses):
+            context = {}
+            if include_context:
+                query_context = query.get("context", None)
+                response_context = response.get("context", None)
+                if global_context:
+                    context["global_context"] = global_context
+                if query_context and not include_query:
+                    context["query_context"] = query_context
+                if response_context and not include_response:
+                    context["response_context"] = response_context
+
+            
+            eval_input = {}
+            if include_query:
+                eval_input["query"] = query
+            if include_response:
+                eval_input["response"] = response
+            if include_context:
+                eval_input["context"] = str(context)
+            eval_inputs.append(eval_input)
+        return eval_inputs
+
+    return converter

@@ -9,10 +9,10 @@ from typing_extensions import override
 
 from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
-from azure.ai.evaluation._evaluators._common._base_context_flow_eval import _BaseContextFlowEval
+from azure.ai.evaluation._evaluators._common._base_prompty_eval import _BasePromptyEval
 
 
-class RelevanceEvaluator(_BaseContextFlowEval):
+class RelevanceEvaluator(_BasePromptyEval):
     """
     Initialize a relevance evaluator configured for a specific Azure OpenAI model.
 

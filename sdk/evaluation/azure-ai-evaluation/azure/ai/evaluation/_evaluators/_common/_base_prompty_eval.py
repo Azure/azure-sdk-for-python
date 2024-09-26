@@ -15,16 +15,17 @@ from promptflow.core import AsyncPrompty
 
 from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from ..._common.utils import (
-    check_and_add_api_version_for_aoai_model_config,
-    check_and_add_user_agent_for_aoai_model_config,
+    ensure_api_version_in_aoai_model_config,
+    ensure_user_agent_in_aoai_model_config,
 )
+
 try:
     from ..._user_agent import USER_AGENT
 except ImportError:
     USER_AGENT = None
 from azure.ai.evaluation._evaluators._common._base_eval import _BaseEval
 
-class _BaseContextFlowEval(_BaseEval):
+class _BasePromptyEval(_BaseEval):
     """Base class for all evaluators that make use of context as an input. It's also assumed that such evaluators
     make use of a prompty file, and return their results as a dictionary, with a single key-value pair
     linking the result name to a float value (unless multi-turn evaluation occurs, in which case the
@@ -45,12 +46,11 @@ class _BaseContextFlowEval(_BaseEval):
 
     LLM_CALL_TIMEOUT = 600
     DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
-    def __init__(self, *, result_key: str, prompty_file: str, model_config: Dict, ignore_queries: bool = False):
+    def __init__(self, *, result_key: str, prompty_file: str, model_config: Dict, eval_last_turn: bool = False):
         self._result_key = result_key
         self._prompty_file = prompty_file
-        self._ignore_queries = ignore_queries
-        super().__init__()
-        check_and_add_api_version_for_aoai_model_config(model_config, self.DEFAULT_OPEN_API_VERSION)
+        super().__init__(eval_last_turn=eval_last_turn)
+        ensure_api_version_in_aoai_model_config(model_config, self.DEFAULT_OPEN_API_VERSION)
 
         prompty_model_config = {"configuration": model_config, "parameters": {"extra_headers": {}}}
         
@@ -58,13 +58,17 @@ class _BaseContextFlowEval(_BaseEval):
         # https://github.com/encode/httpx/discussions/2959
         prompty_model_config["parameters"]["extra_headers"].update({"Connection": "close"})
 
-        check_and_add_user_agent_for_aoai_model_config(
+        ensure_user_agent_in_aoai_model_config(
             model_config,
             prompty_model_config,
             USER_AGENT,
         )
 
         self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
+
+
+    # __call__ not overridden here because child classes have such varied signatures that there's no point
+    # defining a default here.
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict:
@@ -85,43 +89,3 @@ class _BaseContextFlowEval(_BaseEval):
             if match:
                 score = float(match.group())
         return {self._result_key: float(score)}
-
-    @override
-    def _convert_conversation_to_eval_input(self, conversation: Dict) -> List:
-        """Convert a conversation into a list of inputs for this evaluator.
-        Crucially, this variant gathers a 'context' value from the conversation.
-
-        param conversation: The conversation to convert.
-        type conversation: Dict
-        return: A list of arbitrary values that are valid inputs for this evaluator's do_eval function.
-        rtype: List
-        """
-        
-        messages = conversation['messages']
-        global_context = conversation.get('context', None)
-        # Extract queries, responses from conversation
-        queries = []
-        responses = []
-
-        # Convert conversation slice into queries and responses.
-        # Assume that 'user' role is asking queries and 'assistant' role is responding.
-        for each_turn in messages:
-            role = each_turn["role"]
-            if role == "user":
-                queries.append(each_turn)
-            elif role == "assistant":
-                responses.append(each_turn)
-
-        eval_inputs = []
-        for query, response in zip(queries, responses):
-            query_context = query.get("context", None)
-            response_context = query.get("context", None)
-            context = {}
-            if global_context:
-                context["global_context"] = global_context
-            if query_context and not self._ignore_queries:
-                context["query_context"] = query_context
-            if response_context:
-                context["response_context"] = response_context
-            eval_inputs.append({"query": query, "response": response, "context": str(context)})
-        return eval_inputs

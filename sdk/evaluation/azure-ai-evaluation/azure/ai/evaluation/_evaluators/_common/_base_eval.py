@@ -14,6 +14,8 @@ from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
+
+# TODO exception target pass down?
 class _BaseEval(ABC):
     """Base class for all evaluators that are capable of accepting either a conversation as input.
     All such evaluators need to implement two functions of their own:
@@ -30,12 +32,18 @@ class _BaseEval(ABC):
 
     #~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
-    def __init__(self, *, allow_conversation_input: bool = True, not_singleton_inputs: List[str] = ['conversation', 'kwargs']):
+    # Make sure to call super().__init__() in the child class's __init__ method.
+    def __init__(self, *, allow_conversation_input: bool = True, not_singleton_inputs: List[str] = ['conversation', 'kwargs'], eval_last_turn:  bool = False):
         self._not_singleton_inputs = not_singleton_inputs
+        self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
+        self._conversation_converter = self._derive_conversation_converter()
         self._allow_conversation_input = allow_conversation_input
         self._async_evaluator = _AsyncBaseEval(self)
 
+    # This needs to be overriden just to change the function header into something more informative,
+    # and to be able to add a more specific docstring. The actual function contents should just be
+    # super().__call__(<inputs>)
     def __call__(self, **kwargs) -> Dict:
         """Evaluate a given input. This method serves as a wrapper and is meant to be overridden by child classes for
         one main reason - to overwrite the method headers and docstring to include additional inputs as needed.
@@ -49,6 +57,8 @@ class _BaseEval(ABC):
         """
         return async_run_allowing_running_loop(self._async_evaluator, **kwargs)
 
+    # Probably the only thing that can't be simplified. Each evaluator, or at least each family
+    # of evaluators, will need to implement their own version of this function.
     async def _do_eval(self, eval_input: Any) -> Dict:
         """Evaluate the input and produce a response. Must be overridden to produce a functional evaluator.
         In the default case, all required inputs are assumed to be within eval_input, as user-friendly
@@ -64,22 +74,6 @@ class _BaseEval(ABC):
         raise EvaluationException(
             message="Not implemented",
             internal_message="BaseConversationEval's _do_eval method called somehow. This should be overridden.")
-    
-    def _convert_conversation_to_eval_input(self, conversation: Dict) -> List:
-        """Convert a conversation into a list of inputs for this evaluator.
-        The output should always be a list, so if only one evaluation needs to be performed,
-        this should return a list of length 1.
-
-        By default, this function just returns the inputted conversation, wrapped in a list,
-        and this function must be overridden by most children.
-
-        param conversation: The conversation to convert.
-        type conversation: Dict
-        return: A list of arbitrary values that are valid inputs for this evaluator's do_eval function.
-        rtype: List
-        """
-        return [conversation]
-
 
     #~~~ METHODS THAT MIGHT NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
@@ -100,6 +94,63 @@ class _BaseEval(ABC):
             if param not in self._not_singleton_inputs:
                 singletons.append(param)
         return singletons
+    
+    def _derive_conversation_converter(self) -> Callable[Dict, List]:
+        """Produce the function that will be used to convert conversations to a list of evaluable inputs.
+        This uses the inputs derived from the _derive_singleton_inputs function to determine which
+        aspects of a conversation ought to be extracted.
+
+        return: The function that will be used to convert conversations to evaluable inputs.
+        rtype: Callable[Dict, List]
+        """
+        include_context = 'context' in self._singleton_inputs
+        include_query = 'query' in self._singleton_inputs
+        include_response = 'response' in self._singleton_inputs
+
+        def converter(conversation: Dict) -> List:
+            messages = conversation['messages']
+            global_context = conversation.get('context', None)
+            # Extract queries, responses from conversation
+            queries = []
+            responses = []
+
+            # Convert conversation slice into queries and responses.
+            # Assume that 'user' role is asking queries and 'assistant' role is responding.
+            if self._eval_last_turn and len(messages) > 1:
+                messages = messages[-2:]
+
+            for each_turn in messages:
+                role = each_turn["role"]
+                if role == "user":
+                    queries.append(each_turn)
+                elif role == "assistant":
+                    responses.append(each_turn)
+            # TODO complain if len(queries) != len(responses)?
+            eval_inputs = []
+            for query, response in zip(queries, responses):
+                context = {}
+                if include_context:
+                    query_context = query.get("context", None)
+                    response_context = response.get("context", None)
+                    if global_context:
+                        context["global_context"] = global_context
+                    if query_context and not include_query:
+                        context["query_context"] = query_context
+                    if response_context and not include_response:
+                        context["response_context"] = response_context
+
+                
+                eval_input = {}
+                if include_query:
+                    eval_input["query"] = query
+                if include_response:
+                    eval_input["response"] = response
+                if include_context:
+                    eval_input["context"] = str(context)
+                eval_inputs.append(eval_input)
+            return eval_inputs
+
+        return converter
 
     def _convert_kwargs_to_eval_input(self, **kwargs) -> List:
         """Convert an arbitrary input into a list of inputs for evaluators.
@@ -139,7 +190,7 @@ class _BaseEval(ABC):
                 target=ErrorTarget.CONVERSATION)
         # Handle Conversation
         if conversation is not None:
-            return self._convert_conversation_to_eval_input(conversation)
+            return self._conversation_converter(conversation)
         # Handle Singletons
         elif all(value is not None for value in singletons.values()):
             return [singletons] # TODO loosen requirements to allow for optional singletons?

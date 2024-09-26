@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 from typing_extensions import override
 
-from azure.ai.evaluation._evaluators._common._base_context_flow_eval import _BaseContextFlowEval
+from azure.ai.evaluation._evaluators._common._base_prompty_eval import _BasePromptyEval
 
 
-class GroundednessEvaluator(_BaseContextFlowEval):
+class GroundednessEvaluator(_BasePromptyEval):
     """
     Initialize a groundedness evaluator configured for a specific Azure OpenAI model.
 
@@ -41,7 +41,7 @@ class GroundednessEvaluator(_BaseContextFlowEval):
     def __init__(self, model_config: Dict):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY, ignore_queries=True)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
 
     @override
     def __call__(self, *, response: Optional[str] = None, context: Optional[str] = None, conversation: Optional[Dict] = None, **kwargs):
@@ -61,4 +61,8 @@ class GroundednessEvaluator(_BaseContextFlowEval):
         :rtype: dict
         """
         return super().__call__(response=response, context=context, conversation=conversation, **kwargs)
+    
+    @override
+    def _convert_conversation_to_eval_input(self, conversation: Dict) -> List:
+        return get_per_turn_converter(include_query=False)(conversation)
     
