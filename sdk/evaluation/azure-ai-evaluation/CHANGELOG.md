@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `type` field to `AzureOpenAIModelConfiguration` and `OpenAIModelConfiguration`
+
 ### Breaking Changes
 
 ### Bugs Fixed
