@@ -437,7 +437,6 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
     async def complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,

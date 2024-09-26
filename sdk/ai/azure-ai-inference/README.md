@@ -538,10 +538,6 @@ For more information, see [Configure logging in the Azure libraries for Python](
 
 To report issues with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues)
 
-## Next steps
-
-* Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder, containing fully runnable Python code for doing inference using synchronous and asynchronous clients.
-
 ## Tracing
 
 The Azure AI Inferencing API Tracing library provides tracing for Azure AI Inference client library for Python. Refer to Installation chapter above for installation instructions.
@@ -560,7 +556,6 @@ settings.tracing_implementation = "opentelemetry"
 ```
 
 <!-- END SNIPPET -->
-
 
 Please refer to [azure-core-tracing-documentation](https://learn.microsoft.com/python/api/overview/azure/core-tracing-opentelemetry-readme) for more information.
 
@@ -586,7 +581,7 @@ AIInferenceInstrumentor().instrument()
 <!-- END SNIPPET -->
 
 
-It is also possible to uninstrument the Azure AI Inferencing API by using the uninstrument call. After this call, the LLM traces will no longer be emitted by the Azure AI Inferencing API until instrument is called again.
+It is also possible to uninstrument the Azure AI Inferencing API by using the uninstrument call. After this call, the traces will no longer be emitted by the Azure AI Inferencing API until instrument is called again.
 
 <!-- SNIPPET:sample_chat_completions_with_tracing.uninstrument_inferencing -->
 
@@ -623,6 +618,10 @@ def get_temperature(city: str) -> str:
 ```
 
 <!-- END SNIPPET -->
+
+## Next steps
+
+* Have a look at the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder, containing fully runnable Python code for doing inference using synchronous and asynchronous clients.
 
 ## Contributing
 

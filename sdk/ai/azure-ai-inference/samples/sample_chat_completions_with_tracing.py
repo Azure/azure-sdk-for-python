@@ -4,10 +4,10 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to get a chat completions response from
-    the service using a synchronous client. The sample also shows how to 
-    set default chat compoletions configuration in the client constructor,
-    which will be applied to all `complete` calls to the service.
+    This sample demonstrates how to use tracing with the Inference client library.
+    Azure AI Inference is instrumented with OpenTelemetry. In order to enable tracing
+    you need to configure OpenTelemetry to export traces to your observability backend.
+    This sample shows how to capture the traces to a file.
 
     This sample assumes the AI model is hosted on a Serverless API or
     Managed Compute endpoint. For GitHub Models or Azure OpenAI endpoints,
