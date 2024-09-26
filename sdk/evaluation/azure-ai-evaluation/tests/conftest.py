@@ -469,7 +469,6 @@ def pytest_collection_modifyitems(items):
 
 
 def pytest_sessionfinish() -> None:
-
     def stop_promptflow_service() -> None:
         """Ensure that the promptflow service is stopped when pytest exits.
 
