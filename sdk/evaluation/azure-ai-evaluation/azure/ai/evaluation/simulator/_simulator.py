@@ -233,12 +233,16 @@ class Simulator:
                     target=target,
                     progress_bar=progress_bar,
                 )
-            simulated_conversations.append(JsonLineChatProtocol({
-                "messages": current_simulation.to_list(),
-                "finish_reason": ["stop"],
-                "context": {},
-                "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
-            }))
+            simulated_conversations.append(
+                JsonLineChatProtocol(
+                    {
+                        "messages": current_simulation.to_list(),
+                        "finish_reason": ["stop"],
+                        "context": {},
+                        "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
+                    }
+                )
+            )
 
         progress_bar.close()
         return simulated_conversations
