@@ -17,7 +17,13 @@ from ._utils import wrap_exceptions, resolve_tenant
 
 
 class PopTokenRequestOptions(TokenRequestOptions):
-    """Options to use for pop token requests."""
+    """Options to use for pop token requests.
+
+    pop = None means non-PoP token request.
+    pop = True means mTLS PoP token request
+    pop = a Dict means SHR PoP token request
+
+    """
 
     pop: Union[bool, Mapping[str, str]]
 
