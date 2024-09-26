@@ -1,14 +1,9 @@
 # Release History
 
-## 5.12.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.12.2 (2024-10-02)
 
 ### Bugs Fixed
-
-### Other Changes
+- Fixed a bug where async consumer memory usage had no backpressure implemented, causing a memory leak. ([#36398](https://github.com/Azure/azure-sdk-for-python/issues/36398))
 
 ## 5.12.1 (2024-06-11)
 
