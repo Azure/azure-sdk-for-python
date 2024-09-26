@@ -266,7 +266,7 @@ class AdversarialSimulator:
 
         return JsonLineList(sim_results)
 
-    def _to_chat_protocol(self, *, conversation_history, template_parameters: Dict = None):
+    def _to_chat_protocol(self, *, conversation_history, template_parameters: Optional[Dict] = None):
         if template_parameters is None:
             template_parameters = {}
         messages = []
@@ -341,7 +341,7 @@ class AdversarialSimulator:
             temperature=0.0,
         )
 
-    def _setup_bot(self, *, role, template, parameters, target: Callable = None):
+    def _setup_bot(self, *, role, template, parameters, target: Optional[Callable] = None):
         if role == ConversationRole.USER:
             model = self._get_user_proxy_completion_model(
                 template_key=template.template_name, template_parameters=parameters

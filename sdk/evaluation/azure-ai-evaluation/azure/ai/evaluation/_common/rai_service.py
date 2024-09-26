@@ -7,7 +7,7 @@ import re
 import time
 import math
 from ast import literal_eval
-from typing import Dict, List
+from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
 import jwt
@@ -52,7 +52,7 @@ def get_common_headers(token: str) -> Dict:
     }
 
 
-async def ensure_service_availability(rai_svc_url: str, token: str, capability: str = None) -> None:
+async def ensure_service_availability(rai_svc_url: str, token: str, capability: Optional[str] = None) -> None:
     """Check if the Responsible AI service is available in the region and has the required capability, if relevant.
 
     :param rai_svc_url: The Responsible AI service URL.
@@ -384,7 +384,7 @@ async def get_rai_svc_url(project_scope: dict, token: str) -> str:
     return rai_url
 
 
-async def fetch_or_reuse_token(credential: TokenCredential, token: str = None) -> str:
+async def fetch_or_reuse_token(credential: TokenCredential, token: Optional[str] = None) -> str:
     """Get token. Fetch a new token if the current token is near expiry
 
        :param credential: The Azure authentication credential.

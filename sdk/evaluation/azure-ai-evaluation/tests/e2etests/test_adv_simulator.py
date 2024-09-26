@@ -1,6 +1,6 @@
 import asyncio
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import pytest
 from devtools_testutils import is_live
@@ -61,7 +61,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
             response_from_acs, temperature = query, 0.0
@@ -112,7 +115,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -154,7 +160,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -195,7 +204,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -236,7 +248,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -278,7 +293,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -320,7 +338,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -364,7 +385,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -403,7 +427,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -480,7 +507,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -554,7 +584,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
