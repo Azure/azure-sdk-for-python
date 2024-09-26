@@ -564,11 +564,12 @@ settings.tracing_implementation = "opentelemetry"
 
 Please refer to [azure-core-tracing-documentation](https://learn.microsoft.com/python/api/overview/azure/core-tracing-opentelemetry-readme) for more information.
 
-### Trace Exporter(s)
+### Exporting Traces with OpenTelemetry
 
-In order for the traces to be captured, you need to setup the applicable trace exporters. The chosen exporter will be based on where you want the traces to be output. You can also implement your own exporter. You can find more information [here](https://learn.microsoft.com/en-us/python/api/overview/azure/core-tracing-opentelemetry-readme?view=azure-python-preview).
+Azure AI Inference is instrumented with OpenTelemetry. In order to enable tracing you need to configure OpenTelemetry to export traces to your observability backend. 
+Refer to [Azure SDK tracing in Python](https://learn.microsoft.com/python/api/overview/azure/core-tracing-opentelemetry-readme?view=azure-python-preview) for more details.
 
-Please refer to [this](https://learn.microsoft.com/en-us/azure/azure-monitor/app/create-workspace-resource?tabs=bicep) documentation for more information about how to create Azure Monitor resource for the Azure Monitor exporter.
+Refer to [Azure Monitor OpenTelemetry documentation](https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-enable?tabs=python) for the details on how to send Azure AI Inference traces to Azure Monitor and create Azure Monitor resource.
 
 ### Instrumentation
 
