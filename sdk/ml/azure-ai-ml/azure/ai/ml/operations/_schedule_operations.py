@@ -21,10 +21,10 @@ from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 from azure.ai.ml.entities._monitoring.signals import (
     BaselineDataRange,
     FADProductionData,
+    GenerationTokenStatisticsSignal,
+    LlmData,
     ProductionData,
     ReferenceData,
-    LlmData,
-    GenerationTokenStatisticsSignal,
 )
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ScheduleException
@@ -83,7 +83,7 @@ class ScheduleOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(ScheduleOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self.service_client = service_client_06_2023_preview.schedules
         # Note: Trigger once is supported since 24_01, we don't upgrade other operations' client because there are
         # some breaking changes, for example: AzMonMonitoringAlertNotificationSettings is removed.

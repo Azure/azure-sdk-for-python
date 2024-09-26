@@ -10,7 +10,7 @@ import os
 from functools import singledispatch
 from itertools import product
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, TypeVar, Union
+from typing import Any, Optional, Tuple, TypeVar, Union
 
 from azure.ai.ml._azure_environments import (
     CloudArgumentKeys,
@@ -43,7 +43,7 @@ from azure.ai.ml._restclient.workspace_dataplane import (
     AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
-from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
+from azure.ai.ml._telemetry.logging_handler import set_appinsights_distro
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -278,12 +278,11 @@ class MLClient:
 
         user_agent = kwargs.get("user_agent", None)
 
-        app_insights_handler: Tuple = get_appinsights_log_handler(
+        set_appinsights_distro(
             user_agent,
             **{"properties": properties},
             enable_telemetry=self._operation_config.enable_telemetry,
         )
-        app_insights_handler_kwargs: Dict[str, Tuple] = {"app_insights_handler": app_insights_handler}
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
@@ -292,7 +291,7 @@ class MLClient:
         self._operation_container = OperationsContainer()
 
         # kwargs related to operations alone not all kwargs passed to MLClient are needed by operations
-        ops_kwargs = app_insights_handler_kwargs
+        ops_kwargs = {}
         if base_url:
             ops_kwargs["enforce_https"] = _is_https_url(base_url)
 
@@ -479,7 +478,6 @@ class MLClient:
             self._credential,
             requests_pipeline=self._requests_pipeline,
             dataplane_client=self._service_client_workspace_dataplane,
-            **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)  # type: ignore[arg-type]
 
@@ -497,7 +495,6 @@ class MLClient:
             self._service_client_10_2022_preview,
             self._operation_container,
             self._credential,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.REGISTRY, self._registries)  # type: ignore[arg-type]
 
@@ -519,7 +516,6 @@ class MLClient:
             self._operation_config,
             self._service_client_08_2023_preview,
             self._service_client_04_2024_preview,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.COMPUTE, self._compute)
         self._datastores = DatastoreOperations(
@@ -545,7 +541,6 @@ class MLClient:
             workspace_rg=self._ws_rg,
             workspace_sub=self._ws_sub,
             registry_reference=registry_reference,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
         # Evaluators
         self._evaluators = EvaluatorOperations(
@@ -563,7 +558,6 @@ class MLClient:
             workspace_rg=self._ws_rg,
             workspace_sub=self._ws_sub,
             registry_reference=registry_reference,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
 
         self._operation_container.add(AzureMLResourceType.MODEL, self._models)
@@ -705,7 +699,6 @@ class MLClient:
             self._service_client_07_2024_preview,
             self._operation_container,
             self._credential,
-            **app_insights_handler_kwargs,  # type: ignore[arg-type]
         )
 
         self._featuresets = FeatureSetOperations(

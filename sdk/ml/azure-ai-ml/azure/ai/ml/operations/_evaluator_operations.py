@@ -6,15 +6,12 @@
 
 from os import PathLike
 from typing import Any, Dict, Iterable, Optional, Union, cast
+
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient082023Preview,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
-    ListViewType,
-)
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -23,21 +20,13 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.utils import (
-    _get_evaluator_properties,
-    _is_evaluator,
-)
+from azure.ai.ml._utils.utils import _get_evaluator_properties, _is_evaluator
 from azure.ai.ml.entities._assets import Model
-from azure.ai.ml.entities._assets.workspace_asset_reference import (
-    WorkspaceAssetReference,
-)
-from azure.ai.ml.exceptions import (
-    UnsupportedOperationError,
-)
+from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
+from azure.ai.ml.exceptions import UnsupportedOperationError
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.core.exceptions import ResourceNotFoundError
-
 from azure.ai.ml.operations._model_operations import ModelOperations
+from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -79,7 +68,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
     ):
         super(EvaluatorOperations, self).__init__(operation_scope, operation_config)
 
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._model_op = ModelOperations(
             operation_scope=operation_scope,
             operation_config=operation_config,
