@@ -18,7 +18,7 @@ This library is used to provision an Azure Database for PostgreSQL flexible serv
 - [Azure subscription](https://azure.microsoft.com/free/)
 
 ### Install the package
-
+      
 ```bash
 pip install azure-mgmt-postgresqlflexibleservers
 pip install azure-identity
