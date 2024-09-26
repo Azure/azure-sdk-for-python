@@ -492,7 +492,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         response1 = await client.get_model_info()
         self._print_model_info_result(response1)
         self._validate_model_info_result(
-            response1, "completion"
+            response1, "chat-completion" # TODO: This should be chat_completions based on REST API spec...
         )  # TODO: This should be ModelType.CHAT once the model is fixed
         await client.close()
 
@@ -506,7 +506,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         assert client._model_info  # pylint: disable=protected-access
         self._print_model_info_result(response1)
         self._validate_model_info_result(
-            response1, "completion"
+            response1, "chat-completion"
         )  # TODO: This should be ModelType.CHAT once the model is fixed
 
         # Get the model info again. No network calls should be made here,
