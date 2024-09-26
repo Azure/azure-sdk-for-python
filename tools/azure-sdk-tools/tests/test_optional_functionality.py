@@ -3,7 +3,6 @@ import pytest
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import get_config_setting
-from ci_tools.scenario.generation import create_scenario_file
 
 integration_folder = os.path.join(os.path.dirname(__file__), 'integration')
 
@@ -27,9 +26,9 @@ def test_toml_result():
                 'additional_pytest_args': ['-k', '*_async.py']
             },
             {
-                'name': 'no_aiohttp', 
-                'install': [], 
-                'uninstall': ['aiohttp'], 
+                'name': 'no_aiohttp',
+                'install': [],
+                'uninstall': ['aiohttp'],
                 'additional_pytest_args': ['-k', 'not *_async.py']
             }
         ]
@@ -37,7 +36,7 @@ def test_toml_result():
 
     assert actual == expected
 
-    
+
 def test_optional_specific_get():
     package_with_toml = os.path.join(integration_folder, 'scenarios', 'optional_environment_two_options')
     actual = get_config_setting(package_with_toml, 'optional')
@@ -49,9 +48,9 @@ def test_optional_specific_get():
             'additional_pytest_args': ['-k', '*_async.py']
         },
         {
-            'name': 'no_aiohttp', 
-            'install': [], 
-            'uninstall': ['aiohttp'], 
+            'name': 'no_aiohttp',
+            'install': [],
+            'uninstall': ['aiohttp'],
             'additional_pytest_args': ['-k', 'not *_async.py']
         }
     ]
