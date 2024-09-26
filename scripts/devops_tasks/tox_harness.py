@@ -311,7 +311,6 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
             filtered_tox_environment_set = filter_tox_environment_string(parsed_args.tox_env, package_dir)
             filtered_set = set([env.strip().lower() for env in filtered_tox_environment_set.strip().split(",")])
 
-            breakpoint()
             if filtered_set != check_set:
                 skipped_environments = check_set - filtered_set
                 if in_ci() and skipped_environments:
@@ -355,7 +354,6 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
                     "setup_execute_tests.py -> tox_harness.py::prep_and_run_tox",
             )
 
-    breakpoint()
     return_code = execute_tox_serial(tox_command_tuples)
 
     if not parsed_args.disablecov:
