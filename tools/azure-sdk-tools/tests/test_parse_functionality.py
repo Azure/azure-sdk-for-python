@@ -24,12 +24,11 @@ def test_parse_require():
 
     for scenario in test_scenarios:
         result = parse_require(scenario[0])
-        assert result[0] is not None
+        assert result.key is not None
         if scenario[2] is not None:
-            assert result[1] is not None
-            assert isinstance(result[1], SpecifierSet)
-        assert result[0] == scenario[1]
-        assert result[1] == scenario[2]
+            assert len(result.specifier) != 0
+        assert result.key == scenario[1]
+        assert str(result.specifier) == (scenario[2] or "")
 
 
 def test_parse_require_with_no_spec():
@@ -38,8 +37,8 @@ def test_parse_require_with_no_spec():
     for scenario in spec_scenarios:
         result = parse_require(scenario)
 
-        assert result[0] == scenario.replace("_", "-")
-        assert result[1] is None
+        assert result.key == scenario.replace("_", "-")
+        assert len(result.specifier) == 0
 
 
 @patch("ci_tools.parsing.parse_functions.read_setup_py_content")

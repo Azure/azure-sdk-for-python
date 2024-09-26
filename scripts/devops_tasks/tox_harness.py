@@ -82,7 +82,7 @@ def compare_req_to_injected_reqs(parsed_req, injected_packages):
 
 def inject_custom_reqs(file, injected_packages, package_dir):
     req_lines = []
-    injected_packages = [p for p in re.split("[\s,]", injected_packages) if p]
+    injected_packages = [p for p in re.split(r"[\s,]", injected_packages) if p]
 
     if injected_packages:
         logging.info("Adding custom packages to requirements for {}".format(package_dir))

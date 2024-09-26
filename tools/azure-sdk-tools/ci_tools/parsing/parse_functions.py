@@ -26,6 +26,7 @@ from pkg_resources import (
 from packaging.specifiers import SpecifierSet
 from setuptools import Extension
 
+from ci_tools.variables import str_to_bool
 
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
@@ -146,9 +147,10 @@ def get_config_setting(package_path: str, setting: str, default: Any = True) -> 
     pyproject.toml. If the input 'setting' does NOT exist, the provided default value will be returned.
     """
     # we should always take the override if one is present
-    override_value = os.getenv(f"{os.path.basename(package_path).upper()}_{setting.upper()}", None)
+    override_value = os.getenv(f"{os.path.basename(package_path).upper().replace('-','_')}_{setting.upper()}", None)
+
     if override_value:
-        return override_value
+        return str_to_bool(override_value)
 
     # if no override, check for the config setting in the pyproject.toml
     config = get_build_config(package_path)
@@ -272,7 +274,7 @@ def parse_setup(
     classifiers = kwargs.get("classifiers", [])
     keywords = kwargs.get("keywords", [])
 
-    is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
+    is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).key in NEW_REQ_PACKAGES), requires))
 
     ext_package = kwargs.get("ext_package", None)
     ext_modules = kwargs.get("ext_modules", [])
@@ -301,23 +303,13 @@ def get_install_requires(setup_path: str) -> List[str]:
     return ParsedSetup.from_path(setup_path).requires
 
 
-def parse_require(req: str) -> Tuple[str, SpecifierSet]:
+def parse_require(req: str) -> Requirement:
     """
     Parses the incoming version specification and returns a tuple of the requirement name and specifier.
 
     "azure-core<2.0.0,>=1.11.0" -> [azure-core, <2.0.0,>=1.11.0]
     """
-    req_object = Requirement.parse(req.split(";")[0].lower())
-    pkg_name = req_object.key
-
-    # we were not passed a full requirement. Instead we were passed a value of "readme-renderer" or another string without a version.
-    if not req_object.specifier:
-        return [pkg_name, None]
-
-    # regex details ripped from https://peps.python.org/pep-0508/
-    isolated_spec = re.sub(r"^([a-zA-Z0-9\-\_\.]+)(\[[a-zA-Z0-9\-\_\.\,]*\])?", "", str(req_object))
-    spec = SpecifierSet(isolated_spec)
-    return (pkg_name, spec)
+    return Requirement.parse(req)
 
 
 def parse_freeze_output(file_location: str) -> Dict[str, str]:

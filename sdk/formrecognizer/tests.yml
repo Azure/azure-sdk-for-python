@@ -5,9 +5,11 @@ extends:
     parameters:
       BuildTargetingString: azure-ai-formrecognizer
       ServiceDirectory: formrecognizer
-      TestTimeoutInMinutes: 480
+      TestTimeoutInMinutes: 200
+      UseFederatedAuth: true
       MatrixReplace:
-        - TestSamples=.*/true
+        # Disable samples tests for now as some of them are haning.
+        # - TestSamples=.*/true
       SupportedClouds: 'Public,UsGov,China'
       Clouds: 'Prod'
       # This is a specific request from the formrecognizer service team
@@ -18,7 +20,7 @@ extends:
           ServiceConnection: azure-sdk-tests
           SubscriptionConfigurationFilePaths:
             - eng/common/TestResources/sub-config/AzurePublicMsft.json
-          Location: $(LOCATION)
+          Location: 'centraluseuap'
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           Location: 'westus2'
@@ -28,9 +30,6 @@ extends:
           SubscriptionConfiguration: $(sub-config-cn-test-resources)
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'

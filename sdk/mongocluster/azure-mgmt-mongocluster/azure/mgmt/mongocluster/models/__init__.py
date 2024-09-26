@@ -17,6 +17,7 @@ from ._models import FirewallRuleProperties
 from ._models import ListConnectionStringsResult
 from ._models import MongoCluster
 from ._models import MongoClusterProperties
+from ._models import MongoClusterReplicaParameters
 from ._models import MongoClusterRestoreParameters
 from ._models import MongoClusterUpdate
 from ._models import MongoClusterUpdateProperties
@@ -30,7 +31,10 @@ from ._models import PrivateEndpointConnectionResource
 from ._models import PrivateLinkResource
 from ._models import PrivateLinkResourceProperties
 from ._models import PrivateLinkServiceConnectionState
+from ._models import PromoteReplicaRequest
 from ._models import ProxyResource
+from ._models import Replica
+from ._models import ReplicationProperties
 from ._models import Resource
 from ._models import SystemData
 from ._models import TrackedResource
@@ -42,10 +46,15 @@ from ._enums import CreatedByType
 from ._enums import MongoClusterStatus
 from ._enums import NodeKind
 from ._enums import Origin
+from ._enums import PreviewFeature
 from ._enums import PrivateEndpointConnectionProvisioningState
 from ._enums import PrivateEndpointServiceConnectionStatus
+from ._enums import PromoteMode
+from ._enums import PromoteOption
 from ._enums import ProvisioningState
 from ._enums import PublicNetworkAccess
+from ._enums import ReplicationRole
+from ._enums import ReplicationState
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -62,6 +71,7 @@ __all__ = [
     "ListConnectionStringsResult",
     "MongoCluster",
     "MongoClusterProperties",
+    "MongoClusterReplicaParameters",
     "MongoClusterRestoreParameters",
     "MongoClusterUpdate",
     "MongoClusterUpdateProperties",
@@ -75,7 +85,10 @@ __all__ = [
     "PrivateLinkResource",
     "PrivateLinkResourceProperties",
     "PrivateLinkServiceConnectionState",
+    "PromoteReplicaRequest",
     "ProxyResource",
+    "Replica",
+    "ReplicationProperties",
     "Resource",
     "SystemData",
     "TrackedResource",
@@ -86,10 +99,15 @@ __all__ = [
     "MongoClusterStatus",
     "NodeKind",
     "Origin",
+    "PreviewFeature",
     "PrivateEndpointConnectionProvisioningState",
     "PrivateEndpointServiceConnectionStatus",
+    "PromoteMode",
+    "PromoteOption",
     "ProvisioningState",
     "PublicNetworkAccess",
+    "ReplicationRole",
+    "ReplicationState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

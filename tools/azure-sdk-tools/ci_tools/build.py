@@ -3,15 +3,11 @@ import argparse, sys, os, logging, glob, shutil
 from subprocess import run
 
 from typing import List
-from ci_tools.functions import discover_targeted_packages, str_to_bool, process_requires
+from ci_tools.functions import discover_targeted_packages, process_requires
 from ci_tools.parsing import ParsedSetup
-from ci_tools.variables import DEFAULT_BUILD_ID
-from ci_tools.variables import discover_repo_root, get_artifact_directory
+from ci_tools.variables import DEFAULT_BUILD_ID, str_to_bool, discover_repo_root, get_artifact_directory
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
-from ci_tools.logging import initialize_logger, run_logged
-
-logger = initialize_logger("build.py")
 
 def build() -> None:
     parser = argparse.ArgumentParser(
@@ -100,13 +96,13 @@ def build() -> None:
 
     repo_root = discover_repo_root(args.repo)
 
-    if args.service:
+    if args.service and args.service != "auto":
         service_dir = os.path.join("sdk", args.service)
         target_dir = os.path.join(repo_root, service_dir)
     else:
         target_dir = repo_root
 
-    logger.debug(f"Searching for packages starting from {target_dir} with glob string {args.glob_string} and package filter {args.package_filter_string}")
+    logging.debug(f"Searching for packages starting from {target_dir} with glob string {args.glob_string} and package filter {args.package_filter_string}")
 
     targeted_packages = discover_targeted_packages(
         args.glob_string,
@@ -150,7 +146,7 @@ def build_packages(
     build_apiview_artifact: bool = False,
     build_id: str = "",
 ):
-    logger.log(level=logging.INFO, msg=f"Generating {targeted_packages} using python{sys.version}")
+    logging.log(level=logging.INFO, msg=f"Generating {targeted_packages} using python{sys.version}")
 
     for package_root in targeted_packages:
         setup_parsed = ParsedSetup.from_path(package_root)
@@ -162,7 +158,7 @@ def build_packages(
 
             new_version = get_dev_version(setup_parsed.version, build_id)
 
-            logger.log(level=logging.DEBUG, msg=f"{setup_parsed.name}: {setup_parsed.version} -> {new_version}")
+            logging.log(level=logging.DEBUG, msg=f"{setup_parsed.name}: {setup_parsed.version} -> {new_version}")
 
             set_version_py(setup_parsed.setup_filename, new_version)
             set_dev_classifier(setup_parsed.setup_filename, new_version)
