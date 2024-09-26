@@ -1,4 +1,5 @@
 import pytest
+import os
 from devtools_testutils import test_proxy
 
 @pytest.fixture(scope="session", autouse=True)
