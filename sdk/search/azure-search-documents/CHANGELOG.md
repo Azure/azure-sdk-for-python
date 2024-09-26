@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed the issue that `encryptionKey` in `SearchIndexer` was lost during serialization.  #37521
+
 ### Other Changes
 
 ## 11.6.0b5 (2024-09-19)
