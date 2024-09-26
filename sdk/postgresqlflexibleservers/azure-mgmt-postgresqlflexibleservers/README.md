@@ -9,6 +9,8 @@ For a more complete view of Azure libraries, see the [azure sdk python release](
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
+This library is used to provision an Azure Database for PostgreSQL flexible server instance, multiple servers, or multiple databases on a server.
+
 
 ### Prerequisites
 
@@ -32,8 +34,7 @@ By default, [Azure Active Directory](https://aka.ms/awps/aad) token authenticati
 
 In addition, Azure subscription ID can be configured via environment variable `AZURE_SUBSCRIPTION_ID`.
 
-With above configuration, client can be authenticated by following code:
-
+## Examples
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
@@ -42,17 +43,27 @@ import os
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
 client = PostgreSQLManagementClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
-
-## Examples
-
 Code samples for this package can be found at:
-- [Search Postgresqlflexibleservers Management](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com
-- [Azure Python Mgmt SDK Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
+- [Detailed documentation](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/quickstart-create-server-python-sdk?tabs=PythonSDK) on docs.microsoft.com
 
+## Release Notes
 
-## Troubleshooting
+### Important Update
 
-## Next steps
+**Note:** This library was previously a module under azure-mgmt-rdbms library but has now been separated and is maintained as an independent library. Please update your import statements accordingly.
+
+#### Previous Import Statement
+When the library was part of rdbms, you might have imported it like this:
+```python
+from azure.mgmt.rdbms.postgresql_flexibleservers import PostgreSQLManagementClient
+```
+
+#### Current Import Statement
+Now with this new version you can import this library like this:
+```python
+from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
+
+```
 
 ## Provide Feedback
 
