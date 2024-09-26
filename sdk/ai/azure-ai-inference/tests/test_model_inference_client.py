@@ -861,6 +861,7 @@ class TestModelClient(ModelClientTestBase):
         except RuntimeError as e:
             exception_caught = True
             print(e)
+        AIInferenceInstrumentor().uninstrument()
         client.close()
         assert instrumented_once == True
         assert exception_caught == True
@@ -915,9 +916,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                ('gen_ai.system', 'az.ai.inference'),
                                ('gen_ai.request.model', 'chat'),
-                               ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                               ('server.address', ''),
                                ('gen_ai.response.id', ''),
-                               ('gen_ai.response.model', 'mistral-small'),
+                               ('gen_ai.response.model', 'mistral-large'),
                                ('gen_ai.usage.input_tokens', '+'),
                                ('gen_ai.usage.output_tokens', '+'),
                                ('gen_ai.response.finish_reasons', ('stop',))]
@@ -958,9 +959,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                ('gen_ai.system', 'az.ai.inference'),
                                ('gen_ai.request.model', 'chat'),
-                               ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                               ('server.address', ''),
                                ('gen_ai.response.id', ''),
-                               ('gen_ai.response.model', 'mistral-small'),
+                               ('gen_ai.response.model', 'mistral-large'),
                                ('gen_ai.usage.input_tokens', '+'),
                                ('gen_ai.usage.output_tokens', '+'),
                                ('gen_ai.response.finish_reasons', ('stop',))]
@@ -1022,9 +1023,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                ('gen_ai.system', 'az.ai.inference'),
                                ('gen_ai.request.model', 'chat'),
-                               ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                               ('server.address', ''),
                                ('gen_ai.response.id', ''),
-                               ('gen_ai.response.model', 'mistral-small'),
+                               ('gen_ai.response.model', 'mistral-large'),
                                ('gen_ai.usage.input_tokens', '+'),
                                ('gen_ai.usage.output_tokens', '+'),
                                ('gen_ai.response.finish_reasons', ('stop',))]
@@ -1072,9 +1073,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                ('gen_ai.system', 'az.ai.inference'),
                                ('gen_ai.request.model', 'chat'),
-                               ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                               ('server.address', ''),
                                ('gen_ai.response.id', ''),
-                               ('gen_ai.response.model', 'mistral-small'),
+                               ('gen_ai.response.model', 'mistral-large'),
                                ('gen_ai.usage.input_tokens', '+'),
                                ('gen_ai.usage.output_tokens', '+'),
                                ('gen_ai.response.finish_reasons', ('stop',))]
@@ -1174,9 +1175,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                 ('gen_ai.system', 'az.ai.inference'),
                                 ('gen_ai.request.model', 'chat'),
-                                ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                                ('server.address', ''),
                                 ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-small'),
+                                ('gen_ai.response.model', 'mistral-large'),
                                 ('gen_ai.usage.input_tokens', '+'),
                                 ('gen_ai.usage.output_tokens', '+'),
                                 ('gen_ai.response.finish_reasons', ('tool_calls',))]
@@ -1185,9 +1186,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                 ('gen_ai.system', 'az.ai.inference'),
                                 ('gen_ai.request.model', 'chat'),
-                                ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                                ('server.address', ''),
                                 ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-small'),
+                                ('gen_ai.response.model', 'mistral-large'),
                                 ('gen_ai.usage.input_tokens', '+'),
                                 ('gen_ai.usage.output_tokens', '+'),
                                 ('gen_ai.response.finish_reasons', ('stop',))]
@@ -1336,9 +1337,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                 ('gen_ai.system', 'az.ai.inference'),
                                 ('gen_ai.request.model', 'chat'),
-                                ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                                ('server.address', ''),
                                 ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-small'),
+                                ('gen_ai.response.model', 'mistral-large'),
                                 ('gen_ai.usage.input_tokens', '+'),
                                 ('gen_ai.usage.output_tokens', '+'),
                                 ('gen_ai.response.finish_reasons', ('tool_calls',))]
@@ -1347,9 +1348,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                 ('gen_ai.system', 'az.ai.inference'),
                                 ('gen_ai.request.model', 'chat'),
-                                ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                                ('server.address', ''),
                                 ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-small'),
+                                ('gen_ai.response.model', 'mistral-large'),
                                 ('gen_ai.usage.input_tokens', '+'),
                                 ('gen_ai.usage.output_tokens', '+'),
                                 ('gen_ai.response.finish_reasons', ('stop',))]
@@ -1488,9 +1489,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                 ('gen_ai.system', 'az.ai.inference'),
                                 ('gen_ai.request.model', 'chat'),
-                                ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                                ('server.address', ''),
                                 ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-small'),
+                                ('gen_ai.response.model', 'mistral-large'),
                                 ('gen_ai.usage.input_tokens', '+'),
                                 ('gen_ai.usage.output_tokens', '+'),
                                 ('gen_ai.response.finish_reasons', ('tool_calls',))]
@@ -1499,9 +1500,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                 ('gen_ai.system', 'az.ai.inference'),
                                 ('gen_ai.request.model', 'chat'),
-                                ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                                ('server.address', ''),
                                 ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-small'),
+                                ('gen_ai.response.model', 'mistral-large'),
                                 ('gen_ai.usage.input_tokens', '+'),
                                 ('gen_ai.usage.output_tokens', '+'),
                                 ('gen_ai.response.finish_reasons', ('stop',))]
@@ -1688,9 +1689,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                 ('gen_ai.system', 'az.ai.inference'),
                                 ('gen_ai.request.model', 'chat'),
-                                ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                                ('server.address', ''),
                                 ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-small'),
+                                ('gen_ai.response.model', 'mistral-large'),
                                 ('gen_ai.usage.input_tokens', '+'),
                                 ('gen_ai.usage.output_tokens', '+'),
                                 ('gen_ai.response.finish_reasons', ('tool_calls',))]
@@ -1699,9 +1700,9 @@ class TestModelClient(ModelClientTestBase):
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                 ('gen_ai.system', 'az.ai.inference'),
                                 ('gen_ai.request.model', 'chat'),
-                                ('server.address', 'mistral-small-ofgon-serverless.eastus2.inference.ai.azure.com'),
+                                ('server.address', ''),
                                 ('gen_ai.response.id', ''),
-                                ('gen_ai.response.model', 'mistral-small'),
+                                ('gen_ai.response.model', 'mistral-large'),
                                 ('gen_ai.usage.input_tokens', '+'),
                                 ('gen_ai.usage.output_tokens', '+'),
                                 ('gen_ai.response.finish_reasons', ('stop',))]

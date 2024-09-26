@@ -733,12 +733,12 @@ class TestModelAsyncClient(ModelClientTestBase):
         span = spans[0]
         expected_attributes = [('gen_ai.operation.name', 'chat'),
                                ('gen_ai.system', 'az.ai.inference'),
-                               ('gen_ai.request.model', ''),
+                               ('gen_ai.request.model', 'chat'),
                                ('server.address', ''),
                                ('gen_ai.response.id', ''),
-                               ('gen_ai.response.model', ''),
-                               ('gen_ai.usage.input_tokens', ''),
-                               ('gen_ai.usage.output_tokens', ''),
+                               ('gen_ai.response.model', 'mistral-large'),
+                               ('gen_ai.usage.input_tokens', '+'),
+                               ('gen_ai.usage.output_tokens', '+'),
                                ('gen_ai.response.finish_reasons', ('stop',))]
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
