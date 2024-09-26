@@ -183,6 +183,10 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
                 old_tenant = cached_challenge.tenant_id
 
             challenge = _update_challenge(request, response)
+            # CAE challenges may not include a scope or tenant; use the previous challenge's values if necessary
+            if challenge.claims and old_scope:
+                challenge._parameters["scope"] = old_scope  # pylint:disable=protected-access
+                challenge.tenant_id = old_tenant
             # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
             scope = challenge.get_scope() or challenge.get_resource() + "/.default"
         except ValueError:
@@ -191,13 +195,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         if self._verify_challenge_resource:
             resource_domain = urlparse(scope).netloc
             if not resource_domain:
-                # Use the old scope for CAE challenges. The parsing will succeed here since it did before
-                if challenge.claims and old_scope:
-                    resource_domain = urlparse(old_scope).netloc
-                    challenge._parameters["scope"] = old_scope  # pylint:disable=protected-access
-                    challenge.tenant_id = old_tenant
-                else:
-                    raise ValueError(f"The challenge contains invalid scope '{scope}'.")
+                raise ValueError(f"The challenge contains invalid scope '{scope}'.")
 
             request_domain = urlparse(request.http_request.url).netloc
             if not request_domain.lower().endswith(f".{resource_domain.lower()}"):
