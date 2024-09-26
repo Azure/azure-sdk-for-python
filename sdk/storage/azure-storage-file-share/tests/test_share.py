@@ -1818,6 +1818,7 @@ class TestStorageShare(StorageRecordedTestCase):
         finally:
             self._delete_shares()
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy
     def test_provisioned_billing_v2(self, **kwargs):
