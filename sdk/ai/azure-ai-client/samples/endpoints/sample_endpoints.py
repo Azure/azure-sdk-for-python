@@ -1,3 +1,4 @@
+
 """
 # These are needed for SDK logging. You can ignore them.
 import sys
@@ -17,7 +18,16 @@ from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from azure.core.credentials import AzureKeyCredential
 
-# Create an Azure AI Client from individual
+
+# Create an Azure AI Client from a connection string, copied from your AI Studio project.
+# At the moment, it should be in the format "<HubName>;<ResourceGroup>;<AzureSubscriptionId>"
+ai_client = AzureAIClient.from_connection_string(
+    credential=DefaultAzureCredential(),
+    connection=os.environ["AI_STUDIO_PROJECT_CONNECTION_STRING"],
+    #logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging    
+)
+
+# Or, you can create the Azure AI Client by giving all required parameters directly
 ai_client = AzureAIClient(
     credential=DefaultAzureCredential(),
     subscription_id=os.environ["AZURE_SUBSCRIPTION"],
@@ -25,6 +35,7 @@ ai_client = AzureAIClient(
     workspace_name=os.environ["AI_STUDIO_HUB"],
     #logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
 )
+
 
 # You can list all endpoints of a particular "type", with or without their credentials:
 endpoints = ai_client.endpoints.list(

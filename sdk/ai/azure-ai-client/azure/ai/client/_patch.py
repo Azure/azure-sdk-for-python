@@ -18,7 +18,22 @@ logger = logging.getLogger(__name__)
 
 # This is only done to rename the client. Can we do this in TypeSpec?
 class AzureAIClient(ClientGenerated):
-    pass
+    @classmethod
+    def from_connection_string(
+            cls,
+            connection: str,
+            credential: "TokenCredential",
+            **kwargs
+    ) -> "AzureAIClient":
+        if not connection:
+            raise ValueError("Connection string is required")
+        parts = connection.split(";")
+        if len(parts) != 3:
+            raise ValueError("Invalid connection string format")
+        workspace_name = parts[0]
+        resource_group_name = parts[1]
+        subscription_id = parts[2]
+        return cls(subscription_id, resource_group_name, workspace_name, credential, **kwargs)
 
 class SASTokenCredential(TokenCredential):
     def __init__(
