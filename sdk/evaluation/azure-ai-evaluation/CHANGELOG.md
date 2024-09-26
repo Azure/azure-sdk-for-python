@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `type` field to `AzureOpenAIModelConfiguration` and `OpenAIModelConfiguration`
+
 ### Breaking Changes
 
 - The `evaluator_config` parameter of `evaluate` now maps in evaluator name to a dictionary `EvaluatorConfig`, which is a `TypedDict`. The
