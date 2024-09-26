@@ -86,6 +86,8 @@ setup(
         "isodate",
         "azure-common>=1.1",
         "typing-extensions",
+        "opencensus-ext-azure",
+        "opencensus-ext-logging",
         "azure-monitor-opentelemetry",
     ],
     extras_require={
