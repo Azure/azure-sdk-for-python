@@ -113,5 +113,5 @@ The unit tests can be ran by right-clicking a specific test file or specific tes
 [cosmos_account]: https://docs.microsoft.com/azure/cosmos-db/account-overview
 [python]: https://www.python.org/downloads/
 [pycharm]: https://www.jetbrains.com/pycharm/
-[cosmos_db_emulator]: https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator
+[cosmos_db_emulator]: https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator/
 
