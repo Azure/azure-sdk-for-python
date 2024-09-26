@@ -15,7 +15,8 @@ from uuid import uuid4
 
 import pytest
 from azure.core.credentials import AccessToken
-from azure.core.exceptions import ServiceRequestError
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
@@ -69,6 +70,33 @@ class TestChallengeAuth(KeyVaultTestCase):
             os.environ["AZURE_TENANT_ID"] = original_tenant
         else:
             os.environ.pop("AZURE_TENANT_ID")
+
+    @pytest.mark.skip("Manual test for specific, CAE-enabled environments.")
+    @pytest.mark.asyncio
+    @pytest.mark.live_test_only
+    async def test_cae_live(self, **kwargs):
+        class CredentialWrapper(AsyncTokenCredential):
+            def __init__(self, credential):
+                self._credential = credential
+                self._claims = None
+
+            async def get_token(self, *scopes, **kwargs):
+                assert kwargs["enable_cae"] == True
+                if kwargs.get("claims"):
+                    # We should only receive claims once; subsequent challenges should be returned to the caller
+                    assert self._claims is None
+                    self._claims = kwargs["claims"]
+                return await self._credential.get_token(*scopes, **kwargs)
+
+        credential = self.get_credential(KeyClient, is_async=True)
+        wrapped = CredentialWrapper(credential)
+        client = KeyClient(vault_url=os.environ["AZURE_KEYVAULT_URL"], credential=wrapped)
+        try:
+            await client.create_rsa_key("key-name")  # Basic request meant to just trigger CAE challenges
+        # Test environment may continuously return claims challenges; a second consecutive challenge will raise
+        except ClientAuthenticationError as e:
+            assert "continuous access evaluation" in str(e).lower()
+        assert wrapped._claims is not None  # Ensure we passed a claim to a token request
 
 
 @pytest.mark.asyncio
@@ -554,9 +582,10 @@ async def test_cae():
                 return kv_challenge
             raise ValueError("unexpected request")
 
-        async def get_token(*_, **kwargs):
+        async def get_token(*scopes, **kwargs):
             assert kwargs.get("enable_cae") == True
             assert kwargs.get("tenant_id") == tenant
+            assert scopes[0] == resource + "/.default"
             # Response to KV challenge
             if Requests.count == 1:
                 assert kwargs.get("claims") == None
@@ -636,9 +665,10 @@ async def test_cae_consecutive_challenges():
                 return claims_challenge
             raise ValueError("unexpected request")
 
-        async def get_token(*_, **kwargs):
+        async def get_token(*scopes, **kwargs):
             assert kwargs.get("enable_cae") == True
             assert kwargs.get("tenant_id") == tenant
+            assert scopes[0] == resource + "/.default"
             # Response to KV challenge
             if Requests.count == 1:
                 assert kwargs.get("claims") == None

@@ -37,16 +37,11 @@ class HttpChallenge(object):
         trimmed_challenge = split_challenge[1]
 
         self.claims = None
-        encoded_claims = None
         # split trimmed challenge into comma-separated name=value pairs. Values are expected
         # to be surrounded by quotes which are stripped here.
         for item in trimmed_challenge.split(","):
-            # special case for claims, which can contain = symbols as padding
+            # Special case for claims, which can contain = symbols as padding. Assume at most one claim per challenge
             if "claims=" in item:
-                if encoded_claims:
-                    # multiple claims challenges, e.g. for cross-tenant auth, would require special handling
-                    # we can't support this scenario for now, so we ignore claims altogether if there are multiple
-                    self.claims = None
                 encoded_claims = item[item.index("=") + 1 :].strip(" \"'")
                 padding_needed = -len(encoded_claims) % 4
                 try:
