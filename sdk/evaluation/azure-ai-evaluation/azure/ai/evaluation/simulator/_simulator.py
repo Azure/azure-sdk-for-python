@@ -287,7 +287,9 @@ class Simulator:
 
         while len(current_simulation) < max_conversation_turns:
             user_response_content = user_flow(
-                task="Continue the conversation", conversation_history=current_simulation.to_list()
+                task="Continue the conversation",
+                conversation_history=current_simulation.to_list(),
+                **user_simulator_prompty_kwargs
             )
             user_response = self._parse_prompty_response(response=user_response_content)
             user_turn = Turn(role=ConversationRole.USER, content=user_response["content"])
@@ -618,9 +620,12 @@ class Simulator:
             prompty_model_config=self._build_prompty_model_config(),
             user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
         )
-
         try:
-            response_content = user_flow(task=task, conversation_history=conversation_history)
+            response_content = user_flow(
+                task=task,
+                conversation_history=conversation_history,
+                **user_simulator_prompty_kwargs
+            )
             user_response = self._parse_prompty_response(response=response_content)
             return user_response["content"]
         except Exception as e:
