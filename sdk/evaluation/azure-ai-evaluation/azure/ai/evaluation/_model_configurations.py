@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Literal, TypedDict
+from typing import Dict, Literal, TypedDict
 
 from typing_extensions import NotRequired
 
@@ -46,3 +46,10 @@ class AzureAIProject(TypedDict):
     """Azure resource group name of the project"""
     project_name: str
     """Azure project name"""
+
+
+class EvaluatorConfig(TypedDict, total=False):
+    """Configuration for an evaluator"""
+
+    column_mapping: Dict[str, str]
+    """Dictionary mapping evaluator input name to column in data"""
