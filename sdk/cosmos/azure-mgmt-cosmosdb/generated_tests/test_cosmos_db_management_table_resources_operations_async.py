@@ -25,7 +25,7 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
         response = self.client.table_resources.list_tables(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2024-08-15",
+            api_version="2024-09-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             account_name="str",
             table_name="str",
-            api_version="2024-08-15",
+            api_version="2024-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -63,13 +63,19 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
                         },
                     },
                     "id": "str",
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "location": "str",
                     "name": "str",
                     "options": {"autoscaleSettings": {"maxThroughput": 0}, "throughput": 0},
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-08-15",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -84,7 +90,7 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
                 resource_group_name=resource_group.name,
                 account_name="str",
                 table_name="str",
-                api_version="2024-08-15",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -98,7 +104,7 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             account_name="str",
             table_name="str",
-            api_version="2024-08-15",
+            api_version="2024-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -126,12 +132,18 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
                         "throughput": 0,
                     },
                     "id": "str",
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "location": "str",
                     "name": "str",
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-08-15",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -146,7 +158,7 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
                 resource_group_name=resource_group.name,
                 account_name="str",
                 table_name="str",
-                api_version="2024-08-15",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -161,7 +173,7 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
                 resource_group_name=resource_group.name,
                 account_name="str",
                 table_name="str",
-                api_version="2024-08-15",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -177,7 +189,7 @@ class TestCosmosDBManagementTableResourcesOperationsAsync(AzureMgmtRecordedTestC
                 account_name="str",
                 table_name="str",
                 location={"location": "str"},
-                api_version="2024-08-15",
+                api_version="2024-09-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

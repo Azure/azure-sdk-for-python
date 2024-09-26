@@ -6,8 +6,9 @@ import asyncio
 import logging
 from typing import Callable, Dict, List, Tuple, Union
 
-from azure.ai.evaluation.simulator._helpers._language_suffix_mapping import SUPPORTED_LANGUAGES_MAPPING
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator._constants import SupportedLanguages
+from azure.ai.evaluation.simulator._helpers._language_suffix_mapping import SUPPORTED_LANGUAGES_MAPPING
 
 from ..._http_utils import AsyncHttpPipeline
 from . import ConversationBot, ConversationTurn
@@ -24,7 +25,14 @@ def is_closing_message(response: Union[Dict, str], recursion_depth: int = 0) -> 
     :rtype: bool
     """
     if recursion_depth > 10:
-        raise Exception("Exceeded max call depth in is_closing_message")  # pylint: disable=broad-exception-raised
+        msg = "Exceeded max call depth in is_closing_message"
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            error_category=ErrorCategory.INVALID_VALUE,
+            error_target=ErrorTarget.CONVERSATION,
+            error_blame=ErrorBlame.USER_ERROR,
+        )
 
     # recursively go through each inner dictionary in the JSON dict
     # and check if any value entry contains a closing message
@@ -76,20 +84,20 @@ async def simulate_conversation(
     """
     Simulate a conversation between the given bots.
 
-    :param bots: List of ConversationBot instances participating in the conversation.
-    :type bots: List[ConversationBot]
-    :param session: The session to use for making API calls.
-    :type session: AsyncHttpPipeline
-    :param stopping_criteria: A callable that determines when the conversation should stop.
-    :type stopping_criteria: Callable[[str], bool]
-    :param turn_limit: The maximum number of turns in the conversation. Defaults to 10.
-    :type turn_limit: int
-    :param history_limit: The maximum number of turns to keep in the conversation history. Defaults to 5.
-    :type history_limit: int
-    :param api_call_delay_sec: Delay between API calls in seconds. Defaults to 0.
-    :type api_call_delay_sec: float
-    :param logger: The logger to use for logging. Defaults to the logger named after the current module.
-    :type logger: logging.Logger
+    :keyword bots: List of ConversationBot instances participating in the conversation.
+    :paramtype bots: List[ConversationBot]
+    :keyword session: The session to use for making API calls.
+    :paramtype session: AsyncHttpPipeline
+    :keyword stopping_criteria: A callable that determines when the conversation should stop.
+    :paramtype stopping_criteria: Callable[[str], bool]
+    :keyword turn_limit: The maximum number of turns in the conversation. Defaults to 10.
+    :paramtype turn_limit: int
+    :keyword history_limit: The maximum number of turns to keep in the conversation history. Defaults to 5.
+    :paramtype history_limit: int
+    :keyword api_call_delay_sec: Delay between API calls in seconds. Defaults to 0.
+    :paramtype api_call_delay_sec: float
+    :keyword logger: The logger to use for logging. Defaults to the logger named after the current module.
+    :paramtype logger: logging.Logger
     :return: Simulation a conversation between the given bots.
     :rtype: Tuple
     """
