@@ -8,8 +8,8 @@ class AnswerLength:
         self.return_json = return_json
         self.aggregate_return_json = aggregate_return_json
 
-    def __call__(self, answer: str, **kwargs):
-        return {"length": len(answer)} if self.return_json else len(answer)
+    def __call__(self, response: str, **kwargs):
+        return {"length": len(response)} if self.return_json else len(response)
 
     def __aggregate__(self, line_results: List[str]) -> dict:
         median_value = np.median([v.length for v in line_results]) if self.return_json else np.median(line_results)

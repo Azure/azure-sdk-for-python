@@ -1,9 +1,17 @@
 # Release History
 
-## 12.23.0 (Unreleased)
+## 12.23.1 (2024-09-25)
 
 ### Features Added
+- Added support for decryption of Blobs encrypted using client-side encryption version 2.1.
 
+## 12.23.0 (2024-09-17)
+
+### Features Added
+- Stable release of features from 12.23.0b1
+
+### Bugs Fixed
+- Fixed an issue with batch APIs when using Azurite.
 
 ## 12.23.0b1 (2024-08-07)
 
