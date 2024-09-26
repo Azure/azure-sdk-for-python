@@ -5,8 +5,8 @@ import os
 from typing import Dict, Optional
 from typing_extensions import override
 
+from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._evaluators._common._base_prompty_eval import _BasePromptyEval
-
 
 class CoherenceEvaluator(_BasePromptyEval):
     """

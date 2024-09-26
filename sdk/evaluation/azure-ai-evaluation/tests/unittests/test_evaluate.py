@@ -330,11 +330,11 @@ class TestEvaluate:
             evaluate(
                 data=evaluate_test_data_jsonl_file,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
-                evaluator_config={"g": {"query": "${foo.query}"}},
+                evaluator_config={"g": {"column_mapping": {"query": "${foo.query}"}}},
             )
 
         assert (
-            "Unexpected references detected in 'evaluator_config'. Ensure only ${target.} and ${data.} are used."
+            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
             in exc_info.value.args[0]
         )
 

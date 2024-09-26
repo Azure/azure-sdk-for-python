@@ -4,7 +4,42 @@
 
 ### Features Added
 
+- Added `type` field to `AzureOpenAIModelConfiguration` and `OpenAIModelConfiguration`
+
 ### Breaking Changes
+
+- The `evaluator_config` parameter of `evaluate` now maps in evaluator name to a dictionary `EvaluatorConfig`, which is a `TypedDict`. The
+`column_mapping` between `data` or `target` and evaluator field names should now be specified inside this new dictionary:
+
+Before:
+```python
+evaluate(
+    ...,
+    evaluator_config={
+        "hate_unfairness": {
+            "query": "${data.question}",
+            "response": "${data.answer}",
+        }
+    },
+    ...
+)
+```
+
+After
+```python
+evaluate(
+    ...,
+    evaluator_config={
+        "hate_unfairness": {
+            "column_mapping": {
+                "query": "${data.question}",
+                "response": "${data.answer}",
+             }
+        }
+    },
+    ...
+)
+```
 
 ### Bugs Fixed
 
