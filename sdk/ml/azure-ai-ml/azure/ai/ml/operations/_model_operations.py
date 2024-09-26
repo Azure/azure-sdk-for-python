@@ -50,7 +50,7 @@ from azure.ai.ml._utils._registry_utils import (
     get_storage_details_for_registry_assets,
 )
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
-from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder, _is_evaluator
+from azure.ai.ml._utils.utils import _is_evaluator, resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, REGISTRY_URI_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment, Model, ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
@@ -108,7 +108,7 @@ class ModelOperations(_ScopeDependentOperations):
         **kwargs,
     ):
         super(ModelOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
         self._service_client = service_client
