@@ -45,7 +45,7 @@ def test_replace_dev_reqs_specifiers(tmp_directory_create):
     requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
 
     requirements_before = get_requirements_from_file(requirements_file)
-    replace_dev_reqs(requirements_file, core_location)
+    replace_dev_reqs(requirements_file, core_location, None)
     requirements_after = get_requirements_from_file(requirements_file)
 
     assert requirements_before == requirements_after
@@ -74,7 +74,7 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
     ]
 
     requirements_before = get_requirements_from_file(requirements_file)
-    replace_dev_reqs(requirements_file, core_location)
+    replace_dev_reqs(requirements_file, core_location, None)
     requirements_after = get_requirements_from_file(requirements_file)
 
     assert requirements_before != requirements_after
@@ -93,7 +93,7 @@ def test_replace_dev_reqs_remote(tmp_directory_create):
     requirements_file = create_temporary_scenario(tmp_directory_create, target_file)
 
     requirements_before = get_requirements_from_file(requirements_file)
-    replace_dev_reqs(requirements_file, core_location)
+    replace_dev_reqs(requirements_file, core_location, None)
     requirements_after = get_requirements_from_file(requirements_file)
     assert requirements_before == requirements_after
 
