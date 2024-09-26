@@ -26,6 +26,7 @@ jobs:
       - name: Install azure-sdk-tools
         run: |
           python -m pip install tools/azure-sdk-tools[build,ghtools]
+          python -m pip freeze
         shell: bash
 
       - name: Run tests
