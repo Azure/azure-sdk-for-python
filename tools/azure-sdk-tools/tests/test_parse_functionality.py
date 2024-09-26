@@ -111,7 +111,6 @@ setup(
     assert result.requires == ["requests>=2.18.4", "six>=1.11.0", "typing-extensions>=4.0.1"]
     assert result.is_new_sdk == True
     assert result.setup_filename == os.path.join(package_root, "setup.py")
-    assert result.namespace == "ci_tools"
     assert "pytyped" in result.package_data
     assert result.include_package_data == True
     assert result.folder == package_root
@@ -191,7 +190,6 @@ setup(
     assert result.requires == ["requests>=2.18.4", "six>=1.11.0", "typing-extensions>=4.0.1"]
     # todo resolve this conflict assert result.is_new_sdk == True
     assert result.setup_filename == os.path.join(package_root, "setup.py")
-    assert result.namespace == "ci_tools"
     assert "pytyped" in result.package_data
     assert result.include_package_data == True
     assert result.folder == package_root

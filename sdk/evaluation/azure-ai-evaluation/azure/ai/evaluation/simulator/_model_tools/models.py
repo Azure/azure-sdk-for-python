@@ -12,10 +12,9 @@ from abc import ABC, abstractmethod
 from collections import deque
 from typing import Deque, Dict, List, Optional, Union
 from urllib.parse import urlparse
-import ast
 
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 from ._identity_manager import APITokenManager
 
@@ -29,16 +28,15 @@ def get_model_class_from_url(endpoint_url: str):
 
     if endpoint_path.endswith("chat/completions"):
         return OpenAIChatCompletionsModel
-    elif endpoint_path.endswith("completions"):
+    if endpoint_path.endswith("completions"):
         return OpenAICompletionsModel
-    else:
-        raise EvaluationException(
-            message=f"Unknown API type for endpoint {endpoint_url}",
-            internal_message="Unknown API type",
-            error_category=ErrorCategory.UNKNOWN_FIELD,
-            error_blame=ErrorBlame.USER_ERROR,
-            error_target=ErrorTarget.MODELS,
-        )
+    raise EvaluationException(
+        message=f"Unknown API type for endpoint {endpoint_url}",
+        internal_message="Unknown API type",
+        error_category=ErrorCategory.UNKNOWN_FIELD,
+        error_blame=ErrorBlame.USER_ERROR,
+        error_target=ErrorTarget.MODELS,
+    )
 
 
 # ===========================================================

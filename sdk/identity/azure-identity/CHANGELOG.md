@@ -1,5 +1,17 @@
 # Release History
 
+## 1.18.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed the request sent in `AzurePipelinesCredential` so it doesn't result in a redirect response when an invalid system access token is provided. ([#37510](https://github.com/Azure/azure-sdk-for-python/pull/37510))
+
+### Other Changes
+
 ## 1.18.0 (2024-09-19)
 
 ### Features Added

@@ -42,6 +42,10 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 ]
 
 TEST_COMPATIBILITY_MAP = {}
+TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
+    "azure-storage-blob": "pypy",
+    "azure-eventhub": "pypy"
+}
 
 omit_regression = (
     lambda x: "nspkg" not in x
@@ -104,7 +108,12 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
         if pkg_specs_override:
             spec_set = SpecifierSet(pkg_specs_override)
 
-        if running_major_version in spec_set:
+        distro_compat = True
+        distro_incompat = TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP.get(os.path.basename(pkg), None)
+        if distro_incompat and distro_incompat in platform.python_implementation().lower():
+            distro_compat = False
+
+        if running_major_version in spec_set and distro_compat:
             collected_packages.append(pkg)
 
     logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
@@ -187,19 +196,23 @@ def discover_targeted_packages(
 
     # glob the starting package set
     collected_packages = glob_packages(glob_string, target_root_dir)
+    logging.info(f"Results for glob_string \"{glob_string}\" and root directory \"{target_root_dir}\" are: {collected_packages}")
 
     # apply the additional contains filter
     collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
+    logging.info(f"Results after additional contains filter: \"{additional_contains_filter}\" {collected_packages}")
 
     # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable
     if compatibility_filter:
         collected_packages = apply_compatibility_filter(collected_packages)
+        logging.info(f"Results after compatibility filter: {collected_packages}")
 
     if not include_inactive:
         collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)
+    logging.info(f"Results after business filter: {collected_packages}")
 
     return sorted(collected_packages)
 

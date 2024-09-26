@@ -6,6 +6,9 @@
 from functools import wraps
 from typing import Any, Awaitable, Callable, Dict, MutableMapping, Optional
 
+from typing_extensions import Self
+
+from azure.ai.evaluation._user_agent import USER_AGENT
 from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline, Pipeline
 from azure.core.pipeline.policies import (
@@ -28,9 +31,6 @@ from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-tran
 )
 from azure.core.rest import AsyncHttpResponse, HttpRequest, HttpResponse
 from azure.core.rest._rest_py3 import ContentType, FilesType, ParamsType
-from typing_extensions import Self
-
-from azure.ai.evaluation._user_agent import USER_AGENT
 
 
 def _request_fn(f: Callable[["HttpPipeline"], None]):

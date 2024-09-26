@@ -8,12 +8,7 @@ parameters:
   ValidateFormatting: false
   GenerateApiReviewForManualOnly: false
 
-# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
-#     eng/pipelines/templates/jobs/ci.tests.yml
-#     eng/pipelines/templates/jobs/ci.yml
-#     eng/pipelines/templates/jobs/live.test.yml
-
-# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+# Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
     parameters:
@@ -32,14 +27,20 @@ steps:
       scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
       arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
 
-  - ${{ each artifact in parameters.Artifacts }}:
-    - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
-      - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
-        parameters:
-          PackageName: ${{artifact.name}}
-          ServiceName: ${{parameters.ServiceDirectory}}
-          ForRelease: false
-          Condition: succeededOrFailed()
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    - template: /eng/common/pipelines/templates/steps/verify-changelogs.yml
+      parameters:
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+        Condition: succeededOrFailed()
+  - ${{ else }}:
+    - ${{ each artifact in parameters.Artifacts }}:
+      - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
+        - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
+          parameters:
+            PackageName: ${{artifact.name}}
+            ServiceName: ${{parameters.ServiceDirectory}}
+            ForRelease: false
+            Condition: succeededOrFailed()
 
   - script: |
       python -m pip install "./tools/azure-sdk-tools[build]" -q -I
