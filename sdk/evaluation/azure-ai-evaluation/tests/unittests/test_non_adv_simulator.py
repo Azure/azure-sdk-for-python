@@ -37,7 +37,6 @@ def invalid_project():
 
 @pytest.mark.unittest
 class TestNonAdvSimulator:
-
     def test_init_valid_project(self, valid_project):
         simulator = Simulator(azure_ai_project=valid_project)
         assert simulator.azure_ai_project["subscription_id"] == "test_subscription"

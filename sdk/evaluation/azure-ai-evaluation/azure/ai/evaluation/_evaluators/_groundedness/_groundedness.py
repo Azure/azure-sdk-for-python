@@ -11,7 +11,7 @@ from promptflow.core import AsyncPrompty
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
-from ..._common.utils import ensure_api_version_in_aoai_model_config, ensure_user_agent_in_aoai_model_config
+from ..._common.utils import construct_prompty_model_config
 
 try:
     from ..._user_agent import USER_AGENT
@@ -26,17 +26,9 @@ class _AsyncGroundednessEvaluator:
     DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
     def __init__(self, model_config: dict):
-        ensure_api_version_in_aoai_model_config(model_config, self.DEFAULT_OPEN_API_VERSION)
-
-        prompty_model_config = {"configuration": model_config, "parameters": {"extra_headers": {}}}
-
-        # Handle "RuntimeError: Event loop is closed" from httpx AsyncClient
-        # https://github.com/encode/httpx/discussions/2959
-        prompty_model_config["parameters"]["extra_headers"].update({"Connection": "close"})
-
-        ensure_user_agent_in_aoai_model_config(
+        prompty_model_config = construct_prompty_model_config(
             model_config,
-            prompty_model_config,
+            self.DEFAULT_OPEN_API_VERSION,
             USER_AGENT,
         )
 
