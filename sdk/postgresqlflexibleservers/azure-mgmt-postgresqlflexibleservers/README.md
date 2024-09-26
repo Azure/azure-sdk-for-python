@@ -44,7 +44,7 @@ sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
 client = PostgreSQLManagementClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 Code samples for this package can be found at:
-- [Detailed documentation](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/quickstart-create-server-python-sdk?tabs=PythonSDK) on docs.microsoft.com
+- [Detailed documentation](https://learn.microsoft.com/azure/postgresql/flexible-server/quickstart-create-server-python-sdk?tabs=PythonSDK)
 
 ## Release Notes
 
