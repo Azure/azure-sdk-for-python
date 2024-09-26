@@ -530,6 +530,7 @@ async def test_cae():
             if Requests.count == 1:
                 # first request should be unauthorized and have no content; triggers a KV challenge response
                 assert not request.body
+                assert "Authorization" not in request.headers
                 assert request.headers["Content-Length"] == "0"
                 return kv_challenge
             elif Requests.count == 2:
@@ -554,15 +555,15 @@ async def test_cae():
             raise ValueError("unexpected request")
 
         async def get_token(*_, **kwargs):
+            assert kwargs.get("enable_cae") == True
+            assert kwargs.get("tenant_id") == tenant
+            # Response to KV challenge
             if Requests.count == 1:
                 assert kwargs.get("claims") == None
-                assert kwargs.get("enable_cae") == True
-                assert kwargs.get("tenant_id") == tenant
                 return AccessToken(first_token, time.time() + 3600)
+            # Response to CAE challenge
             elif Requests.count == 3:
                 assert kwargs.get("claims") == expected_claim
-                assert kwargs.get("enable_cae") == True
-                assert kwargs.get("tenant_id") == tenant
                 return AccessToken(expected_token, time.time() + 3600)
 
         credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
@@ -578,8 +579,9 @@ async def test_cae():
     cid = 'client_id="00000003-0000-0000-c000-000000000000"'
     err = 'error="insufficient_claims"'
     claim = '{"access_token": {"foo": "bar"}}'
-    # Claim token is a string of the base64 encoding of the claim
+    # Claim token is a string of the base64 encoding of the claim. Trim the padding to ensure the policy can handle it
     claim_token = base64.b64encode(claim.encode()).decode()
+    claim_token = claim_token.strip("=")
     # Note that no resource or scope is necessarily provided in a CAE challenge
     challenge = f'Bearer realm="", {url}, {cid}, {err}, claims="{claim_token}"'
 
@@ -616,6 +618,7 @@ async def test_cae_consecutive_challenges():
             if Requests.count == 1:
                 # first request should be unauthorized and have no content; triggers a KV challenge response
                 assert not request.body
+                assert "Authorization" not in request.headers
                 assert request.headers["Content-Length"] == "0"
                 return kv_challenge
             elif Requests.count == 2:
@@ -634,15 +637,15 @@ async def test_cae_consecutive_challenges():
             raise ValueError("unexpected request")
 
         async def get_token(*_, **kwargs):
+            assert kwargs.get("enable_cae") == True
+            assert kwargs.get("tenant_id") == tenant
+            # Response to KV challenge
             if Requests.count == 1:
                 assert kwargs.get("claims") == None
-                assert kwargs.get("enable_cae") == True
-                assert kwargs.get("tenant_id") == tenant
                 return AccessToken(first_token, time.time() + 3600)
+            # Response to first CAE challenge
             elif Requests.count == 2:
                 assert kwargs.get("claims") == expected_claim
-                assert kwargs.get("enable_cae") == True
-                assert kwargs.get("tenant_id") == tenant
                 return AccessToken(expected_token, time.time() + 3600)
 
         credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
