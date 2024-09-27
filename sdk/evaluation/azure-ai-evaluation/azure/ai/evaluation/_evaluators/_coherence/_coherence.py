@@ -5,10 +5,10 @@ import os
 from typing import Dict, Optional
 from typing_extensions import override
 
-from azure.ai.evaluation._evaluators._common import _BasePromptyEval
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 
 
-class CoherenceEvaluator(_BasePromptyEval):
+class CoherenceEvaluator(PromptyEvaluatorBase):
     """
     Initialize a coherence evaluator configured for a specific Azure OpenAI model.
 

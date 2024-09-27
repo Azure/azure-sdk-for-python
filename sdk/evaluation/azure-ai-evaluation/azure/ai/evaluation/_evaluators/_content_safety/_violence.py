@@ -5,11 +5,11 @@ from typing import Optional
 from typing_extensions import override
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._evaluators._common import _BaseRaiServiceEval
+from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 from azure.core.credentials import TokenCredential
 
 
-class ViolenceEvaluator(_BaseRaiServiceEval):
+class ViolenceEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a violence evaluator for violence score.
 
@@ -43,7 +43,12 @@ class ViolenceEvaluator(_BaseRaiServiceEval):
     """
 
     @override
-    def __init__(self, azure_ai_project: AzureAIProject, credential: Optional[TokenCredential] = None, eval_last_turn: bool = False):
+    def __init__(
+        self,
+        azure_ai_project: AzureAIProject,
+        credential: Optional[TokenCredential] = None,
+        eval_last_turn: bool = False,
+    ):
         super().__init__(
             eval_metric=EvaluationMetrics.VIOLENCE,
             azure_ai_project=azure_ai_project,

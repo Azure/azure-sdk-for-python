@@ -5,11 +5,11 @@ from typing import Optional
 from typing_extensions import override
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.ai.evaluation._evaluators._common import _BaseRaiServiceEval
+from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 from azure.core.credentials import TokenCredential
 
 
-class SelfHarmEvaluator(_BaseRaiServiceEval):
+class SelfHarmEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a self harm evaluator for self harm score.
 
@@ -43,7 +43,12 @@ class SelfHarmEvaluator(_BaseRaiServiceEval):
     """
 
     @override
-    def __init__(self, azure_ai_project: AzureAIProject, credential: Optional[TokenCredential] = None, eval_last_turn: bool = False):
+    def __init__(
+        self,
+        azure_ai_project: AzureAIProject,
+        credential: Optional[TokenCredential] = None,
+        eval_last_turn: bool = False,
+    ):
         super().__init__(
             eval_metric=EvaluationMetrics.SELF_HARM,
             azure_ai_project=azure_ai_project,

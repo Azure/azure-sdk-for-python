@@ -18,10 +18,10 @@ try:
     from ..._user_agent import USER_AGENT
 except ImportError:
     USER_AGENT = None
-from . import _BaseEval
+from . import EvaluatorBase
 
 
-class _BasePromptyEval(_BaseEval):
+class PromptyEvaluatorBase(EvaluatorBase):
     """Base class for all evaluators that make use of context as an input. It's also assumed that such evaluators
     make use of a prompty file, and return their results as a dictionary, with a single key-value pair
     linking the result name to a float value (unless multi-turn evaluation occurs, in which case the

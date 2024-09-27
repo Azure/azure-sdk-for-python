@@ -6,10 +6,10 @@ import os
 from typing import Dict, Optional
 from typing_extensions import override
 
-from azure.ai.evaluation._evaluators._common import _BasePromptyEval
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 
 
-class RelevanceEvaluator(_BasePromptyEval):
+class RelevanceEvaluator(PromptyEvaluatorBase):
     """
     Initialize a relevance evaluator configured for a specific Azure OpenAI model.
 

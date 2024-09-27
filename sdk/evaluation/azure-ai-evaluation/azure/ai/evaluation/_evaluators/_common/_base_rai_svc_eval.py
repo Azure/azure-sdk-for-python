@@ -11,10 +11,10 @@ from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._exceptions import EvaluationException
-from . import _BaseEval
+from . import EvaluatorBase
 
 
-class _BaseRaiServiceEval(_BaseEval):
+class RaiServiceEvaluatorBase(EvaluatorBase):
     """Base class for all evaluators that require the use of the Azure AI RAI service for evaluation.
     This includes content safety evaluators, protected material evaluators, and others. These evaluators
     are all assumed to be of the "query and response or conversation" input variety.

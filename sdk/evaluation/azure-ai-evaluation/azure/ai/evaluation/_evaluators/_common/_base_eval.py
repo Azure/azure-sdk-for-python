@@ -14,7 +14,7 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 
 
 # TODO exception target pass down?
-class _BaseEval(ABC):
+class EvaluatorBase(ABC):
     """Base class for all evaluators that are capable of accepting either a group of single values,
     or conversation as input. All such evaluators need to implement two functions of their own:
         - _convert_conversation_to_eval_input
@@ -46,7 +46,7 @@ class _BaseEval(ABC):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
-        self._async_evaluator = _AsyncBaseEval(self._real_call)
+        self._async_evaluator = AsyncEvaluatorBase(self._real_call)
 
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
@@ -276,12 +276,12 @@ class _BaseEval(ABC):
         return self._async_evaluator
 
 
-class _AsyncBaseEval:
+class AsyncEvaluatorBase:
     """The asynchronous evaluator hidden underneath all evaluators. This makes generous use passing functions
     to ensure that no one ever needs to extend or otherwise modify this class directly.
     """
 
-    def __init__(self, real_call): # DO NOT ADD TYPEHINT PROMPT FLOW WILL SCREAM AT YOU ABOUT META GENERATION
+    def __init__(self, real_call):  # DO NOT ADD TYPEHINT PROMPT FLOW WILL SCREAM AT YOU ABOUT META GENERATION
         self._real_call = real_call
 
     # Don't look at my shame. Nothing to see here....
