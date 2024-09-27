@@ -52,10 +52,6 @@ def print_call(cmd):
     sp.call(cmd, shell=True)
 
 
-def start_test_proxy():
-    print_check('pwsh {}/eng/common/testproxy/docker-start-proxy.ps1 \"start\"'.format(os.getenv('SDK_REPO')))
-
-
 def version_sort(versions: List[str]) -> List[str]:
     versions_package = [parse(version) for version in versions]
     versions_package.sort()
