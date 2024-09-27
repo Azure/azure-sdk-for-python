@@ -258,6 +258,9 @@ class HttpPipeline(Pipeline):
     def patch(self) -> None:
         """Send a PATCH request."""
 
+    def __enter__(self) -> Self:
+        return cast(Self, super().__enter__())
+
 
 class AsyncHttpPipeline(AsyncPipeline):
     """A *very* thin wrapper over azure.core.pipeline.AsyncPipeline that facilitates sending miscellaneous
@@ -413,6 +416,9 @@ class AsyncHttpPipeline(AsyncPipeline):
     @_async_request_fn
     async def patch(self) -> None:
         """Send a PATCH request."""
+
+    async def __aenter__(self) -> Self:
+        return cast(Self, await super().__aenter__())
 
 
 def get_http_client() -> HttpPipeline:
