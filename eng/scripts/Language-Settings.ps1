@@ -9,7 +9,6 @@ $PackageRepositoryUri = "https://pypi.org/project"
 ."$PSScriptRoot/docs/Docs-ToC.ps1"
 ."$PSScriptRoot/docs/Docs-Onboarding.ps1"
 
-
 function Get-python-AdditionalValidationPackagesFromPackageSet {
   param(
     [Parameter(Mandatory=$true)]
@@ -21,9 +20,22 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   )
   $additionalValidationPackages = @()
 
+  function isOther($fileName) {
+    $startsWithPrefixes = @(".config", ".devcontainer", ".github", ".vscode", "common", "conda", "doc", "eng", "scripts")
+
+    $startsWith = $false
+    foreach ($prefix in $startsWithPrefixes) {
+      if ($fileName.StartsWith($prefix)) {
+        $startsWith = $true
+      }
+    }
+
+    return $startsWith
+  }
+
   $toolChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("tool")}
   $engChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("eng")}
-  $othersChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("scripts") -or $_.StartsWith("doc") -or $_.StartsWith("common") -or $_.StartsWith("conda") }
+  $othersChanged = $diffObj.ChangedFiles | Where-Object { isOther($_) }
 
   if ($toolChanged) {
     $additionalPackages = @(
