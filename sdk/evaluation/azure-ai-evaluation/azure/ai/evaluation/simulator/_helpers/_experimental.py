@@ -85,7 +85,7 @@ def _add_class_docstring(cls: Type[T]) -> Type[T]:
         cls.__doc__ = _add_note_to_docstring(cls.__doc__, doc_string)
     else:
         cls.__doc__ = doc_string + ">"
-    cls.__init__ = _add_class_warning(cls.__init__)
+    cls.__init__ = _add_class_warning(cls.__init__)  # type: ignore[method-assign]
     return cls
 
 
