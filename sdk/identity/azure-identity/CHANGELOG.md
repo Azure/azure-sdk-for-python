@@ -1,6 +1,6 @@
 # Release History
 
-## 1.18.0b3 (Unreleased)
+## 1.18.1 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,22 @@
 
 ### Bugs Fixed
 
+- Fixed the request sent in `AzurePipelinesCredential` so it doesn't result in a redirect response when an invalid system access token is provided. ([#37510](https://github.com/Azure/azure-sdk-for-python/pull/37510))
+
+### Other Changes
+
+## 1.18.0 (2024-09-19)
+
+### Features Added
+
+- All credentials now implement the `SupportsTokenInfo` or `AsyncSupportsTokenInfo` protocol. Each credential now has a `get_token_info` method which returns an `AccessTokenInfo` object. The `get_token_info` method is an alternative method to `get_token` that improves support for more complex authentication scenarios. ([#36882](https://github.com/Azure/azure-sdk-for-python/pull/36882))
+    - Information on when a token should be refreshed is now saved in `AccessTokenInfo` (if available).
+
 ### Other Changes
 
 - Added identity config validation to `ManagedIdentityCredential` to avoid non-deterministic states (e.g. both `resource_id` and `object_id` are specified). ([#36950](https://github.com/Azure/azure-sdk-for-python/pull/36950))
+- Additional validation was added for `ManagedIdentityCredential` in Azure Cloud Shell environments. ([#36438](https://github.com/Azure/azure-sdk-for-python/issues/36438))
+- Bumped minimum dependency on `azure-core` to `>=1.31.0`.
 
 ## 1.18.0b2 (2024-08-09)
 

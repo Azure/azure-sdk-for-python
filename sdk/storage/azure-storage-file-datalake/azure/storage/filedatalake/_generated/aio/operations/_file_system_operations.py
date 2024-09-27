@@ -67,6 +67,7 @@ class FileSystemOperations:
         properties: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Create FileSystem.
 
         Create a FileSystem rooted at the specified location. If the FileSystem already exists, the
@@ -94,7 +95,7 @@ class FileSystemOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -153,6 +154,7 @@ class FileSystemOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Set FileSystem Properties.
 
         Set properties for the FileSystem.  This operation supports conditional HTTP requests.  For
@@ -183,7 +185,7 @@ class FileSystemOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -242,6 +244,7 @@ class FileSystemOperations:
     async def get_properties(  # pylint: disable=inconsistent-return-statements
         self, request_id_parameter: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Get FileSystem Properties.
 
         All system and user-defined filesystem properties are specified in the response headers.
@@ -259,7 +262,7 @@ class FileSystemOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -317,6 +320,7 @@ class FileSystemOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Delete FileSystem.
 
         Marks the FileSystem for deletion.  When a FileSystem is deleted, a FileSystem with the same
@@ -344,7 +348,7 @@ class FileSystemOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -408,6 +412,7 @@ class FileSystemOperations:
         upn: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.PathList:
+        # pylint: disable=line-too-long
         """List Paths.
 
         List FileSystem paths and their properties.
@@ -447,7 +452,7 @@ class FileSystemOperations:
         :rtype: ~azure.storage.filedatalake.models.PathList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -516,6 +521,7 @@ class FileSystemOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ListBlobsHierarchySegmentResponse:
+        # pylint: disable=line-too-long
         """The List Blobs operation returns a list of the blobs under the specified container.
 
         :param prefix: Filters results to filesystems within the specified prefix. Default value is
@@ -556,7 +562,7 @@ class FileSystemOperations:
         :rtype: ~azure.storage.filedatalake.models.ListBlobsHierarchySegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

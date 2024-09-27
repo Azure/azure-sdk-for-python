@@ -3,6 +3,7 @@ import ast
 import textwrap
 import re
 import fnmatch
+import logging
 
 try:
     # py 311 adds this library natively
@@ -11,7 +12,7 @@ except:
     # otherwise fall back to pypi package tomli
     import tomli as toml
 
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple, Any, Optional
 
 # Assumes the presence of setuptools
 from pkg_resources import (
@@ -26,6 +27,7 @@ from pkg_resources import (
 from packaging.specifiers import SpecifierSet
 from setuptools import Extension
 
+from ci_tools.variables import str_to_bool
 
 NEW_REQ_PACKAGES = ["azure-core", "azure-mgmt-core"]
 
@@ -101,7 +103,7 @@ class ParsedSetup:
             ext_modules,
         )
 
-    def get_build_config(self) -> Dict[str, Any]:
+    def get_build_config(self) -> Optional[Dict[str, Any]]:
         return get_build_config(self.folder)
 
     def get_config_setting(self, setting: str, default: Any = True) -> Any:
@@ -146,9 +148,10 @@ def get_config_setting(package_path: str, setting: str, default: Any = True) -> 
     pyproject.toml. If the input 'setting' does NOT exist, the provided default value will be returned.
     """
     # we should always take the override if one is present
-    override_value = os.getenv(f"{os.path.basename(package_path).upper()}_{setting.upper()}", None)
+    override_value = os.getenv(f"{os.path.basename(package_path).upper().replace('-','_')}_{setting.upper()}", None)
+
     if override_value:
-        return override_value
+        return str_to_bool(override_value)
 
     # if no override, check for the config setting in the pyproject.toml
     config = get_build_config(package_path)
@@ -160,7 +163,7 @@ def get_config_setting(package_path: str, setting: str, default: Any = True) -> 
     return default
 
 
-def get_build_config(package_path: str) -> Dict[str, Any]:
+def get_build_config(package_path: str) -> Optional[Dict[str, Any]]:
     """
     Attempts to retrieve all values within [tools.azure-sdk-build] section of a pyproject.toml.
 
@@ -183,6 +186,29 @@ def get_build_config(package_path: str) -> Dict[str, Any]:
             return {}
 
 
+def get_ci_config(package_path: str) -> Optional[Dict[str, Any]]:
+    """
+    Attempts to retrieve the parsed toml content of a CI.yml associated with this package.
+    """
+    if os.path.isfile(package_path):
+        package_path = os.path.dirname(package_path)
+
+    # this checks exactly one directory up
+    # for sdk/core/azure-core
+    # sdk/core/ci.yml is checked only
+    ci_file = os.path.join(os.path.dirname(package_path), "ci.yml")
+
+    if os.path.exists(ci_file):
+        import yaml
+        try:
+            with open(ci_file, "r") as f:
+                return yaml.safe_load(f)
+        except Exception as e:
+            logging.error(f"Failed to load ci.yml at {ci_file} due to exception {e}")
+
+    return None
+
+
 def read_setup_py_content(setup_filename: str) -> str:
     """
     Get setup.py content, returns a string.
@@ -191,10 +217,9 @@ def read_setup_py_content(setup_filename: str) -> str:
         content = setup_file.read()
         return content
 
-
 def parse_setup(
     setup_filename: str,
-) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], str, List[Extension]]:
+) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension]]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
     (
@@ -232,7 +257,7 @@ def parse_setup(
             not isinstance(node, ast.Expr)
             or not isinstance(node.value, ast.Call)
             or not hasattr(node.value.func, "id")
-            or node.value.func.id != "setup"
+            or node.value.func.id != "setup"  # type: ignore
         ):
             continue
         parsed.body[index:index] = parsed_mock_setup.body
@@ -272,27 +297,28 @@ def parse_setup(
     classifiers = kwargs.get("classifiers", [])
     keywords = kwargs.get("keywords", [])
 
-    is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
+    is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).key in NEW_REQ_PACKAGES), requires))
 
     ext_package = kwargs.get("ext_package", None)
     ext_modules = kwargs.get("ext_modules", [])
 
+    # fmt: off
     return (
-        name,
-        version,
-        python_requires,
-        requires,
-        is_new_sdk,
-        setup_filename,
-        name_space,
-        package_data,
-        include_package_data,
-        classifiers,
-        keywords,
-        ext_package,
-        ext_modules,
+        name,                   # str
+        version,                # str
+        python_requires,        # str
+        requires,               # List[str]
+        is_new_sdk,             # bool
+        setup_filename,         # str
+        name_space,             # str,
+        package_data,           # Dict[str, Any],
+        include_package_data,   # bool,
+        classifiers,            # List[str],
+        keywords,               # List[str] ADJUSTED
+        ext_package,            # str
+        ext_modules,            # List[Extension]
     )
-
+    # fmt: on
 
 def get_install_requires(setup_path: str) -> List[str]:
     """
@@ -301,33 +327,13 @@ def get_install_requires(setup_path: str) -> List[str]:
     return ParsedSetup.from_path(setup_path).requires
 
 
-def parse_require(req: str) -> Tuple[str, SpecifierSet]:
+def parse_require(req: str) -> Requirement:
     """
     Parses the incoming version specification and returns a tuple of the requirement name and specifier.
 
     "azure-core<2.0.0,>=1.11.0" -> [azure-core, <2.0.0,>=1.11.0]
     """
-    req_object = Requirement.parse(req.split(";")[0].lower())
-    pkg_name = req_object.key
-
-    # we were not passed a full requirement. Instead we were passed a value of "readme-renderer" or another string without a version.
-    if not req_object.specifier:
-        return [pkg_name, None]
-
-    # regex details ripped from https://peps.python.org/pep-0508/
-    isolated_spec = re.sub(r"^([a-zA-Z0-9\-\_\.]+)(\[[a-zA-Z0-9\-\_\.\,]*\])?", "", str(req_object))
-    spec = SpecifierSet(isolated_spec)
-    return (pkg_name, spec)
-
-
-def parse_freeze_output(file_location: str) -> Dict[str, str]:
-    """
-    Takes a python requirements file and returns a dictionary representing the contents.
-    """
-    with open(file_location, "r") as f:
-        reqs = f.read()
-
-    return dict((req.name, req) for req in parse_requirements(reqs))
+    return Requirement.parse(req)
 
 
 def get_name_from_specifier(version: str) -> str:
