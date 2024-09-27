@@ -34,7 +34,7 @@ class _AsyncF1ScoreEvaluator:
         return {"f1_score": f1_result}
 
     @classmethod
-    def _compute_f1_score(cls, response: str, ground_truth: str) -> str:
+    def _compute_f1_score(cls, response: str, ground_truth: str) -> float:
         import re
         import string
 
