@@ -88,7 +88,7 @@ class AzureRecordedTestCase(object):
         secret = os.environ.get("AZURE_CLIENT_SECRET", getattr(os.environ, "CLIENT_SECRET", None))
 
         # Return live credentials only in live mode
-        if self.is_live: 
+        if self.is_live:
             # Service principal authentication
             if tenant_id and client_id and secret:
                 # Create msrestazure class
@@ -190,6 +190,7 @@ class AzureRecordedTestCase(object):
         token = sas_func(*sas_func_pos_args, **kwargs)
         return token
 
+
 def get_credential(**kwargs):
     tenant_id = os.environ.get("AZURE_TENANT_ID", getattr(os.environ, "TENANT_ID", None))
     client_id = os.environ.get("AZURE_CLIENT_ID", getattr(os.environ, "CLIENT_ID", None))
@@ -261,6 +262,7 @@ def get_credential(**kwargs):
         system_access_token = os.environ.get("SYSTEM_ACCESSTOKEN")
         if service_connection_id and client_id and tenant_id and system_access_token:
             from azure.identity import AzurePipelinesCredential
+
             if is_async:
                 from azure.identity.aio import AzurePipelinesCredential
             return AzurePipelinesCredential(
@@ -268,12 +270,12 @@ def get_credential(**kwargs):
                 client_id=client_id,
                 service_connection_id=service_connection_id,
                 system_access_token=system_access_token,
-                **kwargs
+                **kwargs,
             )
         # This is for testing purposes only, to ensure that the AzurePipelinesCredential is used when available
         else:
             force_fallback_dac = os.environ.get("AZURE_TEST_FORCE_FALLBACK_DAC", "false")
-            if service_connection_id and not(force_fallback_dac):
+            if service_connection_id and not (force_fallback_dac):
                 # if service_connection_id is set, we believe it is running in CI
                 system_access_token = SANITIZED if system_access_token else None
                 raise ValueError(
@@ -282,6 +284,7 @@ def get_credential(**kwargs):
                 )
         # Fall back to DefaultAzureCredential
         from azure.identity import DefaultAzureCredential
+
         if is_async:
             from azure.identity.aio import DefaultAzureCredential
         return DefaultAzureCredential(exclude_managed_identity_credential=True, **kwargs)

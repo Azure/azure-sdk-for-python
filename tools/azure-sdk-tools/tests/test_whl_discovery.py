@@ -1,4 +1,3 @@
-
 import os
 
 from unittest.mock import patch
@@ -92,11 +91,11 @@ def test_find_whl_discovers_specific_wheels(test_patch, tmp_directory_create):
             "azure_storage_extensions-1.0.0b1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
             "azure_storage_extensions-1.0.0b1-cp39-cp39-win_amd64.whl",
             "azure_storage_extensions-1.0.0b1-cp39-cp39-win32.whl",
-            "azure-storage-extensions-1.0.0b1.tar.gz"
+            "azure-storage-extensions-1.0.0b1.tar.gz",
         ]
     )
 
-    with open(os.path.join(tags_folder, 'from_WSL_310.txt'), 'r', encoding='utf-8') as f:
+    with open(os.path.join(tags_folder, "from_WSL_310.txt"), "r", encoding="utf-8") as f:
         compatible_tags = [line.strip() for line in f.readlines()]
 
     test_patch.return_value = compatible_tags
@@ -140,11 +139,11 @@ def test_find_sdist_discovers_specific_sdist(test_patch, tmp_directory_create):
             "azure_storage_extensions-1.0.0b1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
             "azure_storage_extensions-1.0.0b1-cp39-cp39-win_amd64.whl",
             "azure_storage_extensions-1.0.0b1-cp39-cp39-win32.whl",
-            "azure-storage-extensions-1.0.0b1.tar.gz"
+            "azure-storage-extensions-1.0.0b1.tar.gz",
         ]
     )
 
-    with open(os.path.join(tags_folder, 'from_WSL_310.txt'), 'r', encoding='utf-8') as f:
+    with open(os.path.join(tags_folder, "from_WSL_310.txt"), "r", encoding="utf-8") as f:
         compatible_tags = [line.strip() for line in f.readlines()]
 
     test_patch.return_value = compatible_tags

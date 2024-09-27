@@ -391,11 +391,8 @@ function Get-python-DocsMsMetadataForPackage($PackageInfo) {
 
 function Import-Dev-Cert-python
 {
-  Write-Host "Python Trust Methodology"
-
-  $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
-  python -m pip install requests
-  python $pathToScript
+  Write-Host "Python no longer requires an out of proc trust methodology." `
+    "The variables SSL_CERT_DIR, SSL_CERT_FILE, and REQUESTS_CA_BUNDLE are now dynamically set in proxy_startup.py"
 }
 
 # Defined in common.ps1 as:
