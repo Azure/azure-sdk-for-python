@@ -30,8 +30,8 @@ import os
 from opentelemetry import trace
 # opentelemetry-sdk is required for the opentelemetry.sdk imports.
 # You can install it with command "pip install opentelemetry.sdk".
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
+#from opentelemetry.sdk.trace import TracerProvider
+#from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason
 from azure.core.credentials import AzureKeyCredential
@@ -42,10 +42,11 @@ settings.tracing_implementation = "opentelemetry"
 # [END trace_setting]
 
 # Setup tracing to console
-exporter = ConsoleSpanExporter()
-trace.set_tracer_provider(TracerProvider())
-tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
+# Requires opentelemetry-sdk
+#exporter = ConsoleSpanExporter()
+#trace.set_tracer_provider(TracerProvider())
+#tracer = trace.get_tracer(__name__)
+#trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
 
 
 def chat_completion_streaming(key, endpoint):

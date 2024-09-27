@@ -879,7 +879,7 @@ class TestModelClient(ModelClientTestBase):
         assert exception_caught == True
 
     @ServicePreparerChatCompletions()
-    def test_uninstrumenting_twise_causes_exception(self, **kwargs):
+    def test_uninstrumenting_twice_causes_exception(self, **kwargs):
         client = self._create_chat_client(**kwargs)
         exception_caught = False
         uninstrumented_once = False
