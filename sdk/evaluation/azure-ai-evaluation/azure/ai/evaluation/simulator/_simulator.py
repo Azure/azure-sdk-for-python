@@ -15,11 +15,10 @@ from promptflow.client import load_flow
 from promptflow.core import AzureOpenAIModelConfiguration, Flow
 from tqdm import tqdm
 
+from .._exceptions import ErrorBlame, ErrorCategory, EvaluationException
 from .._user_agent import USER_AGENT
 from ._conversation.constants import ConversationRole
 from ._helpers import ConversationHistory, Turn, experimental
-
-# from ._tracing import monitor_task_simulator
 from ._utils import JsonLineChatProtocol
 
 
@@ -330,7 +329,13 @@ class Simulator:
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
             except FileNotFoundError as e:
-                raise f"Flow path for {resource_name} does not exist in package {package}." from e
+                msg = f"Flow path for {resource_name} does not exist in package {package}."
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    error_category=ErrorCategory.FILE_OR_FOLDER_NOT_FOUND,
+                    blame=ErrorBlame.USER_ERROR,
+                ) from e
         return load_flow(
             source=user_simulator_prompty,
             model=prompty_model_config,
@@ -445,7 +450,13 @@ class Simulator:
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
             except FileNotFoundError as e:
-                raise f"Flow path for {resource_name} does not exist in package {package}." from e
+                msg = f"Flow path for {resource_name} does not exist in package {package}."
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    error_category=ErrorCategory.FILE_OR_FOLDER_NOT_FOUND,
+                    blame=ErrorBlame.USER_ERROR,
+                ) from e
         return load_flow(
             source=query_response_generating_prompty,
             model=prompty_model_config,
