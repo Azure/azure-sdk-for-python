@@ -78,7 +78,6 @@ async def sample_assistant_stream_iteration():
         message = await assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         logging.info(f"Created message, message ID {message.id}")
 
-        # TODO: implement with stream=True
         stream = await assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, stream=True)
 
         if stream:
