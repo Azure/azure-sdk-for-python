@@ -42,13 +42,13 @@ class ConversationHistory:
     Conversation history class to keep track of the conversation turns in a conversation.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Initializes the conversation history with an empty list of turns.
         """
         self.history: List[Turn] = []
 
-    def add_to_history(self, turn: Turn):
+    def add_to_history(self, turn: Turn) -> None:
         """
         Adds a turn to the conversation history.
 
@@ -57,7 +57,7 @@ class ConversationHistory:
         """
         self.history.append(turn)
 
-    def to_list(self) -> List[Dict[str, str]]:
+    def to_list(self) -> List[Dict[str, Optional[str]]]:
         """
         Converts the conversation history to a list of dictionaries.
 
