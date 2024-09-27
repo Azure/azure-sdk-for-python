@@ -31,11 +31,21 @@ from azure.ai.ml.entities import (
 )
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
 from azure.core.polling import LROPoller
+import urllib.parse
 
 
 @pytest.fixture
 def mock_credential() -> Mock:
     yield Mock()
+
+
+def mock_urlparse(url: str) -> urllib.parse.ParseResult:
+    return urllib.parse.ParseResult(
+        scheme="http", netloc="example.com", path="/index.html", params="", query="a=1&b=2", fragment=""
+    )
+
+
+urllib.parse.urlparse = mock_urlparse
 
 
 @pytest.fixture

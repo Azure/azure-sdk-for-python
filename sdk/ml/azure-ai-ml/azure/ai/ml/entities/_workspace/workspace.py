@@ -222,8 +222,6 @@ class Workspace(Resource):
         :return: Returns mlflow tracking uri of the workspace.
         :rtype: str
         """
-        # TODO: To check with Amit the use of this function
-
         return self._mlflow_tracking_uri
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
@@ -317,7 +315,9 @@ class Workspace(Resource):
         return result
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace, v2_service_context: Optional[object] = None) -> Optional["Workspace"]:
+    def _from_rest_object(
+        cls, rest_obj: RestWorkspace, v2_service_context: Optional[object] = None
+    ) -> Optional["Workspace"]:
 
         if not rest_obj:
             return None

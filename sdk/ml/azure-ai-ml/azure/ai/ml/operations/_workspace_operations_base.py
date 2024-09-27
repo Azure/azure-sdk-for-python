@@ -87,17 +87,21 @@ class WorkspaceOperationsBase(ABC):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         obj = self._operation.get(resource_group, workspace_name)
         v2_service_context = {}
-        
+
         v2_service_context["subscription_id"] = self._subscription_id
         v2_service_context["workspace_name"] = workspace_name
         v2_service_context["resource_group_name"] = resource_group
-        v2_service_context["auth"] = self._credentials
-        
+        v2_service_context["auth"] = self._credentials  # type: ignore
+
         from urllib.parse import urlparse
-        parsed_url = urlparse(obj.ml_flow_tracking_uri)
-        host_url = "https://{}".format(parsed_url.netloc)
-        v2_service_context['host_url'] = host_url
-    
+
+        if obj is not None and obj.ml_flow_tracking_uri:
+            parsed_url = urlparse(obj.ml_flow_tracking_uri)
+            host_url = "https://{}".format(parsed_url.netloc)
+            v2_service_context["host_url"] = host_url
+        else:
+            v2_service_context["host_url"] = ""
+
         # host_url=service_context._get_mlflow_url(),
         # cloud=_get_cloud_or_default(
         #     service_context.get_auth()._cloud_type.name
@@ -436,7 +440,7 @@ class WorkspaceOperationsBase(ABC):
             return (
                 deserialize_callback(deserialized)
                 if deserialize_callback
-                else Workspace._from_rest_object(deserialized, None)
+                else Workspace._from_rest_object(deserialized)
             )
 
         real_callback = callback
