@@ -3,11 +3,8 @@
 # ---------------------------------------------------------
 
 import os
-import re
 from typing import Dict, Optional
 from typing_extensions import override
-
-from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from azure.ai.evaluation._evaluators._common import _BasePromptyEval
 
@@ -65,10 +62,10 @@ class FluencyEvaluator(_BasePromptyEval):
         :paramtype query: str
         :keyword response: The response to be evaluated.
         :paramtype response: str
-        param conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
-        type conversation: Optional[Dict]
+        :paramtype conversation: Optional[Dict]
         :return: The fluency score.
         :rtype: dict
         """

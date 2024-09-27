@@ -2,12 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional, List, Dict, Callable, Any
+from typing import List, Dict, Callable, Any
 import inspect
 
 from abc import ABC
-
-from typing import Dict, List
 
 import numpy as np
 from promptflow._utils.async_utils import async_run_allowing_running_loop
@@ -17,26 +15,31 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, Err
 
 # TODO exception target pass down?
 class _BaseEval(ABC):
-    """Base class for all evaluators that are capable of accepting either a conversation as input.
-    All such evaluators need to implement two functions of their own:
+    """Base class for all evaluators that are capable of accepting either a group of single values,
+    or conversation as input. All such evaluators need to implement two functions of their own:
         - _convert_conversation_to_eval_input
         - _do_eval
 
     Additionally, __call__ should be overridden to reshape the function header as needed to produce more informative
-    documentation, although ideally the actually implementation of overriden __call__ functions should just be
-    a super().__init__() call.
+    documentation, although ideally the actual child implementation of __call__ should just amount to
+    'super().__init__()'.
 
-    param singleton_inputs: A list of strings that represent the names of singleton inputs that can be passed to the evaluator.
-    It is expected that these will all be keyword arguments in the child evaluator's overridden __call__ method.
+
+    :param not_singleton_inputs: A list of strings that represent the names of
+        inputs to the child evaluator's __call__ function that are NOT singleton inputs. By default, this
+        is ["conversation", "kwargs"].
+    :type not_singleton_inputs: List[str]
+    :param eval_last_turn: If True, only the last turn of the conversation will be evaluated. Default is False.
+    :type eval_last_turn: bool
     """
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
     # Make sure to call super().__init__() in the child class's __init__ method.
+    # pylint: disable=dangerous-default-value
     def __init__(
         self,
         *,
-        allow_conversation_input: bool = True,
         not_singleton_inputs: List[str] = ["conversation", "kwargs"],
         eval_last_turn: bool = False,
     ):
@@ -44,7 +47,6 @@ class _BaseEval(ABC):
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
         self._conversation_converter = self._derive_conversation_converter()
-        self._allow_conversation_input = allow_conversation_input
         self._async_evaluator = _AsyncBaseEval(self)
 
     # This needs to be overriden just to change the function header into something more informative,
@@ -56,10 +58,10 @@ class _BaseEval(ABC):
         The actual behavior of this function shouldn't change beyond adding more inputs to the
         async_run_allowing_running_loop call.
 
-        param kwargs: A dictionary that contains inputs needed to evaluate a conversation.
-        type kwargs: Dict
-        return: The evaluation result
-        rtype: Dict
+        :keyword kwargs: A dictionary that contains inputs needed to evaluate a conversation.
+        :type kwargs: Dict
+        :return: The evaluation result
+        :rtype: Dict
         """
         return async_run_allowing_running_loop(self._async_evaluator, **kwargs)
 
@@ -71,10 +73,10 @@ class _BaseEval(ABC):
         typing is handled above this function in favor of polymorphic simplicity. This function must be
         asynchronous.
 
-        param eval_input: Whatever inputs are needed for this evaluator to perform a single evaluation.
-        type eval_input: Any
-        return: A single evaluation result
-        rtype: Dict
+        :param eval_input: Whatever inputs are needed for this evaluator to perform a single evaluation.
+        :type eval_input: Any
+        :return: A single evaluation result
+        :rtype: Dict
 
         """
         raise EvaluationException(
@@ -91,8 +93,8 @@ class _BaseEval(ABC):
         Thankfully this works the way you'd hope, with the call_signature being based on the child
         function's signature, not the parent's.
 
-        return: A list of strings representing the names of singleton inputs.
-        rtype: List[str]
+        :return: A list of strings representing the names of singleton inputs.
+        :rtype: List[str]
         """
 
         call_signature = inspect.signature(self.__call__)
@@ -107,8 +109,8 @@ class _BaseEval(ABC):
         This uses the inputs derived from the _derive_singleton_inputs function to determine which
         aspects of a conversation ought to be extracted.
 
-        return: The function that will be used to convert conversations to evaluable inputs.
-        rtype: Callable[Dict, List]
+        :return: The function that will be used to convert conversations to evaluable inputs.
+        :rtype: Callable[Dict, List]
         """
         include_context = "context" in self._singleton_inputs
         include_query = "query" in self._singleton_inputs
@@ -175,10 +177,10 @@ class _BaseEval(ABC):
         This function must be overridden by child classes IF they need to both a conversation and
         other inputs to be passed in.
 
-        param kwargs: The inputs to convert.
-        type kwargs: Dict
-        return: A list of arbitrary values that are valid inputs for this evaluator's do_eval function.
-        rtype: List
+        :keyword kwargs: The inputs to convert.
+        :type kwargs: Dict
+        :return: A list of arbitrary values that are valid inputs for this evaluator's do_eval function.
+        :rtype: List
         """
 
         # Collect inputs
@@ -199,7 +201,7 @@ class _BaseEval(ABC):
         if conversation is not None:
             return self._conversation_converter(conversation)
         # Handle Singletons
-        elif all(value is not None for value in singletons.values()):
+        if all(value is not None for value in singletons.values()):
             return [singletons]  # TODO loosen requirements to allow for optional singletons?
         # Missing input
         raise EvaluationException(
@@ -216,13 +218,14 @@ class _BaseEval(ABC):
         Exact implementation might need to vary slightly depending on the results produced.
         Default behavior is to average the all number-based outputs.
 
-        param per_turn_results: List of evaluation results for each turn in the conversation.
-        type per_turn_results: List[Dict]
-        return: A dictionary containing aggregated results, with numeric metrics having their
+        :param per_turn_results: List of evaluation results for each turn in the conversation.
+        :type per_turn_results: List[Dict]
+        :return: A dictionary containing aggregated results, with numeric metrics having their
         means as top-level values in the dictionary, and all original
         values (including non-numerics) located in under the "evaluation_per_turn" key,
         which each sub-key being a metric and each sub-value being a the list of that metric's
         per-turn values.
+        :rtype: Dict
         """
 
         aggregated = {}
@@ -232,7 +235,7 @@ class _BaseEval(ABC):
         # metric: List[values] format for the evals_per_turn dictionary.
         for turn in per_turn_results:
             for metric, value in turn.items():
-                if metric not in evaluation_per_turn.keys():
+                if metric not in evaluation_per_turn:
                     evaluation_per_turn[metric] = []
                 evaluation_per_turn[metric].append(value)
 
@@ -246,7 +249,13 @@ class _BaseEval(ABC):
         return aggregated
 
     async def _real_call(self, **kwargs):
-        """The asynchronous call where real end-to-end evaluation logic is performed."""
+        """The asynchronous call where real end-to-end evaluation logic is performed.
+
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
         # Convert inputs into list of evaluable inputs.
         eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
         per_turn_results = []
@@ -257,11 +266,10 @@ class _BaseEval(ABC):
 
         if len(per_turn_results) == 1:
             return per_turn_results[0]
-        elif len(per_turn_results) == 0:
+        if len(per_turn_results) == 0:
             return {}  # TODO raise something?
         # Otherwise, aggregate results.
-        else:
-            return self._aggregate_results(per_turn_results=per_turn_results)
+        return self._aggregate_results(per_turn_results=per_turn_results)
 
     # ~~~ METHODS THAT SHOULD NEVER BE OVERRIDDEN BY CHILDREN~~~
 

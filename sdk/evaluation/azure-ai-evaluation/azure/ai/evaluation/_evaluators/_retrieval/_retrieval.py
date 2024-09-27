@@ -103,6 +103,7 @@ class RetrievalScoreEvaluator:
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
+
     **Usage**
 
     .. code-block:: python
@@ -123,14 +124,14 @@ class RetrievalScoreEvaluator:
 
     .. code-block:: python
 
-    {
-        "gpt_retrieval": 3.0
-        "evaluation_per_turn": {
-            "gpt_retrieval": {
-                "score": [1.0, 2.0, 3.0]
+        {
+            "gpt_retrieval": 3.0
+            "evaluation_per_turn": {
+                "gpt_retrieval": {
+                    "score": [1.0, 2.0, 3.0]
+                }
             }
         }
-    }
     """
 
     def __init__(self, model_config: dict):

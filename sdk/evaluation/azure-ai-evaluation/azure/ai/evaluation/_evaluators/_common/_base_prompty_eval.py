@@ -2,18 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, List
 import re
+from typing import Dict
 
-from abc import ABC
 from typing_extensions import override
 
 
 import numpy as np
 
 from promptflow.core import AsyncPrompty
-
-from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from ..._common.utils import construct_prompty_model_config
 

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import _BasePromptyEval
@@ -61,15 +61,11 @@ class GroundednessEvaluator(_BasePromptyEval):
         :paramtype response: Optional[str]
         :keyword context: The context to be evaluated.
         :paramtype context: Optional[str]
-        param conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
-        type conversation: Optional[Dict]
+        :paramtype conversation: Optional[Dict]
         :return: The relevance score.
         :rtype: dict
         """
         return super().__call__(response=response, context=context, conversation=conversation, **kwargs)
-
-    @override
-    def _convert_conversation_to_eval_input(self, conversation: Dict) -> List:
-        return get_per_turn_converter(include_query=False)(conversation)

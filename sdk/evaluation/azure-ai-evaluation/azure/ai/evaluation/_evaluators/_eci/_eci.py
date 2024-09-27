@@ -1,10 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.evaluation._common.constants import _InternalEvaluationMetrics
 from typing_extensions import override
+from azure.ai.evaluation._common.constants import _InternalEvaluationMetrics
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._evaluators._common import _BaseRaiServiceEval
+from azure.core.credentials import TokenCredential
 
 
 class ECIEvaluator(_BaseRaiServiceEval):
@@ -48,8 +49,8 @@ class ECIEvaluator(_BaseRaiServiceEval):
     """
 
     @override
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None, eval_last_turn: bool = False):
-        return super().__init__(
+    def __init__(self, azure_ai_project: AzureAIProject, credential: TokenCredential, eval_last_turn: bool = False):
+        super().__init__(
             eval_metric=_InternalEvaluationMetrics.ECI,
             azure_ai_project=azure_ai_project,
             credential=credential,

@@ -289,7 +289,7 @@ class Simulator:
             user_response_content = user_flow(
                 task="Continue the conversation",
                 conversation_history=current_simulation.to_list(),
-                **user_simulator_prompty_kwargs
+                **user_simulator_prompty_kwargs,
             )
             user_response = self._parse_prompty_response(response=user_response_content)
             user_turn = Turn(role=ConversationRole.USER, content=user_response["content"])
@@ -326,6 +326,7 @@ class Simulator:
             resource_name = "task_simulate.prompty"
             try:
                 # Access the resource as a file path
+                # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
             except FileNotFoundError as e:
@@ -440,6 +441,7 @@ class Simulator:
             resource_name = "task_query_response.prompty"
             try:
                 # Access the resource as a file path
+                # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
             except FileNotFoundError as e:
@@ -622,9 +624,7 @@ class Simulator:
         )
         try:
             response_content = user_flow(
-                task=task,
-                conversation_history=conversation_history,
-                **user_simulator_prompty_kwargs
+                task=task, conversation_history=conversation_history, **user_simulator_prompty_kwargs
             )
             user_response = self._parse_prompty_response(response=response_content)
             return user_response["content"]

@@ -5,9 +5,6 @@
 from typing import Dict, Optional
 from typing_extensions import override
 
-from abc import ABC
-
-from typing import Dict
 from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
@@ -57,22 +54,33 @@ class _BaseRaiServiceEval(_BaseEval):
         conversation: Optional[Dict] = None,
         **kwargs
     ):
-        """Evaluate either a query and response or a conversation. Must supply either a query AND response, or a conversation,
-        but not both.
+        """Evaluate either a query and response or a conversation. Must supply either a query AND response,
+        or a conversation, but not both.
 
-        param query: The query to evaluate.
-        type query: Optional[str]
-        param response: The response to evaluate.
-        type response: Optional[str]
-        param conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+        :keyword query: The query to evaluate.
+        :paramtype query: Optional[str]
+        :keyword response: The response to evaluate.
+        :paramtype response: Optional[str]
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
-        type conversation: Optional[Dict]
+        :paramtype conversation: Optional[Dict]
+        :return: The evaluation result.
+        :rtype: Dict
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
 
     @override
     async def _do_eval(self, eval_input: Dict):
+        """Perform the evaluation using the Azure AI RAI service.
+        The exact evaluation performed is determined by the evaluation metric supplied
+        by the child class initializer.
+
+        :param eval_input: The input to the evaluation function.
+        :type eval_input: Dict
+        :return: The evaluation result.
+        :rtype: Dict
+        """
         query = eval_input.get("query", None)
         response = eval_input.get("response", None)
         if query is None or response is None:
