@@ -46,7 +46,6 @@ class _BaseEval(ABC):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
-        self._conversation_converter = self._derive_conversation_converter()
         self._async_evaluator = _AsyncBaseEval(self._real_call)
 
     # This needs to be overridden just to change the function header into something more informative,
@@ -199,7 +198,7 @@ class _BaseEval(ABC):
             )
         # Handle Conversation
         if conversation is not None:
-            return self._conversation_converter(conversation)
+            return self._derive_conversation_converter()(conversation)
         # Handle Singletons
         if all(value is not None for value in singletons.values()):
             return [singletons]  # TODO loosen requirements to allow for optional singletons?
@@ -285,5 +284,19 @@ class _AsyncBaseEval:
     def __init__(self, real_call): # DO NOT ADD TYPEHINT PROMPT FLOW WILL SCREAM AT YOU ABOUT META GENERATION
         self._real_call = real_call
 
-    async def __call__(self, **kwargs):
+    # Don't look at my shame. Nothing to see here....
+    # Oh, you're still here? Ok, the reason this has such a gross call signature and bebahvior is due
+    # to our broken async code not properly handling inputs; keyword arguments that aren't in the signature#
+    # are just not passed into this function instead of ending up in kwargs.
+    # Since we want this to be relatively call-agnostic, we just account for every input that any children
+    # are known to throw at this, mash them into kwargs, and then pass them into the real call.
+    async def __call__(self, *, query=None, response=None, context=None, conversation=None, **kwargs):
+        if conversation is not None:
+            kwargs["conversation"] = conversation
+        if query is not None:
+            kwargs["query"] = query
+        if response is not None:
+            kwargs["response"] = response
+        if context is not None:
+            kwargs["context"] = context
         return await self._real_call(**kwargs)
