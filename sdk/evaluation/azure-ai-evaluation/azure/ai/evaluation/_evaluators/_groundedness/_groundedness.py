@@ -34,9 +34,10 @@ class GroundednessEvaluator(_BasePromptyEval):
             "gpt_groundedness": 5
         }
     """
+
     PROMPTY_FILE = "groundedness.prompty"
     RESULT_KEY = "gpt_groundedness"
-    
+
     @override
     def __init__(self, model_config: Dict):
         current_dir = os.path.dirname(__file__)
@@ -44,7 +45,14 @@ class GroundednessEvaluator(_BasePromptyEval):
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
 
     @override
-    def __call__(self, *, response: Optional[str] = None, context: Optional[str] = None, conversation: Optional[Dict] = None, **kwargs):
+    def __call__(
+        self,
+        *,
+        response: Optional[str] = None,
+        context: Optional[str] = None,
+        conversation: Optional[Dict] = None,
+        **kwargs
+    ):
         """Evaluate groundedless. Accepts either a response and context a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
@@ -61,8 +69,7 @@ class GroundednessEvaluator(_BasePromptyEval):
         :rtype: dict
         """
         return super().__call__(response=response, context=context, conversation=conversation, **kwargs)
-    
+
     @override
     def _convert_conversation_to_eval_input(self, conversation: Dict) -> List:
         return get_per_turn_converter(include_query=False)(conversation)
-    

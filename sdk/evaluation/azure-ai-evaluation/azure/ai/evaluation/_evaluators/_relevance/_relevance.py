@@ -39,10 +39,11 @@ class RelevanceEvaluator(_BasePromptyEval):
             "gpt_relevance": 3.0
         }
     """
+
     # Constants must be defined within eval's directory to be save/loadable
     PROMPTY_FILE = "relevance.prompty"
     RESULT_KEY = "gpt_relevance"
-    
+
     @override
     def __init__(self, model_config: Dict):
         current_dir = os.path.dirname(__file__)
@@ -50,13 +51,15 @@ class RelevanceEvaluator(_BasePromptyEval):
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
 
     @override
-    def __call__(self, *,
-            query: Optional[str] = None,
-            response: Optional[str] = None,
-            context: Optional[str] = None,
-            conversation: Optional[Dict] = None,
-            **kwargs
-        ):
+    def __call__(
+        self,
+        *,
+        query: Optional[str] = None,
+        response: Optional[str] = None,
+        context: Optional[str] = None,
+        conversation: Optional[Dict] = None,
+        **kwargs
+    ):
         """Evaluate relevance. Accepts either a response and context a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
@@ -75,4 +78,3 @@ class RelevanceEvaluator(_BasePromptyEval):
         :rtype: dict
         """
         return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
-    

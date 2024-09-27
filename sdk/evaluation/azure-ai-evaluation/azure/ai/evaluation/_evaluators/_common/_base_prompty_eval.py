@@ -23,6 +23,7 @@ except ImportError:
     USER_AGENT = None
 from . import _BaseEval
 
+
 class _BasePromptyEval(_BaseEval):
     """Base class for all evaluators that make use of context as an input. It's also assumed that such evaluators
     make use of a prompty file, and return their results as a dictionary, with a single key-value pair
@@ -41,9 +42,9 @@ class _BasePromptyEval(_BaseEval):
     :type ignore_queries: bool
     """
 
-
     LLM_CALL_TIMEOUT = 600
     DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
+
     def __init__(self, *, result_key: str, prompty_file: str, model_config: Dict, eval_last_turn: bool = False):
         self._result_key = result_key
         self._prompty_file = prompty_file
@@ -57,16 +58,13 @@ class _BasePromptyEval(_BaseEval):
 
         self._flow = AsyncPrompty.load(source=prompty_file, model=prompty_model_config)
 
-
-
-
     # __call__ not overridden here because child classes have such varied signatures that there's no point
     # defining a default here.
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict:
         """Do a relevance evaluation.
-        
+
         :param eval_input: The input to the evaluator. Expected to contain
         whatever inputs are needed for the _flow method, including context
         and other fields depending on the child class.

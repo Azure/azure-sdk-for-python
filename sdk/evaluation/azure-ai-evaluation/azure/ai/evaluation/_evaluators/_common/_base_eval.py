@@ -30,10 +30,16 @@ class _BaseEval(ABC):
     It is expected that these will all be keyword arguments in the child evaluator's overridden __call__ method.
     """
 
-    #~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
+    # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
     # Make sure to call super().__init__() in the child class's __init__ method.
-    def __init__(self, *, allow_conversation_input: bool = True, not_singleton_inputs: List[str] = ['conversation', 'kwargs'], eval_last_turn:  bool = False):
+    def __init__(
+        self,
+        *,
+        allow_conversation_input: bool = True,
+        not_singleton_inputs: List[str] = ["conversation", "kwargs"],
+        eval_last_turn: bool = False,
+    ):
         self._not_singleton_inputs = not_singleton_inputs
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
@@ -73,9 +79,10 @@ class _BaseEval(ABC):
         """
         raise EvaluationException(
             message="Not implemented",
-            internal_message="BaseConversationEval's _do_eval method called somehow. This should be overridden.")
+            internal_message="BaseConversationEval's _do_eval method called somehow. This should be overridden.",
+        )
 
-    #~~~ METHODS THAT MIGHT NEED TO BE OVERRIDDEN BY CHILDREN~~~
+    # ~~~ METHODS THAT MIGHT NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
     def _derive_singleton_inputs(self) -> List[str]:
         """Inspect the evaluator's __call__ function to determine what singleton inputs are expected
@@ -83,7 +90,7 @@ class _BaseEval(ABC):
         By default, it's assumed that any input that is NOT kwargs or a conversation are singleton inputs.
         Thankfully this works the way you'd hope, with the call_signature being based on the child
         function's signature, not the parent's.
-        
+
         return: A list of strings representing the names of singleton inputs.
         rtype: List[str]
         """
@@ -94,7 +101,7 @@ class _BaseEval(ABC):
             if param not in self._not_singleton_inputs:
                 singletons.append(param)
         return singletons
-    
+
     def _derive_conversation_converter(self) -> Callable[Dict, List]:
         """Produce the function that will be used to convert conversations to a list of evaluable inputs.
         This uses the inputs derived from the _derive_singleton_inputs function to determine which
@@ -103,13 +110,13 @@ class _BaseEval(ABC):
         return: The function that will be used to convert conversations to evaluable inputs.
         rtype: Callable[Dict, List]
         """
-        include_context = 'context' in self._singleton_inputs
-        include_query = 'query' in self._singleton_inputs
-        include_response = 'response' in self._singleton_inputs
+        include_context = "context" in self._singleton_inputs
+        include_query = "query" in self._singleton_inputs
+        include_response = "response" in self._singleton_inputs
 
         def converter(conversation: Dict) -> List:
-            messages = conversation['messages']
-            global_context = conversation.get('context', None)
+            messages = conversation["messages"]
+            global_context = conversation.get("context", None)
             # Extract queries, responses from conversation
             queries = []
             responses = []
@@ -139,7 +146,6 @@ class _BaseEval(ABC):
                     if response_context and not include_response:
                         context["response_context"] = response_context
 
-                
                 eval_input = {}
                 if include_query:
                     eval_input["query"] = query
@@ -176,7 +182,7 @@ class _BaseEval(ABC):
         """
 
         # Collect inputs
-        conversation = kwargs.get('conversation', None)
+        conversation = kwargs.get("conversation", None)
         singletons = {}
         if len(self._singleton_inputs) > 0:
             singletons = {key: kwargs.get(key, None) for key in self._singleton_inputs}
@@ -187,28 +193,29 @@ class _BaseEval(ABC):
                 internal_message=f"Both conversation and individual inputs were provided to {type(self).__name__}",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.CONVERSATION)
+                target=ErrorTarget.CONVERSATION,
+            )
         # Handle Conversation
         if conversation is not None:
             return self._conversation_converter(conversation)
         # Handle Singletons
         elif all(value is not None for value in singletons.values()):
-            return [singletons] # TODO loosen requirements to allow for optional singletons?
+            return [singletons]  # TODO loosen requirements to allow for optional singletons?
         # Missing input
         raise EvaluationException(
             message="Missing input",
             internal_message=f"Neither conversation nor individual inputs provided to {type(self).__name__}.",
             blame=ErrorBlame.USER_ERROR,
             category=ErrorCategory.INVALID_VALUE,
-            target=ErrorTarget.CONVERSATION
+            target=ErrorTarget.CONVERSATION,
         )
-    
+
     def _aggregate_results(self, per_turn_results: List[Dict]) -> Dict:
         """Aggregate the evaluation results of each conversation turn into a single result.
 
         Exact implementation might need to vary slightly depending on the results produced.
-        Default behavior is to average the all number-based outputs. 
-        
+        Default behavior is to average the all number-based outputs.
+
         param per_turn_results: List of evaluation results for each turn in the conversation.
         type per_turn_results: List[Dict]
         return: A dictionary containing aggregated results, with numeric metrics having their
@@ -237,10 +244,9 @@ class _BaseEval(ABC):
         aggregated["evaluation_per_turn"] = evaluation_per_turn
 
         return aggregated
-    
+
     async def _real_call(self, **kwargs):
-        """The asynchronous call where real end-to-end evaluation logic is performed.
-        """
+        """The asynchronous call where real end-to-end evaluation logic is performed."""
         # Convert inputs into list of evaluable inputs.
         eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
         per_turn_results = []
@@ -252,22 +258,24 @@ class _BaseEval(ABC):
         if len(per_turn_results) == 1:
             return per_turn_results[0]
         elif len(per_turn_results) == 0:
-            return {} # TODO raise something?
+            return {}  # TODO raise something?
         # Otherwise, aggregate results.
         else:
             return self._aggregate_results(per_turn_results=per_turn_results)
 
-    #~~~ METHODS THAT SHOULD NEVER BE OVERRIDDEN BY CHILDREN~~~
+    # ~~~ METHODS THAT SHOULD NEVER BE OVERRIDDEN BY CHILDREN~~~
 
     def _to_async(self):
         return self._async_evaluator
-class _AsyncBaseEval():
+
+
+class _AsyncBaseEval:
     """The asynchronous evaluator hidden underneath all evaluators. This makes generous use passing functions
-    to ensure that no one ever needs to extend or otherwise modify this class directly. 
+    to ensure that no one ever needs to extend or otherwise modify this class directly.
     """
+
     def __init__(self, sync_eval: _BaseEval):
         self._sync_evaluator = sync_eval
 
     async def __call__(self, **kwargs):
         return await self._sync_evaluator._real_call(**kwargs)
-        

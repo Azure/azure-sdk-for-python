@@ -40,7 +40,7 @@ class FluencyEvaluator(_BasePromptyEval):
 
     PROMPTY_FILE = "fluency.prompty"
     RESULT_KEY = "gpt_fluency"
-    
+
     @override
     def __init__(self, model_config: Dict):
         current_dir = os.path.dirname(__file__)
@@ -48,12 +48,14 @@ class FluencyEvaluator(_BasePromptyEval):
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
 
     @override
-    def __call__(self, *,
-            query: Optional[str] = None,
-            response: Optional[str] = None,
-            conversation: Optional[Dict] = None,
-            **kwargs
-        ):
+    def __call__(
+        self,
+        *,
+        query: Optional[str] = None,
+        response: Optional[str] = None,
+        conversation: Optional[Dict] = None,
+        **kwargs
+    ):
         """
         Evaluate fluency. Accepts either a query and response for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,

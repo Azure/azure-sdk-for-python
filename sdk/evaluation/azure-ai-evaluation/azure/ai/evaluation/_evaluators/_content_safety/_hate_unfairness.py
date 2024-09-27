@@ -7,7 +7,6 @@ from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._evaluators._common import _BaseRaiServiceEval
 
 
-
 class HateUnfairnessEvaluator(_BaseRaiServiceEval):
     """
     Initialize a hate-unfairness evaluator for hate unfairness score.
@@ -43,4 +42,9 @@ class HateUnfairnessEvaluator(_BaseRaiServiceEval):
 
     @override
     def __init__(self, azure_ai_project: AzureAIProject, credential=None, eval_last_turn: bool = False):
-        return super().__init__(eval_metric=EvaluationMetrics.HATE_FAIRNESS, azure_ai_project=azure_ai_project, credential=credential, eval_last_turn=eval_last_turn)
+        return super().__init__(
+            eval_metric=EvaluationMetrics.HATE_FAIRNESS,
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+            eval_last_turn=eval_last_turn,
+        )

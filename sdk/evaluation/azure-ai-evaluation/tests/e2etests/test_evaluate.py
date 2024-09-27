@@ -526,9 +526,9 @@ class TestEvaluate:
     @pytest.mark.skip(reason="TODO: Add test back")
     def test_prompty_with_threadpool_implementation(self):
         pass
-    
+
     @pytest.mark.azuretest
-    def test_evaluate_with_simulator_output(self , model_config, data_file):
+    def test_evaluate_with_simulator_output(self, model_config, data_file):
         # data
         input_data = pd.read_json(data_file, lines=True)
 
@@ -563,4 +563,3 @@ class TestEvaluate:
         assert row_result_df["outputs.grounded.gpt_groundedness"][2] in [4, 5]
         assert row_result_df["outputs.f1_score.f1_score"][2] == 1
         assert result["studio_url"] is None
-

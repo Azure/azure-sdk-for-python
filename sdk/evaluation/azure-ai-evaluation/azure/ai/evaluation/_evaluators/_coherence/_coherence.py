@@ -8,6 +8,7 @@ from typing_extensions import override
 from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._evaluators._common import _BasePromptyEval
 
+
 class CoherenceEvaluator(_BasePromptyEval):
     """
     Initialize a coherence evaluator configured for a specific Azure OpenAI model.
@@ -33,9 +34,10 @@ class CoherenceEvaluator(_BasePromptyEval):
             "gpt_coherence": 1.0
         }
     """
+
     PROMPTY_FILE = "coherence.prompty"
     RESULT_KEY = "gpt_coherence"
-    
+
     @override
     def __init__(self, model_config: Dict):
         current_dir = os.path.dirname(__file__)
@@ -43,7 +45,14 @@ class CoherenceEvaluator(_BasePromptyEval):
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
 
     @override
-    def __call__(self, *, query: Optional[str] = None, response: Optional[str] = None, conversation: Optional[Dict] = None, **kwargs):
+    def __call__(
+        self,
+        *,
+        query: Optional[str] = None,
+        response: Optional[str] = None,
+        conversation: Optional[Dict] = None,
+        **kwargs
+    ):
         """Evaluate coherence. Accepts either a query and response for a single evaluation,
         or a conversation for a potentially multi-turn evaluation. If the conversation has more than one pair of
         turns, the evaluator will aggregate the results of each turn.

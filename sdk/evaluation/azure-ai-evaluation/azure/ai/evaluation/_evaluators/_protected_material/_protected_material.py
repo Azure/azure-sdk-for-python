@@ -7,8 +7,6 @@ from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation._evaluators._common import _BaseRaiServiceEval
 
 
-
-
 class ProtectedMaterialEvaluator(_BaseRaiServiceEval):
     """
     Initialize a protected material evaluator to detect whether protected material
@@ -46,4 +44,9 @@ class ProtectedMaterialEvaluator(_BaseRaiServiceEval):
 
     @override
     def __init__(self, azure_ai_project: AzureAIProject, credential=None, eval_last_turn: bool = False):
-        return super().__init__(eval_metric=EvaluationMetrics.PROTECTED_MATERIAL, azure_ai_project=azure_ai_project, credential=credential, eval_last_turn=eval_last_turn)
+        return super().__init__(
+            eval_metric=EvaluationMetrics.PROTECTED_MATERIAL,
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+            eval_last_turn=eval_last_turn,
+        )

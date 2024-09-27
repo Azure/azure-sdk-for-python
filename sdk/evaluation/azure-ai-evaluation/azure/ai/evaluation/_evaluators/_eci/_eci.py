@@ -49,4 +49,9 @@ class ECIEvaluator(_BaseRaiServiceEval):
 
     @override
     def __init__(self, azure_ai_project: AzureAIProject, credential=None, eval_last_turn: bool = False):
-        return super().__init__(eval_metric=_InternalEvaluationMetrics.ECI, azure_ai_project=azure_ai_project, credential=credential, eval_last_turn=eval_last_turn)
+        return super().__init__(
+            eval_metric=_InternalEvaluationMetrics.ECI,
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+            eval_last_turn=eval_last_turn,
+        )
