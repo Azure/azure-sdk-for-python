@@ -147,7 +147,7 @@ class PlainTokenManager(APITokenManager):
         credential: Optional[Union[DefaultAzureCredential, ManagedIdentityCredential]] = None,
     ) -> None:
         super().__init__(logger, auth_header=auth_header, credential=credential)
-        self.token = openapi_key
+        self.token: str = openapi_key
 
     def get_token(self) -> str:
         """Get the API token
