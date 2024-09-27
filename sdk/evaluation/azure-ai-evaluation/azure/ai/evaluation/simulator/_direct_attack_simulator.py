@@ -13,8 +13,8 @@ from azure.ai.evaluation.simulator import AdversarialScenario
 from azure.identity import DefaultAzureCredential
 
 from ._adversarial_simulator import AdversarialSimulator
-from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
 from ._helpers import experimental
+from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
 
 logger = logging.getLogger(__name__)
 

@@ -2,15 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List, Dict, Callable, Any
 import inspect
-
 from abc import ABC
+from typing import Any, Callable, Dict, List
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._common.math import list_mean
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 
 # TODO exception target pass down?

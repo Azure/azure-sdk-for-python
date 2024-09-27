@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import os
 from typing import Optional
+
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase

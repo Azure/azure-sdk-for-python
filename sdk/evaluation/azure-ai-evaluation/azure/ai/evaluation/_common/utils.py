@@ -8,8 +8,8 @@ from typing import List, Union
 
 import nltk
 
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from . import constants
 
