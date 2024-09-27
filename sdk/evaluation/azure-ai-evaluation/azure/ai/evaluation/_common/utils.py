@@ -7,6 +7,7 @@ import threading
 from typing import List, Union
 
 import nltk
+from typing_extensions import TypeGuard
 
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
@@ -71,12 +72,20 @@ def nltk_tokenize(text: str) -> List[str]:
     return list(tokens)
 
 
+def _is_aoi_model_config(val: object) -> TypeGuard[AzureOpenAIModelConfiguration]:
+    return isinstance(val, dict) and all(isinstance(val.get(k), str) for k in ("azure_endpoint", "azure_deployment"))
+
+
+def _is_openai_model_config(val: object) -> TypeGuard[OpenAIModelConfiguration]:
+    return isinstance(val, dict) and all(isinstance(val.get(k), str) for k in ("model"))
+
+
 def parse_model_config_type(
     model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
 ) -> None:
-    if "azure_endpoint" in model_config or "azure_deployment" in model_config:
+    if _is_aoi_model_config(model_config):
         model_config["type"] = AZURE_OPENAI_TYPE
-    else:
+    elif _is_openai_model_config(model_config):
         model_config["type"] = OPENAI_TYPE
 
 
@@ -87,16 +96,16 @@ def construct_prompty_model_config(
 ) -> dict:
     parse_model_config_type(model_config)
 
-    if model_config["type"] == AZURE_OPENAI_TYPE:
+    if _is_aoi_model_config(model_config):
         model_config["api_version"] = model_config.get("api_version", default_api_version)
 
-    prompty_model_config = {"configuration": model_config, "parameters": {"extra_headers": {}}}
+    prompty_model_config: dict = {"configuration": model_config, "parameters": {"extra_headers": {}}}
 
     # Handle "RuntimeError: Event loop is closed" from httpx AsyncClient
     # https://github.com/encode/httpx/discussions/2959
     prompty_model_config["parameters"]["extra_headers"].update({"Connection": "close"})
 
-    if model_config["type"] == AZURE_OPENAI_TYPE and user_agent:
+    if _is_aoi_model_config(model_config) and user_agent:
         prompty_model_config["parameters"]["extra_headers"].update({"x-ms-useragent": user_agent})
 
     return prompty_model_config

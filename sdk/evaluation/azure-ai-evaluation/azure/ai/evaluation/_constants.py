@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Literal
 
 
 class EvaluationMetrics:
@@ -65,6 +66,6 @@ PF_BATCH_TIMEOUT_SEC = "PF_BATCH_TIMEOUT_SEC"
 OTEL_EXPORTER_OTLP_TRACES_TIMEOUT = "OTEL_EXPORTER_OTLP_TRACES_TIMEOUT"
 OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT = 60
 
-AZURE_OPENAI_TYPE = "azure_openai"
+AZURE_OPENAI_TYPE: Literal["azure_openai"] = "azure_openai"
 
-OPENAI_TYPE = "openai"
+OPENAI_TYPE: Literal["openai"] = "openai"
