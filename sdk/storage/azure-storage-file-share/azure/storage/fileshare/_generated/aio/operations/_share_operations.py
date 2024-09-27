@@ -123,14 +123,15 @@ class ShareOperations:
          the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
          None.
         :type paid_bursting_max_iops: int
-        :param share_provisioned_iops: Optional. The provisioned IOPS of the share. If this is not
-         specified, compute the recommended IOPS of the share using the formula for a share in this
-         media tier (SSD/HDD as appropriate). The provisioned IOPS of the share is always explicitly
-         stored on the share object, even if the recommendation formula is used. Default value is None.
+        :param share_provisioned_iops: Optional. Supported in version 2025-01-05 and later. Only
+         allowed for provisioned v2 file shares. Specifies the provisioned number of input/output
+         operations per second (IOPS) of the share. If this is not specified, the provisioned IOPS is
+         set to value calculated based on recommendation formula. Default value is None.
         :type share_provisioned_iops: int
-        :param share_provisioned_bandwidth_mibps: Optional. The provisioned throughput of the share. If
-         this is not specified, compute the recommended throughput of the share using the formula for a
-         share in this media tier (SSD/HDD as appropriate). Default value is None.
+        :param share_provisioned_bandwidth_mibps: Optional. Supported in version 2025-01-05 and later.
+         Only allowed for provisioned v2 file shares. Specifies the provisioned bandwidth of the share,
+         in mebibytes per second (MiBps). If this is not specified, the provisioned bandwidth is set to
+         value calculated based on recommendation formula. Default value is None.
         :type share_provisioned_bandwidth_mibps: int
         :return: None or the result of cls(response)
         :rtype: None
@@ -199,6 +200,9 @@ class ShareOperations:
         )
         response_headers["x-ms-share-included-burst-iops"] = self._deserialize(
             "int", response.headers.get("x-ms-share-included-burst-iops")
+        )
+        response_headers["x-ms-share-max-burst-credits-for-iops"] = self._deserialize(
+            "int", response.headers.get("x-ms-share-max-burst-credits-for-iops")
         )
 
         if cls:
@@ -416,11 +420,11 @@ class ShareOperations:
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-share-usage-bytes"] = self._deserialize(
-            "int", response.headers.get("x-ms-share-usage-bytes")
+        response_headers["x-ms-file-share-usage-bytes"] = self._deserialize(
+            "int", response.headers.get("x-ms-file-share-usage-bytes")
         )
-        response_headers["x-ms-share-snapshot-usage-bytes"] = self._deserialize(
-            "int", response.headers.get("x-ms-share-snapshot-usage-bytes")
+        response_headers["x-ms-file-share-snapshot-usage-bytes"] = self._deserialize(
+            "int", response.headers.get("x-ms-file-share-snapshot-usage-bytes")
         )
 
         if cls:
@@ -1231,14 +1235,15 @@ class ShareOperations:
          the file share can support. Current maximum for a file share is 102,400 IOPS. Default value is
          None.
         :type paid_bursting_max_iops: int
-        :param share_provisioned_iops: Optional. The provisioned IOPS of the share. If this is not
-         specified, compute the recommended IOPS of the share using the formula for a share in this
-         media tier (SSD/HDD as appropriate). The provisioned IOPS of the share is always explicitly
-         stored on the share object, even if the recommendation formula is used. Default value is None.
+        :param share_provisioned_iops: Optional. Supported in version 2025-01-05 and later. Only
+         allowed for provisioned v2 file shares. Specifies the provisioned number of input/output
+         operations per second (IOPS) of the share. If this is not specified, the provisioned IOPS is
+         set to value calculated based on recommendation formula. Default value is None.
         :type share_provisioned_iops: int
-        :param share_provisioned_bandwidth_mibps: Optional. The provisioned throughput of the share. If
-         this is not specified, compute the recommended throughput of the share using the formula for a
-         share in this media tier (SSD/HDD as appropriate). Default value is None.
+        :param share_provisioned_bandwidth_mibps: Optional. Supported in version 2025-01-05 and later.
+         Only allowed for provisioned v2 file shares. Specifies the provisioned bandwidth of the share,
+         in mebibytes per second (MiBps). If this is not specified, the provisioned bandwidth is set to
+         value calculated based on recommendation formula. Default value is None.
         :type share_provisioned_bandwidth_mibps: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
