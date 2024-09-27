@@ -3,10 +3,9 @@
 # ---------------------------------------------------------
 
 
-from functools import wraps
-from typing import Any, Awaitable, Callable, Dict, MutableMapping, Optional, cast
+from typing import Any, Dict, MutableMapping, Optional, TypedDict, cast
 
-from typing_extensions import Self
+from typing_extensions import Self, Unpack
 
 from azure.ai.evaluation._user_agent import USER_AGENT
 from azure.core.configuration import Configuration
@@ -33,78 +32,25 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest, HttpResponse
 from azure.core.rest._rest_py3 import ContentType, FilesType, ParamsType
 
 
-def _request_fn(f: Callable[["HttpPipeline"], None]):
-    """Decorator to generate convenience methods for HTTP method.
+class RequestKwargs(TypedDict, total=False):
+    """Keyword arguments for request-style http request functions
 
-    :param Callable[["HttpPipeline"],None] f: A HttpPipeline classmethod to wrap.
-        The f.__name__ is the HTTP method used
-    :return: A wrapped callable that sends a `f.__name__` request
-    :rtype: Callable
+    .. note::
+
+        Ideally, we'd be able to express that these are the known subset of kwargs, but it's possible to provide
+        others. But that currently isn't possible; there's no way currently to express a TypedDict that expects
+        a known set of keys and an unknown set of keys.
+
+        PEP 728 - TypedDict with Typed Extra Items (https://peps.python.org/pep-0728/) would rectify this but it's
+        still in Draft status.
     """
 
-    @wraps(f)
-    def request_fn(
-        self: "HttpPipeline",
-        url: str,
-        *,
-        params: Optional[ParamsType] = None,
-        headers: Optional[MutableMapping[str, str]] = None,
-        json: Any = None,
-        content: Optional[ContentType] = None,
-        data: Optional[Dict[str, Any]] = None,
-        files: Optional[FilesType] = None,
-        **kwargs,
-    ) -> HttpResponse:
-        return self.request(
-            f.__name__.upper(),
-            url,
-            params=params,
-            headers=headers,
-            json=json,
-            content=content,
-            data=data,
-            files=files,
-            **kwargs,
-        )
-
-    return request_fn
-
-
-def _async_request_fn(f: Callable[["AsyncHttpPipeline"], Awaitable[None]]):
-    """Decorator to generate convenience methods for HTTP method.
-
-    :param Callable[["HttpPipeline"],None] f: A HttpPipeline classmethod to wrap.
-        The f.__name__ is the HTTP method used
-    :return: A wrapped callable that sends a `f.__name__` request
-    :rtype: Callable
-    """
-
-    @wraps(f)
-    async def request_fn(
-        self: "AsyncHttpPipeline",
-        url: str,
-        *,
-        params: Optional[ParamsType] = None,
-        headers: Optional[MutableMapping[str, str]] = None,
-        json: Any = None,
-        content: Optional[ContentType] = None,
-        data: Optional[Dict[str, Any]] = None,
-        files: Optional[FilesType] = None,
-        **kwargs,
-    ) -> AsyncHttpResponse:
-        return await self.request(
-            f.__name__.upper(),
-            url,
-            params=params,
-            headers=headers,
-            json=json,
-            content=content,
-            data=data,
-            files=files,
-            **kwargs,
-        )
-
-    return request_fn
+    params: ParamsType
+    headers: MutableMapping[str, str]
+    json: Any
+    content: ContentType
+    data: Dict[str, Any]
+    files: FilesType
 
 
 class HttpPipeline(Pipeline):
@@ -216,7 +162,6 @@ class HttpPipeline(Pipeline):
         files: Optional[FilesType] = None,
         **kwargs,
     ) -> HttpResponse:
-
         request = HttpRequest(
             method,
             url,
@@ -230,33 +175,33 @@ class HttpPipeline(Pipeline):
 
         return self.run(request, **kwargs).http_response
 
-    @_request_fn
-    def delete(self) -> None:
+    def delete(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
         """Send a DELETE request."""
+        return self.request(self.delete.__name__.upper(), url, **kwargs)
 
-    @_request_fn
-    def put(self) -> None:
+    def put(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
         """Send a PUT request."""
+        return self.request(self.put.__name__.upper(), url, **kwargs)
 
-    @_request_fn
-    def get(self) -> None:
+    def get(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
         """Send a GET request."""
+        return self.request(self.get.__name__.upper(), url, **kwargs)
 
-    @_request_fn
-    def post(self) -> None:
+    def post(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
         """Send a POST request."""
+        return self.request(self.post.__name__.upper(), url, **kwargs)
 
-    @_request_fn
-    def head(self) -> None:
+    def head(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
         """Send a HEAD request."""
+        return self.request(self.head.__name__.upper(), url, **kwargs)
 
-    @_request_fn
-    def options(self) -> None:
+    def options(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
         """Send a OPTIONS request."""
+        return self.request(self.options.__name__.upper(), url, **kwargs)
 
-    @_request_fn
-    def patch(self) -> None:
+    def patch(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
         """Send a PATCH request."""
+        return self.request(self.patch.__name__.upper(), url, **kwargs)
 
     def __enter__(self) -> Self:
         return cast(Self, super().__enter__())
@@ -375,7 +320,6 @@ class AsyncHttpPipeline(AsyncPipeline):
         files: Optional[FilesType] = None,
         **kwargs,
     ) -> AsyncHttpResponse:
-
         request = HttpRequest(
             method,
             url,
@@ -389,33 +333,33 @@ class AsyncHttpPipeline(AsyncPipeline):
 
         return (await self.run(request, **kwargs)).http_response
 
-    @_async_request_fn
-    async def delete(self) -> None:
+    async def delete(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
         """Send a DELETE request."""
+        return await self.request(self.delete.__name__.upper(), url, **kwargs)
 
-    @_async_request_fn
-    async def put(self) -> None:
+    async def put(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
         """Send a PUT request."""
+        return await self.request(self.put.__name__.upper(), url, **kwargs)
 
-    @_async_request_fn
-    async def get(self) -> None:
+    async def get(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
         """Send a GET request."""
+        return await self.request(self.get.__name__.upper(), url, **kwargs)
 
-    @_async_request_fn
-    async def post(self) -> None:
+    async def post(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
         """Send a POST request."""
+        return await self.request(self.post.__name__.upper(), url, **kwargs)
 
-    @_async_request_fn
-    async def head(self) -> None:
+    async def head(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
         """Send a HEAD request."""
+        return await self.request(self.head.__name__.upper(), url, **kwargs)
 
-    @_async_request_fn
-    async def options(self) -> None:
+    async def options(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
         """Send a OPTIONS request."""
+        return await self.request(self.options.__name__.upper(), url, **kwargs)
 
-    @_async_request_fn
-    async def patch(self) -> None:
+    async def patch(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
         """Send a PATCH request."""
+        return await self.request(self.patch.__name__.upper(), url, **kwargs)
 
     async def __aenter__(self) -> Self:
         return cast(Self, await super().__aenter__())

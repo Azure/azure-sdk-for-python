@@ -13,9 +13,10 @@ from urllib.parse import urlparse
 import jwt
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._http_utils import get_async_http_client
+from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
+from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .constants import (
     CommonConstants,
@@ -52,6 +53,12 @@ def get_common_headers(token: str) -> Dict:
     }
 
 
+def get_async_http_client_with_timeout() -> AsyncHttpPipeline:
+    return get_async_http_client().with_policies(
+        retry_policy=AsyncRetryPolicy(timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT)
+    )
+
+
 async def ensure_service_availability(rai_svc_url: str, token: str, capability: Optional[str] = None) -> None:
     """Check if the Responsible AI service is available in the region and has the required capability, if relevant.
 
@@ -67,9 +74,7 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
     svc_liveness_url = rai_svc_url + "/checkannotation"
 
     async with get_async_http_client() as client:
-        response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-            svc_liveness_url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-        )
+        response = await client.get(svc_liveness_url, headers=headers)
 
     if response.status_code != 200:
         msg = f"RAI service is not available in this region. Status Code: {response.status_code}"
@@ -153,10 +158,8 @@ async def submit_request(query: str, response: str, metric: str, rai_svc_url: st
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token)
 
-    async with get_async_http_client() as client:
-        http_response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-            url, json=payload, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-        )
+    async with get_async_http_client_with_timeout() as client:
+        http_response = await client.post(url, json=payload, headers=headers)
 
     if http_response.status_code != 202:
         print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], http_response.text()))
@@ -189,10 +192,8 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         token = await fetch_or_reuse_token(credential, token)
         headers = get_common_headers(token)
 
-        async with get_async_http_client() as client:
-            response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-                url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-            )
+        async with get_async_http_client_with_timeout() as client:
+            response = await client.get(url, headers=headers)
 
         if response.status_code == 200:
             return response.json()
@@ -336,14 +337,13 @@ async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: st
     """
     headers = get_common_headers(token)
 
-    async with get_async_http_client() as client:
-        response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+    async with get_async_http_client_with_timeout() as client:
+        response = await client.get(
             f"https://management.azure.com/subscriptions/{azure_ai_project['subscription_id']}/"
             f"resourceGroups/{azure_ai_project['resource_group_name']}/"
             f"providers/Microsoft.MachineLearningServices/workspaces/{azure_ai_project['project_name']}?"
             f"api-version=2023-08-01-preview",
             headers=headers,
-            timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT,
         )
 
     if response.status_code != 200:
