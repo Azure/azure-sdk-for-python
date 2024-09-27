@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [ main ]
     paths:
-      - 'tools/azure-sdk-tools/**'
+      - "tools/azure-sdk-tools/**"
 
 
 jobs:
