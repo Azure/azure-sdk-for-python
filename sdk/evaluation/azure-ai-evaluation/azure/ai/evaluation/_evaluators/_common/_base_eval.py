@@ -47,7 +47,7 @@ class _BaseEval(ABC):
         self._eval_last_turn = eval_last_turn
         self._singleton_inputs = self._derive_singleton_inputs()
         self._conversation_converter = self._derive_conversation_converter()
-        self._async_evaluator = _AsyncBaseEval(self)
+        self._async_evaluator = _AsyncBaseEval(self._real_call)
 
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
@@ -282,8 +282,8 @@ class _AsyncBaseEval:
     to ensure that no one ever needs to extend or otherwise modify this class directly.
     """
 
-    def __init__(self, sync_eval: _BaseEval):
-        self._sync_evaluator = sync_eval
+    def __init__(self, real_call): # DO NOT ADD TYPEHINT PROMPT FLOW WILL SCREAM AT YOU ABOUT META GENERATION
+        self._real_call = real_call
 
     async def __call__(self, **kwargs):
-        return await self._sync_evaluator._real_call(**kwargs)
+        return await self._real_call(**kwargs)
