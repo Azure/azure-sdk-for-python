@@ -42,7 +42,7 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 ]
 
 TEST_COMPATIBILITY_MAP = {}
-TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {"azure-storage-blob": "pypy", "azure-eventhub": "pypy"}
+TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {"azure-storage-blob": "pypy", "azure-storage-queue": "pypy", "azure-eventhub": "pypy"}
 
 omit_regression = (
     lambda x: "nspkg" not in x
