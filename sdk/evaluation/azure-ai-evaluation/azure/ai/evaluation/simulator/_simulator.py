@@ -305,7 +305,7 @@ class Simulator:
     def _load_user_simulation_flow(
         self,
         *,
-        user_simulator_prompty: Union[str, os.PathLike],
+        user_simulator_prompty: Optional[Union[str, os.PathLike]],
         prompty_model_config: Dict[str, Any],
         user_simulator_prompty_kwargs: Dict[str, Any],
     ) -> Flow:
@@ -313,7 +313,7 @@ class Simulator:
         Loads the flow for simulating user interactions.
 
         :keyword user_simulator_prompty: Path to the user simulator prompty file.
-        :paramtype user_simulator_prompty: Union[str, os.PathLike]
+        :paramtype user_simulator_prompty: Optional[Union[str, os.PathLike]]
         :keyword prompty_model_config: The configuration for the prompty model.
         :paramtype prompty_model_config: Dict[str, Any]
         :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
@@ -420,7 +420,7 @@ class Simulator:
     def _load_query_generation_flow(
         self,
         *,
-        query_response_generating_prompty: Union[str, os.PathLike],
+        query_response_generating_prompty: Optional[Union[str, os.PathLike]],
         prompty_model_config: Dict[str, Any],
         query_response_generating_prompty_kwargs: Dict[str, Any],
     ) -> Flow:
@@ -428,7 +428,7 @@ class Simulator:
         Loads the flow for generating query responses.
 
         :keyword query_response_generating_prompty: Path to the query response generating prompty file.
-        :paramtype query_response_generating_prompty: Union[str, os.PathLike]
+        :paramtype query_response_generating_prompty: Optional[Union[str, os.PathLike]]
         :keyword prompty_model_config: The configuration for the prompty model.
         :paramtype prompty_model_config: Dict[str, Any]
         :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the flow.
