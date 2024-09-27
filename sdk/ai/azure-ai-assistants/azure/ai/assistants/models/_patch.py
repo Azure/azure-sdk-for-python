@@ -281,6 +281,88 @@ class ToolSet:
                 return tool
         raise ValueError(f"Tool of type {tool_type.__name__} not found.")
 
+class AsyncAssistantRunStream:
+    def __init__(self, response_iterator):
+        self.response_iterator = response_iterator
+        self.buffer = ""
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        while True:
+            chunk = await anext(self.response_iterator, None)
+            if chunk is None:
+                raise StopAsyncIteration
+
+            self.buffer += chunk.decode("utf-8")
+            if "\n\n" in self.buffer:
+                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
+                return self.process_event(event_data_str)
+
+    def process_event(self, event_data_str: str):
+        event_lines = event_data_str.strip().split("\n")
+        event_type = None
+        event_data = ""
+
+        for line in event_lines:
+            if line.startswith("event:"):
+                event_type = line.split(":", 1)[1].strip()
+            elif line.startswith("data:"):
+                event_data = line.split(":", 1)[1].strip()
+
+        try:
+            parsed_data = json.loads(event_data)
+        except json.JSONDecodeError:
+            # Return the raw data if it's not valid JSON
+            return event_type, event_data
+
+        # TODO: Workaround for service bug: Rename 'expires_at' to 'expired_at'
+        if event_type.startswith("thread.run.step") and "expires_at" in parsed_data:
+            parsed_data["expired_at"] = parsed_data.pop("expires_at")
+
+        # Map to the appropriate class instance
+        if event_type in {
+            AssistantStreamEvent.THREAD_RUN_CREATED,
+            AssistantStreamEvent.THREAD_RUN_QUEUED,
+            AssistantStreamEvent.THREAD_RUN_IN_PROGRESS,
+            AssistantStreamEvent.THREAD_RUN_REQUIRES_ACTION,
+            AssistantStreamEvent.THREAD_RUN_COMPLETED,
+            AssistantStreamEvent.THREAD_RUN_FAILED,
+            AssistantStreamEvent.THREAD_RUN_CANCELLING,
+            AssistantStreamEvent.THREAD_RUN_CANCELLED,
+            AssistantStreamEvent.THREAD_RUN_EXPIRED,
+        }:
+            return event_type, ThreadRun(**parsed_data)
+        elif event_type in {
+            AssistantStreamEvent.THREAD_RUN_STEP_CREATED,
+            AssistantStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
+            AssistantStreamEvent.THREAD_RUN_STEP_COMPLETED,
+            AssistantStreamEvent.THREAD_RUN_STEP_FAILED,
+            AssistantStreamEvent.THREAD_RUN_STEP_CANCELLED,
+            AssistantStreamEvent.THREAD_RUN_STEP_EXPIRED,
+        }:
+            return event_type, RunStep(**parsed_data)
+        elif event_type in {
+            AssistantStreamEvent.THREAD_MESSAGE_CREATED,
+            AssistantStreamEvent.THREAD_MESSAGE_IN_PROGRESS,
+            AssistantStreamEvent.THREAD_MESSAGE_COMPLETED,
+            AssistantStreamEvent.THREAD_MESSAGE_INCOMPLETE,
+        }:
+            return event_type, ThreadMessage(**parsed_data)
+        elif event_type == AssistantStreamEvent.THREAD_MESSAGE_DELTA:
+            return event_type, MessageDeltaChunk(**parsed_data)
+        elif event_type == AssistantStreamEvent.THREAD_RUN_STEP_DELTA:
+            return event_type, RunStepDeltaChunk(**parsed_data)
+
+        return event_type, parsed_data
+
 
 class AssistantRunStream:
     def __init__(self, response_iterator):
@@ -366,6 +448,7 @@ class AssistantRunStream:
 
 
 __all__: List[str] = [
+    "AsyncAssistantRunStream",
     "AssistantRunStream",
     "FunctionTool",
     "FileSearchTool",
