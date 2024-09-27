@@ -69,16 +69,16 @@ def monitor_task_simulator(func: Callable[P, R]) -> Callable[P, R]:
 
     @functools.wraps(func)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
-        text_length = len(kwargs.get("text", ""))
-        user_persona_length = len(kwargs.get("user_persona", []))
+        text = kwargs.get("text")
+        user_persona = kwargs.get("user_persona")
         num_queries = kwargs.get("num_queries", 0)
         max_conversation_turns = kwargs.get("max_conversation_turns", 0)
         decorated_func = monitor_operation(
             activity_name="task.simulator.call",
             activity_type=ActivityType.PUBLICAPI,
             custom_dimensions={
-                "text_length": text_length,
-                "user_persona_length": user_persona_length,
+                "text_length": len(text) if isinstance(text, str) else 0,
+                "user_persona_length": len(user_persona) if isinstance(user_persona, list) else 0,
                 "number_of_queries": num_queries,
                 "max_conversation_turns": max_conversation_turns,
             },
