@@ -154,15 +154,15 @@ async def submit_request(query: str, response: str, metric: str, rai_svc_url: st
     headers = get_common_headers(token)
 
     async with get_async_http_client() as client:
-        response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+        http_response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
             url, json=payload, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
         )
 
-    if response.status_code != 202:
-        print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], response.text))
-        response.raise_for_status()
+    if http_response.status_code != 202:
+        print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], http_response.text()))
+        http_response.raise_for_status()
 
-    result = response.json()
+    result = http_response.json()
     operation_id = result["location"].split("/")[-1]
     return operation_id
 
