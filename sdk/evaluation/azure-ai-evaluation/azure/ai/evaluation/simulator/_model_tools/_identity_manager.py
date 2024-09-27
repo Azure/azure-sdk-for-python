@@ -85,7 +85,6 @@ class APITokenManager(ABC):
         :return: API token
         :rtype: str
         """
-        pass  # pylint: disable=unnecessary-pass
 
 
 class ManagedIdentityAPITokenManager(APITokenManager):
