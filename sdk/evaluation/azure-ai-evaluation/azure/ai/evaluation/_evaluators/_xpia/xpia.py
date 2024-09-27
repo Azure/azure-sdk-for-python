@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import logging
 
+from typing import Optional
 from typing_extensions import override
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._model_configurations import AzureAIProject
@@ -25,7 +26,7 @@ class IndirectAttackEvaluator(_BaseRaiServiceEval):
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
     :type eval_last_turn: bool
     :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: Optional[~azure.core.credentials.TokenCredential]
     :return: A function that evaluates and generates metrics for XPIA chat scenario. Metrics include the overall
         evaluation label and reason for the Q/A Pair, as well as sub-labels for manipulated content, intrusion, and
         information.
@@ -52,7 +53,7 @@ class IndirectAttackEvaluator(_BaseRaiServiceEval):
     """
 
     @override
-    def __init__(self, azure_ai_project: AzureAIProject, credential: TokenCredential, eval_last_turn: bool = False):
+    def __init__(self, azure_ai_project: AzureAIProject, credential: Optional[TokenCredential] = None, eval_last_turn: bool = False):
         super().__init__(
             eval_metric=EvaluationMetrics.XPIA,
             azure_ai_project=azure_ai_project,

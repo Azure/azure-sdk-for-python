@@ -6,6 +6,7 @@ from typing import Dict, Optional
 from typing_extensions import override
 
 from azure.core.credentials import TokenCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._model_configurations import AzureAIProject
@@ -23,8 +24,9 @@ class _BaseRaiServiceEval(_BaseEval):
     type eval_metric: ~azure.ai.evaluation._common.constants.EvaluationMetrics
     param azure_ai_project: The scope of the Azure AI project.
     type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    param credential: The credential for connecting to the Azure AI project.
-    type credential: ~azure.core.credentials.TokenCredential
+    param credential: The credential for connecting to the Azure AI project. Uses DefaultAzureCredential
+        if not provided.
+    type credential: Optional[~azure.core.credentials.TokenCredential]
     param eval_last_turn: If True, only the last turn of the conversation will be evaluated, and no
         aggregation will be performed. If False, all turns will be evaluated and the numeric results will be,
         aggregated. Per-turn results are still be available in the output via the "evaluation_per_turn" key
@@ -37,13 +39,17 @@ class _BaseRaiServiceEval(_BaseEval):
         self,
         eval_metric: EvaluationMetrics,
         azure_ai_project: AzureAIProject,
-        credential: TokenCredential,
+        credential: Optional[TokenCredential] = None,
         eval_last_turn: bool = False,
     ):
         super().__init__(eval_last_turn=eval_last_turn)
         self._eval_metric = eval_metric
         self._azure_ai_project = azure_ai_project
-        self._credential = credential
+        if credential is None:
+            # Use DefaultCredential if no credential is provided
+            self._credential = DefaultAzureCredential()
+        else:
+            self._credential = credential
 
     @override
     def __call__(

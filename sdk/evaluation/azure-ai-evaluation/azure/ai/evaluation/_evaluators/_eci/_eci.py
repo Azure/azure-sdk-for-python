@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Optional
 from typing_extensions import override
 from azure.ai.evaluation._common.constants import _InternalEvaluationMetrics
 from azure.ai.evaluation._model_configurations import AzureAIProject
@@ -22,7 +23,7 @@ class ECIEvaluator(_BaseRaiServiceEval):
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: Optional[~azure.core.credentials.TokenCredential]
     :return: Whether or not ECI was found in the response without a disclaimer, with AI-generated reasoning
     :rtype: Dict[str, str]
 
@@ -49,7 +50,7 @@ class ECIEvaluator(_BaseRaiServiceEval):
     """
 
     @override
-    def __init__(self, azure_ai_project: AzureAIProject, credential: TokenCredential, eval_last_turn: bool = False):
+    def __init__(self, azure_ai_project: AzureAIProject, credential: Optional[TokenCredential] = None, eval_last_turn: bool = False):
         super().__init__(
             eval_metric=_InternalEvaluationMetrics.ECI,
             azure_ai_project=azure_ai_project,
