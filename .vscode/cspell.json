@@ -470,7 +470,8 @@
     "dicom",
     "WINDOWSVMIMAGE",
     "LINUXVMIMAGE",
-    "MACVMIMAGE"
+    "MACVMIMAGE",
+    "myuseragent"
   ],
   "overrides": [
     {

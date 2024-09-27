@@ -1,5 +1,6 @@
 import os
 
+
 def str_to_bool(input_string: str) -> bool:
     """
     Takes a boolean string representation and returns a bool type value.
@@ -80,10 +81,14 @@ def in_public() -> int:
 
     return 0
 
+
 def in_analyze_weekly() -> int:
     # Returns 4 if the build originates from the tests-weekly analyze job
     # 0 otherwise
-    if "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "") and os.getenv("SYSTEM_STAGEDISPLAYNAME", "") == "Analyze_Test":
+    if (
+        "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "")
+        and os.getenv("SYSTEM_STAGEDISPLAYNAME", "") == "Analyze_Test"
+    ):
         return 4
     return 0
 
