@@ -18,7 +18,7 @@ class Turn:
 
     role: Union[str, ConversationRole]
     content: str
-    context: str = None
+    context: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Optional[str]]:
         """
