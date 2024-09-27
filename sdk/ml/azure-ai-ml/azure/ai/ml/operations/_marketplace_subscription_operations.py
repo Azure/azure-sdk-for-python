@@ -7,17 +7,12 @@
 from typing import Iterable
 
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient202401Preview
-from azure.ai.ml._scope_dependent_operations import (
-    OperationConfig,
-    OperationScope,
-    _ScopeDependentOperations,
-)
-from azure.core.polling import LROPoller
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._autogen_entities.models import MarketplaceSubscription
-
+from azure.core.polling import LROPoller
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -38,6 +33,7 @@ class MarketplaceSubscriptionOperations(_ScopeDependentOperations):
         service_client: ServiceClient202401Preview,
     ):
         super().__init__(operation_scope, operation_config)
+        ops_logger.update_filter()
         self._service_client = service_client.marketplace_subscriptions
 
     @experimental

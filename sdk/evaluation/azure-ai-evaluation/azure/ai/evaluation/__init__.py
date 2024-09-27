@@ -25,7 +25,12 @@ from ._evaluators._relevance import RelevanceEvaluator
 from ._evaluators._rouge import RougeScoreEvaluator, RougeType
 from ._evaluators._similarity import SimilarityEvaluator
 from ._evaluators._xpia import IndirectAttackEvaluator
-from ._model_configurations import AzureAIProject, AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from ._model_configurations import (
+    AzureAIProject,
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+    EvaluatorConfig,
+)
 
 __all__ = [
     "evaluate",
@@ -53,4 +58,5 @@ __all__ = [
     "AzureAIProject",
     "AzureOpenAIModelConfiguration",
     "OpenAIModelConfiguration",
+    "EvaluatorConfig",
 ]
