@@ -38,7 +38,12 @@ class AccessTokenInfo:
     """Specifies the time, in Unix time, when the cached token should be proactively refreshed. Optional."""
 
     def __init__(
-        self, token: str, expires_on: int, *, token_type: str = "Bearer", refresh_on: Optional[int] = None
+        self,
+        token: str,
+        expires_on: int,
+        *,
+        token_type: str = "Bearer",
+        refresh_on: Optional[int] = None,
     ) -> None:
         self.token = token
         self.expires_on = expires_on

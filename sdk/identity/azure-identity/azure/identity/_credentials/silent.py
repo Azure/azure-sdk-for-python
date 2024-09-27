@@ -8,7 +8,7 @@ from typing import Dict, Optional, Any
 
 from msal import PublicClientApplication, TokenCache
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
@@ -58,17 +58,51 @@ class SilentAuthenticationCredential:
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def get_token(
-        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
-    ) -> AccessToken:
-        if not scopes:
-            raise ValueError('"get_token" requires at least one scope')
+    def close(self) -> None:
+        self.__exit__()
 
-        token_cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        enable_cae: bool = False,
+        **kwargs: Any,
+    ) -> AccessToken:
+        options: TokenRequestOptions = {}
+        if claims:
+            options["claims"] = claims
+        if tenant_id:
+            options["tenant_id"] = tenant_id
+        options["enable_cae"] = enable_cae
+
+        token_info = self._get_token_base(*scopes, options=options, base_method_name="get_token", **kwargs)
+        return AccessToken(token_info.token, token_info.expires_on)
+
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        return self._get_token_base(*scopes, options=options, base_method_name="get_token_info")
+
+    def _get_token_base(
+        self,
+        *scopes: str,
+        options: Optional[TokenRequestOptions] = None,
+        base_method_name: str = "get_token_info",
+        **kwargs: Any,
+    ) -> AccessTokenInfo:
+
+        if not scopes:
+            raise ValueError(f"'{base_method_name}' requires at least one scope")
+
+        options = options or {}
+        claims = options.get("claims")
+        tenant_id = options.get("tenant_id")
+        enable_cae = options.get("enable_cae", False)
+
+        token_cache = self._cae_cache if enable_cae else self._cache
 
         # Try to load the cache if it is None.
         if not token_cache:
-            token_cache = self._initialize_cache(is_cae=bool(kwargs.get("enable_cae")))
+            token_cache = self._initialize_cache(is_cae=enable_cae)
 
             # If the cache is still None, raise an error.
             if not token_cache:
@@ -76,7 +110,7 @@ class SilentAuthenticationCredential:
                     raise CredentialUnavailableError(message="Shared token cache unavailable")
                 raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        return self._acquire_token_silent(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        return self._acquire_token_silent(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
 
     def _initialize_cache(self, is_cae: bool = False) -> Optional[TokenCache]:
 
@@ -129,7 +163,7 @@ class SilentAuthenticationCredential:
         return client_applications_map[tenant_id]
 
     @wrap_exceptions
-    def _acquire_token_silent(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def _acquire_token_silent(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         """Silently acquire a token from MSAL.
 
         :param str scopes: desired scopes for the access token
@@ -153,7 +187,7 @@ class SilentAuthenticationCredential:
                 list(scopes), account=account, claims_challenge=kwargs.get("claims")
             )
             if result and "access_token" in result and "expires_in" in result:
-                return AccessToken(result["access_token"], now + int(result["expires_in"]))
+                return AccessTokenInfo(result["access_token"], now + int(result["expires_in"]))
 
         # if we get this far, the cache contained a matching account but MSAL failed to authenticate it silently
         if result:

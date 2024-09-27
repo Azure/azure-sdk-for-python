@@ -8,7 +8,7 @@ import time
 import logging
 
 import msal
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.exceptions import ClientAuthenticationError
 
 from .msal_client import MsalClient
@@ -45,14 +45,15 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
     def close(self) -> None:
         self.__exit__()
 
-    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
         resource = _scopes_to_resource(*scopes)
         result = self._msal_client.acquire_token_for_client(resource=resource)
         now = int(time.time())
         if result and "access_token" in result and "expires_in" in result:
-            return AccessToken(result["access_token"], now + int(result["expires_in"]))
+            refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
+            return AccessTokenInfo(result["access_token"], now + int(result["expires_in"]), refresh_on=refresh_on)
         if result and "error" in result:
             error_desc = cast(str, result["error"])
         error_message = self.get_unavailable_message(error_desc)
@@ -83,7 +84,7 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
         claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         enable_cae: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AccessToken:
         """Request an access token for `scopes`.
 
@@ -105,31 +106,77 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
         """
+        options: TokenRequestOptions = {}
+        if claims:
+            options["claims"] = claims
+        if tenant_id:
+            options["tenant_id"] = tenant_id
+        options["enable_cae"] = enable_cae
+
+        token_info = self._get_token_base(*scopes, options=options, base_method_name="get_token", **kwargs)
+        return AccessToken(token_info.token, token_info.expires_on)
+
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+        :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
+            required data, state, or platform support
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+            attribute gives a reason.
+        """
+        return self._get_token_base(*scopes, options=options, base_method_name="get_token_info")
+
+    def _get_token_base(
+        self,
+        *scopes: str,
+        options: Optional[TokenRequestOptions] = None,
+        base_method_name: str = "get_token_info",
+        **kwargs: Any,
+    ) -> AccessTokenInfo:
         if not scopes:
-            raise ValueError('"get_token" requires at least one scope')
+            raise ValueError(f'"{base_method_name}" requires at least one scope')
         _scopes_to_resource(*scopes)
         token = None
+
+        options = options or {}
+        claims = options.get("claims")
+        tenant_id = options.get("tenant_id")
+        enable_cae = options.get("enable_cae", False)
+
         try:
             token = self._request_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
             if token:
                 _LOGGER.log(
                     logging.DEBUG if within_credential_chain.get() else logging.INFO,
-                    "%s.get_token succeeded",
+                    "%s.%s succeeded",
                     self.__class__.__name__,
+                    base_method_name,
                 )
                 return token
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.WARNING,
-                "%s.get_token failed",
+                "%s.%s failed",
                 self.__class__.__name__,
+                base_method_name,
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
             raise CredentialUnavailableError(self.get_unavailable_message())
         except msal.ManagedIdentityError as ex:
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.WARNING,
-                "%s.get_token failed: %s",
+                "%s.%s failed: %s",
                 self.__class__.__name__,
+                base_method_name,
                 ex,
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
@@ -137,8 +184,9 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
         except Exception as ex:  # pylint:disable=broad-except
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.WARNING,
-                "%s.get_token failed: %s",
+                "%s.%s failed: %s",
                 self.__class__.__name__,
+                base_method_name,
                 ex,
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )

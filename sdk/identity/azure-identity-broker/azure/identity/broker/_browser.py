@@ -3,16 +3,23 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import socket
-from typing import Dict, Any
+from typing import Dict, Any, Mapping, Union
 import msal
 
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.credentials import TokenRequestOptions
 from azure.identity._credentials import (
     InteractiveBrowserCredential as _InteractiveBrowserCredential,
 )  # pylint:disable=protected-access
 from azure.identity._exceptions import CredentialUnavailableError  # pylint:disable=protected-access
 from azure.identity._internal.utils import within_dac  # pylint:disable=protected-access
 from ._utils import wrap_exceptions, resolve_tenant
+
+
+class PopTokenRequestOptions(TokenRequestOptions):
+    """Options to use for pop token requests."""
+
+    pop: Union[bool, Mapping[str, str]]
 
 
 class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
@@ -64,8 +71,14 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
     def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
         scopes = list(scopes)  # type: ignore
         claims = kwargs.get("claims")
+        pop = kwargs.get("pop")
         app = self._get_app(**kwargs)
         port = self._parsed_url.port if self._parsed_url else None
+        auth_scheme = None
+        if pop:
+            auth_scheme = msal.PopAuthScheme(
+                http_method=pop["resource_request_method"], url=pop["resource_request_url"], nonce=pop["nonce"]
+            )
 
         if self._use_default_broker_account:
             try:
@@ -78,6 +91,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                     port=port,
                     parent_window_handle=self._parent_window_handle,
                     enable_msa_passthrough=self._enable_msa_passthrough,
+                    auth_scheme=auth_scheme,
                 )
                 if "access_token" in result:
                     return result
@@ -93,6 +107,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
                 port=port,
                 parent_window_handle=self._parent_window_handle,
                 enable_msa_passthrough=self._enable_msa_passthrough,
+                auth_scheme=auth_scheme,
             )
         except socket.error as ex:
             raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex

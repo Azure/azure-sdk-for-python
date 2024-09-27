@@ -1,5 +1,17 @@
 # Release History
 
+## 1.31.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Log "x-vss-e2eid" and "x-msedge-ref" headers in `HttpLoggingPolicy`.
+
 ## 1.31.0 (2024-09-12)
 
 ### Features Added
