@@ -73,11 +73,10 @@ class APITokenManager(ABC):
         identity_client_id = os.environ.get("DEFAULT_IDENTITY_CLIENT_ID", None)
         if identity_client_id is not None:
             self.logger.info(f"Using DEFAULT_IDENTITY_CLIENT_ID: {identity_client_id}")
-            credential = ManagedIdentityCredential(client_id=identity_client_id)
-        else:
-            self.logger.info("Environment variable DEFAULT_IDENTITY_CLIENT_ID is not set, using DefaultAzureCredential")
-            credential = DefaultAzureCredential()
-        return credential
+            return ManagedIdentityCredential(client_id=identity_client_id)
+
+        self.logger.info("Environment variable DEFAULT_IDENTITY_CLIENT_ID is not set, using DefaultAzureCredential")
+        return DefaultAzureCredential()
 
     @abstractmethod
     def get_token(self) -> str:
