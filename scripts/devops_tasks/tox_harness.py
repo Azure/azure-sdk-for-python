@@ -20,7 +20,7 @@ from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
 from ci_tools.scenario.generation import replace_dev_reqs
 from ci_tools.functions import cleanup_directory
-from ci_tools.parsing import ParsedSetup, get_ci_config
+from ci_tools.parsing import ParsedSetup
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
 
@@ -193,16 +193,6 @@ def cleanup_tox_environments(tox_dir: str, command_array: str) -> None:
                 pass
     else:
         cleanup_directory(tox_dir)
-
-
-def handle_proxy_presence(package_path: str) -> None:
-    ci_config = get_ci_config(package_path)
-
-    if ci_config:
-        proxy_enabled = ci_config.get("extends", {}).get("parameters", {}).get("TestProxy", True)
-        if not proxy_enabled:
-            os.environ.pop("SSL_CER_DIR", None)
-            os.environ.pop("REQUESTS_CA_BUNDLE", None)
 
 
 def execute_tox_serial(tox_command_tuples):
