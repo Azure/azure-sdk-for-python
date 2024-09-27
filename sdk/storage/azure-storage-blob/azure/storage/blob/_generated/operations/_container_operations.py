@@ -914,6 +914,7 @@ class ContainerOperations:
         container_cpk_scope_info: Optional[_models.ContainerCpkScopeInfo] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """creates a new container under the specified account. If the container with the same name
         already exists, the operation fails.
 
@@ -943,7 +944,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1011,6 +1012,7 @@ class ContainerOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """returns all user-defined metadata and system properties for the specified container. The data
         returned does not include the container's list of blobs.
 
@@ -1029,7 +1031,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1113,6 +1115,7 @@ class ContainerOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """operation marks the specified container for deletion. The container and any blobs contained
         within it are later deleted during garbage collection.
 
@@ -1133,7 +1136,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1203,6 +1206,7 @@ class ContainerOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """operation sets one or more user-defined name-value pairs for the specified container.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1230,7 +1234,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1300,6 +1304,7 @@ class ContainerOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> List[_models.SignedIdentifier]:
+        # pylint: disable=line-too-long
         """gets the permissions for the specified container. The permissions indicate whether container
         data may be accessed publicly.
 
@@ -1318,7 +1323,7 @@ class ContainerOperations:
         :rtype: list[~azure.storage.blob.models.SignedIdentifier]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1393,6 +1398,7 @@ class ContainerOperations:
         container_acl: Optional[List[_models.SignedIdentifier]] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """sets the permissions for the specified container. The permissions indicate whether blobs in a
         container may be accessed publicly.
 
@@ -1418,7 +1424,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1502,6 +1508,7 @@ class ContainerOperations:
         deleted_container_version: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Restores a previously-deleted container.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1523,7 +1530,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1584,6 +1591,7 @@ class ContainerOperations:
         source_lease_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Renames an existing container.
 
         :param source_container_name: Required.  Specifies the name of the container to rename.
@@ -1605,7 +1613,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1666,6 +1674,7 @@ class ContainerOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
+        # pylint: disable=line-too-long
         """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
 
         :param content_length: The length of the request. Required.
@@ -1685,7 +1694,7 @@ class ContainerOperations:
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1760,6 +1769,7 @@ class ContainerOperations:
         include: Optional[List[Union[str, _models.FilterBlobsIncludeItem]]] = None,
         **kwargs: Any
     ) -> _models.FilterBlobSegment:
+        # pylint: disable=line-too-long
         """The Filter Blobs operation enables callers to list blobs in a container whose tags match a
         given search expression.  Filter blobs searches within the given container.
 
@@ -1796,7 +1806,7 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.FilterBlobSegment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1864,6 +1874,7 @@ class ContainerOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
@@ -1890,7 +1901,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1964,6 +1975,7 @@ class ContainerOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
@@ -1984,7 +1996,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2056,6 +2068,7 @@ class ContainerOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
@@ -2076,7 +2089,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2149,6 +2162,7 @@ class ContainerOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
@@ -2175,7 +2189,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2249,6 +2263,7 @@ class ContainerOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
@@ -2273,7 +2288,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2349,6 +2364,7 @@ class ContainerOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ListBlobsFlatSegmentResponse:
+        # pylint: disable=line-too-long
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
         :param prefix: Filters the results to return only containers whose name begins with the
@@ -2384,7 +2400,7 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.ListBlobsFlatSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2455,6 +2471,7 @@ class ContainerOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ListBlobsHierarchySegmentResponse:
+        # pylint: disable=line-too-long
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
         :param delimiter: When the request includes this parameter, the operation returns a BlobPrefix
@@ -2495,7 +2512,7 @@ class ContainerOperations:
         :rtype: ~azure.storage.blob.models.ListBlobsHierarchySegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2559,6 +2576,7 @@ class ContainerOperations:
     def get_account_info(  # pylint: disable=inconsistent-return-statements
         self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Returns the sku name and account kind.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -2574,7 +2592,7 @@ class ContainerOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
