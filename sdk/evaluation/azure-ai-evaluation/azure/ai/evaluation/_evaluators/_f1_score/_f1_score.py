@@ -76,11 +76,9 @@ class _AsyncF1ScoreEvaluator:
 
             return white_space_fix(remove_articles(remove_punctuation(lower(text))))
 
-        prediction_tokens = normalize_text(response)
-        reference_tokens = normalize_text(ground_truth)
         tokenizer = QASplitTokenizer()
-        prediction_tokens = tokenizer(prediction_tokens)
-        reference_tokens = tokenizer(reference_tokens)
+        prediction_tokens = tokenizer(normalize_text(response))
+        reference_tokens = tokenizer(normalize_text(ground_truth))
 
         common_tokens = Counter(prediction_tokens) & Counter(reference_tokens)
         num_common_tokens = sum(common_tokens.values())
