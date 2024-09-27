@@ -225,17 +225,6 @@ class PyPIClient:
             self.bot_warning += 'Need to add track2 config.'
 
 
-def sdk_code_path(service_name, sdk_name) -> str:
-    return str(Path(os.getenv('SDK_REPO') + f'/sdk/{service_name}/{sdk_name}'))
-
-
-@return_origin_path
-def install_package_locally(service_name, sdk_name):
-    os.chdir(sdk_code_path(service_name, sdk_name))
-    print_check('pip install -e .')
-    print_exec('pip install -r dev_requirements.txt')
-
-
 def sdk_info_from_pypi(sdk_info: List[Dict[str, str]], cli_dependency):
     all_sdk_status = []
     for package in sdk_info:
