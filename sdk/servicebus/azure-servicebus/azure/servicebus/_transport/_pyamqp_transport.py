@@ -474,6 +474,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
 
         target = kwargs.pop("target")
+        print("HERE")
+        print(config.keep_alive)
+        config.keep_alive = 1
         return SendClient(
             config.hostname,
             target,
@@ -713,6 +716,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param ~pyamqp.message.Message message: The received message.
         """
         # pylint: disable=protected-access
+        print("In enhanced msg receive")
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
             receiver._handler._received_messages.put((frame, message))

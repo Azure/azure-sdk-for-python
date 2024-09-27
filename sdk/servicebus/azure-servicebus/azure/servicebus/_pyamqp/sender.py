@@ -49,6 +49,7 @@ class SenderLink(Link):
             kwargs["source_address"] = "sender-link-{}".format(name)
         super(SenderLink, self).__init__(session, handle, name, role, target_address=target_address, **kwargs)
         self._pending_deliveries = []
+        self.total_link_credit = 0
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
