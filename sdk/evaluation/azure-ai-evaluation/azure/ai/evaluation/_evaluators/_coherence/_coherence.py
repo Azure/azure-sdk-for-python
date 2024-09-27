@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Optional
+from typing import Optional, Union
 
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 
 class CoherenceEvaluator(PromptyEvaluatorBase):
@@ -39,7 +40,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
     RESULT_KEY = "gpt_coherence"
 
     @override
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
@@ -51,7 +52,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         query: Optional[str] = None,
         response: Optional[str] = None,
         conversation: Optional[dict] = None,
-        **kwargs
+        **kwargs,
     ):
         """Evaluate coherence. Accepts either a query and response for a single evaluation,
         or a conversation for a potentially multi-turn evaluation. If the conversation has more than one pair of

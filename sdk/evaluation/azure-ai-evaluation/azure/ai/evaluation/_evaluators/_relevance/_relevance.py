@@ -3,11 +3,12 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Optional
+from typing import Optional, Union
 
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 
 class RelevanceEvaluator(PromptyEvaluatorBase):
@@ -43,7 +44,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     RESULT_KEY = "gpt_relevance"
 
     @override
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
@@ -56,7 +57,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         response: Optional[str] = None,
         context: Optional[str] = None,
         conversation: Optional[dict] = None,
-        **kwargs
+        **kwargs,
     ):
         """Evaluate relevance. Accepts either a response and context a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
