@@ -238,9 +238,10 @@ class AMQPClient(
             while self._connection and not self._shutdown:
                 current_time = time.time()
                 elapsed_time = current_time - start_time
-                if elapsed_time >= self._keep_alive_interval:
-                    self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
-                    start_time = current_time
+                # if elapsed_time >= self._keep_alive_interval:
+                self.do_work(wait=self._socket_timeout, batch=self._link.total_link_credit)
+                    # self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
+                start_time = current_time
                 time.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
             _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
@@ -892,57 +893,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         if not self._streaming_receive:
             self._received_messages.put((frame, message))
 
-    def _receive_message_batch_impl(
-        self,
-        max_batch_size: Optional[int] = None,
-        on_message_received: Optional[Callable] = None,
-        timeout: float = 0,
-    ):
-        self._message_received_callback = on_message_received
-        max_batch_size = max_batch_size or self._link_credit
-        timeout = time.time() + timeout if timeout else 0
-        receiving = True
-        batch: List[Message] = []
-        self.open()
-        while len(batch) < max_batch_size:
-            try:
-                # TODO: This drops the transfer frame data
-                _, message = self._received_messages.get_nowait()
-                batch.append(message)
-                self._received_messages.task_done()
-            except queue.Empty:
-                break
-        else:
-            return batch
-
-        to_receive_size = max_batch_size - len(batch)
-        before_queue_size = self._received_messages.qsize()
-
-        while receiving and to_receive_size > 0:
-            if timeout and time.time() > timeout:
-                break
-
-            receiving = self.do_work(batch=to_receive_size)
-            cur_queue_size = self._received_messages.qsize()
-            # after do_work, check how many new messages have been received since previous iteration
-            received = cur_queue_size - before_queue_size
-            if to_receive_size < max_batch_size and received == 0:
-                # there are already messages in the batch, and no message is received in the current cycle
-                # return what we have
-                break
-
-            to_receive_size -= received
-            before_queue_size = cur_queue_size
-
-        while len(batch) < max_batch_size:
-            try:
-                _, message = self._received_messages.get_nowait()
-                batch.append(message)
-                self._received_messages.task_done()
-            except queue.Empty:
-                break
-        return batch
-
     def close(self):
         self._received_messages = queue.Queue()
         super(ReceiveClient, self).close()
@@ -1007,18 +957,15 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         """
         self.open()
         self._timeout_reached = False
-        receiving = True
+        # receiving = True
         message = None
         self._last_activity_timestamp = time.time()
         self._timeout = timeout if timeout else self._timeout
         try:
-            while receiving and not self._timeout_reached:
+            while not self._timeout_reached:
                 if self._timeout > 0:
                     if time.time() - self._last_activity_timestamp >= self._timeout:
                         self._timeout_reached = True
-
-                if not self._timeout_reached:
-                    receiving = self.do_work()
 
                 while not self._received_messages.empty():
                     message = self._received_messages.get()
