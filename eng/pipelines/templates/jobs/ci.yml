@@ -219,6 +219,7 @@ jobs:
       parameters:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+        IncludeIndirect: false
 
     - template: ../steps/analyze.yml
       parameters:
