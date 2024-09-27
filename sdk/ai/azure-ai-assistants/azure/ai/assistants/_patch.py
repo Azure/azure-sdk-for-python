@@ -190,6 +190,7 @@ class AssistantsClient(AssistantsClientGenerated):
         tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
+        event_handler: Optional[_models.AssistantEventHandler] = None,
         **kwargs: Any
     ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
         """Creates a new run for an assistant thread.
@@ -267,6 +268,9 @@ class AssistantsClient(AssistantsClientGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.assistants.models.AssistantEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -307,7 +311,7 @@ class AssistantsClient(AssistantsClientGenerated):
 
         # If streaming is enabled, return the custom stream object
         if stream:
-            return _models.AssistantRunStream(response)
+            return _models.AssistantRunStream(response, event_handler)
         else:
             return response
 
