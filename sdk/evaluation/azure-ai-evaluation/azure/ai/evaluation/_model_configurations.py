@@ -7,7 +7,7 @@ from typing import Dict, Literal, TypedDict
 from typing_extensions import NotRequired
 
 
-class AzureOpenAIModelConfiguration(TypedDict, total=False):
+class AzureOpenAIModelConfiguration(TypedDict):
     """Model Configuration for Azure OpenAI Model"""
 
     type: Literal["azure_openai"]
@@ -22,7 +22,7 @@ class AzureOpenAIModelConfiguration(TypedDict, total=False):
     """(Optional) API version to use in request to Azure OpenAI deployment"""
 
 
-class OpenAIModelConfiguration(TypedDict, total=False):
+class OpenAIModelConfiguration(TypedDict):
     """Model Configuration for OpenAI Model"""
 
     type: Literal["openai"]
