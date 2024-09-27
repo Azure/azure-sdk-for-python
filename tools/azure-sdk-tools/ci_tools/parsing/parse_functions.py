@@ -12,8 +12,6 @@ except:
     # otherwise fall back to pypi package tomli
     import tomli as toml
 
-import yaml
-
 from typing import Dict, List, Tuple, Any, Optional
 
 # Assumes the presence of setuptools
@@ -201,6 +199,7 @@ def get_ci_config(package_path: str) -> Optional[Dict[str, Any]]:
     ci_file = os.path.join(os.path.dirname(package_path), "ci.yml")
 
     if os.path.exists(ci_file):
+        import yaml
         try:
             with open(ci_file, "r") as f:
                 return yaml.safe_load(f)

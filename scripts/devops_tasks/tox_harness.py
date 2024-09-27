@@ -208,8 +208,6 @@ def handle_proxy_presence(package_path: str) -> None:
 def execute_tox_serial(tox_command_tuples):
     return_code = 0
 
-    original_env = os.environ.copy()
-
     for index, cmd_tuple in enumerate(tox_command_tuples):
         tox_dir = os.path.abspath(os.path.join(cmd_tuple[1], "./.tox/"))
         clone_dir = os.path.abspath(os.path.join(cmd_tuple[1], "..", "..", "..", "l"))
@@ -219,30 +217,25 @@ def execute_tox_serial(tox_command_tuples):
             "Running tox for {}. {} of {}.".format(os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples))
         )
 
-        handle_proxy_presence(cmd_tuple[1])
-        try:
-            result = run_check_call(cmd_tuple[0], cmd_tuple[1], always_exit=False)
+        result = run_check_call(cmd_tuple[0], cmd_tuple[1], always_exit=False)
 
-            if result is not None and result != 0:
-                return_code = result
+        if result is not None and result != 0:
+            return_code = result
 
-            if in_ci():
-                collect_log_files(cmd_tuple[1])
+        if in_ci():
+            collect_log_files(cmd_tuple[1])
 
-                cleanup_tox_environments(tox_dir, cmd_tuple[0])
+            cleanup_tox_environments(tox_dir, cmd_tuple[0])
 
-                if os.path.exists(clone_dir):
-                    try:
-                        cleanup_directory(clone_dir)
-                    except Exception as e:
-                        # git has a permissions problem. one of the files it drops
-                        # cannot be removed as no one has the permission to do so.
-                        # lets log just in case, but this should really only affect windows machines.
-                        logging.info(e)
-                        pass
-        finally:
-            os.environ.clear()
-            os.environ.update(original_env)
+            if os.path.exists(clone_dir):
+                try:
+                    cleanup_directory(clone_dir)
+                except Exception as e:
+                    # git has a permissions problem. one of the files it drops
+                    # cannot be removed as no one has the permission to do so.
+                    # lets log just in case, but this should really only affect windows machines.
+                    logging.info(e)
+                    pass
 
     return return_code
 
