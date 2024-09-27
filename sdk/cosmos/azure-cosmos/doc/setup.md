@@ -51,14 +51,16 @@ However, the emulator is not ready on MAC OSX yet. Please follow the instruction
 2. Run emulator
 
 ##### On MAC
-**<u>NOTE:</u>** Unfortunately, emulator is not supported on Mac OS. As alternative way, you can manually modify some config variables in `azure-cosmos/test/test_config.py` from your personal Cosmos DB accounts
+**<u>NOTE:</u>** Unfortunately, Azure Cosmos DB Emulator is not supported on Mac OS. Alternatively, you can manually modify some config variables in `azure-cosmos/test/test_config.py` from your personal Cosmos DB accounts to run unit tests.
 
-**<u>WARNING:</u>** Do not commit your updated `test_config.py`. Always revert those changes before pushing your commit
+**<u>WARNING:</u>** Do not commit your updated `test_config.py`. Always revert the changes before pushing your commit.
 
 1. Open `test_config.py`
 2. Replace the default values of `ACCOUNT_KEY` and `ACCOUNT_HOST` to the values from Azure Cosmos DB account(Create new Cosmos DB account if you don't have any)
+![test_config](https://github.com/user-attachments/assets/39574123-43bc-48dd-bd85-31097b6625ff)
+
     - `ACCOUNT_KEY`: Primary key from the keys from `Settings` in Azure Cosmos DB account home
-![key](https://github.com/user-attachments/assets/db920127-ee80-4d8d-a79e-503e5ea629e3)
+![key](https://github.com/user-attachments/assets/145971bc-c28a-4df7-9e88-196fa15254b6)
 
     - `ACCOUNT_HOST`: URI from the overview page of Azure Cosmos DB account
 ![uri](https://github.com/user-attachments/assets/034a700d-47c7-41ee-90cd-afd534729d37)
@@ -120,7 +122,7 @@ To run aad tests, follow the steps below to create `RoleAssignment` that uses th
     az cosmosdb sql role assignment create --account-name $accountName --resource-group $resourceGroupName  --role-definition-name "ExpandedRBACActions" --scope "/" --principal-id $principalId
     ```
 #### Run unit tests
-The unit tests can be ran by right-clicking a specific test file or specific test function in test files
+The unit tests can be run by right-clicking a specific test file or specific test function in test files
 
 - Run all tests on a test file
 ![Screenshot 2024-09-26 at 3 08 50 PM](https://github.com/user-attachments/assets/c47760fc-8302-4c52-8826-23c81d13b123)
