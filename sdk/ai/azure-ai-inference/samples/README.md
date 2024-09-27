@@ -24,14 +24,7 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
 
 * Clone or download this sample repository
 * Open a command prompt / terminal window in this samples folder
-* Install the client library for Python with pip:
-  ```bash
-  pip install azure-ai-inference
-  ```
-  or update an existing installation:
-  ```bash
-  pip install --upgrade azure-ai-inference
-  ```
+* Install the client library for Python with pip. See [Install the package](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#install-the-package)
 * If you plan to run the asynchronous client samples, insall the additional package [aiohttp](https://pypi.org/project/aiohttp/):
   ```bash
   pip install aiohttp

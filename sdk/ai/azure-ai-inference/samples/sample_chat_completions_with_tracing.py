@@ -70,7 +70,8 @@ tracer = get_tracer(__name__)
 
 # The tracer.start_as_current_span decorator will trace the function call and enable adding additional attributes
 # to the span in the function implementation. Note that this will trace the function parameters and their values.
-@tracer.start_as_current_span("get_temperature")
+# Uncomment the following line to add instrumentation for the function call.
+#@tracer.start_as_current_span("get_temperature")
 def get_temperature(city: str) -> str:
 
     # Adding attributes to the current span
