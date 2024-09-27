@@ -82,7 +82,7 @@ def compare_req_to_injected_reqs(parsed_req, injected_packages):
 
 def inject_custom_reqs(file, injected_packages, package_dir):
     req_lines = []
-    injected_packages = [p for p in re.split("[\s,]", injected_packages) if p]
+    injected_packages = [p for p in re.split(r"[\s,]", injected_packages) if p]
 
     if injected_packages:
         logging.info("Adding custom packages to requirements for {}".format(package_dir))
@@ -318,7 +318,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
                         if check not in skipped_tox_checks:
                             skipped_tox_checks[check] = []
 
-                    skipped_tox_checks[check].append(parsed_package)
+                        skipped_tox_checks[check].append(parsed_package)
 
             if not filtered_tox_environment_set:
                 logging.info(
@@ -329,7 +329,6 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
                 continue
 
             tox_execution_array.extend(["-e", filtered_tox_environment_set])
-
 
         if parsed_args.tox_env == "apistub":
             local_options_array = []
@@ -355,9 +354,9 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
                     "setup_execute_tests.py -> tox_harness.py::prep_and_run_tox",
             )
 
-    return_code = execute_tox_serial(tox_command_tuples)
+    return_result = execute_tox_serial(tox_command_tuples)
 
     if not parsed_args.disablecov:
         collect_tox_coverage_files(targeted_packages)
 
-    sys.exit(return_code)
+    sys.exit(return_result) #type: ignore
