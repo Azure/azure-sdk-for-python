@@ -59,8 +59,6 @@ jobs:
         export TOKEN=$(Yuchao-GitToken)
         export SWAGGER_REPO=$(pwd)/azure-rest-api-specs
         export SDK_REPO=$(pwd)/sdk-repo
-        export SKIP_COVERAGE=$(SKIP_COVERAGE)
-        export AZURE_TEST_RUN_LIVE=false
 
         # create virtual env
         python -m venv venv-sdk
