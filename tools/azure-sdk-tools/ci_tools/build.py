@@ -9,6 +9,7 @@ from ci_tools.variables import DEFAULT_BUILD_ID, str_to_bool, discover_repo_root
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 
+
 def build() -> None:
     parser = argparse.ArgumentParser(
         description="""This is the primary entrypoint for the "build" action. This command is used to build any package within the azure-sdk-for-python repository.""",
@@ -102,7 +103,9 @@ def build() -> None:
     else:
         target_dir = repo_root
 
-    logging.debug(f"Searching for packages starting from {target_dir} with glob string {args.glob_string} and package filter {args.package_filter_string}")
+    logging.debug(
+        f"Searching for packages starting from {target_dir} with glob string {args.glob_string} and package filter {args.package_filter_string}"
+    )
 
     targeted_packages = discover_targeted_packages(
         args.glob_string,

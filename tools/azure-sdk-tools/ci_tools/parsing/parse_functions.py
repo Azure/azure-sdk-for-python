@@ -11,7 +11,7 @@ except:
     # otherwise fall back to pypi package tomli
     import tomli as toml
 
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple, Any, Optional
 
 # Assumes the presence of setuptools
 from pkg_resources import (
@@ -102,7 +102,7 @@ class ParsedSetup:
             ext_modules,
         )
 
-    def get_build_config(self) -> Dict[str, Any]:
+    def get_build_config(self) -> Optional[Dict[str, Any]]:
         return get_build_config(self.folder)
 
     def get_config_setting(self, setting: str, default: Any = True) -> Any:
@@ -162,7 +162,7 @@ def get_config_setting(package_path: str, setting: str, default: Any = True) -> 
     return default
 
 
-def get_build_config(package_path: str) -> Dict[str, Any]:
+def get_build_config(package_path: str) -> Optional[Dict[str, Any]]:
     """
     Attempts to retrieve all values within [tools.azure-sdk-build] section of a pyproject.toml.
 
@@ -193,10 +193,24 @@ def read_setup_py_content(setup_filename: str) -> str:
         content = setup_file.read()
         return content
 
+        # name,                 # str
+        # version,              # str
+        # python_requires,      # str
+        # requires,             # List[str]
+        # is_new_sdk,           # bool
+        # setup_filename,       # str
+        # name_space,           # str,
+        # package_data,         # Dict[str, Any],
+        # include_package_data, # bool,
+        # classifiers,          # List[str],
+        # keywords,             # List[str] ADJUSTED
+        # ext_package,          # str
+        # ext_modules           # List[Extension]
+
 
 def parse_setup(
     setup_filename: str,
-) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], str, List[Extension]]:
+) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str], List[str], str, List[Extension]]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
     (
@@ -234,7 +248,7 @@ def parse_setup(
             not isinstance(node, ast.Expr)
             or not isinstance(node.value, ast.Call)
             or not hasattr(node.value.func, "id")
-            or node.value.func.id != "setup"
+            or node.value.func.id != "setup"  # type: ignore
         ):
             continue
         parsed.body[index:index] = parsed_mock_setup.body
@@ -280,19 +294,19 @@ def parse_setup(
     ext_modules = kwargs.get("ext_modules", [])
 
     return (
-        name,
-        version,
-        python_requires,
-        requires,
-        is_new_sdk,
-        setup_filename,
-        name_space,
-        package_data,
-        include_package_data,
-        classifiers,
-        keywords,
-        ext_package,
-        ext_modules,
+        name,  # str
+        version,  # str
+        python_requires,  # str
+        requires,  # List[str]
+        is_new_sdk,  # bool
+        setup_filename,  # str
+        name_space,  # str,
+        package_data,  # Dict[str, Any],
+        include_package_data,  # bool,
+        classifiers,  # List[str],
+        keywords,  # List[str] ADJUSTED
+        ext_package,  # str
+        ext_modules,  # List[Extension]
     )
 
 
@@ -310,16 +324,6 @@ def parse_require(req: str) -> Requirement:
     "azure-core<2.0.0,>=1.11.0" -> [azure-core, <2.0.0,>=1.11.0]
     """
     return Requirement.parse(req)
-
-
-def parse_freeze_output(file_location: str) -> Dict[str, str]:
-    """
-    Takes a python requirements file and returns a dictionary representing the contents.
-    """
-    with open(file_location, "r") as f:
-        reqs = f.read()
-
-    return dict((req.name, req) for req in parse_requirements(reqs))
 
 
 def get_name_from_specifier(version: str) -> str:
