@@ -17,7 +17,7 @@ from . import constants
 _nltk_data_download_lock = threading.Lock()
 
 
-def get_harm_severity_level(harm_score: int) -> str:
+def get_harm_severity_level(harm_score: int) -> Union[str, float]:
     """Generate harm severity level based on harm score.
 
     :param harm_score: The harm score to be evaluated.
