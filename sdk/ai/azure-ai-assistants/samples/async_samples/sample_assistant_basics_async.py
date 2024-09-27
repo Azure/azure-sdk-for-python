@@ -5,13 +5,13 @@
 """
 DESCRIPTION:
     This sample demonstrates how to use basic assistants operations from
-    the Azure Assistants service using a synchronous client.
+    the Azure Assistants service using a asynchronous client.
 
     See package documentation:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
-    python sample_assistant_basics.py
+    python sample_assistant_basics_async.py
 
     Set these two environment variables before running the sample:
     1) AZUREAI_ENDPOINT_URL - Your endpoint URL, in the form 
