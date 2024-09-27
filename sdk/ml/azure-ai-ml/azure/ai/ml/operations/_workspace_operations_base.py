@@ -29,16 +29,17 @@ from azure.ai.ml._utils._workspace_utils import (
     get_name_for_dependent_resource,
     get_resource_and_group_name,
     get_resource_group_location,
+    get_sub_id_resource_and_group_name,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import (
+    WORKSPACE_PATCH_REJECTED_KEYS,
     ArmConstants,
     LROConfigurations,
     WorkspaceKind,
     WorkspaceResourceConstants,
-    WORKSPACE_PATCH_REJECTED_KEYS,
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml.entities import Hub, Project, Workspace
@@ -64,7 +65,7 @@ class WorkspaceOperationsBase(ABC):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._subscription_id = operation_scope.subscription_id
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name
@@ -582,16 +583,21 @@ class WorkspaceOperationsBase(ABC):
             )
 
         if workspace.storage_account:
-            resource_name, group_name = get_resource_and_group_name(workspace.storage_account)
+            subscription_id, resource_name, group_name = get_sub_id_resource_and_group_name(workspace.storage_account)
             _set_val(param["storageAccountName"], resource_name)
             _set_val(param["storageAccountOption"], "existing")
             _set_val(param["storageAccountResourceGroupName"], group_name)
+            _set_val(param["storageAccountSubscriptionId"], subscription_id)
         else:
             storage = _generate_storage(workspace.name, resources_being_deployed)
             _set_val(param["storageAccountName"], storage)
             _set_val(
                 param["storageAccountResourceGroupName"],
                 workspace.resource_group,
+            )
+            _set_val(
+                param["storageAccountSubscriptionId"],
+                self._subscription_id,
             )
 
         if workspace.application_insights:

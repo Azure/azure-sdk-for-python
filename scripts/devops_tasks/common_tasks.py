@@ -23,8 +23,6 @@ from pkg_resources import parse_version, parse_requirements, Requirement, Workin
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
-from packaging.version import Version
-from packaging.version import parse
 
 from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, NO_TESTS_ALLOWED, lambda_filter_azure_pkg, str_to_bool
 from ci_tools.parsing import parse_require, ParsedSetup
@@ -203,7 +201,8 @@ def is_required_version_on_pypi(package_name: str, spec: str) -> bool:
         versions = client.get_ordered_versions(package_name)
 
         if spec:
-            versions = [str(v) for v in versions if str(v) in spec]
+            specifier = SpecifierSet(spec)
+            versions = [str(v) for v in versions if v in specifier]
     except:
         logging.error("Package {} is not found on PyPI".format(package_name))
     return versions

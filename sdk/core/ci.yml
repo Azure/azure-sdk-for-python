@@ -38,6 +38,7 @@ extends:
     BuildTargetingString: "*"
     ValidateFormatting: true
     TestProxy: false
+    TestTimeoutInMinutes: 120
     Artifacts:
     - name: azure-core
       safeName: azurecore

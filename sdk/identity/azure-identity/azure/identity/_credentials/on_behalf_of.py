@@ -7,7 +7,7 @@ from typing import Any, Optional, Callable, Union, Dict
 
 import msal
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
 
 from .certificate import get_client_credential
@@ -123,7 +123,7 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         self._auth_record: Optional[AuthenticationRecord] = None
 
     @wrap_exceptions
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
         if self._auth_record:
             claims = kwargs.get("claims")
             app = self._get_app(**kwargs)
@@ -134,12 +134,15 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 now = int(time.time())
                 result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
                 if result and "access_token" in result and "expires_in" in result:
-                    return AccessToken(result["access_token"], now + int(result["expires_in"]))
+                    refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
+                    return AccessTokenInfo(
+                        result["access_token"], now + int(result["expires_in"]), refresh_on=refresh_on
+                    )
 
         return None
 
     @wrap_exceptions
-    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         app: msal.ConfidentialClientApplication = self._get_app(**kwargs)
         request_time = int(time.time())
         result = app.acquire_token_on_behalf_of(self._assertion, list(scopes), claims_challenge=kwargs.get("claims"))
@@ -153,4 +156,5 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         except ClientAuthenticationError:
             pass  # non-fatal; we'll use the assertion again next time instead of a refresh token
 
-        return AccessToken(result["access_token"], request_time + int(result["expires_in"]))
+        refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
+        return AccessTokenInfo(result["access_token"], request_time + int(result["expires_in"]), refresh_on=refresh_on)

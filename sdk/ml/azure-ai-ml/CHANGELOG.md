@@ -2,6 +2,15 @@
 
 ## 1.21.0 (unreleased)
 
+### Features Added
+  - Cross subscription storage account support for workspace and feature store. Developer can provide a storage account from another subscription while creating a workspace or storage account.
+
+### Bugs Fixed
+  - #35820 - using compute location attribute to fill compute location to align the experience with UI.
+
+### Other Changes
+  - Added dependency on `azure-monitor-opentelemetry`.
+  
 ## 1.20.0 (2024-09-10)
 
 ### Features Added

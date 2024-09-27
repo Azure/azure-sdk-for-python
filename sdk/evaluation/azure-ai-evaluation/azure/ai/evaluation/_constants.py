@@ -19,6 +19,7 @@ class EvaluationMetrics:
     SELF_HARM = "self_harm"
     SEXUAL = "sexual"
     PROTECTED_MATERIAL = "protected_material"
+    XPIA = "xpia"
 
 
 class _InternalEvaluationMetrics:
@@ -38,6 +39,15 @@ class Prefixes:
     TSG_OUTPUTS = "__outputs."
 
 
+class DefaultOpenEncoding:
+    """Enum that captures SDK's default values for the encoding param of open(...)"""
+
+    READ = "utf-8-sig"
+    """SDK Default Encoding when reading a file"""
+    WRITE = "utf-8"
+    """SDK Default Encoding when writing a file"""
+
+
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"
 
 CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT = 4
@@ -47,3 +57,7 @@ PF_BATCH_TIMEOUT_SEC = "PF_BATCH_TIMEOUT_SEC"
 
 OTEL_EXPORTER_OTLP_TRACES_TIMEOUT = "OTEL_EXPORTER_OTLP_TRACES_TIMEOUT"
 OTEL_EXPORTER_OTLP_TRACES_TIMEOUT_DEFAULT = 60
+
+AZURE_OPENAI_TYPE = "azure_openai"
+
+OPENAI_TYPE = "openai"

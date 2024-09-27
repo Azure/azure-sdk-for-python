@@ -16,7 +16,7 @@ model:
       type: json_object
 
 inputs:
-  answer:
+  response:
     type: string
 outputs:
   score:
@@ -33,5 +33,5 @@ output:
 {"score": "1"}
 
 user:
-answer: {{answer}}
+answer: {{response}}
 output:

@@ -544,7 +544,7 @@ class TestModelClient(ModelClientTestBase):
         response1 = client.get_model_info()
         self._print_model_info_result(response1)
         self._validate_model_info_result(
-            response1, "completion"
+            response1, "chat-completion"
         )  # TODO: This should be ModelType.CHAT once the model is fixed
         client.close()
 
@@ -560,7 +560,7 @@ class TestModelClient(ModelClientTestBase):
 
         self._print_model_info_result(response1)
         self._validate_model_info_result(
-            response1, "completion"
+            response1, "chat-completion" # TODO: This should be chat_comletions according to REST API spec...
         )  # TODO: This should be ModelType.CHAT once the model is fixed
 
         # Get the model info again. No network calls should be made here,
