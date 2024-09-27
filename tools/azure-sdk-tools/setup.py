@@ -18,6 +18,7 @@ DEPENDENCIES = [
     "urllib3",
     "tomli-w==1.0.0",
     "azure-core",
+    "pyyaml",
     # Perf/Build
     "ConfigArgParse>=0.12.0",
 ]
@@ -50,7 +51,7 @@ setup(
             "sdk_analyze_deps=ci_tools.dependency_analysis:analyze_dependencies",
             "sdk_find_invalid_versions=ci_tools.versioning.find_invalid_versions:find_invalid_versions_main",
             "sdk_verify_keywords=ci_tools.keywords_verify:entrypoint",
-            "systemperf=devtools_testutils.perfstress_tests:run_system_perfstress_tests_cmd"
+            "systemperf=devtools_testutils.perfstress_tests:run_system_perfstress_tests_cmd",
         ],
     },
     extras_require={
