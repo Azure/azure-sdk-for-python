@@ -89,7 +89,7 @@ def _add_class_docstring(cls: Type[T]) -> Type[T]:
     return cls
 
 
-def _add_method_docstring(func: Optional[Callable[P, T]] = None) -> Callable[P, T]:
+def _add_method_docstring(func: Callable[P, T]) -> Callable[P, T]:
     """Add experimental tag to the method doc string.
 
     :param func: The function to update
