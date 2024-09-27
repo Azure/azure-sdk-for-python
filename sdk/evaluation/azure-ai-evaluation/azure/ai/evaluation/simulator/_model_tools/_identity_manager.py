@@ -80,7 +80,7 @@ class APITokenManager(ABC):
         return credential
 
     @abstractmethod
-    async def get_token(self) -> str:
+    def get_token(self) -> str:
         """Async method to get the API token. Subclasses should implement this method.
 
         :return: API token
@@ -104,8 +104,7 @@ class ManagedIdentityAPITokenManager(APITokenManager):
         super().__init__(logger, **kwargs)
         self.token_scope = token_scope
 
-    # Bug 3353724: This get_token is sync method, but it is defined as async method in the base class
-    def get_token(self) -> str:  # pylint: disable=invalid-overridden-method
+    def get_token(self) -> str:
         """Get the API token. If the token is not available or has expired, refresh the token.
 
         :return: API token
@@ -138,7 +137,7 @@ class PlainTokenManager(APITokenManager):
         super().__init__(logger, **kwargs)
         self.token = openapi_key
 
-    async def get_token(self) -> str:
+    def get_token(self) -> str:
         """Get the API token
 
         :return: API token

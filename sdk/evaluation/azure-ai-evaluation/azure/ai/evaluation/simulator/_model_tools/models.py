@@ -447,7 +447,7 @@ class OpenAICompletionsModel(LLMBase):
 
         self._log_request(request_data)
 
-        token = await self.token_manager.get_token()
+        token = self.token_manager.get_token()
 
         headers = {
             "Content-Type": "application/json",
