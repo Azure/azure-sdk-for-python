@@ -334,6 +334,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             delivery.transfer_state = SessionTransferState.OKAY
 
     async def _incoming_transfer(self, frame):
+        # TODO: should this be only if more=False?
         self.next_incoming_id += 1
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1

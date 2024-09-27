@@ -5,13 +5,13 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from .activity import ActivityType, log_activity, monitor_with_activity, monitor_with_telemetry_mixin
-from .logging_handler import AML_INTERNAL_LOGGER_NAMESPACE, get_appinsights_log_handler
+from .logging_handler import AML_INTERNAL_LOGGER_NAMESPACE, set_appinsights_distro
 
 __all__ = [
     "monitor_with_activity",
     "monitor_with_telemetry_mixin",
     "log_activity",
     "ActivityType",
-    "get_appinsights_log_handler",
+    "set_appinsights_distro",
     "AML_INTERNAL_LOGGER_NAMESPACE",
 ]

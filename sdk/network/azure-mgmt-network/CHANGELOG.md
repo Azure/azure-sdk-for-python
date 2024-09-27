@@ -1,5 +1,40 @@
 # Release History
 
+## 27.0.0 (2024-09-22)
+
+### Features Added
+
+  - Added operation SecurityUserConfigurationsOperations.begin_delete
+  - Added operation VpnLinkConnectionsOperations.begin_set_or_init_default_shared_key
+  - Added operation VpnLinkConnectionsOperations.get_all_shared_keys
+  - Added operation VpnLinkConnectionsOperations.get_default_shared_key
+  - Added operation VpnLinkConnectionsOperations.list_default_shared_key
+  - Added operation group NetworkManagerRoutingConfigurationsOperations
+  - Added operation group RoutingRuleCollectionsOperations
+  - Added operation group RoutingRulesOperations
+  - Added operation group SecurityUserRuleCollectionsOperations
+  - Added operation group SecurityUserRulesOperations
+  - Model ApplicationGatewayFirewallRule has a new parameter sensitivity
+  - Model AzureFirewall has a new parameter autoscale_configuration
+  - Model ConfigurationGroup has a new parameter member_type
+  - Model ConnectionSharedKeyResult has a new parameter id
+  - Model ConnectionSharedKeyResult has a new parameter name
+  - Model ConnectionSharedKeyResult has a new parameter properties
+  - Model ConnectionSharedKeyResult has a new parameter type
+  - Model FlowLog has a new parameter enabled_filtering_criteria
+  - Model FlowLogInformation has a new parameter enabled_filtering_criteria
+  - Model ManagedRuleOverride has a new parameter sensitivity
+  - Model ManagedRulesDefinition has a new parameter exceptions
+  - Model NetworkGroup has a new parameter member_type
+  - Model PrivateLinkService has a new parameter destination_ip_address
+  - Model VirtualNetwork has a new parameter private_endpoint_v_net_policies
+  - Model VirtualNetworkGateway has a new parameter resiliency_model
+  - Model WebApplicationFirewallPolicy has a new parameter application_gateway_for_containers
+
+### Breaking Changes
+
+  - Model ConnectionSharedKeyResult no longer has parameter value
+
 ## 26.0.0 (2024-07-21)
 
 ### Features Added

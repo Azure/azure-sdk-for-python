@@ -5,6 +5,8 @@
 # -------------------------------------------------------------------------
 import time
 import random
+import hashlib
+import base64
 from dataclasses import dataclass
 from typing import Dict, List
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
@@ -18,6 +20,11 @@ from ._constants import (
     PERCENTAGE_FILTER_KEY,
     TIME_WINDOW_FILTER_KEY,
     TARGETING_FILTER_KEY,
+    TELEMETRY_KEY,
+    METADATA_KEY,
+    ETAG_KEY,
+    FEATURE_FLAG_REFERENCE_KEY,
+    FEATURE_FLAG_ID_KEY,
 )
 
 FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
@@ -28,7 +35,37 @@ MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
 class _ConfigurationClientWrapperBase:
     endpoint: str
 
-    def _feature_flag_telemetry(self, feature_flag: FeatureFlagConfigurationSetting, filters_used: Dict[str, bool]):
+    @staticmethod
+    def _calculate_feature_id(key, label):
+        basic_value = f"{key}\n"
+        if label and not label.isspace():
+            basic_value += f"{label}"
+        feature_flag_id_hash_bytes = hashlib.sha256(basic_value.encode()).digest()
+        encoded_flag = base64.b64encode(feature_flag_id_hash_bytes)
+        encoded_flag = encoded_flag.replace(b"+", b"-").replace(b"/", b"_")
+        return encoded_flag[: encoded_flag.find(b"=")]
+
+    def _feature_flag_telemetry(
+        self, endpoint: str, feature_flag: FeatureFlagConfigurationSetting, feature_flag_value: Dict
+    ):
+        if TELEMETRY_KEY in feature_flag_value:
+            if METADATA_KEY not in feature_flag_value[TELEMETRY_KEY]:
+                feature_flag_value[TELEMETRY_KEY][METADATA_KEY] = {}
+            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ETAG_KEY] = feature_flag.etag
+
+            if not endpoint.endswith("/"):
+                endpoint += "/"
+            feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
+            if feature_flag.label and not feature_flag.label.isspace():
+                feature_flag_reference += f"?label={feature_flag.label}"
+            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
+            feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
+                feature_flag.key, feature_flag.label
+            )
+
+    def _feature_flag_appconfig_telemetry(
+        self, feature_flag: FeatureFlagConfigurationSetting, filters_used: Dict[str, bool]
+    ):
         if feature_flag.filters:
             for filter in feature_flag.filters:
                 if filter.get("name") in PERCENTAGE_FILTER_NAMES:
@@ -51,7 +88,7 @@ class ConfigurationClientManagerBase:  # pylint:disable=too-many-instance-attrib
         replica_discovery_enabled,
         min_backoff_sec,
         max_backoff_sec,
-        **kwargs
+        **kwargs,
     ):
         self._replica_clients: List[_ConfigurationClientWrapperBase] = []
         self._original_endpoint = endpoint

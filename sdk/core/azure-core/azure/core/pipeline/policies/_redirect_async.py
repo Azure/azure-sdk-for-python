@@ -26,7 +26,10 @@
 from typing import TypeVar
 from azure.core.exceptions import TooManyRedirectsError
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.pipeline.transport import (
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+)
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from . import AsyncHTTPPolicy
 from ._redirect import RedirectPolicyBase, domain_changed
