@@ -1,7 +1,7 @@
 This document currently details Python commands for building Azure Cosmos SDK.
 
 ### Fork and clone the repository
-To build and develop locally, it is strongly recommended to fork and clone the repository: https://github.com/Azure/azure-sdk-for-python
+To build and develop locally, fork and clone the [Azure Cosmos DB SDK repository][cosmos_db_sdk_repo]
 
 ### Setup SDK with Pycharm
 
@@ -131,6 +131,7 @@ The unit tests can be run by right-clicking a specific test file or specific tes
 ![Screenshot 2024-09-26 at 3 09 38 PM](https://github.com/user-attachments/assets/65d01c13-82b7-4485-9103-fd7b8bde71fb)
 
 <!-- LINKS -->
+[cosmos_db_sdk_repo]: https://github.com/Azure/azure-sdk-for-python
 [azure_sub]: https://azure.microsoft.com/free/
 [cosmos_account]: https://docs.microsoft.com/azure/cosmos-db/account-overview
 [python]: https://www.python.org/downloads/
