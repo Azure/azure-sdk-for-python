@@ -98,8 +98,15 @@ class ManagedIdentityAPITokenManager(APITokenManager):
     :paramtype kwargs: Dict
     """
 
-    def __init__(self, token_scope: TokenScope, logger: logging.Logger, **kwargs: Dict):
-        super().__init__(logger, **kwargs)
+    def __init__(
+        self,
+        token_scope: TokenScope,
+        logger: logging.Logger,
+        *,
+        auth_header: str = "Bearer",
+        credential: Optional[Union[DefaultAzureCredential, ManagedIdentityCredential]] = None,
+    ):
+        super().__init__(logger, auth_header=auth_header, credential=credential)
         self.token_scope = token_scope
 
     def get_token(self) -> str:
@@ -131,8 +138,15 @@ class PlainTokenManager(APITokenManager):
     :paramtype kwargs: Dict
     """
 
-    def __init__(self, openapi_key: str, logger: logging.Logger, **kwargs: Dict):
-        super().__init__(logger, **kwargs)
+    def __init__(
+        self,
+        openapi_key: str,
+        logger: logging.Logger,
+        *,
+        auth_header: str = "Bearer",
+        credential: Optional[Union[DefaultAzureCredential, ManagedIdentityCredential]] = None,
+    ) -> None:
+        super().__init__(logger, auth_header=auth_header, credential=credential)
         self.token = openapi_key
 
     def get_token(self) -> str:
