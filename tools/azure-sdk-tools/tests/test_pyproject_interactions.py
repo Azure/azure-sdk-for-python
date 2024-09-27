@@ -80,6 +80,7 @@ def test_pyproject_update_check_override():
 
         build_config = get_build_config(temp_dir)
 
+        assert build_config is not None
         build_config["pyright"] = True
 
         update_result = update_build_config(temp_dir, build_config)

@@ -20,7 +20,7 @@ from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
 from ci_tools.scenario.generation import replace_dev_reqs
 from ci_tools.functions import cleanup_directory
-from ci_tools.parsing import ParsedSetup
+from ci_tools.parsing import ParsedSetup, get_ci_config
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
 
@@ -195,8 +195,20 @@ def cleanup_tox_environments(tox_dir: str, command_array: str) -> None:
         cleanup_directory(tox_dir)
 
 
+def handle_proxy_presence(package_path: str) -> None:
+    ci_config = get_ci_config(package_path)
+
+    if ci_config:
+        proxy_enabled = ci_config.get("extends", {}).get("parameters", {}).get("TestProxy", True)
+        if not proxy_enabled:
+            os.environ.pop("SSL_CER_DIR", None)
+            os.environ.pop("REQUESTS_CA_BUNDLE", None)
+
+
 def execute_tox_serial(tox_command_tuples):
     return_code = 0
+
+    original_env = os.environ.copy()
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
         tox_dir = os.path.abspath(os.path.join(cmd_tuple[1], "./.tox/"))
@@ -207,25 +219,30 @@ def execute_tox_serial(tox_command_tuples):
             "Running tox for {}. {} of {}.".format(os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples))
         )
 
-        result = run_check_call(cmd_tuple[0], cmd_tuple[1], always_exit=False)
+        handle_proxy_presence(cmd_tuple[1])
+        try:
+            result = run_check_call(cmd_tuple[0], cmd_tuple[1], always_exit=False)
 
-        if result is not None and result != 0:
-            return_code = result
+            if result is not None and result != 0:
+                return_code = result
 
-        if in_ci():
-            collect_log_files(cmd_tuple[1])
+            if in_ci():
+                collect_log_files(cmd_tuple[1])
 
-            cleanup_tox_environments(tox_dir, cmd_tuple[0])
+                cleanup_tox_environments(tox_dir, cmd_tuple[0])
 
-            if os.path.exists(clone_dir):
-                try:
-                    cleanup_directory(clone_dir)
-                except Exception as e:
-                    # git has a permissions problem. one of the files it drops
-                    # cannot be removed as no one has the permission to do so.
-                    # lets log just in case, but this should really only affect windows machines.
-                    logging.info(e)
-                    pass
+                if os.path.exists(clone_dir):
+                    try:
+                        cleanup_directory(clone_dir)
+                    except Exception as e:
+                        # git has a permissions problem. one of the files it drops
+                        # cannot be removed as no one has the permission to do so.
+                        # lets log just in case, but this should really only affect windows machines.
+                        logging.info(e)
+                        pass
+        finally:
+            os.environ.clear()
+            os.environ.update(original_env)
 
     return return_code
 
@@ -354,9 +371,9 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
                     "setup_execute_tests.py -> tox_harness.py::prep_and_run_tox",
             )
 
-    return_code = execute_tox_serial(tox_command_tuples)
+    return_result = execute_tox_serial(tox_command_tuples)
 
     if not parsed_args.disablecov:
         collect_tox_coverage_files(targeted_packages)
 
-    sys.exit(return_code)
+    sys.exit(return_result) #type: ignore

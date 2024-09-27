@@ -18,6 +18,7 @@ DEPENDENCIES = [
     "urllib3",
     "tomli-w==1.0.0",
     "azure-core",
+    "pyyaml",
     # Perf/Build
     "ConfigArgParse>=0.12.0",
 ]

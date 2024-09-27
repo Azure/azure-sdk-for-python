@@ -3,6 +3,7 @@ import ast
 import textwrap
 import re
 import fnmatch
+import logging
 
 try:
     # py 311 adds this library natively
@@ -10,6 +11,8 @@ try:
 except:
     # otherwise fall back to pypi package tomli
     import tomli as toml
+
+import yaml
 
 from typing import Dict, List, Tuple, Any, Optional
 
@@ -185,6 +188,28 @@ def get_build_config(package_path: str) -> Optional[Dict[str, Any]]:
             return {}
 
 
+def get_ci_config(package_path: str) -> Optional[Dict[str, Any]]:
+    """
+    Attempts to retrieve the parsed toml content of a CI.yml associated with this package.
+    """
+    if os.path.isfile(package_path):
+        package_path = os.path.dirname(package_path)
+
+    # this checks exactly one directory up
+    # for sdk/core/azure-core
+    # sdk/core/ci.yml is checked only
+    ci_file = os.path.join(os.path.dirname(package_path), "ci.yml")
+
+    if os.path.exists(ci_file):
+        try:
+            with open(ci_file, "r") as f:
+                return yaml.safe_load(f)
+        except Exception as e:
+            logging.error(f"Failed to load ci.yml at {ci_file} due to exception {e}")
+
+    return None
+
+
 def read_setup_py_content(setup_filename: str) -> str:
     """
     Get setup.py content, returns a string.
@@ -192,21 +217,6 @@ def read_setup_py_content(setup_filename: str) -> str:
     with open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
         content = setup_file.read()
         return content
-
-        # name,                 # str
-        # version,              # str
-        # python_requires,      # str
-        # requires,             # List[str]
-        # is_new_sdk,           # bool
-        # setup_filename,       # str
-        # name_space,           # str,
-        # package_data,         # Dict[str, Any],
-        # include_package_data, # bool,
-        # classifiers,          # List[str],
-        # keywords,             # List[str] ADJUSTED
-        # ext_package,          # str
-        # ext_modules           # List[Extension]
-
 
 def parse_setup(
     setup_filename: str,
@@ -293,22 +303,23 @@ def parse_setup(
     ext_package = kwargs.get("ext_package", None)
     ext_modules = kwargs.get("ext_modules", [])
 
+    # fmt: off
     return (
-        name,  # str
-        version,  # str
-        python_requires,  # str
-        requires,  # List[str]
-        is_new_sdk,  # bool
-        setup_filename,  # str
-        name_space,  # str,
-        package_data,  # Dict[str, Any],
-        include_package_data,  # bool,
-        classifiers,  # List[str],
-        keywords,  # List[str] ADJUSTED
-        ext_package,  # str
-        ext_modules,  # List[Extension]
+        name,                   # str
+        version,                # str
+        python_requires,        # str
+        requires,               # List[str]
+        is_new_sdk,             # bool
+        setup_filename,         # str
+        name_space,             # str,
+        package_data,           # Dict[str, Any],
+        include_package_data,   # bool,
+        classifiers,            # List[str],
+        keywords,               # List[str] ADJUSTED
+        ext_package,            # str
+        ext_modules,            # List[Extension]
     )
-
+    # fmt: on
 
 def get_install_requires(setup_path: str) -> List[str]:
     """
