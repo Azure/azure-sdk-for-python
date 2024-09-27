@@ -40,13 +40,13 @@ class APITokenManager(ABC):
     ) -> None:
         self.logger = logger
         self.auth_header = auth_header
-        self._lock = None
+        self._lock: Optional[asyncio.Lock] = None
         if credential is not None:
             self.credential = credential
         else:
             self.credential = self.get_aad_credential()
-        self.token = None
-        self.last_refresh_time = None
+        self.token: Optional[str] = None
+        self.last_refresh_time: Optional[float] = None
 
     @property
     def lock(self) -> asyncio.Lock:
