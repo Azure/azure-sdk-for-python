@@ -6,7 +6,7 @@ extends:
       ServiceDirectory: openai
       TestTimeoutInMinutes: 200
       MatrixFilters:
-        - PythonVersion=3.11.*
+        - PythonVersion=3.13.*
       MatrixReplace:
         - TestSamples=.*/true
       UseFederatedAuth: true
