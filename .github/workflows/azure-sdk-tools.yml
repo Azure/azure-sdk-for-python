@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   pull_request:
     branches: [ main ]
+    paths:
+      - 'tools/azure-sdk-tools/**'
+
 
 jobs:
   build-and-test:
