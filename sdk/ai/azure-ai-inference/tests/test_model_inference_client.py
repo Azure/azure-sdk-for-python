@@ -835,6 +835,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_instrumentation(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         client = self._create_chat_client(**kwargs)
         exception_caught = False
         try:
@@ -851,6 +856,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_instrumenting_twice_causes_exception(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         client = self._create_chat_client(**kwargs)
         exception_caught = False
         instrumented_once = False
@@ -868,6 +878,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_uninstrumenting_uninstrumented_causes_exception(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         client = self._create_chat_client(**kwargs)
         exception_caught = False
         try:
@@ -880,6 +895,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_uninstrumenting_twice_causes_exception(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         client = self._create_chat_client(**kwargs)
         exception_caught = False
         uninstrumented_once = False
@@ -897,6 +917,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_chat_completion_tracing_content_recording_disabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
@@ -940,6 +965,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_chat_completion_tracing_content_recording_enabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
@@ -997,6 +1027,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_chat_completion_streaming_tracing_content_recording_disabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
@@ -1047,6 +1082,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_chat_completion_streaming_tracing_content_recording_enabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
@@ -1111,6 +1151,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_chat_completion_with_function_call_tracing_content_recording_enabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         import json
         from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason, ToolMessage, AssistantMessage, ChatCompletionsToolCall, ChatCompletionsToolDefinition, FunctionDefinition
         from azure.ai.inference import ChatCompletionsClient
@@ -1273,6 +1318,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_chat_completion_with_function_call_tracing_content_recording_disabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         import json
         from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason, ToolMessage, AssistantMessage, ChatCompletionsToolCall, ChatCompletionsToolDefinition, FunctionDefinition
         from azure.ai.inference import ChatCompletionsClient
@@ -1387,6 +1437,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_chat_completion_with_function_call_streaming_tracing_content_recording_enabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         import json
         from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason, FunctionCall, ToolMessage, AssistantMessage, ChatCompletionsToolCall, ChatCompletionsToolDefinition, FunctionDefinition
         from azure.ai.inference import ChatCompletionsClient
@@ -1587,6 +1642,11 @@ class TestModelClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     def test_chat_completion_with_function_call_streaming_tracing_content_recording_disabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         import json
         from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason, FunctionCall, ToolMessage, AssistantMessage, ChatCompletionsToolCall, ChatCompletionsToolDefinition, FunctionDefinition
         from azure.ai.inference import ChatCompletionsClient

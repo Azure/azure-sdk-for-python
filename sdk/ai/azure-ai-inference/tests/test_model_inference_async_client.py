@@ -715,6 +715,11 @@ class TestModelAsyncClient(ModelClientTestBase):
 
     @ServicePreparerChatCompletions()
     async def test_chat_completion_async_tracing_content_recording_disabled(self, **kwargs):
+        # Make sure code is not instrumented due to a previous test exception
+        try:
+            AIInferenceInstrumentor().uninstrument()
+        except RuntimeError as e:
+            pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_async_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
