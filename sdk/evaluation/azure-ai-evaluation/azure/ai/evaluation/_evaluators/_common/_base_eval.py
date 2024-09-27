@@ -49,7 +49,7 @@ class _BaseEval(ABC):
         self._conversation_converter = self._derive_conversation_converter()
         self._async_evaluator = _AsyncBaseEval(self)
 
-    # This needs to be overriden just to change the function header into something more informative,
+    # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
     # super().__call__(<inputs>)
     def __call__(self, **kwargs) -> Dict:
