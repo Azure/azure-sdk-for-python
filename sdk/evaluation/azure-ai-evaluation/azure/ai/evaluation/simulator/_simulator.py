@@ -289,7 +289,7 @@ class Simulator:
             user_response_content = user_flow(
                 task="Continue the conversation",
                 conversation_history=current_simulation.to_list(),
-                **user_simulator_prompty_kwargs
+                **user_simulator_prompty_kwargs,
             )
             user_response = self._parse_prompty_response(response=user_response_content)
             user_turn = Turn(role=ConversationRole.USER, content=user_response["content"])
@@ -622,9 +622,7 @@ class Simulator:
         )
         try:
             response_content = user_flow(
-                task=task,
-                conversation_history=conversation_history,
-                **user_simulator_prompty_kwargs
+                task=task, conversation_history=conversation_history, **user_simulator_prompty_kwargs
             )
             user_response = self._parse_prompty_response(response=response_content)
             return user_response["content"]
