@@ -57,6 +57,7 @@ def setup_console_trace_exporter():
 
 
 class MyEventHandler(AssistantEventHandler):
+
     def __init__(self, client: AssistantsClient = None):
         self._client = client
 
@@ -108,8 +109,8 @@ class MyEventHandler(AssistantEventHandler):
                 thread_id=run.thread_id, 
                 run_id=run.id, 
                 tool_outputs=tool_outputs, 
-                stream=stream,
-                eventhandler=self
+                stream=True,
+                event_handler=self
         ) as stream:
                 stream.until_done()
 

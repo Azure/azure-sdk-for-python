@@ -528,6 +528,144 @@ class AssistantsClientOperationsMixin(AssistantsClientOperationsMixinGenerated):
             return response
 
     @overload
+    def submit_tool_outputs_to_run(
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def submit_tool_outputs_to_run(
+        self,
+        thread_id: str,
+        run_id: str,
+        *,
+        tool_outputs: List[_models.ToolOutput],
+        content_type: str = "application/json",
+        stream: Optional[bool] = None,
+        event_handler: Optional[_models.AssistantEventHandler] = None,
+        **kwargs: Any
+    ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :keyword tool_outputs: Required.
+        :paramtype tool_outputs: list[~azure.ai.assistants.models.ToolOutput]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword stream: Default value is None.
+        :paramtype stream: bool
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.assistants.models.AssistantEventHandler
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def submit_tool_outputs_to_run(
+        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def submit_tool_outputs_to_run(
+        self,
+        thread_id: str,
+        run_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        tool_outputs: List[_models.ToolOutput] = _Unset,
+        stream: Optional[bool] = None,
+        event_handler: Optional[_models.AssistantEventHandler] = None,
+        **kwargs: Any
+    ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :param tool_outputs: List of tool outputs to submit.
+        :param stream: If ``true``\\ , returns a stream of events that happen during the
+         Run as server-sent events,
+         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
+         value is None.
+        :param event_handler: The event handler to use for processing events during the run.
+        :param kwargs: Additional parameters.
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :raises: HttpResponseError for HTTP errors.
+        """
+
+        if isinstance(body, dict):
+            content_type = kwargs.get("content_type", "application/json")
+            response = super().submit_tool_outputs_to_run(
+                thread_id, run_id, body, content_type=content_type, **kwargs
+            )
+
+        elif tool_outputs is not _Unset:
+            response = super().submit_tool_outputs_to_run(
+                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=stream, stream=stream, **kwargs
+            )
+
+        elif isinstance(body, io.IOBase):
+            content_type = kwargs.get("content_type", "application/json")
+            response = super().submit_tool_outputs_to_run(
+                thread_id, run_id, body, content_type=content_type, **kwargs
+            )
+
+        else:
+            raise ValueError("Invalid combination of arguments provided.")
+        
+        # If streaming is enabled, return the custom stream object
+        if stream:
+            return _models.AssistantRunStream(response, event_handler)
+        else:
+            return response
+        
+    @overload
     def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
