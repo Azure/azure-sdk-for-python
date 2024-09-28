@@ -280,9 +280,8 @@ class ToolSet:
             if isinstance(tool, tool_type):
                 return tool
         raise ValueError(f"Tool of type {tool_type.__name__} not found.")
-
-
-class AssistantRunStream:
+      
+class BaseAssistantRunStream:
     def __init__(self, response_iterator):
         self.response_iterator = response_iterator
         self.buffer = ""
@@ -293,19 +292,6 @@ class AssistantRunStream:
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
 
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        while True:
-            chunk = next(self.response_iterator, None)
-            if chunk is None:
-                raise StopIteration
-
-            self.buffer += chunk.decode("utf-8")
-            if "\n\n" in self.buffer:
-                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                return self.process_event(event_data_str)
 
     def process_event(self, event_data_str: str):
         event_lines = event_data_str.strip().split("\n")
@@ -364,8 +350,38 @@ class AssistantRunStream:
 
         return event_type, parsed_data
 
+class AsyncAssistantRunStream(BaseAssistantRunStream):
+    async def __anext__(self):
+        while True:
+            chunk = await anext(self.response_iterator, None)
+            if chunk is None:
+                raise StopAsyncIteration
+
+            self.buffer += chunk.decode("utf-8")
+            if "\n\n" in self.buffer:
+                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
+                return super().process_event(event_data_str)
+
+    def __aiter__(self):
+        return self
+
+class AssistantRunStream(BaseAssistantRunStream):
+    def __next__(self):
+        while True:
+            chunk = next(self.response_iterator, None)
+            if chunk is None:
+                raise StopIteration
+
+            self.buffer += chunk.decode("utf-8")
+            if "\n\n" in self.buffer:
+                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
+                return super().process_event(event_data_str)
+            
+    def __iter__(self):
+        return self
 
 __all__: List[str] = [
+    "AsyncAssistantRunStream",
     "AssistantRunStream",
     "FunctionTool",
     "FileSearchTool",

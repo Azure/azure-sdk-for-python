@@ -10,6 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import sys, logging, os
 from io import IOBase
 from typing import Any, Dict, List, overload, IO, Union, Optional, TYPE_CHECKING
+from azure.ai.assistants.models._enums import FilePurpose
 from azure.core.tracing.decorator import distributed_trace
 
 if sys.version_info >= (3, 9):
@@ -311,6 +312,9 @@ class AssistantsClientOperationsMixin(AssistantsClientOperationsMixinGenerated):
         """
         if body is not None:
             return super().upload_file(body=body, **kwargs)
+        
+        if isinstance(purpose, FilePurpose):
+            purpose = purpose.value
 
         if file is not None and purpose is not None:
             return super().upload_file(file=file, purpose=purpose, filename=filename, **kwargs)
