@@ -39,6 +39,7 @@ from azure.ai.assistants.models import (
 from azure.core.credentials import AzureKeyCredential
 
 import os, logging
+from typing import Any
 
 
 def setup_console_trace_exporter():
@@ -57,6 +58,24 @@ class MyEventHandler(AssistantEventHandler):
             if isinstance(content_part, MessageDeltaTextContent):
                 text_value = content_part.text.value if content_part.text else "No text"
                 logging.info(f"Text delta received: {text_value}")
+
+    def on_thread_message(self, message: "ThreadMessage") -> None:
+        logging.info(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+
+    def on_thread_run(self, run: "ThreadRun") -> None:
+        logging.info(f"ThreadRun status: {run.status}")
+
+    def on_run_step(self, step: "RunStep") -> None:
+        logging.info(f"RunStep type: {step.type}, Status: {step.status}")
+
+    def on_error(self, data: str) -> None:
+        logging.error(f"An error occurred. Data: {data}")
+
+    def on_done(self) -> None:
+        logging.info("Stream completed.")
+
+    def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+        logging.warning(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 
 def sample_assistant_stream_iteration():
@@ -86,11 +105,13 @@ def sample_assistant_stream_iteration():
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     logging.info(f"Created message, message ID {message.id}")
 
+    event_handler = MyEventHandler()
+
     with assistant_client.create_and_process_run(
         thread_id=thread.id, 
         assistant_id=assistant.id,
         stream=True,
-        event_handler=MyEventHandler
+        event_handler=event_handler
     ) as stream:
         stream.until_done()
 

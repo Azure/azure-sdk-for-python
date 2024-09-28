@@ -334,6 +334,7 @@ class AssistantsClient(AssistantsClientGenerated):
         tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
+        event_handler: Optional[_models.AssistantEventHandler] = None,
         sleep_interval: int = 1,
         **kwargs: Any
     ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
@@ -410,6 +411,12 @@ class AssistantsClient(AssistantsClientGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.assistants.models.AssistantEventHandler
+        :keyword sleep_interval: The time in seconds to wait between polling the service for run status.
+            Default value is 1.
+        :paramtype sleep_interval: int        
         :return: str or AssistantRunStream. The run completion status if streaming is disabled, otherwise 
          the AssistantRunStream object.
         :rtype: str or ~azure.ai.assistants.models.AssistantRunStream
@@ -433,6 +440,7 @@ class AssistantsClient(AssistantsClientGenerated):
             tool_choice=tool_choice,
             response_format=response_format,
             metadata=metadata,
+            event_handler=event_handler,
             **kwargs
         )
 

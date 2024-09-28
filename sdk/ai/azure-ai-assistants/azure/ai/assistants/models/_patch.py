@@ -283,6 +283,7 @@ class ToolSet:
 
 
 class AssistantEventHandler:
+
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         """Handle message delta events."""
         pass
@@ -314,7 +315,7 @@ class AssistantEventHandler:
 
 class AssistantRunStream(Iterator[Tuple[str, Any]]):
 
-    def __init__(self, response_iterator: Iterator[bytes], event_handler: Optional['AssistantEventHandler'] = None):
+    def __init__(self, response_iterator: Iterator[bytes], event_handler: Optional[AssistantEventHandler] = None):
         self.response_iterator = response_iterator
         self.buffer = ""
         self.event_handler = event_handler
@@ -324,6 +325,7 @@ class AssistantRunStream(Iterator[Tuple[str, Any]]):
         return self
 
     def __exit__(self, exc_type: Optional[type], exc_val: Optional[BaseException], exc_tb: Optional[Any]) -> None:
+        # Ensure resource cleanup
         close_method = getattr(self.response_iterator, "close", None)
         if callable(close_method):
             close_method()
@@ -369,7 +371,11 @@ class AssistantRunStream(Iterator[Tuple[str, Any]]):
             parsed_data = event_data
 
         # Workaround for service bug: Rename 'expires_at' to 'expired_at'
-        if event_type.startswith("thread.run.step") and isinstance(parsed_data, dict) and "expires_at" in parsed_data:
+        if (
+            event_type.startswith("thread.run.step")
+            and isinstance(parsed_data, dict)
+            and "expires_at" in parsed_data
+        ):
             parsed_data["expired_at"] = parsed_data.pop("expires_at")
 
         # Map to the appropriate class instance
