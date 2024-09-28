@@ -65,13 +65,10 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             raise exceptions.CosmosClientTimeoutError()
 
     if request_params.endpoint_override:
-        if request_params.location_endpoint_to_route:
-            base_url = request_params.location_endpoint_to_route
-        else:
-            base_url = request_params.endpoint_override
+        base_url = request_params.endpoint_override
     else:
         base_url = global_endpoint_manager.resolve_service_endpoint(request_params)
-    if base_url != request.url:
+    if not request.url.startswith(base_url):
         request.url = _replace_url_prefix(request.url, base_url)
 
     parse_result = urlparse(request.url)
