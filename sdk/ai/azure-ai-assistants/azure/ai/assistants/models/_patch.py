@@ -300,6 +300,10 @@ class AssistantEventHandler:
         """Handle run step events."""
         pass
 
+    def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
+        """Handle run step delta events."""
+        pass
+
     def on_error(self, data: str) -> None:
         """Handle error events."""
         pass
@@ -424,6 +428,8 @@ class AssistantRunStream(Iterator[Tuple[str, Any]]):
                     self.event_handler.on_thread_run(event_data_obj)
                 elif isinstance(event_data_obj, RunStep):
                     self.event_handler.on_run_step(event_data_obj)
+                elif isinstance(event_data_obj, RunStepDeltaChunk):
+                    self.event_handler.on_run_step_delta(event_data_obj)
                 elif event_type == AssistantStreamEvent.ERROR:
                     self.event_handler.on_error(event_data)
                 elif event_type == AssistantStreamEvent.DONE:

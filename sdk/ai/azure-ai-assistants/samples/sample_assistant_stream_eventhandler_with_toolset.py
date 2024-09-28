@@ -72,8 +72,15 @@ class MyEventHandler(AssistantEventHandler):
 
     def on_thread_run(self, run: "ThreadRun") -> None:
         logging.info(f"ThreadRun status: {run.status}")
+
+        if run.status == "failed":
+            logging.error(f"Run failed. Error: {run.last_error}")
+
         if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
             self._handle_submit_tool_outputs(run)
+
+    def on_run_step(self, step: "RunStep") -> None:
+        logging.info(f"RunStep type: {step.type}, Status: {step.status}")
 
     def on_run_step(self, step: "RunStep") -> None:
         logging.info(f"RunStep type: {step.type}, Status: {step.status}")
@@ -102,7 +109,7 @@ class MyEventHandler(AssistantEventHandler):
             if tool:
                 tool_outputs = tool.execute(tool_calls)
             else:
-                raise ValueError("Toolset does not contain a FunctionTool.")                
+                raise ValueError("Toolset does not contain a FunctionTool.")
         else:
             raise ValueError("Toolset is not available in the client.")
         
@@ -139,7 +146,7 @@ def sample_assistant_stream_iteration():
     toolset.add(functions)
 
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+        model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
     )
     logging.info(f"Created assistant, assistant ID {assistant.id}")
 
