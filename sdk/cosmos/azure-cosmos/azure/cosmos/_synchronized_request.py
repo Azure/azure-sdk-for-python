@@ -69,9 +69,8 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     """Makes one http request using the requests module.
 
     :param _GlobalEndpointManager global_endpoint_manager:
-    :param dict request_params:
-        contains the resourceType, operationType, endpointOverride,
-        useWriteEndpoint, useAlternateWriteEndpoint information
+    :param ~azure.cosmos._request_object.RequestObject request_params:
+        contains information for the request, like the resource_type, operation_type, and endpoint_override
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client:
         Pipeline client to process the request
