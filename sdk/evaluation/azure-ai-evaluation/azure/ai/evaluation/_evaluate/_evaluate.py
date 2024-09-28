@@ -625,7 +625,10 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     evaluators_info = {}
     use_pf_client = kwargs.get("_use_pf_client", True)
     if use_pf_client:
-        batch_run_client = ProxyClient(pf_client)
+        # Some user occasionally encountered errors when PFClient uploaded evaluation runs to the cloud.
+        # The root cause is unclear yet, but it appears to involve a conflict between the async evaluator and
+        # the async run uploader. As a temporary mitigation, use a PFClient without a trace destination for batch runs.
+        batch_run_client = ProxyClient(PFClient(user_agent=USER_AGENT))
 
         # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
         # multiple evaluators. If the path is already absolute, abspath will return the original path.
