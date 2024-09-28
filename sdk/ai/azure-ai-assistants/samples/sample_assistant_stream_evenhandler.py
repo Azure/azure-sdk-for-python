@@ -105,13 +105,11 @@ def sample_assistant_stream_iteration():
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     logging.info(f"Created message, message ID {message.id}")
 
-    event_handler = MyEventHandler()
-
     with assistant_client.create_and_process_run(
         thread_id=thread.id, 
         assistant_id=assistant.id,
         stream=True,
-        event_handler=event_handler
+        event_handler=MyEventHandler()
     ) as stream:
         stream.until_done()
 
