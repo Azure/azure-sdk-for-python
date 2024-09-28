@@ -58,7 +58,7 @@ def setup_console_trace_exporter():
 
 class MyEventHandler(AssistantEventHandler):
 
-    def __init__(self, client: AssistantsClient = None):
+    def __init__(self, client: AssistantsClient):
         self._client = client
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
@@ -92,17 +92,20 @@ class MyEventHandler(AssistantEventHandler):
         if not tool_calls:
             logging.warning("No tool calls to execute.")
             return
-
         if not self._client:
-            logging.warning("AssistantClient not set. Cannot execute tool calls.")
+            logging.warning("AssistantClient not set. Cannot execute tool calls using toolset.")
             return
 
-        if hasattr(self._client, "_toolset"):
-            tool_outputs = self._client._toolset.get_tool(FunctionTool).execute(tool_calls)
+        toolset = self._client.get_toolset()
+        if toolset:
+            tool = toolset.get_tool(FunctionTool)
+            if tool:
+                tool_outputs = tool.execute(tool_calls)
+            else:
+                raise ValueError("Toolset does not contain a FunctionTool.")                
         else:
-            logging.warning("Use toolset when creating assistant or override 'on_thread_run' to handle tool outputs.")
-            return
-
+            raise ValueError("Toolset is not available in the client.")
+        
         logging.info("Tool outputs: %s", tool_outputs)
         if tool_outputs:
             with self._client.submit_tool_outputs_to_run(

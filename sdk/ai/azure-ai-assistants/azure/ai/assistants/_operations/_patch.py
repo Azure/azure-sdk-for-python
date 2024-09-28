@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-import sys, io, logging, os
+import sys, io, logging, os, time
 from io import IOBase
 from typing import Any, Dict, List, overload, IO, Union, Optional, TYPE_CHECKING, IO, Union
 from azure.core.tracing.decorator import distributed_trace
@@ -236,6 +236,17 @@ class AssistantsClientOperationsMixin(AssistantsClientOperationsMixinGenerated):
             metadata=metadata,
             **kwargs
         )
+
+    def get_toolset(self) -> Optional[_models.ToolSet]:
+        """
+        Get the toolset for the assistant.
+
+        :return: The toolset for the assistant. If not set, returns None.
+        :rtype: ~azure.ai.assistants.models.ToolSet        
+        """
+        if hasattr(self, "_toolset"):
+            return self._toolset
+        return None
 
     @overload
     def create_run(
@@ -526,6 +537,167 @@ class AssistantsClientOperationsMixin(AssistantsClientOperationsMixinGenerated):
             return _models.AssistantRunStream(response, event_handler)
         else:
             return response
+
+    @distributed_trace
+    def create_and_process_run(
+        self,
+        thread_id: str,
+        assistant_id: str,
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        additional_instructions: Optional[str] = None,
+        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        stream: Optional[bool] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_prompt_tokens: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        truncation_strategy: Optional[_models.TruncationObject] = None,
+        tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        event_handler: Optional[_models.AssistantEventHandler] = None,
+        sleep_interval: int = 1,
+        **kwargs: Any
+    ) -> Union[_models.ThreadRun, _models.AssistantRunStream]:
+        """Creates a new run for an assistant thread and processes the run.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :keyword assistant_id: The ID of the assistant that should run the thread. Required.
+        :paramtype assistant_id: str
+        :keyword model: The overridden model name that the assistant should use to run the thread.
+         Default value is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions that the assistant should use to run
+         the thread. Default value is None.
+        :paramtype instructions: str
+        :keyword additional_instructions: Additional instructions to append at the end of the
+         instructions for the run. This is useful for modifying the behavior
+         on a per-run basis without overriding other instructions. Default value is None.
+        :paramtype additional_instructions: str
+        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+         Default value is None.
+        :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessage]
+        :keyword tools: The overridden list of enabled tools that the assistant should use to run the
+         thread. Default value is None.
+        :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
+        :keyword stream: If ``true``\\ , returns a stream of events that happen during the
+         Run as server-sent events,
+         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
+         value is None.
+        :paramtype stream: bool
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+         the course of the run. The run will make a best effort
+         to use only the number of completion tokens specified, across multiple turns of the run. If
+         the run exceeds the number of
+         completion tokens specified, the run will end with status ``incomplete``. See
+         ``incomplete_details`` for more info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+         moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+         the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
+         AssistantsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or
+         ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+         following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.assistants.models.AssistantEventHandler
+        :keyword sleep_interval: The time in seconds to wait between polling the service for run status.
+            Default value is 1.
+        :paramtype sleep_interval: int        
+        :return: str or AssistantRunStream. The run completion status if streaming is disabled, otherwise 
+         the AssistantRunStream object.
+        :rtype: str or ~azure.ai.assistants.models.AssistantRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        # Create and initiate the run with additional parameters
+        run = self.create_run(
+            thread_id=thread_id,
+            assistant_id=assistant_id,
+            model=model,
+            instructions=instructions,
+            additional_instructions=additional_instructions,
+            additional_messages=additional_messages,
+            tools=tools,
+            stream=stream,
+            temperature=temperature,
+            top_p=top_p,
+            max_prompt_tokens=max_prompt_tokens,
+            max_completion_tokens=max_completion_tokens,
+            truncation_strategy=truncation_strategy,
+            tool_choice=tool_choice,
+            response_format=response_format,
+            metadata=metadata,
+            event_handler=event_handler,
+            **kwargs
+        )
+
+        # Return the run stream object if streaming is enabled
+        if stream:
+            return run
+
+        # Monitor and process the run status
+        while run.status in ["queued", "in_progress", "requires_action"]:
+            time.sleep(sleep_interval)
+            run = self.get_run(thread_id=thread_id, run_id=run.id)
+
+            if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                if not tool_calls:
+                    _LOGGER.warning("No tool calls provided - cancelling run")
+                    self.cancel_run(thread_id=thread_id, run_id=run.id)
+                    break
+
+                toolset = self.get_toolset()
+                if toolset:
+                    tool = toolset.get_tool(_models.FunctionTool)
+                    if tool:
+                        tool_outputs = tool.execute(tool_calls)
+                else:
+                    raise ValueError("Toolset is not available in the client.")
+                    
+                _LOGGER.info("Tool outputs: %s", tool_outputs)
+                if tool_outputs:
+                    self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+
+            _LOGGER.info("Current run status: %s", run.status)
+
+        return run
 
     @overload
     def submit_tool_outputs_to_run(
