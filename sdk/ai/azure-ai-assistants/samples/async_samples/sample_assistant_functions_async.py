@@ -20,7 +20,7 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) AZUREAI_ENDPOINT_KEY - Your model key (a 32-character string). Keep it secret.
 """
-import asyncio
+
 from opentelemetry import trace
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
@@ -30,9 +30,17 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from azure.ai.assistants.aio import AssistantsClient
 from azure.ai.assistants.models import FunctionTool
 from azure.core.credentials import AzureKeyCredential
-from user_functions import user_functions
 
-import os, time, logging
+import os, time, logging, asyncio, sys
+import asyncio.threads
+
+# Add parent directory to sys.path to import user_functions
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, '..'))
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+
+from user_functions import user_functions
 
 
 def setup_console_trace_exporter():
@@ -70,7 +78,7 @@ async def sample_assistant_functions():
 
         # Create assistant
         assistant = await assistant_client.create_assistant(
-            model="gpt", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
+            model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
         )
         logging.info("Created assistant, ID: %s", assistant.id)
 
@@ -98,7 +106,15 @@ async def sample_assistant_functions():
                     await assistant_client.cancel_run(thread_id=thread.id, run_id=run.id)
                     break
 
-                tool_outputs = functions.execute(tool_calls)
+                tool_outputs = []
+                for tool_call in tool_calls:
+                    output = await asyncio.threads.to_thread(functions.execute, tool_call)
+                    tool_output = {
+                            "tool_call_id": tool_call.id,
+                            "output": output,
+                        }
+                    tool_outputs.append(tool_output)
+
                 logging.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
                     await assistant_client.submit_tool_outputs_to_run(
