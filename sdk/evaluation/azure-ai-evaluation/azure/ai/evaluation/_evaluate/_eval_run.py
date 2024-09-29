@@ -14,6 +14,7 @@ from typing import Any, Dict, Optional, Set, Type
 from urllib.parse import urlparse
 
 from promptflow._sdk.entities import Run
+from typing_extensions import Self
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_http_client
@@ -235,7 +236,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             LOGGER.warning("Unable to terminate the run.")
         self._status = RunStatus.TERMINATED
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         """The Context Manager enter call.
 
         :return: The instance of the class.
