@@ -380,11 +380,13 @@ def _apply_target_to_data(
     return target_output, generated_columns, run
 
 
-def _process_column_mappings(column_mapping: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, str]]:
+def _process_column_mappings(
+    column_mapping: Dict[str, Optional[Dict[str, str]]],
+) -> Dict[str, Dict[str, str]]:
     """Process column_mapping to replace ${target.} with ${data.}
 
     :param column_mapping: The configuration for evaluators.
-    :type column_mapping: Dict[str, Dict[str, str]]
+    :type column_mapping: Dict[str, Optional[Dict[str, str]]]
     :return: The processed configuration.
     :rtype: Dict[str, Dict[str, str]]
     """
@@ -573,11 +575,12 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if evaluator_config is None:
         evaluator_config = {}
     # extract column mapping dicts into dictionary mapping evaluator name to column mapping
-    column_mapping = {
-        evaluator_name: evaluator_configuration.get("column_mapping", None)
-        for evaluator_name, evaluator_configuration in evaluator_config.items()
-    }
-    column_mapping = _process_column_mappings(column_mapping)
+    column_mapping = _process_column_mappings(
+        {
+            evaluator_name: evaluator_configuration.get("column_mapping", None)
+            for evaluator_name, evaluator_configuration in evaluator_config.items()
+        }
+    )
     _validate_columns(input_data_df, evaluators, target, column_mapping)
 
     # Target Run

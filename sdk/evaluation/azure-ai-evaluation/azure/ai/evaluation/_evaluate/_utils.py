@@ -8,7 +8,7 @@ import re
 import tempfile
 from collections import namedtuple
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 import pandas as pd
 
@@ -100,7 +100,6 @@ def _log_metrics_and_instance_results(
         ml_client=azure_pf_client.ml_client,
         promptflow_run=run,
     ) as ev_run:
-
         artifact_name = EvalRun.EVALUATION_ARTIFACT if run else EvalRun.EVALUATION_ARTIFACT_DUMMY_RUN
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -168,7 +167,7 @@ def _write_output(path, data_dict):
 
 
 def _apply_column_mapping(
-    source_df: pd.DataFrame, mapping_config: Dict[str, str], inplace: bool = False
+    source_df: pd.DataFrame, mapping_config: Optional[Dict[str, str]], inplace: bool = False
 ) -> pd.DataFrame:
     """
     Apply column mapping to source_df based on mapping_config.
