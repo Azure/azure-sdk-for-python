@@ -4,7 +4,7 @@
 import inspect
 import os
 import re
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type
+from typing import Callable, Dict, List, Optional, Set, Tuple, Type
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
@@ -279,7 +279,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
 
 def _validate_columns(
     df: pd.DataFrame,
-    evaluators: Dict[str, Any],
+    evaluators: Dict[str, Callable],
     target: Optional[Callable],
     column_mapping: Dict[str, Dict[str, str]],
 ) -> None:
@@ -289,7 +289,7 @@ def _validate_columns(
     :param df: The data frame to be validated.
     :type df: pd.DataFrame
     :param evaluators: The dictionary of evaluators.
-    :type evaluators: Dict[str, Any]
+    :type evaluators: Dict[str, Callable]
     :param target: The callable to be applied to data set.
     :type target: Optional[Callable]
     :param column_mapping: Dictionary mapping evaluator name to evaluator column mapping
@@ -560,10 +560,10 @@ def evaluate(
 
 def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     *,
+    evaluators: Dict[str, Callable],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
     data: Optional[str] = None,
-    evaluators: Optional[Dict[str, Callable]] = None,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
     azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
