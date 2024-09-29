@@ -9,6 +9,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
 from promptflow.client import PFClient
+from promptflow.entities import Run
 
 from azure.ai.evaluation._common.math import list_sum
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -327,7 +328,7 @@ def _apply_target_to_data(
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
     _run_name: Optional[str] = None,
-) -> Tuple[pd.DataFrame, Set[str]]:
+) -> Tuple[pd.DataFrame, Set[str], Run]:
     """
     Apply the target function to the data set and return updated data and generated columns.
 
@@ -349,7 +350,7 @@ def _apply_target_to_data(
     # We are manually creating the temporary directory for the flow
     # because the way tempdir remove temporary directories will
     # hang the debugger, because promptflow will keep flow directory.
-    run = pf_client.run(
+    run: Run = pf_client.run(
         flow=target,
         display_name=evaluation_name,
         data=data,
@@ -357,7 +358,7 @@ def _apply_target_to_data(
         stream=True,
         name=_run_name,
     )
-    target_output = pf_client.runs.get_details(run, all_results=True)
+    target_output: pd.DataFrame = pf_client.runs.get_details(run, all_results=True)
     # Remove input and output prefix
     generated_columns = {
         col[len(Prefixes.OUTPUTS) :] for col in target_output.columns if col.startswith(Prefixes.OUTPUTS)
