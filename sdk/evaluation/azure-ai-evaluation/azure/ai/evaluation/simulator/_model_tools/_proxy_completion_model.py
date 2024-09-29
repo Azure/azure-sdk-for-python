@@ -73,12 +73,12 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
     :keyword kwargs: Additional keyword arguments to pass to the parent class.
     """
 
-    def __init__(self, name: str, template_key: str, template_parameters, *args, **kwargs) -> None:
+    def __init__(self, name: str, template_key: str, template_parameters, **kwargs) -> None:
         self.tkey = template_key
         self.tparam = template_parameters
         self.result_url = None
 
-        super().__init__(name=name, *args, **kwargs)
+        super().__init__(name=name, **kwargs)
 
     def format_request_data(self, messages: List[Dict], **request_params) -> Dict:  # type: ignore[override]
         """Format the request data to query the model with.

@@ -522,8 +522,8 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
     formats the prompt for chat completion.
     """
 
-    def __init__(self, name="OpenAIChatCompletionsModel", *args, **kwargs):
-        super().__init__(name=name, *args, **kwargs)
+    def __init__(self, name="OpenAIChatCompletionsModel", **kwargs):
+        super().__init__(name=name, **kwargs)
 
     def format_request_data(self, messages: List[dict], **request_params):  # type: ignore[override]
         request_data = {"messages": messages, **self.get_model_params()}
