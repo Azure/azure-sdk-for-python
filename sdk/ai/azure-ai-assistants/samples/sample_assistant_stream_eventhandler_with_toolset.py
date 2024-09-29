@@ -149,7 +149,7 @@ def sample_assistant_stream_iteration():
     thread = assistant_client.create_thread()
     logging.info(f"Created thread, thread ID {thread.id}")
 
-    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
+    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York?")
     logging.info(f"Created message, message ID {message.id}")
 
     with assistant_client.create_and_process_run(

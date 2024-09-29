@@ -81,7 +81,7 @@ def sample_assistant_run():
     logging.info("Created thread, ID: %s", thread.id)
 
     # Create message to thread
-    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
+    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York?")
     logging.info("Created message, ID: %s", message.id)
 
     # Create and process assistant run in thread with tools
