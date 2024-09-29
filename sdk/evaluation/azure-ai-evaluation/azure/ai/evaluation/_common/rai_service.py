@@ -7,7 +7,7 @@ import math
 import re
 import time
 from ast import literal_eval
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, cast
 from urllib.parse import urlparse
 
 import jwt
@@ -438,7 +438,7 @@ async def evaluate_with_rai_service(
 
     # Submit annotation request and fetch result
     operation_id = await submit_request(query, response, metric_name, rai_svc_url, token)
-    annotation_response = await fetch_result(operation_id, rai_svc_url, credential, token)
+    annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
     result = parse_response(annotation_response, metric_name)
 
     return result
