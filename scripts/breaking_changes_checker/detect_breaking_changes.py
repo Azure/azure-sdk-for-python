@@ -187,7 +187,7 @@ def get_properties(cls: Type) -> Dict:
     analyzer = ClassTreeAnalyzer(cls.__name__)
     analyzer.visit(module)
     cls_node = analyzer.cls_node
-    extract_base_classes = check_base_classes(cls_node)
+    extract_base_classes = True if hasattr(cls_node, "bases") else False
 
     if extract_base_classes:
         base_classes = inspect.getmro(cls)  # includes cls itself
