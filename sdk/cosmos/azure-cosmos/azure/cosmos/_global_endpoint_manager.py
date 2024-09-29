@@ -105,6 +105,7 @@ class _GlobalEndpointManager(object):
     def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
         if database_account:
             self.location_cache.perform_on_database_account_read(database_account)
+            self.refresh_needed = False
         else:
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
