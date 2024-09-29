@@ -6,7 +6,7 @@ import functools
 import inspect
 import json
 import logging
-from typing import Callable, Dict, TypeVar
+from typing import Callable, Dict, Literal, TypeVar
 
 import pandas as pd
 from promptflow._sdk.entities._flows import FlexFlow as flex_flow
@@ -25,22 +25,20 @@ P = ParamSpec("P")
 R = TypeVar("R")
 
 
-def _get_evaluator_type(evaluator: Dict[str, Callable]):
+def _get_evaluator_type(evaluator: Dict[str, Callable]) -> Literal["content-safety", "built-in", "custom"]:
     """
     Get evaluator type for telemetry.
 
     :param evaluator: The evaluator object
     :type evaluator: Dict[str, Callable]
     :return: The evaluator type. Possible values are "built-in", "custom", and "content-safety".
-    :rtype: str
+    :rtype: Literal["content-safety", "built-in", "custom"]
     """
-    built_in = False
-    content_safety = False
-
     module = inspect.getmodule(evaluator)
-    built_in = module and module.__name__.startswith("azure.ai.evaluation._evaluators.")
-    if built_in:
-        content_safety = module.__name__.startswith("azure.ai.evaluation._evaluators._content_safety")
+    module_name = module.__name__ if module else ""
+
+    built_in = module_name.startswith("azure.ai.evaluation._evaluators.")
+    content_safety = built_in and module_name.startswith("azure.ai.evaluation._evaluators._content_safety")
 
     if content_safety:
         return "content-safety"
