@@ -360,7 +360,7 @@ async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: st
     return f"{base_url.scheme}://{base_url.netloc}"
 
 
-async def get_rai_svc_url(project_scope: dict, token: str) -> str:
+async def get_rai_svc_url(project_scope: AzureAIProject, token: str) -> str:
     """Get the Responsible AI service URL
 
     :param project_scope: The Azure AI project scope details.
