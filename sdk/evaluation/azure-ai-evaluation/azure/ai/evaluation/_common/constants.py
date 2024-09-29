@@ -43,7 +43,7 @@ class _InternalAnnotationTasks:
     ECI = "eci"
 
 
-class EvaluationMetrics:
+class EvaluationMetrics(str, Enum):
     """Evaluation metrics to aid the RAI service in determining what
     metrics to request, and how to present them back to the user."""
 
