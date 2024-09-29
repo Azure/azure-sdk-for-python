@@ -11,16 +11,10 @@ from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecut
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
-try:
-    from ._hate_unfairness import HateUnfairnessEvaluator
-    from ._self_harm import SelfHarmEvaluator
-    from ._sexual import SexualEvaluator
-    from ._violence import ViolenceEvaluator
-except ImportError:
-    from _hate_unfairness import HateUnfairnessEvaluator
-    from _self_harm import SelfHarmEvaluator
-    from _sexual import SexualEvaluator
-    from _violence import ViolenceEvaluator
+from ._hate_unfairness import HateUnfairnessEvaluator
+from ._self_harm import SelfHarmEvaluator
+from ._sexual import SexualEvaluator
+from ._violence import ViolenceEvaluator
 
 logger = logging.getLogger(__name__)
 

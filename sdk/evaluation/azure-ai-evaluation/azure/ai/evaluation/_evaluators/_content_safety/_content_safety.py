@@ -5,16 +5,10 @@ from concurrent.futures import as_completed
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
-try:
-    from ._hate_unfairness import HateUnfairnessEvaluator
-    from ._self_harm import SelfHarmEvaluator
-    from ._sexual import SexualEvaluator
-    from ._violence import ViolenceEvaluator
-except ImportError:
-    from _hate_unfairness import HateUnfairnessEvaluator
-    from _self_harm import SelfHarmEvaluator
-    from _sexual import SexualEvaluator
-    from _violence import ViolenceEvaluator
+from ._hate_unfairness import HateUnfairnessEvaluator
+from ._self_harm import SelfHarmEvaluator
+from ._sexual import SexualEvaluator
+from ._violence import ViolenceEvaluator
 
 
 class ContentSafetyEvaluator:
