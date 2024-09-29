@@ -10,7 +10,7 @@ import posixpath
 import time
 import types
 import uuid
-from typing import Any, Dict, Optional, Set, Type
+from typing import Any, Dict, List, Optional, Set, Type
 from urllib.parse import urlparse
 
 from promptflow._sdk.entities import Run
@@ -423,7 +423,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             return
         # First we will list the files and the appropriate remote paths for them.
         root_upload_path = posixpath.join("promptflow", "PromptFlowArtifacts", self.info.run_name)
-        remote_paths = {"paths": []}
+        remote_paths: Dict[str, List[Dict[str, str]]] = {"paths": []}
         local_paths = []
         # Go over the artifact folder and upload all artifacts.
         for root, _, filenames in os.walk(artifact_folder):
