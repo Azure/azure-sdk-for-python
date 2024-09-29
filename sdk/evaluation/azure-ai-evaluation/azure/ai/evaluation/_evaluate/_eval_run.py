@@ -123,7 +123,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         self._promptflow_run = promptflow_run
         self._status = RunStatus.NOT_STARTED
         self._url_base: Optional[str] = None
-        self.info: Optional[RunInfo] = None
+        self._info: Optional[RunInfo] = None
 
     @property
     def status(self) -> RunStatus:
@@ -134,6 +134,20 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :rtype: promptflow._sdk._constants.RunStatus
         """
         return self._status
+
+    @property
+    def info(self) -> RunInfo:
+        if self._info is None:
+            msg = "Run info is missing"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVAL_RUN,
+                category=ErrorCategory.UNKNOWN,
+                blame=ErrorBlame.UNKNOWN,
+            )
+
+        return self._info
 
     def _get_scope(self) -> str:
         """
@@ -162,11 +176,11 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             )
             self._url_base = None
             self._status = RunStatus.BROKEN
-            self.info = RunInfo.generate(self._run_name)
+            self._info = RunInfo.generate(self._run_name)
         else:
             self._url_base = urlparse(self._tracking_uri).netloc
             if self._promptflow_run is not None:
-                self.info = RunInfo(
+                self._info = RunInfo(
                     self._promptflow_run.name,
                     self._promptflow_run._experiment_name,  # pylint: disable=protected-access
                     self._promptflow_run.name,
@@ -183,7 +197,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                     body["run_name"] = self._run_name
                 response = self.request_with_retry(url=url, method="POST", json_dict=body)
                 if response.status_code != 200:
-                    self.info = RunInfo.generate(self._run_name)
+                    self._info = RunInfo.generate(self._run_name)
                     LOGGER.warning(
                         "The run failed to start: %s: %s."
                         "The results will be saved locally, but will not be logged to Azure.",
@@ -193,7 +207,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                     self._status = RunStatus.BROKEN
                 else:
                     parsed_response = response.json()
-                    self.info = RunInfo(
+                    self._info = RunInfo(
                         run_id=parsed_response["run"]["info"]["run_id"],
                         experiment_id=parsed_response["run"]["info"]["experiment_id"],
                         run_name=parsed_response["run"]["info"]["run_name"],
