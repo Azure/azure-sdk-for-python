@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 
 from typing_extensions import override
 
@@ -53,7 +53,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         response: Optional[str] = None,
         conversation: Optional[dict] = None,
         **kwargs,
-    ):
+    ) -> Dict[str, float]:
         """Evaluate coherence. Accepts either a query and response for a single evaluation,
         or a conversation for a potentially multi-turn evaluation. If the conversation has more than one pair of
         turns, the evaluator will aggregate the results of each turn.

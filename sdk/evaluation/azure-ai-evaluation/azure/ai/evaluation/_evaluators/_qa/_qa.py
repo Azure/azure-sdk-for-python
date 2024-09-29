@@ -3,9 +3,11 @@
 # ---------------------------------------------------------
 
 from concurrent.futures import as_completed
+from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
+from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from .._coherence import CoherenceEvaluator
 from .._f1_score import F1ScoreEvaluator
 from .._fluency import FluencyEvaluator
@@ -50,10 +52,12 @@ class QAEvaluator:
         }
     """
 
-    def __init__(self, model_config: dict, parallel: bool = True):
+    def __init__(
+        self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], parallel: bool = True
+    ):
         self._parallel = parallel
 
-        self._evaluators = [
+        self._evaluators: List[Callable[..., Dict[str, float]]] = [
             GroundednessEvaluator(model_config),
             RelevanceEvaluator(model_config),
             CoherenceEvaluator(model_config),
@@ -62,7 +66,7 @@ class QAEvaluator:
             F1ScoreEvaluator(),
         ]
 
-    def __call__(self, *, query: str, response: str, context: str, ground_truth: str, **kwargs):
+    def __call__(self, *, query: str, response: str, context: str, ground_truth: str, **kwargs) -> Dict[str, float]:
         """
         Evaluates question-answering scenario.
 
@@ -77,9 +81,9 @@ class QAEvaluator:
         :keyword parallel: Whether to evaluate in parallel. Defaults to True.
         :paramtype parallel: bool
         :return: The scores for QA scenario.
-        :rtype: dict
+        :rtype: Dict[str, float]
         """
-        results = {}
+        results: Dict[str, float] = {}
         if self._parallel:
             with ThreadPoolExecutor() as executor:
                 futures = {

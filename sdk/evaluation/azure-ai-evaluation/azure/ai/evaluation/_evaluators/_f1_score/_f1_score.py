@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from collections import Counter
-from typing import List
+from typing import Dict, List
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
@@ -14,7 +14,7 @@ class _AsyncF1ScoreEvaluator:
     def __init__(self):
         pass
 
-    async def __call__(self, *, response: str, ground_truth: str, **kwargs):
+    async def __call__(self, *, response: str, ground_truth: str, **kwargs) -> Dict[str, float]:
         # Validate inputs
         if not (response and response.strip() and response != "None") or not (
             ground_truth and ground_truth.strip() and ground_truth != "None"
@@ -120,7 +120,7 @@ class F1ScoreEvaluator:
     def __init__(self):
         self._async_evaluator = _AsyncF1ScoreEvaluator()
 
-    def __call__(self, *, response: str, ground_truth: str, **kwargs):
+    def __call__(self, *, response: str, ground_truth: str, **kwargs) -> Dict[str, float]:
         """
         Evaluate F1 score.
 

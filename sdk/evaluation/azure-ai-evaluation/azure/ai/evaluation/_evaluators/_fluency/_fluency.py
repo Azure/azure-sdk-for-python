@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 
 from typing_extensions import override
 
@@ -54,7 +54,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         response: Optional[str] = None,
         conversation: Optional[dict] = None,
         **kwargs,
-    ):
+    ) -> Dict[str, float]:
         """
         Evaluate fluency. Accepts either a query and response for a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,

@@ -5,7 +5,7 @@
 import math
 import os
 import re
-from typing import Union
+from typing import Dict, Union
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
@@ -98,7 +98,7 @@ class SimilarityEvaluator:
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         self._async_evaluator = _AsyncSimilarityEvaluator(model_config)
 
-    def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):
+    def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs) -> Dict[str, float]:
         """
         Evaluate similarity.
 
