@@ -31,6 +31,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
 from ._cosmos_client_connection import CosmosClientConnection
+from ._cosmos_responses import CosmosDictResponse, CosmosListResponse
 from ._base import (
     build_options,
     validate_cache_staleness_value,
@@ -195,7 +196,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Get the item identified by `item`.
 
         :param item: The ID (name) or dict representing item to retrieve.
@@ -212,9 +213,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: Dict representing the item to be retrieved.
+        :returns: A CosmosDictResponse representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
-        :rtype: dict[str, Any]
+        :rtype: CosmosDictResponse
 
         .. admonition:: Example:
 
@@ -520,7 +521,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Replaces the specified item if it exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -540,10 +541,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: A dict representing the item after replace went through.
+        :returns: A CosmosDictResponse representing the item after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
-        :rtype: Dict[str, Any]
+        :rtype: CosmosDictResponse
         """
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
@@ -590,7 +591,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Insert or update the specified item.
 
         If the item already exists in the container, it is replaced. If the item
@@ -609,9 +610,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: A dict representing the upserted item.
+        :returns: A CosmosDictResponse representing the upserted item.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
-        :rtype: Dict[str, Any]
+        :rtype: CosmosDictResponse
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -661,7 +662,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Create an item in the container.
 
         To update or replace an existing item, use the
@@ -684,9 +685,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: A dict representing the new item.
+        :returns: A CosmosDictResponse representing the new item.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
-        :rtype: Dict[str, Any]
+        :rtype: CosmosDictResponse
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -732,7 +733,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """ Patches the specified item with the provided operations if it
          exists in the container.
 
@@ -755,10 +756,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: A dict representing the item after the patch operations went through.
+        :returns: A CosmosDictResponse representing the item after the patch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
-        :rtype: dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDictResponse
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -797,7 +798,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> List[Dict[str, Any]]:
+    ) -> CosmosListResponse:
         """ Executes the transactional batch for the specified partition key.
 
         :param batch_operations: The batch of operations to be executed.
@@ -814,10 +815,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A list representing the item after the batch operations went through.
+        :returns: A CosmosListResponse representing the item after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
-        :rtype: List[Dict[str, Any]]
+        :rtype: CosmosListResponse
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include

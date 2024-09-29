@@ -487,6 +487,24 @@ container = database.get_container_client(CONTAINER_NAME)
 operation_response = container.create_item({"id": "test_item", "productName": "test_item"})
 operation_headers = operation_response.response_headers
 ```
+For queries, response headers will be present when using paging only:
+```python
+from azure.cosmos import CosmosClient
+import os
+
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+DATABASE_NAME = 'testDatabase'
+CONTAINER_NAME = 'products'
+client = CosmosClient(URL, credential=KEY)
+database = client.get_database_client(DATABASE_NAME)
+container = database.get_container_client(CONTAINER_NAME)
+
+query_response = container.query_items("select * from c", enable_cross_partition_query=True)
+query_pages = query_response.by_page()
+first_page = query_pages.next()
+first_page_headers = query_pages.response_headers
+```
 
 ### Using the asynchronous client
 

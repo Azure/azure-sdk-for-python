@@ -518,7 +518,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Creates a document in a collection.
 
         :param str database_or_container_link:
@@ -530,7 +530,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The created Document.
         :rtype:
-            dict
+            CosmosDictResponse
 
         """
         # Python's default arguments are evaluated once when the function is defined,
@@ -707,7 +707,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Creates an Azure Cosmos resource and returns it.
 
         :param dict body:
@@ -720,7 +720,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The created Azure Cosmos resource.
         :rtype:
-            dict
+            CosmosDictResponse
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -800,7 +800,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Upserts a document in a collection.
 
         :param str database_or_container_link:
@@ -812,7 +812,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The upserted Document.
         :rtype:
-            dict
+            CosmosDictResponse
 
         """
         # Python's default arguments are evaluated once when the function is defined,
@@ -844,7 +844,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Upserts an Azure Cosmos resource and returns it.
 
         :param dict body:
@@ -857,7 +857,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The upserted Azure Cosmos resource.
         :rtype:
-            dict
+            CosmosDictResponse
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -964,7 +964,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Reads a document.
 
         :param str document_link:
@@ -975,7 +975,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The read Document.
         :rtype:
-            dict
+            CosmosDictResponse
 
         """
         if options is None:
@@ -1147,7 +1147,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Reads an Azure Cosmos resource and returns it.
 
         :param str path:
@@ -1158,9 +1158,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The request options for the request.
 
         :return:
-            The upserted Azure Cosmos resource.
+            The retrieved Azure Cosmos resource.
         :rtype:
-            dict
+            CosmosDictResponse
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -1364,7 +1364,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         new_document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Replaces a document and returns it.
 
         :param str document_link:
@@ -1375,7 +1375,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new Document.
         :rtype:
-            dict
+            CosmosDictResponse
 
         """
         base._validate_resource(new_document)
@@ -1404,7 +1404,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         operations: List[Dict[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Patches a document and returns it.
 
         :param str document_link: The link to the document.
@@ -1413,7 +1413,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new Document.
         :rtype:
-            dict
+            CosmosDictResponse
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -1507,7 +1507,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDictResponse:
         """Replaces an Azure Cosmos resource and returns it.
 
         :param dict resource:
@@ -1520,7 +1520,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new Azure Cosmos resource.
         :rtype:
-            dict
+            CosmosDictResponse
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -1894,7 +1894,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> List[Dict[str, Any]]:
+    ) -> CosmosListResponse:
         """Executes the given operations in transactional batch.
 
         :param str collection_link: The link to the collection
@@ -1904,7 +1904,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The result of the batch operation.
         :rtype:
-            list
+            CosmosListResponse
 
         """
         response_hook = kwargs.pop("response_hook", None)
