@@ -8,6 +8,7 @@
 
 from ._models_py3 import AccessKeyInfoBase
 from ._models_py3 import AuthInfoBase
+from ._models_py3 import AzureAppConfigProperties
 from ._models_py3 import AzureKeyVaultProperties
 from ._models_py3 import AzureResource
 from ._models_py3 import AzureResourcePropertiesBase
@@ -36,6 +37,7 @@ from ._models_py3 import EasyAuthMicrosoftEntraIDAuthInfo
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import FabricPlatform
 from ._models_py3 import FirewallRules
 from ._models_py3 import KeyVaultSecretReferenceSecretInfo
 from ._models_py3 import KeyVaultSecretUriSecretInfo
@@ -95,6 +97,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "AccessKeyInfoBase",
     "AuthInfoBase",
+    "AzureAppConfigProperties",
     "AzureKeyVaultProperties",
     "AzureResource",
     "AzureResourcePropertiesBase",
@@ -123,6 +126,7 @@ __all__ = [
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
+    "FabricPlatform",
     "FirewallRules",
     "KeyVaultSecretReferenceSecretInfo",
     "KeyVaultSecretUriSecretInfo",

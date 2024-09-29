@@ -1,5 +1,14 @@
 # Release History
 
+## 1.2.0b3 (2024-10-20)
+
+### Features Added
+
+  - Enum `AzureResourceType` added member `APP_CONFIG`
+  - Enum `TargetServiceType` added member `FABRIC_PLATFORM`
+  - Added model `AzureAppConfigProperties`
+  - Added model `FabricPlatform`
+
 ## 1.2.0b2 (2024-03-19)
 
 ### Features Added

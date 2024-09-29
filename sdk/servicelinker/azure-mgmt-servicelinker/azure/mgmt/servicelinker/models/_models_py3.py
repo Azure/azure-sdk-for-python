@@ -25,7 +25,7 @@ class AuthInfoBase(_serialization.Model):
     ServicePrincipalCertificateAuthInfo, ServicePrincipalSecretAuthInfo,
     SystemAssignedIdentityAuthInfo, UserAccountAuthInfo, UserAssignedIdentityAuthInfo
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: The authentication type. Required. Known values are: "systemAssignedIdentity",
      "userAssignedIdentity", "servicePrincipalSecret", "servicePrincipalCertificate", "secret",
@@ -77,7 +77,7 @@ class AccessKeyInfoBase(AuthInfoBase):
     """The access key directly from target resource properties, which target service is Azure
     Resource, such as Microsoft.Storage.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: The authentication type. Required. Known values are: "systemAssignedIdentity",
      "userAssignedIdentity", "servicePrincipalSecret", "servicePrincipalCertificate", "secret",
@@ -89,7 +89,7 @@ class AccessKeyInfoBase(AuthInfoBase):
      are: "optInAllAuth" and "optOutAllAuth".
     :vartype auth_mode: str or ~azure.mgmt.servicelinker.models.AuthMode
     :ivar permissions: Permissions of the accessKey. ``Read`` and ``Write`` are for Azure Cosmos DB
-     and Azure App Configuration, ``Listen``\ , ``Send`` and ``Manage`` are for Azure Event Hub and
+     and Azure App Configuration, ``Listen``\\ , ``Send`` and ``Manage`` are for Azure Event Hub and
      Azure Service Bus.
     :vartype permissions: list[str or ~azure.mgmt.servicelinker.models.AccessKeyPermissions]
     """
@@ -118,7 +118,7 @@ class AccessKeyInfoBase(AuthInfoBase):
          Known values are: "optInAllAuth" and "optOutAllAuth".
         :paramtype auth_mode: str or ~azure.mgmt.servicelinker.models.AuthMode
         :keyword permissions: Permissions of the accessKey. ``Read`` and ``Write`` are for Azure Cosmos
-         DB and Azure App Configuration, ``Listen``\ , ``Send`` and ``Manage`` are for Azure Event Hub
+         DB and Azure App Configuration, ``Listen``\\ , ``Send`` and ``Manage`` are for Azure Event Hub
          and Azure Service Bus.
         :paramtype permissions: list[str or ~azure.mgmt.servicelinker.models.AccessKeyPermissions]
         """
@@ -131,11 +131,11 @@ class AzureResourcePropertiesBase(_serialization.Model):
     """The azure resource properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureKeyVaultProperties
+    AzureAppConfigProperties, AzureKeyVaultProperties
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar type: The azure resource type. Required. "KeyVault"
+    :ivar type: The azure resource type. Required. Known values are: "KeyVault" and "AppConfig".
     :vartype type: str or ~azure.mgmt.servicelinker.models.AzureResourceType
     """
 
@@ -147,7 +147,7 @@ class AzureResourcePropertiesBase(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    _subtype_map = {"type": {"KeyVault": "AzureKeyVaultProperties"}}
+    _subtype_map = {"type": {"AppConfig": "AzureAppConfigProperties", "KeyVault": "AzureKeyVaultProperties"}}
 
     def __init__(self, **kwargs: Any) -> None:
         """ """
@@ -155,12 +155,44 @@ class AzureResourcePropertiesBase(_serialization.Model):
         self.type: Optional[str] = None
 
 
+class AzureAppConfigProperties(AzureResourcePropertiesBase):
+    """The resource properties when type is Azure App Configuration.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The azure resource type. Required. Known values are: "KeyVault" and "AppConfig".
+    :vartype type: str or ~azure.mgmt.servicelinker.models.AzureResourceType
+    :ivar connect_with_kubernetes_extension: True if connection enables app configuration
+     kubernetes extension.
+    :vartype connect_with_kubernetes_extension: bool
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "connect_with_kubernetes_extension": {"key": "connectWithKubernetesExtension", "type": "bool"},
+    }
+
+    def __init__(self, *, connect_with_kubernetes_extension: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword connect_with_kubernetes_extension: True if connection enables app configuration
+         kubernetes extension.
+        :paramtype connect_with_kubernetes_extension: bool
+        """
+        super().__init__(**kwargs)
+        self.type: str = "AppConfig"
+        self.connect_with_kubernetes_extension = connect_with_kubernetes_extension
+
+
 class AzureKeyVaultProperties(AzureResourcePropertiesBase):
     """The resource properties when type is Azure Key Vault.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
-    :ivar type: The azure resource type. Required. "KeyVault"
+    :ivar type: The azure resource type. Required. Known values are: "KeyVault" and "AppConfig".
     :vartype type: str or ~azure.mgmt.servicelinker.models.AzureResourceType
     :ivar connect_as_kubernetes_csi_driver: True if connect via Kubernetes CSI Driver.
     :vartype connect_as_kubernetes_csi_driver: bool
@@ -189,12 +221,14 @@ class TargetServiceBase(_serialization.Model):
     """The target service properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureResource, ConfluentBootstrapServer, ConfluentSchemaRegistry, SelfHostedServer
+    AzureResource, ConfluentBootstrapServer, ConfluentSchemaRegistry, FabricPlatform,
+    SelfHostedServer
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The target service type. Required. Known values are: "AzureResource",
-     "ConfluentBootstrapServer", "ConfluentSchemaRegistry", and "SelfHostedServer".
+     "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "SelfHostedServer", and
+     "FabricPlatform".
     :vartype type: str or ~azure.mgmt.servicelinker.models.TargetServiceType
     """
 
@@ -211,6 +245,7 @@ class TargetServiceBase(_serialization.Model):
             "AzureResource": "AzureResource",
             "ConfluentBootstrapServer": "ConfluentBootstrapServer",
             "ConfluentSchemaRegistry": "ConfluentSchemaRegistry",
+            "FabricPlatform": "FabricPlatform",
             "SelfHostedServer": "SelfHostedServer",
         }
     }
@@ -224,10 +259,11 @@ class TargetServiceBase(_serialization.Model):
 class AzureResource(TargetServiceBase):
     """The azure resource info when target service type is AzureResource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The target service type. Required. Known values are: "AzureResource",
-     "ConfluentBootstrapServer", "ConfluentSchemaRegistry", and "SelfHostedServer".
+     "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "SelfHostedServer", and
+     "FabricPlatform".
     :vartype type: str or ~azure.mgmt.servicelinker.models.TargetServiceType
     :ivar id: The Id of azure resource.
     :vartype id: str
@@ -270,7 +306,7 @@ class DryrunPrerequisiteResult(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     BasicErrorDryrunPrerequisiteResult, PermissionsMissingDryrunPrerequisiteResult
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of dryrun result. Required. Known values are: "basicError" and
      "permissionsMissing".
@@ -301,7 +337,7 @@ class DryrunPrerequisiteResult(_serialization.Model):
 class BasicErrorDryrunPrerequisiteResult(DryrunPrerequisiteResult):
     """The represent of basic error.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of dryrun result. Required. Known values are: "basicError" and
      "permissionsMissing".
@@ -603,10 +639,11 @@ class ConfigurationStore(_serialization.Model):
 class ConfluentBootstrapServer(TargetServiceBase):
     """The service properties when target service type is ConfluentBootstrapServer.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The target service type. Required. Known values are: "AzureResource",
-     "ConfluentBootstrapServer", "ConfluentSchemaRegistry", and "SelfHostedServer".
+     "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "SelfHostedServer", and
+     "FabricPlatform".
     :vartype type: str or ~azure.mgmt.servicelinker.models.TargetServiceType
     :ivar endpoint: The endpoint of service.
     :vartype endpoint: str
@@ -634,10 +671,11 @@ class ConfluentBootstrapServer(TargetServiceBase):
 class ConfluentSchemaRegistry(TargetServiceBase):
     """The service properties when target service type is ConfluentSchemaRegistry.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The target service type. Required. Known values are: "AzureResource",
-     "ConfluentBootstrapServer", "ConfluentSchemaRegistry", and "SelfHostedServer".
+     "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "SelfHostedServer", and
+     "FabricPlatform".
     :vartype type: str or ~azure.mgmt.servicelinker.models.TargetServiceType
     :ivar endpoint: The endpoint of service.
     :vartype endpoint: str
@@ -758,7 +796,7 @@ class DryrunParameters(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     CreateOrUpdateDryrunParameters
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar action_name: The name of action for you dryrun job. Required. "createOrUpdate"
     :vartype action_name: str or ~azure.mgmt.servicelinker.models.DryrunActionName
@@ -785,7 +823,7 @@ class CreateOrUpdateDryrunParameters(DryrunParameters, LinkerProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar target_service: The target service properties.
     :vartype target_service: ~azure.mgmt.servicelinker.models.TargetServiceBase
@@ -1238,7 +1276,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1280,7 +1318,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1292,24 +1330,6 @@ class ProxyResource(Resource):
     :vartype system_data: ~azure.mgmt.servicelinker.models.SystemData
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class DryrunResource(ProxyResource):
     """a dryrun job resource.
@@ -1317,7 +1337,7 @@ class DryrunResource(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1373,7 +1393,7 @@ class DryrunResource(ProxyResource):
 class EasyAuthMicrosoftEntraIDAuthInfo(AuthInfoBase):
     """The authentication info when authType is EasyAuth Microsoft Entra ID.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: The authentication type. Required. Known values are: "systemAssignedIdentity",
      "userAssignedIdentity", "servicePrincipalSecret", "servicePrincipalCertificate", "secret",
@@ -1529,6 +1549,38 @@ class ErrorResponse(_serialization.Model):
         self.error = error
 
 
+class FabricPlatform(TargetServiceBase):
+    """The service properties when target service type is FabricPlatform.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar type: The target service type. Required. Known values are: "AzureResource",
+     "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "SelfHostedServer", and
+     "FabricPlatform".
+    :vartype type: str or ~azure.mgmt.servicelinker.models.TargetServiceType
+    :ivar endpoint: The endpoint of service.
+    :vartype endpoint: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "endpoint": {"key": "endpoint", "type": "str"},
+    }
+
+    def __init__(self, *, endpoint: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword endpoint: The endpoint of service.
+        :paramtype endpoint: str
+        """
+        super().__init__(**kwargs)
+        self.type: str = "FabricPlatform"
+        self.endpoint = endpoint
+
+
 class FirewallRules(_serialization.Model):
     """Target service's firewall rules. to allow connections from source service.
 
@@ -1582,7 +1634,7 @@ class SecretInfoBase(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     KeyVaultSecretReferenceSecretInfo, KeyVaultSecretUriSecretInfo, ValueSecretInfo
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar secret_type: The secret type. Required. Known values are: "rawValue",
      "keyVaultSecretUri", and "keyVaultSecretReference".
@@ -1616,7 +1668,7 @@ class KeyVaultSecretReferenceSecretInfo(SecretInfoBase):
     secret stored in user's keyvault and source is Azure Kubernetes. The key Vault's resource id is
     linked to secretStore.keyVaultId.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar secret_type: The secret type. Required. Known values are: "rawValue",
      "keyVaultSecretUri", and "keyVaultSecretReference".
@@ -1654,7 +1706,7 @@ class KeyVaultSecretUriSecretInfo(SecretInfoBase):
     """The secret info when type is keyVaultSecretUri. It's for scenario that user provides a secret
     stored in user's keyvault and source is Web App, Spring Cloud or Container App.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar secret_type: The secret type. Required. Known values are: "rawValue",
      "keyVaultSecretUri", and "keyVaultSecretReference".
@@ -1778,7 +1830,7 @@ class LinkerResource(ProxyResource):  # pylint: disable=too-many-instance-attrib
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2002,10 +2054,10 @@ class OperationListResult(_serialization.Model):
         self.next_link = None
 
 
-class PermissionsMissingDryrunPrerequisiteResult(DryrunPrerequisiteResult):
+class PermissionsMissingDryrunPrerequisiteResult(DryrunPrerequisiteResult):  # pylint: disable=name-too-long
     """The represent of missing permissions.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The type of dryrun result. Required. Known values are: "basicError" and
      "permissionsMissing".
@@ -2134,7 +2186,7 @@ class ResourceList(_serialization.Model):
 class SecretAuthInfo(AuthInfoBase):
     """The authentication info when authType is secret.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: The authentication type. Required. Known values are: "systemAssignedIdentity",
      "userAssignedIdentity", "servicePrincipalSecret", "servicePrincipalCertificate", "secret",
@@ -2220,10 +2272,11 @@ class SecretStore(_serialization.Model):
 class SelfHostedServer(TargetServiceBase):
     """The service properties when target service type is SelfHostedServer.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: The target service type. Required. Known values are: "AzureResource",
-     "ConfluentBootstrapServer", "ConfluentSchemaRegistry", and "SelfHostedServer".
+     "ConfluentBootstrapServer", "ConfluentSchemaRegistry", "SelfHostedServer", and
+     "FabricPlatform".
     :vartype type: str or ~azure.mgmt.servicelinker.models.TargetServiceType
     :ivar endpoint: The endpoint of service.
     :vartype endpoint: str
@@ -2251,7 +2304,7 @@ class SelfHostedServer(TargetServiceBase):
 class ServicePrincipalCertificateAuthInfo(AuthInfoBase):
     """The authentication info when authType is servicePrincipal certificate.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar auth_type: The authentication type. Required. Known values are: "systemAssignedIdentity",
      "userAssignedIdentity", "servicePrincipalSecret", "servicePrincipalCertificate", "secret",
@@ -2335,7 +2388,7 @@ class ServicePrincipalCertificateAuthInfo(AuthInfoBase):
 class ServicePrincipalSecretAuthInfo(AuthInfoBase, DatabaseAadAuthInfo):
     """The authentication info when authType is servicePrincipal secret.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar user_name: Username created in the database which is mapped to a user in AAD.
     :vartype user_name: str
@@ -2485,7 +2538,7 @@ class SourceConfiguration(_serialization.Model):
 class SystemAssignedIdentityAuthInfo(AuthInfoBase, DatabaseAadAuthInfo):
     """The authentication info when authType is systemAssignedIdentity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar user_name: Username created in the database which is mapped to a user in AAD.
     :vartype user_name: str
@@ -2617,7 +2670,7 @@ class SystemData(_serialization.Model):
 class UserAccountAuthInfo(AuthInfoBase, DatabaseAadAuthInfo):
     """The authentication info when authType is user account.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar user_name: Username created in the database which is mapped to a user in AAD.
     :vartype user_name: str
@@ -2692,7 +2745,7 @@ class UserAccountAuthInfo(AuthInfoBase, DatabaseAadAuthInfo):
 class UserAssignedIdentityAuthInfo(AuthInfoBase, DatabaseAadAuthInfo):
     """The authentication info when authType is userAssignedIdentity.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar user_name: Username created in the database which is mapped to a user in AAD.
     :vartype user_name: str
@@ -2922,7 +2975,7 @@ class ValidationResultItem(_serialization.Model):
 class ValueSecretInfo(SecretInfoBase):
     """The secret info when type is rawValue. It's for scenarios that user input the secret.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar secret_type: The secret type. Required. Known values are: "rawValue",
      "keyVaultSecretUri", and "keyVaultSecretReference".
