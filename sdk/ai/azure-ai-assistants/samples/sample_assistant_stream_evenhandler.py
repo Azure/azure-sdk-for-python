@@ -95,7 +95,7 @@ def sample_assistant_stream_iteration():
     logging.info("Created assistant client")
 
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="You are a helpful assistant"
+        model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant"
     )
     logging.info(f"Created assistant, assistant ID {assistant.id}")
 

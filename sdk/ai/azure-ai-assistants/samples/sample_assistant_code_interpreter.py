@@ -72,7 +72,7 @@ def sample_assistant_run():
 
     # Create assistant
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="You are a helpful assistant that can analyze data and create charts", toolset=toolset
+        model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant that can analyze data and create charts", toolset=toolset
     )
     logging.info("Created assistant, ID: %s", assistant.id)
 

@@ -67,7 +67,7 @@ def sample_assistant_functions():
 
     # Create assistant
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
+        model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
     )
     logging.info("Created assistant, ID: %s", assistant.id)
 

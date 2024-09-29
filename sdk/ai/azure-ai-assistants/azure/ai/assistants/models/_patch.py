@@ -391,43 +391,18 @@ class AssistantEventHandler:
         pass
 
 
-class AssistantRunStream(Iterator[Tuple[str, Any]]):
-
-    def __init__(self, response_iterator: Iterator[bytes], event_handler: Optional[AssistantEventHandler] = None):
+class BaseAssistantRunStream:
+    def __init__(self, response_iterator: Iterator[bytes]):
         self.response_iterator = response_iterator
         self.buffer = ""
-        self.event_handler = event_handler
-        self.done = False
 
-    def __enter__(self) -> "AssistantRunStream":
+    def __enter__(self):
         return self
 
-    def __exit__(self, exc_type: Optional[type], exc_val: Optional[BaseException], exc_tb: Optional[Any]) -> None:
-        # Ensure resource cleanup
+    def __exit__(self, exc_type, exc_val, exc_tb):
         close_method = getattr(self.response_iterator, "close", None)
         if callable(close_method):
             close_method()
-
-    def __iter__(self) -> "AssistantRunStream":
-        return self
-
-    def __next__(self) -> Tuple[str, Any]:
-        if self.done:
-            raise StopIteration
-        while True:
-            try:
-                chunk = next(self.response_iterator)
-                self.buffer += chunk.decode("utf-8")
-            except StopIteration:
-                if self.buffer:
-                    event_data_str, self.buffer = self.buffer, ""
-                    if event_data_str:
-                        return self.process_event(event_data_str)
-                raise StopIteration
-
-            while "\n\n" in self.buffer:
-                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                return self.process_event(event_data_str)
 
     def process_event(self, event_data_str: str) -> Tuple[str, Any]:
         event_lines = event_data_str.strip().split("\n")
@@ -492,6 +467,64 @@ class AssistantRunStream(Iterator[Tuple[str, Any]]):
         else:
             event_data_obj = parsed_data
 
+        return event_type, event_data_obj
+
+
+class AsyncAssistantRunStream(BaseAssistantRunStream):
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        while True:
+            try:
+                chunk = await self.response_iterator.__anext__()
+                self.buffer += chunk.decode("utf-8")
+            except StopAsyncIteration:
+                if self.buffer:
+                    event_data_str, self.buffer = self.buffer, ""
+                    if event_data_str:
+                        return self.process_event(event_data_str)
+                raise StopAsyncIteration
+
+            while "\n\n" in self.buffer:
+                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
+                return self.process_event(event_data_str)
+
+
+class AssistantRunStream(BaseAssistantRunStream, Iterator[Tuple[str, Any]]):
+    def __init__(
+        self,
+        response_iterator: Iterator[bytes],
+        event_handler: Optional[AssistantEventHandler] = None,
+    ):
+        super().__init__(response_iterator)
+        self.event_handler = event_handler
+        self.done = False
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> Tuple[str, Any]:
+        if self.done:
+            raise StopIteration
+        while True:
+            try:
+                chunk = next(self.response_iterator)
+                self.buffer += chunk.decode("utf-8")
+            except StopIteration:
+                if self.buffer:
+                    event_data_str, self.buffer = self.buffer, ""
+                    if event_data_str:
+                        return self.process_event(event_data_str)
+                raise StopIteration
+
+            while "\n\n" in self.buffer:
+                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
+                return self.process_event(event_data_str)
+
+    def process_event(self, event_data_str: str) -> Tuple[str, Any]:
+        event_type, event_data_obj = super().process_event(event_data_str)
+
         if self.event_handler:
             try:
                 if isinstance(event_data_obj, MessageDeltaChunk):
@@ -505,7 +538,7 @@ class AssistantRunStream(Iterator[Tuple[str, Any]]):
                 elif isinstance(event_data_obj, RunStepDeltaChunk):
                     self.event_handler.on_run_step_delta(event_data_obj)
                 elif event_type == AssistantStreamEvent.ERROR:
-                    self.event_handler.on_error(event_data)
+                    self.event_handler.on_error(event_data_obj)
                 elif event_type == AssistantStreamEvent.DONE:
                     self.event_handler.on_done()
                     self.done = True  # Mark the stream as done
@@ -529,6 +562,7 @@ class AssistantRunStream(Iterator[Tuple[str, Any]]):
 
 __all__: List[str] = [
     "AssistantEventHandler",
+    "AsyncAssistantRunStream",
     "AssistantRunStream",
     "FunctionTool",
     "FileSearchTool",
@@ -536,6 +570,7 @@ __all__: List[str] = [
     "Tool",
     "ToolSet",
 ]  # Add all objects you want publicly available to users at this package level
+
 
 
 def patch_sdk():

@@ -28,6 +28,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants import AssistantsClient
 from azure.ai.assistants.models import FileSearchTool, ToolSet
+from azure.ai.assistants.models._enums import FilePurpose
 from azure.core.credentials import AzureKeyCredential
 from user_functions import user_functions
 
@@ -64,7 +65,7 @@ def sample_assistant_run():
 
     # Create file search tool
     file_search = FileSearchTool()
-    openai_file = assistant_client.upload_file(file_path="product_info_1.md", purpose="assistants")
+    openai_file = assistant_client.upload_file(file_path="product_info_1.md", purpose=FilePurpose.ASSISTANTS)
     openai_vectorstore = assistant_client.create_vector_store(file_ids=[openai_file.id], name="my_vectorstore")
     file_search.add_vector_store(openai_vectorstore.id)
 
@@ -73,7 +74,7 @@ def sample_assistant_run():
 
     # Create assistant
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="Hello, you are helpful assistant and can search information from uploaded files", toolset=toolset
+        model="gpt-4o-mini", name="my-assistant", instructions="Hello, you are helpful assistant and can search information from uploaded files", toolset=toolset
     )
     logging.info("Created assistant, ID: %s", assistant.id)
 
