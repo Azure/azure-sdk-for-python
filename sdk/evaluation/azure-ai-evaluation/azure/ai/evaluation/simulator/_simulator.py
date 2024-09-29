@@ -547,7 +547,7 @@ class Simulator:
         target: Callable,
         api_call_delay_sec: float,
         progress_bar: tqdm,
-    ) -> List[Dict[str, str]]:
+    ) -> List[Dict[str, Optional[str]]]:
         """
         Completes a conversation with the target model based on the conversation starter.
 
@@ -568,7 +568,7 @@ class Simulator:
         :keyword progress_bar: Progress bar for tracking simulation progress.
         :paramtype progress_bar: tqdm
         :return: A list representing the conversation history with each turn's content.
-        :rtype: List[Dict[str, str]]
+        :rtype: List[Dict[str, Optional[str]]]
         """
         conversation_history = ConversationHistory()
         # user_turn = Turn(role=ConversationRole.USER, content=conversation_starter)
