@@ -6,7 +6,7 @@ import functools
 import inspect
 import json
 import logging
-from typing import Callable, Dict, Literal, TypeVar
+from typing import Callable, Dict, Literal, Optional, TypeVar, Union, cast
 
 import pandas as pd
 from promptflow._sdk.entities._flows import FlexFlow as flex_flow
@@ -15,6 +15,8 @@ from promptflow._sdk.entities._flows.dag import Flow as dag_flow
 from promptflow.client import PFClient
 from promptflow.core import Prompty as prompty_core
 from typing_extensions import ParamSpec
+
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 from ..._user_agent import USER_AGENT
 from .._utils import _trace_destination_from_project_scope
@@ -110,8 +112,8 @@ def log_evaluate_activity(func: Callable[P, R]) -> Callable[P, R]:
         from promptflow._sdk._telemetry import ActivityType, log_activity
         from promptflow._sdk._telemetry.telemetry import get_telemetry_logger
 
-        evaluators = kwargs.get("evaluators", [])
-        azure_ai_project = kwargs.get("azure_ai_project", None)
+        evaluators = cast(Optional[Dict[str, Callable]], kwargs.get("evaluators", {})) or {}
+        azure_ai_project = cast(Optional[AzureAIProject], kwargs.get("azure_ai_project", None))
 
         pf_client = PFClient(
             config=(
@@ -125,7 +127,7 @@ def log_evaluate_activity(func: Callable[P, R]) -> Callable[P, R]:
         track_in_cloud = bool(pf_client._config.get_trace_destination())  # pylint: disable=protected-access
         evaluate_target = bool(kwargs.get("target", None))
         evaluator_config = bool(kwargs.get("evaluator_config", None))
-        custom_dimensions = {
+        custom_dimensions: Dict[str, Union[str, bool]] = {
             "track_in_cloud": track_in_cloud,
             "evaluate_target": evaluate_target,
             "evaluator_config": evaluator_config,
