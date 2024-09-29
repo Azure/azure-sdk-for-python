@@ -276,6 +276,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :type exc_tb: Optional[types.TracebackType]
         """
         self._end_run("FINISHED")
+        return None
 
     def get_run_history_uri(self) -> str:
         """
