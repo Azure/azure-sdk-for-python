@@ -391,7 +391,7 @@ def _process_column_mappings(
     :rtype: Dict[str, Dict[str, str]]
     """
 
-    processed_config = {}
+    processed_config: Dict[str, Dict[str, str]] = {}
 
     unexpected_references = re.compile(r"\${(?!target\.|data\.).+?}")
 
