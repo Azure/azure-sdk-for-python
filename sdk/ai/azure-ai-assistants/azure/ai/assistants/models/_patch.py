@@ -21,8 +21,42 @@ from ._models import (
 )
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Type, Optional, Iterator, Tuple
+from typing import List, Dict, Any, Type, Optional, Iterator, Tuple, get_origin
+
 import inspect, json, logging
+
+
+# Define type_map to translate Python type annotations to JSON Schema types
+type_map = {
+    "str": "string",
+    "int": "integer",
+    "float": "number",
+    "bool": "boolean",
+    "bytes": "string",      # Typically encoded as base64-encoded strings in JSON
+    "NoneType": "null",
+    "datetime": "string",   # Use format "date-time"
+    "date": "string",       # Use format "date"
+    "UUID": "string",       # Use format "uuid"
+}
+
+
+def _map_type(annotation) -> str:
+
+    if annotation == inspect.Parameter.empty:
+        return "string"  # Default type if annotation is missing
+
+    origin = get_origin(annotation)
+    
+    if origin in {list, List}:
+        return "array"
+    elif origin in {dict, Dict}:
+        return "object"
+    elif hasattr(annotation, "__name__"):
+        return type_map.get(annotation.__name__, "string")
+    elif isinstance(annotation, type):
+        return type_map.get(annotation.__name__, "string")
+    
+    return "string"  # Fallback to "string" if type is unrecognized
 
 
 class Tool(ABC):
@@ -68,31 +102,19 @@ class FunctionTool(Tool):
 
     def _build_function_definitions(self, functions: Dict[str, Any]) -> List[FunctionToolDefinition]:
         specs = []
-        type_map = {"str": "string", "int": "integer", "float": "number", "bool": "boolean", "default": "string"}
-
         for name, func in functions.items():
             sig = inspect.signature(func)
             params = sig.parameters
             docstring = inspect.getdoc(func)
             description = docstring.split("\n")[0] if docstring else "No description"
 
-            properties = {
-                param_name: {
-                    "type": type_map.get(
-                        param.annotation.__name__ if param.annotation != inspect.Parameter.empty else "default",
-                        type_map["default"],
-                    ),
-                    "description": param.annotation.__doc__ if param.annotation != inspect.Parameter.empty else None,
-                }
-                for param_name, param in params.items()
-            }
+            properties = {}
+            for param_name, param in params.items():
+                param_type = _map_type(param.annotation)
+                param_description = param.annotation.__doc__ if param.annotation != inspect.Parameter.empty else None
+                properties[param_name] = {"type": param_type, "description": param_description}
 
-            function_def = FunctionDefinition(
-                name=name,
-                description=description,
-                parameters={"type": "object", "properties": properties, "required": list(params.keys())},
-            )
-
+            function_def = FunctionDefinition(name=name, description=description, parameters={"type": "object", "properties": properties, "required": list(params.keys())})
             tool_def = FunctionToolDefinition(function=function_def)
             specs.append(tool_def)
         return specs
@@ -101,7 +123,8 @@ class FunctionTool(Tool):
         """
         Execute the function tool with the provided tool call information.
 
-        :param tool_call: The tool call to execute.
+        :param tool_call: A dictionary containing the function call details.
+
         :return: The output of the tool operations.
         """
         function_name = tool_call.function.name
@@ -238,8 +261,25 @@ class ToolSet:
         Add a tool to the tool set.
 
         :param tool: The tool to add.
+        :raises ValueError: If a tool of the same type already exists.
         """
+        if any(isinstance(existing_tool, type(tool)) for existing_tool in self._tools):
+            raise ValueError(f"Tool of type {type(tool).__name__} already exists in the ToolSet.")
         self._tools.append(tool)
+
+    def remove(self, tool_type: Type[Tool]) -> None:
+        """
+        Remove a tool of the specified type from the tool set.
+
+        :param tool_type: The type of tool to remove.
+        :raises ValueError: If a tool of the specified type is not found.
+        """
+        for i, tool in enumerate(self._tools):
+            if isinstance(tool, tool_type):
+                del self._tools[i]
+                logging.info(f"Tool of type {tool_type.__name__} removed from the ToolSet.")
+                return
+        raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
     @property
     def definitions(self) -> List[ToolDefinition]:
