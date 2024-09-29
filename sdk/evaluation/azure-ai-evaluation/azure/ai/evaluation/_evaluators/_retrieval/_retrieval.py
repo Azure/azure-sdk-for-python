@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 try:
     from .._user_agent import USER_AGENT
 except ImportError:
-    USER_AGENT = None
+    USER_AGENT = "None"
 
 
 class _AsyncRetrievalScoreEvaluator:

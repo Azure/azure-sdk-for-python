@@ -18,7 +18,7 @@ from ..._common.utils import construct_prompty_model_config
 try:
     from ..._user_agent import USER_AGENT
 except ImportError:
-    USER_AGENT = None
+    USER_AGENT = "None"
 
 
 class _AsyncSimilarityEvaluator:
