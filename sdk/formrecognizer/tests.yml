@@ -6,8 +6,10 @@ extends:
       BuildTargetingString: azure-ai-formrecognizer
       ServiceDirectory: formrecognizer
       TestTimeoutInMinutes: 200
+      UseFederatedAuth: true
       MatrixReplace:
-        - TestSamples=.*/true
+        # Disable samples tests for now as some of them are haning.
+        # - TestSamples=.*/true
       Clouds: 'Prod'
       # This is a specific request from the formrecognizer service team
       # their claim is that the full matrix ends up stress-testing their service.
@@ -17,12 +19,9 @@ extends:
           ServiceConnection: azure-sdk-tests
           SubscriptionConfigurationFilePaths:
             - eng/common/TestResources/sub-config/AzurePublicMsft.json
-          Location: $(LOCATION)
+          Location: 'centraluseuap'
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'

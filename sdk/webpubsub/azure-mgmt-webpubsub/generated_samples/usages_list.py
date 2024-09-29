@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.webpubsub import WebPubSubManagementClient
 
 """
@@ -36,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/webpubsub/resource-manager/Microsoft.SignalRService/preview/2023-08-01-preview/examples/Usages_List.json
+# x-ms-original-file: specification/webpubsub/resource-manager/Microsoft.SignalRService/stable/2024-03-01/examples/Usages_List.json
 if __name__ == "__main__":
     main()
