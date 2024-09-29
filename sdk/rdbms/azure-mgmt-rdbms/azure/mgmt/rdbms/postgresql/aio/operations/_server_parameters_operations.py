@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, AsyncIterator, Callable, Dict, IO, Optional, Type, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -15,21 +16,25 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._server_parameters_operations import build_list_update_configurations_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -57,10 +62,10 @@ class ServerParametersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        value: Union[_models.ConfigurationListResult, IO],
+        value: Union[_models.ConfigurationListResult, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.ConfigurationListResult]:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -73,7 +78,7 @@ class ServerParametersOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.ConfigurationListResult]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -83,7 +88,7 @@ class ServerParametersOperations:
         else:
             _json = self._serialize.body(value, "ConfigurationListResult")
 
-        request = build_list_update_configurations_request(
+        _request = build_list_update_configurations_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             subscription_id=self._config.subscription_id,
@@ -91,36 +96,33 @@ class ServerParametersOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._list_update_configurations_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("ConfigurationListResult", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    _list_update_configurations_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers/{serverName}/updateConfigurations"
-    }
+        return deserialized  # type: ignore
 
     @overload
     async def begin_list_update_configurations(
@@ -144,14 +146,6 @@ class ServerParametersOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ConfigurationListResult or the
          result of cls(response)
         :rtype:
@@ -164,7 +158,7 @@ class ServerParametersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        value: IO,
+        value: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -177,18 +171,10 @@ class ServerParametersOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param value: The parameters for updating a list of server configuration. Required.
-        :type value: IO
+        :type value: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either ConfigurationListResult or the
          result of cls(response)
         :rtype:
@@ -201,7 +187,7 @@ class ServerParametersOperations:
         self,
         resource_group_name: str,
         server_name: str,
-        value: Union[_models.ConfigurationListResult, IO],
+        value: Union[_models.ConfigurationListResult, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConfigurationListResult]:
         """Update a list of configurations in a given server.
@@ -212,19 +198,8 @@ class ServerParametersOperations:
         :param server_name: The name of the server. Required.
         :type server_name: str
         :param value: The parameters for updating a list of server configuration. Is either a
-         ConfigurationListResult type or a IO type. Required.
-        :type value: ~azure.mgmt.rdbms.postgresql.models.ConfigurationListResult or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         ConfigurationListResult type or a IO[bytes] type. Required.
+        :type value: ~azure.mgmt.rdbms.postgresql.models.ConfigurationListResult or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either ConfigurationListResult or the
          result of cls(response)
         :rtype:
@@ -252,12 +227,13 @@ class ServerParametersOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("ConfigurationListResult", pipeline_response)
+            deserialized = self._deserialize("ConfigurationListResult", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -270,14 +246,12 @@ class ServerParametersOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.ConfigurationListResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_list_update_configurations.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/servers/{serverName}/updateConfigurations"
-    }
+        return AsyncLROPoller[_models.ConfigurationListResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

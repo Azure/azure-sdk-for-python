@@ -159,7 +159,7 @@ class JobOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
 
         self._operation_2023_02_preview = service_client_02_2023_preview.jobs
         self._service_client = service_client_02_2023_preview
@@ -725,7 +725,8 @@ class JobOperations(_ScopeDependentOperations):
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
             service_client_operation = self.service_client_01_2024_preview.jobs
-
+        if rest_job_resource.properties.job_type == RestJobType.AUTO_ML:
+            service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_01_2024_preview.jobs
 

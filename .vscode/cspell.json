@@ -61,6 +61,7 @@
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/core/corehttp/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
+    "sdk/evaluation/azure-ai-evaluation/tests/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
@@ -134,9 +135,11 @@
     "conda/conda-recipes/msal-extensions/meta.yaml",
     "conda/conda-recipes/msrest/meta.yaml",
     "conda/conda-recipes/uamqp/meta.yaml",
-    "conda/conda-releaselogs/azure-mgmt.md"
+    "conda/conda-releaselogs/azure-mgmt.md",
+    ".github/workflows/azure-sdk-tools.yml"
   ],
   "words": [
+    "msedge",
     "spinup",
     "cibuildwheel",
     "aoai",
@@ -260,6 +263,7 @@
     "iohttp",
     "IOHTTP",
     "IOLRO",
+    "incompat",
     "inprogress",
     "ipconfiguration",
     "ipconfigurations",
@@ -466,7 +470,8 @@
     "dicom",
     "WINDOWSVMIMAGE",
     "LINUXVMIMAGE",
-    "MACVMIMAGE"
+    "MACVMIMAGE",
+    "myuseragent"
   ],
   "overrides": [
     {
@@ -1305,7 +1310,32 @@
         "mros",
         "Nify",
         "ctxt",
-        "wday"
+        "wday",
+        "dtype"
+      ]
+    },
+    {
+      "filename": "sdk/evaluation/azure-ai-evaluation/**",
+      "words": [
+        "raisvc",
+        "otel",
+        "otlp",
+        "aggr",
+        "mlflow",
+        "azureml",
+        "dcid",
+        "prompty",
+        "wsid",
+        "tkey",
+        "tparam",
+        "tqdm",
+        "ncols",
+        "datas",
+        "punkt",
+        "gleu",
+        "fmeasure",
+        "upia",
+        "xpia",
       ]
     },
     {

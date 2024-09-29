@@ -37,10 +37,16 @@ extends:
     settings:
       skipBuildTagsForGitHubPullRequests: true
     sdl:
+      ${{ if and(eq(variables['Build.DefinitionName'], 'python - core'), eq(variables['Build.SourceBranchName'], 'main'), eq(variables['System.TeamProject'], 'internal')) }}:
+        autobaseline:
+          isMainPipeline: true
+          enableForGitHub: true
       sourceAnalysisPool:
         name: azsdk-pool-mms-win-2022-general
         image: azsdk-pool-mms-win-2022-1espt
         os: windows
+      # Turn off the build warnings caused by disabling some sdl checks
+      createAdoIssuesForJustificationsForDisablement: false
       eslint:
         enabled: false
         justificationForDisabling: "ESLint injected task has failures because it uses an old version of mkdirp. We should not fail for tools not controlled by the repo. See: https://dev.azure.com/azur     19 e-sdk/internal/_build/results?buildId=3556850"

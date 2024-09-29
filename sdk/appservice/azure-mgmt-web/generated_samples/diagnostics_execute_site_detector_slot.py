@@ -30,11 +30,12 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.diagnostics.execute_site_detector(
+    response = client.diagnostics.execute_site_detector_slot(
         resource_group_name="Sample-WestUSResourceGroup",
         site_name="SampleApp",
         detector_name="sitecrashes",
         diagnostic_category="availability",
+        slot="staging",
     )
     print(response)
 

@@ -244,14 +244,14 @@ set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 pip install azure-maps-render --pre
 
 python samples/sample_authentication.py
-python sample/sample_get_copyright_caption.py
-python sample/sample_get_copyright_for_tile.py
-python sample/sample_get_copyright_for_world.py
-python sample/sample_get_copyright_from_bounding_box.py
-python sample/sample_get_map_attribution.py
-python sample/sample_get_map_static_image.py
-python sample/sample_get_map_tile.py
-python sample/sample_get_map_tileset.py
+python samples/sample_get_copyright_caption.py
+python samples/sample_get_copyright_for_tile.py
+python samples/sample_get_copyright_for_world.py
+python samples/sample_get_copyright_from_bounding_box.py
+python samples/sample_get_map_attribution.py
+python samples/sample_get_map_static_image.py
+python samples/sample_get_map_tile.py
+python samples/sample_get_map_tileset.py
 ```
 
 > Notes: `--pre` flag can be optionally added, it is to include pre-release and development versions for `pip install`. By default, `pip` only finds stable versions.

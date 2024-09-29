@@ -13,6 +13,7 @@ from .link import Link
 from .constants import LinkState, Role
 from .performatives import TransferFrame, DispositionFrame
 from .outcomes import Received, Accepted, Rejected, Released, Modified
+from .error import AMQPException, ErrorCondition
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -28,6 +29,7 @@ class ReceiverLink(Link):
         self._on_transfer = kwargs.pop("on_transfer")
         self._received_payload = bytearray()
         self._first_frame = None
+        self._received_delivery_tags = set()
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -54,10 +56,12 @@ class ReceiverLink(Link):
     def _incoming_transfer(self, frame):
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
+
         # If more is false --> this is the last frame of the message
         if not frame[5]:
             self.current_link_credit -= 1
-        self.delivery_count += 1
+            self.total_link_credit -=1
+            self.delivery_count += 1
         self.received_delivery_id = frame[1]  # delivery_id
         if self.received_delivery_id is not None:
             self._first_frame = frame
@@ -66,16 +70,19 @@ class ReceiverLink(Link):
         if self._received_payload or frame[5]:  # more
             self._received_payload.extend(frame[11])
         if not frame[5]:
+            self._received_delivery_tags.add(self._first_frame[2])
             if self._received_payload:
                 message = decode_payload(memoryview(self._received_payload))
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
             delivery_state = self._process_incoming_message(self._first_frame, message)
+
             if not frame[4] and delivery_state:  # settled
                 self._outgoing_disposition(
                     first=self._first_frame[1],
                     last=self._first_frame[1],
+                    delivery_tag=self._first_frame[2],
                     settled=True,
                     state=delivery_state,
                     batchable=None
@@ -97,16 +104,21 @@ class ReceiverLink(Link):
         self,
         first: int,
         last: Optional[int],
+        delivery_tag: bytes,
         settled: Optional[bool],
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
     ):
+        if delivery_tag not in self._received_delivery_tags:
+            raise AMQPException(condition=ErrorCondition.IllegalState, description = "Delivery tag not found.")
+
         disposition_frame = DispositionFrame(
             role=self.role, first=first, last=last, settled=settled, state=state, batchable=batchable
         )
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
+        self._received_delivery_tags.remove(delivery_tag)
 
     def attach(self):
         super().attach()
@@ -118,12 +130,20 @@ class ReceiverLink(Link):
         wait: Union[bool, float] = False,
         first_delivery_id: int,
         last_delivery_id: Optional[int] = None,
+        delivery_tag: bytes,
         settled: Optional[bool] = None,
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
         batchable: Optional[bool] = None
     ):
         if self._is_closed:
             raise ValueError("Link already closed.")
-        self._outgoing_disposition(first_delivery_id, last_delivery_id, settled, delivery_state, batchable)
+        self._outgoing_disposition(
+            first_delivery_id,
+            last_delivery_id,
+            delivery_tag,
+            settled,
+            delivery_state,
+            batchable
+        )
         if not settled:
             self._wait_for_response(wait)

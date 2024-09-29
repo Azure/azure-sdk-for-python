@@ -1,0 +1,6 @@
+httpx==0.25.2
+markdown==3.6
+PyGitHub>=1.59.0
+setuptools==72.2.0
+-e ./sdk/identity/azure-identity
+-e ./tools/azure-sdk-tools

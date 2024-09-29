@@ -48,7 +48,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     ImageObjectDetection as RestImageObjectDetection,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2024_01_01_preview.models._models_py3 import (
     InstanceSegmentationPrimaryMetrics,
     JobBase,
     LogVerbosity,

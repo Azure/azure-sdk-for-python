@@ -1,5 +1,32 @@
 # Release History
 
+## 12.24.0b1 (Unreleased)
+
+### Features Added
+
+
+
+## 12.23.1 (2024-09-25)
+
+### Features Added
+- Added support for decryption of Blobs encrypted using client-side encryption version 2.1.
+
+## 12.23.0 (2024-09-17)
+
+### Features Added
+- Stable release of features from 12.23.0b1
+
+### Bugs Fixed
+- Fixed an issue with batch APIs when using Azurite.
+
+## 12.23.0b1 (2024-08-07)
+
+### Features Added
+- Added support for service version 2024-11-04.
+
+### Other Changes
+- Bumped minimum `azure-core` dependency to 1.30.0.
+
 ## 12.22.0 (2024-08-06)
 
 ### Other Changes

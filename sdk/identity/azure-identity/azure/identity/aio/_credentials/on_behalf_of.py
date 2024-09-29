@@ -6,7 +6,7 @@ import logging
 from typing import Optional, Union, Any, Dict, Callable
 
 from azure.core.exceptions import ClientAuthenticationError
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._credentials.certificate import get_client_credential
@@ -68,6 +68,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         client_secret: Optional[str] = None,
         client_assertion_func: Optional[Callable[[], str]] = None,
         user_assertion: str,
+        password: Optional[Union[str, bytes]] = None,
         **kwargs: Any
     ) -> None:
         super().__init__()
@@ -90,7 +91,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
             if client_secret:
                 raise ValueError('Specifying both "client_certificate" and "client_secret" is not valid.')
             try:
-                cert = get_client_credential(None, kwargs.pop("password", None), client_certificate)
+                cert = get_client_credential(None, password, client_certificate)
             except ValueError as ex:
                 message = '"client_certificate" is not a valid certificate in PEM or PKCS12 format'
                 raise ValueError(message) from ex
@@ -110,10 +111,10 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     async def close(self) -> None:
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         # Note we assume the cache has tokens for one user only. That's okay because each instance of this class is
         # locked to a single user (assertion). This assumption will become unsafe if this class allows applications
         # to change an instance's assertion.

@@ -116,5 +116,5 @@ __all__ = [
     "RetryCounter",
     "FakeTokenCredential",
     "create_combined_bundle",
-    "is_live_and_not_recording"
+    "is_live_and_not_recording",
 ]

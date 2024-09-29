@@ -56,7 +56,7 @@ setup(
     url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob',
     keywords="azure, azure sdk",
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
@@ -78,14 +78,14 @@ setup(
     ]),
     python_requires=">=3.8",
     install_requires=[
-        "azure-core>=1.28.0",
+        "azure-core>=1.30.0",
         "cryptography>=2.1.4",
         "typing-extensions>=4.6.0",
         "isodate>=0.6.1"
     ],
     extras_require={
         "aio": [
-            "azure-core[aio]>=1.28.0",
+            "azure-core[aio]>=1.30.0",
         ],
     },
 )
