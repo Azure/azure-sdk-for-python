@@ -8,7 +8,17 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from ._enums import AssistantStreamEvent
 from ._models import MessageDeltaChunk, ThreadRun, RunStep, ThreadMessage, RunStepDeltaChunk
-from ._models import FunctionToolDefinition, FunctionDefinition, ToolDefinition, ToolResources, FileSearchToolDefinition, FileSearchToolResource, CodeInterpreterToolDefinition, CodeInterpreterToolResource
+from ._models import (
+    FunctionToolDefinition, 
+    FunctionDefinition, 
+    ToolDefinition, 
+    ToolResources, 
+    FileSearchToolDefinition, 
+    FileSearchToolResource, 
+    CodeInterpreterToolDefinition, 
+    CodeInterpreterToolResource, 
+    RequiredFunctionToolCall
+)
 
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Type, Optional, Iterator, Tuple
@@ -32,8 +42,13 @@ class Tool(ABC):
         pass
 
     @abstractmethod
-    def execute(self, tool_calls: List[Any]) -> Any:
-        """Execute tool operations based on tool_calls provided."""
+    def execute(self, tool_call : Any) -> Any:
+        """
+        Execute the tool with the provided tool call.
+
+        :param tool_call: The tool call to execute.
+        :return: The output of the tool operations.
+        """
         pass
 
 
@@ -64,10 +79,10 @@ class FunctionTool(Tool):
             properties = {
                 param_name: {
                     "type": type_map.get(
-                        param.annotation.__name__ if param.annotation != inspect._empty else "default",
+                        param.annotation.__name__ if param.annotation != inspect.Parameter.empty else "default",
                         type_map["default"],
                     ),
-                    "description": param.annotation.__doc__ if param.annotation != inspect._empty else None,
+                    "description": param.annotation.__doc__ if param.annotation != inspect.Parameter.empty else None,
                 }
                 for param_name, param in params.items()
             }
@@ -82,44 +97,39 @@ class FunctionTool(Tool):
             specs.append(tool_def)
         return specs
 
-    def execute(self, tool_calls: List[Any]) -> Any:
+    def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
         """
-        Invoke a list of function calls with their specified arguments.
+        Execute the function tool with the provided tool call information.
 
-        :param tool_calls: A list of tool call objects, each containing a function name and arguments.
-        :return: A list of tool outputs containing the results of the function calls.
+        :param tool_call: The tool call to execute.
+        :return: The output of the tool operations.
         """
-        tool_outputs = []
+        function_name = tool_call.function.name
+        arguments = tool_call.function.arguments
+        return self._handle_function_call(function_name, arguments)
+    
+    def _handle_function_call(self, function_name: str, arguments: str) -> Any:
+        if function_name not in self._functions:
+            logging.error(f"Function '{function_name}' not found.")
+            raise ValueError(f"Function '{function_name}' not found.")
+        
+        function = self._functions[function_name]
 
-        for tool_call in tool_calls:
-            function_response = str(self._handle_function_call(tool_call.function.name, tool_call.function.arguments))
-            tool_output = {
-                "tool_call_id": tool_call.id,
-                "output": function_response,
-            }
-            tool_outputs.append(tool_output)
+        try:
+            parsed_arguments = json.loads(arguments)
+        except json.JSONDecodeError as e:
+            logging.error(f"Invalid JSON arguments for function '{function_name}': {e}")
+            raise ValueError(f"Invalid JSON arguments: {e}") from e
 
-        return tool_outputs
+        if not isinstance(parsed_arguments, dict):
+            logging.error(f"Arguments must be a JSON object for function '{function_name}'.")
+            raise TypeError("Arguments must be a JSON object.")
 
-    def _handle_function_call(self, function_name, arguments):
-        if function_name in self._functions:
-            function = self._functions[function_name]
-
-            try:
-                parsed_arguments = json.loads(arguments)
-            except json.JSONDecodeError:
-                parsed_arguments = {}
-
-            if isinstance(parsed_arguments, dict):
-                if not parsed_arguments:
-                    return function()
-                else:
-                    try:
-                        return function(**parsed_arguments)
-                    except TypeError as e:
-                        return None
-            else:
-                return None
+        try:
+            return function(**parsed_arguments) if parsed_arguments else function()
+        except TypeError as e:
+            logging.error(f"Error executing function '{function_name}': {e}")
+            raise
 
     @property
     def definitions(self) -> List[FunctionToolDefinition]:
@@ -173,7 +183,7 @@ class FileSearchTool(Tool):
             )
         )
 
-    def execute(self, tool_calls: List[Any]) -> Any:
+    def execute(self, tool_call: Any) -> Any:
         pass
 
 
@@ -211,7 +221,7 @@ class CodeInterpreterTool(Tool):
             )
         )
 
-    def execute(self, tool_calls: List[Any]) -> Any:
+    def execute(self, tool_call: Any) -> Any:
         pass
 
 
@@ -280,6 +290,30 @@ class ToolSet:
             if isinstance(tool, tool_type):
                 return tool
         raise ValueError(f"Tool of type {tool_type.__name__} not found.")
+
+    def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
+        """
+        Execute a tool of the specified type with the provided tool calls.
+
+        :param tool_calls: A list of tool calls to execute.
+        :return: The output of the tool operations.
+        """
+        tool_outputs = []
+
+        for tool_call in tool_calls:
+            try:
+                if tool_call.type == "function":
+                    tool = self.get_tool(FunctionTool)
+                    output = tool.execute(tool_call)
+                    tool_output = {
+                        "tool_call_id": tool_call.id,
+                        "output": output,
+                    }
+                    tool_outputs.append(tool_output)
+            except Exception as e:
+                logging.error(f"Failed to execute tool call {tool_call}: {e}")
+
+        return tool_outputs
 
 
 class AssistantEventHandler:

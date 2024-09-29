@@ -95,7 +95,15 @@ def sample_assistant_functions():
                 assistant_client.cancel_run(thread_id=thread.id, run_id=run.id)
                 break
 
-            tool_outputs = functions.execute(tool_calls)
+            tool_outputs = []
+            for tool_call in tool_calls:
+                output = functions.execute(tool_call)
+                tool_output = {
+                        "tool_call_id": tool_call.id,
+                        "output": output,
+                    }
+                tool_outputs.append(tool_output)
+
             logging.info("Tool outputs: %s", tool_outputs)
             if tool_outputs:
                 assistant_client.submit_tool_outputs_to_run(

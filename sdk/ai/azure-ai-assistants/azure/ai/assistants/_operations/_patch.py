@@ -685,9 +685,7 @@ class AssistantsClientOperationsMixin(AssistantsClientOperationsMixinGenerated):
 
                 toolset = self.get_toolset()
                 if toolset:
-                    tool = toolset.get_tool(_models.FunctionTool)
-                    if tool:
-                        tool_outputs = tool.execute(tool_calls)
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
                 else:
                     raise ValueError("Toolset is not available in the client.")
                     
