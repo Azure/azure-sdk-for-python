@@ -394,24 +394,21 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: Optional[str]
        :type token: str
        :return: The Azure authentication token.
     """
-    acquire_new_token = True
-    try:
-        if token:
-            # Decode the token to get its expiration time
+    if token:
+        # Decode the token to get its expiration time
+        try:
             decoded_token = jwt.decode(token, options={"verify_signature": False})
+        except jwt.PyJWTError:
+            pass
+        else:
             exp_time = decoded_token["exp"]
             current_time = time.time()
 
-            # Check if the token is near expiry
+            # Return current token if not near expiry
             if (exp_time - current_time) >= 300:
-                acquire_new_token = False
-    except Exception:  # pylint: disable=broad-exception-caught
-        pass
+                return token
 
-    if acquire_new_token:
-        token = credential.get_token("https://management.azure.com/.default").token
-
-    return token
+    return credential.get_token("https://management.azure.com/.default").token
 
 
 async def evaluate_with_rai_service(
