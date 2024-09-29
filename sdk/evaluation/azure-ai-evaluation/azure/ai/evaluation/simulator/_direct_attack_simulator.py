@@ -10,7 +10,7 @@ from typing import Callable, Optional
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator import AdversarialScenario
-from azure.identity import DefaultAzureCredential
+from azure.core.credentials import TokenCredential
 
 from ._adversarial_simulator import AdversarialSimulator
 from ._helpers import experimental
@@ -32,7 +32,7 @@ class DirectAttackSimulator:
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
         """Constructor."""
         # check if azure_ai_project has the keys: subscription_id, resource_group_name, project_name, credential
         if not all(key in azure_ai_project for key in ["subscription_id", "resource_group_name", "project_name"]):
@@ -54,10 +54,6 @@ class DirectAttackSimulator:
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,
             )
-        if "credential" not in azure_ai_project and not credential:
-            credential = DefaultAzureCredential()
-        elif "credential" in azure_ai_project:
-            credential = azure_ai_project["credential"]
         self.credential = credential
         self.azure_ai_project = azure_ai_project
         self.token_manager = ManagedIdentityAPITokenManager(

@@ -7,10 +7,11 @@ from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.core.credentials import TokenCredential
 
 
 class _AsyncProtectedMaterialsEvaluator:
-    def __init__(self, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, azure_ai_project: AzureAIProject, credential: TokenCredential):
         self._azure_ai_project = azure_ai_project
         self._credential = credential
 
@@ -85,7 +86,7 @@ class ProtectedMaterialsEvaluator:
         }
     """
 
-    def __init__(self, credential, azure_ai_project: AzureAIProject):
+    def __init__(self, credential: TokenCredential, azure_ai_project: AzureAIProject):
         self._async_evaluator = _AsyncProtectedMaterialsEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, query: str, response: str, **kwargs):

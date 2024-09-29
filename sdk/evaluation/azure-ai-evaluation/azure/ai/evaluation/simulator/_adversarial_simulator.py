@@ -15,8 +15,8 @@ from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator import AdversarialScenario
 from azure.ai.evaluation.simulator._adversarial_scenario import _UnstableAdversarialScenario
+from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
-from azure.identity import DefaultAzureCredential
 
 from ._constants import SupportedLanguages
 from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole
@@ -46,7 +46,7 @@ class AdversarialSimulator:
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, azure_ai_project: AzureAIProject, credential=None):
+    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
         """Constructor."""
         # check if azure_ai_project has the keys: subscription_id, resource_group_name and project_name
         if not all(key in azure_ai_project for key in ["subscription_id", "resource_group_name", "project_name"]):
@@ -68,10 +68,6 @@ class AdversarialSimulator:
                 category=ErrorCategory.MISSING_FIELD,
                 blame=ErrorBlame.USER_ERROR,
             )
-        if "credential" not in azure_ai_project and not credential:
-            credential = DefaultAzureCredential()
-        elif "credential" in azure_ai_project:
-            credential = azure_ai_project["credential"]
         self.azure_ai_project = azure_ai_project
         self.token_manager = ManagedIdentityAPITokenManager(
             token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,

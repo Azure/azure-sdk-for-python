@@ -10,6 +10,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Dict, Optional, Union
 
+from azure.core.credentials import TokenCredential
 from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 
 AZURE_TOKEN_REFRESH_INTERVAL = 600  # seconds
@@ -29,14 +30,14 @@ class APITokenManager(ABC):
     :param auth_header: Authorization header prefix. Defaults to "Bearer"
     :type auth_header: str
     :param credential: Azure credential object
-    :type credential: Optional[Union[azure.identity.DefaultAzureCredential, azure.identity.ManagedIdentityCredential]
+    :type credential: Optional[TokenCredential]
     """
 
     def __init__(
         self,
         logger: logging.Logger,
         auth_header: str = "Bearer",
-        credential: Optional[Union[DefaultAzureCredential, ManagedIdentityCredential]] = None,
+        credential: Optional[TokenCredential] = None,
     ) -> None:
         self.logger = logger
         self.auth_header = auth_header
@@ -104,7 +105,7 @@ class ManagedIdentityAPITokenManager(APITokenManager):
         logger: logging.Logger,
         *,
         auth_header: str = "Bearer",
-        credential: Optional[Union[DefaultAzureCredential, ManagedIdentityCredential]] = None,
+        credential: Optional[TokenCredential] = None,
     ):
         super().__init__(logger, auth_header=auth_header, credential=credential)
         self.token_scope = token_scope
@@ -144,7 +145,7 @@ class PlainTokenManager(APITokenManager):
         logger: logging.Logger,
         *,
         auth_header: str = "Bearer",
-        credential: Optional[Union[DefaultAzureCredential, ManagedIdentityCredential]] = None,
+        credential: Optional[TokenCredential] = None,
     ) -> None:
         super().__init__(logger, auth_header=auth_header, credential=credential)
         self.token: str = openapi_key
