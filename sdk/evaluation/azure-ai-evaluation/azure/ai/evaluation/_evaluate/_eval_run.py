@@ -121,8 +121,8 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         self._run_name = run_name
         self._promptflow_run = promptflow_run
         self._status = RunStatus.NOT_STARTED
-        self._url_base = None
-        self.info = None
+        self._url_base: Optional[str] = None
+        self.info: Optional[RunInfo] = None
 
     @property
     def status(self) -> RunStatus:
