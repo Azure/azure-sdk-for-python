@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
-from typing import Optional, cast, Union
+from typing import Optional, cast, Union, Tuple
 from urllib.parse import urlparse
 
 from azure.core.pipeline.transport import (
@@ -133,7 +133,7 @@ def get_challenge_parameter(headers, challenge_scheme: str, challenge_parameter:
     return None
 
 
-def get_next_challenge(header_value: str) -> Optional[tuple[str, str]]:
+def get_next_challenge(header_value: str) -> Optional[Tuple[str, str]]:
     """
     Iterates through the challenge schemes present in a challenge header.
 
@@ -152,7 +152,7 @@ def get_next_challenge(header_value: str) -> Optional[tuple[str, str]]:
     return challenge_key, header_value
 
 
-def get_next_parameter(header_value: str, separator: str = '=') -> Optional[tuple[str, str, str]]:
+def get_next_parameter(header_value: str, separator: str = '=') -> Optional[Tuple[str, str, str]]:
     """
     Iterates through a challenge header value to extract key-value parameters.
 
