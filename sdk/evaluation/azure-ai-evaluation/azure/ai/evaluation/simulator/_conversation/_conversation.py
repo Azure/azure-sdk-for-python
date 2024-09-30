@@ -4,7 +4,7 @@
 
 import asyncio
 import logging
-from typing import Callable, Dict, List, Tuple, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation.simulator._constants import SupportedLanguages
@@ -80,7 +80,7 @@ async def simulate_conversation(
     history_limit: int = 5,
     api_call_delay_sec: float = 0,
     logger: logging.Logger = logging.getLogger(__name__),
-) -> Tuple:
+) -> Tuple[Optional[str], List[ConversationTurn]]:
     """
     Simulate a conversation between the given bots.
 
@@ -99,7 +99,7 @@ async def simulate_conversation(
     :keyword logger: The logger to use for logging. Defaults to the logger named after the current module.
     :paramtype logger: logging.Logger
     :return: Simulation a conversation between the given bots.
-    :rtype: Tuple
+    :rtype: Tuple[Optional[str], List[ConversationTurn]]
     """
 
     # Read the first prompt.
@@ -110,7 +110,7 @@ async def simulate_conversation(
         turn_number=0,
     )
     if "id" in first_response:
-        conversation_id = first_response["id"]
+        conversation_id: Optional[str] = first_response["id"]
     else:
         conversation_id = None
     first_prompt = first_response["samples"][0]
