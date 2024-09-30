@@ -178,6 +178,7 @@ class AsyncEventHandler(AsyncAssistantEventHandler):
             assert tool_call.function.name is not None
 
 
+@pytest.mark.live_test_only
 class TestAssistantsAsync(AzureRecordedTestCase):
 
     def handle_run_failure(self, run: Run):

@@ -6,5 +6,5 @@ type_check_samples = false
 verifytypes = false
 sphinx = false
 sdist = false
-whl = false
 mindependency = false
+verifysdist = false
