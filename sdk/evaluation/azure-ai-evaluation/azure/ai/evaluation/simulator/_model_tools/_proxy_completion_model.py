@@ -184,8 +184,8 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                 message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
             )
 
-        response = response.json()
-        self.result_url = response["location"]
+        response_data = response.json()
+        self.result_url = response_data["location"]
 
         retry_policy = AsyncRetryPolicy(  # set up retry configuration
             retry_on_status_codes=[202],  # on which statuses to retry
