@@ -228,8 +228,7 @@ class AsyncTransportMixin:
         if not cafile:
             cafile = certifi.where()
         loop = asyncio.get_event_loop()
-        with ThreadPoolExecutor() as pool:
-            await loop.run_in_executor(pool, ctx.load_verify_locations, cafile=cafile)
+        await loop.run_in_executor(None, ctx.load_verify_locations, cafile=cafile)
 
     async def _build_ssl_context(
         self, check_hostname=None, **ctx_options
