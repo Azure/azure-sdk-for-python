@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -29,10 +28,6 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import KeyVaultClientMixinABC
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -45,7 +40,7 @@ def build_key_vault_set_secret_request(secret_name: str, **kwargs: Any) -> HttpR
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +66,7 @@ def build_key_vault_delete_secret_request(secret_name: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -96,7 +91,7 @@ def build_key_vault_update_secret_request(secret_name: str, secret_version: str,
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -123,7 +118,7 @@ def build_key_vault_get_secret_request(secret_name: str, secret_version: str, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -148,7 +143,7 @@ def build_key_vault_get_secrets_request(*, maxresults: Optional[int] = None, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -171,7 +166,7 @@ def build_key_vault_get_secret_versions_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -199,7 +194,7 @@ def build_key_vault_get_deleted_secrets_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -222,7 +217,7 @@ def build_key_vault_get_deleted_secret_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -248,7 +243,7 @@ def build_key_vault_purge_deleted_secret_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -274,7 +269,7 @@ def build_key_vault_recover_deleted_secret_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -298,7 +293,7 @@ def build_key_vault_backup_secret_request(secret_name: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -323,7 +318,7 @@ def build_key_vault_restore_secret_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.6-preview.1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "7.5"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -341,7 +336,6 @@ def build_key_vault_restore_secret_request(**kwargs: Any) -> HttpRequest:
 
 
 class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
-
     @overload
     def set_secret(
         self,
@@ -365,12 +359,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          identifiable or sensitive information. Required.
         :type secret_name: str
         :param parameters: The parameters for setting the secret. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretSetParameters
+        :type parameters: ~azure.keyvault.v7_5.models.SecretSetParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -402,7 +396,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -428,12 +422,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type secret_name: str
         :param parameters: The parameters for setting the secret. Is either a SecretSetParameters type
          or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretSetParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.SecretSetParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -502,10 +499,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :return: DeletedSecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.DeletedSecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -574,12 +571,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_version: The version of the secret. Required.
         :type secret_version: str
         :param parameters: The parameters for update secret operation. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretUpdateParameters
+        :type parameters: ~azure.keyvault.v7_5.models.SecretUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -612,7 +609,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -639,12 +636,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type secret_version: str
         :param parameters: The parameters for update secret operation. Is either a
          SecretUpdateParameters type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretUpdateParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.SecretUpdateParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -719,10 +719,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          specified, the latest version of the secret is returned. Required.
         :type secret_version: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -784,7 +784,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of SecretItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_6_preview_1.models.SecretItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_5.models.SecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -792,7 +792,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         cls: ClsType[_models._models.SecretListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -880,7 +880,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of SecretItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_6_preview_1.models.SecretItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_5.models.SecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -888,7 +888,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
 
         cls: ClsType[_models._models.SecretListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -975,7 +975,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          service will return up to 25 results. Default value is None.
         :paramtype maxresults: int
         :return: An iterator like instance of DeletedSecretItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_6_preview_1.models.DeletedSecretItem]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.v7_5.models.DeletedSecretItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -985,7 +985,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
             "cls", None
         )
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1068,10 +1068,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :return: DeletedSecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.DeletedSecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.DeletedSecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1134,7 +1134,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1187,10 +1187,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the deleted secret. Required.
         :type secret_name: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1247,10 +1247,10 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
         :return: BackupSecretResult
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.BackupSecretResult
+        :rtype: ~azure.keyvault.v7_5.models.BackupSecretResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1312,12 +1312,12 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
         :param parameters: The parameters to restore the secret. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretRestoreParameters
+        :type parameters: ~azure.keyvault.v7_5.models.SecretRestoreParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1338,7 +1338,7 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
          Default value is "application/json".
         :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1355,12 +1355,15 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         :type vault_base_url: str
         :param parameters: The parameters to restore the secret. Is either a SecretRestoreParameters
          type or a IO[bytes] type. Required.
-        :type parameters: ~azure.keyvault.v7_6_preview_1.models.SecretRestoreParameters or IO[bytes]
+        :type parameters: ~azure.keyvault.v7_5.models.SecretRestoreParameters or IO[bytes]
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :return: SecretBundle
-        :rtype: ~azure.keyvault.v7_6_preview_1.models.SecretBundle
+        :rtype: ~azure.keyvault.v7_5.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
