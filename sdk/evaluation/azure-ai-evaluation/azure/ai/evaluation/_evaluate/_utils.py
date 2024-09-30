@@ -80,7 +80,7 @@ def _log_metrics_and_instance_results(
     trace_destination,
     run,
     evaluation_name,
-) -> str:
+) -> Optional[str]:
     if trace_destination is None:
         LOGGER.error("Unable to log traces as trace destination was not defined.")
         return None
