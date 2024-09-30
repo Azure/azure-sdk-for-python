@@ -177,12 +177,12 @@ class AsyncTransportMixin:
 
         await self.write(data)
 
-    def _build_ssl_opts(self, sslopts):
+    async def _build_ssl_opts(self, sslopts):
         if sslopts in [True, False, None, {}]:
             return sslopts
         try:
             if "context" in sslopts:
-                return self._build_ssl_context(**sslopts.pop("context"))
+                return await self._build_ssl_context(**sslopts.pop("context"))
             ssl_version = sslopts.get("ssl_version")
             if ssl_version is None:
                 ssl_version = ssl.PROTOCOL_TLS_CLIENT
@@ -224,12 +224,15 @@ class AsyncTransportMixin:
                 "SSL configuration must be a dictionary, or the value True."
             ) from None
 
-    def _build_ssl_context(
+    async def load_verify_locations(self, ctx):
+        ctx.load_verify_locations(cafile=certifi.where())
+
+    async def _build_ssl_context(
         self, check_hostname=None, **ctx_options
     ):
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
-        ctx.load_verify_locations(cafile=certifi.where())
+        await self.load_verify_locations(ctx)
         ctx.check_hostname = check_hostname
         return ctx
 
@@ -271,7 +274,7 @@ class AsyncTransport(
             try:
             # Building ssl opts here instead of constructor, so that invalid cert error is raised
             # when client is connecting, rather then during creation. For uamqp exception parity.
-                self.sslopts = self._build_ssl_opts(self.sslopts)
+                self.sslopts = await self._build_ssl_opts(self.sslopts)
             except FileNotFoundError as exc:
             # FileNotFoundError does not have missing filename info, so adding it below.
             # Assuming that this must be ca_certs, since this is the only file path that
@@ -455,7 +458,7 @@ class WebSocketTransportAsync(
         self._use_tls = use_tls
 
     async def connect(self):
-        self.sslopts = self._build_ssl_opts(self.sslopts)
+        self.sslopts = await self._build_ssl_opts(self.sslopts)
         username, password = None, None
         http_proxy_host, http_proxy_port = None, None
         http_proxy_auth = None
