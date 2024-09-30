@@ -124,7 +124,7 @@ class ConversationBot:
         self.model = model
 
         self.logger = logging.getLogger(repr(self))
-        self.conversation_starter = None  # can either be a dictionary or jinja template
+        self.conversation_starter: Optional[Union[str, jinja2.Template, Dict]] = None
         if role == ConversationRole.USER:
             if "conversation_starter" in self.persona_template_args:
                 conversation_starter_content = self.persona_template_args["conversation_starter"]
@@ -169,11 +169,11 @@ class ConversationBot:
         if turn_number == 0 and self.conversation_starter is not None:
             # if conversation_starter is a dictionary, pass it into samples as is
             if isinstance(self.conversation_starter, dict):
-                samples = [self.conversation_starter]
+                samples: List[Union[str, jinja2.Template, Dict]] = [self.conversation_starter]
             if isinstance(self.conversation_starter, jinja2.Template):
                 samples = [self.conversation_starter.render(**self.persona_template_args)]
             else:
-                samples = [self.conversation_starter]  # type: ignore[attr-defined]
+                samples = [self.conversation_starter]
             time_taken = 0
 
             finish_reason = ["stop"]
