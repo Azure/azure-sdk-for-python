@@ -5,25 +5,21 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
-    TypeVar, TYPE_CHECKING
-)
+import uuid
+
+from typing import Union, Optional, Any, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.aio.operations import FileOperations, ShareOperations
-from .._lease import ShareLeaseClient as LeaseClientBase
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    ShareFileClient = TypeVar("ShareFileClient")
-    ShareClient = TypeVar("ShareClient")
+    from azure.storage.fileshare.aio import ShareClient, ShareFileClient
 
 
-class ShareLeaseClient(LeaseClientBase):
+class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
     """Creates a new ShareLeaseClient.
 
     This client provides lease operations on a ShareClient or ShareFileClient.
@@ -46,22 +42,30 @@ class ShareLeaseClient(LeaseClientBase):
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
     """
-
-    def __enter__(self):
-        raise TypeError("Async lease must use 'async with'.")
-
-    def __exit__(self, *args):
-        self.release()
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+        self, client: Union["ShareFileClient", "ShareClient"],
+        lease_id: Optional[str] = None
+    ) -> None:
+        self.id = lease_id or str(uuid.uuid4())
+        self.last_modified = None
+        self.etag = None
+        if hasattr(client, 'file_name'):
+            self._client = client._client.file  # type: ignore # pylint: disable=protected-access
+            self._snapshot = None
+        elif hasattr(client, 'share_name'):
+            self._client = client._client.share
+            self._snapshot = client.snapshot
+        else:
+            raise TypeError("Lease must use ShareFileClient or ShareClient.")
 
     async def __aenter__(self):
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any):
         await self.release()
 
     @distributed_trace_async
-    async def acquire(self, **kwargs):
-        # type: (**Any) -> None
+    async def acquire(self, **kwargs: Any) -> None:
         """Requests a new lease. This operation establishes and manages a lock on a
         file or share for write and delete operations. If the file or share does not have an active lease,
         the File or Share service creates a lease on the file or share. If the file has an active lease,
@@ -97,13 +101,12 @@ class ShareLeaseClient(LeaseClientBase):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
-        self.etag = response.get('etag')  # type: str
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
+        self.etag = response.get('etag')
 
     @distributed_trace_async
-    async def renew(self, **kwargs):
-        # type: (Any) -> None
+    async def renew(self, **kwargs: Any) -> None:
         """Renews the share lease.
 
         The share lease can be renewed if the lease ID specified in the
@@ -133,13 +136,12 @@ class ShareLeaseClient(LeaseClientBase):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace_async
-    async def release(self, **kwargs):
-        # type: (Any) -> None
+    async def release(self, **kwargs: Any) -> None:
         """Releases the lease. The lease may be released if the lease ID specified on the request matches
         that associated with the share or file. Releasing the lease allows another client to immediately acquire
         the lease for the share or file as soon as the release is complete.
@@ -162,13 +164,12 @@ class ShareLeaseClient(LeaseClientBase):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace_async
-    async def change(self, proposed_lease_id, **kwargs):
-        # type: (str, Any) -> None
+    async def change(self, proposed_lease_id: str, **kwargs: Any) -> None:
         """ Changes the lease ID of an active lease. A change must include the current lease ID in x-ms-lease-id and
         a new lease ID in x-ms-proposed-lease-id.
 
@@ -194,13 +195,12 @@ class ShareLeaseClient(LeaseClientBase):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        self.etag = response.get('etag')  # type: str
-        self.id = response.get('lease_id')  # type: str
-        self.last_modified = response.get('last_modified')   # type: datetime
+        self.etag = response.get('etag')
+        self.id = response.get('lease_id')
+        self.last_modified = response.get('last_modified')
 
     @distributed_trace_async
-    async def break_lease(self, **kwargs):
-        # type: (Any) -> int
+    async def break_lease(self, **kwargs: Any) -> int:
         """Force breaks the lease if the file or share has an active lease. Any authorized request can break the lease;
         the request is not required to specify a matching lease ID. An infinite lease breaks immediately.
 
@@ -246,4 +246,4 @@ class ShareLeaseClient(LeaseClientBase):
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
-        return response.get('lease_time') # type: ignore
+        return response.get('lease_time')  # type: ignore
