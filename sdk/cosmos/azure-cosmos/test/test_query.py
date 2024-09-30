@@ -12,7 +12,7 @@ import azure.cosmos._retry_utility as retry_utility
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import http_constants, DatabaseProxy,_retry_utility, _endpoint_discovery_retry_policy
+from azure.cosmos import http_constants, DatabaseProxy, _endpoint_discovery_retry_policy
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
@@ -873,9 +873,9 @@ class TestQuery(unittest.TestCase):
         for item in items:
             created_collection.create_item(body=item)
 
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        self.OriginalExecuteFunction = retry_utility.ExecuteFunction
         # Test session retry will properly push the exception when retries run out
-        _retry_utility.ExecuteFunction = self._MockExecuteFunctionSessionRetry
+        retry_utility.ExecuteFunction = self._MockExecuteFunctionSessionRetry
         try:
             query = "SELECT * FROM c"
             items = created_collection.query_items(
@@ -886,10 +886,9 @@ class TestQuery(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, 404)
             self.assertEqual(e.sub_status, 1002)
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+
         # Test endpoint discovery retry
-        _retry_utility.ExecuteFunction = self._MockExecuteFunctionEndPointRetry
+        retry_utility.ExecuteFunction = self._MockExecuteFunctionEndPointRetry
         _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = 3
         _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = 10
         try:
@@ -902,12 +901,11 @@ class TestQuery(unittest.TestCase):
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, http_constants.StatusCodes.FORBIDDEN)
             self.assertEqual(e.sub_status, http_constants.SubStatusCodes.WRITE_FORBIDDEN)
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = 120
         _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = 1000
+
         # Finally lets test timeout failover retry
-        _retry_utility.ExecuteFunction = self._MockExecuteFunctionTimeoutFailoverRetry
+        retry_utility.ExecuteFunction = self._MockExecuteFunctionTimeoutFailoverRetry
         try:
             query = "SELECT * FROM c"
             items = created_collection.query_items(
@@ -917,8 +915,8 @@ class TestQuery(unittest.TestCase):
             fetch_results = list(items)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, http_constants.StatusCodes.REQUEST_TIMEOUT)
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+        retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.created_db.delete_container(created_collection.id)
 
 
