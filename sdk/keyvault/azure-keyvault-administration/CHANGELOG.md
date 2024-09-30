@@ -1,9 +1,9 @@
 # Release History
 
-## 4.5.0b1 (Unreleased)
+## 4.4.1 (Unreleased)
 
 ### Features Added
-- Added support for service API version `7.6-preview.1`
+- Added support for Continuous Access Evaluation (CAE). `enable_cae=True` is passed to all `get_token` requests.
 
 ### Breaking Changes
 
@@ -12,7 +12,7 @@
   ([#34744](https://github.com/Azure/azure-sdk-for-python/issues/34744))
 
 ### Other Changes
-- Key Vault API version `7.6-preview.1` is now the default
+- Updated minimum `azure-core` version to 1.31.0
 
 ## 4.4.0 (2024-02-22)
 
