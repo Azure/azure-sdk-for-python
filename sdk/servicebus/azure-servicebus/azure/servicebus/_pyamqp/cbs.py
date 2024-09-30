@@ -31,6 +31,7 @@ from .constants import (
 
 from .session import Session
 from .authentication import JWTTokenAuth, SASTokenAuth
+from threading import RLock
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -89,6 +90,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
         self.state = CbsState.CLOSED
         self.auth_state = CbsAuthState.IDLE
+        self.auth_lock = RLock()
 
     def _put_token(self, token: str, token_type: str, audience: str, expires_on: Optional[datetime] = None) -> None:
         message = Message(  # type: ignore  # TODO: missing positional args header, etc.
@@ -190,35 +192,37 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             self.auth_state = CbsAuthState.ERROR
 
     def _update_status(self) -> None:
-        if (
-            self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED)
-        ):
-            is_expired, is_refresh_required = check_expiration_and_refresh_status(
-                self._expires_on, self._refresh_window # type: ignore
-            )
-            _LOGGER.debug(
-                "CBS status check: state == %r, expired == %r, refresh required == %r",
-                self.auth_state,
-                is_expired,
-                is_refresh_required,
-                extra=self._network_trace_params
-            )
-            if is_expired:
-                self.auth_state = CbsAuthState.EXPIRED
-            elif is_refresh_required:
-                self.auth_state = CbsAuthState.REFRESH_REQUIRED
-        elif self.auth_state == CbsAuthState.IN_PROGRESS:
-            _LOGGER.debug(
-                "CBS update in progress. Token put time: %r",
-                self._token_put_time,
-                extra=self._network_trace_params
-            )
-            if self._token_put_time is not None:
-                put_timeout = check_put_timeout_status(
-                    self._auth_timeout, self._token_put_time
+        with self.auth_lock:
+            if (
+                self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED)
+            ):
+                
+                is_expired, is_refresh_required = check_expiration_and_refresh_status(
+                    self._expires_on, self._refresh_window # type: ignore
                 )
-                if put_timeout:
-                    self.auth_state = CbsAuthState.TIMEOUT
+                _LOGGER.debug(
+                    "CBS status check: state == %r, expired == %r, refresh required == %r",
+                    self.auth_state,
+                    is_expired,
+                    is_refresh_required,
+                    extra=self._network_trace_params
+                )
+                if is_expired:
+                    self.auth_state = CbsAuthState.EXPIRED
+                elif is_refresh_required:
+                    self.auth_state = CbsAuthState.REFRESH_REQUIRED
+            elif self.auth_state == CbsAuthState.IN_PROGRESS:
+                _LOGGER.debug(
+                    "CBS update in progress. Token put time: %r",
+                    self._token_put_time,
+                    extra=self._network_trace_params
+                )
+                if self._token_put_time is not None:
+                    put_timeout = check_put_timeout_status(
+                        self._auth_timeout, self._token_put_time
+                    )
+                    if put_timeout:
+                        self.auth_state = CbsAuthState.TIMEOUT
 
     def _cbs_link_ready(self) -> Optional[bool]:
         if self.state == CbsState.OPEN:
@@ -241,78 +245,80 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         self.state = CbsState.CLOSED
 
     def update_token(self) -> None:
-        self.auth_state = CbsAuthState.IN_PROGRESS
-        access_token = self._auth.get_token()
-        if not access_token:
-            _LOGGER.info(
-                "Token refresh function received an empty token object.",
-                extra=self._network_trace_params
-            )
-        elif not access_token.token:
-            _LOGGER.info(
-                "Token refresh function received an empty token.",
-                extra=self._network_trace_params
-            )
-        self._expires_on = access_token.expires_on
-        expires_in = self._expires_on - int(utc_now().timestamp())
-        self._refresh_window = int(float(expires_in) * 0.1)
-        token_type: Optional[str] = None
+        with self.auth_lock:
+            self.auth_state = CbsAuthState.IN_PROGRESS
+            access_token = self._auth.get_token()
+            if not access_token:
+                _LOGGER.info(
+                    "Token refresh function received an empty token object.",
+                    extra=self._network_trace_params
+                )
+            elif not access_token.token:
+                _LOGGER.info(
+                    "Token refresh function received an empty token.",
+                    extra=self._network_trace_params
+                )
+            self._expires_on = access_token.expires_on
+            expires_in = self._expires_on - int(utc_now().timestamp())
+            self._refresh_window = int(float(expires_in) * 0.1)
+            token_type: Optional[str] = None
 
-        if isinstance(access_token.token, bytes):
-            self._token = access_token.token.decode()
-        elif isinstance(access_token.token, str):
-            self._token = access_token.token
-        else:
-            raise ValueError("Token must be a string or bytes.")
-        if isinstance(self._auth.token_type, bytes):
-            token_type = self._auth.token_type.decode()
-        elif isinstance(self._auth.token_type, str):
-            token_type = self._auth.token_type
-        else:
-            raise ValueError("Token type must be a string or bytes.")
+            if isinstance(access_token.token, bytes):
+                self._token = access_token.token.decode()
+            elif isinstance(access_token.token, str):
+                self._token = access_token.token
+            else:
+                raise ValueError("Token must be a string or bytes.")
+            if isinstance(self._auth.token_type, bytes):
+                token_type = self._auth.token_type.decode()
+            elif isinstance(self._auth.token_type, str):
+                token_type = self._auth.token_type
+            else:
+                raise ValueError("Token type must be a string or bytes.")
 
-        self._token_put_time = int(utc_now().timestamp())
-        if self._token and token_type:
-            self._put_token(
-                self._token,
-                token_type,
-                self._auth.audience, # type: ignore
-                utc_from_timestamp(self._expires_on),
-            )
+            self._token_put_time = int(utc_now().timestamp())
+            if self._token and token_type:
+                self._put_token(
+                    self._token,
+                    token_type,
+                    self._auth.audience, # type: ignore
+                    utc_from_timestamp(self._expires_on),
+                )
 
     def handle_token(self) -> bool:  # pylint: disable=inconsistent-return-statements
-        if not self._cbs_link_ready():
-            return False
-        self._update_status()
-        if self.auth_state == CbsAuthState.IDLE:
-            self.update_token()
-            return False
-        if self.auth_state == CbsAuthState.IN_PROGRESS:
-            return False
-        if self.auth_state == CbsAuthState.OK:
-            return True
-        if self.auth_state == CbsAuthState.REFRESH_REQUIRED:
-            _LOGGER.info(
-                "Token will expire soon - attempting to refresh.",
-                extra=self._network_trace_params
-            )
-            self.update_token()
-            return False
-        if self.auth_state == CbsAuthState.FAILURE:
-            raise AuthenticationException(
-                condition=ErrorCondition.InternalError,
-                description="Failed to open CBS authentication link.",
-            )
-        if self.auth_state == CbsAuthState.ERROR:
-            raise TokenAuthFailure(
-                self._token_status_code,
-                self._token_status_description,
-                encoding=self._encoding,  # TODO: drop off all the encodings
-            )
-        if self.auth_state == CbsAuthState.TIMEOUT:
-            raise TimeoutError("Authentication attempt timed-out.")
-        if self.auth_state == CbsAuthState.EXPIRED:
-            raise TokenExpired(
-                condition=ErrorCondition.InternalError,
-                description="CBS Authentication Expired.",
-            )
+        with self.auth_lock:
+            if not self._cbs_link_ready():
+                return False
+            self._update_status()
+            if self.auth_state == CbsAuthState.IDLE:
+                self.update_token()
+                return False
+            if self.auth_state == CbsAuthState.IN_PROGRESS:
+                return False
+            if self.auth_state == CbsAuthState.OK:
+                return True
+            if self.auth_state == CbsAuthState.REFRESH_REQUIRED:
+                _LOGGER.info(
+                    "Token will expire soon - attempting to refresh.",
+                    extra=self._network_trace_params
+                )
+                self.update_token()
+                return False
+            if self.auth_state == CbsAuthState.FAILURE:
+                raise AuthenticationException(
+                    condition=ErrorCondition.InternalError,
+                    description="Failed to open CBS authentication link.",
+                )
+            if self.auth_state == CbsAuthState.ERROR:
+                raise TokenAuthFailure(
+                    self._token_status_code,
+                    self._token_status_description,
+                    encoding=self._encoding,  # TODO: drop off all the encodings
+                )
+            if self.auth_state == CbsAuthState.TIMEOUT:
+                raise TimeoutError("Authentication attempt timed-out.")
+            if self.auth_state == CbsAuthState.EXPIRED:
+                raise TokenExpired(
+                    condition=ErrorCondition.InternalError,
+                    description="CBS Authentication Expired.",
+                )
