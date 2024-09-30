@@ -45,6 +45,21 @@ steps:
       Write-Host (Get-Command python).Source
     displayName: 'Prep Environment'
 
+
+  - pwsh: |
+      if ($IsWindows) {
+        . $(VENV_LOCATION)/Scripts/Activate.ps1
+      }
+      else {
+        . $(VENV_LOCATION)/bin/activate.ps1
+      }
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+
+      python "$(Build.SourcesDirectory)/devops_tasks/update_sample_code.py" "${{ parameters.ServiceDirectory }}"
+    displayName: 'Samples Credential Update'
+
+
   - template: /eng/common/testproxy/test-proxy-tool.yml
     parameters:
       runProxy: false
