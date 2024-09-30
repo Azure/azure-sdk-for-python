@@ -55,8 +55,7 @@ steps:
       }
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-
-      python "$(Build.SourcesDirectory)/devops_tasks/update_sample_code.py" "${{ parameters.ServiceDirectory }}"
+      python "$(Build.SourcesDirectory)/scripts/devops_tasks/update_sample_code.py" "${{ parameters.ServiceDirectory }}"
     displayName: 'Samples Credential Update'
 
 
