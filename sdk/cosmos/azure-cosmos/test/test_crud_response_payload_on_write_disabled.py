@@ -267,7 +267,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # create document without partition key being specified
-        created_document = created_collection.create_item(body=document_definition, response_payload_on_write_disabled=False)
+        created_document = created_collection.create_item(body=document_definition, no_response=False)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[0], '["WA"]')
         del self.last_headers[:]
@@ -284,7 +284,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present as a leaf level property but a dict
-        created_document = created_collection1.create_item(document_definition, response_payload_on_write_disabled=False)
+        created_document = created_collection1.create_item(document_definition, no_response=False)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[0], [{}])
         del self.last_headers[:]
@@ -300,7 +300,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present in the document
-        created_document = created_collection2.create_item(document_definition, response_payload_on_write_disabled=False)
+        created_document = created_collection2.create_item(document_definition, no_response=False)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[0], [{}])
         del self.last_headers[:]
@@ -393,7 +393,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             response_hook=headerEnvelope.capture_response_headers
         )
 
-        self.assertIsNone(no_response)
+        self.assertDictEqual(no_response, {})
 
         # read document
         read_document = created_collection.read_item(
@@ -417,7 +417,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             body=document_definition,
             response_hook=headerEnvelope.capture_response_headers
         )
-        self.assertIsNone(no_response)
+        self.assertDictEqual(no_response, {})
 
         # read document
         replaced_document = created_collection.read_item(
@@ -433,7 +433,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         document_definition['key'] = 'value2'
 
         no_Response = created_collection.upsert_item(body=document_definition, response_hook=headerEnvelope.capture_response_headers)
-        self.assertIsNone(no_response)
+        self.assertDictEqual(no_response, {})
 
         upserted_document = created_collection.read_item(
             item=document_definition.get('id'),
@@ -732,7 +732,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                                'key': 'value',
                                'pk': 'pk'}
 
-        created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, response_payload_on_write_disabled=False)
+        created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, no_response=False)
         self.assertEqual(created_document.get('name'),
                          document_definition['name'])
 
@@ -742,7 +742,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                                'pk': 'pk',
                                'id': str(uuid.uuid4())}
 
-        created_document = created_collection.create_item(body=document_definition, response_payload_on_write_disabled=False)
+        created_document = created_collection.create_item(body=document_definition, no_response=False)
         self.assertEqual(created_document.get('name'),
                          document_definition['name'])
         self.assertEqual(created_document.get('id'),
@@ -786,7 +786,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         replaced_document = created_collection.replace_item(
             item=created_document['id'],
             body=created_document,
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         self.assertEqual(replaced_document['name'],
                          'replaced document',
@@ -817,7 +817,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                 etag=replaced_document['_etag'],
                 item=replaced_document['id'],
                 body=replaced_document,
-                response_payload_on_write_disabled=False
+                no_response=False
             )
 
         # should fail if only match condition specified
@@ -826,14 +826,14 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                 match_condition=MatchConditions.IfNotModified,
                 item=replaced_document['id'],
                 body=replaced_document,
-                response_payload_on_write_disabled=False
+                no_response=False
             )
         with self.assertRaises(ValueError):
             created_collection.replace_item(
                 match_condition=MatchConditions.IfModified,
                 item=replaced_document['id'],
                 body=replaced_document,
-                response_payload_on_write_disabled=False
+                no_response=False
             )
 
         # should fail if invalid match condition specified
@@ -842,7 +842,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                 match_condition=replaced_document['_etag'],
                 item=replaced_document['id'],
                 body=replaced_document,
-                response_payload_on_write_disabled=False
+                no_response=False
             )
 
         # should pass for most recent etag
@@ -851,7 +851,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             etag=replaced_document['_etag'],
             item=replaced_document['id'],
             body=replaced_document,
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         self.assertEqual(replaced_document_conditional['name'],
                          'replaced document based on condition',
@@ -902,7 +902,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         headerEnvelope = CosmosResponseHeaderEnvelope()
         self.assertIsNone(headerEnvelope.headers)
         created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=False, response_hook=headerEnvelope.capture_response_headers)
-        self.assertIsNone(created_document)
+        self.assertDictEqual(created_document, {})
         self.assertIsNotNone(headerEnvelope.headers)
         
         expectedEtag = headerEnvelope.headers['etag']
@@ -955,7 +955,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             response_hook=headerEnvelope.capture_response_headers
         )
 
-        self.assertIsNone(replaced_document)
+        self.assertDictEqual(replaced_document, {})
         read_document = created_collection.read_item(item=id, partition_key=document_definition['pk'])
 
         self.assertIsNotNone(read_document)
@@ -1020,7 +1020,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             etag=to_be_replaced_document['_etag'],
             item=to_be_replaced_document['id'],
             body=to_be_replaced_document,
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         self.assertEqual(replaced_document_conditional['name'],
                          'replaced document based on condition',
@@ -1071,7 +1071,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         # create document using Upsert API
         headerEnvelope = CosmosResponseHeaderEnvelope()
         none_response = created_collection.upsert_item(body=document_definition, response_hook=headerEnvelope.capture_response_headers)
-        self.assertIsNone(none_response)
+        self.assertDictEqual(none_response, {})
 
         created_document = created_collection.read_item(item='doc', partition_key=document_definition['pk'])
         self.assertEqual(headerEnvelope.headers['etag'], created_document['_etag'])
@@ -1098,7 +1098,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
         # should replace document since it already exists
         none_response = created_collection.upsert_item(body=created_document, response_hook=headerEnvelope.capture_response_headers)
-        self.assertIsNone(none_response)
+        self.assertDictEqual(none_response, {})
 
         upserted_document = created_collection.read_item(item=id, partition_key=document_definition['pk'])
         self.assertEqual(headerEnvelope.headers['etag'], upserted_document['_etag'])
@@ -1127,7 +1127,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
         # Upsert should create new document since the id is different
         no_response = created_collection.upsert_item(body=created_document, response_hook=headerEnvelope.capture_response_headers)
-        self.assertIsNone(none_response)
+        self.assertDictEqual(none_response, {})
 
         new_document = created_collection.read_item(item='new id', partition_key=document_definition['pk'])
         self.assertEqual(headerEnvelope.headers['etag'], new_document['_etag'])
@@ -1471,7 +1471,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                       'key': 'value'},
             )
 
-            self.assertIsNone(document)
+            self.assertDictEqual(document, {})
             document = collection.read_item(item = id, partition_key = id)
 
             # create user
@@ -2039,9 +2039,9 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         collection = self.databaseForTest.create_container("query-iterable-container",
                                                            partition_key=PartitionKey("/pk"))
 
-        doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1', 'pk': 'pk'}, response_payload_on_write_disabled=False)
-        doc2 = collection.create_item(body={'id': 'doc2', 'prop1': 'value2', 'pk': 'pk'}, response_payload_on_write_disabled=False)
-        doc3 = collection.create_item(body={'id': 'doc3', 'prop1': 'value3', 'pk': 'pk'}, response_payload_on_write_disabled=False)
+        doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1', 'pk': 'pk'}, no_response=False)
+        doc2 = collection.create_item(body={'id': 'doc2', 'prop1': 'value2', 'pk': 'pk'}, no_response=False)
+        doc3 = collection.create_item(body={'id': 'doc3', 'prop1': 'value3', 'pk': 'pk'}, no_response=False)
         resources = {
             'coll': collection,
             'doc1': doc1,
@@ -2198,7 +2198,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             body={'id': 'doc1',
                   'key': 'value'},
             pre_trigger_include='t1',
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         self.assertEqual(document_1_1['id'],
                          'DOC1t1',
@@ -2208,14 +2208,14 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             body={'id': 'testing post trigger', 'key': 'value'},
             pre_trigger_include='t1',
             post_trigger_include='response1',
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         self.assertEqual(document_1_2['id'], 'TESTING POST TRIGGERt1')
 
         document_1_3 = collection1.create_item(
             body={'id': 'responseheaders', 'key': 'value'},
             pre_trigger_include='t1',
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         self.assertEqual(document_1_3['id'], "RESPONSEHEADERSt1")
 
@@ -2225,7 +2225,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             body={'id': 'doc2',
                   'key': 'value2'},
             pre_trigger_include='t2',
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         self.assertEqual(document_2_1['id'],
                          'doc2',
@@ -2235,7 +2235,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                   'prop': 'empty',
                   'key': 'value2'},
             pre_trigger_include='t3',
-            response_payload_on_write_disabled=False)
+            no_response=False)
         self.assertEqual(document_2_2['id'], 'doc3t3')
 
         triggers_3 = list(collection3.scripts.list_triggers())
@@ -2244,7 +2244,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             collection3.create_item(
                 body={'id': 'Docoptype', 'key': 'value2'},
                 post_trigger_include='triggerOpType',
-                response_payload_on_write_disabled=False
+                no_response=False
             )
 
         db.delete_container(collection1)
@@ -2463,7 +2463,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         read_container = created_db.get_container_client(created_properties)
         self.assertEqual(read_container.id, created_container.id)
 
-        created_item = created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'}, response_payload_on_write_disabled=False)
+        created_item = created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'}, no_response=False)
 
         # read item with id
         read_item = created_container.read_item(item=created_item['id'], partition_key=created_item['pk'])
@@ -2574,7 +2574,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
 
         # add items for partition key 2
 
-        pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), response_payload_on_write_disabled=False)
+        pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), no_response=False)
 
         # delete all items for partition key 1
         created_collection.delete_all_items_by_partition_key(partition_key1)
@@ -2623,7 +2623,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         ]
         none_response = created_container.patch_item(item="patch_item", partition_key=pkValue,
                                                     patch_operations=operations)
-        self.assertIsNone(none_response)
+        self.assertDictEqual(none_response, {})
 
         patched_item = created_container.read_item(item="patch_item", partition_key=pkValue)
 
@@ -2705,7 +2705,7 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
                                                     patch_operations=operations,
                                                     filter_predicate=filter_predicate,
                                                     response_hook=headerEnvelope.capture_response_headers)
-        self.assertIsNone(none_Response)
+        self.assertDictEqual(none_Response, {})
 
         patched_item = created_container.read_item(item="conditional_patch_item", partition_key=pkValue)
         self.assertEqual(headerEnvelope.headers['etag'], patched_item['_etag'])

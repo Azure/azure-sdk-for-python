@@ -158,7 +158,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
         level (to log all requests) or at a single request level. Requests will be logged at INFO level.
     :keyword bool response_payload_on_write_disabled: Indicates whether service should be instructed to skip sending 
-        response payloads.
+        response payloads for write operations by default unless specified differently per operation.
 
     .. admonition:: Example:
 

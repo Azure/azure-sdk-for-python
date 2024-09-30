@@ -282,10 +282,10 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         self.OriginalExecuteFunction = _retry_utility_async.ExecuteFunctionAsync
         _retry_utility_async.ExecuteFunctionAsync = self._mock_execute_function
         # create document without partition key being specified
-        created_document = await created_collection.create_item(body=document_definition, response_payload_on_write_disabled=True)
-        assert created_document is None
+        created_document = await created_collection.create_item(body=document_definition, no_response=True)
+        self.assertDictEqual(created_document,{})
         document_definition["id"]= "document1"
-        created_document = await created_collection.create_item(body=document_definition, response_payload_on_write_disabled=False)
+        created_document = await created_collection.create_item(body=document_definition, no_response=False)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
         assert self.last_headers[0] == '["WA"]'
         del self.last_headers[:]
@@ -390,13 +390,13 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                                'key': 'value'}
 
         created_document = await created_collection.create_item(body=document_definition)
-        assert created_document is None
+        self.assertDictEqual(created_document, {})
         created_document = await created_collection.upsert_item(body=document_definition)
-        assert created_document is None
-        created_document = await created_collection.upsert_item(body=document_definition, response_payload_on_write_disabled=True)
-        assert created_document is None
-        created_document = await created_collection.upsert_item(body=document_definition, response_payload_on_write_disabled=False)
-        assert created_document is not None
+        self.assertDictEqual(created_document, {})
+        created_document = await created_collection.upsert_item(body=document_definition, no_response=True)
+        self.assertDictEqual(created_document, {})
+        created_document = await created_collection.upsert_item(body=document_definition, no_response=False)
+        assert created_document is not {}
 
         assert created_document.get('id') == document_definition.get('id')
         assert created_document.get('key') == document_definition.get('key')
@@ -421,17 +421,17 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             item=read_document,
             body=document_definition
         )
-        assert replaced_document is None
+        self.assertDictEqual(replaced_document, {})
         replaced_document = await created_collection.replace_item(
             item=read_document,
             body=document_definition,
-            response_payload_on_write_disabled=True
+            no_response=True
         )
-        assert replaced_document is None
+        self.assertDictEqual(replaced_document, {})
         replaced_document = await created_collection.replace_item(
             item=read_document,
             body=document_definition,
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         assert replaced_document is not None
 
@@ -441,7 +441,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         document_definition['id'] = 'document2'
         document_definition['key'] = 'value2'
 
-        upserted_document = await created_collection.upsert_item(body=document_definition, response_payload_on_write_disabled=False)
+        upserted_document = await created_collection.upsert_item(body=document_definition, no_response=False)
 
         assert upserted_document.get('id') == document_definition.get('id')
         assert upserted_document.get('key') == document_definition.get('key')
@@ -709,7 +709,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
         created_document = await created_collection.create_item(body=document_definition,
                                                                 enable_automatic_id_generation=True,
-                                                                response_payload_on_write_disabled=False)
+                                                                no_response=False)
         assert created_document.get('name') == document_definition['name']
 
         document_definition = {'name': 'sample document',
@@ -719,15 +719,15 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                                'id': str(uuid.uuid4())}
 
         created_document = await created_collection.create_item(body=document_definition)
-        assert created_document is None
+        self.assertDictEqual(created_document, {})
 
         document_definition["id"] = str(uuid.uuid4())
-        created_document = await created_collection.create_item(body=document_definition, response_payload_on_write_disabled=True)
-        assert created_document is None
+        created_document = await created_collection.create_item(body=document_definition, no_response=True)
+        self.assertDictEqual(created_document, {})
 
         document_definition["id"] = str(uuid.uuid4())
-        created_document = await created_collection.create_item(body=document_definition, response_payload_on_write_disabled=False)
-        assert created_document is not None
+        created_document = await created_collection.create_item(body=document_definition, no_response=False)
+        assert created_document is not {}
 
         assert created_document.get('name') == document_definition['name']
         assert created_document.get('id') == document_definition['id']
@@ -763,19 +763,19 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             item=created_document['id'],
             body=created_document
         )
-        assert replaced_document is None
+        self.assertDictEqual(replaced_document, {})
 
         replaced_document = await created_collection.replace_item(
             item=created_document['id'],
             body=created_document,
-            response_payload_on_write_disabled=True
+            no_response=True
         )
-        assert replaced_document is None
+        self.assertDictEqual(replaced_document, {})
 
         replaced_document = await created_collection.replace_item(
             item=created_document['id'],
             body=created_document,
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         assert replaced_document is not None
 
@@ -844,7 +844,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             body=replaced_document,
             response_hook=headerEnvelope.capture_response_headers
         )
-        assert replaced_document_conditional is None
+        self.assertDictEqual(replaced_document_conditional, {})
         replaced_document_conditional = await created_collection.read_item(
             item=replaced_document['id'],
             partition_key=replaced_document['pk'])
@@ -890,10 +890,10 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
 
         # create document using Upsert API
         created_document = await created_collection.upsert_item(body=document_definition)
-        assert created_document is None
-        created_document = await created_collection.upsert_item(body=document_definition, response_payload_on_write_disabled=True)
-        assert created_document is None
-        created_document = await created_collection.upsert_item(body=document_definition, response_payload_on_write_disabled=False)
+        self.assertDictEqual(created_document, {})
+        created_document = await created_collection.upsert_item(body=document_definition, no_response=True)
+        self.assertDictEqual(created_document, {})
+        created_document = await created_collection.upsert_item(body=document_definition, no_response=False)
         assert created_document is not None
 
         # verify id property
@@ -913,7 +913,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         created_document['spam'] = 'not eggs'
 
         # should replace document since it already exists
-        upserted_document = await created_collection.upsert_item(body=created_document, response_payload_on_write_disabled=False)
+        upserted_document = await created_collection.upsert_item(body=created_document, no_response=False)
 
         # verify the changed properties
         assert upserted_document['name'] == created_document['name']
@@ -929,7 +929,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         created_document['id'] = 'new id'
 
         # Upsert should create new document since the id is different
-        new_document = await created_collection.upsert_item(body=created_document, response_payload_on_write_disabled=False)
+        new_document = await created_collection.upsert_item(body=created_document, no_response=False)
 
         # Test modified access conditions
         created_document['spam'] = 'more eggs'
@@ -1241,7 +1241,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                 body={'id': 'doc1',
                       'spam': 'eggs',
                       'key': 'value'},
-                response_payload_on_write_disabled=False      
+                no_response=False      
             )
 
             # create user
@@ -1777,13 +1777,13 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         collection = await self.database_for_test.create_container("query-iterable-container-async",
                                                                    PartitionKey(path="/pk"))
         doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'})
-        assert doc1 is None
-        doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'}, response_payload_on_write_disabled=True)
-        assert doc1 is None
-        doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'}, response_payload_on_write_disabled=False)
+        self.assertDictEqual(doc1, {})
+        doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'}, no_response=True)
+        self.assertDictEqual(doc1, {})
+        doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'}, no_response=False)
         assert doc1 is not None
-        doc2 = await collection.upsert_item(body={'id': 'doc2', 'prop1': 'value2'}, response_payload_on_write_disabled=False)
-        doc3 = await collection.upsert_item(body={'id': 'doc3', 'prop1': 'value3'}, response_payload_on_write_disabled=False)
+        doc2 = await collection.upsert_item(body={'id': 'doc2', 'prop1': 'value2'}, no_response=False)
+        doc3 = await collection.upsert_item(body={'id': 'doc3', 'prop1': 'value3'}, no_response=False)
         resources = {
             'coll': collection,
             'doc1': doc1,
@@ -1928,7 +1928,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             body={'id': 'doc1',
                   'key': 'value'},
             pre_trigger_include='t1',
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         assert document_1_1['id'] == 'DOC1t1'
 
@@ -1936,14 +1936,14 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             body={'id': 'testing post trigger', 'key': 'value'},
             pre_trigger_include='t1',
             post_trigger_include='response1',
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         assert document_1_2['id'] == 'TESTING POST TRIGGERt1'
 
         document_1_3 = await collection1.create_item(
             body={'id': 'responseheaders', 'key': 'value'},
             pre_trigger_include='t1',
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         assert document_1_3['id'] == "RESPONSEHEADERSt1"
 
@@ -1953,7 +1953,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             body={'id': 'doc2',
                   'key': 'value2'},
             pre_trigger_include='t2',
-            response_payload_on_write_disabled=False
+            no_response=False
         )
         assert document_2_1['id'] == 'doc2'
         document_2_2 = await collection2.create_item(
@@ -1961,7 +1961,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                   'prop': 'empty',
                   'key': 'value2'},
             pre_trigger_include='t3',
-            response_payload_on_write_disabled=False)
+            no_response=False)
         assert document_2_2['id'] == 'doc3t3'
 
         triggers_3 = [trigger async for trigger in collection3.scripts.list_triggers()]
@@ -2140,7 +2140,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         read_container = created_db.get_container_client(created_properties)
         assert read_container.id == created_container.id
 
-        created_item = await created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'}, response_payload_on_write_disabled=False)
+        created_item = await created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'}, no_response=False)
 
         # read item with id
         read_item = await created_container.read_item(item=created_item['id'], partition_key=created_item['pk'])
@@ -2248,10 +2248,10 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             newDoc = await created_collection.upsert_item(
                 dict(id="item{}".format(i), pk=partition_key1)
             )
-            assert newDoc is None
+            self.assertDictEqual(newDoc, {})
 
         # add items for partition key 2
-        pk2_item = await created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), response_payload_on_write_disabled=False)
+        pk2_item = await created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), no_response=False)
        
         # delete all items for partition key 1
         await created_collection.delete_all_items_by_partition_key(partition_key1)
@@ -2302,9 +2302,9 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         patched_item = await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                           patch_operations=operations)
         # Verify results from patch operations
-        assert patched_item is None
+        self.assertDictEqual(patched_item, {})
         patched_item = await created_container.read_item(item=item_id, partition_key="patch_item_pk")
-        assert patched_item is not None
+        assert patched_item is not {}
         assert patched_item.get("color") is None
         assert patched_item.get("prop") is None
         assert patched_item.get("company") == "CosmosDB"
@@ -2359,7 +2359,7 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
             "company": "Microsoft",
             "number": 3}
         newDoc = await created_container.create_item(item)
-        assert newDoc is None
+        self.assertDictEqual(newDoc,{})
 
         # Define patch operations
         operations = [
@@ -2386,9 +2386,9 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
                                                           patch_operations=operations,
                                                           filter_predicate=filter_predicate)
         # Verify results from patch operations
-        assert patched_item is None
+        self.assertDictEqual(patched_item,{})
         patched_item = await created_container.read_item(item=item_id, partition_key="patch_item_pk")
-        assert patched_item is not None
+        assert patched_item is not {}
         assert patched_item.get("color") is None
         assert patched_item.get("prop") is None
         assert patched_item.get("company") == "CosmosDB"

@@ -61,7 +61,7 @@ _COMMON_OPTIONS = {
     'supported_query_features': 'supportedQueryFeatures',
     'query_version': 'queryVersion',
     'priority': 'priorityLevel',
-    'response_payload_on_write_disabled': 'responsePayloadOnWriteDisabled'
+    'no_response': 'responsePayloadOnWriteDisabled'
 }
 
 # Cosmos resource ID validation regex breakdown:
