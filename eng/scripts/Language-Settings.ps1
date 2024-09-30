@@ -9,7 +9,6 @@ $PackageRepositoryUri = "https://pypi.org/project"
 ."$PSScriptRoot/docs/Docs-ToC.ps1"
 ."$PSScriptRoot/docs/Docs-Onboarding.ps1"
 
-
 function Get-python-AdditionalValidationPackagesFromPackageSet {
   param(
     [Parameter(Mandatory=$true)]
@@ -21,9 +20,22 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   )
   $additionalValidationPackages = @()
 
+  function isOther($fileName) {
+    $startsWithPrefixes = @(".config", ".devcontainer", ".github", ".vscode", "common", "conda", "doc", "eng", "scripts")
+
+    $startsWith = $false
+    foreach ($prefix in $startsWithPrefixes) {
+      if ($fileName.StartsWith($prefix)) {
+        $startsWith = $true
+      }
+    }
+
+    return $startsWith
+  }
+
   $toolChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("tool")}
   $engChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("eng")}
-  $othersChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("scripts") -or $_.StartsWith("doc") -or $_.StartsWith("common") -or $_.StartsWith("conda") }
+  $othersChanged = $diffObj.ChangedFiles | Where-Object { isOther($_) }
 
   if ($toolChanged) {
     $additionalPackages = @(
@@ -391,11 +403,8 @@ function Get-python-DocsMsMetadataForPackage($PackageInfo) {
 
 function Import-Dev-Cert-python
 {
-  Write-Host "Python Trust Methodology"
-
-  $pathToScript = Resolve-Path (Join-Path -Path $PSScriptRoot -ChildPath "../../scripts/devops_tasks/trust_proxy_cert.py")
-  python -m pip install requests
-  python $pathToScript
+  Write-Host "Python no longer requires an out of proc trust methodology." `
+    "The variables SSL_CERT_DIR, SSL_CERT_FILE, and REQUESTS_CA_BUNDLE are now dynamically set in proxy_startup.py"
 }
 
 # Defined in common.ps1 as:
