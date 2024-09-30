@@ -148,7 +148,7 @@ class ConversationBot:
         conversation_history: List[ConversationTurn],
         max_history: int,
         turn_number: int = 0,
-    ) -> Tuple[dict, dict, int, dict]:
+    ) -> Tuple[dict, dict, float, dict]:
         """
         Prompt the ConversationBot for a response.
 
@@ -161,7 +161,7 @@ class ConversationBot:
         :param turn_number: Parameters used to query GPT-4 model.
         :type turn_number: int
         :return: The response from the ConversationBot.
-        :rtype: Tuple[dict, dict, int, dict]
+        :rtype: Tuple[dict, dict, float, dict]
         """
 
         # check if this is the first turn and the conversation_starter is not None,
@@ -254,7 +254,7 @@ class CallbackConversationBot(ConversationBot):
         conversation_history: List[Any],
         max_history: int,
         turn_number: int = 0,
-    ) -> Tuple[dict, dict, int, dict]:
+    ) -> Tuple[dict, dict, float, dict]:
         chat_protocol_message = self._to_chat_protocol(
             self.user_template, conversation_history, self.user_template_parameters
         )
