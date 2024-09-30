@@ -7,3 +7,4 @@ verifytypes = false
 sphinx = false
 sdist = false
 whl = false
+mindependency = false
