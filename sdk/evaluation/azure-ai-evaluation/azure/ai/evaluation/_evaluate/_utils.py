@@ -6,9 +6,8 @@ import logging
 import os
 import re
 import tempfile
-from collections import namedtuple
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, NamedTuple, Optional
 
 import pandas as pd
 
@@ -29,14 +28,20 @@ AZURE_WORKSPACE_REGEX_FORMAT = (
     "(/providers/Microsoft.MachineLearningServices)?/workspaces/([^/]+)$"
 )
 
-AzureMLWorkspaceTriad = namedtuple("AzureMLWorkspace", ["subscription_id", "resource_group_name", "workspace_name"])
+
+class AzureMLWorkspace(NamedTuple):
+    subscription_id: str
+    resource_group_name: str
+    workspace_name: str
 
 
 def is_none(value):
     return value is None or str(value).lower() == "none"
 
 
-def extract_workspace_triad_from_trace_provider(trace_provider: str):  # pylint: disable=name-too-long
+def extract_workspace_triad_from_trace_provider(  # pylint: disable=name-too-long
+    trace_provider: str,
+) -> AzureMLWorkspace:
     match = re.match(AZURE_WORKSPACE_REGEX_FORMAT, trace_provider)
     if not match or len(match.groups()) != 5:
         raise EvaluationException(
@@ -53,7 +58,7 @@ def extract_workspace_triad_from_trace_provider(trace_provider: str):  # pylint:
     subscription_id = match.group(1)
     resource_group_name = match.group(3)
     workspace_name = match.group(5)
-    return AzureMLWorkspaceTriad(subscription_id, resource_group_name, workspace_name)
+    return AzureMLWorkspace(subscription_id, resource_group_name, workspace_name)
 
 
 def load_jsonl(path):
