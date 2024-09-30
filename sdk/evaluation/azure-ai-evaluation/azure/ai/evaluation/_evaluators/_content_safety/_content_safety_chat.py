@@ -4,7 +4,7 @@
 import logging
 import math
 from concurrent.futures import as_completed
-from typing import Dict, List
+from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
@@ -93,7 +93,7 @@ class ContentSafetyChatEvaluator:
     ):
         self._eval_last_turn = eval_last_turn
         self._parallel = parallel
-        self._evaluators = [
+        self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(azure_ai_project, credential),
             SexualEvaluator(azure_ai_project, credential),
             SelfHarmEvaluator(azure_ai_project, credential),
@@ -144,7 +144,7 @@ class ContentSafetyChatEvaluator:
                     }
 
                     for future in as_completed(future_to_evaluator):
-                        result = future.result()
+                        result: Dict[str, Union[str, float]] = future.result()
                         current_turn_result.update(result)
             else:
                 # Sequential execution

@@ -4,7 +4,7 @@
 
 import inspect
 from abc import ABC
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Union
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
@@ -50,7 +50,7 @@ class EvaluatorBase(ABC):
     # This needs to be overridden just to change the function header into something more informative,
     # and to be able to add a more specific docstring. The actual function contents should just be
     # super().__call__(<inputs>)
-    def __call__(self, **kwargs) -> Dict:
+    def __call__(self, **kwargs) -> Dict[str, Union[str, float]]:
         """Evaluate a given input. This method serves as a wrapper and is meant to be overridden by child classes for
         one main reason - to overwrite the method headers and docstring to include additional inputs as needed.
         The actual behavior of this function shouldn't change beyond adding more inputs to the

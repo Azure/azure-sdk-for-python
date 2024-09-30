@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from typing_extensions import override
 
@@ -50,7 +50,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase):
         response: Optional[str] = None,
         conversation: Optional[dict] = None,
         **kwargs,
-    ):
+    ) -> Dict[str, Union[str, float]]:
         """Evaluate either a query and response or a conversation. Must supply either a query AND response,
         or a conversation, but not both.
 
