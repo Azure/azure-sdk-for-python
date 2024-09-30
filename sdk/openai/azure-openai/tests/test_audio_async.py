@@ -92,16 +92,16 @@ class TestAudioAsync(AzureRecordedTestCase):
         assert result.language == "english"
         assert result.duration == 56.25
         for segment in result.segments:
-            assert segment["id"] is not None
-            assert segment["seek"] is not None
-            assert segment["start"] is not None
-            assert segment["end"] is not None
-            assert segment["text"] is not None
-            assert segment["tokens"] is not None
-            assert segment["temperature"] is not None
-            assert segment["avg_logprob"] is not None
-            assert segment["compression_ratio"] is not None
-            assert segment["no_speech_prob"] is not None
+            assert segment.id is not None
+            assert segment.seek is not None
+            assert segment.start is not None
+            assert segment.end is not None
+            assert segment.text is not None
+            assert segment.tokens is not None
+            assert segment.temperature is not None
+            assert segment.avg_logprob is not None
+            assert segment.compression_ratio is not None
+            assert segment.no_speech_prob is not None
 
     @configure_async
     @pytest.mark.asyncio
@@ -161,16 +161,16 @@ class TestAudioAsync(AzureRecordedTestCase):
         assert result.language == "english"
         assert result.duration == 56.25
         for segment in result.segments:
-            assert segment["id"] is not None
-            assert segment["seek"] is not None
-            assert segment["start"] is not None
-            assert segment["end"] is not None
-            assert segment["text"] is not None
-            assert segment["tokens"] is not None
-            assert segment["temperature"] is not None
-            assert segment["avg_logprob"] is not None
-            assert segment["compression_ratio"] is not None
-            assert segment["no_speech_prob"] is not None
+            assert segment.id is not None
+            assert segment.seek is not None
+            assert segment.start is not None
+            assert segment.end is not None
+            assert segment.text is not None
+            assert segment.tokens is not None
+            assert segment.temperature is not None
+            assert segment.avg_logprob is not None
+            assert segment.compression_ratio is not None
+            assert segment.no_speech_prob is not None
 
     @configure_async
     @pytest.mark.asyncio
