@@ -4,3 +4,6 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
+sphinx = false
+sdist = false
+whl = false
