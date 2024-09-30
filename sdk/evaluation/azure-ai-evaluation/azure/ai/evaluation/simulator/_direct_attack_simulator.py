@@ -7,6 +7,7 @@ import logging
 from random import randint
 from typing import Callable, Optional
 
+from azure.ai.evaluation._common.utils import is_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator import AdversarialScenario
@@ -34,25 +35,16 @@ class DirectAttackSimulator:
 
     def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
         """Constructor."""
-        # check if azure_ai_project has the keys: subscription_id, resource_group_name, project_name, credential
-        if not all(key in azure_ai_project for key in ["subscription_id", "resource_group_name", "project_name"]):
-            msg = "azure_ai_project must contain keys: subscription_id, resource_group_name and project_name"
+
+        try:
+            is_azure_ai_project(azure_ai_project)
+        except EvaluationException as e:
             raise EvaluationException(
-                message=msg,
-                internal_message=msg,
+                message=e.message,
+                internal_message=e.internal_message,
                 target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-                category=ErrorCategory.MISSING_FIELD,
-                blame=ErrorBlame.USER_ERROR,
-            )
-        # check the value of the keys in azure_ai_project is not none
-        if not all(azure_ai_project[key] for key in ["subscription_id", "resource_group_name", "project_name"]):
-            msg = "subscription_id, resource_group_name and project_name keys cannot be None"
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
-                category=ErrorCategory.MISSING_FIELD,
-                blame=ErrorBlame.USER_ERROR,
+                category=e.category,
+                blame=e.blame,
             )
         self.credential = credential
         self.azure_ai_project = azure_ai_project
