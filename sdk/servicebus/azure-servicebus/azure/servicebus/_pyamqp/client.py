@@ -170,7 +170,6 @@ class AMQPClient(
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
         self._keep_alive_interval = kwargs.get("keep_alive_interval", 0)
         self._keep_alive_interval = int(self._keep_alive_interval) if self._keep_alive_interval is not None else 0
-        print(self._keep_alive_interval)
         self._keep_alive_thread = None
 
         # Connection settings
@@ -234,25 +233,10 @@ class AMQPClient(
         self.close()
 
     def _keep_alive(self):
-        print("in keep alive")
-        start_time = time.time()
-        try:
-            while self._connection and not self._shutdown:
-                current_time = time.time()
-                elapsed_time = current_time - start_time
-                # if elapsed_time >= self._keep_alive_interval:
-                # if self._link.total_link_credit == 0:
-                # self._link.flow(300)
-                print("call do_work")
-                # print(self._link.total_link_credit)
-                print(threading.current_thread().name)
-                # self.do_work(wait=self._socket_timeout)
-                self._connection.listen(wait=self._socket_timeout)
-                start_time = current_time
-                # time.sleep(.01)
-        except Exception as e:  # pylint: disable=broad-except
-            _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
-
+        while self._connection and not self._shutdown:
+            # self.do_work(wait=self._socket_timeout)
+            self._connection.listen(wait=self._socket_timeout)
+   
     def _client_ready(self):
         """Determine whether the client is ready to start sending and/or
         receiving messages. To be ready, the connection must be open and
@@ -346,7 +330,6 @@ class AMQPClient(
             )
             self._session.begin()
         if self._keep_alive_interval:
-            print("Starting keep alive")
             self._keep_alive_thread = threading.Thread(target=self._keep_alive)
             self._keep_alive_thread.daemon = True
             self._keep_alive_thread.start()
@@ -437,7 +420,6 @@ class AMQPClient(
             return False
         if not self.client_ready():
             return True
-        print(threading.current_thread().name)
         return self._client_run(**kwargs)
 
     def mgmt_request(
@@ -964,7 +946,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         :return: A generator of messages.
         :rtype: generator[~pyamqp.message.Message]
         """
-        print("OPEN")
         self.open()
         self._timeout_reached = False
         # receiving = True
@@ -972,20 +953,13 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._last_activity_timestamp = time.time()
         self._timeout = timeout if timeout else self._timeout
         try:
-            print("here")
-            while not self._timeout_reached:
-                # print("IN HERE")
-                # print(f'Link credit: {self._link.total_link_credit}')
-                # print(f'Link credit: {self._link_credit}')
-                # if self._link.total_link_credit <= 0:
-                    
+            while not self._timeout_reached:          
                 self._link.flow(link_credit=self._link_credit)
                 if self._timeout > 0:
                     if time.time() - self._last_activity_timestamp >= self._timeout:
                         self._timeout_reached = True
 
                 if not self._timeout_reached:
-                    print(threading.current_thread().name)
                     time.sleep(1)
 
                 while not self._received_messages.empty():
@@ -993,9 +967,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                     self._last_activity_timestamp = time.time()
                     self._received_messages.task_done()
                     yield message
-
-                # # print("down here")
-                # time.sleep(0.5)
 
         finally:
             if self._shutdown:
