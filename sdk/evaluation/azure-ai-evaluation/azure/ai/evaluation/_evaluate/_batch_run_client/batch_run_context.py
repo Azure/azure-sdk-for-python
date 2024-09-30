@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
+import types
+from typing import Optional, Type, Union
 
 from promptflow._sdk._constants import PF_FLOW_ENTRY_IN_TMP, PF_FLOW_META_LOAD_IN_SUBPROCESS
 from promptflow._utils.user_agent_utils import ClientUserAgentUtil
@@ -30,12 +32,12 @@ class BatchRunContext:
     ]
     """
 
-    def __init__(self, client) -> None:
+    def __init__(self, client: Union[CodeClient, ProxyClient]) -> None:
         self.client = client
         self._is_batch_timeout_set_by_system = False
         self._is_otel_timeout_set_by_system = False
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         if isinstance(self.client, CodeClient):
             ClientUserAgentUtil.append_user_agent(USER_AGENT)
             inject_openai_api()
@@ -56,7 +58,12 @@ class BatchRunContext:
             # For addressing the issue of asyncio event loop closed on Windows
             set_event_loop_policy()
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        exc_tb: Optional[types.TracebackType],
+    ) -> Optional[bool]:
         if isinstance(self.client, CodeClient):
             recover_openai_api()
 
@@ -71,3 +78,5 @@ class BatchRunContext:
             if self._is_otel_timeout_set_by_system:
                 os.environ.pop(OTEL_EXPORTER_OTLP_TRACES_TIMEOUT, None)
                 self._is_otel_timeout_set_by_system = False
+
+        return None
