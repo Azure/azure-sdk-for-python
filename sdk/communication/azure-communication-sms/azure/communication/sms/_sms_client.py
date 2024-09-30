@@ -83,7 +83,7 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace
     def send(self, from_,  # type: str
              to,  # type: Union[str, List[str]]
-             message,  # type: str,
+             message,  # type: str
              *,
              enable_delivery_report: bool = False,
              tag: Optional[str] = None,
@@ -105,9 +105,6 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
 
         if isinstance(to, str):
             to = [to]
-
-        if not isinstance(enable_delivery_report, bool):
-            raise TypeError("enable_delivery_report must be a boolean.")
 
         sms_send_options = SmsSendOptions(
             enable_delivery_report=enable_delivery_report,

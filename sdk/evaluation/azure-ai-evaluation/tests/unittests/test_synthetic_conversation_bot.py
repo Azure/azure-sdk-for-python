@@ -5,7 +5,7 @@ import pytest
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from azure.ai.evaluation._http_utils import get_async_http_client
-from azure.ai.evaluation.synthetic._conversation import (
+from azure.ai.evaluation.simulator._conversation import (
     ConversationBot,
     ConversationRole,
     ConversationTurn,
@@ -84,9 +84,11 @@ class TestConversationBot:
             )
         )
 
-        parsed_response, req, time_taken, full_response = await bot.generate_response(
-            session=client, conversation_history=[], max_history=0, turn_number=0
-        )
+        async with client:
+            parsed_response, req, time_taken, full_response = await bot.generate_response(
+                session=client, conversation_history=[], max_history=0, turn_number=0
+            )
+
         assert (
             parsed_response["samples"][0]
             == bot_invalid_jinja_params["instantiation_parameters"]["conversation_starter"]

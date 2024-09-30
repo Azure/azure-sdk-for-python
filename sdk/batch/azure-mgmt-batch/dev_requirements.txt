@@ -4,3 +4,4 @@ azure-mgmt-network<19.0.0
 -e ../../resources/azure-mgmt-resource
 -e ../../storage/azure-mgmt-storage
 ../../identity/azure-identity
+aiohttp

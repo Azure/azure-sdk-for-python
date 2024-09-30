@@ -165,7 +165,9 @@ class AsyncPipelineClient(
         self._base_url = base_url
         self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
 
-    async def __aenter__(self) -> AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]:
+    async def __aenter__(
+        self,
+    ) -> AsyncPipelineClient[HTTPRequestType, AsyncHTTPResponseType]:
         await self._pipeline.__aenter__()
         return self
 
@@ -223,7 +225,7 @@ class AsyncPipelineClient(
                 [
                     config.logging_policy,
                     DistributedTracingPolicy(**kwargs),
-                    SensitiveHeaderCleanupPolicy(**kwargs) if config.redirect_policy else None,
+                    (SensitiveHeaderCleanupPolicy(**kwargs) if config.redirect_policy else None),
                     config.http_logging_policy or HttpLoggingPolicy(**kwargs),
                 ]
             )
@@ -263,7 +265,7 @@ class AsyncPipelineClient(
 
     async def _make_pipeline_call(self, request: HTTPRequestType, **kwargs) -> AsyncHTTPResponseType:
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = await self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
+        pipeline_response = await self._pipeline.run(request, **kwargs)
         if return_pipeline_response:
             return pipeline_response  # type: ignore  # This is a private API we don't want to type in signature
         return pipeline_response.http_response
