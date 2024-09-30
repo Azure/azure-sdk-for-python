@@ -6,7 +6,7 @@ import copy
 import json
 import time
 import uuid
-from typing import Dict, List
+from typing import Dict, List, Optional, cast
 
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._user_agent import USER_AGENT
@@ -76,7 +76,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
     def __init__(self, name: str, template_key: str, template_parameters, **kwargs) -> None:
         self.tkey = template_key
         self.tparam = template_parameters
-        self.result_url = None
+        self.result_url: Optional[str] = None
 
         super().__init__(name=name, **kwargs)
 
@@ -185,7 +185,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
             )
 
         response_data = response.json()
-        self.result_url = response_data["location"]
+        self.result_url = cast(str, response_data["location"])
 
         retry_policy = AsyncRetryPolicy(  # set up retry configuration
             retry_on_status_codes=[202],  # on which statuses to retry
