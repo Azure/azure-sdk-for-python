@@ -106,14 +106,11 @@ class AdversarialTemplateHandler:
     """
 
     def __init__(self, azure_ai_project: AzureAIProject, rai_client: RAIClient) -> None:
-        self.cached_templates_source = {}
-        # self.template_env = JinjaEnvironment(loader=JinjaFileSystemLoader(searchpath=template_dir))
         self.azure_ai_project = azure_ai_project
         self.categorized_ch_parameters = None
         self.rai_client = rai_client
 
     async def _get_content_harm_template_collections(self, collection_key):
-
         if self.categorized_ch_parameters is None:
             categorized_parameters = {}
             util = ContentHarmTemplatesUtils
