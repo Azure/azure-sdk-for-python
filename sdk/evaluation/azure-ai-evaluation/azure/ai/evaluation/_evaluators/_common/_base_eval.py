@@ -103,13 +103,13 @@ class EvaluatorBase(ABC):
                 singletons.append(param)
         return singletons
 
-    def _derive_conversation_converter(self) -> Callable[Dict, List]:
+    def _derive_conversation_converter(self) -> Callable:
         """Produce the function that will be used to convert conversations to a list of evaluable inputs.
         This uses the inputs derived from the _derive_singleton_inputs function to determine which
         aspects of a conversation ought to be extracted.
 
         :return: The function that will be used to convert conversations to evaluable inputs.
-        :rtype: Callable[Dict, List]
+        :rtype: Callable
         """
         include_context = "context" in self._singleton_inputs
         include_query = "query" in self._singleton_inputs
