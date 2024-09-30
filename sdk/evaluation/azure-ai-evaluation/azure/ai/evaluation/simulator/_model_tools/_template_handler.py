@@ -8,19 +8,17 @@ from azure.ai.evaluation._model_configurations import AzureAIProject
 
 from ._rai_client import RAIClient
 
-CONTENT_HARM_TEMPLATES_COLLECTION_KEY = set(
-    [
-        "adv_qa",
-        "adv_conversation",
-        "adv_summarization",
-        "adv_search",
-        "adv_rewrite",
-        "adv_content_gen_ungrounded",
-        "adv_content_gen_grounded",
-        "adv_content_protected_material",
-        "adv_politics",
-    ]
-)
+CONTENT_HARM_TEMPLATES_COLLECTION_KEY = {
+    "adv_qa",
+    "adv_conversation",
+    "adv_summarization",
+    "adv_search",
+    "adv_rewrite",
+    "adv_content_gen_ungrounded",
+    "adv_content_gen_grounded",
+    "adv_content_protected_material",
+    "adv_politics",
+}
 
 
 class ContentHarmTemplatesUtils:
