@@ -328,7 +328,7 @@ class OpenAICompletionsModel(LLMBase):
         # Format prompts and tag with index
         request_datas: List[Dict] = []
         for idx, prompt in enumerate(prompts):
-            prompt: Dict[str, str] = self.format_request_data(prompt, **request_params)
+            prompt = self.format_request_data(prompt, **request_params)
             prompt[self.prompt_idx_key] = idx  # type: ignore[assignment]
             request_datas.append(prompt)
 
