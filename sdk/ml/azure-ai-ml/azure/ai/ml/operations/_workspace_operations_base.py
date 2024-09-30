@@ -65,7 +65,6 @@ class WorkspaceOperationsBase(ABC):
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
-        # ops_logger.update_info(kwargs)
         self._subscription_id = operation_scope.subscription_id
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name
@@ -132,7 +131,6 @@ class WorkspaceOperationsBase(ABC):
             if existing_workspace.tags is not None:
                 existing_workspace.tags.update(workspace.tags)  # type: ignore
             workspace.tags = existing_workspace.tags
-            # TODO do we want projects to do this?
             if workspace._kind != WorkspaceKind.PROJECT:
                 workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
                 workspace.application_insights = (
