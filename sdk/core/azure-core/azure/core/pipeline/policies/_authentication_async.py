@@ -153,7 +153,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                     bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], token).token
                     request.http_request.headers["Authorization"] = "Bearer " + bearer_token
                     return True
-                except Exception as ex:  # pylint:disable=broad-except
+                except Exception:  # pylint:disable=broad-except
                     return False
         return False
 
@@ -197,18 +197,17 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                 if key in TokenRequestOptions.__annotations__:  # pylint: disable=no-member
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
-            token = await await_result(
+            return await await_result(
                 cast(AsyncSupportsTokenInfo, self._credential).get_token_info,
                 *scopes,
                 options=options,
             )
         else:
-            token = await await_result(
+            return await await_result(
                 cast(AsyncTokenCredential, self._credential).get_token,
                 *scopes,
                 **kwargs,
             )
-        return token
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> None:
         """Request a new token from the credential.

@@ -95,10 +95,9 @@ class _BearerTokenCredentialPolicyBase:
                 if key in TokenRequestOptions.__annotations__:  # pylint: disable=no-member
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
-            token = cast(SupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)
+            return cast(SupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)
         else:
-            token = cast(TokenCredential, self._credential).get_token(*scopes, **kwargs)
-        return token
+            return cast(TokenCredential, self._credential).get_token(*scopes, **kwargs)
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> None:
         """Request a new token from the credential.
@@ -210,7 +209,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
                     bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], token).token
                     self._update_headers(request.http_request.headers, bearer_token)
                     return True
-                except Exception as ex:  # pylint:disable=broad-except
+                except Exception:  # pylint:disable=broad-except
                     return False
         return False
 

@@ -108,10 +108,11 @@ def get_challenge_parameter(headers, challenge_scheme: str, challenge_parameter:
     """
     Parses the specified parameter from a challenge header found in the response.
 
-    :param headers: The response headers to parse.
-    :param challenge_scheme: The challenge scheme containing the challenge parameter, e.g., "Bearer".
-    :param challenge_parameter: The parameter key name to search for.
+    :param dict[str, str] headers: The response headers to parse.
+    :param str challenge_scheme: The challenge scheme containing the challenge parameter, e.g., "Bearer".
+    :param str challenge_parameter: The parameter key name to search for.
     :return: The value of the parameter name if found.
+    :rtype: str or None
     """
     header_value = headers.get("WWW-Authenticate")
     if not header_value:
@@ -143,8 +144,9 @@ def get_next_challenge(header_value: str) -> Optional[Tuple[str, str]]:
     """
     Iterates through the challenge schemes present in a challenge header.
 
-    :param header_value: The header value which will be sliced to remove the first parsed challenge key.
+    :param str header_value: The header value which will be sliced to remove the first parsed challenge key.
     :return: The parsed challenge scheme and the remaining header value.
+    :rtype: tuple[str, str] or None
     """
     header_value = header_value.lstrip(' ')
     end_of_challenge_key = header_value.find(' ')
@@ -162,9 +164,10 @@ def get_next_parameter(header_value: str, separator: str = '=') -> Optional[Tupl
     """
     Iterates through a challenge header value to extract key-value parameters.
 
-    :param header_value: The header value after being parsed by get_next_challenge.
-    :param separator: The challenge parameter key-value pair separator, default is '='.
+    :param str header_value: The header value after being parsed by get_next_challenge.
+    :param str separator: The challenge parameter key-value pair separator, default is '='.
     :return: The next available challenge parameter as a tuple (param_key, param_value, remaining header_value).
+    :rtype: tuple[str, str, str] or None
     """
     space_or_comma = " ,"
     header_value = header_value.lstrip(space_or_comma)
