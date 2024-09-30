@@ -8,14 +8,19 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
+from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 
 from . import models as _models
 from ._configuration import DesktopVirtualizationMgmtClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
+    AppAttachPackageInfoOperations,
+    AppAttachPackageOperations,
     ApplicationGroupsOperations,
     ApplicationsOperations,
     DesktopsOperations,
@@ -77,15 +82,21 @@ class DesktopVirtualizationMgmtClient:  # pylint: disable=client-accepts-api-ver
     :vartype session_hosts: azure.mgmt.desktopvirtualization.operations.SessionHostsOperations
     :ivar msix_packages: MSIXPackagesOperations operations
     :vartype msix_packages: azure.mgmt.desktopvirtualization.operations.MSIXPackagesOperations
+    :ivar app_attach_package_info: AppAttachPackageInfoOperations operations
+    :vartype app_attach_package_info:
+     azure.mgmt.desktopvirtualization.operations.AppAttachPackageInfoOperations
     :ivar msix_images: MsixImagesOperations operations
     :vartype msix_images: azure.mgmt.desktopvirtualization.operations.MsixImagesOperations
+    :ivar app_attach_package: AppAttachPackageOperations operations
+    :vartype app_attach_package:
+     azure.mgmt.desktopvirtualization.operations.AppAttachPackageOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-09-05". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2024-04-03". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -100,7 +111,25 @@ class DesktopVirtualizationMgmtClient:  # pylint: disable=client-accepts-api-ver
         self._config = DesktopVirtualizationMgmtClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                ARMAutoResourceProviderRegistrationPolicy(),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -131,9 +160,15 @@ class DesktopVirtualizationMgmtClient:  # pylint: disable=client-accepts-api-ver
         self.user_sessions = UserSessionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.session_hosts = SessionHostsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.msix_packages = MSIXPackagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.app_attach_package_info = AppAttachPackageInfoOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.msix_images = MsixImagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.app_attach_package = AppAttachPackageOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -153,12 +188,12 @@ class DesktopVirtualizationMgmtClient:  # pylint: disable=client-accepts-api-ver
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "DesktopVirtualizationMgmtClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

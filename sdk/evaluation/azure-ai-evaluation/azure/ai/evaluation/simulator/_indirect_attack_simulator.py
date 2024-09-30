@@ -4,17 +4,17 @@
 # noqa: E501
 import functools
 import logging
-from typing import Any, Callable, Dict
-
-from azure.identity import DefaultAzureCredential
+from typing import Callable
 
 from promptflow._sdk._telemetry import ActivityType, monitor_operation
-from azure.ai.evaluation.simulator import AdversarialScenario
-from azure.ai.evaluation._model_configurations import AzureAIProject
 
-from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation.simulator import AdversarialScenario
+from azure.identity import DefaultAzureCredential
+
 from ._adversarial_simulator import AdversarialSimulator
+from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
 
 logger = logging.getLogger(__name__)
 

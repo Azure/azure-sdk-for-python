@@ -29,6 +29,7 @@ from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
     OpenAIModelConfiguration,
+    EvaluatorConfig,
 )
 
 __all__ = [
@@ -57,4 +58,5 @@ __all__ = [
     "AzureAIProject",
     "AzureOpenAIModelConfiguration",
     "OpenAIModelConfiguration",
+    "EvaluatorConfig",
 ]
