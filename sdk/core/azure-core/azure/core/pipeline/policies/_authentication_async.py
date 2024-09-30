@@ -144,12 +144,14 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         error = get_challenge_parameter(headers, "Bearer", "error")
         if error == "insufficient_claims":
             encoded_claims = get_challenge_parameter(headers, "Bearer", "claims")
+            if not encoded_claims:
+                return False
             claims = base64.urlsafe_b64decode(encoded_claims).decode("utf-8")
             if claims:
                 try:
                     token = await self._get_token(*self._scopes, claims=claims)
                     bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], token).token
-                    self._update_headers(request.http_request.headers, bearer_token)
+                    request.http_request.headers["Authorization"] = "Bearer " + bearer_token
                     return True
                 except Exception as ex:  # pylint:disable=broad-except
                     return False

@@ -123,10 +123,16 @@ def get_challenge_parameter(headers, challenge_scheme: str, challenge_parameter:
 
     # Iterate through each challenge value.
     while get_next_challenge(header_span):
-        challenge_key, header_span = get_next_challenge(header_span)
+        challenge = get_next_challenge(header_span)
+        if not challenge:
+            break
+        challenge_key, header_span = challenge
         # Enumerate each key-value parameter until we find the parameter key on the specified scheme challenge.
         while get_next_parameter(header_span):
-            key, value, header_span = get_next_parameter(header_span)
+            parameters = get_next_parameter(header_span)
+            if not parameters:
+                break
+            key, value, header_span = parameters
             if challenge_key.lower() == scheme.lower() and key.lower() == parameter.lower():
                 return value
 

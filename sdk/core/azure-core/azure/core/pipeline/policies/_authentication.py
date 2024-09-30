@@ -201,6 +201,8 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         error = get_challenge_parameter(headers, "Bearer", "error")
         if error == "insufficient_claims":
             encoded_claims = get_challenge_parameter(headers, "Bearer", "claims")
+            if not encoded_claims:
+                return False
             claims = base64.urlsafe_b64decode(encoded_claims).decode("utf-8")
             if claims:
                 try:
