@@ -4,7 +4,7 @@
 import logging
 import math
 from concurrent.futures import as_completed
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List, TypedDict, Union, cast
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
@@ -20,6 +20,12 @@ from ._sexual import SexualEvaluator
 from ._violence import ViolenceEvaluator
 
 logger = logging.getLogger(__name__)
+
+
+class _EvaluationPerTurn(TypedDict):
+    severity: List[str]
+    score: List[float]
+    reason: List[str]
 
 
 class ContentSafetyChatEvaluator:
@@ -101,7 +107,9 @@ class ContentSafetyChatEvaluator:
             HateUnfairnessEvaluator(azure_ai_project, credential),
         ]
 
-    def __call__(self, *, conversation, **kwargs):
+    def __call__(
+        self, *, conversation: List[Dict], **kwargs
+    ) -> Dict[str, Union[float, str, Dict[str, _EvaluationPerTurn]]]:
         """
         Evaluates content-safety metrics for "chat" scenario.
 
@@ -158,7 +166,13 @@ class ContentSafetyChatEvaluator:
         aggregated = self._aggregate_results(per_turn_results)
         return aggregated
 
-    def _evaluate_turn(self, turn_num, queries, responses, evaluator):
+    def _evaluate_turn(
+        self,
+        turn_num: int,
+        queries: List[str],
+        responses: List[str],
+        evaluator: Callable[..., Dict[str, Union[str, float]]],
+    ) -> Dict[str, Union[str, float]]:
         try:
             query = queries[turn_num] if turn_num < len(queries) else ""
             response = responses[turn_num] if turn_num < len(responses) else ""
@@ -175,28 +189,30 @@ class ContentSafetyChatEvaluator:
             )
             return {}
 
-    def _aggregate_results(self, per_turn_results: List[Dict]):
-        scores = {}
-        reasons = {}
-        levels = {}
+    def _aggregate_results(
+        self, per_turn_results: List[Dict[str, Union[str, float]]]
+    ) -> Dict[str, Union[float, str, Dict[str, _EvaluationPerTurn]]]:
+        scores: Dict[str, List[float]] = {}
+        reasons: Dict[str, List[str]] = {}
+        levels: Dict[str, List[str]] = {}
 
         for turn in per_turn_results:
             for metric, value in turn.items():
                 if "_score" in metric:
                     if metric not in scores:
                         scores[metric] = []
-                    scores[metric].append(value)
+                    scores[metric].append(cast(float, value))
                 elif "_reason" in metric:
                     if metric not in reasons:
                         reasons[metric] = []
-                    reasons[metric].append(value)
+                    reasons[metric].append(cast(str, value))
                 else:
                     if metric not in levels:
                         levels[metric] = []
-                    levels[metric].append(value)
+                    levels[metric].append(cast(str, value))
 
-        aggregated = {}
-        evaluation_per_turn = {}
+        aggregated: Dict[str, Union[float, str, Dict[str, _EvaluationPerTurn]]] = {}
+        evaluation_per_turn: Dict[str, _EvaluationPerTurn] = {}
 
         for metric, values in levels.items():
             score_key = f"{metric}_score"
@@ -210,9 +226,11 @@ class ContentSafetyChatEvaluator:
             aggregated[score_key] = aggregated_score
 
             # Prepare per-turn evaluations
-            evaluation_per_turn[metric] = {"severity": values}
-            evaluation_per_turn[metric]["score"] = scores[score_key]
-            evaluation_per_turn[metric]["reason"] = reasons[reason_key]
+            evaluation_per_turn[metric] = {
+                "severity": values,
+                "score": scores[score_key],
+                "reason": reasons[reason_key],
+            }
 
         aggregated["evaluation_per_turn"] = evaluation_per_turn
 
