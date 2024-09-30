@@ -99,6 +99,10 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         parameters that have already been set by the system, or in this section. This parameter is only
         supported for Azure ML compute types.
     :paramtype docker_args: Optional[str]
+    :keyword docker_args_list: List of extra arguments to pass to the Docker run command. This would override any
+        parameters that have already been set by the system, or in this section. This parameter is only
+        supported for Azure ML compute types.
+    :paramtype docker_args_list: Optional[List[str]]
     :keyword shm_size: The size of the docker container's shared memory block. This should be in the
         format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
         b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
@@ -126,6 +130,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         instance_type: Optional[Union[str, List]] = None,
         properties: Optional[Union[Properties, Dict]] = None,
         docker_args: Optional[str] = None,
+        docker_args_list: Optional[List[str]] = None,
         shm_size: Optional[str] = None,
         max_instance_count: Optional[int] = None,
         **kwargs: Any
@@ -136,6 +141,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         self.shm_size = shm_size
         self.max_instance_count = max_instance_count
         self.docker_args = docker_args
+        self.docker_args_list = docker_args_list
         self._properties = None
         self.properties = properties
 
@@ -170,6 +176,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             max_instance_count=self.max_instance_count,
             properties=self.properties.as_dict() if isinstance(self.properties, Properties) else None,
             docker_args=self.docker_args,
+            docker_args_list=self.docker_args_list,
             shm_size=self.shm_size,
         )
 
@@ -186,6 +193,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             max_instance_count=obj.max_instance_count if hasattr(obj, "max_instance_count") else None,
             properties=obj.properties,
             docker_args=obj.docker_args,
+            docker_args_list=obj.docker_args_list,
             shm_size=obj.shm_size,
             deserialize_properties=True,
         )
@@ -199,6 +207,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             and self.instance_type == other.instance_type
             and self.max_instance_count == other.max_instance_count
             and self.docker_args == other.docker_args
+            and self.docker_args_list == other.docker_args_list
             and self.shm_size == other.shm_size
         )
 
@@ -221,5 +230,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
                 self.properties = other.properties
             if other.docker_args:
                 self.docker_args = other.docker_args
+            if other.docker_args_list:
+                self.docker_args_list = other.docker_args_list
             if other.shm_size:
                 self.shm_size = other.shm_size

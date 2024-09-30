@@ -146,6 +146,7 @@ def command(
     instance_type: Optional[str] = None,
     locations: Optional[List[str]] = None,
     docker_args: Optional[str] = None,
+    docker_args_list: Optional[List[str]] = None,
     shm_size: Optional[str] = None,
     timeout: Optional[int] = None,
     code: Optional[Union[str, os.PathLike]] = None,
@@ -200,6 +201,10 @@ def command(
         parameters that have already been set by the system, or in this section. This parameter is only
         supported for Azure ML compute types. Defaults to None.
     :paramtype docker_args: Optional[str]
+    :keyword docker_args_list: List of extra arguments to pass to the Docker run command. This would override any
+        parameters that have already been set by the system, or in this section. This parameter is only
+        supported for Azure ML compute types. Defaults to None.
+    :paramtype docker_args_list: Optional[List[str]]
     :keyword shm_size: The size of the Docker container's shared memory block. This should be in the
         format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
         b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
@@ -287,10 +292,11 @@ def command(
     )
 
     if (
-        locations is not None
+        locations is not None  # pylint: disable=too-many-boolean-expressions
         or instance_count is not None
         or instance_type is not None
         or docker_args is not None
+        or docker_args_list is not None
         or shm_size is not None
     ):
         command_obj.set_resources(
@@ -298,6 +304,7 @@ def command(
             instance_count=instance_count,
             instance_type=instance_type,
             docker_args=docker_args,
+            docker_args_list=docker_args_list,
             shm_size=shm_size,
         )
 
