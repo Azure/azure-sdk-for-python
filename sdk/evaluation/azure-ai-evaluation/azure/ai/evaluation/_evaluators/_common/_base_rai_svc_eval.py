@@ -22,11 +22,6 @@ class RaiServiceEvaluatorBase(EvaluatorBase):
     param eval_metric: The evaluation metric to be used for evaluation. This is used by the API call logic
     to specify which evaluation to perform.
     type eval_metric: ~azure.ai.evaluation._common.constants.EvaluationMetrics
-    param azure_ai_project: The scope of the Azure AI project.
-    type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    param credential: The credential for connecting to the Azure AI project. Uses DefaultAzureCredential
-        if not provided.
-    type credential: Optional[~azure.core.credentials.TokenCredential]
     param eval_last_turn: If True, only the last turn of the conversation will be evaluated, and no
         aggregation will be performed. If False, all turns will be evaluated and the numeric results will be,
         aggregated. Per-turn results are still be available in the output via the "evaluation_per_turn" key
@@ -38,8 +33,8 @@ class RaiServiceEvaluatorBase(EvaluatorBase):
     def __init__(
         self,
         eval_metric: EvaluationMetrics,
-        azure_ai_project: AzureAIProject,
-        credential: Optional[TokenCredential] = None,
+        azure_ai_project: dict,
+        credential: Optional[dict] = None,
         eval_last_turn: bool = False,
     ):
         super().__init__(eval_last_turn=eval_last_turn)
@@ -57,7 +52,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[Dict] = None,
+        conversation: Optional[dict] = None,
         **kwargs
     ):
         """Evaluate either a query and response or a conversation. Must supply either a query AND response,

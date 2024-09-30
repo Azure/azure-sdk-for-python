@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Dict, Optional
+from typing import Optional
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
@@ -39,7 +39,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
     RESULT_KEY = "gpt_fluency"
 
     @override
-    def __init__(self, model_config: Dict):
+    def __init__(self, model_config: dict):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
@@ -50,7 +50,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[Dict] = None,
+        conversation: Optional[dict] = None,
         **kwargs
     ):
         """

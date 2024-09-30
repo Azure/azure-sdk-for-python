@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, Optional
+from typing import Optional
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
@@ -39,7 +39,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     RESULT_KEY = "gpt_groundedness"
 
     @override
-    def __init__(self, model_config: Dict):
+    def __init__(self, model_config: dict):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
@@ -50,7 +50,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         *,
         response: Optional[str] = None,
         context: Optional[str] = None,
-        conversation: Optional[Dict] = None,
+        conversation: Optional[dict] = None,
         **kwargs
     ):
         """Evaluate groundedless. Accepts either a response and context a single evaluation,
