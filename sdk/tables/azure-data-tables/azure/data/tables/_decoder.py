@@ -106,8 +106,8 @@ class TableEntityDecoder(TableEntityDecoderABC[Union[TableEntity, Mapping[str, A
                 properties[name] = value
 
         # prepare metadata
-        raw_timestamp: Optional[str] = properties.get("Timestamp")  # type: ignore[assignment]
-        raw_etag: Optional[str] = odata.get("etag")  # type: ignore[assignment]
+        raw_timestamp: Optional[str] = properties.pop("Timestamp")  # type: ignore[assignment]
+        raw_etag: Optional[str] = odata.pop("etag")  # type: ignore[assignment]
         timestamp = None
         etag = None
         if raw_timestamp:
