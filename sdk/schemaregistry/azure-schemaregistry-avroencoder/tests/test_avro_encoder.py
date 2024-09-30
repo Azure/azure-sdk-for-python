@@ -276,16 +276,16 @@ class TestAvroEncoder(AzureRecordedTestCase):
 
         dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
         with pytest.raises(TypeError) as e:
-            encoded_message_content = sr_avro_encoder.encode(dict_content, schema=schema_str, request_options={"fake_kwarg": True})
-        assert 'request() got an unexpected keyword' in str(e.value)
+            encoded_message_content = sr_avro_encoder.encode(dict_content, schema=schema_str, request_options={"files": True})
+        assert 'request() got multiple values for keyword' in str(e.value)
         encoded_message_content = sr_avro_encoder.encode(dict_content, schema=schema_str)
         content_type = encoded_message_content["content_type"]
         encoded_content = encoded_message_content["content"]
 
         encoded_content_dict = {"content": encoded_content, "content_type": content_type}
         with pytest.raises(TypeError) as e:
-            decoded_content = sr_avro_encoder.decode(encoded_content_dict, request_options={"fake_kwarg": True})
-        assert 'request() got an unexpected keyword' in str(e.value)
+            decoded_content = sr_avro_encoder.decode(encoded_content_dict, request_options={"files": True})
+        assert 'request() got multiple values for keyword' in str(e.value)
 
 
     ################################################################# 
