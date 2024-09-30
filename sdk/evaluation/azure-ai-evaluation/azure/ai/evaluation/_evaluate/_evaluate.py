@@ -159,8 +159,8 @@ def _validate_input_data_for_evaluator(evaluator, evaluator_name, df_data, is_ta
 
     missing_inputs = [col for col in required_inputs if col not in df_data.columns]
     if missing_inputs and "conversation" in required_inputs:
-        non_convo_inputs = [val for val in required_inputs if val != "conversation"]
-        if len(missing_inputs) == len(non_convo_inputs) and [input in non_convo_inputs for input in missing_inputs]:
+        non_conversation_inputs = [val for val in required_inputs if val != "conversation"]
+        if len(missing_inputs) == len(non_conversation_inputs) and [input in non_conversation_inputs for input in missing_inputs]:
             missing_inputs = []
     if missing_inputs:
         if not is_target_fn:
