@@ -77,8 +77,6 @@ class _VSCodeCredentialBase(abc.ABC):
                 authority = AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
             elif self._cloud == "AzureChinaCloud":
                 authority = AzureAuthorityHosts.AZURE_CHINA
-            elif self._cloud == "AzureGermanCloud":
-                authority = AzureAuthorityHosts.AZURE_GERMANY
             elif self._cloud == "AzureUSGovernment":
                 authority = AzureAuthorityHosts.AZURE_GOVERNMENT
             else:

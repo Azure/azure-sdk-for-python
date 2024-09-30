@@ -15,7 +15,6 @@ CACHE_CAE_SUFFIX = ".cae"
 
 class AzureAuthorityHosts:
     AZURE_CHINA = "login.chinacloudapi.cn"
-    AZURE_GERMANY = "login.microsoftonline.de"
     AZURE_GOVERNMENT = "login.microsoftonline.us"
     AZURE_PUBLIC_CLOUD = "login.microsoftonline.com"
 
