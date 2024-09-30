@@ -263,7 +263,7 @@ class OpenAICompletionsModel(LLMBase):
     def get_model_params(self):
         return {param: getattr(self, param) for param in self.model_param_names if getattr(self, param) is not None}
 
-    def format_request_data(self, prompt: str, **request_params) -> Dict[str, str]:
+    def format_request_data(self, prompt: Dict[str, str], **request_params) -> Dict[str, str]:  # type: ignore[override]
         """
         Format the request data for the OpenAI API.
         """
