@@ -43,7 +43,11 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 
 TEST_COMPATIBILITY_MAP = {}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
-    "azure-storage-blob": "pypy"
+    "azure-storage-blob": "pypy",
+    "azure-storage-queue": "pypy",
+    "azure-storage-file-datalake": "pypy",
+    "azure-storage-file-share": "pypy",
+    "azure-eventhub": "pypy",
 }
 
 omit_regression = (
@@ -195,11 +199,13 @@ def discover_targeted_packages(
 
     # glob the starting package set
     collected_packages = glob_packages(glob_string, target_root_dir)
-    logging.info(f"Results for glob_string \"{glob_string}\" and root directory \"{target_root_dir}\" are: {collected_packages}")
+    logging.info(
+        f'Results for glob_string "{glob_string}" and root directory "{target_root_dir}" are: {collected_packages}'
+    )
 
     # apply the additional contains filter
     collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
-    logging.info(f"Results after additional contains filter: \"{additional_contains_filter}\" {collected_packages}")
+    logging.info(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
 
     # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable
     if compatibility_filter:
@@ -405,9 +411,7 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
     packages = [os.path.relpath(w, dist_dir) for w in packages]
 
     if not packages:
-        logging.error(
-            f"No sdist is found in directory {dist_dir} with package name format {pkg_format}."
-        )
+        logging.error(f"No sdist is found in directory {dist_dir} with package name format {pkg_format}.")
         return
     return packages[0]
 

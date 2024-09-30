@@ -18,6 +18,9 @@ from cryptography.hazmat.primitives.keywrap import (
 )
 
 
+_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown keywrap algorithm specified. Supported algorithm: A256KW."
+
+
 class KeyWrapper:
     def __init__(self, kid='local:key1'):
         # Must have constant key value for recorded tests, otherwise we could use a random generator.
