@@ -40,7 +40,7 @@ import struct
 from ssl import SSLError
 from io import BytesIO
 import logging
-
+from concurrent.futures import ThreadPoolExecutor
 
 
 import certifi
@@ -195,7 +195,7 @@ class AsyncTransportMixin:
 
             if ca_certs is not None:
                 try:
-                    context.load_verify_locations(ca_certs)
+                    await self.load_verify_locations(context, cafile=ca_certs)
                 except FileNotFoundError as exc:
                     # FileNotFoundError does not have missing filename info, so adding it below.
                     # since this is the only file path that users can pass in
@@ -224,8 +224,12 @@ class AsyncTransportMixin:
                 "SSL configuration must be a dictionary, or the value True."
             ) from None
 
-    async def load_verify_locations(self, ctx):
-        ctx.load_verify_locations(cafile=certifi.where())
+    async def load_verify_locations(self, ctx, cafile=None):
+        if not cafile:
+            cafile = certifi.where()
+        loop = asyncio.get_event_loop()
+        with ThreadPoolExecutor() as pool:
+            await loop.run_in_executor(pool, ctx.load_verify_locations, cafile=cafile)
 
     async def _build_ssl_context(
         self, check_hostname=None, **ctx_options
