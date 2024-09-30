@@ -285,7 +285,7 @@ class AsyncEvaluatorBase:
         self._real_call = real_call
 
     # Don't look at my shame. Nothing to see here....
-    # Oh, you're still here? Ok, the reason this has such a gross call signature and bebahvior is due
+    # Oh, you're still here? Ok, the reason this has such a gross call signature and behavior is due
     # to our broken async code not properly handling inputs; keyword arguments that aren't in the signature#
     # are just not passed into this function instead of ending up in kwargs.
     # Since we want this to be relatively call-agnostic, we just account for every input that any children

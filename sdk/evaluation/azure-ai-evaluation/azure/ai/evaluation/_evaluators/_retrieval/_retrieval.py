@@ -94,7 +94,7 @@ class _AsyncRetrievalScoreEvaluator:
         }
 
 
-class RetrievalScoreEvaluator:
+class RetrievalEvaluator:
     """
     Initialize an evaluator configured for a specific Azure OpenAI model.
 
