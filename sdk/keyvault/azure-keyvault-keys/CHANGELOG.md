@@ -1,9 +1,8 @@
 # Release History
 
-## 4.10.0b1 (Unreleased)
+## 4.9.1 (Unreleased)
 
 ### Features Added
-- Added support for service API version `7.6-preview.1`
 - Added support for Continuous Access Evaluation (CAE). `enable_cae=True` is passed to all `get_token` requests.
 
 ### Breaking Changes
@@ -14,11 +13,8 @@
 
 ### Other Changes
 - Updated minimum `azure-core` version to 1.31.0
-- Key Vault API version `7.6-preview.1` is now the default
 
 ## 4.9.0 (2024-02-22)
-
-### Features Added
 - Added support for service API version `7.5`
 - (From 4.9.0b2) The `cryptography` library's `RSAPrivateKey` and `RSAPublicKey` interfaces are now implemented by
   `KeyVaultRSAPrivateKey` and `KeyVaultRSAPublicKey` classes that can use keys managed by Key Vault
