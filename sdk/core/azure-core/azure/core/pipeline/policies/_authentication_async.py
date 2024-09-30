@@ -7,13 +7,20 @@ import time
 from typing import Any, Awaitable, Optional, cast, TypeVar, Union
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
-from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo, AsyncTokenProvider
+from azure.core.credentials_async import (
+    AsyncTokenCredential,
+    AsyncSupportsTokenInfo,
+    AsyncTokenProvider,
+)
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
     _BearerTokenCredentialPolicyBase,
 )
-from azure.core.pipeline.transport import AsyncHttpResponse as LegacyAsyncHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.pipeline.transport import (
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+    HttpRequest as LegacyHttpRequest,
+)
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.utils._utils import get_running_async_lock
 
@@ -93,7 +100,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
         try:
             response = await self.next.send(request)
-        except Exception:  # pylint:disable=broad-except
+        except Exception:
             await await_result(self.on_exception, request)
             raise
         await await_result(self.on_response, request, response)
@@ -109,7 +116,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                     request.context.options.pop("insecure_domain_change", False)
                     try:
                         response = await self.next.send(request)
-                    except Exception:  # pylint:disable=broad-except
+                    except Exception:
                         await await_result(self.on_exception, request)
                         raise
                     await await_result(self.on_response, request, response)
@@ -176,7 +183,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
             options: TokenRequestOptions = {}
             # Loop through all the keyword arguments and check if they are part of the TokenRequestOptions.
             for key in list(kwargs.keys()):
-                if key in TokenRequestOptions.__annotations__:  # pylint:disable=no-member
+                if key in TokenRequestOptions.__annotations__:  # pylint: disable=no-member
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
             self._token = await await_result(
@@ -185,4 +192,8 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                 options=options,
             )
         else:
-            self._token = await await_result(cast(AsyncTokenCredential, self._credential).get_token, *scopes, **kwargs)
+            self._token = await await_result(
+                cast(AsyncTokenCredential, self._credential).get_token,
+                *scopes,
+                **kwargs,
+            )

@@ -1,23 +1,5 @@
 # Microsoft Azure SDK for Python
 
-This is the Microsoft Azure Cognitive Services Spellcheck Client Library.
-This package has been tested with Python 2.7, 3.6+.
-For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
+This package has been deprecated and will no longer be maintained after 09-18-2024. This package will only receive security fixes until 09-18-2024. Refer to the samples in the [Bing Search for Python SDK repo](https://github.com/microsoft/bing-search-sdk-for-python/tree/main/sdk/SpellCheck) instead.
 
-
-# Usage
-
-
-
-
-For code examples, see [Cognitive Services Spellcheck](https://docs.microsoft.com/python/api/overview/azure/cognitive-services) on docs.microsoft.com.
-
-
-# Provide Feedback
-
-If you encounter any bugs or have suggestions, please file an issue in the
-[Issues](https://github.com/Azure/azure-sdk-for-python/issues)
-section of the project. 
-
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-cognitiveservices-language-spellcheck%2FREADME.png)
+For additional support, open a new issue in the [Issues](https://github.com/microsoft/bing-search-sdk-for-python/issues) section of the Bing Search for Python SDK repo.

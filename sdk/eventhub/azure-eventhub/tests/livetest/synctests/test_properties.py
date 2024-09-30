@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import sys
 import pytest
 
 from azure.eventhub import EventHubSharedKeyCredential
@@ -97,7 +98,7 @@ def test_get_partition_ids(auth_credentials, uamqp_transport):
         partition_ids = client.get_partition_ids()
         assert partition_ids == ["0", "1"]
 
-
+@pytest.mark.skipif(sys.platform.startswith("win"), reason="Large negative timestamp to datetime conversion fails on Windows with: https://bugs.python.org/issue36439")
 @pytest.mark.liveTest
 def test_get_partition_properties(auth_credentials, uamqp_transport):
     fully_qualified_namespace, eventhub_name, credential = auth_credentials

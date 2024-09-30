@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.cosmosdb import CosmosDBManagementClient
@@ -29,17 +27,17 @@ from azure.mgmt.cosmosdb import CosmosDBManagementClient
 def main():
     client = CosmosDBManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     response = client.cassandra_clusters.begin_invoke_command(
         resource_group_name="cassandra-prod-rg",
         cluster_name="cassandra-prod",
-        body={"command": "nodetool status", "host": "10.0.1.12"},
+        body={"arguments": {"status": ""}, "command": "nodetool", "host": "10.0.1.12"},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBManagedCassandraCommand.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-09-01-preview/examples/CosmosDBManagedCassandraCommand.json
 if __name__ == "__main__":
     main()
