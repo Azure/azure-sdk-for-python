@@ -343,14 +343,17 @@ class AdversarialSimulator:
 
         if role == ConversationRole.ASSISTANT:
 
-            def dummy_model() -> None:
-                return None
+            class DummyModel:
+                def __init__(self):
+                    self.name = "dummy_model"
 
-            dummy_model.name = "dummy_model"
+                def __call__(self) -> None:
+                    pass
+
             return CallbackConversationBot(
                 callback=target,
                 role=role,
-                model=dummy_model,
+                model=DummyModel(),
                 user_template=str(template),
                 user_template_parameters=parameters,
                 conversation_template="",
