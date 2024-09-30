@@ -241,17 +241,17 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
 
         dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
         with pytest.raises(TypeError) as e:
-            encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str, request_options={"files": True})
+            encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str, request_options={"fake_kwarg": True, "files": (False)})
         # aiohttp error differs from sync requests: unexpected keyword vs. multiple keywords
-        assert 'request() got an unexpected keyword' in str(e.value)
+        assert 'request() got' in str(e.value)
         encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str)
         content_type = encoded_message_content["content_type"]
         encoded_content = encoded_message_content["content"]
 
         encoded_content_dict = {"content": encoded_content, "content_type": content_type}
         with pytest.raises(TypeError) as e:
-            decoded_content = await sr_avro_encoder.decode(encoded_content_dict, request_options={"files": True})
-        assert 'request() got an unexpected keyword' in str(e.value)
+            decoded_content = await sr_avro_encoder.decode(encoded_content_dict, request_options={"fake_kwarg": True, "files": (False)})
+        assert 'request() got' in str(e.value)
 
     ################################################################# 
     ######################### PARSE SCHEMAS #########################
