@@ -117,8 +117,6 @@ def resolve_compatible_package(dev_req_pkg_name: str, dev_req_pkg_version: str, 
                     available_versions.reverse()
 
                     if not required_pkg_version in dev_req_dependency.specifier:
-                        breakpoint()
-
                         pypi.get_ordered_versions(dev_req_dependency.key, True)
 
 
@@ -437,8 +435,8 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir, addition
         and not any([check_req_against_exclusion(req, i) for i in req_to_exclude])
     ]
 
-    if additionalFilterFn:
-        filtered_req = additionalFilterFn(setup_py_path, filtered_req, released_packages)
+    # if additionalFilterFn:
+    #     filtered_req = additionalFilterFn(setup_py_path, filtered_req, released_packages)
 
     logging.info("Filtered dev requirements: %s", filtered_req)
 
