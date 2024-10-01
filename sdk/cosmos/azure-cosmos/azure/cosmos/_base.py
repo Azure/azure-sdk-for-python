@@ -326,7 +326,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
             responsePayloadOnWriteDisabled = cosmos_client_connection.connection_policy.ResponsePayloadOnWriteDisabled
 
         if responsePayloadOnWriteDisabled:
-            headers[http_constants.HttpHeaders.Prefer] = http_constants.HttpHeaderValues.PreferReturnMinimal
+            headers[http_constants.HttpHeaders.Prefer] = "return=minimal"
 
     # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
     # refreshed.

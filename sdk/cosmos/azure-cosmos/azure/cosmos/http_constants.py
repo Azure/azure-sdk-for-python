@@ -34,9 +34,6 @@ class HttpMethods:
     Head = "HEAD"
     Options = "OPTIONS"
 
-class HttpHeaderValues:
-    PreferReturnMinimal = "return=minimal"
-
 class HttpHeaders:
     """Constants of http headers.
     """
