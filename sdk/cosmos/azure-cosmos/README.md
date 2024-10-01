@@ -502,12 +502,13 @@ database = client.get_database_client(DATABASE_NAME)
 container = database.get_container_client(CONTAINER_NAME)
 
 query_response = container.query_items("select * from c", enable_cross_partition_query=True)
-query_pages = query_response.by_page()
-empty_headers = query_pages.get_response_headers()
-first_page = query_pages.next()
-first_page_headers = query_pages.get_response_headers()
-etag_value = first_page_headers['etag']
-request_charge = first_page_headers['x-ms-request-charge']
+item_pages = query_response.by_page()
+for page in item_pages:
+    current_page_headers = item_pages.get_response_headers()
+    etag_value = current_page_headers['etag']
+    request_charge = current_page_headers['x-ms-request-charge']
+    for item in page:
+        print(item)
 ```
 
 ### Using the asynchronous client
