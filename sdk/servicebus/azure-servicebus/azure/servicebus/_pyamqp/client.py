@@ -235,7 +235,7 @@ class AMQPClient(
     def _keep_alive(self):
         while self._connection and not self._shutdown:
             _logger.debug(f"Calling keep alive :{threading.current_thread().name}")
-            if self._link:
+            if self._link and self._link.total_link_credit > 0:
                 self.do_work(batch=self._link.total_link_credit)
             else:
                 self.do_work()
@@ -332,9 +332,6 @@ class AMQPClient(
                 outgoing_window=self._outgoing_window,
             )
             self._session.begin()
-        self._keep_alive_thread = threading.Thread(target=self._keep_alive)
-        self._keep_alive_thread.daemon = True
-        self._keep_alive_thread.start()
         if self._auth.auth_type == AUTH_TYPE_CBS:
             self._cbs_authenticator = CBSAuthenticator(
                 session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
@@ -343,6 +340,9 @@ class AMQPClient(
         self._network_trace_params["amqpConnection"] = self._connection._container_id
         self._network_trace_params["amqpSession"] = self._session.name
         self._shutdown = False
+        self._keep_alive_thread = threading.Thread(target=self._keep_alive)
+        self._keep_alive_thread.daemon = True
+        self._keep_alive_thread.start()
 
     def close(self):
         """Close the client. This includes closing the Session
@@ -610,6 +610,7 @@ class SendClient(AMQPClient):
         :rtype: bool
         """
         _logger.debug("%s thread listening on sender link", threading.current_thread().name)
+        # commented this b/c threading issue potentially of two threads trying to listen on the same link
         self._link.update_pending_deliveries()
         self._connection.listen(wait=self._socket_timeout, **kwargs)
         return True
@@ -640,6 +641,7 @@ class SendClient(AMQPClient):
         message_delivery.error = error
 
     def _on_send_complete(self, message_delivery, reason, state):
+        _logger.debug("%s thread calling on send complete", threading.current_thread().name)
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:
@@ -669,19 +671,17 @@ class SendClient(AMQPClient):
             )
 
     def _send_message_impl(self, message, *, timeout: float = 0):
-        _logger.debug("%s thread calling send_msg_impl", threading.current_thread().name)
+        _logger.debug("%s SEND_MESSAGE_IMPL", threading.current_thread().name)
         expire_time = (time.time() + timeout) if timeout else None
         self.open()
         message_delivery = _MessageDelivery(
             message, MessageDeliveryState.WaitingToBeSent, expire_time
         )
-        # while not self.client_ready():
-        #     time.sleep(0.05)
-
         self._transfer_message(message_delivery, timeout)
-        running = True
-        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            time.sleep(0.01)
+        while message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            print("Message delivery state: ", message_delivery.state)
+            time.sleep(1)
+            _logger.debug(f"Message delivery state: {message_delivery.state}, on thread: {threading.current_thread().name}")
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
                 condition=ErrorCondition.ClientError,
