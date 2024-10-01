@@ -116,7 +116,7 @@ def is_package_compatible(package_name: str, package_requirements: List[Requirem
 
     return True
 
-def resolve_compatible_package(package_name: str, immutable_requirements: List[Requirement]) -> Optional[str]:
+def resolve_compatible_package(package_name: str, package_version: Optional[str], immutable_requirements: List[Requirement]) -> Optional[str]:
     """
     This function attempts to resolve a compatible package version for whatever set of immutable_requirements that the package must be compatible with.
 
@@ -150,6 +150,11 @@ def resolve_compatible_package(package_name: str, immutable_requirements: List[R
 
         versions = pypi.get_ordered_versions(package_name, True)
         versions.reverse()
+
+        # only allow prerelease versions if the dev_req we're targeting is also prerelease
+        if required_pkg_version:
+            if not Version(required_pkg_version).is_prerelease:
+                versions = [v for v in versions if not v.is_prerelease]
 
         for version in versions:
             version_release = pypi.project_release(package_name, version).get("info", {}).get("requires_dist", [])
@@ -186,50 +191,73 @@ def handle_incompatible_minimum_dev_reqs(setup_path: str, filtered_requirement_l
         cleansed_dev_requirement_line = dev_requirement_line.strip().replace("-e ", "").split("#")[0].split(";")[0]
 
         if cleansed_dev_requirement_line:
-            # this is probably a replaced built wheel
+            dev_req_package = None
+            dev_req_version = None
+            requirements_for_dev_req = []
+
+            # this is a locally built wheel file, ise pkginfo to get the metadata
             if os.path.exists(cleansed_dev_requirement_line) and os.path.isfile(cleansed_dev_requirement_line):
-                logging.info(f"We are processing a replaced relative requirement: {cleansed_dev_requirement_line}")
+                logging.info(f"We are processing a replaced relative requirement built into a wheel: {cleansed_dev_requirement_line}")
                 try:
                     local_package_metadata = pkginfo.get_metadata(cleansed_dev_requirement_line)
                     if local_package_metadata:
+                        dev_req_package = local_package_metadata.name
+                        dev_req_version = local_package_metadata.version
                         requirements_for_dev_req = [Requirement(r) for r in local_package_metadata.requires_dist]
-                        if not is_package_compatible(local_package_metadata.name, requirements_for_dev_req, packages_for_install):
-                            new_req = resolve_compatible_package(local_package_metadata.name, packages_for_install)
-
-                            if new_req:
-                                cleansed_reqs.append(new_req)
-                            else:
-                                cleansed_reqs.append(cleansed_dev_requirement_line)
                     else:
                         logging.error(f"Error while processing locally built requirement {cleansed_dev_requirement_line}. Unable to resolve metadata.")
                         cleansed_reqs.append(cleansed_dev_requirement_line)
                 except Exception as e:
-                    logging.error(f"Error while processing locally built requirement {cleansed_dev_requirement_line}: {e}")
+                    logging.error(f"Unable to determine metadata for locally built requirement {cleansed_dev_requirement_line}: {e}")
                     cleansed_reqs.append(cleansed_dev_requirement_line)
-            # this is a relative requirement
+                    continue
+
+            # this is a relative requirement to a package path in the repo, use our ParsedSetup class to get data from setup.py or pyproject.toml
             elif cleansed_dev_requirement_line.startswith("."):
                 logging.info(f"We are processing a relative requirement: {cleansed_dev_requirement_line}")
                 try:
                     local_package = ParsedSetup.from_path(os.path.join(setup_path, cleansed_dev_requirement_line))
 
                     if local_package:
+                        dev_req_package = local_package.name
+                        dev_req_version = local_package.version
                         requirements_for_dev_req = [Requirement(r) for r in local_package.requires]
-                        if not is_package_compatible(local_package.name, requirements_for_dev_req, packages_for_install):
-                            new_req = resolve_compatible_package(local_package.name, packages_for_install)
-                            if new_req:
-                                cleansed_reqs.append(new_req)
-                            else:
-                                cleansed_reqs.append(cleansed_dev_requirement_line)
+                    else:
+                        logging.error(f"Error while processing relative requirement {cleansed_dev_requirement_line}. Unable to resolve metadata.")
+                        cleansed_reqs.append(cleansed_dev_requirement_line)
 
                 except Exception as e:
-                    logging.error(f"Error while processing relative requirement {cleansed_dev_requirement_line}: {e}")
+                    logging.error(f"Unable to determine metadata for relative requirement \"{cleansed_dev_requirement_line}\", not modifying: {e}")
                     cleansed_reqs.append(cleansed_dev_requirement_line)
+                    continue
+            # If we got here, this has to be a standard requirement, attempt to parse it as a specifier and if unable to do so,
+            # simply add it to the list as a last fallback. we will log so that we can implement a fix for the edge case later.
             else:
-                breakpoint()
-                # try to parse it as a standard specifier. If it is, we can probably add it to the list of requirements unless it conflicts with the current set of packages
-                # doing nothing here, as we don't understand how to resolve this yet
+                logging.info(f"We are processing a standard requirement: {cleansed_dev_requirement_line}")
                 cleansed_reqs.append(cleansed_dev_requirement_line)
-                continue
+
+                # todo, fix this
+                # try:
+                #     dev_req_package = Requirement(cleansed_dev_requirement_line).name
+                #     dev_req_version = Requirement(cleansed_dev_requirement_line).specifier
+                #     requirements_for_dev_req = [Requirement(cleansed_dev_requirement_line)]
+                # except Exception as e:
+                #     logging.error(f"Unable to parse standard requirement {cleansed_dev_requirement_line}: {e}")
+                #     cleansed_reqs.append(cleansed_dev_requirement_line)
+                #     continue
+
+            # we understand how to parse it, so we should handle it
+            if dev_req_package:
+                if not is_package_compatible(dev_req_package, requirements_for_dev_req, packages_for_install):
+                    new_req = resolve_compatible_package(dev_req_package, dev_req_version, packages_for_install)
+
+                    if new_req:
+                        cleansed_reqs.append(new_req)
+                    else:
+                        logging.error(f"Found incompatible dev requirement {dev_req_package}, but unable to locate a compatible version. Not modifying the line: \"{dev_requirement_line}\".")
+                        cleansed_reqs.append(cleansed_dev_requirement_line)
+                else:
+                    cleansed_reqs.append(cleansed_dev_requirement_line)
 
     return cleansed_reqs
 
@@ -257,7 +285,6 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # after september 2024, filter_dev_requirements will also check for **compatibility** with the packages being installed when filtering the dev_requirements.
     dev_req_file_path = filter_dev_requirements(setup_py_file_path, released_packages, temp_dir, additionalFilterFn)
 
-    breakpoint()
     if override_added_packages:
         logging.info(f"Expanding the requirement set by the packages {override_added_packages}.")
 
@@ -497,7 +524,7 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir, addition
         # create new dev requirements file with different name for filtered requirements
         new_dev_req_path = os.path.join(temp_dir, NEW_DEV_REQ_FILE)
         with open(new_dev_req_path, "w") as dev_req_file:
-            dev_req_file.writelines(filtered_req)
+            dev_req_file.writelines(line if line.endswith("\n") else line + "\n" for line in filtered_req)
 
     return new_dev_req_path
 
