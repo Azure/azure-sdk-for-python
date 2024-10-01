@@ -5,9 +5,23 @@
 ### Features Added
 
 - Added `type` field to `AzureOpenAIModelConfiguration` and `OpenAIModelConfiguration`
+- The following evaluators now support `conversation` as an alternative input to their usual single-turn inputs:
+  - `ViolenceEvaluator`
+  - `SexualEvaluator`
+  - `SelfHarmEvaluator`
+  - `HateUnfairnessEvaluator`
+  - `ProtectedMaterialEvaluator`
+  - `IndirectAttackEvaluator`
+  - `CoherenceEvaluator`
+  - `RelevanceEvaluator`
+  - `FluencyEvaluator`
+  - `GroundednessEvaluator`
+- Surfaced `RetrievalScoreEvaluator`, formally an internal part of `ChatEvaluator` as a standalone conversation-only evaluator.
 
 ### Breaking Changes
 
+
+- Removed `ContentSafetyChatEvaluator` and `ChatEvaluator`
 - The `evaluator_config` parameter of `evaluate` now maps in evaluator name to a dictionary `EvaluatorConfig`, which is a `TypedDict`. The
 `column_mapping` between `data` or `target` and evaluator field names should now be specified inside this new dictionary:
 
