@@ -43,6 +43,8 @@ evaluate(
 
 ### Bugs Fixed
 
+- Fixed issue where Entra ID authentication was not working with `AzureOpenAIModelConfiguration` 
+
 ### Other Changes
 
 ## 1.0.0b2 (2024-09-24)
