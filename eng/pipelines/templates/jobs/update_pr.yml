@@ -10,7 +10,8 @@ variables:
   skipComponentGovernanceDetection: true
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: azsdk-pool-mms-ubuntu-2004-general
+  vmImage: 'ubuntu-20.04'
 
 steps:
 - task: UsePythonVersion@0
