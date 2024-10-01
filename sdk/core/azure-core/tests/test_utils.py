@@ -147,13 +147,26 @@ def test_parse_retry_after():
     ret = parse_retry_after("0.9")
     assert ret == 0.9
 
+
 def test_get_challenge_parameter():
-    headers = {"WWW-Authenticate": 'Bearer authorization_uri="https://login.microsoftonline.com/tenant-id", resource="https://vault.azure.net"'}
-    assert get_challenge_parameter(headers, "Bearer", "authorization_uri") == "https://login.microsoftonline.com/tenant-id"
+    headers = {
+        "WWW-Authenticate": 'Bearer authorization_uri="https://login.microsoftonline.com/tenant-id", resource="https://vault.azure.net"'
+    }
+    assert (
+        get_challenge_parameter(headers, "Bearer", "authorization_uri") == "https://login.microsoftonline.com/tenant-id"
+    )
     assert get_challenge_parameter(headers, "Bearer", "resource") == "https://vault.azure.net"
     assert get_challenge_parameter(headers, "Bearer", "foo") is None
 
-    headers = {"WWW-Authenticate": 'Bearer realm="", authorization_uri="https://login.microsoftonline.com/common/oauth2/authorize", error="insufficient_claims", claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwidmFsdWUiOiIxNzI2MDc3NTk1In0sInhtc19jYWVlcnJvciI6eyJ2YWx1ZSI6IjEwMDEyIn19fQ=="'}
-    assert get_challenge_parameter(headers, "Bearer", "authorization_uri") == "https://login.microsoftonline.com/common/oauth2/authorize"
+    headers = {
+        "WWW-Authenticate": 'Bearer realm="", authorization_uri="https://login.microsoftonline.com/common/oauth2/authorize", error="insufficient_claims", claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwidmFsdWUiOiIxNzI2MDc3NTk1In0sInhtc19jYWVlcnJvciI6eyJ2YWx1ZSI6IjEwMDEyIn19fQ=="'
+    }
+    assert (
+        get_challenge_parameter(headers, "Bearer", "authorization_uri")
+        == "https://login.microsoftonline.com/common/oauth2/authorize"
+    )
     assert get_challenge_parameter(headers, "Bearer", "error") == "insufficient_claims"
-    assert get_challenge_parameter(headers, "Bearer", "claims") == 'eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwidmFsdWUiOiIxNzI2MDc3NTk1In0sInhtc19jYWVlcnJvciI6eyJ2YWx1ZSI6IjEwMDEyIn19fQ=='
+    assert (
+        get_challenge_parameter(headers, "Bearer", "claims")
+        == "eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwidmFsdWUiOiIxNzI2MDc3NTk1In0sInhtc19jYWVlcnJvciI6eyJ2YWx1ZSI6IjEwMDEyIn19fQ=="
+    )

@@ -96,8 +96,7 @@ class _BearerTokenCredentialPolicyBase:
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
             return cast(SupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)
-        else:
-            return cast(TokenCredential, self._credential).get_token(*scopes, **kwargs)
+        return cast(TokenCredential, self._credential).get_token(*scopes, **kwargs)
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> None:
         """Request a new token from the credential.

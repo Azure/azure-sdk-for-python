@@ -202,12 +202,11 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                 *scopes,
                 options=options,
             )
-        else:
-            return await await_result(
-                cast(AsyncTokenCredential, self._credential).get_token,
-                *scopes,
-                **kwargs,
-            )
+        return await await_result(
+            cast(AsyncTokenCredential, self._credential).get_token,
+            *scopes,
+            **kwargs,
+        )
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> None:
         """Request a new token from the credential.

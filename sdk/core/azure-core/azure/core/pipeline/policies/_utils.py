@@ -148,19 +148,19 @@ def get_next_challenge(header_value: str) -> Optional[Tuple[str, str]]:
     :return: The parsed challenge scheme and the remaining header value.
     :rtype: tuple[str, str] or None
     """
-    header_value = header_value.lstrip(' ')
-    end_of_challenge_key = header_value.find(' ')
+    header_value = header_value.lstrip(" ")
+    end_of_challenge_key = header_value.find(" ")
 
     if end_of_challenge_key < 0:
         return None
 
     challenge_key = header_value[:end_of_challenge_key]
-    header_value = header_value[end_of_challenge_key + 1:]
+    header_value = header_value[end_of_challenge_key + 1 :]
 
     return challenge_key, header_value
 
 
-def get_next_parameter(header_value: str, separator: str = '=') -> Optional[Tuple[str, str, str]]:
+def get_next_parameter(header_value: str, separator: str = "=") -> Optional[Tuple[str, str, str]]:
     """
     Iterates through a challenge header value to extract key-value parameters.
 
@@ -172,7 +172,7 @@ def get_next_parameter(header_value: str, separator: str = '=') -> Optional[Tupl
     space_or_comma = " ,"
     header_value = header_value.lstrip(space_or_comma)
 
-    next_space = header_value.find(' ')
+    next_space = header_value.find(" ")
     next_separator = header_value.find(separator)
 
     if next_space < next_separator and next_space != -1:
@@ -182,21 +182,21 @@ def get_next_parameter(header_value: str, separator: str = '=') -> Optional[Tupl
         return None
 
     param_key = header_value[:next_separator].strip()
-    header_value = header_value[next_separator + 1:]
+    header_value = header_value[next_separator + 1 :]
 
     quote_index = header_value.find('"')
 
     if quote_index >= 0:
-        header_value = header_value[quote_index + 1:]
-        param_value = header_value[:header_value.find('"')]
+        header_value = header_value[quote_index + 1 :]
+        param_value = header_value[: header_value.find('"')]
     else:
-        trailing_delimiter_index = header_value.find(' ')
+        trailing_delimiter_index = header_value.find(" ")
         if trailing_delimiter_index >= 0:
             param_value = header_value[:trailing_delimiter_index]
         else:
             param_value = header_value
 
     if header_value != param_value:
-        header_value = header_value[len(param_value) + 1:]
+        header_value = header_value[len(param_value) + 1 :]
 
     return param_key, param_value, header_value
