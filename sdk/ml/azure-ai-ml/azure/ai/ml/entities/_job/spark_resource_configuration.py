@@ -75,8 +75,8 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
 
         # runtime_version type is either float or str
         if isinstance(self.runtime_version, float):
-            if self.runtime_version < 3.2 or self.runtime_version >= 3.4:
-                msg = "runtime version should be either 3.2 or 3.3"
+            if self.runtime_version < 3.3 or self.runtime_version >= 3.5:
+                msg = "runtime version should be either 3.3 or 3.4"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -91,7 +91,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
             except ValueError as e:
                 raise ValueError("runtime_version should only contain numbers") from e
             if len(runtime_arr) <= 1:
-                msg = "runtime version should be either 3.2 or 3.3"
+                msg = "runtime version should be either 3.3 or 3.4"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -100,8 +100,8 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
                 )
             first_number = int(runtime_arr[0])
             second_number = int(runtime_arr[1])
-            if first_number != 3 or second_number not in (2, 3):
-                msg = "runtime version should be either 3.2 or 3.3"
+            if first_number != 3 or second_number not in (3, 4):
+                msg = "runtime version should be either 3.3 or 3.4"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
