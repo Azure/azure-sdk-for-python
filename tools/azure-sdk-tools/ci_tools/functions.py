@@ -804,17 +804,7 @@ def handle_incompatible_minimum_dev_reqs(
             # simply add it to the list as a last fallback. we will log so that we can implement a fix for the edge case later.
             else:
                 logging.info(f"We are processing a standard requirement: {cleansed_dev_requirement_line}")
-                cleansed_reqs.append(cleansed_dev_requirement_line)
-
-                # todo, fix this
-                # try:
-                #     dev_req_package = Requirement(cleansed_dev_requirement_line).name
-                #     dev_req_version = Requirement(cleansed_dev_requirement_line).specifier
-                #     requirements_for_dev_req = [Requirement(cleansed_dev_requirement_line)]
-                # except Exception as e:
-                #     logging.error(f"Unable to parse standard requirement {cleansed_dev_requirement_line}: {e}")
-                #     cleansed_reqs.append(cleansed_dev_requirement_line)
-                #     continue
+                cleansed_reqs.append(dev_requirement_line)
 
             # we understand how to parse it, so we should handle it
             if dev_req_package:
