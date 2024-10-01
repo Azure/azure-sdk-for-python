@@ -4,7 +4,7 @@
 import inspect
 import os
 import re
-from typing import Callable, Dict, List, Optional, Set, Tuple, Type
+from typing import Callable, Dict, List, Optional, Set, Tuple
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
@@ -35,7 +35,7 @@ from ._utils import (
 
 # pylint: disable=line-too-long
 def _aggregate_content_safety_metrics(
-    df: pd.DataFrame, evaluators: Dict[str, Type]
+    df: pd.DataFrame, evaluators: Dict[str, Callable]
 ) -> Tuple[List[str], Dict[str, float]]:
     """Find and aggregate defect rates for content safety metrics. Returns both a list
     of columns that were used to calculate defect rates and the defect rates themselves.
@@ -116,7 +116,7 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
     return label_cols, defect_rates
 
 
-def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Type]) -> Dict[str, float]:
+def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
     On top of naively calculating the mean of most metrics, this function also identifies certain columns
     that represent defect rates and renames them accordingly. Other columns in the dataframe are dropped.
@@ -125,7 +125,7 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Type]) -> Dict[st
     :param df: The dataframe of evaluation results.
     :type df: ~pandas.DataFrame
     :param evaluators:  A dictionary mapping of strings to evaluator classes.
-    :type evaluators: Dict[str, Type]
+    :type evaluators: Dict[str, Callable]
     :return: The aggregated metrics.
     :rtype: Dict[str, float]
     """
