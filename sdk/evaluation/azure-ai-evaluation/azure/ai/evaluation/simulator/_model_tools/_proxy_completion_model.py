@@ -56,9 +56,12 @@ class SimulationRequestDTO:
         :return: The DTO as a dictionary.
         :rtype: Dict
         """
-        if self.templateParameters is not None:
-            self.templateParameters = {str(k): str(v) for k, v in self.templateParameters.items()}
-        return self.__dict__
+        toReturn = self.__dict__.copy()
+
+        if toReturn["templateParameters"] is not None:
+            toReturn["templateParameters"] = {str(k): str(v) for k, v in toReturn["templateParameters"].items()}
+
+        return toReturn
 
     def to_json(self):
         """Convert the DTO to a JSON string.
