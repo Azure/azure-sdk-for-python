@@ -24,7 +24,12 @@ TROUBLESHOOTING_GUIDE = "https://aka.ms/azsdk/python/identity/azurepipelinescred
 def build_oidc_request(service_connection_id: str, access_token: str) -> HttpRequest:
     base_uri = os.environ[SYSTEM_OIDCREQUESTURI].rstrip("/")
     url = f"{base_uri}?api-version={OIDC_API_VERSION}&serviceConnectionId={service_connection_id}"
-    headers = {"Content-Type": "application/json", "Authorization": f"Bearer {access_token}"}
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {access_token}",
+        # Prevents the service from responding with a redirect HTTP status code (useful for automation).
+        "X-TFS-FedAuthRedirect": "Suppress",
+    }
     return HttpRequest("POST", url, headers=headers)
 
 
