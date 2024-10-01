@@ -6,7 +6,7 @@
 import asyncio
 import logging
 import random
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Literal, Optional, Union, cast
 
 from tqdm import tqdm
 
@@ -20,7 +20,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from ._constants import SupportedLanguages
-from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole
+from ._conversation import CallbackConversationBot, ConversationBot, ConversationRole, ConversationTurn
 from ._conversation._conversation import simulate_conversation
 from ._helpers import experimental
 from ._model_tools import (
@@ -30,6 +30,7 @@ from ._model_tools import (
     RAIClient,
     TokenScope,
 )
+from ._model_tools._template_handler import AdversarialTemplate, TemplateParameters
 from ._utils import JsonLineList
 
 logger = logging.getLogger(__name__)
@@ -254,16 +255,21 @@ class AdversarialSimulator:
 
         return JsonLineList(sim_results)
 
-    def _to_chat_protocol(self, *, conversation_history, template_parameters: Optional[Dict] = None):
+    def _to_chat_protocol(
+        self,
+        *,
+        conversation_history: List[ConversationTurn],
+        template_parameters: Optional[Dict[str, Union[str, Dict[str, str]]]] = None,
+    ):
         if template_parameters is None:
             template_parameters = {}
         messages = []
         for _, m in enumerate(conversation_history):
             message = {"content": m.message, "role": m.role.value}
-            if "context" in m.full_response:
+            if m.full_response is not None and "context" in m.full_response:
                 message["context"] = m.full_response["context"]
             messages.append(message)
-        conversation_category = template_parameters.pop("metadata", {}).get("Category")
+        conversation_category = cast(Dict[str, str], template_parameters.pop("metadata", {})).get("Category")
         template_parameters["metadata"] = {}
         for key in (
             "conversation_starter",
@@ -285,14 +291,14 @@ class AdversarialSimulator:
         self,
         *,
         target: Callable,
-        template,
-        parameters,
-        max_conversation_turns,
-        api_call_retry_limit,
-        api_call_retry_sleep_sec,
-        api_call_delay_sec,
-        language,
-        semaphore,
+        template: AdversarialTemplate,
+        parameters: TemplateParameters,
+        max_conversation_turns: int,
+        api_call_retry_limit: int,
+        api_call_retry_sleep_sec: int,
+        api_call_delay_sec: int,
+        language: SupportedLanguages,
+        semaphore: asyncio.Semaphore,
     ) -> List[Dict]:
         user_bot = self._setup_bot(role=ConversationRole.USER, template=template, parameters=parameters)
         system_bot = self._setup_bot(
@@ -315,9 +321,15 @@ class AdversarialSimulator:
                 api_call_delay_sec=api_call_delay_sec,
                 language=language,
             )
-        return self._to_chat_protocol(conversation_history=conversation_history, template_parameters=parameters)
 
-    def _get_user_proxy_completion_model(self, template_key, template_parameters):
+        return self._to_chat_protocol(
+            conversation_history=conversation_history,
+            template_parameters=cast(Dict[str, Union[str, Dict[str, str]]], parameters),
+        )
+
+    def _get_user_proxy_completion_model(
+        self, template_key: str, template_parameters: TemplateParameters
+    ) -> ProxyChatCompletionsModel:
         return ProxyChatCompletionsModel(
             name="raisvc_proxy_model",
             template_key=template_key,
@@ -329,7 +341,14 @@ class AdversarialSimulator:
             temperature=0.0,
         )
 
-    def _setup_bot(self, *, role, template, parameters, target: Optional[Callable] = None):
+    def _setup_bot(
+        self,
+        *,
+        role: ConversationRole,
+        template: AdversarialTemplate,
+        parameters: TemplateParameters,
+        target: Optional[Callable] = None,
+    ) -> ConversationBot:
         if role == ConversationRole.USER:
             model = self._get_user_proxy_completion_model(
                 template_key=template.template_name, template_parameters=parameters
@@ -366,8 +385,8 @@ class AdversarialSimulator:
             instantiation_parameters=parameters,
         )
 
-    def _join_conversation_starter(self, parameters, to_join):
-        key = "conversation_starter"
+    def _join_conversation_starter(self, parameters: TemplateParameters, to_join: str) -> TemplateParameters:
+        key: Literal["conversation_starter"] = "conversation_starter"
         if key in parameters.keys():
             parameters[key] = f"{to_join} {parameters[key]}"
         else:

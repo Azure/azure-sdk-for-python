@@ -6,13 +6,14 @@ import copy
 import json
 import time
 import uuid
-from typing import Dict, List, Optional, cast
+from typing import Any, Dict, List, Optional, cast
 
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._user_agent import USER_AGENT
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
+from .._model_tools._template_handler import TemplateParameters
 from .models import OpenAIChatCompletionsModel
 
 
@@ -33,7 +34,15 @@ class SimulationRequestDTO:
     :type template_parameters: Dict
     """
 
-    def __init__(self, url, headers, payload, params, templatekey, template_parameters):
+    def __init__(
+        self,
+        url: str,
+        headers: Dict[str, str],
+        payload: Dict[str, Any],
+        params: Dict[str, str],
+        templatekey: str,
+        template_parameters: Optional[TemplateParameters],
+    ):
         self.url = url
         self.headers = headers
         self.json = json.dumps(payload)
@@ -73,7 +82,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
     :keyword kwargs: Additional keyword arguments to pass to the parent class.
     """
 
-    def __init__(self, name: str, template_key: str, template_parameters, **kwargs) -> None:
+    def __init__(self, name: str, template_key: str, template_parameters: TemplateParameters, **kwargs) -> None:
         self.tkey = template_key
         self.tparam = template_parameters
         self.result_url: Optional[str] = None

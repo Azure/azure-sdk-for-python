@@ -7,7 +7,7 @@ import copy
 import logging
 import time
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 
 import jinja2
 
@@ -15,6 +15,7 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 
 from .._model_tools import LLMBase, OpenAIChatCompletionsModel
+from .._model_tools._template_handler import TemplateParameters
 from .constants import ConversationRole
 
 
@@ -40,7 +41,7 @@ class ConversationTurn:
     role: "ConversationRole"
     name: Optional[str] = None
     message: str = ""
-    full_response: Optional[Any] = None
+    full_response: Optional[Dict[str, Any]] = None
     request: Optional[Any] = None
 
     def to_openai_chat_format(self, reverse: bool = False) -> Dict[str, str]:
@@ -109,7 +110,7 @@ class ConversationBot:
         role: ConversationRole,
         model: Union[LLMBase, OpenAIChatCompletionsModel],
         conversation_template: str,
-        instantiation_parameters: Dict[str, str],
+        instantiation_parameters: TemplateParameters,
     ) -> None:
         self.role = role
         self.conversation_template_orig = conversation_template
@@ -118,9 +119,9 @@ class ConversationBot:
         )
         self.persona_template_args = instantiation_parameters
         if self.role == ConversationRole.USER:
-            self.name = self.persona_template_args.get("name", role.value)
+            self.name: str = cast(str, self.persona_template_args.get("name", role.value))
         else:
-            self.name = self.persona_template_args.get("chatbot_name", role.value) or model.name
+            self.name = cast(str, self.persona_template_args.get("chatbot_name", role.value)) or model.name
         self.model = model
 
         self.logger = logging.getLogger(repr(self))
@@ -238,7 +239,7 @@ class CallbackConversationBot(ConversationBot):
         self,
         callback: Callable,
         user_template: str,
-        user_template_parameters: Dict,
+        user_template_parameters: TemplateParameters,
         *args,
         **kwargs,
     ) -> None:
