@@ -9,6 +9,7 @@ import logging
 import time
 from urllib.parse import urlparse
 import socket
+import threading
 from ssl import SSLError
 from typing import Any, Dict, List, Tuple, Optional, NamedTuple, Type, Union, cast
 
@@ -599,6 +600,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
          incoming frame has altered the state. If `True` is returned, the state has changed and the batch
          should be interrupted.
         """
+        _LOGGER.debug("%s - Processing incoming frame", threading.current_thread().name, extra=self._network_trace_params)
         try:
             performative, fields = cast(Union[bytes, Tuple], frame)
         except TypeError:
@@ -662,6 +664,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :rtype: None
         :raises ValueError: If the connection is not open or not in a valid state.
         """
+        _LOGGER.debug("%s - Processing outgoing frame", threading.current_thread().name, extra=self._network_trace_params)
         if not self._allow_pipelined_open and self.state in [
             ConnectionState.OPEN_PIPE,
             ConnectionState.OPEN_SENT,
@@ -749,6 +752,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
          and is processing incoming Transfer frames.
         :rtype: None
         """
+        _LOGGER.debug("%s - Listening for incoming frames.", threading.current_thread().name, extra=self._network_trace_params)
         if self._error:
             raise self._error
 

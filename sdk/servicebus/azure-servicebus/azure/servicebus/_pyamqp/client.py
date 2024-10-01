@@ -234,7 +234,7 @@ class AMQPClient(
 
     def _keep_alive(self):
         while self._connection and not self._shutdown:
-            _logger.debug("Calling keep alive.")
+            _logger.debug(f"Calling keep alive :{threading.current_thread().name}")
             if self._link:
                 self.do_work(batch=self._link.total_link_credit)
             else:
@@ -332,7 +332,6 @@ class AMQPClient(
                 outgoing_window=self._outgoing_window,
             )
             self._session.begin()
-        # if self._keep_alive_interval:
         self._keep_alive_thread = threading.Thread(target=self._keep_alive)
         self._keep_alive_thread.daemon = True
         self._keep_alive_thread.start()
