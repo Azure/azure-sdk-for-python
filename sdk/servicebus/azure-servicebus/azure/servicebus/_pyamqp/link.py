@@ -7,6 +7,7 @@
 from typing import Any, Optional, TYPE_CHECKING
 import uuid
 import logging
+import threading
 
 from .error import AMQPError, ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
 from .endpoints import Source, Target

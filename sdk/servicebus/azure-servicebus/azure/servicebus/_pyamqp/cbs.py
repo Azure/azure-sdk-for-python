@@ -7,7 +7,6 @@
 import logging
 from datetime import datetime
 from typing import Any, Optional, Tuple, Union
-
 from .utils import utc_now, utc_from_timestamp
 from .management_link import ManagementLink
 from .message import Message, Properties
@@ -32,6 +31,7 @@ from .constants import (
 from .session import Session
 from .authentication import JWTTokenAuth, SASTokenAuth
 from threading import RLock
+import threading
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -93,6 +93,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         self.auth_lock = RLock()
 
     def _put_token(self, token: str, token_type: str, audience: str, expires_on: Optional[datetime] = None) -> None:
+        _LOGGER.debug(f"{threading.current_thread().name} - Put token: {token}, expires on: {expires_on}")
         message = Message(  # type: ignore  # TODO: missing positional args header, etc.
             value=token,
             properties=Properties(message_id=self._mgmt_link.next_message_id),  # type: ignore
@@ -113,6 +114,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         self._mgmt_link.next_message_id += 1
 
     def _on_amqp_management_open_complete(self, management_open_result: ManagementOpenResult) -> None:
+        _LOGGER.debug(f"{threading.current_thread().name} - mgmt open complete")
         if self.state in (CbsState.CLOSED, CbsState.ERROR):
             _LOGGER.debug(
                 "CSB with status: %r encounters unexpected AMQP management open complete.",
@@ -192,7 +194,8 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
             self.auth_state = CbsAuthState.ERROR
 
     def _update_status(self) -> None:
-        with self.auth_lock:
+        # with self.auth_lock:
+            _LOGGER.debug(f"{threading.current_thread().name} - update status")
             if (
                 self.auth_state in (CbsAuthState.OK, CbsAuthState.REFRESH_REQUIRED)
             ):
@@ -237,15 +240,20 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
         return None
 
     def open(self) -> None:
-        self.state = CbsState.OPENING
-        self._mgmt_link.open()
+        with self.auth_lock:
+            _LOGGER.debug(f"{threading.current_thread().name} - open cbs")
+
+            self.state = CbsState.OPENING
+            self._mgmt_link.open()
 
     def close(self) -> None:
         self._mgmt_link.close()
         self.state = CbsState.CLOSED
 
     def update_token(self) -> None:
-        with self.auth_lock:
+        # with self.auth_lock:
+            _LOGGER.debug(f"{threading.current_thread().name} - update token")
+
             self.auth_state = CbsAuthState.IN_PROGRESS
             access_token = self._auth.get_token()
             if not access_token:
@@ -287,6 +295,8 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
     def handle_token(self) -> bool:  # pylint: disable=inconsistent-return-statements
         with self.auth_lock:
+            _LOGGER.debug(f"{threading.current_thread().name} - handle token")
+
             if not self._cbs_link_ready():
                 return False
             self._update_status()
