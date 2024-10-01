@@ -64,7 +64,7 @@ class Simulator:
         *,
         target: Callable,
         max_conversation_turns: int = 5,
-        tasks: List[Dict] = [],
+        tasks: List[str] = [],
         text: str = "",
         num_queries: int = 5,
         query_response_generating_prompty: Optional[str] = None,
@@ -468,7 +468,7 @@ class Simulator:
         *,
         query_responses: List[Dict[str, str]],
         max_conversation_turns: int,
-        tasks: List[Dict],
+        tasks: List[str],
         user_simulator_prompty: Optional[str],
         user_simulator_prompty_kwargs: Dict[str, Any],
         target: Callable,
@@ -482,7 +482,7 @@ class Simulator:
         :keyword max_conversation_turns: The maximum number of conversation turns.
         :paramtype max_conversation_turns: int
         :keyword tasks: A list of tasks for the simulation.
-        :paramtype tasks: List[Dict]
+        :paramtype tasks: List[str]
         :keyword user_simulator_prompty: Path to the user simulator prompty file.
         :paramtype user_simulator_prompty: Optional[str]
         :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
