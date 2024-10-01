@@ -700,9 +700,8 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
         # invalid cert file to connection_verify should fail
         client = ServiceBusClient(hostname, credential, connection_verify="fakecertfile.pem", uamqp_transport=uamqp_transport)
         with client:
-            sender = client.get_queue_sender(servicebus_queue.name)
             with pytest.raises(ServiceBusError):
-                with sender:
+                with client.get_queue_sender(servicebus_queue.name) as sender:
                     sender.send_messages(ServiceBusMessage("foo"))
 
         # Skipping on OSX uamqp - it's raising an Authentication/TimeoutError

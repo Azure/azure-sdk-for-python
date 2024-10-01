@@ -503,10 +503,11 @@ async def test_client_invalid_credential_async(live_eventhub, get_credential_asy
         fully_qualified_namespace=live_eventhub["hostname"],
         eventhub_name=live_eventhub["event_hub"],
         credential=azure_credential,
-        connection_verify="fakecert.pem",
+        connection_verify="cacert.pem",
         uamqp_transport=uamqp_transport,
     )
 
+    # TODO: this seems like a bug from uamqp, should be ConnectError?
     async with producer_client:
         with pytest.raises(EventHubError):
             await producer_client.create_batch(partition_id="0")
