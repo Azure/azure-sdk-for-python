@@ -6,7 +6,7 @@ import functools
 import inspect
 import json
 import logging
-from typing import Callable, Dict, Literal, Optional, TypeVar, Union, cast
+from typing import Callable, Dict, Literal, Optional, Union, cast
 
 import pandas as pd
 from promptflow._sdk.entities._flows import FlexFlow as flex_flow
@@ -19,12 +19,11 @@ from typing_extensions import ParamSpec
 from azure.ai.evaluation._model_configurations import AzureAIProject
 
 from ..._user_agent import USER_AGENT
-from .._utils import _trace_destination_from_project_scope
+from .._utils import EvaluateResult, _trace_destination_from_project_scope
 
 LOGGER = logging.getLogger(__name__)
 
 P = ParamSpec("P")
-R = TypeVar("R")
 
 
 def _get_evaluator_type(evaluator: Dict[str, Callable]) -> Literal["content-safety", "built-in", "custom"]:
@@ -98,17 +97,17 @@ def _get_evaluator_properties(evaluator, evaluator_name):
 
 
 # cspell:ignore isna
-def log_evaluate_activity(func: Callable[P, R]) -> Callable[P, R]:
+def log_evaluate_activity(func: Callable[P, EvaluateResult]) -> Callable[P, EvaluateResult]:
     """Decorator to log evaluate activity
 
     :param func: The function to be decorated
     :type func: Callable
     :returns: The decorated function
-    :rtype: Callable[P, R]
+    :rtype: Callable[P, EvaluateResult]
     """
 
     @functools.wraps(func)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+    def wrapper(*args: P.args, **kwargs: P.kwargs) -> EvaluateResult:
         from promptflow._sdk._telemetry import ActivityType, log_activity
         from promptflow._sdk._telemetry.telemetry import get_telemetry_logger
 

@@ -25,6 +25,7 @@ from .._model_configurations import AzureAIProject, EvaluatorConfig
 from .._user_agent import USER_AGENT
 from ._batch_run_client import BatchRunContext, CodeClient, ProxyClient
 from ._utils import (
+    EvaluateResult,
     _apply_column_mapping,
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
@@ -568,7 +569,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
     **kwargs,
-):
+) -> EvaluateResult:
     input_data_df = _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name)
 
     # Process evaluator config to replace ${target.} with ${data.}
@@ -710,7 +711,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         evaluation_name,
     )
 
-    result = {"rows": result_df.to_dict("records"), "metrics": metrics, "studio_url": studio_url}
+    result: EvaluateResult = {"rows": result_df.to_dict("records"), "metrics": metrics, "studio_url": studio_url}
 
     if output_path:
         _write_output(output_path, result)

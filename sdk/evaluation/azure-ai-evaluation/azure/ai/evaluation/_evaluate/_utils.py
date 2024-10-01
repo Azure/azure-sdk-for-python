@@ -7,7 +7,7 @@ import os
 import re
 import tempfile
 from pathlib import Path
-from typing import Dict, NamedTuple, Optional
+from typing import Dict, List, NamedTuple, Optional, TypedDict
 
 import pandas as pd
 
@@ -33,6 +33,12 @@ class AzureMLWorkspace(NamedTuple):
     subscription_id: str
     resource_group_name: str
     workspace_name: str
+
+
+class EvaluateResult(TypedDict):
+    metrics: Dict[str, float]
+    studio_url: Optional[str]
+    rows: List[Dict]
 
 
 def is_none(value):
