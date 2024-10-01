@@ -82,7 +82,7 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
     def _unpack(self, block):
         continuation = None
         try:
-            self._last_response_headers = block.response_headers
+            self._last_response_headers = block.get_response_headers()
         except AttributeError:
             self._last_response_headers = self._client.last_response_headers
         if self._last_response_headers:
@@ -107,11 +107,10 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
             raise StopIteration
         return block
 
-    @property
-    def response_headers(self) -> CaseInsensitiveDict:
+    def get_response_headers(self) -> CaseInsensitiveDict:
         """Returns the response headers associated to this result
 
         :return: Dict of response headers
         :rtype: ~azure.core.CaseInsensitiveDict
         """
-        return self._last_response_headers
+        return self._last_response_headers.copy()

@@ -64,7 +64,7 @@ class _QueryExecutionContextBase(object):
 
         if not self._buffer:
             results = self._fetch_next_block()
-            self._response_headers = results.response_headers
+            self._response_headers = results.get_response_headers()
             self._buffer.extend(results)
 
         if not self._buffer:

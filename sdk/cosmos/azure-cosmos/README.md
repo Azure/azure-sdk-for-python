@@ -467,11 +467,10 @@ print(json.dumps(container_props['defaultTtl']))
 
 For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_ttl].
 
-### Using operation response headers
+### Using item operation response headers
 
-We have recently made some quality of life enhancements to our item-level operations, allowing users to look at their operations' response headers directly from the response returned by the methods.
-Response headers include metadata information from the executed operations like `etag`, which allows for optimistic concurrency scenarios.
-These changes apply to all item operations in both the sync and async clients - and can be used by referencing the `response_headers` property of any response as such:
+Response headers include metadata information from the executed operations like `etag`, which allows for optimistic concurrency scenarios, or `x-ms-request-charge` which lets you know how many RUs were consumed by the request.
+This applies to all item operations in both the sync and async clients - and can be used by referencing the `get_response_headers()` method of any response as such:
 ```python
 from azure.cosmos import CosmosClient
 import os
@@ -485,7 +484,9 @@ database = client.get_database_client(DATABASE_NAME)
 container = database.get_container_client(CONTAINER_NAME)
 
 operation_response = container.create_item({"id": "test_item", "productName": "test_item"})
-operation_headers = operation_response.response_headers
+operation_headers = operation_response.get_response_headers()
+etag_value = operation_headers['etag']
+request_charge = operation_headers['x-ms-request-charge']
 ```
 For queries, response headers will be present when using paging only:
 ```python
@@ -503,7 +504,9 @@ container = database.get_container_client(CONTAINER_NAME)
 query_response = container.query_items("select * from c", enable_cross_partition_query=True)
 query_pages = query_response.by_page()
 first_page = query_pages.next()
-first_page_headers = query_pages.response_headers
+first_page_headers = query_pages.get_response_headers()
+etag_value = first_page_headers['etag']
+request_charge = first_page_headers['x-ms-request-charge']
 ```
 
 ### Using the asynchronous client

@@ -40,33 +40,33 @@ class TestCosmosResponses(unittest.TestCase):
         container = self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
                                                         partition_key=PartitionKey(path="/company"))
         first_response = container.upsert_item({"id": str(uuid.uuid4()), "company": "Microsoft"})
-        lsn = first_response.response_headers['lsn']
+        lsn = first_response.get_response_headers()['lsn']
 
         create_response = container.create_item({"id": str(uuid.uuid4()), "company": "Microsoft"})
-        assert len(create_response.response_headers) > 0
-        assert int(lsn) + 1 == int(create_response.response_headers['lsn'])
-        lsn = create_response.response_headers['lsn']
+        assert len(create_response.get_response_headers()) > 0
+        assert int(lsn) + 1 == int(create_response.get_response_headers()['lsn'])
+        lsn = create_response.get_response_headers()['lsn']
 
         read_response = container.read_item(create_response['id'], create_response['company'])
-        assert len(read_response.response_headers) > 0
+        assert len(read_response.get_response_headers()) > 0
 
         upsert_response = container.upsert_item({"id": str(uuid.uuid4()), "company": "Microsoft"})
-        assert len(upsert_response.response_headers) > 0
-        assert int(lsn) + 1 == int(upsert_response.response_headers['lsn'])
-        lsn = upsert_response.response_headers['lsn']
+        assert len(upsert_response.get_response_headers()) > 0
+        assert int(lsn) + 1 == int(upsert_response.get_response_headers()['lsn'])
+        lsn = upsert_response.get_response_headers()['lsn']
 
         upsert_response['replace'] = True
         replace_response = container.replace_item(upsert_response['id'], upsert_response)
         assert replace_response['replace'] is not None
-        assert len(replace_response.response_headers) > 0
-        assert int(lsn) + 1 == int(replace_response.response_headers['lsn'])
+        assert len(replace_response.get_response_headers()) > 0
+        assert int(lsn) + 1 == int(replace_response.get_response_headers()['lsn'])
 
         batch = []
         for i in range(50):
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert len(batch_response.response_headers) > 0
-        assert int(lsn) + 1 < int(batch_response.response_headers['lsn'])
+        assert len(batch_response.get_response_headers()) > 0
+        assert int(lsn) + 1 < int(batch_response.get_response_headers()['lsn'])
 
     def test_query_paging_headers(self):
         container = self.test_database.create_container(id="responses_paging_test" + str(uuid.uuid4()),
@@ -76,15 +76,15 @@ class TestCosmosResponses(unittest.TestCase):
             container.create_item({"id": str(uuid.uuid4()), "number": i % 2})
         iterable = container.query_items("select * from c", enable_cross_partition_query=True, max_item_count=3)
         item_pages = iterable.by_page()
-        assert len(item_pages.response_headers) == 0
+        assert len(item_pages.get_response_headers()) == 0
 
         item_pages.next()
-        first_page_headers = item_pages.response_headers
+        first_page_headers = item_pages.get_response_headers()
         assert len(first_page_headers) > 0
         assert int(first_page_headers[HttpHeaders.ItemCount]) == 3
 
         item_pages.next()
-        second_page_headers = item_pages.response_headers
+        second_page_headers = item_pages.get_response_headers()
         assert len(second_page_headers) > 0
         assert int(second_page_headers[HttpHeaders.ItemCount]) == 2
         assert first_page_headers[HttpHeaders.PartitionKeyRangeID] == second_page_headers[
@@ -92,7 +92,7 @@ class TestCosmosResponses(unittest.TestCase):
         assert first_page_headers != second_page_headers
 
         item_pages.next()
-        third_page_headers = item_pages.response_headers
+        third_page_headers = item_pages.get_response_headers()
         assert len(third_page_headers) > 0
         assert int(third_page_headers[HttpHeaders.ItemCount]) == 3
         assert first_page_headers[HttpHeaders.PartitionKeyRangeID] != third_page_headers[
