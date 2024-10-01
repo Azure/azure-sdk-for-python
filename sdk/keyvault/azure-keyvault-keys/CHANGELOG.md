@@ -1,11 +1,9 @@
 # Release History
 
-## 4.9.1 (Unreleased)
+## 4.10.0 (Unreleased)
 
 ### Features Added
 - Added support for Continuous Access Evaluation (CAE). `enable_cae=True` is passed to all `get_token` requests.
-
-### Breaking Changes
 
 ### Bugs Fixed
 - Typing errors from using Key Vault clients as context managers have been fixed
