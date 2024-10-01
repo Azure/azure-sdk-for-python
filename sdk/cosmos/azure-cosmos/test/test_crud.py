@@ -705,8 +705,8 @@ class TestCRUDOperations(unittest.TestCase):
                                'key': 'value',
                                'pk': 'pk'}
 
-        no_response = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, response_payload_on_write_disabled=True)
-        self.assertIsNone(no_response)
+        no_response = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, no_response=True)
+        self.assertDictEqual(no_response, {})
 
         created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True)
         self.assertEqual(created_document.get('name'),
