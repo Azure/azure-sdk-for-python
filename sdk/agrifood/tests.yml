@@ -8,6 +8,7 @@ extends:
       Clouds: Public_FarmBeats
       CloudConfig:
         Public_Farmbeats:
+          ServiceConnection: azure-sdk-tests-public #Might need a specific service connection if this is a unique sub.
           SubscriptionConfiguration: $(sub-config-farmbeats-azure-cloud-test-resources)
       EnvVars:
         AZURE_CLIENT_ID: $(AGRIFOOD_CLIENT_ID)

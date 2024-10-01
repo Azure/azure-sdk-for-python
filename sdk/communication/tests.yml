@@ -25,19 +25,11 @@ extends:
       ServiceDirectory: communication
       TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
       Packages: ${{ parameters.Services }}
-      UseFederatedAuth: true
       CloudConfig:
         Public:
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
           SubscriptionConfigurations:
             - $(sub-config-communication-services-cloud-test-resources-common)
             - $(sub-config-communication-services-cloud-test-resources-python)
           MatrixReplace:
             - TestSamples=.*/true
-        Int:
-          SubscriptionConfigurations:
-            - $(sub-config-communication-int-test-resources-common)
-            - $(sub-config-communication-int-test-resources-python)
-      Clouds: Public,Int
+      Clouds: Public

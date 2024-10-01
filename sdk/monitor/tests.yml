@@ -9,7 +9,7 @@ extends:
         - task: AzureCLI@2
           displayName: Set OIDC variables
           inputs:
-            azureSubscription: azure-sdk-tests
+            azureSubscription: azure-sdk-tests-public
             scriptType: pscore
             scriptLocation: inlineScript
             addSpnToEnvironment: true
@@ -18,23 +18,6 @@ extends:
       ServiceDirectory: monitor
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-monitor-*
-      SupportedClouds: 'Public,UsGov,China'
-      CloudConfig:
-        Public:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
-        UsGov:
-          ServiceConnection: usgov_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureUsGovMsft.json
-        China:
-          ServiceConnection: china_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureChinaMsft.json
-          Location: chinanorth3
-      UseFederatedAuth: true
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(MONITOR_SUBSCRIPTION_ID)
         AZURE_TEST_RUN_LIVE: 'true'

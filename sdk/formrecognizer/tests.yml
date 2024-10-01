@@ -6,7 +6,6 @@ extends:
       BuildTargetingString: azure-ai-formrecognizer
       ServiceDirectory: formrecognizer
       TestTimeoutInMinutes: 200
-      UseFederatedAuth: true
       MatrixReplace:
         # Disable samples tests for now as some of them are haning.
         # - TestSamples=.*/true
@@ -17,8 +16,6 @@ extends:
       CloudConfig:
         Prod:
           ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
           Location: 'centraluseuap'
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)

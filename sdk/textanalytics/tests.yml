@@ -9,18 +9,12 @@ extends:
         Public:
           Location: eastus
           SubscriptionConfigurations:
-            - $(sub-config-azure-cloud-test-resources)
             - $(sub-config-text-analytics-azure-cloud-test-resources)
           MatrixReplace:
             - TestSamples=.*/true
         UsGov:
-          ServiceConnection: usgov_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureUsGovMsft.json
         China:
-          ServiceConnection: china_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureChinaMsft.json
+          Location: chinanorth3
       SupportedClouds: 'Public,UsGov,China'
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(TEXTANALYTICS_SUBSCRIPTION_ID)

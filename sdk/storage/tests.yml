@@ -18,7 +18,6 @@ extends:
       ServiceDirectory: storage
       InjectedPackages: $(InjectedPackages)
       Packages: ${{ parameters.Services }}
-      UseFederatedAuth: true
       MatrixReplace:
         # Use dedicated storage pool in canadacentral with higher memory capacity
         - Pool=.*LINUXPOOL.*/azsdk-pool-mms-ubuntu-2004-storage

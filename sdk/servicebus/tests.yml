@@ -5,7 +5,6 @@ extends:
     parameters:
       ServiceDirectory: servicebus
       TestTimeoutInMinutes: 960
-      UseFederatedAuth: true
       BuildTargetingString: azure-servicebus*
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(SERVICEBUS_SUBSCRIPTION_ID)
@@ -14,19 +13,11 @@ extends:
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       Clouds: 'Public,Canary'
-      SupportedClouds: 'Public,UsGov,China'
+      SupportedClouds: 'Public,Canary,UsGov'
       CloudConfig:
         Public:
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
         Canary:
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
+          ServiceConnection: azure-sdk-tests-public
           Location: 'eastus2euap'
         UsGov:
-          ServiceConnection: usgov_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureUsGovMsft.json
           Location: 'usgovarizona'
