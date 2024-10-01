@@ -9,6 +9,7 @@ import uuid
 import logging
 import time
 from typing import Union, Optional
+import threading
 
 from .constants import ConnectionState, SessionState, SessionTransferState, Role
 from .sender import SenderLink
@@ -67,6 +68,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self._connection = connection
         self._output_handles = {}
         self._input_handles = {}
+        self._lock = threading.Lock()
 
     def __enter__(self):
         self.begin()
@@ -112,16 +114,17 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         :returns: The next available outgoing handle number.
         :rtype: int
         """
-        if len(self._output_handles) >= self.handle_max:
-            raise ValueError(
-                "Maximum number of handles ({}) has been reached.".format(
-                    self.handle_max
+        with self._lock:
+            if len(self._output_handles) >= self.handle_max:
+                raise ValueError(
+                    "Maximum number of handles ({}) has been reached.".format(
+                        self.handle_max
+                    )
                 )
+            next_handle = next(
+                i for i in range(1, self.handle_max) if i not in self._output_handles
             )
-        next_handle = next(
-            i for i in range(1, self.handle_max) if i not in self._output_handles
-        )
-        return next_handle
+            return next_handle
 
     def _outgoing_begin(self):
         begin_frame = BeginFrame(
@@ -277,37 +280,72 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     link._incoming_flow(frame)  # pylint: disable=protected-access
 
     def _outgoing_transfer(self, delivery, network_trace_params):
-        if self.state != SessionState.MAPPED:
-            delivery.transfer_state = SessionTransferState.ERROR
-        if self.remote_incoming_window <= 0:
-            delivery.transfer_state = SessionTransferState.BUSY
-        else:
-            payload = delivery.frame["payload"]
-            payload_size = len(payload)
+        with self._lock:
+            if self.state != SessionState.MAPPED:
+                delivery.transfer_state = SessionTransferState.ERROR
+            if self.remote_incoming_window <= 0:
+                delivery.transfer_state = SessionTransferState.BUSY
+            else:
+                payload = delivery.frame["payload"]
+                payload_size = len(payload)
 
-            delivery.frame["delivery_id"] = self.next_outgoing_id
-            # calculate the transfer frame encoding size excluding the payload
-            delivery.frame["payload"] = b""
-            # TODO: encoding a frame would be expensive, we might want to improve depending on the perf test results
-            encoded_frame = encode_frame(TransferFrame(**delivery.frame))[1]
-            transfer_overhead_size = len(encoded_frame)
+                delivery.frame["delivery_id"] = self.next_outgoing_id
+                # calculate the transfer frame encoding size excluding the payload
+                delivery.frame["payload"] = b""
+                # TODO: encoding a frame would be expensive, we might want to improve depending on the perf test results
+                encoded_frame = encode_frame(TransferFrame(**delivery.frame))[1]
+                transfer_overhead_size = len(encoded_frame)
 
-            # available size for payload per frame is calculated as following:
-            # remote max frame size - transfer overhead (calculated) - header (8 bytes)
-            available_frame_size = (
-                self._connection._remote_max_frame_size - transfer_overhead_size - 8  # pylint: disable=protected-access
-            )
+                # available size for payload per frame is calculated as following:
+                # remote max frame size - transfer overhead (calculated) - header (8 bytes)
+                available_frame_size = (
+                    self._connection._remote_max_frame_size - transfer_overhead_size - 8  # pylint: disable=protected-access
+                )
 
-            start_idx = 0
-            remaining_payload_cnt = payload_size
-            # encode n-1 frames if payload_size > available_frame_size
-            while remaining_payload_cnt > available_frame_size:
+                start_idx = 0
+                remaining_payload_cnt = payload_size
+                # encode n-1 frames if payload_size > available_frame_size
+                while remaining_payload_cnt > available_frame_size:
+                    tmp_delivery_frame = {
+                        "handle": delivery.frame["handle"],
+                        "delivery_tag": delivery.frame["delivery_tag"],
+                        "message_format": delivery.frame["message_format"],
+                        "settled": delivery.frame["settled"],
+                        "more": True,
+                        "rcv_settle_mode": delivery.frame["rcv_settle_mode"],
+                        "state": delivery.frame["state"],
+                        "resume": delivery.frame["resume"],
+                        "aborted": delivery.frame["aborted"],
+                        "batchable": delivery.frame["batchable"],
+                        "delivery_id": self.next_outgoing_id,
+                    }
+                    if network_trace_params:
+                        # We determine the logging for the outgoing Transfer frames based on the source
+                        # Link configuration rather than the Session, because it's only at the Session
+                        # level that we can determine how many outgoing frames are needed and their
+                        # delivery IDs.
+                        # TODO: Obscuring the payload for now to investigate the potential for leaks.
+                        _LOGGER.debug(
+                            "-> %r", TransferFrame(payload=b"***", **tmp_delivery_frame),
+                            extra=network_trace_params
+                        )
+                    self._connection._process_outgoing_frame(  # pylint: disable=protected-access
+                        self.channel,
+                        TransferFrame(
+                            payload=payload[start_idx : start_idx + available_frame_size],
+                            **tmp_delivery_frame
+                        )
+                    )
+                    start_idx += available_frame_size
+                    remaining_payload_cnt -= available_frame_size
+
+                # encode the last frame
                 tmp_delivery_frame = {
                     "handle": delivery.frame["handle"],
                     "delivery_tag": delivery.frame["delivery_tag"],
                     "message_format": delivery.frame["message_format"],
                     "settled": delivery.frame["settled"],
-                    "more": True,
+                    "more": False,
                     "rcv_settle_mode": delivery.frame["rcv_settle_mode"],
                     "state": delivery.frame["state"],
                     "resume": delivery.frame["resume"],
@@ -327,47 +365,14 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     )
                 self._connection._process_outgoing_frame(  # pylint: disable=protected-access
                     self.channel,
-                    TransferFrame(
-                        payload=payload[start_idx : start_idx + available_frame_size],
-                        **tmp_delivery_frame
-                    )
+                    TransferFrame(payload=payload[start_idx:], **tmp_delivery_frame)
                 )
-                start_idx += available_frame_size
-                remaining_payload_cnt -= available_frame_size
-
-            # encode the last frame
-            tmp_delivery_frame = {
-                "handle": delivery.frame["handle"],
-                "delivery_tag": delivery.frame["delivery_tag"],
-                "message_format": delivery.frame["message_format"],
-                "settled": delivery.frame["settled"],
-                "more": False,
-                "rcv_settle_mode": delivery.frame["rcv_settle_mode"],
-                "state": delivery.frame["state"],
-                "resume": delivery.frame["resume"],
-                "aborted": delivery.frame["aborted"],
-                "batchable": delivery.frame["batchable"],
-                "delivery_id": self.next_outgoing_id,
-            }
-            if network_trace_params:
-                # We determine the logging for the outgoing Transfer frames based on the source
-                # Link configuration rather than the Session, because it's only at the Session
-                # level that we can determine how many outgoing frames are needed and their
-                # delivery IDs.
-                # TODO: Obscuring the payload for now to investigate the potential for leaks.
-                _LOGGER.debug(
-                    "-> %r", TransferFrame(payload=b"***", **tmp_delivery_frame),
-                    extra=network_trace_params
-                )
-            self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-                self.channel,
-                TransferFrame(payload=payload[start_idx:], **tmp_delivery_frame)
-            )
-            self.next_outgoing_id += 1
-            self.remote_incoming_window -= 1
-            self.outgoing_window -= 1
-            # TODO: We should probably handle an error at the connection and update state accordingly
-            delivery.transfer_state = SessionTransferState.OKAY
+                self.next_outgoing_id += 1
+                self.remote_incoming_window -= 1
+                self.outgoing_window -= 1
+                # TODO: We should probably handle an error at the connection and update state accordingly
+                delivery.transfer_state = SessionTransferState.OKAY
+        print("OUTGOING TRANSFER CALLED")
 
     def _incoming_transfer(self, frame):
         # TODO: should this be only if more=False?
