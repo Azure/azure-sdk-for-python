@@ -349,7 +349,7 @@ class AdversarialSimulator:
         parameters: TemplateParameters,
         target: Optional[Callable] = None,
     ) -> ConversationBot:
-        if role == ConversationRole.USER:
+        if role is ConversationRole.USER:
             model = self._get_user_proxy_completion_model(
                 template_key=template.template_name, template_parameters=parameters
             )
@@ -360,7 +360,17 @@ class AdversarialSimulator:
                 instantiation_parameters=parameters,
             )
 
-        if role == ConversationRole.ASSISTANT:
+        if role is ConversationRole.ASSISTANT:
+            if target is None:
+                msg = "Cannot setup system bot. Target is None"
+
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+                    error_category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.SYSTEM_ERROR,
+                )
 
             class DummyModel:
                 def __init__(self):
@@ -378,11 +388,14 @@ class AdversarialSimulator:
                 conversation_template="",
                 instantiation_parameters={},
             )
-        return ConversationBot(
-            role=role,
-            model=model,
-            conversation_template=template,
-            instantiation_parameters=parameters,
+
+        msg = "Invalid value for enum ConversationRole. This should never happen."
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.ADVERSARIAL_SIMULATOR,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.SYSTEM_ERROR,
         )
 
     def _join_conversation_starter(self, parameters: TemplateParameters, to_join: str) -> TemplateParameters:
