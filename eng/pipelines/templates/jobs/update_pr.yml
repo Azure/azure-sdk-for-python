@@ -10,8 +10,8 @@ variables:
   skipComponentGovernanceDetection: true
 
 pool:
-  name: azsdk-pool-mms-ubuntu-2004-general
-  vmImage: 'ubuntu-20.04'
+  name: azsdk-pool-mms-ubuntu-2204-general
+  vmImage: 'ubuntu-22.04'
 
 steps:
 - task: UsePythonVersion@0
