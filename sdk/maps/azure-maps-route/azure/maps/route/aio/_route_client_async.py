@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# pylint: disable=unused-import,ungrouped-imports, R0904, C0302, W0212
+# pylint: disable=C4758, W0212
 from typing import Any, List, Union, Tuple, overload
 from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async

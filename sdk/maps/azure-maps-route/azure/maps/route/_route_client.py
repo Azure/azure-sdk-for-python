@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# pylint: disable=unused-import,ungrouped-imports, R0904, C0302, W0212
+# pylint: disable=unused-import, C4758, W0212
 from typing import Union, Any, List, Tuple, overload
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import AzureKeyCredential, TokenCredential
