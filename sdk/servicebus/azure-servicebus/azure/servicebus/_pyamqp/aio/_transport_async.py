@@ -262,21 +262,23 @@ class AsyncTransport(
         self.sslopts = ssl_opts
         self.network_trace_params = kwargs.get('network_trace_params')
         self._use_tls = use_tls
-        try:
-            self.sslopts = self._build_ssl_opts(self.sslopts)
-        except FileNotFoundError as exc:
-        # FileNotFoundError does not have missing filename info, so adding it below.
-        # Assuming that this must be ca_certs, since this is the only file path that
-        # users can pass in (`connection_verify` in the EH/SB clients) through sslopts above.
-        # For uamqp exception parity.
-            exc.filename = self.sslopts
-            raise exc
 
     async def connect(self):
         try:
             # are we already connected?
             if self.connected:
                 return
+            try:
+            # Building ssl opts here instead of constructor, so that invalid cert error is raised
+            # when client is connecting, rather then during creation. For uamqp exception parity.
+                self.sslopts = self._build_ssl_opts(self.sslopts)
+            except FileNotFoundError as exc:
+            # FileNotFoundError does not have missing filename info, so adding it below.
+            # Assuming that this must be ca_certs, since this is the only file path that
+            # users can pass in (`connection_verify` in the EH/SB clients) through sslopts above.
+            # For uamqp exception parity. Remove later when resolving issue #27128.
+                exc.filename = self.sslopts
+                raise exc
             self.reader, self.writer = await asyncio.open_connection(
                 host=self.host,
                 port=self.port,
