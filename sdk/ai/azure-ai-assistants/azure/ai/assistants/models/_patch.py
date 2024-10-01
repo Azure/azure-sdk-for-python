@@ -509,6 +509,10 @@ class AsyncAssistantRunStream(BaseAssistantRunStream, AsyncIterator[Tuple[str, A
         self.done = False
         self.buffer = ""
         
+    async def __aenter__(self):
+        # Initialization code goes here
+        return self
+            
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         close_method = getattr(self.response_iterator, "close", None)
         if callable(close_method):

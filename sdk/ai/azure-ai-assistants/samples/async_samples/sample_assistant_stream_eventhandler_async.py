@@ -11,7 +11,7 @@ DESCRIPTION:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
-    python sample_assistant_stream_iteration.py
+    python sample_assistant_stream_eventhandler.py
 
     Set these two environment variables before running the sample:
     1) AZUREAI_ENDPOINT_URL - Your endpoint URL, in the form 
@@ -106,13 +106,12 @@ async def sample_assistant_stream_iteration():
         message = await assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         logging.info(f"Created message, message ID {message.id}")
 
-        stream = await assistant_client.create_and_process_run(
+        async with await assistant_client.create_and_process_run(
             thread_id=thread.id, 
             assistant_id=assistant.id,
             stream=True,
             event_handler=MyEventHandler()
-        )
-        if stream:
+        ) as stream:
             await stream.until_done()
 
         messages = await assistant_client.list_messages(thread_id=thread.id)

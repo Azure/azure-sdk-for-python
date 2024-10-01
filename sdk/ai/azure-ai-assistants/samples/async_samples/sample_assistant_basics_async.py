@@ -60,7 +60,7 @@ async def sample_assistant_basic_operation():
         print("Created assistant client")
 
         assistant = await assistant_client.create_assistant(
-            model="gpt", name="my-assistant", instructions="You are helpful assistant"
+            model="gpt-4o-mini", name="my-assistant", instructions="You are helpful assistant"
         )
         print("Created assistant, assistant ID", assistant.id)
 
