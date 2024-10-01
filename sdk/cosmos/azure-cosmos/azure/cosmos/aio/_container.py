@@ -621,8 +621,8 @@ class ContainerProxy:
     def __unwrap_response(self, response: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         if response is None:
             return {}
-        else:
-            return response
+        
+        return response
 
     @distributed_trace_async
     async def replace_item(
