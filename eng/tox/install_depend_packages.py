@@ -88,7 +88,7 @@ SPECIAL_CASE_OVERRIDES = {
     }
 }
 
-def is_package_compatible(package_requirements: List[Requirement], immutable_requirements: List[Requirement]) -> bool:
+def is_package_compatible(package_name: str, package_requirements: List[Requirement], immutable_requirements: List[Requirement], should_log: bool = True) -> bool:
     """
     This function accepts a set of requirements for a package, and ensures that the package is compatible with the immutable_requirements.
 
@@ -110,50 +110,57 @@ def is_package_compatible(package_requirements: List[Requirement], immutable_req
                 immutable_version = next(iter(immutable_requirement.specifier)).version
 
                 if not package_requirement.specifier.contains(immutable_version):
-                    logging.info(f"Dev req dependency {package_requirement} is not compatible with immutable requirement {immutable_requirement}.")
+                    if should_log:
+                        logging.info(f"Dev req dependency {package_name}'s requirement specifier of {package_requirement} is not compatible with immutable requirement {immutable_requirement}.")
                     return False
 
     return True
 
-def resolve_compatible_package(package_name: str, package_version: str, immutable_requirements: List[Requirement]) -> Optional[str]:
+def resolve_compatible_package(package_name: str, immutable_requirements: List[Requirement]) -> Optional[str]:
     """
-    This function accepts a targeted package, a set of requirements for that package, and a set of immutable_requirements that the package must be compatible with.
+    This function attempts to resolve a compatible package version for whatever set of immutable_requirements that the package must be compatible with.
 
-    This function should only be utilized when a package is found to be incompatible with the immutable_requirements. It will attempt to resolve the incompatibility by
+    It should only be utilized when a package is found to be incompatible with the immutable_requirements. It will attempt to resolve the incompatibility by
     walking backwards through different versions of <package_name> until a compatible version is found that works with the immutable_requirements.
     """
 
     pypi = PyPIClient()
     immovable_pkgs = {req.key: req for req in immutable_requirements}
 
-    # Let's use a real use-case to walk through this function. We're going to use the azure-ai-language-conversations package as an example.
+    # Let's use a real use-case to walk through this function. We're going to use the azure-ai-language-conversations package as an example.\
+
     # immovable_pkgs = the selected mindependency for azure-ai-language-conversations
     #   -> "azure-core==1.28.0",
     #   -> "isodate==0.6.1",
     #   -> "typing-extensions==4.0.1",
+    # we have the following dev_reqs for azure-ai-language-conversations
+    #   -> ../azure-sdk-tools
+    #   ->  ../azure-identity
+    #   -> ../azure-core
+
+    # as we walk each of the dev reqs, we check for compatibility with the immovable_packages. (this happens in is_package_compatible)
+    # if the dev req is incompatible, we need to resolve it. THIS function is what resolves it!
+
+    # since we already know that package_name is incompatible with the immovable_pkgs, we need to walk backwards through the versions of package_name
+    # checking to ensure that each version is compatible with the immovable_pkgs.
+    # if we find one that is, we will return a new requirement string for that package which will replace this dev_req line.
     for pkg in immovable_pkgs:
+        required_package = immovable_pkgs[pkg].name
         required_pkg_version = next(iter(immovable_pkgs[pkg].specifier)).version
-        # as we walk through each hard dependency, we need to check all of the dev_requirements for compatibility with these packages
-        # for dev_req_dependency in dev_req_pkg_reqs:
-        #     # if the dev_req_dependency is present in the hard dependencies, we need to check compatibility
-        #     if dev_req_dependency.key in immovable_pkgs:
-        #         if str(dev_req_dependency.specifier):
-        #             # check compatibility here. if the dep is compatible with the current set of packages, we can use it.
-        #             # otherwise we need to keep walking backwards until we find a compatible version.
-        #             # from here on we have to check the same dependency for this package on the retrieved version as well
-        #             available_versions = pypi.get_ordered_versions(dev_req_dependency.key, True) # they come back smallest to largest by default
-        #             available_versions.reverse()
 
-        #             if not required_pkg_version in dev_req_dependency.specifier:
-        #                 pypi.get_ordered_versions(dev_req_dependency.key, True)
+        versions = pypi.get_ordered_versions(package_name, True)
+        versions.reverse()
 
+        for version in versions:
+            version_release = pypi.project_release(package_name, version).get("info", {}).get("requires_dist", [])
 
-                    # # we're attempting to do this entirely with metadata instead of downloading each version
-                    # for version in available_versions:
-                    #     version_release = pypi.project_release(dev_req_dependency.key, version)
-                    #     breakpoint()
+            if version_release:
+                requirements_for_dev_req = [Requirement(r) for r in version_release]
 
-                    # breakpoint()
+                compatible = is_package_compatible(required_package, requirements_for_dev_req, immutable_requirements, should_log=False)
+                if compatible:
+                    # we have found a compatible version. We can return this as the new requirement line for the dev_req file.
+                    return f"{package_name}=={version}"
 
     # no changes necessary
     return None
@@ -186,9 +193,8 @@ def handle_incompatible_minimum_dev_reqs(setup_path: str, filtered_requirement_l
                     local_package_metadata = pkginfo.get_metadata(cleansed_dev_requirement_line)
                     if local_package_metadata:
                         requirements_for_dev_req = [Requirement(r) for r in local_package_metadata.requires_dist]
-                        if not is_package_compatible(requirements_for_dev_req, packages_for_install):
-                            breakpoint()
-                            new_req = resolve_compatible_package(local_package_metadata.name, local_package_metadata.version, packages_for_install)
+                        if not is_package_compatible(local_package_metadata.name, requirements_for_dev_req, packages_for_install):
+                            new_req = resolve_compatible_package(local_package_metadata.name, packages_for_install)
 
                             if new_req:
                                 cleansed_reqs.append(new_req)
@@ -208,13 +214,12 @@ def handle_incompatible_minimum_dev_reqs(setup_path: str, filtered_requirement_l
 
                     if local_package:
                         requirements_for_dev_req = [Requirement(r) for r in local_package.requires]
-                        if not is_package_compatible(requirements_for_dev_req, packages_for_install):
-                            breakpoint()
-                            new_req = resolve_compatible_package(local_package.name, local_package.version, packages_for_install)
+                        if not is_package_compatible(local_package.name, requirements_for_dev_req, packages_for_install):
+                            new_req = resolve_compatible_package(local_package.name, packages_for_install)
                             if new_req:
                                 cleansed_reqs.append(new_req)
                             else:
-                                cleansed_reqs.append(cleansed_reqs)
+                                cleansed_reqs.append(cleansed_dev_requirement_line)
 
                 except Exception as e:
                     logging.error(f"Error while processing relative requirement {cleansed_dev_requirement_line}: {e}")
@@ -224,7 +229,6 @@ def handle_incompatible_minimum_dev_reqs(setup_path: str, filtered_requirement_l
                 # try to parse it as a standard specifier. If it is, we can probably add it to the list of requirements unless it conflicts with the current set of packages
                 # doing nothing here, as we don't understand how to resolve this yet
                 cleansed_reqs.append(cleansed_dev_requirement_line)
-                logging.info(f"While filtering incompatible minimum dev requirements, found a requirement that we don't know how to deal with yet: \"{cleansed_dev_requirement_line}\"")
                 continue
 
     return cleansed_reqs
@@ -253,6 +257,7 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
     # after september 2024, filter_dev_requirements will also check for **compatibility** with the packages being installed when filtering the dev_requirements.
     dev_req_file_path = filter_dev_requirements(setup_py_file_path, released_packages, temp_dir, additionalFilterFn)
 
+    breakpoint()
     if override_added_packages:
         logging.info(f"Expanding the requirement set by the packages {override_added_packages}.")
 
