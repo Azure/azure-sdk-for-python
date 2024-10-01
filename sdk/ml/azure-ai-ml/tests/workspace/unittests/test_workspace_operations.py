@@ -28,15 +28,6 @@ def mock_credential() -> Mock:
     yield Mock()
 
 
-def mock_urlparse(url: str) -> urllib.parse.ParseResult:
-    return urllib.parse.ParseResult(
-        scheme="http", netloc="example.com", path="/index.html", params="", query="a=1&b=2", fragment=""
-    )
-
-
-urllib.parse.urlparse = mock_urlparse
-
-
 @pytest.fixture
 def mock_workspace_operation(
     mock_workspace_scope: OperationScope,
@@ -97,7 +88,8 @@ class TestWorkspaceOperation:
         else:
             mock_workspace_operation._operation.list_by_resource_group.assert_called_once()
 
-    def test_get(self, mock_workspace_operation: WorkspaceOperations) -> None:
+    def test_get(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
+        mocker.patch("urllib.parse.urlparse")
         mock_workspace_operation.get("random_name")
         mock_workspace_operation._operation.get.assert_called_once()
 
@@ -124,7 +116,8 @@ class TestWorkspaceOperation:
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
 
-    def test_update(self, mock_workspace_operation: WorkspaceOperations) -> None:
+    def test_update(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
+        mocker.patch("urllib.parse.urlparse")
         ws = Workspace(
             name="name",
             description="description",
@@ -145,6 +138,7 @@ class TestWorkspaceOperation:
     def test_update_with_role_assignemnt(
         self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
     ) -> None:
+        mocker.patch("urllib.parse.urlparse")
         mocker.patch(
             "azure.ai.ml.operations.WorkspaceOperations._populate_feature_store_role_assignment_parameters",
             return_value=({}, {}, {}),
@@ -173,6 +167,7 @@ class TestWorkspaceOperation:
         mock_workspace_operation._operation.begin_update.assert_called()
 
     def test_delete(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
+        mocker.patch("urllib.parse.urlparse")
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
         mocker.patch(
             "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
@@ -181,6 +176,7 @@ class TestWorkspaceOperation:
         mock_workspace_operation._operation.begin_delete.assert_called_once()
 
     def test_purge(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
+        mocker.patch("urllib.parse.urlparse")
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
         mocker.patch(
             "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
