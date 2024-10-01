@@ -5,13 +5,13 @@
 """
 DESCRIPTION:
     This sample demonstrates how to use assistants with streaming from
-    the Azure Assistants service using a asynchronous client.
+    the Azure Assistants service using a synchronous client.
 
     See package documentation:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
-    python sample_assistant_stream_iteration_async.py
+    python sample_assistant_stream_iteration.py
 
     Set these two environment variables before running the sample:
     1) AZUREAI_ENDPOINT_URL - Your endpoint URL, in the form 
@@ -29,7 +29,8 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants.aio import AssistantsClient
 from azure.ai.assistants.models import (
-    AssistantStreamEvent,
+    AsyncAssistantEventHandler,
+    AsyncAssistantEventHandler,
     MessageDeltaTextContent,
     MessageDeltaChunk,
     ThreadMessage,
@@ -39,6 +40,7 @@ from azure.ai.assistants.models import (
 from azure.core.credentials import AzureKeyCredential
 
 import os, logging
+from typing import Any
 
 
 def setup_console_trace_exporter():
@@ -49,6 +51,32 @@ def setup_console_trace_exporter():
 
     # Instrument requests to capture HTTP-related telemetry
     RequestsInstrumentor().instrument()
+
+
+class MyEventHandler(AsyncAssistantEventHandler):
+    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+        for content_part in delta.delta.content:
+            if isinstance(content_part, MessageDeltaTextContent):
+                text_value = content_part.text.value if content_part.text else "No text"
+                logging.info(f"Text delta received: {text_value}")
+
+    async def on_thread_message(self, message: "ThreadMessage") -> None:
+        logging.info(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+
+    async def on_thread_run(self, run: "ThreadRun") -> None:
+        logging.info(f"ThreadRun status: {run.status}")
+
+    async def on_run_step(self, step: "RunStep") -> None:
+        logging.info(f"RunStep type: {step.type}, Status: {step.status}")
+
+    async def on_error(self, data: str) -> None:
+        logging.error(f"An error occurred. Data: {data}")
+
+    async def on_done(self) -> None:
+        logging.info("Stream completed.")
+
+    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+        logging.warning(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 
 async def sample_assistant_stream_iteration():
@@ -78,35 +106,14 @@ async def sample_assistant_stream_iteration():
         message = await assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         logging.info(f"Created message, message ID {message.id}")
 
-        stream = await assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, stream=True)
-
+        stream = await assistant_client.create_and_process_run(
+            thread_id=thread.id, 
+            assistant_id=assistant.id,
+            stream=True,
+            event_handler=MyEventHandler()
+        )
         if stream:
-            async for event_type, event_data in stream:
-
-                if isinstance(event_data, MessageDeltaChunk):
-                    for content_part in event_data.delta.content:
-                        if isinstance(content_part, MessageDeltaTextContent):
-                            text_value = content_part.text.value if content_part.text else "No text"
-                            logging.info(f"Text delta received: {text_value}")
-
-                elif isinstance(event_data, ThreadMessage):
-                    logging.info(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
-
-                elif isinstance(event_data, ThreadRun):
-                    logging.info(f"ThreadRun status: {event_data.status}")
-
-                elif isinstance(event_data, RunStep):
-                    logging.info(f"RunStep type: {event_data.type}, Status: {event_data.status}")
-
-                elif event_type == AssistantStreamEvent.ERROR:
-                    logging.error(f"An error occurred. Data: {event_data}")
-
-                elif event_type == AssistantStreamEvent.DONE:
-                    logging.info("Stream completed.")
-                    break
-
-                else:
-                    logging.warning(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+            await stream.until_done()
 
         messages = await assistant_client.list_messages(thread_id=thread.id)
         logging.info(f"Messages: {messages}")

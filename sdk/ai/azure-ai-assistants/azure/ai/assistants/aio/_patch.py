@@ -10,6 +10,8 @@ import sys, io, logging, time
 from typing import Any, Dict, List, overload, IO, Union, Optional, TYPE_CHECKING
 from .. import models as _models
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.tracing.decorator import distributed_trace
+
 from ._client import AssistantsClient as AssistantsClientGenerated
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -26,6 +28,18 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class AssistantsClient(AssistantsClientGenerated):
+    
+    def get_toolset(self) -> Optional[_models.ToolSet]:
+        """
+        Get the toolset for the assistant.
+
+        :return: The toolset for the assistant. If not set, returns None.
+        :rtype: ~azure.ai.assistants.models.ToolSet        
+        """
+        if hasattr(self, "_toolset"):
+            return self._toolset
+        return None
+
     @overload
     async def create_run(
         self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
@@ -37,7 +51,7 @@ class AssistantsClient(AssistantsClientGenerated):
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-            Default value is "application/json".
+         Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.ThreadRun
@@ -65,6 +79,7 @@ class AssistantsClient(AssistantsClientGenerated):
         tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
+        event_handler: Optional[_models.AsyncAssistantEventHandler] = None,
         **kwargs: Any
     ) -> Union[_models.ThreadRun, _models.AsyncAssistantRunStream]:
         """Creates a new run for an assistant thread.
@@ -74,75 +89,78 @@ class AssistantsClient(AssistantsClientGenerated):
         :keyword assistant_id: The ID of the assistant that should run the thread. Required.
         :paramtype assistant_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-            Default value is "application/json".
+         Default value is "application/json".
         :paramtype content_type: str
         :keyword model: The overridden model name that the assistant should use to run the thread.
-            Default value is None.
+         Default value is None.
         :paramtype model: str
         :keyword instructions: The overridden system instructions that the assistant should use to run
-            the thread. Default value is None.
+         the thread. Default value is None.
         :paramtype instructions: str
         :keyword additional_instructions: Additional instructions to append at the end of the
-            instructions for the run. This is useful for modifying the behavior
-            on a per-run basis without overriding other instructions. Default value is None.
+         instructions for the run. This is useful for modifying the behavior
+         on a per-run basis without overriding other instructions. Default value is None.
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
-            Default value is None.
+         Default value is None.
         :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessage]
         :keyword tools: The overridden list of enabled tools that the assistant should use to run the
-            thread. Default value is None.
+         thread. Default value is None.
         :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword stream: If ``true``\\ , returns a stream of events that happen during the
-            Run as server-sent events,
-            terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
-            value is None.
+         Run as server-sent events,
+         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
+         value is None.
         :paramtype stream: bool
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-            will make the output
-            more random, while lower values like 0.2 will make it more focused and deterministic. Default
-            value is None.
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
         :paramtype temperature: float
         :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-            model
-            considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
-            comprising the top 10% probability mass are considered.
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
 
-            We generally recommend altering this or temperature but not both. Default value is None.
+         We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
         :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
-            course of the run. The run will make a best effort to use only
-            the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
-            the number of prompt tokens specified,
-            the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
-            value is None.
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
         :paramtype max_prompt_tokens: int
         :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
-            the course of the run. The run will make a best effort
-            to use only the number of completion tokens specified, across multiple turns of the run. If
-            the run exceeds the number of
-            completion tokens specified, the run will end with status ``incomplete``. See
-            ``incomplete_details`` for more info. Default value is None.
+         the course of the run. The run will make a best effort
+         to use only the number of completion tokens specified, across multiple turns of the run. If
+         the run exceeds the number of
+         completion tokens specified, the run will end with status ``incomplete``. See
+         ``incomplete_details`` for more info. Default value is None.
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
-            moves forward. Default value is None.
+         moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-            the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
-            AssistantsNamedToolChoice Default value is None.
+         the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
+         AssistantsNamedToolChoice Default value is None.
         :paramtype tool_choice: str or str or
-            ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
-            ~azure.ai.assistants.models.AssistantsNamedToolChoice
+         ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-            following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
-            AssistantsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or
-            ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
-            ~azure.ai.assistants.models.AssistantsApiResponseFormat
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-            for storing additional information about that object in a structured format. Keys may be up to
-            64 characters in length and values may be up to 512 characters in length. Default value is
-            None.
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
         :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.assistants.models.AsyncAssistantEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -159,7 +177,7 @@ class AssistantsClient(AssistantsClientGenerated):
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-            Default value is "application/json".
+         Default value is "application/json".
         :paramtype content_type: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.ThreadRun
@@ -187,6 +205,7 @@ class AssistantsClient(AssistantsClientGenerated):
         tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
+        event_handler: Optional[_models.AsyncAssistantEventHandler] = None,
         **kwargs: Any
     ) -> Union[_models.ThreadRun, _models.AsyncAssistantRunStream]:
         """Creates a new run for an assistant thread.
@@ -198,72 +217,75 @@ class AssistantsClient(AssistantsClientGenerated):
         :keyword assistant_id: The ID of the assistant that should run the thread. Required.
         :paramtype assistant_id: str
         :keyword model: The overridden model name that the assistant should use to run the thread.
-            Default value is None.
+         Default value is None.
         :paramtype model: str
         :keyword instructions: The overridden system instructions that the assistant should use to run
-            the thread. Default value is None.
+         the thread. Default value is None.
         :paramtype instructions: str
         :keyword additional_instructions: Additional instructions to append at the end of the
-            instructions for the run. This is useful for modifying the behavior
-            on a per-run basis without overriding other instructions. Default value is None.
+         instructions for the run. This is useful for modifying the behavior
+         on a per-run basis without overriding other instructions. Default value is None.
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
-            Default value is None.
+         Default value is None.
         :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessage]
         :keyword tools: The overridden list of enabled tools that the assistant should use to run the
-            thread. Default value is None.
+         thread. Default value is None.
         :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword stream: If ``true``\\ , returns a stream of events that happen during the
-            Run as server-sent events,
-            terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
-            value is None.
+         Run as server-sent events,
+         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
+         value is None.
         :paramtype stream: bool
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-            will make the output
-            more random, while lower values like 0.2 will make it more focused and deterministic. Default
-            value is None.
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
         :paramtype temperature: float
         :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-            model
-            considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
-            comprising the top 10% probability mass are considered.
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
 
-            We generally recommend altering this or temperature but not both. Default value is None.
+         We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
         :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
-            course of the run. The run will make a best effort to use only
-            the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
-            the number of prompt tokens specified,
-            the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
-            value is None.
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
         :paramtype max_prompt_tokens: int
         :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
-            the course of the run. The run will make a best effort
-            to use only the number of completion tokens specified, across multiple turns of the run. If
-            the run exceeds the number of
-            completion tokens specified, the run will end with status ``incomplete``. See
-            ``incomplete_details`` for more info. Default value is None.
+         the course of the run. The run will make a best effort
+         to use only the number of completion tokens specified, across multiple turns of the run. If
+         the run exceeds the number of
+         completion tokens specified, the run will end with status ``incomplete``. See
+         ``incomplete_details`` for more info. Default value is None.
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
-            moves forward. Default value is None.
+         moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-            the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
-            AssistantsNamedToolChoice Default value is None.
+         the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
+         AssistantsNamedToolChoice Default value is None.
         :paramtype tool_choice: str or str or
-            ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
-            ~azure.ai.assistants.models.AssistantsNamedToolChoice
+         ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-            following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
-            AssistantsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or
-            ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
-            ~azure.ai.assistants.models.AssistantsApiResponseFormat
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-            for storing additional information about that object in a structured format. Keys may be up to
-            64 characters in length and values may be up to 512 characters in length. Default value is
-            None.
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
         :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.assistants.models.AsyncAssistantEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -304,7 +326,7 @@ class AssistantsClient(AssistantsClientGenerated):
 
         # If streaming is enabled, return the custom stream object
         if stream:
-            return _models.AsyncAssistantRunStream(await response)
+            return _models.AsyncAssistantRunStream(await response, event_handler)
         else:
             return await response
 
@@ -327,6 +349,7 @@ class AssistantsClient(AssistantsClientGenerated):
         tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
+        event_handler: Optional[_models.AsyncAssistantEventHandler] = None,
         sleep_interval: int = 1,
         **kwargs: Any
     ) -> Union[_models.ThreadRun, _models.AsyncAssistantRunStream]:
@@ -337,74 +360,80 @@ class AssistantsClient(AssistantsClientGenerated):
         :keyword assistant_id: The ID of the assistant that should run the thread. Required.
         :paramtype assistant_id: str
         :keyword model: The overridden model name that the assistant should use to run the thread.
-            Default value is None.
+         Default value is None.
         :paramtype model: str
         :keyword instructions: The overridden system instructions that the assistant should use to run
-            the thread. Default value is None.
+         the thread. Default value is None.
         :paramtype instructions: str
         :keyword additional_instructions: Additional instructions to append at the end of the
-            instructions for the run. This is useful for modifying the behavior
-            on a per-run basis without overriding other instructions. Default value is None.
+         instructions for the run. This is useful for modifying the behavior
+         on a per-run basis without overriding other instructions. Default value is None.
         :paramtype additional_instructions: str
         :keyword additional_messages: Adds additional messages to the thread before creating the run.
-            Default value is None.
+         Default value is None.
         :paramtype additional_messages: list[~azure.ai.assistants.models.ThreadMessage]
         :keyword tools: The overridden list of enabled tools that the assistant should use to run the
-            thread. Default value is None.
+         thread. Default value is None.
         :paramtype tools: list[~azure.ai.assistants.models.ToolDefinition]
         :keyword stream: If ``true``\\ , returns a stream of events that happen during the
-            Run as server-sent events,
-            terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
-            value is None.
+         Run as server-sent events,
+         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
+         value is None.
         :paramtype stream: bool
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
-            will make the output
-            more random, while lower values like 0.2 will make it more focused and deterministic. Default
-            value is None.
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
         :paramtype temperature: float
         :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
-            model
-            considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
-            comprising the top 10% probability mass are considered.
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
 
-            We generally recommend altering this or temperature but not both. Default value is None.
+         We generally recommend altering this or temperature but not both. Default value is None.
         :paramtype top_p: float
         :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
-            course of the run. The run will make a best effort to use only
-            the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
-            the number of prompt tokens specified,
-            the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
-            value is None.
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
         :paramtype max_prompt_tokens: int
         :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
-            the course of the run. The run will make a best effort
-            to use only the number of completion tokens specified, across multiple turns of the run. If
-            the run exceeds the number of
-            completion tokens specified, the run will end with status ``incomplete``. See
-            ``incomplete_details`` for more info. Default value is None.
+         the course of the run. The run will make a best effort
+         to use only the number of completion tokens specified, across multiple turns of the run. If
+         the run exceeds the number of
+         completion tokens specified, the run will end with status ``incomplete``. See
+         ``incomplete_details`` for more info. Default value is None.
         :paramtype max_completion_tokens: int
         :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
-            moves forward. Default value is None.
+         moves forward. Default value is None.
         :paramtype truncation_strategy: ~azure.ai.assistants.models.TruncationObject
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
-            the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
-            AssistantsNamedToolChoice Default value is None.
+         the following types: str, Union[str, "_models.AssistantsApiToolChoiceOptionMode"],
+         AssistantsNamedToolChoice Default value is None.
         :paramtype tool_choice: str or str or
-            ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
-            ~azure.ai.assistants.models.AssistantsNamedToolChoice
+         ~azure.ai.assistants.models.AssistantsApiToolChoiceOptionMode or
+         ~azure.ai.assistants.models.AssistantsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
-            following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
-            AssistantsApiResponseFormat Default value is None.
+         following types: str, Union[str, "_models.AssistantsApiResponseFormatMode"],
+         AssistantsApiResponseFormat Default value is None.
         :paramtype response_format: str or str or
-            ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
-            ~azure.ai.assistants.models.AssistantsApiResponseFormat
+         ~azure.ai.assistants.models.AssistantsApiResponseFormatMode or
+         ~azure.ai.assistants.models.AssistantsApiResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
-            for storing additional information about that object in a structured format. Keys may be up to
-            64 characters in length and values may be up to 512 characters in length. Default value is
-            None.
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
         :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.assistants.models.AsyncAssistantEventHandler
+        :keyword sleep_interval: The time in seconds to wait between polling the service for run status.
+            Default value is 1.
+        :paramtype sleep_interval: int        
         :return: str or AsyncAssistantRunStream. The run completion status if streaming is disabled, otherwise 
-            the AsyncAssistantRunStream object.
+         the AsyncAssistantRunStream object.
         :rtype: str or ~azure.ai.assistants.models.AsyncAssistantRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -426,6 +455,7 @@ class AssistantsClient(AssistantsClientGenerated):
             tool_choice=tool_choice,
             response_format=response_format,
             metadata=metadata,
+            event_handler=event_handler,
             **kwargs
         )
 
@@ -445,21 +475,158 @@ class AssistantsClient(AssistantsClientGenerated):
                     await self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
 
-                # TODO: Find better way to retrieve tool set
-                if hasattr(self, "_toolset"):
-                    tool_outputs =  self._toolset.get_tool(_models.FunctionTool).execute(tool_calls)
+                toolset = self.get_toolset()
+                if toolset:
+                    tool_outputs = toolset.execute_tool_calls(tool_calls)
                 else:
-                    raise ValueError("No tool set provided to handle tool calls")
+                    raise ValueError("Toolset is not available in the client.")
                     
                 _LOGGER.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
-                    await self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                    self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
 
             _LOGGER.info("Current run status: %s", run.status)
 
         return run
 
+    @overload
+    def submit_tool_outputs_to_run(
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> Union[_models.ThreadRun, _models.AsyncAssistantRunStream]:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
 
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def submit_tool_outputs_to_run(
+        self,
+        thread_id: str,
+        run_id: str,
+        *,
+        tool_outputs: List[_models.ToolOutput],
+        content_type: str = "application/json",
+        stream: Optional[bool] = None,
+        event_handler: Optional[_models.AsyncAssistantEventHandler] = None,
+        **kwargs: Any
+    ) -> Union[_models.ThreadRun, _models.AsyncAssistantRunStream]:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :keyword tool_outputs: Required.
+        :paramtype tool_outputs: list[~azure.ai.assistants.models.ToolOutput]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword stream: Default value is None.
+        :paramtype stream: bool
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.assistants.models.AsyncAssistantEventHandler
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def submit_tool_outputs_to_run(
+        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> Union[_models.ThreadRun, _models.AsyncAssistantRunStream]:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def submit_tool_outputs_to_run(
+        self,
+        thread_id: str,
+        run_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        tool_outputs: List[_models.ToolOutput] = _Unset,
+        stream: Optional[bool] = None,
+        event_handler: Optional[_models.AsyncAssistantEventHandler] = None,
+        **kwargs: Any
+    ) -> Union[_models.ThreadRun, _models.AsyncAssistantRunStream]:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :param tool_outputs: List of tool outputs to submit.
+        :param stream: If ``true``\\ , returns a stream of events that happen during the
+         Run as server-sent events,
+         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
+         value is None.
+        :param event_handler: The event handler to use for processing events during the run.
+        :param kwargs: Additional parameters.
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :raises: HttpResponseError for HTTP errors.
+        """
+
+        if isinstance(body, dict):
+            content_type = kwargs.get("content_type", "application/json")
+            response = super().submit_tool_outputs_to_run(
+                thread_id, run_id, body, content_type=content_type, **kwargs
+            )
+
+        elif tool_outputs is not _Unset:
+            response = super().submit_tool_outputs_to_run(
+                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=stream, stream=stream, **kwargs
+            )
+
+        elif isinstance(body, io.IOBase):
+            content_type = kwargs.get("content_type", "application/json")
+            response = super().submit_tool_outputs_to_run(
+                thread_id, run_id, body, content_type=content_type, **kwargs
+            )
+
+        else:
+            raise ValueError("Invalid combination of arguments provided.")
+        
+        # If streaming is enabled, return the custom stream object
+        if stream:
+            return _models.AsyncAssistantRunStream(response, event_handler)
+        else:
+            return response
+        
 __all__: List[str] = ["AssistantsClient", ""]  # Add all objects you want publicly available to users at this package level
 
 
