@@ -504,11 +504,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if isinstance(partition_key, list) and len(partition_key_definition['paths']) == len(partition_key):
             return False
         return True
-    
+
     def __unwrap_response(self, response: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         if response is None:
             return {}
-        
+
         return response
 
 

@@ -617,11 +617,11 @@ class ContainerProxy:
             **kwargs
         )
         return self.__unwrap_response(result)
-    
+
     def __unwrap_response(self, response: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         if response is None:
             return {}
-        
+
         return response
 
     @distributed_trace_async
