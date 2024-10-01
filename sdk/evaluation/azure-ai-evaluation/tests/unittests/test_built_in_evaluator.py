@@ -39,4 +39,3 @@ class TestBuiltInEvaluators:
             fluency_eval(query="What is the capital of Japan?", response=None)
 
         assert "Missing input" in exc_info.value.args[0]
-
