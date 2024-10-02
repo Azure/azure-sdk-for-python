@@ -650,7 +650,7 @@ def is_package_compatible(
     It is factored this way because we retrieve requirements differently according to the source of the package.
         If published, we can get requires() from PyPI
         If locally built wheel, we can get requires() from the metadata of the package
-        If local relative requirement, we can get requires() from a ParsedSetup of the setup.py for th package
+        If local relative requirement, we can get requires() from a ParsedSetup of the setup.py for the package
 
     :param List[Requirement] package_requirements: The dependencies of a dev_requirement file. This is the set of
         requirements that we are checking compatibility for.
