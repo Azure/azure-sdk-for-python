@@ -735,7 +735,7 @@ def handle_incompatible_minimum_dev_reqs(
     This function is used to handle the case where a dev requirement is incompatible with the current set of packages
     being installed. This is used to update or remove dev_requirements that are incompatible with a targeted set of packages.
 
-    :param str setup_path: The path to the setup.py file whos dev_requirements are being filtered.
+    :param str setup_path: The path to the setup.py file whose dev_requirements are being filtered.
 
     :param List[str] filtered_requirement_list: A filtered copy of the dev_requirements.txt for the targeted package. This list will be
     modified in place to remove any requirements incompatible with the packages_for_install.
