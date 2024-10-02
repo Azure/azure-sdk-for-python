@@ -2,6 +2,10 @@
 
 ## 2.0.0b2 (2024-09-12)
 
+### Features Added
+
+* Added support for load balancing between replicas.
+
 ### Bugs Fixed
 
 * Fixing ETag to be "ETag" instead of "etag" in feature flag telemetry.

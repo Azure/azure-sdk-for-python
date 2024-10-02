@@ -20,19 +20,20 @@ class MockClient:
 
 
 @pytest.mark.usefixtures("caplog")
-class TestConfigurationAsyncClientManagerLoadBalance():
+class TestConfigurationAsyncClientManagerLoadBalance:
 
     @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
-    @patch("azure.appconfiguration.provider.aio._async_client_manager.AzureAppConfigurationClient.from_connection_string")
+    @patch(
+        "azure.appconfiguration.provider.aio._async_client_manager.AzureAppConfigurationClient.from_connection_string"
+    )
     async def test_find_active_clients(self, mock_client, mock_find_auto_failover_endpoints):
         # Single endpoint test no load balancing
         endpoint = "https://fake.endpoint"
         connection_string = "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret"
 
-        
         mock_find_auto_failover_endpoints.return_value = []
-        
+
         manager = AsyncConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, False)
         await manager.setup_initial_clients()
         assert manager.get_next_client() is None
@@ -52,9 +53,9 @@ class TestConfigurationAsyncClientManagerLoadBalance():
         assert manager._active_clients[1].endpoint == "https://fake.endpoint2"
         assert manager._active_clients[2].endpoint == "https://fake.endpoint3"
 
-        # Single endpoint test load balancing        
+        # Single endpoint test load balancing
         mock_find_auto_failover_endpoints.return_value = []
-        
+
         manager = AsyncConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, True)
         await manager.setup_initial_clients()
 
@@ -96,9 +97,9 @@ class TestConfigurationAsyncClientManagerLoadBalance():
     async def test_find_active_clients_entra_id(self, mock_client, mock_find_auto_failover_endpoints):
         # Single endpoint test no load balancing
         endpoint = "https://fake.endpoint"
-        
+
         mock_find_auto_failover_endpoints.return_value = []
-        
+
         manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, False)
         await manager.setup_initial_clients()
         assert manager.get_next_client() is None
@@ -118,9 +119,9 @@ class TestConfigurationAsyncClientManagerLoadBalance():
         assert manager._active_clients[1].endpoint == "https://fake.endpoint2"
         assert manager._active_clients[2].endpoint == "https://fake.endpoint3"
 
-        # Single endpoint test load balancing        
+        # Single endpoint test load balancing
         mock_find_auto_failover_endpoints.return_value = []
-        
+
         manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, True)
         await manager.setup_initial_clients()
 

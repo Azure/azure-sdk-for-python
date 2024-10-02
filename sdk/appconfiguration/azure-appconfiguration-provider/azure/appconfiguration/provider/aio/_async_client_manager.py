@@ -391,14 +391,16 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
             return
         if self._next_update_time > time.time():
             return
-        await self._setup_failover_endpoints()
-        if self._load_balance:
+
+        updated_endpoints = await self._setup_failover_endpoints()
+        if updated_endpoints and self._load_balance:
+            # Reshuffle only if a new client was added and load_balance is enabled
             random.shuffle(self._replica_clients)
 
     def get_client_count(self) -> int:
         return len(self._replica_clients)
 
-    async def _setup_failover_endpoints(self):
+    async def _setup_failover_endpoints(self) -> bool:
         failover_endpoints = await find_auto_failover_endpoints(
             self._original_endpoint, self._replica_discovery_enabled
         )
@@ -406,12 +408,14 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         if failover_endpoints is None:
             # SRV record not found, so we should refresh after a longer interval
             self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
-            return
+            return False
 
         if len(failover_endpoints) == 0:
             # No failover endpoints in SRV record.
             self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
-            return
+            return False
+
+        updated_endpoints = False
 
         new_clients = [self._replica_clients[0]]  # Keep the original client
         for failover_endpoint in failover_endpoints:
@@ -422,6 +426,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                     found_client = True
                     break
             if not found_client:
+                updated_endpoints = True
                 if self._original_connection_string:
                     failover_connection_string = self._original_connection_string.replace(
                         self._original_endpoint, failover_endpoint
@@ -436,7 +441,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                             **self._args
                         )
                     )
-                else:
+                elif self._credential:
                     new_clients.append(
                         _AsyncConfigurationClientWrapper.from_credential(
                             failover_endpoint,
@@ -449,6 +454,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                     )
         self._replica_clients = new_clients
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
+        return updated_endpoints
 
     def backoff(self, client: _AsyncConfigurationClientWrapper):
         client.failed_attempts += 1

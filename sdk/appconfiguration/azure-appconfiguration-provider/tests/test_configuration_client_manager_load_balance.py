@@ -29,9 +29,8 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         endpoint = "https://fake.endpoint"
         connection_string = "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret"
 
-        
         mock_find_auto_failover_endpoints.return_value = []
-        
+
         with ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, False) as manager:
             assert manager.get_next_client() is None
 
@@ -49,9 +48,9 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         assert manager._active_clients[1].endpoint == "https://fake.endpoint2"
         assert manager._active_clients[2].endpoint == "https://fake.endpoint3"
 
-        # Single endpoint test load balancing        
+        # Single endpoint test load balancing
         mock_find_auto_failover_endpoints.return_value = []
-        
+
         manager = ConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, True)
 
         manager.find_active_clients()
@@ -92,9 +91,9 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
     def test_find_active_clients_entra_id(self, mock_client, mock_find_auto_failover_endpoints):
         # Single endpoint test no load balancing
         endpoint = "https://fake.endpoint"
-        
+
         mock_find_auto_failover_endpoints.return_value = []
-        
+
         with ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, False) as manager:
             assert manager.get_next_client() is None
 
@@ -112,9 +111,9 @@ class TestConfigurationClientManagerLoadBalance(unittest.TestCase):
         assert manager._active_clients[1].endpoint == "https://fake.endpoint2"
         assert manager._active_clients[2].endpoint == "https://fake.endpoint3"
 
-        # Single endpoint test load balancing        
+        # Single endpoint test load balancing
         mock_find_auto_failover_endpoints.return_value = []
-        
+
         manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, True)
 
         manager.find_active_clients()
