@@ -7,9 +7,11 @@ import os
 import re
 import tempfile
 from pathlib import Path
-from typing import Dict, List, NamedTuple, Optional, TypedDict
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple, TypedDict, Union
 
 import pandas as pd
+from promptflow.client import PFClient
+from promptflow.entities import Run
 
 from azure.ai.evaluation._constants import (
     DEFAULT_EVALUATION_RESULTS_FILE_NAME,
@@ -41,7 +43,7 @@ class EvaluateResult(TypedDict):
     rows: List[Dict]
 
 
-def is_none(value):
+def is_none(value) -> bool:
     return value is None or str(value).lower() == "none"
 
 
@@ -72,7 +74,7 @@ def load_jsonl(path):
         return [json.loads(line) for line in f.readlines()]
 
 
-def _azure_pf_client_and_triad(trace_destination):
+def _azure_pf_client_and_triad(trace_destination) -> Tuple[PFClient, AzureMLWorkspace]:
     from promptflow.azure._cli._utils import _get_azure_pf_client
 
     ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
@@ -86,11 +88,11 @@ def _azure_pf_client_and_triad(trace_destination):
 
 
 def _log_metrics_and_instance_results(
-    metrics,
-    instance_results,
-    trace_destination,
-    run,
-    evaluation_name,
+    metrics: Dict[str, Any],
+    instance_results: pd.DataFrame,
+    trace_destination: Optional[str],
+    run: Run,
+    evaluation_name: Optional[str],
 ) -> Optional[str]:
     if trace_destination is None:
         LOGGER.error("Unable to log traces as trace destination was not defined.")
@@ -168,9 +170,9 @@ def _trace_destination_from_project_scope(project_scope: AzureAIProject) -> str:
     return trace_destination
 
 
-def _write_output(path, data_dict):
+def _write_output(path: Union[str, os.PathLike], data_dict: Any) -> None:
     p = Path(path)
-    if os.path.isdir(path):
+    if p.is_dir():
         p = p / DEFAULT_EVALUATION_RESULTS_FILE_NAME
 
     with open(p, "w", encoding=DefaultOpenEncoding.WRITE) as f:
@@ -228,7 +230,7 @@ def _apply_column_mapping(
     return result_df
 
 
-def _has_aggregator(evaluator):
+def _has_aggregator(evaluator: object) -> bool:
     return hasattr(evaluator, "__aggregate__")
 
 
@@ -251,11 +253,11 @@ def get_int_env_var(env_var_name: str, default_value: int) -> int:
         return default_value
 
 
-def set_event_loop_policy():
+def set_event_loop_policy() -> None:
     import asyncio
     import platform
 
     if platform.system().lower() == "windows":
         # Reference: https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop
         # On Windows seems to be a problem with EventLoopPolicy, use this snippet to work around it
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore[attr-defined]
