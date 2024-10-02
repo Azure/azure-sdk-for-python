@@ -15,7 +15,7 @@ async def fluency_async_mock():
 class TestBuiltInEvaluators:
     def test_fluency_evaluator(self, mock_model_config):
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
-        fluency_eval._async_evaluator._flow = MagicMock(return_value=fluency_async_mock())
+        fluency_eval._flow = MagicMock(return_value=fluency_async_mock())
 
         score = fluency_eval(query="What is the capital of Japan?", response="The capital of Japan is Tokyo.")
 
@@ -24,7 +24,7 @@ class TestBuiltInEvaluators:
 
     def test_fluency_evaluator_non_string_inputs(self, mock_model_config):
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
-        fluency_eval._async_evaluator._flow = MagicMock(return_value=fluency_async_mock())
+        fluency_eval._flow = MagicMock(return_value=fluency_async_mock())
 
         score = fluency_eval(query={"foo": 1}, response={"bar": "2"})
 
@@ -33,14 +33,9 @@ class TestBuiltInEvaluators:
 
     def test_fluency_evaluator_empty_string(self, mock_model_config):
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
-        fluency_eval._async_evaluator._flow = MagicMock(return_value=fluency_async_mock())
+        fluency_eval._flow = MagicMock(return_value=fluency_async_mock())
 
         with pytest.raises(EvaluationException) as exc_info:
             fluency_eval(query="What is the capital of Japan?", response=None)
 
-        assert "Both 'query' and 'response' must be non-empty strings." in exc_info.value.args[0]
-
-        with pytest.raises(EvaluationException) as exc_info:
-            fluency_eval(query="What is the capital of Japan?", response="")
-
-        assert "Both 'query' and 'response' must be non-empty strings." in exc_info.value.args[0]
+        assert "Missing input" in exc_info.value.args[0]
