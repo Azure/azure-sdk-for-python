@@ -24,7 +24,7 @@ jobs:
 
     resources:
       instance_type: standard_e4s_v3
-      runtime_version: 3.2.0
+      runtime_version: 3.3.0
 
   count_by_row:
     type: spark
@@ -37,4 +37,4 @@ jobs:
 
     resources:
       instance_type: ${{parent.inputs.instance_type}}
-      runtime_version: 3.2.0
+      runtime_version: 3.3.0

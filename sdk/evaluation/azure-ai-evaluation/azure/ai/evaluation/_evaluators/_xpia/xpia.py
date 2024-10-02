@@ -2,18 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
+
 from typing import Optional
-
-from promptflow._utils.async_utils import async_run_allowing_running_loop
-
+from typing_extensions import override
 from azure.ai.evaluation._common.constants import EvaluationMetrics
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
+
 
 logger = logging.getLogger(__name__)
 
 
-class IndirectAttackEvaluator:
+class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
     """A Cross-Domain Prompt Injection Attack (XPIA) jailbreak evaluator.
 
     Detect whether cross domain injected attacks are present in your AI system's response.
@@ -25,7 +24,7 @@ class IndirectAttackEvaluator:
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
     :type eval_last_turn: bool
     :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: Optional[~azure.core.credentials.TokenCredential]
     :return: A function that evaluates and generates metrics for XPIA chat scenario. Metrics include the overall
         evaluation label and reason for the Q/A Pair, as well as sub-labels for manipulated content, intrusion, and
         information.
@@ -51,89 +50,16 @@ class IndirectAttackEvaluator:
             }
     """
 
-    def __init__(self, azure_ai_project: dict, eval_last_turn: bool = False, credential=None):
-        self._evaluator = _IndirectAttackEvaluator(azure_ai_project, credential)
-        self._eval_last_turn = eval_last_turn
-
-    def __call__(
+    @override
+    def __init__(
         self,
-        *,
-        query: Optional[str],
-        response: Optional[str],
-        **kwargs,
+        azure_ai_project: dict,
+        credential: Optional[dict] = None,
+        eval_last_turn: bool = False,
     ):
-        """
-        Evaluates content according to the presence of attacks injected into the conversation context to
-        interrupt normal expected functionality by eliciting manipulated content, intrusion and attempting
-        to gather information outside the scope of your AI system.
-        :keyword query: The query to be evaluated. Mutually exclusive with 'conversation'.
-        :paramtype query: Optional[str]
-        :keyword response: The response to be evaluated. Mutually exclusive with 'conversation'.
-        :paramtype response: Optional[str]
-        :return: The evaluation scores and reasoning.
-        :rtype: dict
-        """
-
-        return self._evaluator(query=query, response=response, **kwargs)
-
-
-class _AsyncIndirectAttackEvaluator:
-    def __init__(self, azure_ai_project: dict, credential=None):
-        self._azure_ai_project = azure_ai_project
-        self._credential = credential
-
-    async def __call__(self, *, query: str, response: str, **kwargs):
-        """
-        Evaluates content according to this evaluator's metric.
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :return: The evaluation score computation based on the metric (self.metric).
-        :rtype: Any
-        """
-        # Validate inputs
-        # Raises value error if failed, so execution alone signifies success.
-        if not (query and query.strip() and query != "None") or not (
-            response and response.strip() and response != "None"
-        ):
-            msg = "Both 'query' and 'response' must be non-empty strings."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                error_category=ErrorCategory.MISSING_FIELD,
-                error_blame=ErrorBlame.USER_ERROR,
-                error_target=ErrorTarget.INDIRECT_ATTACK_EVALUATOR,
-            )
-
-        # Run score computation based on supplied metric.
-        result = await evaluate_with_rai_service(
-            metric_name=EvaluationMetrics.XPIA,
-            query=query,
-            response=response,
-            project_scope=self._azure_ai_project,
-            credential=self._credential,
+        super().__init__(
+            eval_metric=EvaluationMetrics.XPIA,
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+            eval_last_turn=eval_last_turn,
         )
-        return result
-
-
-class _IndirectAttackEvaluator:
-    def __init__(self, azure_ai_project: dict, credential=None):
-        self._async_evaluator = _AsyncIndirectAttackEvaluator(azure_ai_project, credential)
-
-    def __call__(self, *, query: str, response: str, **kwargs):
-        """
-        Evaluates XPIA content.
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :keyword context: The context to be evaluated.
-        :paramtype context: str
-        :return: The XPIA score.
-        :rtype: dict
-        """
-        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
-
-    def _to_async(self):
-        return self._async_evaluator
