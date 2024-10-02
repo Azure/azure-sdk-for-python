@@ -25,7 +25,7 @@ def verify_ordering(item_list, distance_function):
             assert item_list[i]["SimilarityScore"] >= item_list[i + 1]["SimilarityScore"]
 
 
-class TestVectorSimilarityQueryAsync(unittest.TestCase):
+class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check vector similarity queries behavior."""
 
     created_db: DatabaseProxy = None

@@ -4,7 +4,7 @@
 import unittest
 import test_config
 import pytest
-from azure.cosmos import CosmosClient
+from azure.cosmos import CosmosClient, http_constants, exceptions
 
 
 @pytest.mark.cosmosEmulator
@@ -36,11 +36,13 @@ class TestUserAgentSuffix(unittest.TestCase):
 
     def test_user_agent_suffix_special_character(self):
         user_agent_suffix = "TéstUserAgent's"  # cspell:disable-line
-        self.client = CosmosClient(self.host, self.masterKey, user_agent=user_agent_suffix)
-        self.created_database = self.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-
-        read_result = self.created_database.read()
-        assert read_result['id'] == self.created_database.id
+        try:
+            self.client = CosmosClient(self.host, self.masterKey, user_agent=user_agent_suffix)
+            self.created_database = self.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+            self.created_database.read()
+            pytest.fail()
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
 
     def test_user_agent_suffix_unicode_character(self):
         user_agent_suffix = "UnicodeChar鱀InUserAgent"

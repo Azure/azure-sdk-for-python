@@ -5,6 +5,7 @@ import unittest
 import pytest
 import test_config
 from azure.cosmos.aio import CosmosClient
+from azure.cosmos import exceptions, http_constants
 
 
 @pytest.mark.cosmosEmulator
@@ -37,12 +38,13 @@ class TestUserAgentSuffixAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_user_agent_suffix_special_character_async(self):
         user_agent_suffix = "TéstUserAgent's"  # cspell:disable-line
-        self.client = CosmosClient(self.host, self.masterKey, user_agent=user_agent_suffix)
-        self.created_database = self.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
-
-        read_result = await self.created_database.read()
-        assert read_result['id'] == self.created_database.id
-        await self.client.close()
+        try:
+            async with CosmosClient(self.host, self.masterKey, user_agent=user_agent_suffix) as self.client:
+                self.created_database = self.client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+                await self.created_database.read()
+                pytest.fail("should have failed with the special character")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == http_constants.StatusCodes.BAD_REQUEST
 
     async def test_user_agent_suffix_unicode_character_async(self):
         user_agent_suffix = "UnicodeChar鱀InUserAgent"
