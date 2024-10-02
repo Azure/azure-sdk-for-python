@@ -45,7 +45,7 @@ class DirectAttackSimulator:
                 target=ErrorTarget.DIRECT_ATTACK_SIMULATOR,
                 category=e.category,
                 blame=e.blame,
-            )
+            ) from e
         self.credential = credential
         self.azure_ai_project = azure_ai_project
         self.token_manager = ManagedIdentityAPITokenManager(

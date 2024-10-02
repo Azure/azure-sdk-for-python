@@ -60,7 +60,7 @@ class AdversarialSimulator:
                 target=ErrorTarget.ADVERSARIAL_SIMULATOR,
                 category=e.category,
                 blame=e.blame,
-            )
+            ) from e
         self.azure_ai_project = azure_ai_project
         self.token_manager = ManagedIdentityAPITokenManager(
             token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
