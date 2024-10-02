@@ -545,7 +545,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from 
             kwargs or when also not specified there from client-level kwargs.  
-        :returns: A dict representing the item after replace went through. The dict will be empty if `no_response` is specified.
+        :returns: A dict representing the item after replace went through. The dict will be empty if `no_response` 
+            is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
         :rtype: Dict[str, Any]
