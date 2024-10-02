@@ -564,7 +564,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     evaluators: Dict[str, Callable],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
-    data: Optional[str] = None,
+    data: str,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
     azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
