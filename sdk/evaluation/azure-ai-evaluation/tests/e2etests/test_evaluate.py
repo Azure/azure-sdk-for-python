@@ -10,6 +10,7 @@ import requests
 from ci_tools.variables import in_ci
 
 from azure.ai.evaluation import (
+    evaluate,
     ContentSafetyEvaluator,
     F1ScoreEvaluator,
     FluencyEvaluator,
@@ -292,12 +293,12 @@ class TestEvaluate:
             None,
             {"default": {}},
             {"default": {}, "question_ev": {}},
-            {"default": {"query": "${target.query}"}},
-            {"default": {"query": "${data.query}"}},
-            {"default": {}, "question_ev": {"query": "${data.query}"}},
-            {"default": {}, "question_ev": {"query": "${target.query}"}},
-            {"default": {}, "question_ev": {"another_question": "${target.query}"}},
-            {"default": {"another_question": "${target.query}"}},
+            {"default": {"column_mapping": {"query": "${target.query}"}}},
+            {"default": {"column_mapping": {"query": "${data.query}"}}},
+            {"default": {}, "question_ev": {"column_mapping": {"query": "${data.query}"}}},
+            {"default": {}, "question_ev": {"column_mapping": {"query": "${target.query}"}}},
+            {"default": {}, "question_ev": {"column_mapping": {"another_question": "${target.query}"}}},
+            {"default": {"column_mapping": {"another_question": "${target.query}"}}},
         ],
     )
     def test_evaluate_another_questions(self, questions_file, evaluation_config):
@@ -334,19 +335,25 @@ class TestEvaluate:
             (
                 {
                     "f1_score": {
-                        "response": "${data.context}",
-                        "ground_truth": "${data.ground_truth}",
+                        "column_mapping": {
+                            "response": "${data.context}",
+                            "ground_truth": "${data.ground_truth}",
+                        }
                     },
                     "answer": {
-                        "response": "${target.response}",
+                        "column_mapping": {
+                            "response": "${target.response}",
+                        }
                     },
                 }
             ),
             (
                 {
                     "default": {
-                        "response": "${target.response}",
-                        "ground_truth": "${data.ground_truth}",
+                        "column_mapping": {
+                            "response": "${target.response}",
+                            "ground_truth": "${data.ground_truth}",
+                        }
                     },
                 }
             ),

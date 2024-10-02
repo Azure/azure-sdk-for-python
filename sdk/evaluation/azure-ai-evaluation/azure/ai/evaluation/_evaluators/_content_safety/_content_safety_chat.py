@@ -7,9 +7,8 @@ from typing import Dict, List
 
 import numpy as np
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
-from azure.ai.evaluation._model_configurations import AzureAIProject 
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 try:
     from ._hate_unfairness import HateUnfairnessEvaluator
@@ -165,7 +164,10 @@ class ContentSafetyChatEvaluator:
             return score
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.warning(
-                f"Evaluator {evaluator.__class__.__name__} failed for turn {turn_num + 1} with exception: {e}"
+                "Evaluator %s failed for turn %s with exception: %s",
+                evaluator.__class__.__name__,
+                turn_num + 1,
+                e,
             )
             return {}
 
@@ -235,7 +237,10 @@ class ContentSafetyChatEvaluator:
                 )
 
             if "role" not in turn or "content" not in turn:
-                msg = f"Each turn in 'conversation' must have 'role' and 'content' keys. Turn number: {one_based_turn_num}"
+                msg = (
+                    "Each turn in 'conversation' must have 'role' and 'content' keys. "
+                    + f"Turn number: {one_based_turn_num}"
+                )
                 raise EvaluationException(
                     message=msg,
                     internal_message=msg,

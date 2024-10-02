@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.webpubsub import WebPubSubManagementClient
 
 """
@@ -54,6 +55,7 @@ def main():
                     "publicNetwork": {"allow": ["ClientConnection"]},
                 },
                 "publicNetworkAccess": "Enabled",
+                "socketIO": {"serviceMode": "Serverless"},
                 "tls": {"clientCertEnabled": False},
             },
             "sku": {"capacity": 1, "name": "Premium_P1", "tier": "Premium"},
@@ -63,6 +65,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/webpubsub/resource-manager/Microsoft.SignalRService/preview/2023-08-01-preview/examples/WebPubSub_Update.json
+# x-ms-original-file: specification/webpubsub/resource-manager/Microsoft.SignalRService/stable/2024-03-01/examples/WebPubSub_Update.json
 if __name__ == "__main__":
     main()

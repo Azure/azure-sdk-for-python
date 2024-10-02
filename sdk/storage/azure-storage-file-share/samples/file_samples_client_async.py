@@ -22,8 +22,9 @@ USAGE:
 """
 
 
-import os
 import asyncio
+import os
+import sys
 
 
 SOURCE_FILE = './SampleSource.txt'
@@ -36,6 +37,11 @@ class FileSamplesAsync(object):
     account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
 
     async def simple_file_operations_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: simple_file_operations_async")
+            sys.exit(1)
+
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "filesamples1")
@@ -77,7 +83,12 @@ class FileSamplesAsync(object):
                 # Delete the share
                 await share.delete_share()
 
-    async def file_copy_from_url_async(self):
+    async def copy_file_from_url_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: copy_file_from_url_async")
+            sys.exit(1)
+
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "filesamples2")
@@ -114,7 +125,7 @@ class FileSamplesAsync(object):
 async def main():
     sample = FileSamplesAsync()
     await sample.simple_file_operations_async()
-    await sample.file_copy_from_url_async()
+    await sample.copy_file_from_url_async()
 
 if __name__ == '__main__':
     asyncio.run(main())

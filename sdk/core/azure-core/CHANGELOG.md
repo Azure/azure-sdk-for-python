@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Log "x-vss-e2eid" and "x-msedge-ref" headers in `HttpLoggingPolicy`.
+
 ## 1.31.0 (2024-09-12)
 
 ### Features Added
