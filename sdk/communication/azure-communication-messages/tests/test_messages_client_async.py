@@ -146,7 +146,7 @@ class TestNotificationMessageClientForTextAsync(AsyncMessagesRecordedTestCase):
     @recorded_by_proxy_async
     async def test_download_media_async(self):
         phone_number: str = "+14254360097"
-        input_media_id: str = "8f8c29b2-c2e4-4340-bb28-3009c8a57283"
+        input_media_id: str = "057be8fa-cc09-46c0-a6dd-bb6a55d5b9c3"
         raised = False
         message_client: NotificationMessagesClient = self.create_notification_message_client()
         try:
