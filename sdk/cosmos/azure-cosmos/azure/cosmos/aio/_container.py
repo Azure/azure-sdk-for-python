@@ -220,8 +220,7 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from 
             client-level options.  
-        :returns: A dict representing the item after replace went through or if response payload on write is disabled
-            None.
+        :returns: A dict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: Dict[str, Any]
         """
         if pre_trigger_include is not None:
@@ -250,7 +249,7 @@ class ContainerProxy:
         result = await self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
         )
-        return self.__unwrap_response(result)
+        return result or {}
 
     @distributed_trace_async
     async def read_item(
@@ -585,8 +584,8 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from 
             client-level options.  
-        :returns: A dict representing the item after replace went through or if response payload on write is disabled
-            None.
+        :returns: A dict representing the item after the upsert operation went through. The dict will be empty if 
+            `no_response` is specified.
         :rtype: Dict[str, Any]
         """
         if pre_trigger_include is not None:
@@ -616,13 +615,7 @@ class ContainerProxy:
             options=request_options,
             **kwargs
         )
-        return self.__unwrap_response(result)
-
-    def __unwrap_response(self, response: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-        if response is None:
-            return {}
-
-        return response
+        return result or {}
 
     @distributed_trace_async
     async def replace_item(
@@ -665,8 +658,8 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from 
             client-level options.  
-        :returns: A dict representing the item after replace went through or if response payload on write is disabled
-            None.
+        :returns: A dict representing the item after replace went through. The dict will be empty if `no_response` 
+            is specified.
         :rtype: Dict[str, Any]
         """
         item_link = self._get_document_link(item)
@@ -694,7 +687,7 @@ class ContainerProxy:
         result = await self.client_connection.ReplaceItem(
             document_link=item_link, new_document=body, options=request_options, **kwargs
         )
-        return self.__unwrap_response(result)
+        return result or {}
 
     @distributed_trace_async
     async def patch_item(
@@ -738,8 +731,8 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from 
             client-level options.  
-        :returns: A dict representing the item after replace went through or if response payload on write is disabled
-            None.
+        :returns: A dict representing the item after the patch operation went through. The dict will be empty if 
+            `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
         :rtype: dict[str, Any]
@@ -769,7 +762,7 @@ class ContainerProxy:
         item_link = self._get_document_link(item)
         result = await self.client_connection.PatchItem(
             document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
-        return self.__unwrap_response(result)
+        return result or {}
 
     @distributed_trace_async
     async def delete_item(

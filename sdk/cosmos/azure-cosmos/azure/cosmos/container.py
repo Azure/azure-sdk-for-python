@@ -505,12 +505,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             return False
         return True
 
-    def __unwrap_response(self, response: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-        if response is None:
-            return {}
-
-        return response
-
 
     @distributed_trace
     def replace_item(  # pylint:disable=docstring-missing-param
@@ -551,8 +545,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from 
             kwargs or when also not specified there from client-level kwargs.  
-        :returns: A dict representing the item after replace went through or if response payload on write is disabled
-            an empty dictionary.
+        :returns: A dict representing the item after replace went through. The dict will be empty if `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
         :rtype: Dict[str, Any]
@@ -586,10 +579,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
-        return self.__unwrap_response(
-            self.client_connection.ReplaceItem(
+        result = self.client_connection.ReplaceItem(
                 document_link=item_link, new_document=body, options=request_options, **kwargs)
-        )
+        return result or {}
 
     @distributed_trace
     def upsert_item(  # pylint:disable=docstring-missing-param
@@ -628,7 +620,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending 
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
             when also not specified there from client-level kwargs.   
-        :returns: A dict representing the upserted item or if response payload on write is disabled None.
+        :returns: A dict representing the upserted item. The dict will be empty if `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :rtype: Dict[str, Any]
         """
@@ -659,14 +651,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
-        return self.__unwrap_response(
-            self.client_connection.UpsertItem(
+        result = self.client_connection.UpsertItem(
                 database_or_container_link=self.container_link,
                 document=body,
                 options=request_options,
                 **kwargs
             )
-        )
+        return result or {}
 
     @distributed_trace
     def create_item(  # pylint:disable=docstring-missing-param
@@ -711,7 +702,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending 
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
             when also not specified there from client-level kwargs.
-        :returns: A dict representing the new item or if response payload on write is disabled None.
+        :returns: A dict representing the new item. The dict will be empty if `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :rtype: Dict[str, Any]
         """
@@ -743,10 +734,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["indexingDirective"] = indexing_directive
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        return self.__unwrap_response(
-            self.client_connection.CreateItem(
+        result = self.client_connection.CreateItem(
                 database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
-        )
+        return result or {}
 
     @distributed_trace
     def patch_item(
@@ -790,8 +780,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending 
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
             when also not specified there from client-level kwargs.
-        :returns: A dict representing the item after the patch operations went through or if response payload on write
-            is disabled None.
+        :returns: A dict representing the item after the patch operations went through. The dict will be empty 
+            if `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
         :rtype: Dict[str, Any]
@@ -819,10 +809,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         item_link = self._get_document_link(item)
-        return self.__unwrap_response(
-            self.client_connection.PatchItem(
+        result = self.client_connection.PatchItem(
                 document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
-        )
+        return result or {}
 
     @distributed_trace
     def execute_item_batch(
