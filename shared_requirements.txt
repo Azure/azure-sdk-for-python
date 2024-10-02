@@ -57,6 +57,7 @@ opentelemetry-instrumentation-urllib3
 opentelemetry-resource-detector-azure
 azure-nspkg
 azure-ai-nspkg
+azure-ai-inference
 azure-cognitiveservices-nspkg
 azure-mgmt-nspkg
 azure-mixedreality-authentication
