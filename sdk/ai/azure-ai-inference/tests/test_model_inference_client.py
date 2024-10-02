@@ -834,6 +834,7 @@ class TestModelClient(ModelClientTestBase):
         return current_value
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_instrumentation(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
@@ -855,6 +856,7 @@ class TestModelClient(ModelClientTestBase):
         assert exception_caught == False
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_instrumenting_twice_causes_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
@@ -877,6 +879,7 @@ class TestModelClient(ModelClientTestBase):
         assert exception_caught == True
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_uninstrumenting_uninstrumented_causes_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
@@ -894,6 +897,7 @@ class TestModelClient(ModelClientTestBase):
         assert exception_caught == True
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_uninstrumenting_twice_causes_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
@@ -916,6 +920,7 @@ class TestModelClient(ModelClientTestBase):
         assert exception_caught == True
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_chat_completion_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
@@ -964,6 +969,7 @@ class TestModelClient(ModelClientTestBase):
         AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_chat_completion_tracing_content_recording_enabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
@@ -1026,6 +1032,7 @@ class TestModelClient(ModelClientTestBase):
         AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_chat_completion_streaming_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
@@ -1081,6 +1088,7 @@ class TestModelClient(ModelClientTestBase):
         AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_chat_completion_streaming_tracing_content_recording_enabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
@@ -1150,6 +1158,7 @@ class TestModelClient(ModelClientTestBase):
         AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_chat_completion_with_function_call_tracing_content_recording_enabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
@@ -1317,6 +1326,7 @@ class TestModelClient(ModelClientTestBase):
         AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_chat_completion_with_function_call_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
@@ -1436,6 +1446,7 @@ class TestModelClient(ModelClientTestBase):
         AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_chat_completion_with_function_call_streaming_tracing_content_recording_enabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
@@ -1641,6 +1652,7 @@ class TestModelClient(ModelClientTestBase):
         AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy
     def test_chat_completion_with_function_call_streaming_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:

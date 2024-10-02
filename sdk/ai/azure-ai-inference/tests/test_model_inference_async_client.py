@@ -714,6 +714,7 @@ class TestModelAsyncClient(ModelClientTestBase):
         return current_value
 
     @ServicePreparerChatCompletions()
+    @recorded_by_proxy_async
     async def test_chat_completion_async_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
