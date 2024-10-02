@@ -105,7 +105,7 @@ class ContentSafetyChatEvaluator:
             HateUnfairnessEvaluator(azure_ai_project, credential),
         ]
 
-    def __call__(self, *, conversation: List[Dict], **kwargs):
+    def __call__(self, *, conversation: list, **kwargs):
         """
         Evaluates content-safety metrics for "chat" scenario.
 
