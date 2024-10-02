@@ -4,7 +4,7 @@
 import inspect
 import os
 import re
-from typing import Callable, Dict, List, Optional, Set, Tuple
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
@@ -31,6 +31,13 @@ from ._utils import (
     _trace_destination_from_project_scope,
     _write_output,
 )
+
+TClient = TypeVar("TClient", ProxyClient, CodeClient)
+
+
+class __EvaluatorInfo(TypedDict):
+    result: pd.DataFrame
+    metrics: Dict[str, Any]
 
 
 # pylint: disable=line-too-long
@@ -632,39 +639,45 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             # Also ignore columns that are already in config, since they've been covered by target mapping.
             if not col.startswith(Prefixes.TSG_OUTPUTS) and col not in column_mapping["default"].keys():
                 column_mapping["default"][col] = f"${{data.{col}}}"
+
+    def get_evaluators_info(batch_run_client: TClient) -> Dict[str, __EvaluatorInfo]:
+        with BatchRunContext(batch_run_client):
+            runs = {
+                evaluator_name: batch_run_client.run(
+                    flow=evaluator,
+                    run=target_run,
+                    evaluator_name=evaluator_name,
+                    column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
+                    data=data,
+                    stream=True,
+                    name=kwargs.get("_run_name"),
+                )
+                for evaluator_name, evaluator in evaluators.items()
+            }
+
+            # get_details needs to be called within BatchRunContext scope in order to have user agent populated
+            return {
+                evaluator_name: {
+                    "result": batch_run_client.get_details(run, all_results=True),
+                    "metrics": batch_run_client.get_metrics(run),
+                }
+                for evaluator_name, run in runs.items()
+            }
+
     # Batch Run
-    evaluators_info = {}
     use_pf_client = kwargs.get("_use_pf_client", True)
     if use_pf_client:
         # A user reported intermittent errors when PFClient uploads evaluation runs to the cloud.
         # The root cause is still unclear, but it seems related to a conflict between the async run uploader
         # and the async batch run. As a quick mitigation, use a PFClient without a trace destination for batch runs.
-        batch_run_client = ProxyClient(PFClient(user_agent=USER_AGENT))
+        evaluators_info = get_evaluators_info(ProxyClient(PFClient(user_agent=USER_AGENT)))
 
         # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
         # multiple evaluators. If the path is already absolute, abspath will return the original path.
         data = os.path.abspath(data)
     else:
-        batch_run_client = CodeClient()
+        evaluators_info = get_evaluators_info(CodeClient())
         data = input_data_df
-
-    with BatchRunContext(batch_run_client):
-        for evaluator_name, evaluator in evaluators.items():
-            evaluators_info[evaluator_name] = {}
-            evaluators_info[evaluator_name]["run"] = batch_run_client.run(
-                flow=evaluator,
-                run=target_run,
-                evaluator_name=evaluator_name,
-                column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
-                data=data,
-                stream=True,
-                name=kwargs.get("_run_name"),
-            )
-
-        # get_details needs to be called within BatchRunContext scope in order to have user agent populated
-        for evaluator_name, evaluator_info in evaluators_info.items():
-            evaluator_info["result"] = batch_run_client.get_details(evaluator_info["run"], all_results=True)
-            evaluator_info["metrics"] = batch_run_client.get_metrics(evaluator_info["run"])
 
     # Concatenate all results
     evaluators_result_df = None
