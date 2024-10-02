@@ -64,7 +64,6 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "opentelemetry-api>=1.12.0",
-        "azure-core>=1.30.0",
-        "azure-ai-inference>=1.0.0b4"
+        "azure-core>=1.30.0"
     ],
 )
