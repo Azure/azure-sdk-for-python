@@ -11,7 +11,7 @@ def list_sum(lst: List[float]) -> float:
 
 
 def list_mean(lst: List[float]) -> float:
-    return list_sum(lst)/len(lst)
+    return list_sum(lst) / len(lst)
 
 
 def list_mean_nan_safe(lst: List[float]) -> float:

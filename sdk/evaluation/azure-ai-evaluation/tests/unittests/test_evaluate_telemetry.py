@@ -15,7 +15,7 @@ from azure.ai.evaluation import F1ScoreEvaluator, HateUnfairnessEvaluator
 
 
 def _add_nans(df, n, column_name):
-    mask =[False] * df.shape[0] # Start with an all False mask (no NaNs)
+    mask = [False] * df.shape[0]  # Start with an all False mask (no NaNs)
     mask[:n] = [True] * n  # Set the first 'n' values to True
     random.shuffle(mask)  # Shuffle to distribute the NaNs randomly
 
