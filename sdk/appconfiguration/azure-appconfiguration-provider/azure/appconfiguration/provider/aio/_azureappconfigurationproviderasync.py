@@ -29,10 +29,9 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
-from azure.keyvault.secrets.aio import SecretClient
-from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from azure.core.exceptions import AzureError, HttpResponseError
-
+from azure.keyvault.secrets import KeyVaultSecretIdentifier
+from azure.keyvault.secrets.aio import SecretClient
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from .._constants import (
     FEATURE_MANAGEMENT_KEY,
@@ -337,6 +336,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             replica_discovery_enabled=kwargs.pop("replica_discovery_enabled", True),
             min_backoff_sec=min_backoff,
             max_backoff_sec=max_backoff,
+            load_balance=kwargs.pop("load_balancing_enabled", False),
             **kwargs,
         )
         self._dict: Dict[str, Any] = {}
@@ -390,7 +390,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         exception: Exception = RuntimeError(error_message)
         try:
             await self._replica_client_manager.refresh_clients()
-            active_clients = self._replica_client_manager.get_active_clients()
+            self._replica_client_manager.find_active_clients()
 
             headers = _get_headers(
                 kwargs.pop("headers", {}),
@@ -400,7 +400,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 self._feature_filter_usage,
                 self._uses_key_vault,
             )
-            for client in active_clients:
+
+            while self._replica_client_manager.has_next_client():
+                client = self._replica_client_manager.get_next_client()
+                if not client:
+                    return
                 try:
                     if self._refresh_on:
                         need_refresh, self._refresh_on, configuration_settings = (
@@ -420,11 +424,13 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         if need_refresh:
                             self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
-                        need_ff_refresh, self._refresh_on_feature_flags, feature_flags, filters_used = (
+                        need_ff_refresh, refresh_on_feature_flags, feature_flags, filters_used = (
                             await client.refresh_feature_flags(
                                 self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
                             )
                         )
+                        if refresh_on_feature_flags:
+                            self._refresh_on_feature_flags = refresh_on_feature_flags
                         self._feature_filter_usage = filters_used
 
                         if need_refresh or need_ff_refresh:
@@ -450,9 +456,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             self._refresh_lock.release()
 
     async def _load_all(self, **kwargs):
-        active_clients = self._replica_client_manager.get_active_clients()
+        self._replica_client_manager.find_active_clients()
 
-        for client in active_clients:
+        while self._replica_client_manager.has_next_client():
+            client = self._replica_client_manager.get_next_client()
+            if not client:
+                return
             try:
                 configuration_settings, sentinel_keys = await client.load_configuration_settings(
                     self._selects, self._refresh_on, **kwargs

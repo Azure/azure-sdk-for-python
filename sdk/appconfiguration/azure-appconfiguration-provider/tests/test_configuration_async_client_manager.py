@@ -33,7 +33,7 @@ class TestAsyncConfigurationClientManager:
 
         # No connection string or credential was provided
         with pytest.raises(ValueError) as ex:
-            AsyncConfigurationClientManager(None, endpoint, None, "", 0, 0, False, 0, 0)
+            AsyncConfigurationClientManager(None, endpoint, None, "", 0, 0, False, 0, 0, False)
             await manager.setup_initial_clients()
             assert (
                 str(ex.exception) == "Please pass either endpoint and credential, or a connection string with a value."
@@ -48,7 +48,7 @@ class TestAsyncConfigurationClientManager:
 
         # No auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = []
-        manager = AsyncConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0)
+        manager = AsyncConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, False)
         await manager.setup_initial_clients()
         assert manager is not None
         assert len(manager._replica_clients) == 1
@@ -68,7 +68,7 @@ class TestAsyncConfigurationClientManager:
 
         # A single auto failover endpoint found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
-        manager = AsyncConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0)
+        manager = AsyncConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, False, 0, 0, False)
         await manager.setup_initial_clients()
         assert manager is not None
         int = 0
@@ -96,7 +96,7 @@ class TestAsyncConfigurationClientManager:
 
         # No connection string or credential was provided
         with pytest.raises(ValueError) as ex:
-            AsyncConfigurationClientManager(None, endpoint, None, "", 0, 0, False, 0, 0)
+            AsyncConfigurationClientManager(None, endpoint, None, "", 0, 0, False, 0, 0, False)
             assert (
                 str(ex.exception) == "Please pass either endpoint and credential, or a connection string with a value."
             )
@@ -108,7 +108,7 @@ class TestAsyncConfigurationClientManager:
 
         # No auto failover endpoints found
         mock_find_auto_failover_endpoints.return_value = []
-        manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0)
+        manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, False)
         await manager.setup_initial_clients()
         assert manager is not None
         assert len(manager._replica_clients) == 1
@@ -124,7 +124,7 @@ class TestAsyncConfigurationClientManager:
 
         # A single auto failover endpoint found
         mock_find_auto_failover_endpoints.return_value = ["https://fake.endpoint2"]
-        manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0)
+        manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, False)
         await manager.setup_initial_clients()
         assert manager is not None
         int = 0
@@ -152,10 +152,10 @@ class TestAsyncConfigurationClientManager:
 
         mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
         mock_find_auto_failover_endpoints.return_value = []
-        manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0)
+        manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
         await manager.setup_initial_clients()
         manager_disabled_refresh = AsyncConfigurationClientManager(
-            None, endpoint, "fake-credential", "", 0, 0, False, 0, 0
+            None, endpoint, "fake-credential", "", 0, 0, False, 0, 0, False
         )
         await manager_disabled_refresh.setup_initial_clients()
 
@@ -245,11 +245,20 @@ class TestAsyncConfigurationClientManager:
         )
         mock_find_auto_failover_endpoints.return_value = []
         manager = AsyncConfigurationClientManager(
-            "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", endpoint, None, "", 0, 0, True, 0, 0
+            "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", endpoint, None, "", 0, 0, True, 0, 0, False
         )
         await manager.setup_initial_clients()
         manager_disabled_refresh = AsyncConfigurationClientManager(
-            "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret", endpoint, None, "", 0, 0, False, 0, 0
+            "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret",
+            endpoint,
+            None,
+            "",
+            0,
+            0,
+            False,
+            0,
+            0,
+            False,
         )
         await manager_disabled_refresh.setup_initial_clients()
 
@@ -339,8 +348,10 @@ class TestAsyncConfigurationClientManager:
     def test_calculate_backoff(self, mock_client, mock_find_auto_failover_endpoints):
         endpoint = "https://fake.endpoint"
         mock_find_auto_failover_endpoints.return_value = []
-        manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 30, 600)
-        manager_invalid = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 600, 30)
+        manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 30, 600, False)
+        manager_invalid = AsyncConfigurationClientManager(
+            None, endpoint, "fake-credential", "", 0, 0, True, 600, 30, False
+        )
 
         assert manager._calculate_backoff(0) == 30000.0
         assert 30000.0 <= manager._calculate_backoff(1) <= 60000.0

@@ -6,6 +6,7 @@
 from logging import getLogger
 import json
 import time
+import random
 from dataclasses import dataclass
 from typing import Tuple, Union, Dict, List, Any, Optional, Mapping
 from typing_extensions import Self
@@ -134,7 +135,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     def load_configuration_settings(
-        self, selects: List[SettingSelector], refresh_on: Dict[Tuple[str, str], str], **kwargs
+        self, selects: List[SettingSelector], refresh_on: Mapping[Tuple[str, str], Optional[str]], **kwargs
     ) -> Tuple[List[ConfigurationSetting], Dict[Tuple[str, str], str]]:
         configuration_settings = []
         sentinel_keys = kwargs.pop("sentinel_keys", refresh_on)
@@ -188,8 +189,12 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     def refresh_configuration_settings(
-        self, selects: List[SettingSelector], refresh_on: Dict[Tuple[str, str], str], headers: Dict[str, str], **kwargs
-    ) -> Tuple[bool, Dict[Tuple[str, str], str], List[Any]]:
+        self,
+        selects: List[SettingSelector],
+        refresh_on: Mapping[Tuple[str, str], Optional[str]],
+        headers: Dict[str, str],
+        **kwargs
+    ) -> Tuple[bool, Mapping[Tuple[str, str], Optional[str]], List[Any]]:
         """
         Gets the refreshed configuration settings if they have changed.
 
@@ -224,7 +229,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         feature_flag_selectors: List[SettingSelector],
         headers: Dict[str, str],
         **kwargs
-    ) -> Tuple[bool, Optional[Dict[Tuple[str, str], str]], Optional[List[Any]], Dict[str, bool]]:
+    ) -> Tuple[bool, Optional[Mapping[Tuple[str, str], Optional[str]]], Optional[List[Any]], Dict[str, bool]]:
         """
         Gets the refreshed feature flags if they have changed.
 
@@ -247,7 +252,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         return False, None, None, {}
 
     @distributed_trace
-    def get_configuration_setting(self, key: str, label: str, **kwargs) -> ConfigurationSetting:
+    def get_configuration_setting(self, key: str, label: str, **kwargs) -> Optional[ConfigurationSetting]:
         """
         Gets a configuration setting from the replica client.
 
@@ -293,6 +298,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         replica_discovery_enabled,
         min_backoff_sec,
         max_backoff_sec,
+        load_balance: bool,
         **kwargs
     ):
         super(ConfigurationClientManager, self).__init__(
@@ -303,10 +309,13 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
             replica_discovery_enabled,
             min_backoff_sec,
             max_backoff_sec,
+            load_balance,
             **kwargs
         )
         self._original_connection_string = connection_string
         self._credential = credential
+        self._replica_clients: List[_ConfigurationClientWrapper] = []
+        self._active_clients: List[_ConfigurationClientWrapper] = []
 
         if connection_string and endpoint:
             self._replica_clients.append(
@@ -315,6 +324,8 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                 )
             )
             self._setup_failover_endpoints()
+            if load_balance:
+                random.shuffle(self._replica_clients)
             return
         if endpoint and credential:
             self._replica_clients.append(
@@ -323,8 +334,54 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                 )
             )
             self._setup_failover_endpoints()
+            if load_balance:
+                random.shuffle(self._replica_clients)
             return
         raise ValueError("Please pass either endpoint and credential, or a connection string with a value.")
+
+    def get_next_client(self) -> Optional[_ConfigurationClientWrapper]:
+        """
+        Get the next client to be used for the request. find_active_clients needs be called before this method or None
+        client will be returned. If load_balance isn't enabled the first active client will be returned, which is the
+        provided endpoint unless it has failed. If load_balance is enabled the next client in the list will be returned.
+
+        :return: The next client to be used for the request.
+        """
+        if not self._active_clients:
+            return None
+        if not self._load_balance:
+            return self._active_clients[0]
+        next_client = self._active_clients.pop(0)
+        self._last_active_client_name = next_client.endpoint
+        return next_client
+
+    def has_next_client(self) -> bool:
+        """
+        Check if there is another client to be used for the request. find_active_clients needs be called before this
+        method or False will be returned.
+
+        :return: True if there is another client to be used for the request, False otherwise.
+        :rtype: bool
+        """
+        return bool(self._active_clients)
+
+    def find_active_clients(self):
+        """
+        Figures out the current active clients, if load_balance is enabled the start of the list will be the one after
+        the last active client used.
+        """
+        active_clients = []
+        for client in self._replica_clients:
+            if client.is_active():
+                active_clients.append(client)
+        if not self._load_balance or not self._last_active_client_name:
+            self._active_clients = active_clients
+            return
+
+        for i, client in enumerate(active_clients):
+            if client.endpoint == self._last_active_client_name:
+                self._active_clients = active_clients[i:] + active_clients[:i]
+                return
 
     def refresh_clients(self):
         if not self._replica_discovery_enabled:
@@ -332,6 +389,11 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         if self._next_update_time > time.time():
             return
         self._setup_failover_endpoints()
+        if self._load_balance:
+            random.shuffle(self._replica_clients)
+
+    def get_client_count(self) -> int:
+        return len(self._replica_clients)
 
     def _setup_failover_endpoints(self):
         failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
