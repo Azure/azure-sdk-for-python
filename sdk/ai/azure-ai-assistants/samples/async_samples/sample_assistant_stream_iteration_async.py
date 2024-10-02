@@ -68,7 +68,7 @@ async def sample_assistant_stream_iteration():
         logging.info("Created assistant client")
 
         assistant = await assistant_client.create_assistant(
-            model="gpt", name="my-assistant", instructions="You are a helpful assistant"
+            model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant"
         )
         logging.info(f"Created assistant, assistant ID {assistant.id}")
 
@@ -78,9 +78,7 @@ async def sample_assistant_stream_iteration():
         message = await assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         logging.info(f"Created message, message ID {message.id}")
 
-        stream = await assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, stream=True)
-
-        if stream:
+        async with await assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, stream=True) as stream:
             async for event_type, event_data in stream:
 
                 if isinstance(event_data, MessageDeltaChunk):

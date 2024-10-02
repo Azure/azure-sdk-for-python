@@ -4,14 +4,14 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to use basic assistants operations from
-    the Azure Assistants service using a asynchronous client.
+    This sample demonstrates how to use assistants with streaming from
+    the Azure Assistants service using a synchronous client.
 
     See package documentation:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
-    python sample_assistant_basics_async.py
+    python sample_assistant_stream_eventhandler.py
 
     Set these two environment variables before running the sample:
     1) AZUREAI_ENDPOINT_URL - Your endpoint URL, in the form 
@@ -28,9 +28,19 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants.aio import AssistantsClient
+from azure.ai.assistants.models import (
+    AsyncAssistantEventHandler,
+    AsyncAssistantEventHandler,
+    MessageDeltaTextContent,
+    MessageDeltaChunk,
+    ThreadMessage,
+    ThreadRun,
+    RunStep,
+)
 from azure.core.credentials import AzureKeyCredential
 
-import os, time, json
+import os, logging
+from typing import Any
 
 
 def setup_console_trace_exporter():
@@ -43,7 +53,33 @@ def setup_console_trace_exporter():
     RequestsInstrumentor().instrument()
 
 
-async def sample_assistant_basic_operation():
+class MyEventHandler(AsyncAssistantEventHandler):
+    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+        for content_part in delta.delta.content:
+            if isinstance(content_part, MessageDeltaTextContent):
+                text_value = content_part.text.value if content_part.text else "No text"
+                logging.info(f"Text delta received: {text_value}")
+
+    async def on_thread_message(self, message: "ThreadMessage") -> None:
+        logging.info(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+
+    async def on_thread_run(self, run: "ThreadRun") -> None:
+        logging.info(f"ThreadRun status: {run.status}")
+
+    async def on_run_step(self, step: "RunStep") -> None:
+        logging.info(f"RunStep type: {step.type}, Status: {step.status}")
+
+    async def on_error(self, data: str) -> None:
+        logging.error(f"An error occurred. Data: {data}")
+
+    async def on_done(self) -> None:
+        logging.info("Stream completed.")
+
+    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+        logging.warning(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+
+
+async def sample_assistant_stream_iteration():
 
     setup_console_trace_exporter()
 
@@ -57,38 +93,35 @@ async def sample_assistant_basic_operation():
         exit()
 
     async with AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version) as assistant_client:
-        print("Created assistant client")
+        logging.info("Created assistant client")
 
         assistant = await assistant_client.create_assistant(
-            model="gpt-4o-mini", name="my-assistant", instructions="You are helpful assistant"
+            model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant"
         )
-        print("Created assistant, assistant ID", assistant.id)
+        logging.info(f"Created assistant, assistant ID {assistant.id}")
 
         thread = await assistant_client.create_thread()
-        print("Created thread, thread ID", thread.id)
+        logging.info(f"Created thread, thread ID {thread.id}")
 
         message = await assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-        print("Created message, message ID", message.id)
+        logging.info(f"Created message, message ID {message.id}")
 
-        run = await assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
-        print("Created run, run ID", run.id)
-
-        # poll the run as long as run status is queued or in progress
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            # wait for a second
-            time.sleep(1)
-            run = await assistant_client.get_run(thread_id=thread.id, run_id=run.id)
-
-            print("Run status:", run.status)
-
-        print("Run completed with status:", run.status)
+        async with await assistant_client.create_and_process_run(
+            thread_id=thread.id, 
+            assistant_id=assistant.id,
+            stream=True,
+            event_handler=MyEventHandler()
+        ) as stream:
+            await stream.until_done()
 
         messages = await assistant_client.list_messages(thread_id=thread.id)
-        print("messages:", messages)
+        logging.info(f"Messages: {messages}")
 
         await assistant_client.delete_assistant(assistant.id)
-        print("Deleted assistant")
+        logging.info("Deleted assistant")
 
 
 if __name__ == "__main__":
-    asyncio.run(sample_assistant_basic_operation())
+    # Set logging level
+    logging.basicConfig(level=logging.INFO)
+    asyncio.run(sample_assistant_stream_iteration())

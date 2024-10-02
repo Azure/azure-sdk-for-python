@@ -21,7 +21,7 @@ from ._models import (
 )
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Type, Optional, Iterator, Tuple, get_origin
+from typing import AsyncIterator, List, Dict, Any, Type, Optional, Iterator, Tuple, get_origin
 
 import inspect, json, logging
 
@@ -389,20 +389,48 @@ class AssistantEventHandler:
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         """Handle any unhandled event types."""
         pass
+    
+    
+class AsyncAssistantEventHandler:
+
+    async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
+        """Handle message delta events."""
+        pass
+
+    async def on_thread_message(self, message: "ThreadMessage") -> None:
+        """Handle thread message events."""
+        pass
+
+    async def on_thread_run(self, run: "ThreadRun") -> None:
+        """Handle thread run events."""
+        pass
+
+    async def on_run_step(self, step: "RunStep") -> None:
+        """Handle run step events."""
+        pass
+
+    async def on_run_step_delta(self, delta: "RunStepDeltaChunk") -> None:
+        """Handle run step delta events."""
+        pass
+
+    async def on_error(self, data: str) -> None:
+        """Handle error events."""
+        pass
+
+    async def on_done(self) -> None:
+        """Handle the completion of the stream."""
+        pass
+
+    async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
+        """Handle any unhandled event types."""
+        pass    
 
 
-class BaseAssistantRunStream:
-    def __init__(self, response_iterator: Iterator[bytes]):
-        self.response_iterator = response_iterator
-        self.buffer = ""
-
+class BaseAssistantRunStream:            
     def __enter__(self):
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        close_method = getattr(self.response_iterator, "close", None)
-        if callable(close_method):
-            close_method()
+
 
     def process_event(self, event_data_str: str) -> Tuple[str, Any]:
         event_lines = event_data_str.strip().split("\n")
@@ -470,11 +498,30 @@ class BaseAssistantRunStream:
         return event_type, event_data_obj
 
 
-class AsyncAssistantRunStream(BaseAssistantRunStream):
+class AsyncAssistantRunStream(BaseAssistantRunStream, AsyncIterator[Tuple[str, Any]]):
+    def __init__(
+        self,
+        response_iterator: AsyncIterator[bytes],
+        event_handler: Optional[AsyncAssistantEventHandler] = None,
+    ):
+        self.response_iterator = response_iterator
+        self.event_handler = event_handler
+        self.done = False
+        self.buffer = ""
+        
+    async def __aenter__(self):
+        # Initialization code goes here
+        return self
+            
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        close_method = getattr(self.response_iterator, "close", None)
+        if callable(close_method):
+            await close_method()   
+        
     def __aiter__(self):
         return self
 
-    async def __anext__(self):
+    async def __anext__(self) -> Tuple[str, Any]:
         while True:
             try:
                 chunk = await self.response_iterator.__anext__()
@@ -483,12 +530,49 @@ class AsyncAssistantRunStream(BaseAssistantRunStream):
                 if self.buffer:
                     event_data_str, self.buffer = self.buffer, ""
                     if event_data_str:
-                        return self.process_event(event_data_str)
+                        return await self.process_event(event_data_str)
                 raise StopAsyncIteration
 
             while "\n\n" in self.buffer:
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                return self.process_event(event_data_str)
+                return await self.process_event(event_data_str)
+            
+    async def process_event(self, event_data_str: str) -> Tuple[str, Any]:
+        event_type, event_data_obj = super().process_event(event_data_str)
+
+        if self.event_handler:
+            try:
+                if isinstance(event_data_obj, MessageDeltaChunk):
+                    await self.event_handler.on_message_delta(event_data_obj)
+                elif isinstance(event_data_obj, ThreadMessage):
+                    await self.event_handler.on_thread_message(event_data_obj)
+                elif isinstance(event_data_obj, ThreadRun):
+                    await self.event_handler.on_thread_run(event_data_obj)
+                elif isinstance(event_data_obj, RunStep):
+                    await self.event_handler.on_run_step(event_data_obj)
+                elif isinstance(event_data_obj, RunStepDeltaChunk):
+                    await self.event_handler.on_run_step_delta(event_data_obj)
+                elif event_type == AssistantStreamEvent.ERROR:
+                    await self.event_handler.on_error(event_data_obj)
+                elif event_type == AssistantStreamEvent.DONE:
+                    await self.event_handler.on_done()
+                    self.done = True  # Mark the stream as done
+                else:
+                    await self.event_handler.on_unhandled_event(event_type, event_data_obj)
+            except Exception as e:
+                logging.error(f"Error in event handler for event '{event_type}': {e}")
+
+        return event_type, event_data_obj
+
+    async def until_done(self) -> None:
+        """
+        Iterates through all events until the stream is marked as done.
+        """
+        try:
+            async for _ in self:
+                pass  # The EventHandler handles the events
+        except StopIteration:
+            pass            
 
 
 class AssistantRunStream(BaseAssistantRunStream, Iterator[Tuple[str, Any]]):
@@ -497,9 +581,15 @@ class AssistantRunStream(BaseAssistantRunStream, Iterator[Tuple[str, Any]]):
         response_iterator: Iterator[bytes],
         event_handler: Optional[AssistantEventHandler] = None,
     ):
-        super().__init__(response_iterator)
+        self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.done = False
+        self.buffer = ""
+        
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        close_method = getattr(self.response_iterator, "close", None)
+        if callable(close_method):
+            close_method()    
 
     def __iter__(self):
         return self
@@ -561,6 +651,7 @@ class AssistantRunStream(BaseAssistantRunStream, Iterator[Tuple[str, Any]]):
 
 
 __all__: List[str] = [
+    "AsyncAssistantEventHandler",
     "AssistantEventHandler",
     "AsyncAssistantRunStream",
     "AssistantRunStream",
