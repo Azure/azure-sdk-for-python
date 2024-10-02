@@ -22,6 +22,8 @@
 """Internal class for feed range implementation in the Azure Cosmos
 database service.
 """
+import base64
+import json
 from abc import ABC, abstractmethod
 from typing import Union, List, Dict, Any
 
@@ -29,7 +31,7 @@ from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.partition_key import _Undefined, _Empty
 
 
-class FeedRange(ABC):
+class FeedRangeInternal(ABC):
 
     @abstractmethod
     def get_normalized_range(self) -> Range:
@@ -39,7 +41,15 @@ class FeedRange(ABC):
     def to_dict(self) -> Dict[str, Any]:
         pass
 
-class FeedRangePartitionKey(FeedRange):
+    def _to_base64_encoded_string(self) -> str:
+        data_json = json.dumps(self._to_dict())
+        json_bytes = data_json.encode('utf-8')
+        # Encode the bytes to a Base64 string
+        base64_bytes = base64.b64encode(json_bytes)
+        # Convert the Base64 bytes to a string
+        return base64_bytes.decode('utf-8')
+
+class FeedRangeInternalPartitionKey(FeedRangeInternal):
     type_property_name = "PK"
 
     def __init__(
@@ -69,7 +79,7 @@ class FeedRangePartitionKey(FeedRange):
         return { self.type_property_name: self._pk_value }
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any], feed_range: Range) -> 'FeedRangePartitionKey':
+    def from_json(cls, data: Dict[str, Any], feed_range: Range) -> 'FeedRangeInternalPartitionKey':
         if data.get(cls.type_property_name):
             pk_value = data.get(cls.type_property_name)
             if not pk_value:
@@ -80,11 +90,11 @@ class FeedRangePartitionKey(FeedRange):
                 return cls(list(pk_value), feed_range)
             return cls(data[cls.type_property_name], feed_range)
 
-        raise ValueError(f"Can not parse FeedRangePartitionKey from the json,"
+        raise ValueError(f"Can not parse FeedRangeInternalPartitionKey from the json,"
                          f" there is no property {cls.type_property_name}")
 
 
-class FeedRangeEpk(FeedRange):
+class FeedRangeInternalEpk(FeedRangeInternal):
     type_property_name = "Range"
 
     def __init__(self, feed_range: Range) -> None:
@@ -92,6 +102,7 @@ class FeedRangeEpk(FeedRange):
             raise ValueError("feed_range cannot be None")
 
         self._range = feed_range
+        self._base64_encoded_string = None
 
     def get_normalized_range(self) -> Range:
         return self._range.to_normalized_range()
@@ -102,8 +113,20 @@ class FeedRangeEpk(FeedRange):
         }
 
     @classmethod
-    def from_json(cls, data: Dict[str, Any]) -> 'FeedRangeEpk':
+    def from_json(cls, data: Dict[str, Any]) -> 'FeedRangeInternalEpk':
         if data.get(cls.type_property_name):
             feed_range = Range.ParseFromDict(data.get(cls.type_property_name))
             return cls(feed_range)
-        raise ValueError(f"Can not parse FeedRangeEPK from the json, there is no property {cls.type_property_name}")
+        raise ValueError(f"Can not parse FeedRangeInternalEPK from the json,"
+                         f" there is no property {cls.type_property_name}")
+
+    def __str__(self) -> str:
+        """Get a json representation of the feed range.
+           The returned json string can be used to create a new feed range from it.
+
+        :return: A json representation of the feed range.
+        """
+        if self._base64_encoded_string is None:
+            self._base64_encoded_string = self._to_base64_encoded_string()
+
+        return self._base64_encoded_string

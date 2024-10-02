@@ -39,7 +39,8 @@ from ._base import (
     _set_properties_cache
 )
 from ._cosmos_client_connection import CosmosClientConnection
-from ._routing.routing_range import Range, partition_key_range_to_range_string
+from ._feed_range import FeedRange, FeedRangeEpk
+from ._routing.routing_range import Range
 from .offer import Offer, ThroughputProperties
 from .partition_key import (
     NonePartitionKeyValue,
@@ -352,7 +353,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def query_items_change_feed(
             self,
             *,
-            feed_range: str,
+            feed_range: FeedRange,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
@@ -361,7 +362,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword str feed_range: The feed range that is used to define the scope.
+        :keyword feed_range: The feed range that is used to define the scope.
+        :type feed_range: ~azure.cosmos.FeedRange
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
@@ -434,6 +436,30 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             *args: Any,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
+
+        """Get a sorted list of items that were changed, in the order in which they were modified.
+
+        :keyword str continuation: The continuation token retrieved from previous response.
+        :keyword feed_range: The feed range that is used to define the scope.
+        :type feed_range: ~azure.cosmos.FeedRange
+        :keyword partition_key: The partition key that is used to define the scope
+            (logical partition or a subset of a container)
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword start_time: The start time to start processing chang feed items.
+            Beginning: Processing the change feed items from the beginning of the change feed.
+            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+            By default, it is start from current ("Now")
+        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :returns: An Iterable of items (dicts).
+        :rtype: Iterable[Dict[str, Any]]
+        """
+
         # pylint: disable=too-many-statements
         if kwargs.get("priority") is not None:
             kwargs['priority'] = kwargs['priority']
@@ -500,7 +526,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
         if kwargs.get("feed_range") is not None:
-            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
+            feed_range: FeedRangeEpk = kwargs.pop('feed_range')
+            change_feed_state_context["feedRange"] = feed_range._feed_range_internal
 
         container_properties = self._get_properties()
         feed_options["changeFeedStateContext"] = change_feed_state_context
@@ -1310,7 +1337,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             self,
             *,
             force_refresh: Optional[bool] = False,
-            **kwargs: Any) -> List[str]:
+            **kwargs: Any) -> List[FeedRange]:
 
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
 
@@ -1329,4 +1356,5 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 [Range("", "FF", True, False)], # default to full range
                 **kwargs)
 
-        return [partition_key_range_to_range_string(partitionKeyRange) for partitionKeyRange in partition_key_ranges]
+        return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange))
+                for partitionKeyRange in partition_key_ranges]

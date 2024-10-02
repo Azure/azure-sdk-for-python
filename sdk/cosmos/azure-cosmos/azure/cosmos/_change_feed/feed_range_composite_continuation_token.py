@@ -26,7 +26,8 @@ from collections import deque
 from typing import Any, Deque, Dict, Optional
 
 from azure.cosmos._change_feed.composite_continuation_token import CompositeContinuationToken
-from azure.cosmos._change_feed.feed_range import FeedRange, FeedRangeEpk, FeedRangePartitionKey
+from azure.cosmos._change_feed.feed_range_internal import (FeedRangeInternal, FeedRangeInternalEpk,
+                                                           FeedRangeInternalPartitionKey)
 from azure.cosmos._routing.routing_map_provider import SmartRoutingMapProvider
 from azure.cosmos._routing.aio.routing_map_provider import SmartRoutingMapProvider as AsyncSmartRoutingMapProvider
 from azure.cosmos._routing.routing_range import Range
@@ -39,7 +40,7 @@ class FeedRangeCompositeContinuation:
     def __init__(
             self,
             container_rid: str,
-            feed_range: FeedRange,
+            feed_range: FeedRangeInternal,
             continuation: Deque[CompositeContinuationToken]) -> None:
         if container_rid is None:
             raise ValueError("container_rid is missing")
@@ -87,11 +88,11 @@ class FeedRangeCompositeContinuation:
                         for child_range_continuation_token in continuation_data]
 
         # parsing feed range
-        feed_range: Optional[FeedRange] = None
-        if data.get(FeedRangeEpk.type_property_name):
-            feed_range = FeedRangeEpk.from_json(data)
-        elif data.get(FeedRangePartitionKey.type_property_name):
-            feed_range = FeedRangePartitionKey.from_json(data, continuation[0].feed_range)
+        feed_range: Optional[FeedRangeInternal] = None
+        if data.get(FeedRangeInternalEpk.type_property_name):
+            feed_range = FeedRangeInternalEpk.from_json(data)
+        elif data.get(FeedRangeInternalPartitionKey.type_property_name):
+            feed_range = FeedRangeInternalPartitionKey.from_json(data, continuation[0].feed_range)
         else:
             raise ValueError("Invalid feed range composite continuation token [Missing feed range scope]")
 
@@ -171,5 +172,5 @@ class FeedRangeCompositeContinuation:
             self._initial_no_result_range = self._current_token.feed_range
 
     @property
-    def feed_range(self) -> FeedRange:
+    def feed_range(self) -> FeedRangeInternal:
         return self._feed_range
