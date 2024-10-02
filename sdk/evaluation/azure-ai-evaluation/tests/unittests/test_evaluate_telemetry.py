@@ -1,10 +1,11 @@
 import json
+import math
 import os
 import pathlib
+import random
 from typing import Callable, Dict, Optional
 from unittest.mock import MagicMock, patch
 
-import numpy as np
 import pandas as pd
 import pytest
 from promptflow.client import load_flow
@@ -14,12 +15,12 @@ from azure.ai.evaluation import F1ScoreEvaluator, HateUnfairnessEvaluator
 
 
 def _add_nans(df, n, column_name):
-    mask = np.full(df.shape[0], False)  # Start with an all False mask (no NaNs)
+    mask =[False for _ in range(df.shape[0])] # Start with an all False mask (no NaNs)
     mask[:n] = True  # Set the first 'n' values to True
-    np.random.shuffle(mask)  # Shuffle to distribute the NaNs randomly
+    random.shuffle(mask)  # Shuffle to distribute the NaNs randomly
 
     # Apply the mask to assign NaNs in the DataFrame column
-    df.loc[mask, column_name] = np.nan
+    df.loc[mask, column_name] = math.nan
 
 
 def _get_file(name):

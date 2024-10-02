@@ -4,7 +4,6 @@ import pathlib
 import time
 from typing import Dict, List, Any
 import asyncio
-import numpy as np
 import pandas as pd
 import pytest
 import requests
