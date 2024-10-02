@@ -220,7 +220,7 @@ class ContainerProxy:
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from 
             client-level options.  
-        :returns: A dict representing the item after replace went through or if response payload on write is disabled
+        :returns: A dict representing the item after replace went through. The dict will be empty if `no_response` is specified.
             None.
         :rtype: Dict[str, Any]
         """
