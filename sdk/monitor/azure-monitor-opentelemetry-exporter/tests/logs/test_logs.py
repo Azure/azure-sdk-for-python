@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import json
 import os
 import platform
 import shutil
@@ -109,6 +110,24 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
+        cls._log_data_complex_body = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "WARNING",
+                trace_flags = None,
+                severity_number = SeverityNumber.WARN,
+                body = {"foo": {"bar" : "baz", "qux": 42}},
+                resource = Resource.create(
+                    attributes={"asd":"test_resource"}
+                ),
+                attributes={
+                    "test": "attribute"
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
         cls._log_data_event = _logs.LogData(
             _logs.LogRecord(
                 timestamp = 1646865018558419456,
@@ -118,6 +137,23 @@ class TestAzureLogExporter(unittest.TestCase):
                 trace_flags = None,
                 severity_number = SeverityNumber.INFO,
                 body = "Test Event",
+                resource = Resource.create(attributes={"asd":"test_resource"}),
+                attributes={
+                    "event_key": "event_attribute",
+                    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE: True,
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
+        cls._log_data_event_complex_body = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "INFO",
+                trace_flags = None,
+                severity_number = SeverityNumber.INFO,
+                body = {"foo": {"bar" : "baz", "qux": 42}},
                 resource = Resource.create(attributes={"asd":"test_resource"}),
                 attributes={
                     "event_key": "event_attribute",
@@ -350,6 +386,13 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_type, 'MessageData')
         self.assertEqual(envelope.data.base_data.message, "n/a")
 
+    def test_log_to_envelope_log_complex_body(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_complex_body)
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Message')
+        self.assertEqual(envelope.data.base_type, 'MessageData')
+        self.assertEqual(envelope.data.base_data.message, json.dumps(self._log_data_complex_body.log_record.body))
+
     def test_log_to_envelope_exception_with_string_message(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._exc_data)
@@ -420,6 +463,16 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.name, record.body)
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
 
+    def test_log_to_envelope_event_complex_body(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._log_data_event_complex_body)
+        record = self._log_data_event_complex_body.log_record
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Event')
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.data.base_type, 'EventData')
+        self.assertEqual(envelope.data.base_data.name, json.dumps(record.body))
+        self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
+
     def test_log_to_envelope_timestamp(self):
         exporter = self._exporter
         old_record = self._log_data.log_record
@@ -429,15 +482,15 @@ class TestAzureLogExporter(unittest.TestCase):
         record = self._log_data.log_record
         self.assertEqual(envelope.time, ns_to_iso_str(record.observed_timestamp))
         self._log_data.log_record = old_record
-        
+
 
 class TestAzureLogExporterWithDisabledStorage(TestAzureLogExporter):
     _exporter_class = partial(AzureMonitorLogExporter, disable_offline_storage=True)
-    
+
     @classmethod
     def tearDownClass(cls):
         pass
-    
+
     def test_constructor(self):
         """Test the constructor."""
         exporter = AzureMonitorLogExporter(
@@ -449,12 +502,12 @@ class TestAzureLogExporterWithDisabledStorage(TestAzureLogExporter):
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
         self.assertEqual(exporter.storage, None)
-    
+
     def test_shutdown(self):
         exporter = self._exporter
         exporter.shutdown()
         self.assertEqual(exporter.storage, None)
-        
+
     def test_export_failure(self):
         exporter = self._exporter
         with mock.patch(

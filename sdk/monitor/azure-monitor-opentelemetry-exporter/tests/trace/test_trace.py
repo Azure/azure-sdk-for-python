@@ -341,7 +341,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.end(end_time=end_time)
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
-  
+
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
@@ -489,7 +489,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.end(end_time=end_time)
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
-  
+
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
@@ -609,7 +609,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.end(end_time=end_time)
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
-  
+
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
@@ -624,7 +624,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.type, "rpc.system")
         self.assertEqual(envelope.data.base_data.target, "service")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
-        
+
         # target
         span._attributes = {
             "rpc.system": "rpc",
@@ -656,7 +656,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.end(end_time=end_time)
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
-  
+
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
@@ -671,13 +671,50 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.type, "messaging")
         self.assertEqual(envelope.data.base_data.target, "celery")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
-        
+
         # target
         span._attributes = {
             "messaging.system": "messaging",
         }
         envelope = exporter._span_to_envelope(span)
         self.assertEqual(envelope.data.base_data.target, "messaging")
+
+    def test_span_to_envelope_client_gen_ai(self):
+        exporter = self._exporter
+        start_time = 1575494316027613500
+        end_time = start_time + 1001000000
+
+        # SpanKind.CLIENT messaging
+        span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557337,
+                is_remote=False,
+            ),
+            attributes={
+                "gen_ai.system": "az.ai.inference",
+            },
+            kind=SpanKind.CLIENT,
+        )
+        span.start(start_time=start_time)
+        span.end(end_time=end_time)
+        span._status = Status(status_code=StatusCode.UNSET)
+        envelope = exporter._span_to_envelope(span)
+
+        self.assertEqual(
+            envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
+        )
+        self.assertEqual(envelope.time, "2019-12-04T21:18:36.027613Z")
+        self.assertEqual(envelope.data.base_data.name, "test")
+        self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
+        self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
+        self.assertTrue(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.result_code, "0")
+
+        self.assertEqual(envelope.data.base_type, "RemoteDependencyData")
+        self.assertEqual(envelope.data.base_data.type, "az.ai.inference")
+        self.assertEqual(len(envelope.data.base_data.properties), 1)
 
     def test_span_to_envelope_client_azure(self):
         exporter = self._exporter
@@ -703,7 +740,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.end(end_time=end_time)
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
-  
+
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
@@ -718,7 +755,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.type, "Microsoft.EventHub")
         self.assertEqual(envelope.data.base_data.target, "test_address/test_destination")
         self.assertEqual(len(envelope.data.base_data.properties), 2)
-        
+
         # target
         span._attributes = {
             "messaging.system": "messaging",
@@ -749,7 +786,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.end(end_time=end_time)
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
-  
+
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
@@ -806,7 +843,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.end(end_time=end_time)
         span._status = Status(status_code=StatusCode.OK)
         envelope = exporter._span_to_envelope(span)
-  
+
         self.assertEqual(
             envelope.name, "Microsoft.ApplicationInsights.RemoteDependency"
         )
@@ -967,7 +1004,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "client_ip")
         self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
-        
+
         # success
         span._attributes = {
             "http.method": "GET",
@@ -1080,7 +1117,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.id, "a6f5d48acb4d31d9")
         self.assertEqual(envelope.data.base_data.duration, "0.00:00:01.001")
         self.assertTrue(envelope.data.base_data.success)
-        
+
         self.assertEqual(envelope.tags[ContextTagKeys.AI_LOCATION_IP], "127.0.0.1")
         self.assertEqual(envelope.data.base_data.source, "test name/celery")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
@@ -1281,7 +1318,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.end()
         span._status = Status(status_code=StatusCode.OK)
         envelopes = exporter._span_events_to_envelopes(span)
-  
+
         self.assertEqual(len(envelopes), 1)
         envelope = envelopes[0]
         self.assertEqual(
@@ -1332,7 +1369,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.end()
         span._status = Status(status_code=StatusCode.OK)
         envelopes = exporter._span_events_to_envelopes(span)
-  
+
         self.assertEqual(len(envelopes), 1)
         envelope = envelopes[0]
         self.assertEqual(
@@ -1384,7 +1421,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         span.end()
         span._status = Status(status_code=StatusCode.OK)
         envelopes = exporter._span_events_to_envelopes(span)
-  
+
         self.assertEqual(len(envelopes), 1)
         envelope = envelopes[0]
         self.assertEqual(
@@ -1468,7 +1505,7 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(metric_name, "Microsoft.ApplicationInsights.Metric")
         instrumentation_key = envelope.instrumentation_key
         self.assertEqual(instrumentation_key, exporter._instrumentation_key)
-        
+
         monitor_base = envelope.data
         self.assertEqual(monitor_base.base_type, "MetricData")
         metrics_data = monitor_base.base_data
