@@ -894,7 +894,7 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="wh
     All required parameters must be populated in order to send to server.
 
     :ivar kind: MessageTemplateBindings is whatsApp. Required. The WhatsApp template type.
-    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP
+    :vartype kind: str or ~azure.communication.messages.models.WHATSAPP
     :ivar header: The header template bindings.
     :vartype header:
      list[~azure.communication.messages.models.WhatsAppMessageTemplateBindingsComponent]
@@ -909,7 +909,7 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="wh
      list[~azure.communication.messages.models.WhatsAppMessageTemplateBindingsButton]
     """
 
-    kind: Literal[MessageTemplateBindingsKind.WHATS_APP] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[MessageTemplateBindingsKind.WHATSAPP] = rest_discriminator(name="kind")  # type: ignore
     """MessageTemplateBindings is whatsApp. Required. The WhatsApp template type."""
     header: Optional[List["_models.WhatsAppMessageTemplateBindingsComponent"]] = rest_field()
     """The header template bindings."""
@@ -938,7 +938,7 @@ class WhatsAppMessageTemplateBindings(MessageTemplateBindings, discriminator="wh
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, kind=MessageTemplateBindingsKind.WHATS_APP, **kwargs)
+        super().__init__(*args, kind=MessageTemplateBindingsKind.WHATSAPP, **kwargs)
 
 
 class WhatsAppMessageTemplateBindingsButton(_model_base.Model):
@@ -1026,12 +1026,12 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator="whatsApp")
     :vartype content: any
     :ivar kind: Message template response type is whatsApp. Required. The WhatsApp communication
      messages channel type.
-    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP
+    :vartype kind: str or ~azure.communication.messages.models.WHATSAPP
     """
 
     content: Optional[Any] = rest_field()
     """WhatsApp platform's template content. This is the payload returned from WhatsApp API."""
-    kind: Literal[CommunicationMessagesChannel.WHATS_APP] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[CommunicationMessagesChannel.WHATSAPP] = rest_discriminator(name="kind")  # type: ignore
     """Message template response type is whatsApp. Required. The WhatsApp communication messages
      channel type."""
 
@@ -1052,4 +1052,4 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator="whatsApp")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, kind=CommunicationMessagesChannel.WHATS_APP, **kwargs)
+        super().__init__(*args, kind=CommunicationMessagesChannel.WHATSAPP, **kwargs)

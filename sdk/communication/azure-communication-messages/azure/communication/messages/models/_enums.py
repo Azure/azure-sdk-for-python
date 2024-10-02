@@ -33,14 +33,14 @@ class CommunicationMessageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class CommunicationMessagesChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the communication messages channel."""
 
-    WHATS_APP = "whatsApp"
+    WHATSAPP = "whatsApp"
     """The WhatsApp communication messages channel type."""
 
 
 class MessageTemplateBindingsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the message template."""
 
-    WHATS_APP = "whatsApp"
+    WHATSAPP = "whatsApp"
     """The WhatsApp template type."""
 
 
