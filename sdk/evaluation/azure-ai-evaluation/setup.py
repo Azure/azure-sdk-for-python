@@ -67,8 +67,6 @@ setup(
     install_requires=[
         "promptflow-devkit>=1.15.0",
         "promptflow-core>=1.15.0",
-        "numpy>=1.23.2; python_version<'3.12'",
-        "numpy>=1.26.4; python_version>='3.12'",
         "pyjwt>=2.8.0",
         "azure-identity>=1.12.0",
         "azure-core>=1.30.2",

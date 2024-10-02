@@ -1,16 +1,13 @@
+import math
 import platform
 
 from azure.ai.inference.models import (
     UserMessage, 
-    SystemMessage,
     TextContentItem,
     ImageContentItem, 
     ImageUrl,
 )
 
-from azure.ai.inference.models._enums import ImageDetailLevel
-
-import numpy as np
 import pytest
 from devtools_testutils import is_live
 
@@ -341,11 +338,11 @@ class TestBuiltInEvaluators:
         # Test Q/A below would cause NaNs in the evaluation metrics before the fix.
         score = qa_eval(query="This's the color?", response="Black", ground_truth="gray", context="gray")
 
-        assert score["gpt_groundedness"] is not np.nan
-        assert score["gpt_relevance"] is not np.nan
-        assert score["gpt_coherence"] is not np.nan
-        assert score["gpt_fluency"] is not np.nan
-        assert score["gpt_similarity"] is not np.nan
+        assert not math.isnan(score["gpt_groundedness"])
+        assert not math.isnan(score["gpt_relevance"])
+        assert not math.isnan(score["gpt_coherence"])
+        assert not math.isnan(score["gpt_fluency"])
+        assert not math.isnan(score["gpt_similarity"])
 
     def test_composite_evaluator_content_safety(self, project_scope, azure_cred):
         safety_eval = ContentSafetyEvaluator(project_scope, parallel=False, credential=azure_cred)
@@ -483,3 +480,107 @@ class TestBuiltInEvaluators:
         assert convo_result["xpia_label"] == 0.5
         assert convo_result["evaluation_per_turn"]["xpia_label"] == [False, True]
         assert all(convo_result["evaluation_per_turn"]["xpia_reason"]), "xpia_reason must not be None or empty."
+
+    def test_multimodal_evaluator_content_safety_json(self, project_scope, azure_cred):
+        chat_eval = ContentSafetyMultimodalEvaluator(
+            project_scope, credential=azure_cred
+        )
+
+        conversation = [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "What is in this image?"},
+                    {"type": "image_url", "image_url": {"url": "https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg"}},
+                ],
+            },
+        ]
+
+        score = chat_eval(messages=conversation)
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+
+        assert score["evaluation_per_turn"] is not None
+
+        turn_count = 1
+        assert score["evaluation_per_turn"]["violence"] is not None
+        assert len(score["evaluation_per_turn"]["violence"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["violence"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["violence"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["sexual"] is not None
+        assert len(score["evaluation_per_turn"]["sexual"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["sexual"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["sexual"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["self_harm"] is not None
+        assert len(score["evaluation_per_turn"]["self_harm"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["self_harm"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["self_harm"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["hate_unfairness"] is not None
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["severity"]) == turn_count
+
+    def test_multimodal_evaluator_content_safety_inference(self, project_scope, azure_cred):
+        chat_eval = ContentSafetyMultimodalEvaluator(
+            project_scope, credential=azure_cred
+        )
+
+        messages = [ 
+           UserMessage( 
+               content=[ 
+                   TextContentItem(text="What is in this image?"), 
+                   ImageContentItem( 
+                    image_url=
+                        ImageUrl( 
+                                url="https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg" 
+                        ),
+                   ), 
+               ], 
+           ) 
+       ]
+
+        score = chat_eval(messages=messages)
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+
+        assert score["evaluation_per_turn"] is not None
+
+        turn_count = 1
+        assert score["evaluation_per_turn"]["violence"] is not None
+        assert len(score["evaluation_per_turn"]["violence"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["violence"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["violence"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["sexual"] is not None
+        assert len(score["evaluation_per_turn"]["sexual"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["sexual"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["sexual"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["self_harm"] is not None
+        assert len(score["evaluation_per_turn"]["self_harm"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["self_harm"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["self_harm"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["hate_unfairness"] is not None
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["severity"]) == turn_count
+
+    
