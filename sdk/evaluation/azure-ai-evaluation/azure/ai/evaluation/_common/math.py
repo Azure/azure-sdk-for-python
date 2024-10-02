@@ -8,7 +8,7 @@ from typing import List
 
 
 def list_sum(lst: List[float]) -> float:
-    return reduce(lambda a, b: a+b, lst)
+    return sum(lst)
 
 
 def list_mean(lst: List[float]) -> float:

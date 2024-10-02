@@ -235,7 +235,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
 
         if metric_name == EvaluationMetrics.XPIA:
             # Add "manipulated_content", "intrusion" and "information_gathering" to the result
-            # if present else set them to float("nan")
+            # if present else set them to math.nan
             result[metric_name + "_manipulated_content"] = (
                 parsed_response["manipulated_content"] if "manipulated_content" in parsed_response else math.nan
             )
