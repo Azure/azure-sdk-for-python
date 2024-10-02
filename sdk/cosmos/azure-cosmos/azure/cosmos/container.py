@@ -456,6 +456,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :param Any args: args
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """

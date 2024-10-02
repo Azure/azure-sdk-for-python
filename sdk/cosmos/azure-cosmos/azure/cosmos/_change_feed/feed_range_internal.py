@@ -25,7 +25,7 @@ database service.
 import base64
 import json
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict, Any
+from typing import Union, List, Dict, Any, Optional
 
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.partition_key import _Undefined, _Empty
@@ -42,7 +42,7 @@ class FeedRangeInternal(ABC):
         pass
 
     def _to_base64_encoded_string(self) -> str:
-        data_json = json.dumps(self._to_dict())
+        data_json = json.dumps(self.to_dict())
         json_bytes = data_json.encode('utf-8')
         # Encode the bytes to a Base64 string
         base64_bytes = base64.b64encode(json_bytes)
@@ -102,7 +102,7 @@ class FeedRangeInternalEpk(FeedRangeInternal):
             raise ValueError("feed_range cannot be None")
 
         self._range = feed_range
-        self._base64_encoded_string = None
+        self._base64_encoded_string: Optional[str] = None
 
     def get_normalized_range(self) -> Range:
         return self._range.to_normalized_range()
