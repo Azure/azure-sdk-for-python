@@ -592,8 +592,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         user_agent=USER_AGENT,
     )
 
-    trace_destination = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
-    target_run = None
+    trace_destination: Optional[str] = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
+    target_run: Optional[Run] = None
 
     # Create default configuration for evaluators that directly maps
     # input data names to keyword inputs of the same name in the evaluators.
