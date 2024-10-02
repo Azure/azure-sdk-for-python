@@ -625,7 +625,7 @@ class SendClient(AMQPClient):
             message_delivery.message,
             on_send_complete=on_send_complete,
             timeout=timeout,
-            send_async=True,
+            send_async=False,
         )
         return delivery
 
@@ -677,13 +677,16 @@ class SendClient(AMQPClient):
         message_delivery = _MessageDelivery(
             message, MessageDeliveryState.WaitingToBeSent, expire_time
         )
-        while not self.client_ready():
-            time.sleep(0.05)
+        # while not self.client_ready():
+        #     time.sleep(0.05)
 
         self._transfer_message(message_delivery, timeout)
         running = True
-        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            running = self.do_work()
+        while message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            # running = self.do_work()
+            print("sleep called")
+            time.sleep(1)
+            print("sleep done")
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(
                 condition=ErrorCondition.ClientError,
@@ -1018,7 +1021,8 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                         self._timeout_reached = True
 
                 if not self._timeout_reached:
-                    receiving = self.do_work()
+                    # receiving = self.do_work()
+                    time.sleep(1)
 
                 while not self._received_messages.empty():
                     message = self._received_messages.get()

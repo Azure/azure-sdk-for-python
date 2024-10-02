@@ -460,7 +460,7 @@ class ServiceBusReceiver(
                         expired = True
                         break
                     before = received_messages_queue.qsize()
-                    receiving = amqp_receive_client.do_work()
+                    # receiving = amqp_receive_client.do_work()
                     received = received_messages_queue.qsize() - before
                     if (
                         not first_message_received
