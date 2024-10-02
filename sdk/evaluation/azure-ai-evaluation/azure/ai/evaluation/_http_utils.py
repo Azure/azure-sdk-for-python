@@ -176,31 +176,73 @@ class HttpPipeline(Pipeline):
         return self.run(request, **kwargs).http_response
 
     def delete(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
-        """Send a DELETE request."""
+        """Send a DELETE request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: HttpResponse
+        """
+
         return self.request(self.delete.__name__.upper(), url, **kwargs)
 
     def put(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
-        """Send a PUT request."""
+        """Send a PUT request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: HttpResponse
+        """
+
         return self.request(self.put.__name__.upper(), url, **kwargs)
 
     def get(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
-        """Send a GET request."""
+        """Send a GET request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: HttpResponse
+        """
+
         return self.request(self.get.__name__.upper(), url, **kwargs)
 
     def post(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
-        """Send a POST request."""
+        """Send a POST request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: HttpResponse
+        """
+
         return self.request(self.post.__name__.upper(), url, **kwargs)
 
     def head(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
-        """Send a HEAD request."""
+        """Send a HEAD request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: HttpResponse
+        """
+
         return self.request(self.head.__name__.upper(), url, **kwargs)
 
     def options(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
-        """Send a OPTIONS request."""
+        """Send a OPTIONS request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: HttpResponse
+        """
+
         return self.request(self.options.__name__.upper(), url, **kwargs)
 
     def patch(self: "HttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> HttpResponse:
-        """Send a PATCH request."""
+        """Send a PATCH request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: HttpResponse
+        """
+
         return self.request(self.patch.__name__.upper(), url, **kwargs)
 
     def __enter__(self) -> Self:
@@ -334,31 +376,72 @@ class AsyncHttpPipeline(AsyncPipeline):
         return (await self.run(request, **kwargs)).http_response
 
     async def delete(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
-        """Send a DELETE request."""
+        """Send a DELETE request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: AsyncHttpResponse
+        """
         return await self.request(self.delete.__name__.upper(), url, **kwargs)
 
     async def put(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
-        """Send a PUT request."""
+        """Send a PUT request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: AsyncHttpResponse
+        """
+
         return await self.request(self.put.__name__.upper(), url, **kwargs)
 
     async def get(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
-        """Send a GET request."""
+        """Send a GET request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: AsyncHttpResponse
+        """
+
         return await self.request(self.get.__name__.upper(), url, **kwargs)
 
     async def post(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
-        """Send a POST request."""
+        """Send a POST request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: AsyncHttpResponse
+        """
+
         return await self.request(self.post.__name__.upper(), url, **kwargs)
 
     async def head(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
-        """Send a HEAD request."""
+        """Send a HEAD request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: AsyncHttpResponse
+        """
+
         return await self.request(self.head.__name__.upper(), url, **kwargs)
 
     async def options(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
-        """Send a OPTIONS request."""
+        """Send a OPTIONS request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: AsyncHttpResponse
+        """
+
         return await self.request(self.options.__name__.upper(), url, **kwargs)
 
     async def patch(self: "AsyncHttpPipeline", url: str, **kwargs: Unpack[RequestKwargs]) -> AsyncHttpResponse:
-        """Send a PATCH request."""
+        """Send a PATCH request.
+
+        :param str url: The request url
+        :returns: The request response
+        :rtype: AsyncHttpResponse
+        """
+
         return await self.request(self.patch.__name__.upper(), url, **kwargs)
 
     async def __aenter__(self) -> Self:
