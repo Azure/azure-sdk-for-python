@@ -7,7 +7,6 @@ from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
-from azure.ai.evaluation._model_configurations import AzureAIProject
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +53,7 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
     def __init__(
         self,
         credential,
-        azure_ai_project: AzureAIProject,
+        azure_ai_project: dict,
         eval_last_turn: bool = False,
     ):
         super().__init__(

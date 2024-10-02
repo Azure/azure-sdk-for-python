@@ -118,7 +118,7 @@ def construct_prompty_model_config(
     return prompty_model_config
 
 
-def is_azure_ai_project(o: object) -> TypeGuard[AzureAIProject]:
+def validate_azure_ai_project(o: object) -> AzureAIProject:
     fields = {"subscription_id": str, "resource_group_name": str, "project_name": str}
 
     if not isinstance(o, dict):
@@ -157,7 +157,7 @@ def is_azure_ai_project(o: object) -> TypeGuard[AzureAIProject]:
             blame=ErrorBlame.USER_ERROR,
         )
 
-    return True
+    return cast(AzureAIProject, o)
 
 
 def validate_model_config(config: dict) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]:

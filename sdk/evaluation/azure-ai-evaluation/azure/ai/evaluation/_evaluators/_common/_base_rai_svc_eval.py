@@ -7,8 +7,8 @@ from typing_extensions import override
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
-from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase
@@ -33,13 +33,13 @@ class RaiServiceEvaluatorBase(EvaluatorBase):
     def __init__(
         self,
         eval_metric: EvaluationMetrics,
-        azure_ai_project: AzureAIProject,
+        azure_ai_project: dict,
         credential: TokenCredential,
         eval_last_turn: bool = False,
     ):
         super().__init__(eval_last_turn=eval_last_turn)
         self._eval_metric = eval_metric
-        self._azure_ai_project = azure_ai_project
+        self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
 
     @override

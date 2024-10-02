@@ -7,6 +7,7 @@ from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
@@ -88,8 +89,10 @@ class ProtectedMaterialsEvaluator:
         }
     """
 
-    def __init__(self, credential, azure_ai_project: AzureAIProject):
-        self._async_evaluator = _AsyncProtectedMaterialsEvaluator(azure_ai_project, cast(TokenCredential, credential))
+    def __init__(self, credential, azure_ai_project: dict):
+        self._async_evaluator = _AsyncProtectedMaterialsEvaluator(
+            validate_azure_ai_project(azure_ai_project), cast(TokenCredential, credential)
+        )
 
     def __call__(self, *, query: str, response: str, **kwargs):
         """
