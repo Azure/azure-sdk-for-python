@@ -7,7 +7,6 @@ from typing import Callable, Dict, List, Union
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.core.credentials import TokenCredential
 
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
@@ -64,7 +63,7 @@ class ContentSafetyEvaluator:
         }
     """
 
-    def __init__(self, credential: TokenCredential, azure_ai_project: AzureAIProject, parallel: bool = True):
+    def __init__(self, credential, azure_ai_project: AzureAIProject, parallel: bool = True):
         self._parallel = parallel
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),

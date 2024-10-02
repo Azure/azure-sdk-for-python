@@ -5,7 +5,7 @@
 # noqa: E501
 import logging
 from random import randint
-from typing import Callable, Optional
+from typing import Callable, Optional, cast
 
 from azure.ai.evaluation._common.utils import is_azure_ai_project
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -33,7 +33,7 @@ class DirectAttackSimulator:
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
+    def __init__(self, *, azure_ai_project: AzureAIProject, credential):
         """Constructor."""
 
         try:
@@ -46,12 +46,12 @@ class DirectAttackSimulator:
                 category=e.category,
                 blame=e.blame,
             ) from e
-        self.credential = credential
+        self.credential = cast(TokenCredential, credential)
         self.azure_ai_project = azure_ai_project
         self.token_manager = ManagedIdentityAPITokenManager(
             token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
             logger=logging.getLogger("AdversarialSimulator"),
-            credential=credential,
+            credential=self.credential,
         )
         self.rai_client = RAIClient(azure_ai_project=azure_ai_project, token_manager=self.token_manager)
         self.adversarial_template_handler = AdversarialTemplateHandler(

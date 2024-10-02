@@ -48,7 +48,7 @@ class AdversarialSimulator:
     :type credential: ~azure.core.credentials.TokenCredential
     """
 
-    def __init__(self, *, azure_ai_project: AzureAIProject, credential: TokenCredential):
+    def __init__(self, *, azure_ai_project: AzureAIProject, credential):
         """Constructor."""
 
         try:
@@ -65,7 +65,7 @@ class AdversarialSimulator:
         self.token_manager = ManagedIdentityAPITokenManager(
             token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
             logger=logging.getLogger("AdversarialSimulator"),
-            credential=credential,
+            credential=cast(TokenCredential, credential),
         )
         self.rai_client = RAIClient(azure_ai_project=azure_ai_project, token_manager=self.token_manager)
         self.adversarial_template_handler = AdversarialTemplateHandler(

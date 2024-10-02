@@ -12,7 +12,6 @@ from azure.ai.evaluation._common.constants import HarmSeverityLevel
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.core.credentials import TokenCredential
 
 from ._hate_unfairness import HateUnfairnessEvaluator
 from ._self_harm import SelfHarmEvaluator
@@ -93,7 +92,7 @@ class ContentSafetyChatEvaluator:
 
     def __init__(
         self,
-        credential: TokenCredential,
+        credential,
         azure_ai_project: AzureAIProject,
         eval_last_turn: bool = False,
         parallel: bool = True,

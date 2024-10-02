@@ -8,7 +8,6 @@ from typing_extensions import override
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 from azure.ai.evaluation._model_configurations import AzureAIProject
-from azure.core.credentials import TokenCredential
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +53,7 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
     @override
     def __init__(
         self,
-        credential: TokenCredential,
+        credential,
         azure_ai_project: AzureAIProject,
         eval_last_turn: bool = False,
     ):
