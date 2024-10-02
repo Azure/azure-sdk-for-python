@@ -27,7 +27,7 @@ from collections import deque
 import copy
 
 from ...aio import _retry_utility_async
-from ..._cosmos_responses import CosmosListResponse
+from ..._cosmos_responses import CosmosList
 from ... import http_constants
 
 # pylint: disable=protected-access
@@ -79,10 +79,10 @@ class _QueryExecutionContextBase(object):
         QueryIterable has exposed fetch_next_block api).
 
         :return: List of results.
-        :rtype: ~azure.cosmos.CosmosListResponse
+        :rtype: ~azure.cosmos.CosmosList
         """
         await self._ensure()
-        res = CosmosListResponse(self._buffer, response_headers=self._response_headers)
+        res = CosmosList(self._buffer, response_headers=self._response_headers)
         self._buffer.clear()
         return res
 
@@ -145,7 +145,7 @@ class _QueryExecutionContextBase(object):
                 self._continuation = None
             if fetched_items:
                 break
-        return CosmosListResponse(fetched_items, response_headers=response_headers)
+        return CosmosList(fetched_items, response_headers=response_headers)
 
     async def _fetch_items_helper_with_retries(self, fetch_function):
         async def callback():

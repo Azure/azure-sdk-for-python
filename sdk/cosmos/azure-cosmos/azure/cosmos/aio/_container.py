@@ -31,7 +31,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._cosmos_responses import CosmosDictResponse, CosmosListResponse
+from .._cosmos_responses import CosmosDict, CosmosList
 from .._base import (
     build_options as _build_options,
     validate_cache_staleness_value,
@@ -192,7 +192,7 @@ class ContainerProxy:
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse:
+    ) -> CosmosDict:
         """Create an item in the container.
 
         To update or replace an existing item, use the
@@ -217,8 +217,8 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
-        :returns: A CosmosDictResponse representing the new item.
-        :rtype: CosmosDictResponse
+        :returns: A CosmosDict representing the new item.
+        :rtype: CosmosDict
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -258,7 +258,7 @@ class ContainerProxy:
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse:
+    ) -> CosmosDict:
         """Get the item identified by `item`.
 
         :param item: The ID (name) or dict representing item to retrieve.
@@ -277,8 +277,8 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
-        :returns: A CosmosDictResponse representing the retrieved item.
-        :rtype: CosmosDictResponse
+        :returns: A CosmosDict representing the retrieved item.
+        :rtype: CosmosDict
 
         .. admonition:: Example:
 
@@ -554,7 +554,7 @@ class ContainerProxy:
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse:
+    ) -> CosmosDict:
         """Insert or update the specified item.
 
         If the item already exists in the container, it is replaced. If the item
@@ -575,8 +575,8 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
-        :returns: A CosmosDictResponse representing the upserted item.
-        :rtype: CosmosDictResponse
+        :returns: A CosmosDict representing the upserted item.
+        :rtype: CosmosDict
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -619,7 +619,7 @@ class ContainerProxy:
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse:
+    ) -> CosmosDict:
         """Replaces the specified item if it exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -643,7 +643,7 @@ class ContainerProxy:
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
             given id does not exist.
         :returns: A dict representing the item after replace went through.
-        :rtype: CosmosDictResponse
+        :rtype: CosmosDict
         """
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
@@ -685,7 +685,7 @@ class ContainerProxy:
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse:
+    ) -> CosmosDict:
         """ Patches the specified item with the provided operations if it
          exists in the container.
 
@@ -708,10 +708,10 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: A CosmosDictResponse representing the item after the patch operations went through.
+        :returns: A CosmosDict representing the item after the patch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
-        :rtype: CosmosDictResponse
+        :rtype: CosmosDict
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -1057,7 +1057,7 @@ class ContainerProxy:
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         **kwargs: Any
-    ) -> CosmosListResponse:
+    ) -> CosmosList:
         """ Executes the transactional batch for the specified partition key.
 
         :param batch_operations: The batch of operations to be executed.
@@ -1074,10 +1074,10 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A CosmosListResponse representing the items after the batch operations went through.
+        :returns: A CosmosList representing the items after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
-        :rtype: CosmosListResponse
+        :rtype: CosmosList
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include

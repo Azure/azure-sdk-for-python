@@ -54,7 +54,7 @@ from .. import documents
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
-from .._cosmos_responses import CosmosDictResponse, CosmosListResponse
+from .._cosmos_responses import CosmosDict, CosmosList
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
 from .. import _runtime_constants as runtime_constants
@@ -518,7 +518,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse[str, Any]:
+    ) -> CosmosDict[str, Any]:
         """Creates a document in a collection.
 
         :param str database_or_container_link:
@@ -530,7 +530,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The created Document.
         :rtype:
-            CosmosDictResponse[str, Any]
+            CosmosDict[str, Any]
 
         """
         # Python's default arguments are evaluated once when the function is defined,
@@ -707,7 +707,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse[str, Any]:
+    ) -> CosmosDict[str, Any]:
         """Creates an Azure Cosmos resource and returns it.
 
         :param dict body:
@@ -720,7 +720,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The created Azure Cosmos resource.
         :rtype:
-            CosmosDictResponse[str, Any]
+            CosmosDict[str, Any]
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -739,7 +739,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse[str, Any](result,
+        return CosmosDict[str, Any](result,
                                   response_headers=last_response_headers)
 
     async def UpsertUser(
@@ -800,7 +800,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse[str, Any]:
+    ) -> CosmosDict[str, Any]:
         """Upserts a document in a collection.
 
         :param str database_or_container_link:
@@ -812,7 +812,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The upserted Document.
         :rtype:
-            CosmosDictResponse[str, Any]
+            CosmosDict[str, Any]
 
         """
         # Python's default arguments are evaluated once when the function is defined,
@@ -844,7 +844,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse[str, Any]:
+    ) -> CosmosDict[str, Any]:
         """Upserts an Azure Cosmos resource and returns it.
 
         :param dict body:
@@ -857,7 +857,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The upserted Azure Cosmos resource.
         :rtype:
-            CosmosDictResponse[str, Any]
+            CosmosDict[str, Any]
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -877,7 +877,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse[str, Any](result,
+        return CosmosDict[str, Any](result,
                                   response_headers=last_response_headers)
 
     async def __Post(
@@ -964,7 +964,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse[str, Any]:
+    ) -> CosmosDict[str, Any]:
         """Reads a document.
 
         :param str document_link:
@@ -975,7 +975,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The read Document.
         :rtype:
-            CosmosDictResponse[str, Any]
+            CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1147,7 +1147,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse[str, Any]:
+    ) -> CosmosDict[str, Any]:
         """Reads an Azure Cosmos resource and returns it.
 
         :param str path:
@@ -1160,7 +1160,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The retrieved Azure Cosmos resource.
         :rtype:
-            CosmosDictResponse[str, Any]
+            CosmosDict[str, Any]
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -1175,7 +1175,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.last_response_headers = last_response_headers
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse[str, Any](result,
+        return CosmosDict[str, Any](result,
                                   response_headers=last_response_headers)
 
     async def __Get(
@@ -1364,7 +1364,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         new_document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse[str, Any]:
+    ) -> CosmosDict[str, Any]:
         """Replaces a document and returns it.
 
         :param str document_link:
@@ -1375,7 +1375,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new Document.
         :rtype:
-            CosmosDictResponse[str, Any]
+            CosmosDict[str, Any]
 
         """
         base._validate_resource(new_document)
@@ -1404,7 +1404,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         operations: List[Dict[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse[str, Any]:
+    ) -> CosmosDict[str, Any]:
         """Patches a document and returns it.
 
         :param str document_link: The link to the document.
@@ -1413,7 +1413,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new Document.
         :rtype:
-            CosmosDictResponse[str, Any]
+            CosmosDict[str, Any]
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -1439,7 +1439,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse[str, Any](result,
+        return CosmosDict[str, Any](result,
                                   response_headers=last_response_headers)
 
     async def ReplaceOffer(
@@ -1507,7 +1507,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> CosmosDictResponse[str, Any]:
+    ) -> CosmosDict[str, Any]:
         """Replaces an Azure Cosmos resource and returns it.
 
         :param dict resource:
@@ -1520,7 +1520,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new Azure Cosmos resource.
         :rtype:
-            CosmosDictResponse[str, Any]
+            CosmosDict[str, Any]
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -1538,7 +1538,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         if response_hook:
             response_hook(last_response_headers, result)
-        return CosmosDictResponse[str, Any](result,
+        return CosmosDict[str, Any](result,
                                   response_headers=last_response_headers)
 
     async def __Put(
@@ -1894,7 +1894,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> CosmosListResponse[Dict[str, Any]]:
+    ) -> CosmosList[Dict[str, Any]]:
         """Executes the given operations in transactional batch.
 
         :param str collection_link: The link to the collection
@@ -1904,7 +1904,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The result of the batch operation.
         :rtype:
-            CosmosListResponse[Dict[str, Any]]
+            CosmosList[Dict[str, Any]]
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -1950,7 +1950,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             )
         if response_hook:
             response_hook(last_response_headers, final_responses)
-        return CosmosListResponse[Dict[str, Any]](final_responses,
+        return CosmosList[Dict[str, Any]](final_responses,
                                   response_headers=last_response_headers)
 
     async def _Batch(

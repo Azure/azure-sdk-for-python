@@ -100,7 +100,7 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
 
         :param Any args:
         :return: List of results.
-        :rtype: ~azure.cosmos.CosmosListResponse
+        :rtype: ~azure.cosmos.CosmosList
         """
         block = self._ex_context.fetch_next_block()
         if not block:

@@ -7,7 +7,7 @@
 * Added Retry Policy for Container Recreate in the Python SDK. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043)
 
 #### Breaking Changes
-* Item-level operations will now return new response types, `CosmosDictResponse` and `CosmosListResponse`. 
+* Item-level operations will now return `CosmosDict` and `CosmosList` response types. 
 Responses will still be able to be used directly as previously, but will now have access to their response headers without need for a response hook. See [PR 35791](https://github.com/Azure/azure-sdk-for-python/pull/35791).
 For more information on this, see our README section [here](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#using-item-operation-response-headers).
 

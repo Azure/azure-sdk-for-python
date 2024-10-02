@@ -1,11 +1,11 @@
 # The MIT License (MIT)
 # Copyright (c) 2024 Microsoft Corporation
 
-from typing import Any, Dict, Iterable, Mapping, Optional
+from typing import Any, Dict, Iterable, Mapping, Optional, List
 from azure.core.utils import CaseInsensitiveDict
 
 
-class CosmosDictResponse(dict):
+class CosmosDict(Dict):
     def __init__(self, original_dict: Optional[Mapping[str, Any]], /, *, response_headers: CaseInsensitiveDict) -> None:
         if original_dict is None:
             original_dict = {}
@@ -21,7 +21,7 @@ class CosmosDictResponse(dict):
         return self._response_headers.copy()
 
 
-class CosmosListResponse(list):
+class CosmosList(List):
     def __init__(self, original_list: Optional[Iterable[Dict[str, Any]]], /, *,
                  response_headers: CaseInsensitiveDict) -> None:
         if original_list is None:

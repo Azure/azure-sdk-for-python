@@ -101,7 +101,7 @@ class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-att
 
         :param Any args:
         :return: List of results.
-        :rtype: ~azure.cosmos.CosmosListResponse
+        :rtype: ~azure.cosmos.CosmosList
         """
 
         if 'partitionKey' in self._options and asyncio.iscoroutine(self._options['partitionKey']):
