@@ -3,7 +3,6 @@ mypy = false
 pyright = false
 pylint = true
 black = true
-bandit = false
 verifytypes = false
 
 [tool.isort]
