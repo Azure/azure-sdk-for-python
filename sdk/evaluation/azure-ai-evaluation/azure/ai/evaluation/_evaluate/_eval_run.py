@@ -265,7 +265,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         exc_type: Optional[Type[BaseException]],
         exc_value: Optional[BaseException],
         exc_tb: Optional[types.TracebackType],
-    ) -> Optional[bool]:
+    ) -> None:
         """The context manager exit call.
 
         :param exc_type: The exception type
@@ -276,7 +276,6 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :type exc_tb: Optional[types.TracebackType]
         """
         self._end_run("FINISHED")
-        return None
 
     def get_run_history_uri(self) -> str:
         """

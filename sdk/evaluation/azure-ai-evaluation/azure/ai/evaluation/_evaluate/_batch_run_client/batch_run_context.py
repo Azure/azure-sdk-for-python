@@ -63,7 +63,7 @@ class BatchRunContext:
         exc_type: Optional[Type[BaseException]],
         exc_value: Optional[BaseException],
         exc_tb: Optional[types.TracebackType],
-    ) -> Optional[bool]:
+    ) -> None:
         if isinstance(self.client, CodeClient):
             recover_openai_api()
 
@@ -78,5 +78,3 @@ class BatchRunContext:
             if self._is_otel_timeout_set_by_system:
                 os.environ.pop(OTEL_EXPORTER_OTLP_TRACES_TIMEOUT, None)
                 self._is_otel_timeout_set_by_system = False
-
-        return None
