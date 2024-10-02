@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Removed `numpy` dependency. All NaN values returned by the SDK have been changed to from `numpy.nan` to `math.nan`.
+
 ### Bugs Fixed
 
 ### Other Changes
