@@ -332,6 +332,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             operation will fail with ResourceExistsError.
         :keyword bool include_source_blob_properties:
             Indicates if properties from the source blob should be copied. Defaults to True.
+        :keyword dict(str, str) metadata:
+            Name-value pairs associated with the blob as metadata.
         :keyword tags:
             Name-value pairs associated with the blob as tag. Tags are case-sensitive.
             The tag set may contain at most 10 tags.  Tag keys must be between 1 and 128 characters,
