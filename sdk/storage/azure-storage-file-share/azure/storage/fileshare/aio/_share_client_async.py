@@ -226,8 +226,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword bool paid_bursting_enabled: This property enables paid bursting.
         :keyword int paid_bursting_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
         :keyword int paid_bursting_iops: The maximum IOPS the file share can support.
-        :keyword int share_provisioned_iops: The provisioned IOPS of the share, stored on the share object.
-        :keyword int share_provisioned_bandwidth_mibps:
+        :keyword int provisioned_iops: The provisioned IOPS of the share, stored on the share object.
+        :keyword int provisioned_bandwidth_mibps:
             The provisioned throughput of the share, stored on the share object.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
@@ -504,8 +504,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :keyword bool paid_bursting_enabled: This property enables paid bursting.
         :keyword int paid_bursting_bandwidth_mibps: The maximum throughput the file share can support in MiB/s.
         :keyword int paid_bursting_iops: The maximum IOPS the file share can support.
-        :keyword int share_provisioned_iops: The provisioned IOPS of the share, stored on the share object.
-        :keyword int share_provisioned_bandwidth_mibps:
+        :keyword int provisioned_iops: The provisioned IOPS of the share, stored on the share object.
+        :keyword int provisioned_bandwidth_mibps:
             The provisioned throughput of the share, stored on the share object.
         :returns: Share-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]

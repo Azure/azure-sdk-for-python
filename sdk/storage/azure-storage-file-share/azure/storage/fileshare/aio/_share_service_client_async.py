@@ -295,8 +295,8 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
-        :keyword int share_provisioned_iops: The provisioned IOPS of the share, stored on the share object.
-        :keyword int share_provisioned_bandwidth_mibps:
+        :keyword int provisioned_iops: The provisioned IOPS of the share, stored on the share object.
+        :keyword int provisioned_bandwidth_mibps:
             The provisioned throughput of the share, stored on the share object.
         :return: A ShareClient for the newly created Share.
         :rtype: ~azure.storage.fileshare.aio.ShareClient

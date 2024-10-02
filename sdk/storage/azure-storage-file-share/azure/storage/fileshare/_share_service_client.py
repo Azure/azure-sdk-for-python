@@ -357,8 +357,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`__.
         :return: A ShareClient for the newly created Share.
-        :keyword int share_provisioned_iops: The provisioned IOPS of the share, stored on the share object.
-        :keyword int share_provisioned_bandwidth_mibps:
+        :keyword int provisioned_iops: The provisioned IOPS of the share, stored on the share object.
+        :keyword int provisioned_bandwidth_mibps:
             The provisioned throughput of the share, stored on the share object.
         :rtype: ~azure.storage.fileshare.ShareClient
 

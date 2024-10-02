@@ -1839,8 +1839,8 @@ class TestStorageShare(StorageRecordedTestCase):
             assert props.provisioned_bandwidth == 150
             assert props.included_burst_iops is not None
             assert props.max_burst_credits_for_iops is not None
-            assert props.next_allowed_provisioned_iops_downgrade_time is not None
-            assert props.next_allowed_provisioned_bandwidth_downgrade_time is not None
+            assert props.next_provisioned_iops_downgrade is not None
+            assert props.next_provisioned_bandwidth_downgrade is not None
 
             share.set_share_properties(
                 access_tier="Hot",
@@ -1857,8 +1857,8 @@ class TestStorageShare(StorageRecordedTestCase):
             assert shares[0].provisioned_bandwidth == 125
             assert shares[0].included_burst_iops is not None
             assert shares[0].max_burst_credits_for_iops is not None
-            assert shares[0].next_allowed_provisioned_iops_downgrade_time is not None
-            assert shares[0].next_allowed_provisioned_bandwidth_downgrade_time is not None
+            assert shares[0].next_provisioned_iops_downgrade is not None
+            assert shares[0].next_provisioned_bandwidth_downgrade is not None
         finally:
             self._delete_shares()
 
