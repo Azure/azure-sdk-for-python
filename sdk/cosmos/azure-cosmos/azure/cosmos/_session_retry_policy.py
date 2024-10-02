@@ -67,6 +67,8 @@ class _SessionRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
+        if not self.request:
+            return False
         self.session_token_retry_count += 1
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
