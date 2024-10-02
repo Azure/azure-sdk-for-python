@@ -59,11 +59,11 @@ def dummy_evaluate_function(
     nan_count = kwargs.get("number_of_nans", 1)
     for evaluation_name, evaluator in evaluators.items():
 
-        df[f"outputs.{evaluation_name}.score"] = np.random.randint(0, 100, df.shape[0])
+        df[f"outputs.{evaluation_name}.score"] = [random.choice(range(100)) for _ in range(df.shape[0])]
         _add_nans(df, nan_count, f"outputs.{evaluation_name}.score")
 
         # Add a new column with random strings
-        df[f"outputs.{evaluation_name}.reason"] = np.random.choice(["a", "b", "c", "d", "e"], df.shape[0])
+        df[f"outputs.{evaluation_name}.reason"] = random.sample(["a", "b", "c", "d", "e"], df.shape[0])
 
     return {
         "rows": df.to_dict(orient="records"),
