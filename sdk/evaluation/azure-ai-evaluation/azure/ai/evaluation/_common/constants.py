@@ -3,6 +3,8 @@
 # ---------------------------------------------------------
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
+
 
 class CommonConstants:
     """Define common constants."""
@@ -43,7 +45,7 @@ class _InternalAnnotationTasks:
     ECI = "eci"
 
 
-class EvaluationMetrics(str, Enum):
+class EvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation metrics to aid the RAI service in determining what
     metrics to request, and how to present them back to the user."""
 
