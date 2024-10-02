@@ -22,6 +22,8 @@
 """Internal class for feed range implementation in the Azure Cosmos
 database service.
 """
+import base64
+import json
 from abc import ABC, abstractmethod
 from typing import Union, List, Dict, Any
 
@@ -38,6 +40,14 @@ class FeedRangeInternal(ABC):
     @abstractmethod
     def to_dict(self) -> Dict[str, Any]:
         pass
+
+    def _to_base64_encoded_string(self) -> str:
+        data_json = json.dumps(self._to_dict())
+        json_bytes = data_json.encode('utf-8')
+        # Encode the bytes to a Base64 string
+        base64_bytes = base64.b64encode(json_bytes)
+        # Convert the Base64 bytes to a string
+        return base64_bytes.decode('utf-8')
 
 class FeedRangeInternalPartitionKey(FeedRangeInternal):
     type_property_name = "PK"
@@ -92,6 +102,7 @@ class FeedRangeInternalEpk(FeedRangeInternal):
             raise ValueError("feed_range cannot be None")
 
         self._range = feed_range
+        self._base64_encoded_string = None
 
     def get_normalized_range(self) -> Range:
         return self._range.to_normalized_range()
@@ -108,3 +119,14 @@ class FeedRangeInternalEpk(FeedRangeInternal):
             return cls(feed_range)
         raise ValueError(f"Can not parse FeedRangeInternalEPK from the json,"
                          f" there is no property {cls.type_property_name}")
+
+    def __str__(self) -> str:
+        """Get a json representation of the feed range.
+           The returned json string can be used to create a new feed range from it.
+
+        :return: A json representation of the feed range.
+        """
+        if self._base64_encoded_string is None:
+            self._base64_encoded_string = self._to_base64_encoded_string()
+
+        return self._base64_encoded_string

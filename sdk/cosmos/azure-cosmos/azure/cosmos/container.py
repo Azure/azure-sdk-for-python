@@ -526,8 +526,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
         if kwargs.get("feed_range") is not None:
-            feed_range: FeedRange = kwargs.pop('feed_range')
-            change_feed_state_context["feedRange"] = feed_range._to_feed_range_internal()
+            feed_range: FeedRangeEpk = kwargs.pop('feed_range')
+            change_feed_state_context["feedRange"] = feed_range._feed_range_internal
 
         container_properties = self._get_properties()
         feed_options["changeFeedStateContext"] = change_feed_state_context

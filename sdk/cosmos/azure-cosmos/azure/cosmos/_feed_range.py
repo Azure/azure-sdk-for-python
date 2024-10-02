@@ -21,10 +21,10 @@
 
 import base64
 import json
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Any, Dict
 
-from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternal, FeedRangeInternalEpk
+from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 
 # pylint: disable=protected-access
@@ -48,22 +48,6 @@ class FeedRange(ABC):
 
         raise ValueError("Invalid feed range base64 encoded string [Wrong feed range type]")
 
-    @abstractmethod
-    def _to_dict(self) -> Dict[str, Any]:
-        pass
-
-    @abstractmethod
-    def _to_feed_range_internal(self) -> 'FeedRangeInternal':
-        pass
-
-    def _to_base64_encoded_string(self) -> str:
-        data_json = json.dumps(self._to_dict())
-        json_bytes = data_json.encode('utf-8')
-        # Encode the bytes to a Base64 string
-        base64_bytes = base64.b64encode(json_bytes)
-        # Convert the Base64 bytes to a string
-        return base64_bytes.decode('utf-8')
-
 class FeedRangeEpk(FeedRange):
     type_property_name = "Range"
 
@@ -71,8 +55,7 @@ class FeedRangeEpk(FeedRange):
         if feed_range is None:
             raise ValueError("feed_range cannot be None")
 
-        self._feed_range = feed_range
-        self._base64_encoded_string = None
+        self._feed_range_internal = FeedRangeInternalEpk(feed_range)
 
     def __str__(self) -> str:
         """Get a json representation of the feed range.
@@ -80,22 +63,8 @@ class FeedRangeEpk(FeedRange):
 
         :return: A json representation of the feed range.
         """
-        if self._base64_encoded_string is None:
-            self._base64_encoded_string = self._to_base64_encoded_string()
-
-        return self._base64_encoded_string
-
-    def _to_dict(self) -> Dict[str, Any]:
-        return {
-            self.type_property_name: self._feed_range.to_dict()
-        }
-
-    def _to_feed_range_internal(self) -> 'FeedRangeInternal':
-        return FeedRangeInternalEpk(self._feed_range)
+        return self._feed_range_internal.__str__()
 
     @classmethod
     def _from_json(cls, data: Dict[str, Any]) -> 'FeedRange':
-        try:
-            return cls(Range.ParseFromDict(data[cls.type_property_name]))
-        except KeyError as e:
-            raise ValueError(f"Can not parse FeedRangeEPK from the json, there is no property {cls.type_property_name}") from e
+        return cls(FeedRangeInternalEpk.from_json(data)._range)
