@@ -21,7 +21,6 @@ def test_incompatible_specifier(fake_package_input_requirements, immutable_requi
 def test_identity_resolution():
     result = resolve_compatible_package(
         "azure-identity",
-        "1.18.1",
         [Requirement("azure-core>=1.28.0"), Requirement("isodate>=0.6.1"), Requirement("typing-extensions>=4.0.1")],
     )
     assert result == "azure-identity==1.16.0"
