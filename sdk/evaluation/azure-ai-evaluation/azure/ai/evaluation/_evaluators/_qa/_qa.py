@@ -66,7 +66,7 @@ class QAEvaluator:
             F1ScoreEvaluator(),
         ]
 
-    def __call__(self, *, query: str, response: str, context: str, ground_truth: str, **kwargs) -> Dict[str, float]:
+    def __call__(self, *, query: str, response: str, context: str, ground_truth: str, **kwargs):
         """
         Evaluates question-answering scenario.
 

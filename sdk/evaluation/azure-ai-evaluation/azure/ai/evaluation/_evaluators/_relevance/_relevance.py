@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 from typing_extensions import override
 
@@ -58,7 +58,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         context: Optional[str] = None,
         conversation: Optional[dict] = None,
         **kwargs,
-    ) -> Dict[str, float]:
+    ):
         """Evaluate relevance. Accepts either a response and context a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
         the evaluator will aggregate the results of each turn.
@@ -74,6 +74,6 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[Dict]
         :return: The relevance score.
-        :rtype: dict
+        :rtype: Dict[str, float]
         """
         return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)

@@ -107,16 +107,14 @@ class ContentSafetyChatEvaluator:
             HateUnfairnessEvaluator(azure_ai_project, credential),
         ]
 
-    def __call__(
-        self, *, conversation: List[Dict], **kwargs
-    ) -> Dict[str, Union[float, str, Dict[str, _EvaluationPerTurn]]]:
+    def __call__(self, *, conversation: List[Dict], **kwargs):
         """
         Evaluates content-safety metrics for "chat" scenario.
 
         :keyword conversation: The conversation to be evaluated. Each turn should have "role" and "content" keys.
         :paramtype conversation: List[Dict]
         :return: The scores for Chat scenario.
-        :rtype: dict
+        :rtype: Dict[str, Union[float, str, Dict[str, _EvaluationPerTurn]]]
         """
         self._validate_conversation(conversation)
 

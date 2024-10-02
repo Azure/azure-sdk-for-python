@@ -5,7 +5,7 @@
 import math
 import os
 import re
-from typing import Dict, Union
+from typing import Union
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
@@ -39,6 +39,18 @@ class _AsyncSimilarityEvaluator:
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
     async def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):
+        """
+        Evaluate similarity.
+
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword ground_truth: The ground truth to be evaluated.
+        :paramtype ground_truth: str
+        :return: The similarity score.
+        :rtype: Dict[str, float]
+        """
         # Validate input parameters
         query = str(query or "")
         response = str(response or "")
@@ -98,7 +110,7 @@ class SimilarityEvaluator:
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         self._async_evaluator = _AsyncSimilarityEvaluator(model_config)
 
-    def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs) -> Dict[str, float]:
+    def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):
         """
         Evaluate similarity.
 
@@ -109,7 +121,7 @@ class SimilarityEvaluator:
         :keyword ground_truth: The ground truth to be evaluated.
         :paramtype ground_truth: str
         :return: The similarity score.
-        :rtype: dict
+        :rtype: Dict[str, float]
         """
         return async_run_allowing_running_loop(
             self._async_evaluator, query=query, response=response, ground_truth=ground_truth, **kwargs
