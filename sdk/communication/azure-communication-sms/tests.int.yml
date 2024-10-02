@@ -10,7 +10,7 @@ extends:
       CloudConfig:
         Int:
           SubscriptionConfigurations:
-            - $(sub-config-communication-dogfood-test-resources-common)
+            - $(sub-config-communication-int-test-resources-common)
             - $(sub-config-communication-int-test-resources-python)
             - $(sub-config-communication-sms-int-test-resources)
       EnvVars:
