@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
+import math
 from concurrent.futures import as_completed
 from typing import Dict, List
 
-import numpy as np
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
+from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 try:
@@ -198,7 +199,7 @@ class ContentSafetyChatEvaluator:
             score_key = f"{metric}_score"
             reason_key = f"{metric}_reason"
 
-            aggregated_score = np.nanmean(scores[score_key])
+            aggregated_score = list_mean_nan_safe(scores[score_key])
             aggregated[metric] = self._get_harm_severity_level(aggregated_score)
             aggregated[score_key] = aggregated_score
 
@@ -291,11 +292,11 @@ class ContentSafetyChatEvaluator:
             "High": [6, 7],
         }
 
-        if harm_score == np.nan or harm_score is None:
-            return np.nan
+        if math.isnan(harm_score) or harm_score is None:
+            return math.nan
 
         for harm_level, harm_score_range in HARM_SEVERITY_LEVEL_MAPPING.items():
             if harm_score_range[0] <= harm_score <= harm_score_range[1]:
                 return harm_level
 
-        return np.nan
+        return math.nan
