@@ -16,5 +16,4 @@ def list_mean(lst: List[float]) -> float:
 
 
 def list_mean_nan_safe(lst: List[float]) -> float:
-    filtered_list = list(filter(lambda a: not math.isnan(a), lst))
-    return list_mean(filtered_list)
+    return list_mean([l for l in lst if not math.isnan(l)])
