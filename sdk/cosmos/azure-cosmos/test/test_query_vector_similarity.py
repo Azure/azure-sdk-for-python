@@ -210,10 +210,10 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                                                                              max_item_count=3)
         all_fetched_res = []
         count = 0
-        for page in query_iterable.by_page():
-            fetched_res = list(page)
-            all_fetched_res.extend(fetched_res)
+        item_pages = query_iterable.by_page()
+        for items in item_pages.next():
             count += 1
+            all_fetched_res.extend(items)
         assert count == 3
         assert len(all_fetched_res) == 8
         verify_ordering(all_fetched_res, "cosine")

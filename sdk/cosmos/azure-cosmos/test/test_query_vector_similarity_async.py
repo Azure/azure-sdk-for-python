@@ -198,7 +198,7 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
         async for items in await pages.__anext__():
             count += 1
             all_fetched_res.extend(items)
-        assert count >= 3
+        assert count == 3
         assert len(all_fetched_res) == 8
         verify_ordering(all_fetched_res, "cosine")
 
