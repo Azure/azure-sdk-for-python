@@ -19,9 +19,8 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
         assert callable(simulator)
 
     def test_incorrect_scenario_raises_error(self, azure_cred, project_scope):
@@ -32,13 +31,12 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(x):
             return x
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
         with pytest.raises(EvaluationException):
             asyncio.run(
                 simulator(
@@ -57,7 +55,6 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
@@ -83,7 +80,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -111,7 +108,6 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
@@ -131,7 +127,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -156,7 +152,6 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
@@ -176,7 +171,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -200,7 +195,6 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
@@ -220,7 +214,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
