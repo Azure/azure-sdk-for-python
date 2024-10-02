@@ -3,11 +3,10 @@
 # ---------------------------------------------------------
 
 from concurrent.futures import as_completed
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
-from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from .._coherence import CoherenceEvaluator
 from .._f1_score import F1ScoreEvaluator
 from .._fluency import FluencyEvaluator
@@ -52,9 +51,7 @@ class QAEvaluator:
         }
     """
 
-    def __init__(
-        self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration], parallel: bool = True
-    ):
+    def __init__(self, model_config: dict, parallel: bool = True):
         self._parallel = parallel
 
         self._evaluators: List[Callable[..., Dict[str, float]]] = [

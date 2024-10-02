@@ -4,10 +4,10 @@
 
 import math
 import threading
-from typing import List, Union
+from typing import Any, List, Literal, Mapping, Type, TypeVar, Union, cast, get_args, get_origin
 
 import nltk
-from typing_extensions import TypeGuard
+from typing_extensions import NotRequired, Required, TypeGuard
 
 from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -20,6 +20,8 @@ from azure.ai.evaluation._model_configurations import (
 from . import constants
 
 _nltk_data_download_lock = threading.Lock()
+
+T_TypedDict = TypeVar("T_TypedDict", bound=Mapping[Any, Any])
 
 
 def get_harm_severity_level(harm_score: int) -> Union[str, float]:
@@ -156,3 +158,115 @@ def is_azure_ai_project(o: object) -> TypeGuard[AzureAIProject]:
         )
 
     return True
+
+
+def validate_model_config(config: dict) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]:
+    try:
+        return _validate_typed_dict(config, AzureOpenAIModelConfiguration)
+    except TypeError:
+        try:
+            return _validate_typed_dict(config, OpenAIModelConfiguration)
+        except TypeError as e:
+            msg = "Model config validation failed."
+            raise EvaluationException(
+                message=msg, internal_message=msg, category=ErrorCategory.MISSING_FIELD, blame=ErrorBlame.USER_ERROR
+            ) from e
+
+
+def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
+    """Do very basic runtime validation that an object is a typed dict
+
+    .. warning::
+
+        This validation is very basic, robust enough to cover some very simple TypedDicts.
+        Ideally, validation of this kind should be delegated to something more robust.
+
+        You will very quickly run into limitations trying to apply this function more broadly:
+           * Doesn't support stringized annotations at all
+           * Very limited support for generics, and "special form" (NoReturn, NotRequired, Required, etc...) types.
+           * Error messages are poor, especially if there is any nesting.
+
+    :param object o: The object to check
+    :param Type[T_TypedDict] t: The TypedDict to validate against
+    :raises NotImplementedError: Several forms of validation are unsupported
+        * Checking against stringized annotations
+        * Checking a generic that is not one of a few basic forms
+    :raises TypeError: If a value does not match the specified annotation
+    :raises ValueError: If t's annotation is not a string, type of a special form (e.g. NotRequired, Required, etc...)
+    :returns: The object passed in
+    :rtype: T_TypedDict
+    """
+    if not isinstance(o, dict):
+        raise TypeError(f"Expected type 'dict', got type '{type(object)}'.")
+
+    annotations = t.__annotations__
+    is_total = getattr(t, "__total__", False)
+    unknown_keys = set(o.keys()) - annotations.keys()
+
+    if unknown_keys:
+        raise TypeError(f"dict contains unknown keys: {list(unknown_keys)!r}")
+
+    required_keys = {
+        k
+        for k in annotations
+        if (is_total and get_origin(annotations[k]) is not NotRequired)
+        or (not is_total and get_origin(annotations[k]) is Required)
+    }
+
+    missing_keys = required_keys - o.keys()
+
+    if missing_keys:
+        raise TypeError(f"Missing required keys: {list(missing_keys)!r}.")
+
+    def validate_annotation(v: object, annotation: Union[str, type, object]) -> bool:
+        if isinstance(annotation, str):
+            raise NotImplementedError("Missing support for validating against stringized annotations.")
+
+        if (origin := get_origin(annotation)) is not None:
+            if origin is tuple:
+                validate_annotation(v, tuple)
+                tuple_args = get_args(annotation)
+                if len(cast(tuple, v)) != len(tuple_args):
+                    raise TypeError(f"Expected a {len(tuple_args)}-tuple, got a {len(cast(tuple, v))}-tuple.")
+                for tuple_val, tuple_args in zip(cast(tuple, v), tuple_args):
+                    validate_annotation(tuple_val, tuple_args)
+            elif origin is dict:
+                validate_annotation(v, dict)
+                dict_key_ann, dict_val_ann = get_args(annotation)
+                for dict_key, dict_val in cast(dict, v).items():
+                    validate_annotation(dict_val, dict_val_ann)
+                    validate_annotation(dict_key, dict_key_ann)
+            elif origin is list:
+                validate_annotation(v, list)
+                list_val_ann = get_args(annotation)[0]
+                for list_val in cast(list, v):
+                    validate_annotation(list_val, list_val_ann)
+            elif origin is Union:
+                for generic_arg in get_args(annotation):
+                    try:
+                        validate_annotation(v, generic_arg)
+                        return True
+                    except TypeError:
+                        pass
+                    raise TypeError(f"Expected value to have type {annotation}. Received type {type(v)}")
+            elif origin is Literal:
+                literal_args = get_args(annotation)
+                if not any(type(literal) is type(v) and literal == v for literal in literal_args):
+                    raise TypeError(f"Expected value to be one of {list(literal_args)!r}. Received type {type(v)}")
+            elif any(origin is g for g in (NotRequired, Required)):
+                validate_annotation(v, get_args(annotation)[0])
+            else:
+                raise NotImplementedError(f"Validation not implemented for generic {origin}.")
+            return True
+
+        if isinstance(annotation, type):
+            if not isinstance(v, annotation):
+                raise TypeError(f"Expected value to have type {annotation}. Received type {type(v)}.")
+            return True
+
+        raise ValueError("Annotation to validate against should be a str, type, or generic.")
+
+    for k, v in o.items():
+        validate_annotation(v, annotations[k])
+
+    return cast(T_TypedDict, o)

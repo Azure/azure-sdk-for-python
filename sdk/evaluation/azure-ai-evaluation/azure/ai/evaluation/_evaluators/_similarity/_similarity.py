@@ -13,7 +13,7 @@ from promptflow.core import AsyncPrompty
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
-from ..._common.utils import construct_prompty_model_config
+from ..._common.utils import construct_prompty_model_config, validate_model_config
 
 try:
     from ..._user_agent import USER_AGENT
@@ -107,8 +107,8 @@ class SimilarityEvaluator:
         }
     """
 
-    def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
-        self._async_evaluator = _AsyncSimilarityEvaluator(model_config)
+    def __init__(self, model_config: dict):
+        self._async_evaluator = _AsyncSimilarityEvaluator(validate_model_config(model_config))
 
     def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):
         """

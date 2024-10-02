@@ -9,7 +9,7 @@ from typing import Dict
 from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
-from ..._common.utils import construct_prompty_model_config
+from ..._common.utils import construct_prompty_model_config, validate_model_config
 
 try:
     from ..._user_agent import USER_AGENT
@@ -39,13 +39,13 @@ class PromptyEvaluatorBase(EvaluatorBase):
     LLM_CALL_TIMEOUT = 600
     DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
-    def __init__(self, *, result_key: str, prompty_file: str, model_config: Dict, eval_last_turn: bool = False):
+    def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False):
         self._result_key = result_key
         self._prompty_file = prompty_file
         super().__init__(eval_last_turn=eval_last_turn)
 
         prompty_model_config = construct_prompty_model_config(
-            model_config,
+            validate_model_config(model_config),
             self.DEFAULT_OPEN_API_VERSION,
             USER_AGENT,
         )

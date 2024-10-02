@@ -15,7 +15,7 @@ from promptflow.core import AsyncPrompty
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from ..._common.math import list_mean_nan_safe
-from ..._common.utils import construct_prompty_model_config
+from ..._common.utils import construct_prompty_model_config, validate_model_config
 
 logger = logging.getLogger(__name__)
 
@@ -137,8 +137,8 @@ class RetrievalEvaluator:
         }
     """
 
-    def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
-        self._async_evaluator = _AsyncRetrievalScoreEvaluator(model_config)
+    def __init__(self, model_config: dict):
+        self._async_evaluator = _AsyncRetrievalScoreEvaluator(validate_model_config(model_config))
 
     def __call__(self, *, conversation, **kwargs):
         """Evaluates retrieval score chat scenario.
