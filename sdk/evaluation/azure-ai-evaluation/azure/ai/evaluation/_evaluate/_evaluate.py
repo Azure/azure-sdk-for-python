@@ -16,6 +16,7 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
     EvaluationMetrics,
+    EvaluationRunProperties,
     Prefixes,
     _InternalEvaluationMetrics,
 )
@@ -346,7 +347,7 @@ def _apply_target_to_data(
         flow=target,
         display_name=evaluation_name,
         data=data,
-        properties={"runType": "eval_run", "isEvaluatorRun": "true"},
+        properties={EvaluationRunProperties.RUN_TYPE: "eval_run", "isEvaluatorRun": "true"},
         stream=True,
         name=_run_name,
     )

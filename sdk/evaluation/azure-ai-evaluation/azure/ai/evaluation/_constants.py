@@ -47,6 +47,11 @@ class DefaultOpenEncoding:
     WRITE = "utf-8"
     """SDK Default Encoding when writing a file"""
 
+class EvaluationRunProperties:
+    """Defines properties used to identify an evaluation run by UI"""
+    RUN_TYPE = "runType"
+    EVALUATION_RUN = "_azureml.evaluation_run"
+
 
 DEFAULT_EVALUATION_RESULTS_FILE_NAME = "evaluation_results.json"
 
