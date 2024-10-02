@@ -8,7 +8,7 @@ import os
 import time
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
 from azure.core.credentials import TokenCredential
 from azure.identity import DefaultAzureCredential, ManagedIdentityCredential

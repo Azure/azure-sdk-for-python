@@ -6,7 +6,7 @@ import functools
 import inspect
 import logging
 import sys
-from typing import Callable, Optional, Type, TypeVar, Union, cast, overload
+from typing import Callable, Type, TypeVar, Union, overload
 
 from typing_extensions import ParamSpec, TypeGuard
 
