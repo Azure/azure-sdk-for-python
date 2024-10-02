@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import asyncio
 import copy
 import functools
 import importlib
@@ -11,19 +10,22 @@ import logging
 from urllib.parse import urlparse
 from enum import Enum
 from typing import Any, Iterator, Callable, Optional, List, Tuple, Dict, Union
-from azure.ai.inference.aio import ChatCompletionsClient
+from opentelemetry.trace import StatusCode, Span
+
+# pylint: disable = no-name-in-module
+from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.ai.inference import models as _models
-from azure.core.tracing import AbstractSpan
-from azure.core.tracing import SpanKind
+
+# pylint: disable = no-name-in-module
+from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore
 from azure.core.settings import settings
-from opentelemetry.trace import Status, StatusCode, Span
 
 _inference_traces_enabled: bool = False
 _trace_inference_content: bool = False
 INFERENCE_GEN_AI_SYSTEM_NAME = "az.ai.inference"
 
 
-class TraceType(str, Enum):
+class TraceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):  # pylint: disable=C4747
     """An enumeration class to represent different types of traces."""
 
     INFERENCE = "Inference"
@@ -47,27 +49,27 @@ def _add_request_chat_message_event(span: AbstractSpan, **kwargs: Any) -> None:
             name = f"gen_ai.{message.get('role')}.message"
             span.span_instance.add_event(
                 name=name,
-                attributes={
-                    "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                    "gen_ai.event.content": json.dumps(message)
-                }
+                attributes={"gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME, "gen_ai.event.content": json.dumps(message)},
             )
 
 
-def parse_url(url):  
-    parsed = urlparse(url)  
-    server_address = parsed.hostname  
-    port = parsed.port  
-    return server_address, port 
+def parse_url(url):
+    parsed = urlparse(url)
+    server_address = parsed.hostname
+    port = parsed.port
+    return server_address, port
 
 
 def _add_request_chat_attributes(span: AbstractSpan, *args: Any, **kwargs: Any) -> None:
     client = args[0]
-    endpoint = client._config.endpoint
+    endpoint = client._config.endpoint  # pylint: disable=protected-access
     server_address, port = parse_url(endpoint)
-    model = 'chat'
-    if kwargs.get('model') is not None:
-        model = kwargs.get('model')
+    model = "chat"
+    if kwargs.get("model") is not None:
+        model_value = kwargs.get("model")
+        if model_value is not None:
+            model = model_value
+
     _set_attributes(
         span,
         ("gen_ai.operation.name", "chat"),
@@ -85,40 +87,48 @@ def _add_request_chat_attributes(span: AbstractSpan, *args: Any, **kwargs: Any) 
 def remove_function_call_names_and_arguments(tool_calls: list) -> list:
     tool_calls_copy = copy.deepcopy(tool_calls)
     for tool_call in tool_calls_copy:
-        if 'function' in tool_call:
-            if 'name' in tool_call['function']:
-                del tool_call['function']['name']
-            if 'arguments' in tool_call['function']:
-                del tool_call['function']['arguments']
-            if not tool_call['function']:
-                del tool_call['function']
+        if "function" in tool_call:
+            if "name" in tool_call["function"]:
+                del tool_call["function"]["name"]
+            if "arguments" in tool_call["function"]:
+                del tool_call["function"]["arguments"]
+            if not tool_call["function"]:
+                del tool_call["function"]
     return tool_calls_copy
 
 
 def get_finish_reasons(result):
     if hasattr(result, "choices") and result.choices:
-        return [getattr(choice, "finish_reason", None).value if getattr(choice, "finish_reason", None) is not None else "none" for choice in result.choices]
-    else:
-        return None
+        return [
+            (
+                getattr(choice, "finish_reason", None).value
+                if getattr(choice, "finish_reason", None) is not None
+                else "none"
+            )
+            for choice in result.choices
+        ]
+    return None
 
 
 def get_finish_reason_for_choice(choice):
-    return getattr(choice, "finish_reason", None).value if getattr(choice, "finish_reason", None) is not None else "none"
+    return (
+        getattr(choice, "finish_reason", None).value if getattr(choice, "finish_reason", None) is not None else "none"
+    )
 
 
 def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCompletions) -> None:
     for choice in result.choices:
         if _trace_inference_content:
-            response: Dict[str, Any] = {
+            full_response: Dict[str, Any] = {
                 "message": {"content": choice.message.content},
                 "finish_reason": get_finish_reason_for_choice(choice),
                 "index": choice.index,
             }
             if choice.message.tool_calls:
-                response["message"]["tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
-            attributes={
+                full_response["message"]["tool_calls"] = [tool.as_dict() for tool in choice.message.tool_calls]
+            attributes = {
                 "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                "gen_ai.event.content": json.dumps(response)
+                "gen_ai.event.content": json.dumps(full_response),
             }
         else:
             response: Dict[str, Any] = {
@@ -127,35 +137,46 @@ def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCom
             }
             if choice.message.tool_calls:
                 response["message"] = {}
-                tool_calls_function_names_and_arguments_removed = remove_function_call_names_and_arguments(choice.message.tool_calls)
-                response["message"]["tool_calls"] = [tool.as_dict() for tool in tool_calls_function_names_and_arguments_removed]
-                attributes={
+                tool_calls_function_names_and_arguments_removed = remove_function_call_names_and_arguments(
+                    choice.message.tool_calls
+                )
+                response["message"]["tool_calls"] = [
+                    tool.as_dict() for tool in tool_calls_function_names_and_arguments_removed
+                ]
+                attributes = {
                     "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                    "gen_ai.event.content": json.dumps(response)
+                    "gen_ai.event.content": json.dumps(response),
                 }
             else:
-                attributes={
+                attributes = {
                     "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                    "gen_ai.event.content": json.dumps(response)
+                    "gen_ai.event.content": json.dumps(response),
                 }
         span.span_instance.add_event(name="gen_ai.choice", attributes=attributes)
 
 
-def _add_response_chat_attributes(span: AbstractSpan,  result: Union[_models.ChatCompletions, _models.StreamingChatCompletionsUpdate]) -> None:
+def _add_response_chat_attributes(
+    span: AbstractSpan, result: Union[_models.ChatCompletions, _models.StreamingChatCompletionsUpdate]
+) -> None:
 
     _set_attributes(
         span,
         ("gen_ai.response.id", result.id),
         ("gen_ai.response.model", result.model),
-        ("gen_ai.usage.input_tokens", result.usage.prompt_tokens if hasattr(result, "usage") and result.usage else None),
-        ("gen_ai.usage.output_tokens", result.usage.completion_tokens if hasattr(result, "usage") and result.usage else None),
+        (
+            "gen_ai.usage.input_tokens",
+            result.usage.prompt_tokens if hasattr(result, "usage") and result.usage else None,
+        ),
+        (
+            "gen_ai.usage.output_tokens",
+            result.usage.completion_tokens if hasattr(result, "usage") and result.usage else None,
+        ),
     )
     finish_reasons = get_finish_reasons(result)
     span.add_attribute("gen_ai.response.finish_reasons", finish_reasons)
 
 
-def _add_request_span_attributes(span: AbstractSpan, span_name: str, args: Any, kwargs: Any) -> None:
-    global _trace_inference_content
+def _add_request_span_attributes(span: AbstractSpan, _span_name: str, args: Any, kwargs: Any) -> None:
     _add_request_chat_attributes(span, *args, **kwargs)
     if _trace_inference_content:
         _add_request_chat_message_event(span, **kwargs)
@@ -183,7 +204,9 @@ def _accumulate_response(item, accumulate: Dict[str, Any]) -> None:
         if item.delta.tool_calls is not None:
             for tool_call in item.delta.tool_calls:
                 if tool_call.id:
-                    accumulate["message"]["tool_calls"].append({"id": tool_call.id, "type": "", "function": {"name": "", "arguments": ""}})
+                    accumulate["message"]["tool_calls"].append(
+                        {"id": tool_call.id, "type": "", "function": {"name": "", "arguments": ""}}
+                    )
                 if tool_call.function:
                     accumulate["message"]["tool_calls"][-1]["type"] = "function"
                 if tool_call.function and tool_call.function.name:
@@ -192,21 +215,24 @@ def _accumulate_response(item, accumulate: Dict[str, Any]) -> None:
                     accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
 
 
-def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: AbstractSpan) ->  _models.StreamingChatCompletions:
+def _wrapped_stream(
+    stream_obj: _models.StreamingChatCompletions, span: AbstractSpan
+) -> _models.StreamingChatCompletions:
     class StreamWrapper(_models.StreamingChatCompletions):
         def __init__(self, stream_obj):
             super().__init__(stream_obj._response)
 
         def __iter__(self) -> Iterator[_models.StreamingChatCompletionsUpdate]:
-            global _trace_inference_content
             try:
                 accumulate: Dict[str, Any] = {}
+                chunk = None
                 for chunk in stream_obj:
                     for item in chunk.choices:
                         _accumulate_response(item, accumulate)
                     yield chunk
 
-                _add_response_chat_attributes(span, chunk)
+                if chunk is not None:
+                    _add_response_chat_attributes(span, chunk)
 
             except Exception as exc:
                 # Set the span status to error
@@ -226,22 +252,26 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
                     accumulate["index"] = 0
                     # Delete message if content tracing is not enabled
                     if not _trace_inference_content:
-                        if 'message' in accumulate:
-                            if 'content' in accumulate['message']:
-                                del accumulate['message']['content']
-                            if not accumulate['message']:
-                                del accumulate['message']
-                        if 'message' in accumulate:
-                            if 'tool_calls' in accumulate['message']:
-                                tool_calls_function_names_and_arguments_removed = remove_function_call_names_and_arguments(accumulate['message']['tool_calls'])
-                                accumulate['message']['tool_calls'] = [tool for tool in tool_calls_function_names_and_arguments_removed]
+                        if "message" in accumulate:
+                            if "content" in accumulate["message"]:
+                                del accumulate["message"]["content"]
+                            if not accumulate["message"]:
+                                del accumulate["message"]
+                        if "message" in accumulate:
+                            if "tool_calls" in accumulate["message"]:
+                                tool_calls_function_names_and_arguments_removed = (
+                                    remove_function_call_names_and_arguments(accumulate["message"]["tool_calls"])
+                                )
+                                accumulate["message"]["tool_calls"] = list(
+                                    tool_calls_function_names_and_arguments_removed
+                                )
 
                 span.span_instance.add_event(
                     name="gen_ai.choice",
                     attributes={
                         "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                        "gen_ai.event.content": json.dumps(accumulate)
-                    }
+                        "gen_ai.event.content": json.dumps(accumulate),
+                    },
                 )
                 span.finish()
 
@@ -249,25 +279,26 @@ def _wrapped_stream(stream_obj: _models.StreamingChatCompletions, span: Abstract
 
 
 def _trace_sync_function(
-    function: Callable = None,
+    function: Callable,
     *,
-    args_to_ignore: Optional[List[str]] = None,
-    trace_type=TraceType.INFERENCE,
-    name: Optional[str] = None,
+    _args_to_ignore: Optional[List[str]] = None,
+    _trace_type=TraceType.INFERENCE,
+    _name: Optional[str] = None,
 ) -> Callable:
     """
     Decorator that adds tracing to a synchronous function.
 
-    Args:
-        function (Callable): The function to be traced.
-        args_to_ignore (Optional[List[str]], optional): A list of argument names to be ignored in the trace.
-                                                        Defaults to None.
-        trace_type (TraceType, optional): The type of the trace. Defaults to TraceType.INFERENCE.
-        name (str, optional): The name of the trace, will set to func name if not provided.
-
-
-    Returns:
-        Callable: The traced function.
+    :param function: The function to be traced.
+    :type function: Callable
+    :param args_to_ignore: A list of argument names to be ignored in the trace.
+                           Defaults to None.
+    :type: args_to_ignore: [List[str]], optional
+    :param trace_type: The type of the trace. Defaults to TraceType.INFERENCE.
+    :type trace_type: TraceType, optional
+    :param name: The name of the trace, will set to func name if not provided.
+    :type name: str, optional
+    :return: The traced function.
+    :rtype: Callable
     """
 
     @functools.wraps(function)
@@ -280,10 +311,10 @@ def _trace_sync_function(
         class_function_name = function.__qualname__
 
         if class_function_name.startswith("ChatCompletionsClient.complete"):
-            if kwargs.get('model') is None:
-                span_name = f"chat"
+            if kwargs.get("model") is None:
+                span_name = "chat"
             else:
-                model = kwargs.get('model')
+                model = kwargs.get("model")
                 span_name = f"chat {model}"
 
             span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
@@ -310,29 +341,33 @@ def _trace_sync_function(
             span.finish()
             return result
 
+        # Handle the default case (if the function name does not match)
+        return None  # Ensure all paths return
+
     return inner
 
 
 def _trace_async_function(
-    function: Callable = None,
+    function: Callable,
     *,
-    args_to_ignore: Optional[List[str]] = None,
-    trace_type=TraceType.INFERENCE,
-    name: Optional[str] = None,
+    _args_to_ignore: Optional[List[str]] = None,
+    _trace_type=TraceType.INFERENCE,
+    _name: Optional[str] = None,
 ) -> Callable:
     """
     Decorator that adds tracing to an asynchronous function.
 
-    Args:
-        function (Callable): The function to be traced.
-        args_to_ignore (Optional[List[str]], optional): A list of argument names to be ignored in the trace.
-                                                        Defaults to None.
-        trace_type (TraceType, optional): The type of the trace. Defaults to TraceType.INFERENCE.
-        name (str, optional): The name of the trace, will set to func name if not provided.
-
-
-    Returns:
-        Callable: The traced function.
+    :param function: The function to be traced.
+    :type function: Callable
+    :param args_to_ignore: A list of argument names to be ignored in the trace.
+                           Defaults to None.
+    :type: args_to_ignore: [List[str]], optional
+    :param trace_type: The type of the trace. Defaults to TraceType.INFERENCE.
+    :type trace_type: TraceType, optional
+    :param name: The name of the trace, will set to func name if not provided.
+    :type name: str, optional
+    :return: The traced function.
+    :rtype: Callable
     """
 
     @functools.wraps(function)
@@ -345,10 +380,10 @@ def _trace_async_function(
         class_function_name = function.__qualname__
 
         if class_function_name.startswith("ChatCompletionsClient.complete"):
-            if kwargs.get('model') is None:
-                span_name = f"chat"
+            if kwargs.get("model") is None:
+                span_name = "chat"
             else:
-                model = kwargs.get('model')
+                model = kwargs.get("model")
                 span_name = f"chat {model}"
 
             span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
@@ -378,24 +413,36 @@ def _trace_async_function(
     return inner
 
 
-def inject_async(f, trace_type, name):
+def inject_async(f, _trace_type, _name):
     wrapper_fun = _trace_async_function(f)
-    wrapper_fun._original = f
+    wrapper_fun._original = f  # pylint: disable=protected-access
     return wrapper_fun
 
 
-def inject_sync(f, trace_type, name):
+def inject_sync(f, _trace_type, _name):
     wrapper_fun = _trace_sync_function(f)
-    wrapper_fun._original = f
+    wrapper_fun._original = f  # pylint: disable=protected-access
     return wrapper_fun
 
 
 def _inference_apis():
     sync_apis = (
-        ("azure.ai.inference", "ChatCompletionsClient", "complete", TraceType.INFERENCE, "inference_chat_completions_complete"),
+        (
+            "azure.ai.inference",
+            "ChatCompletionsClient",
+            "complete",
+            TraceType.INFERENCE,
+            "inference_chat_completions_complete",
+        ),
     )
     async_apis = (
-        ("azure.ai.inference.aio", "ChatCompletionsClient", "complete", TraceType.INFERENCE, "inference_chat_completions_complete"),
+        (
+            "azure.ai.inference.aio",
+            "ChatCompletionsClient",
+            "complete",
+            TraceType.INFERENCE,
+            "inference_chat_completions_complete",
+        ),
     )
     return sync_apis, async_apis
 
@@ -407,8 +454,8 @@ def _inference_api_list():
 
 
 def _generate_api_and_injector(apis):
-    for apis, injector in apis:
-        for module_name, class_name, method_name, trace_type, name in apis:
+    for api, injector in apis:
+        for module_name, class_name, method_name, trace_type, name in api:
             try:
                 module = importlib.import_module(module_name)
                 api = getattr(module, class_name)
@@ -417,11 +464,11 @@ def _generate_api_and_injector(apis):
             except AttributeError as e:
                 # Log the attribute exception with the missing class information
                 logging.warning(
-                    f"AttributeError: The module '{module_name}' does not have the class '{class_name}'. {str(e)}"
+                    "AttributeError: The module '%s' does not have the class '%s'. %s", module_name, class_name, str(e)
                 )
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 # Log other exceptions as a warning, as we're not sure what they might be
-                logging.warning(f"An unexpected error occurred: {str(e)}")
+                logging.warning("An unexpected error occurred: '%s'", str(e))
 
 
 def available_inference_apis_and_injectors():
@@ -429,16 +476,23 @@ def available_inference_apis_and_injectors():
     Generates a sequence of tuples containing Inference API classes, method names, and
     corresponding injector functions.
 
-    Yields:
-        Tuples of (api_class, method_name, injector_function)
+    :return: A generator yielding tuples.
+    :rtype: tuple
     """
     yield from _generate_api_and_injector(_inference_api_list())
 
 
 def _instrument_inference(enable_content_tracing: bool = False):
-    """This function modifies the methods of the Inference API classes to inject logic before calling the original methods.
+    """This function modifies the methods of the Inference API classes to
+    inject logic before calling the original methods.
     The original methods are stored as _original attributes of the methods.
+
+    :param enable_content_tracing: Indicates whether tracing of message content should be enabled.
+                                   This also controls whether function call tool function names,
+                                   parameter names and parameter values are traced.
+    :type enable_content_tracing: bool
     """
+    # pylint: disable=W0603
     global _inference_traces_enabled
     global _trace_inference_content
     if _inference_traces_enabled:
@@ -455,6 +509,7 @@ def _uninstrument_inference():
     """This function restores the original methods of the Inference API classes
     by assigning them back from the _original attributes of the modified methods.
     """
+    # pylint: disable=W0603
     global _inference_traces_enabled
     global _trace_inference_content
     _trace_inference_content = False
@@ -465,8 +520,10 @@ def _uninstrument_inference():
 
 
 def _is_instrumented():
-    """This function returns True if Inference API has already been instrumented
-    for tracing and False if the API has not been instrumented.
+    """This function returns True if Inference libary has already been instrumented
+    for tracing and False if it has not been instrumented.
+
+    :return: A value indicating whether the Inference library is currently instrumented or not.
+    :rtype: bool
     """
-    global _inference_traces_enabled
     return _inference_traces_enabled
