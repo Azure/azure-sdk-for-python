@@ -66,6 +66,9 @@ class EndpointDiscoveryRetryPolicy(object):
         :returns: a boolean stating whether the request should be retried
         :rtype: bool
         """
+        if not self.request:
+            return False
+
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
 
