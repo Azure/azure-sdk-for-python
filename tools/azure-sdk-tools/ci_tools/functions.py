@@ -192,9 +192,13 @@ def discover_targeted_packages(
 
     :param str glob_string: The basic glob used to query packages within the repo. Defaults to "azure-*"
     :param str target_root_dir: The root directory in which globbing will begin.
-    :param str additional_contains_filter: Additional filter option. Used when needing to provide one-off filtration that doesn't merit an additional filter_type. Defaults to empty string.
-    :param str filter_type: One a string representing a filter function as a set of options. Options [ "Build", "Docs", "Regression", "Omit_management" ] Defaults to "Build".
-    :param bool compatibility_filter: Enables or disables compatibility filtering of found packages. If the invoking python executable does not match a found package's specifiers, the package will be omitted. Defaults to True.
+    :param str additional_contains_filter: Additional filter option.
+        Used when needing to provide one-off filtration that doesn't merit an additional filter_type. Defaults to empty string.
+    :param str filter_type: One a string representing a filter function as a set of options.
+        Options [ "Build", "Docs", "Regression", "Omit_management" ] Defaults to "Build".
+    :param bool compatibility_filter: Enables or disables compatibility filtering of found packages.
+        If the invoking python executable does not match a found package's specifiers, the package will be omitted.
+        Defaults to True.
     """
 
     # glob the starting package set
@@ -640,49 +644,54 @@ def is_package_compatible(
     should_log: bool = True,
 ) -> bool:
     """
-    This function accepts a set of requirements for a package, and ensures that the package is compatible with the immutable_requirements.
+    This function accepts a set of requirements for a package, and ensures that the package is compatible with the
+    immutable_requirements.
 
     It is factored this way because we retrieve requirements differently according to the source of the package.
         If published, we can get requires() from PyPI
         If locally built wheel, we can get requires() from the metadata of the package
         If local relative requirement, we can get requires() from a ParsedSetup of the setup.py for th package
 
-    :param List[Requirement] package_requirements: The dependencies of a dev_requirement file. This is the set of requirements that we are checking compatibility for.
-    :param List[Requirement] immutable_requirements: A list of requirements that the other packages must be compatible with.
+    :param List[Requirement] package_requirements: The dependencies of a dev_requirement file. This is the set of
+        requirements that we are checking compatibility for.
+    :param List[Requirement] immutable_requirements: A list of requirements that the other packages must be compatible
+        with.
     """
 
     for immutable_requirement in immutable_requirements:
         for package_requirement in package_requirements:
             if package_requirement.key == immutable_requirement.key:
-                # if the dev_req line has a requirement that conflicts with the immutable requirement, we need to resolve it
-                # we KNOW that the immutable requirement will be of form package==version, so we can reliably pull out the version
-                # and check it against the specifier of the dev_req line.
+                # if the dev_req line has a requirement that conflicts with the immutable requirement,
+                # we need to resolve it. We KNOW that the immutable requirement will be of form package==version,
+                # so we can reliably pull out the version and check it against the specifier of the dev_req line.
                 immutable_version = next(iter(immutable_requirement.specifier)).version
 
                 if not package_requirement.specifier.contains(immutable_version):
                     if should_log:
                         logging.info(
-                            f"Dev req dependency {package_name}'s requirement specifier of {package_requirement} is not compatible with immutable requirement {immutable_requirement}."
+                            f"Dev req dependency {package_name}'s requirement specifier of {package_requirement}"
+                            f"is not compatible with immutable requirement {immutable_requirement}."
                         )
                     return False
 
     return True
 
 
-def resolve_compatible_package(
-    package_name: str, package_version: Optional[str], immutable_requirements: List[Requirement]
-) -> Optional[str]:
+def resolve_compatible_package(package_name: str, immutable_requirements: List[Requirement]) -> Optional[str]:
     """
-    This function attempts to resolve a compatible package version for whatever set of immutable_requirements that the package must be compatible with.
+    This function attempts to resolve a compatible package version for whatever set of immutable_requirements that
+    the package must be compatible with.
 
-    It should only be utilized when a package is found to be incompatible with the immutable_requirements. It will attempt to resolve the incompatibility by
-    walking backwards through different versions of <package_name> until a compatible version is found that works with the immutable_requirements.
+    It should only be utilized when a package is found to be incompatible with the immutable_requirements.
+    It will attempt to resolve the incompatibility by walking backwards through different versions of <package_name>
+    until a compatible version is found that works with the immutable_requirements.
     """
 
     pypi = PyPIClient()
     immovable_pkgs = {req.key: req for req in immutable_requirements}
 
-    # Let's use a real use-case to walk through this function. We're going to use the azure-ai-language-conversations package as an example.\
+    # Let's use a real use-case to walk through this function. We're going to use the azure-ai-language-conversations
+    # package as an example.
 
     # immovable_pkgs = the selected mindependency for azure-ai-language-conversations
     #   -> "azure-core==1.28.0",
@@ -693,11 +702,12 @@ def resolve_compatible_package(
     #   ->  ../azure-identity
     #   -> ../azure-core
 
-    # as we walk each of the dev reqs, we check for compatibility with the immovable_packages. (this happens in is_package_compatible)
-    # if the dev req is incompatible, we need to resolve it. THIS function is what resolves it!
+    # as we walk each of the dev reqs, we check for compatibility with the immovable_packages.
+    # (this happens in is_package_compatible) if the dev req is incompatible, we need to resolve it.
+    # THIS function is what resolves it!
 
-    # since we already know that package_name is incompatible with the immovable_pkgs, we need to walk backwards through the versions of package_name
-    # checking to ensure that each version is compatible with the immovable_pkgs.
+    # since we already know that package_name is incompatible with the immovable_pkgs, we need to walk backwards
+    # through the versions of package_name checking to ensure that each version is compatible with the immovable_pkgs.
     # if we find one that is, we will return a new requirement string for that package which will replace this dev_req line.
     for pkg in immovable_pkgs:
         required_package = immovable_pkgs[pkg].name
@@ -733,11 +743,13 @@ def handle_incompatible_minimum_dev_reqs(
 ) -> List[str]:
     """
     This function is used to handle the case where a dev requirement is incompatible with the current set of packages
-    being installed. This is used to update or remove dev_requirements that are incompatible with a targeted set of packages.
+    being installed. This is used to update or remove dev_requirements that are incompatible with a targeted set of
+        packages.
 
     :param str setup_path: The path to the setup.py file whose dev_requirements are being filtered.
 
-    :param List[str] filtered_requirement_list: A filtered copy of the dev_requirements.txt for the targeted package. This list will be
+    :param List[str] filtered_requirement_list: A filtered copy of the dev_requirements.txt for the targeted package.
+        This list will be
     modified in place to remove any requirements incompatible with the packages_for_install.
 
     :param List[Requirement] packages_for_install: A list of packages that dev_requirements MUST be compatible with.
@@ -809,7 +821,7 @@ def handle_incompatible_minimum_dev_reqs(
             # we understand how to parse it, so we should handle it
             if dev_req_package:
                 if not is_package_compatible(dev_req_package, requirements_for_dev_req, packages_for_install):
-                    new_req = resolve_compatible_package(dev_req_package, dev_req_version, packages_for_install)
+                    new_req = resolve_compatible_package(dev_req_package, packages_for_install)
 
                     if new_req:
                         cleansed_reqs.append(new_req)
