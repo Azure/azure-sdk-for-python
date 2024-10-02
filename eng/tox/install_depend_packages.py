@@ -102,7 +102,7 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
 
     logging.info("%s released packages: %s", dependency_type, released_packages)
 
-    additionalFilterFn = None
+    additional_filter_fn = None
     if dependency_type == "Minimum":
         additionalFilterFn = handle_incompatible_minimum_dev_reqs
 
