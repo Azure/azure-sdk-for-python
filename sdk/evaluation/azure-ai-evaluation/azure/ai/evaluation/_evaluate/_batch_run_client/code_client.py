@@ -43,7 +43,7 @@ class CodeRun:
             result_df = result_df.drop(columns=[col for col in result_df.columns if col.startswith("inputs.")])
         return result_df
 
-    def get_aggregated_metrics(self) -> Dict:
+    def get_aggregated_metrics(self) -> Dict[str, Any]:
         try:
             batch_run_timeout = get_int_env_var(PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT)
             aggregated_metrics: Optional[Any] = (
