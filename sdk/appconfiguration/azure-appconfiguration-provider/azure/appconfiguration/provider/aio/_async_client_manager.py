@@ -377,10 +377,12 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         if not self._load_balance or not self._last_active_client_name:
             self._active_clients = active_clients
             return
-
         for i, client in enumerate(active_clients):
             if client.endpoint == self._last_active_client_name:
-                self._active_clients = active_clients[i:] + active_clients[:i]
+                swap_point = i + 1
+                if swap_point >= len(active_clients):
+                    swap_point = 0
+                self._active_clients = active_clients[swap_point:] + active_clients[:swap_point]
                 return
 
     async def setup_initial_clients(self):
