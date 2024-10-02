@@ -370,19 +370,14 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         Figures out the current active clients, if load_balance is enabled the start of the list will be the one after
         the last active client used.
         """
-        active_clients = []
-        for client in self._replica_clients:
-            if client.is_active():
-                active_clients.append(client)
+        active_clients = [client for client in self._replica_clients if client.is_active()]
                 
         self._active_clients = active_clients
         if not self._load_balance or len(self._last_active_client_name) == 0:
             return
         for i, client in enumerate(active_clients):
             if client.endpoint == self._last_active_client_name:
-                swap_point = i + 1
-                if swap_point >= len(active_clients):
-                    swap_point = 0
+                swap_point = (i + 1) % len(active_clients)
                 self._active_clients = active_clients[swap_point:] + active_clients[:swap_point]
                 return
 

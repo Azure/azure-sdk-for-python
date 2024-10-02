@@ -119,6 +119,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword replica_discovery_enabled: Optional flag to enable or disable the discovery of replica endpoints. Default
      is True.
     :paramtype replica_discovery_enabled: bool
+    :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
+     is False.
+    :paramtype load_balancing_enabled: bool
     """
 
 
@@ -179,6 +182,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword replica_discovery_enabled: Optional flag to enable or disable the discovery of replica endpoints. Default
      is True.
     :paramtype replica_discovery_enabled: bool
+    :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
+     is False.
+    :paramtype load_balancing_enabled: bool
     """
 
 
