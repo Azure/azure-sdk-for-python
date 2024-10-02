@@ -115,7 +115,7 @@ def _datetime_as_isostr(dt: Union[datetime, date, time, timedelta]) -> str:
 class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
-    def default(self, o: Any) -> Any:  # pylint: disable=too-many-return-statements
+    def default(self, o: Any) -> Any:
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
         try:

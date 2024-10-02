@@ -169,9 +169,9 @@ def check_certificate_location(repo_root: str) -> None:
     """
 
     existing_root_pem = certifi.where()
-    local_dev_cert = os.path.abspath(os.path.join(repo_root, 'eng', 'common', 'testproxy', 'dotnet-devcert.crt'))
+    local_dev_cert = os.path.abspath(os.path.join(repo_root, "eng", "common", "testproxy", "dotnet-devcert.crt"))
     combined_filename = os.path.basename(local_dev_cert).split(".")[0] + ".pem"
-    combined_folder = os.path.join(repo_root, '.certificate')
+    combined_folder = os.path.join(repo_root, ".certificate")
     combined_location = os.path.join(combined_folder, combined_filename)
 
     # If no local certificate folder exists, create one
@@ -316,11 +316,7 @@ def set_common_sanitizers() -> None:
 
     # General regex sanitizers for sensitive patterns throughout interactions
     batch_sanitizers[Sanitizer.GENERAL_REGEX] = [
-        {
-            "regex": "(?:[\\?&](sig|se|st|sv)=)(?<secret>[^&\\\"\\s]*)",
-            "group_for_replace": "secret",
-            "value": SANITIZED
-        },
+        {"regex": '(?:[\\?&](sig|se|st|sv)=)(?<secret>[^&\\"\\s]*)', "group_for_replace": "secret", "value": SANITIZED},
     ]
 
     # Header regex sanitizers for sensitive patterns in request/response headers

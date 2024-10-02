@@ -22,7 +22,7 @@ from .._shared.utils import parse_connection_str, get_current_utc_time
 from .._version import SDK_MONIKER
 
 
-class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
+class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """A client to interact with the AzureCommunicationService Sms gateway asynchronously.
 
     This client provides operations to send an SMS via a phone number.

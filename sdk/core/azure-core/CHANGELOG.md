@@ -1,6 +1,18 @@
 # Release History
 
-## 1.31.0 (Unreleased)
+## 1.31.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Log "x-vss-e2eid" and "x-msedge-ref" headers in `HttpLoggingPolicy`.
+
+## 1.31.0 (2024-09-12)
 
 ### Features Added
 
@@ -11,10 +23,6 @@
 - Added a new `AccessTokenInfo` class, which is returned by `get_token_info` implementations. This class contains the token, its expiration time, and optional additional information like when a token should be refreshed. #36565
 - `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now first check if a credential has the `get_token_info` method defined. If so, the `get_token_info` method is used to acquire a token. Otherwise, the `get_token` method is used. #36565
   - These policies now also check the `refresh_on` attribute when determining if a new token request should be made.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 

@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.cosmosdb import CosmosDBManagementClient
@@ -48,7 +46,7 @@ def main():
                         "type": "AzureKeyVault",
                         "value": "AzureKeyVault Key URL",
                     },
-                    "wrappedDataEncryptionKey": "U3dhZ2dlciByb2Nrcw==",
+                    "wrappedDataEncryptionKey": "VGhpcyBpcyBhY3R1YWxseSBhbiBhcnJheSBvZiBieXRlcy4gVGhpcyByZXF1ZXN0L3Jlc3BvbnNlIGlzIGJlaW5nIHByZXNlbnRlZCBhcyBhIHN0cmluZyBmb3IgcmVhZGFiaWxpdHkgaW4gdGhlIGV4YW1wbGU=",
                 }
             }
         },
@@ -56,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2024-05-15/examples/CosmosDBSqlClientEncryptionKeyCreateUpdate.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2024-09-01-preview/examples/CosmosDBSqlClientEncryptionKeyCreateUpdate.json
 if __name__ == "__main__":
     main()

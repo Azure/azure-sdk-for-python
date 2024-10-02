@@ -10,15 +10,6 @@ from unittest import mock
 from helpers import validating_transport
 
 
-def await_test(fn):
-    @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(fn(*args, **kwargs))
-
-    return wrapper
-
-
 def get_completed_future(result=None):
     future = asyncio.Future()
     future.set_result(result)

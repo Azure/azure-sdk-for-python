@@ -129,6 +129,7 @@ class TestMgmtContainerServiceClient(AzureMgmtRecordedTestCase):
                                                                 resource_name=RESOURCE_NAME)
         result.result()
 
+    @pytest.mark.skip('duplicated testcase')
     @ResourceGroupPreparer()
     @recorded_by_proxy
     def test_operations(self):

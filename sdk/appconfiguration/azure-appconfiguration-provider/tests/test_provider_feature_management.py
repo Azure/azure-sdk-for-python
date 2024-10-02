@@ -7,8 +7,7 @@ from azure.appconfiguration.provider import SettingSelector, load
 from azure.appconfiguration import AzureAppConfigurationClient
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator
-from testcase import AppConfigTestCase, setup_configs, has_feature_flag
-from unittest.mock import patch
+from testcase import AppConfigTestCase, setup_configs, has_feature_flag, get_feature_flag
 from test_constants import FEATURE_MANAGEMENT_KEY
 
 
@@ -25,6 +24,7 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
         assert len(client.keys()) == 1
         assert FEATURE_MANAGEMENT_KEY in client
         assert has_feature_flag(client, "Alpha")
+        assert "telemetry" not in get_feature_flag(client, "Alpha")
 
     # method: load
     @recorded_by_proxy

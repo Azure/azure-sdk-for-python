@@ -8,6 +8,8 @@ from pytest_mock import MockFixture
 from azure.ai.ml._restclient.v2024_07_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
+)
+from azure.ai.ml._restclient.v2024_07_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -306,6 +308,10 @@ class TestWorkspaceOperation:
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
         mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_sub_id_resource_and_group_name",
+            return_value=["random_name", "random_grp", "random_storage"],
+        )
+        mocker.patch(
             "azure.ai.ml.operations._workspace_operations_base.get_resource_group_location", return_value="random_name"
         )
         mocker.patch(
@@ -330,6 +336,10 @@ class TestWorkspaceOperation:
     def test_populate_feature_store_arm_parameters(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_sub_id_resource_and_group_name",
+            return_value=["random_sub", "random_grp", "random_storage"],
+        )
         mocker.patch(
             "azure.ai.ml.operations._workspace_operations_base.get_resource_group_location", return_value="random_name"
         )
