@@ -286,7 +286,10 @@ class InteractiveCredential(MsalCredential, ABC):
                 if result and "access_token" in result and "expires_in" in result:
                     refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
                     return AccessTokenInfo(
-                        result["access_token"], now + int(result["expires_in"]), refresh_on=refresh_on
+                        result["access_token"],
+                        now + int(result["expires_in"]),
+                        token_type=result.get("token_type", "Bearer"),
+                        refresh_on=refresh_on,
                     )
 
         # if we get this far, result is either None or the content of a Microsoft Entra ID error response

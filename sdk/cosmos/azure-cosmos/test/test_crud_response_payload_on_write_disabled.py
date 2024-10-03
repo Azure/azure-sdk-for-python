@@ -19,6 +19,7 @@ from azure.core import MatchConditions
 from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from urllib3.util.retry import Retry
+from typing import Any, Dict, Optional
 
 import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
@@ -29,6 +30,12 @@ from azure.cosmos import _retry_utility
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.partition_key import PartitionKey
 
+class CosmosResponseHeaderEnvelope:
+    def __init__(self):
+        self.headers: Optional[Dict[str, Any]] = None
+    
+    def capture_response_headers(self, headers: Dict[str, Any], response: Dict[str, Any]):
+        self.headers = headers
 
 class TimeoutTransport(RequestsTransport):
 
@@ -50,7 +57,7 @@ class TimeoutTransport(RequestsTransport):
 
 
 @pytest.mark.cosmosEmulator
-class TestCRUDOperations(unittest.TestCase):
+class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
     """Python CRUD Tests.
     """
 
@@ -82,8 +89,10 @@ class TestCRUDOperations(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, no_response_on_write=True)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
+        cls.logger = logging.getLogger("DisableResponseOnWriteTestLogger")
+        cls.logger.setLevel(logging.DEBUG)
 
     def test_database_crud(self):
         database_id = str(uuid.uuid4())
@@ -258,7 +267,7 @@ class TestCRUDOperations(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # create document without partition key being specified
-        created_document = created_collection.create_item(body=document_definition)
+        created_document = created_collection.create_item(body=document_definition, no_response=False)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[0], '["WA"]')
         del self.last_headers[:]
@@ -275,7 +284,7 @@ class TestCRUDOperations(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present as a leaf level property but a dict
-        created_document = created_collection1.create_item(document_definition)
+        created_document = created_collection1.create_item(document_definition, no_response=False)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[0], [{}])
         del self.last_headers[:]
@@ -291,7 +300,7 @@ class TestCRUDOperations(unittest.TestCase):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         # Create document with partitionkey not present in the document
-        created_document = created_collection2.create_item(document_definition)
+        created_document = created_collection2.create_item(document_definition, no_response=False)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.last_headers[0], [{}])
         del self.last_headers[:]
@@ -378,21 +387,23 @@ class TestCRUDOperations(unittest.TestCase):
                                'key': 'value',
                                'pk': 'pk'}
 
-        created_document = created_collection.create_item(
-            body=document_definition
+        headerEnvelope=CosmosResponseHeaderEnvelope()
+        no_response = created_collection.create_item(
+            body=document_definition,
+            response_hook=headerEnvelope.capture_response_headers
         )
 
-        self.assertEqual(created_document.get('id'), document_definition.get('id'))
-        self.assertEqual(created_document.get('key'), document_definition.get('key'))
+        self.assertDictEqual(no_response, {})
 
         # read document
         read_document = created_collection.read_item(
-            item=created_document.get('id'),
-            partition_key=created_document.get('pk')
+            item=document_definition.get('id'),
+            partition_key=document_definition.get('pk')
         )
 
-        self.assertEqual(read_document.get('id'), created_document.get('id'))
-        self.assertEqual(read_document.get('key'), created_document.get('key'))
+        self.assertEqual(headerEnvelope.headers['etag'], read_document['_etag'])
+        self.assertEqual(read_document.get('id'), document_definition.get('id'))
+        self.assertEqual(read_document.get('key'), document_definition.get('key'))
 
         # Read document feed doesn't require partitionKey as it's always a cross partition query
         documentlist = list(created_collection.read_all_items())
@@ -401,19 +412,35 @@ class TestCRUDOperations(unittest.TestCase):
         # replace document
         document_definition['key'] = 'new value'
 
-        replaced_document = created_collection.replace_item(
+        no_Response = created_collection.replace_item(
             item=read_document,
-            body=document_definition
+            body=document_definition,
+            response_hook=headerEnvelope.capture_response_headers
+        )
+        self.assertDictEqual(no_response, {})
+
+        # read document
+        replaced_document = created_collection.read_item(
+            item=document_definition.get('id'),
+            partition_key=document_definition.get('pk')
         )
 
+        self.assertEqual(headerEnvelope.headers['etag'], replaced_document.get('_etag'))
         self.assertEqual(replaced_document.get('key'), document_definition.get('key'))
 
         # upsert document(create scenario)
         document_definition['id'] = 'document2'
         document_definition['key'] = 'value2'
 
-        upserted_document = created_collection.upsert_item(body=document_definition)
+        no_Response = created_collection.upsert_item(body=document_definition, response_hook=headerEnvelope.capture_response_headers)
+        self.assertDictEqual(no_response, {})
 
+        upserted_document = created_collection.read_item(
+            item=document_definition.get('id'),
+            partition_key=document_definition.get('pk')
+        )
+
+        self.assertEqual(headerEnvelope.headers['etag'], upserted_document.get('_etag'))
         self.assertEqual(upserted_document.get('id'), document_definition.get('id'))
         self.assertEqual(upserted_document.get('key'), document_definition.get('key'))
 
@@ -500,7 +527,7 @@ class TestCRUDOperations(unittest.TestCase):
             read_permission.properties['_token'])
 
         restricted_client = cosmos_client.CosmosClient(
-            TestCRUDOperations.host, resource_tokens, "Session", connection_policy=TestCRUDOperations.connectionPolicy)
+            self.host, resource_tokens, "Session", connection_policy=self.connectionPolicy)
 
         document_definition = {'id': 'document1',
                                'key': 1
@@ -689,7 +716,7 @@ class TestCRUDOperations(unittest.TestCase):
 
         self.assertEqual(0, len(conflictlist))
 
-    def test_document_crud(self):
+    def test_document_crud_response_payload_enabled_via_override(self):
         # create database
         created_db = self.databaseForTest
         # create collection
@@ -705,10 +732,7 @@ class TestCRUDOperations(unittest.TestCase):
                                'key': 'value',
                                'pk': 'pk'}
 
-        no_response = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, no_response=True)
-        self.assertDictEqual(no_response, {})
-
-        created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True)
+        created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=True, no_response=False)
         self.assertEqual(created_document.get('name'),
                          document_definition['name'])
 
@@ -718,7 +742,7 @@ class TestCRUDOperations(unittest.TestCase):
                                'pk': 'pk',
                                'id': str(uuid.uuid4())}
 
-        created_document = created_collection.create_item(body=document_definition)
+        created_document = created_collection.create_item(body=document_definition, no_response=False)
         self.assertEqual(created_document.get('name'),
                          document_definition['name'])
         self.assertEqual(created_document.get('id'),
@@ -733,7 +757,7 @@ class TestCRUDOperations(unittest.TestCase):
         documents = list(created_collection.read_all_items())
         self.assertEqual(
             len(documents),
-            before_create_documents_count + 3,
+            before_create_documents_count + 2,
             'create should increase the number of documents')
         # query documents
         documents = list(created_collection.query_items(
@@ -761,7 +785,8 @@ class TestCRUDOperations(unittest.TestCase):
         old_etag = created_document['_etag']
         replaced_document = created_collection.replace_item(
             item=created_document['id'],
-            body=created_document
+            body=created_document,
+            no_response=False
         )
         self.assertEqual(replaced_document['name'],
                          'replaced document',
@@ -791,7 +816,8 @@ class TestCRUDOperations(unittest.TestCase):
             created_collection.replace_item(
                 etag=replaced_document['_etag'],
                 item=replaced_document['id'],
-                body=replaced_document
+                body=replaced_document,
+                no_response=False
             )
 
         # should fail if only match condition specified
@@ -799,13 +825,15 @@ class TestCRUDOperations(unittest.TestCase):
             created_collection.replace_item(
                 match_condition=MatchConditions.IfNotModified,
                 item=replaced_document['id'],
-                body=replaced_document
+                body=replaced_document,
+                no_response=False
             )
         with self.assertRaises(ValueError):
             created_collection.replace_item(
                 match_condition=MatchConditions.IfModified,
                 item=replaced_document['id'],
-                body=replaced_document
+                body=replaced_document,
+                no_response=False
             )
 
         # should fail if invalid match condition specified
@@ -813,7 +841,8 @@ class TestCRUDOperations(unittest.TestCase):
             created_collection.replace_item(
                 match_condition=replaced_document['_etag'],
                 item=replaced_document['id'],
-                body=replaced_document
+                body=replaced_document,
+                no_response=False
             )
 
         # should pass for most recent etag
@@ -821,7 +850,8 @@ class TestCRUDOperations(unittest.TestCase):
             match_condition=MatchConditions.IfNotModified,
             etag=replaced_document['_etag'],
             item=replaced_document['id'],
-            body=replaced_document
+            body=replaced_document,
+            no_response=False
         )
         self.assertEqual(replaced_document_conditional['name'],
                          'replaced document based on condition',
@@ -848,7 +878,176 @@ class TestCRUDOperations(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            created_collection.read_item,
                                            replaced_document['id'],
-                                           replaced_document['id'])
+                                           replaced_document['id'])    
+
+    def test_document_crud(self):
+        # create database
+        created_db = self.databaseForTest
+        # create collection
+        created_collection = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
+        # read documents
+        documents = list(created_collection.read_all_items())
+        # create a document
+        before_create_documents_count = len(documents)
+
+        id = str(uuid.uuid4())
+
+        # create a document with auto ID generation
+        document_definition = {'name': 'sample document',
+                               'spam': 'eggs',
+                               'key': 'value',
+                               'pk': 'pk',
+                               'id': id}
+        
+        headerEnvelope = CosmosResponseHeaderEnvelope()
+        self.assertIsNone(headerEnvelope.headers)
+        created_document = created_collection.create_item(body=document_definition, enable_automatic_id_generation=False, response_hook=headerEnvelope.capture_response_headers)
+        self.assertDictEqual(created_document, {})
+        self.assertIsNotNone(headerEnvelope.headers)
+        
+        expectedEtag = headerEnvelope.headers['etag']
+        read_document = created_collection.read_item(item=id, partition_key=document_definition['pk'])
+
+        self.assertIsNotNone(read_document)
+        self.assertEqual(id, read_document['id'])
+        self.assertEqual(expectedEtag, read_document['_etag'])
+        self.assertEqual(read_document['name'], document_definition['name'])
+
+        # duplicated documents are not allowed when 'id' is provided.
+        duplicated_definition_with_id = document_definition.copy()
+        self.__AssertHTTPFailureWithStatus(StatusCodes.CONFLICT,
+                                           created_collection.create_item,
+                                           duplicated_definition_with_id)
+        # read documents after creation
+        documents = list(created_collection.read_all_items())
+        self.assertEqual(
+            len(documents),
+            before_create_documents_count + 1,
+            'create should increase the number of documents')
+        # query documents
+        documents = list(created_collection.query_items(
+            {
+                'query': 'SELECT * FROM root r WHERE r.name=@name',
+                'parameters': [
+                    {'name': '@name', 'value': document_definition['name']}
+                ]
+            }, enable_cross_partition_query=True
+        ))
+        self.assertTrue(documents)
+        documents = list(created_collection.query_items(
+            {
+                'query': 'SELECT * FROM root r WHERE r.name=@name',
+                'parameters': [
+                    {'name': '@name', 'value': document_definition['name']}
+                ],
+            }, enable_cross_partition_query=True,
+            enable_scan_in_query=True
+        ))
+        self.assertTrue(documents)
+        # replace document.
+        to_be_replaced_document = read_document.copy()
+        to_be_replaced_document['name'] = 'replaced document'
+        to_be_replaced_document['spam'] = 'not eggs'
+        old_etag = expectedEtag
+        replaced_document = created_collection.replace_item(
+            item=to_be_replaced_document['id'],
+            body=to_be_replaced_document,
+            response_hook=headerEnvelope.capture_response_headers
+        )
+
+        self.assertDictEqual(replaced_document, {})
+        read_document = created_collection.read_item(item=id, partition_key=document_definition['pk'])
+
+        self.assertIsNotNone(read_document)
+        self.assertEqual(id, read_document['id'])
+        self.assertNotEqual(expectedEtag, headerEnvelope.headers['etag'])
+        self.assertNotEqual(expectedEtag, read_document['_etag'])
+        self.assertEqual(headerEnvelope.headers['etag'], read_document['_etag'])
+        self.assertEqual(read_document['name'], to_be_replaced_document['name'])
+        self.assertEqual(read_document['spam'], to_be_replaced_document['spam'])
+
+        self.assertEqual(read_document['name'], 'replaced document')
+        self.assertEqual(read_document['spam'], 'not eggs')
+        self.assertEqual(id,  read_document['id'])
+
+        # replace document based on condition
+        to_be_replaced_document = read_document.copy()
+        to_be_replaced_document['name'] = 'replaced document based on condition'
+        to_be_replaced_document['spam'] = 'new spam field'
+
+        # should fail for stale etag
+        self.__AssertHTTPFailureWithStatus(
+            StatusCodes.PRECONDITION_FAILED,
+            created_collection.replace_item,
+            to_be_replaced_document['id'],
+            to_be_replaced_document,
+            if_match=old_etag,
+        )
+
+        # should fail if only etag specified
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                etag=to_be_replaced_document['_etag'],
+                item=to_be_replaced_document['id'],
+                body=to_be_replaced_document
+            )
+
+        # should fail if only match condition specified
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                match_condition=MatchConditions.IfNotModified,
+                item=to_be_replaced_document['id'],
+                body=to_be_replaced_document
+            )
+        with self.assertRaises(ValueError):
+            created_collection.replace_item(
+                match_condition=MatchConditions.IfModified,
+                item=to_be_replaced_document['id'],
+                body=to_be_replaced_document
+            )
+
+        # should fail if invalid match condition specified
+        with self.assertRaises(TypeError):
+            created_collection.replace_item(
+                match_condition=to_be_replaced_document['_etag'],
+                item=to_be_replaced_document['id'],
+                body=to_be_replaced_document
+            )
+
+        # should pass for most recent etag
+        replaced_document_conditional = created_collection.replace_item(
+            match_condition=MatchConditions.IfNotModified,
+            etag=to_be_replaced_document['_etag'],
+            item=to_be_replaced_document['id'],
+            body=to_be_replaced_document,
+            no_response=False
+        )
+        self.assertEqual(replaced_document_conditional['name'],
+                         'replaced document based on condition',
+                         'document id property should change')
+        self.assertEqual(replaced_document_conditional['spam'],
+                         'new spam field',
+                         'property should have changed')
+        self.assertEqual(replaced_document_conditional['id'],
+                         to_be_replaced_document['id'],
+                         'document id should stay the same')
+        # read document
+        one_document_from_read = created_collection.read_item(
+            item=to_be_replaced_document['id'],
+            partition_key=to_be_replaced_document['pk']
+        )
+        self.assertEqual(to_be_replaced_document['id'],
+                         one_document_from_read['id'])
+        # delete document
+        created_collection.delete_item(
+            item=to_be_replaced_document,
+            partition_key=to_be_replaced_document['pk']
+        )
+        # read documents after deletion
+        self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
+                                           created_collection.read_item,
+                                           to_be_replaced_document['id'],
+                                           to_be_replaced_document['id'])
 
     def test_document_upsert(self):
         # create database
@@ -862,14 +1061,20 @@ class TestCRUDOperations(unittest.TestCase):
         before_create_documents_count = len(documents)
 
         # create document definition
-        document_definition = {'id': 'doc',
+        id = 'doc'
+        document_definition = {'id': id,
                                'name': 'sample document',
                                'spam': 'eggs',
                                'pk': 'pk',
                                'key': 'value'}
 
         # create document using Upsert API
-        created_document = created_collection.upsert_item(body=document_definition)
+        headerEnvelope = CosmosResponseHeaderEnvelope()
+        none_response = created_collection.upsert_item(body=document_definition, response_hook=headerEnvelope.capture_response_headers)
+        self.assertDictEqual(none_response, {})
+
+        created_document = created_collection.read_item(item='doc', partition_key=document_definition['pk'])
+        self.assertEqual(headerEnvelope.headers['etag'], created_document['_etag'])
 
         # verify id property
         self.assertEqual(created_document['id'],
@@ -892,7 +1097,11 @@ class TestCRUDOperations(unittest.TestCase):
         created_document['spam'] = 'not eggs'
 
         # should replace document since it already exists
-        upserted_document = created_collection.upsert_item(body=created_document)
+        none_response = created_collection.upsert_item(body=created_document, response_hook=headerEnvelope.capture_response_headers)
+        self.assertDictEqual(none_response, {})
+
+        upserted_document = created_collection.read_item(item=id, partition_key=document_definition['pk'])
+        self.assertEqual(headerEnvelope.headers['etag'], upserted_document['_etag'])
 
         # verify the changed properties
         self.assertEqual(upserted_document['name'],
@@ -917,7 +1126,11 @@ class TestCRUDOperations(unittest.TestCase):
         created_document['id'] = 'new id'
 
         # Upsert should create new document since the id is different
-        new_document = created_collection.upsert_item(body=created_document)
+        no_response = created_collection.upsert_item(body=created_document, response_hook=headerEnvelope.capture_response_headers)
+        self.assertDictEqual(none_response, {})
+
+        new_document = created_collection.read_item(item='new id', partition_key=document_definition['pk'])
+        self.assertEqual(headerEnvelope.headers['etag'], new_document['_etag'])
 
         # Test modified access conditions
         created_document['spam'] = 'more eggs'
@@ -1251,11 +1464,15 @@ class TestCRUDOperations(unittest.TestCase):
                 partition_key=PartitionKey(path='/id', kind='Hash')
             )
             # create document1
+            id = 'doc1'
             document = collection.create_item(
-                body={'id': 'doc1',
+                body={'id': id,
                       'spam': 'eggs',
                       'key': 'value'},
             )
+
+            self.assertDictEqual(document, {})
+            document = collection.read_item(item = id, partition_key = id)
 
             # create user
             user = db.create_user(body={'id': 'user' + str(uuid.uuid4())})
@@ -1274,7 +1491,7 @@ class TestCRUDOperations(unittest.TestCase):
             permission = {
                 'id': 'permission On Doc',
                 'permissionMode': documents.PermissionMode.All,
-                'resource': "dbs/" + db.id + "/colls/" + collection.id + "/docs/" + document["id"]
+                'resource': "dbs/" + db.id + "/colls/" + collection.id + "/docs/" + id
             }
             permission_on_doc = user.create_permission(body=permission)
             self.assertIsNotNone(permission_on_doc.properties['_token'],
@@ -1292,23 +1509,23 @@ class TestCRUDOperations(unittest.TestCase):
 
         # Client without any authorization will fail.
         try:
-            cosmos_client.CosmosClient(TestCRUDOperations.host, {}, "Session",
-                                       connection_policy=TestCRUDOperations.connectionPolicy)
+            cosmos_client.CosmosClient(self.host, {}, "Session",
+                                       connection_policy=self.connectionPolicy)
             raise Exception("Test did not fail as expected.")
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.UNAUTHORIZED)
 
         # Client with master key.
-        client = cosmos_client.CosmosClient(TestCRUDOperations.host,
-                                            TestCRUDOperations.masterKey,
+        client = cosmos_client.CosmosClient(self.host,
+                                            self.masterKey,
                                             "Session",
-                                            connection_policy=TestCRUDOperations.connectionPolicy)
+                                            connection_policy=self.connectionPolicy)
         # setup entities
         entities = __SetupEntities(client)
         resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
                                entities['permissionOnColl'].properties['_token']}
         col_client = cosmos_client.CosmosClient(
-            TestCRUDOperations.host, resource_tokens, "Session", connection_policy=TestCRUDOperations.connectionPolicy)
+            self.host, resource_tokens, "Session", connection_policy=self.connectionPolicy)
         db = entities['db']
 
         old_client_connection = db.client_connection
@@ -1348,7 +1565,7 @@ class TestCRUDOperations(unittest.TestCase):
                                entities['permissionOnDoc'].properties['_token']}
 
         doc_client = cosmos_client.CosmosClient(
-            TestCRUDOperations.host, resource_tokens, "Session", connection_policy=TestCRUDOperations.connectionPolicy)
+            self.host, resource_tokens, "Session", connection_policy=self.connectionPolicy)
 
         # 6. Success-- Use Doc permission to read doc
         read_doc = doc_client.get_database_client(db.id).get_container_client(success_coll.id).read_item(docId, docId)
@@ -1815,96 +2032,16 @@ class TestCRUDOperations(unittest.TestCase):
 
             with self.assertRaises(Exception):
                 # client does a getDatabaseAccount on initialization, which will time out
-                cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
+                cosmos_client.CosmosClient(self.host, self.masterKey, "Session",
                                            connection_policy=connection_policy)
-
-    def test_client_request_timeout_when_connection_retry_configuration_specified(self):
-        connection_policy = documents.ConnectionPolicy()
-        # making timeout 0 ms to make sure it will throw
-        connection_policy.RequestTimeout = 0.000000000001
-        connection_policy.ConnectionRetryConfiguration = Retry(
-            total=3,
-            read=3,
-            connect=3,
-            backoff_factor=0.3,
-            status_forcelist=(500, 502, 504)
-        )
-        with self.assertRaises(AzureError):
-            # client does a getDatabaseAccount on initialization, which will time out
-            cosmos_client.CosmosClient(TestCRUDOperations.host, TestCRUDOperations.masterKey, "Session",
-                                       connection_policy=connection_policy)
-
-    # TODO: Skipping this test to debug later
-    @unittest.skip
-    def test_client_connection_retry_configuration(self):
-        total_time_for_two_retries = self.initialize_client_with_connection_core_retry_config(2)
-        total_time_for_three_retries = self.initialize_client_with_connection_core_retry_config(3)
-        self.assertGreater(total_time_for_three_retries, total_time_for_two_retries)
-
-    def initialize_client_with_connection_core_retry_config(self, retries):
-        start_time = time.time()
-        try:
-            cosmos_client.CosmosClient(
-                "https://localhost:9999",
-                TestCRUDOperations.masterKey,
-                "Session",
-                retry_total=retries,
-                retry_read=retries,
-                retry_connect=retries,
-                retry_status=retries)
-            self.fail()
-        except AzureError as e:
-            end_time = time.time()
-            return end_time - start_time
-
-    # TODO: Skipping this test to debug later
-    @unittest.skip
-    def test_absolute_client_timeout(self):
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            cosmos_client.CosmosClient(
-                "https://localhost:9999",
-                TestCRUDOperations.masterKey,
-                "Session",
-                retry_total=3,
-                timeout=1)
-
-        error_response = ServiceResponseError("Read timeout")
-        timeout_transport = TimeoutTransport(error_response)
-        client = cosmos_client.CosmosClient(
-            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
-
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            client.create_database_if_not_exists("test", timeout=2)
-
-        status_response = 500  # Users connection level retry
-        timeout_transport = TimeoutTransport(status_response)
-        client = cosmos_client.CosmosClient(
-            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            client.create_database("test", timeout=2)
-
-        databases = client.list_databases(timeout=2)
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            list(databases)
-
-        status_response = 429  # Uses Cosmos custom retry
-        timeout_transport = TimeoutTransport(status_response)
-        client = cosmos_client.CosmosClient(
-            self.host, self.masterKey, "Session", transport=timeout_transport, passthrough=True)
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            client.create_database_if_not_exists("test", timeout=2)
-
-        databases = client.list_databases(timeout=2)
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            list(databases)
 
     def test_query_iterable_functionality(self):
         collection = self.databaseForTest.create_container("query-iterable-container",
                                                            partition_key=PartitionKey("/pk"))
 
-        doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1', 'pk': 'pk'})
-        doc2 = collection.create_item(body={'id': 'doc2', 'prop1': 'value2', 'pk': 'pk'})
-        doc3 = collection.create_item(body={'id': 'doc3', 'prop1': 'value3', 'pk': 'pk'})
+        doc1 = collection.create_item(body={'id': 'doc1', 'prop1': 'value1', 'pk': 'pk'}, no_response=False)
+        doc2 = collection.create_item(body={'id': 'doc2', 'prop1': 'value2', 'pk': 'pk'}, no_response=False)
+        doc3 = collection.create_item(body={'id': 'doc3', 'prop1': 'value3', 'pk': 'pk'}, no_response=False)
         resources = {
             'coll': collection,
             'doc1': doc1,
@@ -2060,7 +2197,8 @@ class TestCRUDOperations(unittest.TestCase):
         document_1_1 = collection1.create_item(
             body={'id': 'doc1',
                   'key': 'value'},
-            pre_trigger_include='t1'
+            pre_trigger_include='t1',
+            no_response=False
         )
         self.assertEqual(document_1_1['id'],
                          'DOC1t1',
@@ -2070,12 +2208,14 @@ class TestCRUDOperations(unittest.TestCase):
             body={'id': 'testing post trigger', 'key': 'value'},
             pre_trigger_include='t1',
             post_trigger_include='response1',
+            no_response=False
         )
         self.assertEqual(document_1_2['id'], 'TESTING POST TRIGGERt1')
 
         document_1_3 = collection1.create_item(
             body={'id': 'responseheaders', 'key': 'value'},
-            pre_trigger_include='t1'
+            pre_trigger_include='t1',
+            no_response=False
         )
         self.assertEqual(document_1_3['id'], "RESPONSEHEADERSt1")
 
@@ -2084,7 +2224,8 @@ class TestCRUDOperations(unittest.TestCase):
         document_2_1 = collection2.create_item(
             body={'id': 'doc2',
                   'key': 'value2'},
-            pre_trigger_include='t2'
+            pre_trigger_include='t2',
+            no_response=False
         )
         self.assertEqual(document_2_1['id'],
                          'doc2',
@@ -2093,7 +2234,8 @@ class TestCRUDOperations(unittest.TestCase):
             body={'id': 'Doc3',
                   'prop': 'empty',
                   'key': 'value2'},
-            pre_trigger_include='t3')
+            pre_trigger_include='t3',
+            no_response=False)
         self.assertEqual(document_2_2['id'], 'doc3t3')
 
         triggers_3 = list(collection3.scripts.list_triggers())
@@ -2101,7 +2243,8 @@ class TestCRUDOperations(unittest.TestCase):
         with self.assertRaises(Exception):
             collection3.create_item(
                 body={'id': 'Docoptype', 'key': 'value2'},
-                post_trigger_include='triggerOpType'
+                post_trigger_include='triggerOpType',
+                no_response=False
             )
 
         db.delete_container(collection1)
@@ -2320,7 +2463,7 @@ class TestCRUDOperations(unittest.TestCase):
         read_container = created_db.get_container_client(created_properties)
         self.assertEqual(read_container.id, created_container.id)
 
-        created_item = created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'})
+        created_item = created_container.create_item({'id': '1' + str(uuid.uuid4()), 'pk': 'pk'}, no_response=False)
 
         # read item with id
         read_item = created_container.read_item(item=created_item['id'], partition_key=created_item['pk'])
@@ -2431,7 +2574,7 @@ class TestCRUDOperations(unittest.TestCase):
 
         # add items for partition key 2
 
-        pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
+        pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), no_response=False)
 
         # delete all items for partition key 1
         created_collection.delete_all_items_by_partition_key(partition_key1)
@@ -2457,8 +2600,8 @@ class TestCRUDOperations(unittest.TestCase):
     def test_patch_operations(self):
         created_container = self.databaseForTest.get_container_client(self.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
-        pkValue = "patch_item_pk" + str(uuid.uuid4())
         # Create item to patch
+        pkValue = "patch_item_pk" + str(uuid.uuid4())
         item = {
             "id": "patch_item",
             "pk": pkValue,
@@ -2478,8 +2621,12 @@ class TestCRUDOperations(unittest.TestCase):
             {"op": "incr", "path": "/number", "value": 7},
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
-        patched_item = created_container.patch_item(item="patch_item", partition_key=pkValue,
+        none_response = created_container.patch_item(item="patch_item", partition_key=pkValue,
                                                     patch_operations=operations)
+        self.assertDictEqual(none_response, {})
+
+        patched_item = created_container.read_item(item="patch_item", partition_key=pkValue)
+
         # Verify results from patch operations
         self.assertTrue(patched_item.get("color") is None)
         self.assertTrue(patched_item.get("prop") is None)
@@ -2551,9 +2698,18 @@ class TestCRUDOperations(unittest.TestCase):
             self.assertEqual(e.status_code, StatusCodes.PRECONDITION_FAILED)
 
         # Run patch operations with correct filter
+        headerEnvelope=CosmosResponseHeaderEnvelope()
         filter_predicate = "from root where root.number = " + str(item.get("number"))
-        patched_item = created_container.patch_item(item="conditional_patch_item", partition_key=pkValue,
-                                                    patch_operations=operations, filter_predicate=filter_predicate)
+        none_Response = created_container.patch_item(item="conditional_patch_item",
+                                                    partition_key=pkValue,
+                                                    patch_operations=operations,
+                                                    filter_predicate=filter_predicate,
+                                                    response_hook=headerEnvelope.capture_response_headers)
+        self.assertDictEqual(none_Response, {})
+
+        patched_item = created_container.read_item(item="conditional_patch_item", partition_key=pkValue)
+        self.assertEqual(headerEnvelope.headers['etag'], patched_item['_etag'])
+
         # Verify results from patch operations
         self.assertTrue(patched_item.get("color") is None)
         self.assertTrue(patched_item.get("prop") is None)
