@@ -1,5 +1,46 @@
 # Release History
 
+## 4.0.0b20 (2024-10-20)
+
+### Features Added
+
+  - Model `DistributedAvailabilityGroup` added property `distributed_availability_group_name`
+  - Model `DistributedAvailabilityGroup` added property `partner_link_role`
+  - Model `DistributedAvailabilityGroup` added property `partner_availability_group_name`
+  - Model `DistributedAvailabilityGroup` added property `partner_endpoint`
+  - Model `DistributedAvailabilityGroup` added property `instance_link_role`
+  - Model `DistributedAvailabilityGroup` added property `instance_availability_group_name`
+  - Model `DistributedAvailabilityGroup` added property `failover_mode`
+  - Model `DistributedAvailabilityGroup` added property `seeding_mode`
+  - Model `DistributedAvailabilityGroup` added property `databases`
+  - Added model `CertificateInfo`
+  - Added model `DistributedAvailabilityGroupDatabase`
+  - Added model `DistributedAvailabilityGroupSetRole`
+  - Added model `DistributedAvailabilityGroupsFailoverRequest`
+  - Added enum `FailoverModeType`
+  - Added enum `FailoverType`
+  - Added enum `InstanceRole`
+  - Added enum `LinkRole`
+  - Added enum `ReplicaConnectedState`
+  - Added enum `ReplicaSynchronizationHealth`
+  - Added enum `ReplicationModeType`
+  - Added enum `RoleChangeType`
+  - Added enum `SeedingModeType`
+  - Model `DistributedAvailabilityGroupsOperations` added method `begin_failover`
+  - Model `DistributedAvailabilityGroupsOperations` added method `begin_set_role`
+
+### Breaking Changes
+
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `target_database`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `source_endpoint`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `primary_availability_group_name`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `secondary_availability_group_name`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `source_replica_id`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `target_replica_id`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `link_state`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `last_hardened_lsn`
+  - Deleted or renamed model `ReplicationMode`
+
 ## 4.0.0b19 (2024-09-09)
 
 ### Features Added
