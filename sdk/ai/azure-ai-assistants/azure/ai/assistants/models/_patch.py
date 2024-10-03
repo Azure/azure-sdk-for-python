@@ -118,20 +118,11 @@ class FunctionTool(Tool):
             tool_def = FunctionToolDefinition(function=function_def)
             specs.append(tool_def)
         return specs
-
-    def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
-        """
-        Execute the function tool with the provided tool call information.
-
-        :param tool_call: A dictionary containing the function call details.
-
-        :return: The output of the tool operations.
-        """
+    
+    def _get_func_and_args(self, tool_call: RequiredFunctionToolCall) -> Tuple[Any, Dict[str, Any]]:
         function_name = tool_call.function.name
         arguments = tool_call.function.arguments
-        return self._handle_function_call(function_name, arguments)
-    
-    def _handle_function_call(self, function_name: str, arguments: str) -> Any:
+                
         if function_name not in self._functions:
             logging.error(f"Function '{function_name}' not found.")
             raise ValueError(f"Function '{function_name}' not found.")
@@ -147,11 +138,16 @@ class FunctionTool(Tool):
         if not isinstance(parsed_arguments, dict):
             logging.error(f"Arguments must be a JSON object for function '{function_name}'.")
             raise TypeError("Arguments must be a JSON object.")
+        
+        return function, parsed_arguments
+    
+    def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
+        function, parsed_arguments = self._get_func_and_args(tool_call)
 
         try:
             return function(**parsed_arguments) if parsed_arguments else function()
         except TypeError as e:
-            logging.error(f"Error executing function '{function_name}': {e}")
+            logging.error(f"Error executing function '{tool_call.function.name}': {e}")
             raise
 
     @property
@@ -172,6 +168,20 @@ class FunctionTool(Tool):
         """
         return ToolResources()
 
+
+class AsyncFunctionTool(FunctionTool):
+
+    async def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
+        function, parsed_arguments = self._get_func_and_args(tool_call)
+
+        try:
+            if inspect.iscoroutinefunction(function):                
+                return await function(**parsed_arguments) if parsed_arguments else await function()
+            else:
+                return function(**parsed_arguments) if parsed_arguments else function()
+        except TypeError as e:
+            logging.error(f"Error executing function '{tool_call.function.name}': {e}")
+            raise
 
 class FileSearchTool(Tool):
     """
@@ -256,6 +266,16 @@ class ToolSet:
     def __init__(self):
         self._tools = []
 
+    def validate_tool_type(self, tool_type: Type[Tool]) -> None:
+        """
+        Validate the type of the tool.
+
+        :param tool_type: The type of the tool to validate.
+        :raises ValueError: If the tool type is not a subclass of Tool.
+        """
+        if isinstance(tool_type, AsyncFunctionTool):
+            raise ValueError("AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and AssistantClient in azure.ai.assistants.aio.")
+
     def add(self, tool: Tool):
         """
         Add a tool to the tool set.
@@ -263,8 +283,10 @@ class ToolSet:
         :param tool: The tool to add.
         :raises ValueError: If a tool of the same type already exists.
         """
+        self.validate_tool_type(type(tool))
+        
         if any(isinstance(existing_tool, type(tool)) for existing_tool in self._tools):
-            raise ValueError(f"Tool of type {type(tool).__name__} already exists in the ToolSet.")
+            raise ValueError("Tool of type {type(tool).__name__} already exists in the ToolSet.")
         self._tools.append(tool)
 
     def remove(self, tool_type: Type[Tool]) -> None:
@@ -355,6 +377,42 @@ class ToolSet:
 
         return tool_outputs
 
+class AsyncToolSet(ToolSet):
+    
+    def validate_tool_type(self, tool_type: Type[Tool]) -> None:
+        """
+        Validate the type of the tool.
+
+        :param tool_type: The type of the tool to validate.
+        :raises ValueError: If the tool type is not a subclass of Tool.
+        """
+        if isinstance(tool_type, FunctionTool):
+            raise ValueError("FunctionTool is not supported in AsyncToolSet.  Please use AsyncFunctionTool instead and provide sync and/or async function(s).")
+
+    
+    async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
+        """
+        Execute a tool of the specified type with the provided tool calls.
+
+        :param tool_calls: A list of tool calls to execute.
+        :return: The output of the tool operations.
+        """
+        tool_outputs = []
+
+        for tool_call in tool_calls:
+            try:
+                if tool_call.type == "function":
+                    tool = self.get_tool(AsyncFunctionTool)
+                    output = await tool.execute(tool_call)
+                    tool_output = {
+                        "tool_call_id": tool_call.id,
+                        "output": output,
+                    }
+                    tool_outputs.append(tool_output)
+            except Exception as e:
+                logging.error(f"Failed to execute tool call {tool_call}: {e}")
+
+        return tool_outputs
 
 class AssistantEventHandler:
 
@@ -510,7 +568,6 @@ class AsyncAssistantRunStream(BaseAssistantRunStream, AsyncIterator[Tuple[str, A
         self.buffer = ""
         
     async def __aenter__(self):
-        # Initialization code goes here
         return self
             
     async def __aexit__(self, exc_type, exc_val, exc_tb):
@@ -571,7 +628,7 @@ class AsyncAssistantRunStream(BaseAssistantRunStream, AsyncIterator[Tuple[str, A
         try:
             async for _ in self:
                 pass  # The EventHandler handles the events
-        except StopIteration:
+        except StopAsyncIteration:
             pass            
 
 
@@ -655,6 +712,8 @@ __all__: List[str] = [
     "AssistantEventHandler",
     "AsyncAssistantRunStream",
     "AssistantRunStream",
+    "AsyncFunctionTool",
+    "AsyncToolSet",
     "FunctionTool",
     "FileSearchTool",
     "CodeInterpreterTool",
