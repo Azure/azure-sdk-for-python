@@ -136,7 +136,7 @@ def get_challenge_parameter(headers, challenge_scheme: str, challenge_parameter:
             if not parameters:
                 break
             key, value, header_span = parameters
-            if challenge_key.lower() == scheme.lower() and key.lower() == parameter.lower():
+            if key.lower() == parameter.lower():
                 return value
 
     return None
