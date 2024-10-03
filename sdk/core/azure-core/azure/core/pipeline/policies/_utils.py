@@ -129,7 +129,7 @@ def get_challenge_parameter(headers, challenge_scheme: str, challenge_parameter:
             break
         challenge_key, header_span = challenge
         # Enumerate each key-value parameter until we find the parameter key on the specified scheme challenge.
-        while get_next_parameter(header_span):
+        while True:
             parameters = get_next_parameter(header_span)
             if not parameters:
                 break
