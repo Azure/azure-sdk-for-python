@@ -29,10 +29,11 @@ from ._model_tools import (
     TokenScope,
 )
 from ._utils import JsonLineList
+from ._helpers import experimental
 
 logger = logging.getLogger(__name__)
 
-
+@experimental
 class AdversarialSimulator:
     """
     Initializes the adversarial simulator with a project scope.

@@ -16,39 +16,11 @@ from azure.identity import DefaultAzureCredential
 
 from ._adversarial_simulator import AdversarialSimulator
 from ._model_tools import AdversarialTemplateHandler, ManagedIdentityAPITokenManager, RAIClient, TokenScope
-
+from ._helpers import experimental
 logger = logging.getLogger(__name__)
 
 
-def monitor_adversarial_scenario(func) -> Callable:
-    """Decorator to monitor adversarial scenario.
-
-    :param func: The function to be decorated.
-    :type func: Callable
-    :return: The decorated function.
-    :rtype: Callable
-    """
-
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs):
-        scenario = str(kwargs.get("scenario", None))
-        max_conversation_turns = kwargs.get("max_conversation_turns", None)
-        max_simulation_results = kwargs.get("max_simulation_results", None)
-        decorated_func = monitor_operation(
-            activity_name="jailbreak.adversarial.simulator.call",
-            activity_type=ActivityType.PUBLICAPI,
-            custom_dimensions={
-                "scenario": scenario,
-                "max_conversation_turns": max_conversation_turns,
-                "max_simulation_results": max_simulation_results,
-            },
-        )(func)
-
-        return decorated_func(*args, **kwargs)
-
-    return wrapper
-
-
+@experimental
 class DirectAttackSimulator:
     """
     Initialize a UPIA (user prompt injected attack) jailbreak adversarial simulator with a project scope.
@@ -110,7 +82,6 @@ class DirectAttackSimulator:
                 blame=ErrorBlame.USER_ERROR,
             )
 
-    # @monitor_adversarial_scenario
     async def __call__(
         self,
         *,
