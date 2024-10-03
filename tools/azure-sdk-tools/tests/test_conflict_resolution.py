@@ -9,7 +9,7 @@ from pkg_resources import Requirement
 
 
 @pytest.mark.parametrize(
-    "input_requirements, immutable_requirements, expected_result",
+    "fake_package_input_requirements, immutable_requirements, expected_result",
     [([Requirement("sphinx==1.0.0")], [Requirement("sphinx>=1.0.0")], True),
      ([Requirement("sphinx==1.0.0")], [Requirement("sphinx>=1.1.0")], False)],
 )
