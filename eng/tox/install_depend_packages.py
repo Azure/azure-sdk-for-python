@@ -308,7 +308,12 @@ def check_req_against_exclusion(req, req_to_exclude):
     return req_id == req_to_exclude
 
 
-def filter_dev_requirements(setup_py_path, released_packages, temp_dir, additionalFilterFn: Optional[Callable[[str, List[str],List[Requirement]], List[str]]] = None):
+def filter_dev_requirements(
+    setup_py_path,
+    released_packages,
+    temp_dir,
+    additional_filter_fn: Optional[Callable[[str, List[str],List[Requirement]], List[str]]] = None,
+):
     """
     This function takes an existing package path, a list of specific package specifiers that we have resolved, a temporary directory to write
     the modified dev_requirements to, and an optional additionalFilterFn that can be used to further filter the dev_requirements file if necessary.
