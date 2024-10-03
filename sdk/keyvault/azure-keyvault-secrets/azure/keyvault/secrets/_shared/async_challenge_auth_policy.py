@@ -28,7 +28,7 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from . import http_challenge_cache as ChallengeCache
-from .challenge_auth_policy import _enforce_tls, _update_challenge
+from .challenge_auth_policy import _enforce_tls, _has_claims, _update_challenge
 
 
 P = ParamSpec("P")
@@ -123,6 +123,11 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         """
         self._token = None  # any cached token is invalid
         if "WWW-Authenticate" in response.http_response.headers:
+            # If the previous challenge was a KV challenge and this one is too, return the 401
+            claims_challenge = _has_claims(response.http_response.headers["WWW-Authenticate"])
+            if consecutive_challenge and not claims_challenge:
+                return response
+
             request_authorized = await self.on_challenge(request, response)
             if request_authorized:
                 # if we receive a challenge response, we retrieve a new token
@@ -138,8 +143,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
                 # If consecutive_challenge == True, this could be a third consecutive 401
                 if response.http_response.status_code == 401 and not consecutive_challenge:
                     # If the previous challenge wasn't from CAE, we can try this function one more time
-                    challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
-                    if challenge and not challenge.claims:
+                    if not claims_challenge:
                         return await self.handle_challenge_flow(request, response, consecutive_challenge=True)
                 await await_result(self.on_response, request, response)
         return response

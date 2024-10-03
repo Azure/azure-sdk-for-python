@@ -36,6 +36,20 @@ def _enforce_tls(request: PipelineRequest) -> None:
         )
 
 
+def _has_claims(challenge: str) -> bool:
+    """Check if a challenge header contains claims.
+
+    :param challenge: The challenge header to check.
+    :type challenge: str
+
+    :returns: True if the challenge contains claims; False otherwise.
+    :rtype: bool
+    """
+    # Split the challenge into its scheme and parameters, then check if any parameter contains claims
+    split_challenge = challenge.strip().split(" ", 1)
+    return any("claims=" in item for item in split_challenge[1].split(","))
+
+
 def _update_challenge(request: PipelineRequest, challenger: PipelineResponse) -> HttpChallenge:
     """Parse challenge from a challenge response, cache it, and return it.
 
@@ -119,6 +133,11 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
         """
         self._token = None  # any cached token is invalid
         if "WWW-Authenticate" in response.http_response.headers:
+            # If the previous challenge was a KV challenge and this one is too, return the 401
+            claims_challenge = _has_claims(response.http_response.headers["WWW-Authenticate"])
+            if consecutive_challenge and not claims_challenge:
+                return response
+
             request_authorized = self.on_challenge(request, response)
             if request_authorized:
                 # if we receive a challenge response, we retrieve a new token
@@ -134,8 +153,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
                 # If consecutive_challenge == True, this could be a third consecutive 401
                 if response.http_response.status_code == 401 and not consecutive_challenge:
                     # If the previous challenge wasn't from CAE, we can try this function one more time
-                    challenge = ChallengeCache.get_challenge_for_url(request.http_request.url)
-                    if challenge and not challenge.claims:
+                    if not claims_challenge:
                         return self.handle_challenge_flow(request, response, consecutive_challenge=True)
                 self.on_response(request, response)
         return response
