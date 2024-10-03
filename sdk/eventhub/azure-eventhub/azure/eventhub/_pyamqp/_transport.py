@@ -34,7 +34,6 @@
 
 
 from __future__ import absolute_import, unicode_literals
-from typing import Dict, Optional, Any
 
 import errno
 import re
