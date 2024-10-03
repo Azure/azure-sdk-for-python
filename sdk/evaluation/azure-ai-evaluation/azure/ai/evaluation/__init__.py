@@ -12,6 +12,13 @@ from ._evaluators._content_safety import (
     SexualEvaluator,
     ViolenceEvaluator,
 )
+from ._evaluators._multimodal._content_safety_multimodal import (
+    ContentSafetyMultimodalEvaluator,
+    HateUnfairnessMultimodalEvaluator,
+    SelfHarmMultimodalEvaluator,
+    SexualMultimodalEvaluator,
+    ViolenceMultimodalEvaluator,
+)
 from ._evaluators._f1_score import F1ScoreEvaluator
 from ._evaluators._fluency import FluencyEvaluator
 from ._evaluators._gleu import GleuScoreEvaluator
@@ -57,4 +64,9 @@ __all__ = [
     "AzureOpenAIModelConfiguration",
     "OpenAIModelConfiguration",
     "EvaluatorConfig",
+    "ContentSafetyMultimodalEvaluator",
+    "HateUnfairnessMultimodalEvaluator",
+    "SelfHarmMultimodalEvaluator",
+    "SexualMultimodalEvaluator",
+    "ViolenceMultimodalEvaluator",
 ]

@@ -72,6 +72,7 @@ setup(
         "azure-core>=1.30.2",
         "nltk>=3.9.1",
         "rouge-score>=0.1.2",
+        "azure-ai-inference>=1.0.0b4"
     ],
     extras_require={
         "pf-azure": [

@@ -56,6 +56,7 @@ class ErrorTarget(Enum):
     RAI_CLIENT = "RAIClient"
     COHERENCE_EVALUATOR = "CoherenceEvaluator"
     CONTENT_SAFETY_CHAT_EVALUATOR = "ContentSafetyEvaluator"
+    CONTENT_SAFETY_MULTIMODAL_EVALUATOR = "ContentSafetyMultimodalEvaluator"
     ECI_EVALUATOR = "ECIEvaluator"
     F1_EVALUATOR = "F1Evaluator"
     GROUNDEDNESS_EVALUATOR = "GroundednessEvaluator"
