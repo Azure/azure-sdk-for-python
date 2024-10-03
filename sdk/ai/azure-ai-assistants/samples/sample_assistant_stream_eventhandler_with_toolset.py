@@ -130,8 +130,8 @@ def sample_assistant_stream_iteration():
         key = os.environ["AZUREAI_ENDPOINT_KEY"]
         api_version = os.environ.get("AZUREAI_API_VERSION", "2024-07-01-preview")
     except KeyError:
-        print("Missing environment variable 'AZUREAI_ENDPOINT_URL' or 'AZUREAI_ENDPOINT_KEY'")
-        print("Set them before running this sample.")
+        logging.error("Missing environment variable 'AZUREAI_ENDPOINT_URL' or 'AZUREAI_ENDPOINT_KEY'")
+        logging.error("Set them before running this sample.")
         exit()
 
     assistant_client = AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version)
@@ -160,11 +160,11 @@ def sample_assistant_stream_iteration():
     ) as stream:
         stream.until_done()
 
-    messages = assistant_client.list_messages(thread_id=thread.id)
-    logging.info(f"Messages: {messages}")
-
     assistant_client.delete_assistant(assistant.id)
     logging.info("Deleted assistant")
+
+    messages = assistant_client.list_messages(thread_id=thread.id)
+    logging.info(f"Messages: {messages}")
 
 
 if __name__ == "__main__":

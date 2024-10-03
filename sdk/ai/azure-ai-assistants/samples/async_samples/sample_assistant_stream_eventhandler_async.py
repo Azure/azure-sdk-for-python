@@ -88,8 +88,8 @@ async def sample_assistant_stream_iteration():
         key = os.environ["AZUREAI_ENDPOINT_KEY"]
         api_version = os.environ.get("AZUREAI_API_VERSION", "2024-07-01-preview")
     except KeyError:
-        print("Missing environment variable 'AZUREAI_ENDPOINT_URL' or 'AZUREAI_ENDPOINT_KEY'")
-        print("Set them before running this sample.")
+        logging.error("Missing environment variable 'AZUREAI_ENDPOINT_URL' or 'AZUREAI_ENDPOINT_KEY'")
+        logging.error("Set them before running this sample.")
         exit()
 
     async with AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version) as assistant_client:
@@ -114,14 +114,13 @@ async def sample_assistant_stream_iteration():
         ) as stream:
             await stream.until_done()
 
-        messages = await assistant_client.list_messages(thread_id=thread.id)
-        logging.info(f"Messages: {messages}")
-
         await assistant_client.delete_assistant(assistant.id)
         logging.info("Deleted assistant")
 
+        messages = await assistant_client.list_messages(thread_id=thread.id)
+        logging.info(f"Messages: {messages}")
+
 
 if __name__ == "__main__":
-    # Set logging level
     logging.basicConfig(level=logging.INFO)
     asyncio.run(sample_assistant_stream_iteration())
