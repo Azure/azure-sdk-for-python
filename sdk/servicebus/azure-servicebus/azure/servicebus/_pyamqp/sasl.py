@@ -58,42 +58,44 @@ class SASLExternalCredential(object):
 
     def start(self):
         return b""
-
+import threading
+import time
 
 class SASLTransportMixin:
     def _negotiate(self):
-        self.write(SASL_HEADER_FRAME)
-        self.start_loop()
-        _, returned_header = self.receive_frame()
-        if returned_header[1] != SASL_HEADER_FRAME:
-            raise ValueError(
-                f"""Mismatching AMQP header protocol. Expected: {SASL_HEADER_FRAME!r},"""
-                """received: {returned_header[1]!r}"""
-            )
+            self._negotiating = True
+            self.write(SASL_HEADER_FRAME)
+            self.start_loop()
+            _, returned_header = self.receive_frame()
+            if returned_header[1] != SASL_HEADER_FRAME:
+                raise ValueError(
+                    f"""Mismatching AMQP header protocol. Expected: {SASL_HEADER_FRAME!r},"""
+                    """received: {returned_header[1]!r}"""
+                )
 
-        _, supported_mechanisms = self.receive_frame(verify_frame_type=1)
-        if (
-            self.credential.mechanism not in supported_mechanisms[1][0]
-        ):  # sasl_server_mechanisms
-            raise ValueError(
-                "Unsupported SASL credential type: {}".format(self.credential.mechanism)
+            _, supported_mechanisms = self.receive_frame(verify_frame_type=1)
+            if (
+                self.credential.mechanism not in supported_mechanisms[1][0]
+            ):  # sasl_server_mechanisms
+                raise ValueError(
+                    "Unsupported SASL credential type: {}".format(self.credential.mechanism)
+                )
+            sasl_init = SASLInit(
+                mechanism=self.credential.mechanism,
+                initial_response=self.credential.start(),
+                hostname=self.host,
             )
-        sasl_init = SASLInit(
-            mechanism=self.credential.mechanism,
-            initial_response=self.credential.start(),
-            hostname=self.host,
-        )
-        self.send_frame(0, sasl_init, frame_type=_SASL_FRAME_TYPE)
-
-        _, next_frame = self.receive_frame(verify_frame_type=1)
-        frame_type, fields = next_frame
-        if frame_type != 0x00000044:  # SASLOutcome
-            raise NotImplementedError("Unsupported SASL challenge")
-        if fields[0] == SASLCode.Ok:  # code
-            return
-        raise ValueError(
-            "SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields)
-        )
+            self.send_frame(0, sasl_init, frame_type=_SASL_FRAME_TYPE)
+            _, next_frame = self.receive_frame(verify_frame_type=1)
+            frame_type, fields = next_frame
+            self._negotiating = False
+            if frame_type != 0x00000044:  # SASLOutcome
+                raise NotImplementedError("Unsupported SASL challenge")
+            if fields[0] == SASLCode.Ok:  # code
+                return
+            raise ValueError(
+                "SASL negotiation failed.\nOutcome: {}\nDetails: {}".format(*fields)
+            )
 
 
 class SASLTransport(SSLTransport, SASLTransportMixin):
@@ -144,4 +146,5 @@ class SASLWithWebSocket(WebSocketTransport, SASLTransportMixin):
         )
 
     def negotiate(self):
+        # with self.block():
         self._negotiate()

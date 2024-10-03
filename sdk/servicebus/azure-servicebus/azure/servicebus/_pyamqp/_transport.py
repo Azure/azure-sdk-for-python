@@ -194,7 +194,9 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self._incoming_queue = Queue()
         self.start_read = False
         self.sel = selectors.DefaultSelector()
-        
+        self._recieve_callback = kwargs.get('recieve_callback')
+        self._lock = threading.RLock()   
+        self._negotiating = False     
 
         self._use_tls = use_tls
 
@@ -407,11 +409,10 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
     def _io_loop(self):
         # TODO: how to raise the errors from here. Perhaps a callback function or another variable.
         offset = 0
-        _LOGGER.info("IO Loop running")
+        
         while self._run_io_loop:
             # write to the socket if there is anything in the outgoing queue
             if not self._outgoing_queue.empty():
-                _LOGGER.info("outgoing queue not empty")
                 try:
                     q_size = self._outgoing_queue.qsize()
                     for _ in range(q_size):
@@ -427,61 +428,68 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     raise
             # read from the socket if there is anything in the incoming queue
             # max size of 10 frames for now
+            # print("Incoming queue size: ", self._incoming_queue.qsize())
+            
+            try:
+                # _LOGGER.info("trying to read from socket")
 
-            if self._incoming_queue.qsize() == 0:
-                try:
-                    _LOGGER.info("trying to read from socket")
-    
-                    read_frame_buffer = BytesIO()
-                    frame_header = memoryview(bytearray(8))
-                    time_start = time.time()
-                    read_frame_buffer.write(self._read(8, buffer=frame_header, initial=True))
-                    time_end = time.time()
-                    _LOGGER.info(f"Time taken to read from socket: {time_end - time_start}")
-                    time_start = time.time()
-                    print("Trying to parse frame header")
-                    channel = struct.unpack(">H", frame_header[6:])[0]
-                    size = frame_header[0:4]
-                    if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
-                        _LOGGER.info("Empty frame or AMQP header negotiation")
-                        self._incoming_queue.put((frame_header, channel, None))
-                        continue
-                    size = struct.unpack(">I", size)[0]
-                    offset = frame_header[4]
-                    frame_type = frame_header[5]
-                    time_end = time.time()
-                    _LOGGER.info(f"Time taken to parse frame header: {time_end - time_start}")
-                    # >I is an unsigned int, but the argument to sock.recv is signed,
-                    # so we know the size can be at most 2 * SIGNED_INT_MAX
-                    payload_size = size - len(frame_header)
-                    payload = memoryview(bytearray(payload_size))
-                    if size > SIGNED_INT_MAX:
-                        read_frame_buffer.write(self._read(SIGNED_INT_MAX, buffer=payload))
-                        read_frame_buffer.write(
-                            self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:])
-                        )
-                    else:
-                        read_frame_buffer.write(self._read(payload_size, buffer=payload))
-                    offset -= 2
-                    self._incoming_queue.put((frame_header, channel, payload[offset:]))
-                except (socket.timeout, TimeoutError) as k:
-                    _LOGGER.info(f"Socket timeout: {k}")
-                    time_end = time.time()
-                    _LOGGER.info(f"Time to timeout: {time_end - time_start}")
-                    read_frame_buffer.write(self._read_buffer.getvalue())
-                    self._read_buffer = read_frame_buffer
-                    self._read_buffer.seek(0)
-                    #raise
-                except (OSError, IOError, SSLError, socket.error) as exc:
-                    # Don't disconnect for ssl read time outs
-                    # http://bugs.python.org/issue10272
-                    if isinstance(exc, SSLError) and "timed out" in str(exc):
-                        raise socket.timeout()
-                    if get_errno(exc) not in _UNAVAIL:
-                        self.connected = False
-                    _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
-                    raise
+                read_frame_buffer = BytesIO()
+                frame_header = memoryview(bytearray(8))
+                time_start = time.time()
+                read_frame_buffer.write(self._read(8, buffer=frame_header, initial=True))
+                time_end = time.time()
+                # _LOGGER.info(f"Time taken to read from socket: {time_end - time_start}")
+                time_start = time.time()
+                # print("Trying to parse frame header")
+                channel = struct.unpack(">H", frame_header[6:])[0]
+                size = frame_header[0:4]
+                if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
+                    # _LOGGER.info("Empty frame or AMQP header negotiation")
+                    self._incoming_queue.put((frame_header, channel, None))
+                    continue
+                size = struct.unpack(">I", size)[0]
+                offset = frame_header[4]
+                frame_type = frame_header[5]
+                time_end = time.time()
+                # _LOGGER.info(f"Time taken to parse frame header: {time_end - time_start}")
+                # >I is an unsigned int, but the argument to sock.recv is signed,
+                # so we know the size can be at most 2 * SIGNED_INT_MAX
+                payload_size = size - len(frame_header)
+                payload = memoryview(bytearray(payload_size))
+                if size > SIGNED_INT_MAX:
+                    read_frame_buffer.write(self._read(SIGNED_INT_MAX, buffer=payload))
+                    read_frame_buffer.write(
+                        self._read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:])
+                    )
+                else:
+                    read_frame_buffer.write(self._read(payload_size, buffer=payload))
+                offset -= 2
+                self._incoming_queue.put((frame_header, channel, payload[offset:]))
+            except (socket.timeout, TimeoutError) as k:
+                # _LOGGER.info(f"Socket timeout: {k}")
+                time_end = time.time()
+                # _LOGGER.info(f"Time to timeout: {time_end - time_start}")
+                read_frame_buffer.write(self._read_buffer.getvalue())
+                self._read_buffer = read_frame_buffer
+                self._read_buffer.seek(0)
+                #raise
+            except (OSError, IOError, SSLError, socket.error) as exc:
+                # Don't disconnect for ssl read time outs
+                # http://bugs.python.org/issue10272
+                if isinstance(exc, SSLError) and "timed out" in str(exc):
+                    raise socket.timeout()
+                if get_errno(exc) not in _UNAVAIL:
+                    self.connected = False
+                _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
+                raise
             #time.sleep(0.5)
+
+            print(f"INCOMING QUEUE SIZE: {self._incoming_queue.qsize()}")
+            print(f"OUTGOING QUEUE SIZE: {self._outgoing_queue.qsize()}")
+            if not self._incoming_queue.empty() and not self._negotiating:
+                print("CALL CALLBACK")
+                if self._recieve_callback:
+                    self._recieve_callback()
 
 
 
@@ -491,8 +499,10 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         with self.socket_lock:
             # lets stop the background loop
             while not self._outgoing_queue.empty():
+                print(f"thread: {threading.current_thread().name} waiting for outgoing queue to be empty")
+                print(f"OUTGOING QUEUE SIZE: {self._outgoing_queue.qsize()}")
                 _LOGGER.info("waiting for outgoing queue to be empty")
-                time.sleep(0.2)
+                time.sleep(0.02)
             self._run_io_loop = False
             self._io_loop.join()
             if self.sock is not None:
@@ -515,8 +525,8 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             self.connected = False
 
     def read(self, verify_frame_type=0):
-        
         frame_header, channel, payload = self._incoming_queue.get()
+        print(f"Got frame from queue: {frame_header}")
         size = frame_header[0:4]
         if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
             return frame_header, channel, None
@@ -536,22 +546,25 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         
 
     def write(self, s):
+        print(f"WRITE CALLED {threading.current_thread().name}")
         self._outgoing_queue.put(s)
 
     def receive_frame(self, **kwargs):
-        try:
-            time_start = time.time()
-            _LOGGER.info("trying to get a frame from the queue")
-            header, channel, payload = self.read(**kwargs)
-            time_end = time.time()
-            _LOGGER.info(f"Time taken to get a frame from the queue: {time_end - time_start}")
-            if not payload:
-                decoded = decode_empty_frame(header)
-            else:
-                decoded = decode_frame(payload)
-            return channel, decoded
-        except (socket.timeout, TimeoutError):
-            return None, None
+        # print(f'RECEIVE FRAME CALLED {threading.current_thread().name}')
+        with self._lock:
+            try:
+                time_start = time.time()
+                header, channel, payload = self.read(**kwargs)
+                print(f"finished read() with thread: {threading.current_thread().name}")
+                time_end = time.time()
+                if not payload:
+                    decoded = decode_empty_frame(header)
+                else:
+                    decoded = decode_frame(payload)
+                print(f"Time taken to decode frame: {time_end - time_start}")
+                return channel, decoded
+            except (socket.timeout, TimeoutError):
+                return None, None
 
     def send_frame(self, channel, frame, **kwargs):
         header, performative = encode_frame(frame, **kwargs)
@@ -644,6 +657,7 @@ class SSLTransport(_AbstractTransport):
         }
 
         context = ssl.SSLContext(ssl_version)
+        context.keylog_filename = "/home/llawrence/repos/azure-sdk-for-python/sdk/servicebus/azure-servicebus/keylog.txt"
 
         if ca_certs is not None:
             try:

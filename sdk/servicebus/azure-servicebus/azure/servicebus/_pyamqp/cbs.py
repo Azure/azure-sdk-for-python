@@ -90,6 +90,7 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
         self.state = CbsState.CLOSED
         self.auth_state = CbsAuthState.IDLE
+        self.auth_lock = RLock()
 
     def _put_token(self, token: str, token_type: str, audience: str, expires_on: Optional[datetime] = None) -> None:
         _LOGGER.debug(f"{threading.current_thread().name} - Put token: {token}, expires on: {expires_on}")
@@ -288,8 +289,6 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
     def handle_token(self) -> bool:  # pylint: disable=inconsistent-return-statements
         with self.auth_lock:
-            _LOGGER.debug(f"{threading.current_thread().name} - handle token")
-
             if not self._cbs_link_ready():
                 return False
             self._update_status()

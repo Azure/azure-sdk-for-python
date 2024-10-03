@@ -440,18 +440,19 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
     def _wait_for_response(self, wait, end_state):
         # type: (Union[bool, float], SessionState) -> None
         if wait is True:
-            self._connection.listen(wait=False)
-            while self.state != end_state:
-                time.sleep(self.idle_wait_time)
-                self._connection.listen(wait=False)
-        elif wait:
-            self._connection.listen(wait=False)
-            timeout = time.time() + wait
-            while self.state != end_state:
-                if time.time() >= timeout:
-                    break
-                time.sleep(self.idle_wait_time)
-                self._connection.listen(wait=False)
+            pass
+        #     self._connection.listen(wait=False)
+        #     while self.state != end_state:
+        #         time.sleep(self.idle_wait_time)
+        #         self._connection.listen(wait=False)
+        # elif wait:
+        #     self._connection.listen(wait=False)
+        #     timeout = time.time() + wait
+        #     while self.state != end_state:
+        #         if time.time() >= timeout:
+        #             break
+        #         time.sleep(self.idle_wait_time)
+        #         self._connection.listen(wait=False)
 
     def begin(self, wait=False):
         self._outgoing_begin()

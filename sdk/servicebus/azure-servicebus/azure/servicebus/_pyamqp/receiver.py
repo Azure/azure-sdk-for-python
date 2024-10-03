@@ -89,14 +89,14 @@ class ReceiverLink(Link):
                 )
 
     def _wait_for_response(self, wait: Union[bool, float]) -> None:
-        if wait is True:
-            self._session._connection.listen(wait=False) # pylint: disable=protected-access
-            if self.state == LinkState.ERROR:
-                if self._error:
-                    raise self._error
-        elif wait:
-            self._session._connection.listen(wait=wait) # pylint: disable=protected-access
-            if self.state == LinkState.ERROR:
+        # if wait is True:
+        #     self._session._connection.listen(wait=False) # pylint: disable=protected-access
+        #     if self.state == LinkState.ERROR:
+        #         if self._error:
+        #             raise self._error
+        # elif wait:
+        #     self._session._connection.listen(wait=wait) # pylint: disable=protected-access
+        #     if self.state == LinkState.ERROR:
                 if self._error:
                     raise self._error
 

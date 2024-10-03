@@ -232,18 +232,18 @@ class AMQPClient(
         """
         self.close()
 
-    def _keep_alive(self):
-        start_time = time.time()
-        try:
-            while self._connection and not self._shutdown:
-                current_time = time.time()
-                elapsed_time = current_time - start_time
-                if elapsed_time >= self._keep_alive_interval:
-                    self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
-                    start_time = current_time
-                time.sleep(1)
-        except Exception as e:  # pylint: disable=broad-except
-            _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
+    # def _keep_alive(self):
+    #     start_time = time.time()
+        # try:
+        #     while self._connection and not self._shutdown:
+        #         current_time = time.time()
+        #         elapsed_time = current_time - start_time
+        #         if elapsed_time >= self._keep_alive_interval:
+        #             self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
+        #             start_time = current_time
+        #         time.sleep(1)
+        # except Exception as e:  # pylint: disable=broad-except
+        #     _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
 
     def _client_ready(self):
         """Determine whether the client is ready to start sending and/or
@@ -257,7 +257,7 @@ class AMQPClient(
 
     def _client_run(self, **kwargs):
         """Perform a single Connection iteration."""
-        self._connection.listen(wait=self._socket_timeout, **kwargs)
+        # self._connection.listen(wait=self._socket_timeout, **kwargs)
 
     def _close_link(self):
         if self._link and not self._link._is_closed:  # pylint: disable=protected-access
@@ -337,10 +337,10 @@ class AMQPClient(
                 outgoing_window=self._outgoing_window,
             )
             self._session.begin()
-        if self._keep_alive_interval:
-            self._keep_alive_thread = threading.Thread(target=self._keep_alive)
-            self._keep_alive_thread.daemon = True
-            self._keep_alive_thread.start()
+        # if self._keep_alive_interval:
+        #     self._keep_alive_thread = threading.Thread(target=self._keep_alive)
+        #     self._keep_alive_thread.daemon = True
+        #     self._keep_alive_thread.start()
         if self._auth.auth_type == AUTH_TYPE_CBS:
             self._cbs_authenticator = CBSAuthenticator(
                 session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
@@ -391,7 +391,8 @@ class AMQPClient(
         :rtype: bool
         """
         if self._cbs_authenticator and not self._cbs_authenticator.handle_token():
-            self._connection.listen(wait=self._socket_timeout)
+            # self._connection.listen(wait=self._socket_timeout)
+            # time.sleep(1)
             return False
         return True
 
@@ -407,10 +408,10 @@ class AMQPClient(
         if not self.auth_complete():
             return False
         if not self._client_ready():
-            try:
-                self._connection.listen(wait=self._socket_timeout)
-            except ValueError:
-                return True
+            # try:
+            #     self._connection.listen(wait=self._socket_timeout)
+            # except ValueError:
+            #     return True
             return False
         return True
 
@@ -471,7 +472,8 @@ class AMQPClient(
             time.sleep(0.05)
 
         while not mgmt_link.ready():
-            self._connection.listen(wait=False)
+            time.sleep(1)
+        #     self._connection.listen(wait=False)
         operation_type = operation_type or b"empty"
         status, description, response = mgmt_link.execute(
             message, operation=operation, operation_type=operation_type, timeout=timeout
@@ -615,7 +617,7 @@ class SendClient(AMQPClient):
         :rtype: bool
         """
         self._link.update_pending_deliveries()
-        self._connection.listen(wait=self._socket_timeout, **kwargs)
+        # self._connection.listen(wait=self._socket_timeout, **kwargs)
         return True
 
     def _transfer_message(self, message_delivery, timeout=0):
@@ -643,10 +645,12 @@ class SendClient(AMQPClient):
         message_delivery.error = error
 
     def _on_send_complete(self, message_delivery, reason, state):
+        print("On send complete")
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:
                 message_delivery.state = MessageDeliveryState.Ok
+                print("Okay")
             else:
                 try:
                     error_info = state[SEND_DISPOSITION_REJECT]
@@ -684,7 +688,7 @@ class SendClient(AMQPClient):
         running = True
         while message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             # running = self.do_work()
-            print("sleep called")
+            print(f"sleep called {message_delivery.state}")
             time.sleep(1)
             print("sleep done")
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
@@ -871,7 +875,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         try:
             if self._link.total_link_credit <= 0:
                 self._link.flow(link_credit=self._link_credit)
-            self._connection.listen(wait=self._socket_timeout, **kwargs)
+            # self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
             self._shutdown = True

@@ -166,6 +166,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 custom_endpoint=custom_endpoint,
                 socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
+                recieve_callback=self._read_frame,
                 **kwargs
             )
         else:
@@ -174,6 +175,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 transport_type=self._transport_type,
                 socket_timeout=self._socket_timeout,
                 network_trace_params=self._network_trace_params,
+                recieve_callback=self._read_frame,
                 **kwargs)
         self._max_frame_size: int = max_frame_size
         self._remote_max_frame_size: Optional[int] = None
@@ -199,6 +201,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._outgoing_endpoints: Dict[int, Session] = {}
         self._incoming_endpoints: Dict[int, Session] = {}
         self._lock = threading.RLock()
+        self._outgoing_lock = threading.Lock()
+        self._incoming_lock = threading.Lock()
 
     def __enter__(self) -> "Connection":
         self.open()
@@ -211,9 +215,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         """Update the connection state.
         :param ~pyamqp.constants.ConnectionState new_state: The new state of the connection.
         """
+        
+        if new_state is None:
+            return
         with self._lock:
-            if new_state is None:
-                return
             previous_state = self.state
             self.state = new_state
             _LOGGER.info(
@@ -222,8 +227,11 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 new_state,
                 extra=self._network_trace_params
             )
+            print("set state")
+            print(f"thread: {threading.current_thread().name}")
             for session in self._outgoing_endpoints.values():
                 session._on_connection_state_change()  # pylint:disable=protected-access
+            print("set state done")
 
     def _connect(self) -> None:
         """Initiate the connection.
@@ -263,11 +271,13 @@ class Connection:  # pylint:disable=too-many-instance-attributes
 
     def _disconnect(self) -> None:
         """Disconnect the transport and set state to END."""
-        with self._lock:
-            if self.state == ConnectionState.END:
-                return
-            self._set_state(ConnectionState.END)
-            self._transport.close()
+        # with self._lock:
+        if self.state == ConnectionState.END:
+            return
+        self._set_state(ConnectionState.END)
+        print("close this won't exit until all close frames have been sent")
+        self._transport.close()
+        print("close done")
 
     def _can_read(self) -> bool:
         """Whether the connection is in a state where it is legal to read for incoming frames.
@@ -289,16 +299,20 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :returns: A tuple with the incoming channel number, and the frame in the form or a tuple of performative
          descriptor and field values.
         """
-        _LOGGER.debug("%s - Reading frame", threading.current_thread().name, extra=self._network_trace_params)
-        # Since we use `sock.settimeout()` in the transport for reading/writing, that acts as a
-        # "block with timeout" when we pass in a timeout value. If `wait` is float value, then
-        # timeout was set during socket init.
-        if wait is not True:    # wait is float/int/False
-            new_frame = self._transport.receive_frame(**kwargs)
-        else:
-            #with self._transport.block():
-            new_frame = self._transport.receive_frame(**kwargs)
-        return self._process_incoming_frame(*new_frame)
+        print(f"self locked owned by {self._lock._is_owned()}")
+        print(f"{threading.current_thread().name} - IN READ FRAME")
+        with self._incoming_lock:
+            _LOGGER.debug("%s - IN READ FRAME", threading.current_thread().name, extra=self._network_trace_params)
+            # Since we use `sock.settimeout()` in the transport for reading/writing, that acts as a
+            # "block with timeout" when we pass in a timeout value. If `wait` is float value, then
+            # timeout was set during socket init.
+            if wait is not True:    # wait is float/int/False
+                new_frame = self._transport.receive_frame(**kwargs)
+            else:
+                #with self._transport.block():
+                new_frame = self._transport.receive_frame(**kwargs)
+            print(f"new_frame: {new_frame}")
+            return self._process_incoming_frame(*new_frame)
 
     def _can_write(self) -> bool:
         """Whether the connection is in a state where it is legal to write outgoing frames.
@@ -317,6 +331,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         if self._error:
             raise self._error
 
+        # with self._lock:
         if self._can_write():
             try:
                 self._last_frame_sent_time = time.time()
@@ -501,6 +516,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :param int channel: The incoming channel number.
         :param tuple frame: The incoming Close frame.
         """
+        print("incoming close")
+        # with self._lock:
         if self._network_trace:
             _LOGGER.debug("<- %r", CloseFrame(*frame), extra=self._network_trace_params)
         disconnect_states = [
@@ -522,6 +539,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
             )
             close_error = AMQPError(condition=ErrorCondition.InvalidField, description="Invalid channel", info=None)
 
+      
         self._set_state(ConnectionState.CLOSE_RCVD)
         self._outgoing_close(error=close_error)
         self._disconnect()
@@ -609,62 +627,62 @@ class Connection:  # pylint:disable=too-many-instance-attributes
          incoming frame has altered the state. If `True` is returned, the state has changed and the batch
          should be interrupted.
         """
-        _LOGGER.debug("%s - Processing incoming frame", threading.current_thread().name, extra=self._network_trace_params)
-        print("INCOMING FRAME")
-        with self._lock:
-            try:
-                performative, fields = cast(Union[bytes, Tuple], frame)
-            except TypeError:
-                return True  # Empty Frame or socket timeout
-            fields = cast(Tuple[Any, ...], fields)
-            try:
-                self._last_frame_received_time = time.time()
-                if performative == 20:
-                    self._incoming_endpoints[channel]._incoming_transfer(  # pylint:disable=protected-access
-                        fields
-                    )
-                    return False
-                if performative == 21:
-                    self._incoming_endpoints[channel]._incoming_disposition(  # pylint:disable=protected-access
-                        fields
-                    )
-                    return False
-                if performative == 19:
-                    self._incoming_endpoints[channel]._incoming_flow(  # pylint:disable=protected-access
-                        fields
-                    )
-                    return False
-                if performative == 18:
-                    self._incoming_endpoints[channel]._incoming_attach(  # pylint:disable=protected-access
-                        fields
-                    )
-                    return False
-                if performative == 22:
-                    self._incoming_endpoints[channel]._incoming_detach(  # pylint:disable=protected-access
-                        fields
-                    )
-                    return True
-                if performative == 17:
-                    self._incoming_begin(channel, fields)
-                    return True
-                if performative == 23:
-                    self._incoming_end(channel, fields)
-                    return True
-                if performative == 16:
-                    self._incoming_open(channel, fields)
-                    return True
-                if performative == 24:
-                    self._incoming_close(channel, fields)
-                    return True
-                if performative == 0:
-                    self._incoming_header(channel, cast(bytes, fields))
-                    return True
-                if performative == 1:
-                    return False
-                _LOGGER.error("Unrecognized incoming frame: %r", frame, extra=self._network_trace_params)
+        # _LOGGER.debug("%s - Processing incoming frame", threading.current_thread().name, extra=self._network_trace_params)
+        # print("INCOMING FRAME")
+        # with self._incoming_lock:
+        try:
+            performative, fields = cast(Union[bytes, Tuple], frame)
+        except TypeError:
+            return True  # Empty Frame or socket timeout
+        fields = cast(Tuple[Any, ...], fields)
+        try:
+            self._last_frame_received_time = time.time()
+            if performative == 20:
+                self._incoming_endpoints[channel]._incoming_transfer(  # pylint:disable=protected-access
+                    fields
+                )
+                return False
+            if performative == 21:
+                self._incoming_endpoints[channel]._incoming_disposition(  # pylint:disable=protected-access
+                    fields
+                )
+                return False
+            if performative == 19:
+                self._incoming_endpoints[channel]._incoming_flow(  # pylint:disable=protected-access
+                    fields
+                )
+                return False
+            if performative == 18:
+                self._incoming_endpoints[channel]._incoming_attach(  # pylint:disable=protected-access
+                    fields
+                )
+                return False
+            if performative == 22:
+                self._incoming_endpoints[channel]._incoming_detach(  # pylint:disable=protected-access
+                    fields
+                )
                 return True
-            except KeyError:
-                return True  # TODO: channel error
+            if performative == 17:
+                self._incoming_begin(channel, fields)
+                return True
+            if performative == 23:
+                self._incoming_end(channel, fields)
+                return True
+            if performative == 16:
+                self._incoming_open(channel, fields)
+                return True
+            if performative == 24:
+                self._incoming_close(channel, fields)
+                return True
+            if performative == 0:
+                self._incoming_header(channel, cast(bytes, fields))
+                return True
+            if performative == 1:
+                return False
+            _LOGGER.error("Unrecognized incoming frame: %r", frame, extra=self._network_trace_params)
+            return True
+        except KeyError:
+            return True  # TODO: channel error
 
     def _process_outgoing_frame(self, channel: int, frame) -> None:
         """Send an outgoing frame if the connection is in a legal state.
@@ -675,10 +693,10 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :rtype: None
         :raises ValueError: If the connection is not open or not in a valid state.
         """
-        import threading
-        _LOGGER.debug("%s - Processing outgoing frame", threading.current_thread().name, extra=self._network_trace_params)
-        print("OUTGOING FRAME")
-        with self._lock:
+        # import threading
+        # _LOGGER.debug("%s - Processing outgoing frame", threading.current_thread().name, extra=self._network_trace_params)
+        # print("OUTGOING FRAME")
+        with self._outgoing_lock:
             if not self._allow_pipelined_open and self.state in [
                 ConnectionState.OPEN_PIPE,
                 ConnectionState.OPEN_SENT,
@@ -739,88 +757,20 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         :param ConnectionState end_state: The desired end state to wait until.
         :rtype: None
         """
-        if wait is True:
-            self.listen(wait=False)
-            while self.state != end_state:
-                time.sleep(self._idle_wait_time)
-                self.listen(wait=False)
-        elif wait:
-            self.listen(wait=False)
-            timeout = time.time() + wait
-            while self.state != end_state:
-                if time.time() >= timeout:
-                    break
-                time.sleep(self._idle_wait_time)
-                self.listen(wait=False)
+        # if wait is True:
+        #     self.listen(wait=False)
+        #     while self.state != end_state:
+        #         time.sleep(self._idle_wait_time)
+        #         self.listen(wait=False)
+        # elif wait:
+        #     self.listen(wait=False)
+        #     timeout = time.time() + wait
+        #     while self.state != end_state:
+        #         if time.time() >= timeout:
+        #             break
+        #         time.sleep(self._idle_wait_time)
+        #         self.listen(wait=False)
 
-    def listen(self, wait: Union[float, bool] = False, batch: int = 1, **kwargs: Any) -> None:
-        """Listen on the socket for incoming frames and process them.
-
-        :param wait: Whether to block on the socket until a frame arrives. If set to `True`, socket will
-         block indefinitely. Alternatively, if set to a time in seconds, the socket will block for at most
-         the specified timeout. Default value is `False`, where the socket will block for its configured read
-         timeout (by default 0.2 seconds).
-        :type wait: float or bool
-        :param int batch: The number of frames to attempt to read and process before returning. The default value
-         is 1, i.e. process frames one-at-a-time. A higher value should only be used when a receiver is established
-         and is processing incoming Transfer frames.
-        :rtype: None
-        """
-        if self._error:
-            raise self._error
-        with self._lock:
-            _LOGGER.debug("%s - Listening for incoming frames.", threading.current_thread().name, extra=self._network_trace_params)
-            try:
-                if self.state not in _CLOSING_STATES:
-                    now = time.time()
-                    if get_local_timeout(
-                        now,
-                        cast(float, self._idle_timeout),
-                        cast(float, self._last_frame_received_time),
-                    ) or self._get_remote_timeout(
-                        now
-                    ):
-                        _LOGGER.info(
-                            "No frame received for the idle timeout. Closing connection.",
-                            extra=self._network_trace_params
-                        )
-                        self.close(
-                            error=AMQPError(
-                                condition=ErrorCondition.ConnectionCloseForced,
-                                description="No frame received for the idle timeout.",
-                            ),
-                            wait=False,
-                        )
-                        return
-                print("not in timeout")
-                if self.state == ConnectionState.END:
-                    self._error = AMQPConnectionError(
-                        condition=ErrorCondition.ConnectionCloseForced, description="Connection was already closed."
-                    )
-                    print("not in end")
-                    return
-                print(f"batch: {batch}")
-                for _ in range(batch):
-                    if self._can_read():
-                        print("can read")
-                        if self._read_frame(wait=wait, **kwargs):
-                            print("read frame")
-                            break
-                    else:
-                        _LOGGER.info(
-                            "Connection cannot read frames in this state: %r",
-                            self.state,
-                            extra=self._network_trace_params
-                        )
-                        break
-            except (OSError, IOError, SSLError, socket.error) as exc:
-                self._error = AMQPConnectionError(
-                    ErrorCondition.SocketError,
-                    description="Can not read frame due to exception: " + str(exc),
-                    error=exc,
-                )
-            except Exception:  # pylint:disable=try-except-raise
-                raise
 
     def create_session(
             self,
