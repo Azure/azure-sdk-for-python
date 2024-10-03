@@ -6,15 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import ConnectionProperties
-from ._models import ConnectionPropertiesAADAuth
-from ._models import ConnectionPropertiesApiKeyAuth
-from ._models import ConnectionPropertiesSASAuth
-from ._models import ConnectionsListResponse
-from ._models import ConnectionsListSecretsResponse
-from ._models import CredentialsApiKeyAuth
+from ._models import AppInsightsConfiguration
+from ._models import Dataset
+from ._models import Evaluation
+from ._models import EvaluatorConfiguration
+from ._models import InputData
+from ._models import SystemData
+from ._models import UpdateEvaluationRequest
 from ._models import CredentialsSASAuth
-
 from ._enums import AuthenticationType
 from ._enums import EndpointType
 from ._patch import __all__ as _patch_all
@@ -22,13 +21,13 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ConnectionProperties",
-    "ConnectionPropertiesAADAuth",
-    "ConnectionPropertiesApiKeyAuth",
-    "ConnectionPropertiesSASAuth",
-    "ConnectionsListResponse",
-    "ConnectionsListSecretsResponse",
-    "CredentialsApiKeyAuth",
+    "AppInsightsConfiguration",
+    "Dataset",
+    "Evaluation",
+    "EvaluatorConfiguration",
+    "InputData",
+    "SystemData",
+    "UpdateEvaluationRequest",
     "CredentialsSASAuth",
     "AuthenticationType",
     "EndpointType",

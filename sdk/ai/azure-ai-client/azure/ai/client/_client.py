@@ -16,7 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import AssistantsOperations, EndpointsOperations, EvaluationsOperations
+from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,15 +28,20 @@ class Client:  # pylint: disable=client-accepts-api-version-keyword
 
     :ivar endpoints: EndpointsOperations operations
     :vartype endpoints: azure.ai.client.operations.EndpointsOperations
-    :ivar assistants: AssistantsOperations operations
-    :vartype assistants: azure.ai.client.operations.AssistantsOperations
+    :ivar agents: AgentsOperations operations
+    :vartype agents: azure.ai.client.operations.AgentsOperations
     :ivar evaluations: EvaluationsOperations operations
     :vartype evaluations: azure.ai.client.operations.EvaluationsOperations
-    :param subscription_id: The ID of the target subscription. Required.
+    :param host_name: The Azure AI Studio project host name, in the format
+     ``<azure-region>.api.azureml.ms`` or ``<private-link-guid>.<azure-region>.api.azureml.ms``\\\\
+     , where :code:`<azure-region>` is the Azure region where the project is deployed (e.g. westus)
+     and :code:`<private-link-guid>` is the GUID of the Enterprise private link. Required.
+    :type host_name: str
+    :param subscription_id: The Azure subscription ID. Required.
     :type subscription_id: str
-    :param resource_group_name: The name of the Resource Group. Required.
+    :param resource_group_name: The name of the Azure Resource Group. Required.
     :type resource_group_name: str
-    :param workspace_name: The name of the workspace (Azure AI Studio hub). Required.
+    :param workspace_name: The name of the Azure AI Studio hub. Required.
     :type workspace_name: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -48,14 +53,16 @@ class Client:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(
         self,
+        host_name: str,
         subscription_id: str,
         resource_group_name: str,
         workspace_name: str,
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        _endpoint = "https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"  # pylint: disable=line-too-long
+        _endpoint = "https://{hostName}/{subscriptionId}/{resourceGroupName}/{workspaceName}"
         self._config = ClientConfiguration(
+            host_name=host_name,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
@@ -85,7 +92,7 @@ class Client:  # pylint: disable=client-accepts-api-version-keyword
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.endpoints = EndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.assistants = AssistantsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
@@ -108,6 +115,7 @@ class Client:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         path_format_arguments = {
+            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
             "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"

@@ -28,5 +28,5 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure OpenAI"""
     SERVERLESS = "Serverless"
     """Serverless API"""
-    AGENTS = "Agents"
-    """Agents"""
+    AGENT = "Agent"
+    """Agent"""

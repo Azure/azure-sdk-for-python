@@ -1,5 +1,4 @@
 
-"""
 # These are needed for SDK logging. You can ignore them.
 import sys
 import logging
@@ -7,7 +6,6 @@ logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 # End of logging setup
-"""
 
 import os
 from azure.ai.client import AzureAIClient
@@ -20,22 +18,24 @@ from azure.core.credentials import AzureKeyCredential
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HubName>;<ResourceGroup>;<AzureSubscriptionId>"
+# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    connection=os.environ["AI_STUDIO_PROJECT_CONNECTION_STRING"],
-    #logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging    
+    connection=os.environ["AI_CLIENT_CONNECTION_STRING"],
+    logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging    
 )
 
 # Or, you can create the Azure AI Client by giving all required parameters directly
+"""
 ai_client = AzureAIClient(
     credential=DefaultAzureCredential(),
-    subscription_id=os.environ["AZURE_SUBSCRIPTION"],
-    resource_group_name=os.environ["AZURE_RESOURCE_GROUP"],
-    workspace_name=os.environ["AI_STUDIO_HUB"],
-    #logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
+    host_name=os.environ["AI_CLIENT_HOST_NAME"],
+    subscription_id=os.environ["AI_CLIENT_SUBSCRIPTION_ID"],
+    resource_group_name=os.environ["AI_CLIENT_RESOURCE_GROUP_NAME"],
+    workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
+    logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
 )
-
+"""
 
 # You can list all endpoints of a particular "type", with or without their credentials:
 endpoints = ai_client.endpoints.list(
@@ -57,7 +57,7 @@ print(endpoint)
 
 # You can get an endpoint by its name:
 endpoint = ai_client.endpoints.get(
-    endpoint_name=os.environ["AI_STUDIO_CONNECTION_1"], # Required.
+    endpoint_name=os.environ["AI_CLIENT_ENDPOINT_NAME"], # Required.
     populate_secrets=True
 )
 print("====> Print properties of a particular endpoint:")

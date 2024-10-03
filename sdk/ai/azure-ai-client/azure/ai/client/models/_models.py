@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Literal, Mapping, TYPE_CHECKING, Union, overload
+import datetime
+from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
@@ -16,6 +17,86 @@ from ._enums import AuthenticationType
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+
+
+class InputData(_model_base.Model):
+    """Abstract data class.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AppInsightsConfiguration, Dataset
+
+
+    :ivar type: Discriminator property for InputData. Required. Default value is None.
+    :vartype type: str
+    :ivar id: Evaluation input data. Required.
+    :vartype id: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """Discriminator property for InputData. Required. Default value is None."""
+    id: str = rest_field()
+    """Evaluation input data. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        id: str,  # pylint: disable=redefined-builtin
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class AppInsightsConfiguration(InputData, discriminator="app_insights"):
+    """Data Source for Application Insight.
+
+
+    :ivar id: Evaluation input data. Required.
+    :vartype id: str
+    :ivar type: Required. Default value is "app_insights".
+    :vartype type: str
+    :ivar connection_string: Application Insight connection string. Required.
+    :vartype connection_string: str
+    :ivar query: Query to fetch data. Required.
+    :vartype query: str
+    """
+
+    type: Literal["app_insights"] = rest_discriminator(name="type")  # type: ignore
+    """Required. Default value is \"app_insights\"."""
+    connection_string: str = rest_field(name="connectionString")
+    """Application Insight connection string. Required."""
+    query: str = rest_field()
+    """Query to fetch data. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        connection_string: str,
+        query: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="app_insights", **kwargs)
+
 
 class ConnectionProperties(_model_base.Model):
     """to do.
@@ -34,23 +115,6 @@ class ConnectionProperties(_model_base.Model):
     """Authentication type of the connection target. Required. Known values are: \"ApiKey\", \"AAD\",
      and \"SAS\"."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        auth_type: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
 
 class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     """Connection properties for connections with AAD authentication (aka ``Entra ID passthrough``\\
@@ -60,8 +124,8 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     :ivar auth_type: Authentication type of the connection target. Required. Entra ID
      authentication
     :vartype auth_type: str or ~azure.ai.client.models.AAD
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
-     "Serverless".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", and "Agent".
     :vartype category: str or ~azure.ai.client.models.EndpointType
     :ivar target: to do. Required.
     :vartype target: str
@@ -69,28 +133,11 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
 
     auth_type: Literal[AuthenticationType.AAD] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. Entra ID authentication"""
-    category: Union[str, "_models.EndpointType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
+    category: Union[str, "_models._enums.EndpointType"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\", and
+     \"Agent\"."""
     target: str = rest_field()
     """to do. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        category: Union[str, "_models.EndpointType"],
-        target: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, auth_type=AuthenticationType.AAD, **kwargs)
 
 
 class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey"):
@@ -99,42 +146,24 @@ class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey
 
     :ivar auth_type: Authentication type of the connection target. Required. API Key authentication
     :vartype auth_type: str or ~azure.ai.client.models.API_KEY
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
-     "Serverless".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", and "Agent".
     :vartype category: str or ~azure.ai.client.models.EndpointType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
-    :vartype credentials: ~azure.ai.client.models.CredentialsApiKeyAuth
+    :vartype credentials: ~azure.ai.client.models._models.CredentialsApiKeyAuth
     :ivar target: to do. Required.
     :vartype target: str
     """
 
     auth_type: Literal[AuthenticationType.API_KEY] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. API Key authentication"""
-    category: Union[str, "_models.EndpointType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
-    credentials: "_models.CredentialsApiKeyAuth" = rest_field()
+    category: Union[str, "_models._enums.EndpointType"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\", and
+     \"Agent\"."""
+    credentials: "_models._models.CredentialsApiKeyAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
     target: str = rest_field()
     """to do. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        category: Union[str, "_models.EndpointType"],
-        credentials: "_models.CredentialsApiKeyAuth",
-        target: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, auth_type=AuthenticationType.API_KEY, **kwargs)
 
 
 class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
@@ -144,11 +173,11 @@ class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
     :ivar auth_type: Authentication type of the connection target. Required. Shared Access
      Signature (SAS) authentication
     :vartype auth_type: str or ~azure.ai.client.models.SAS
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
-     "Serverless".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
+     "Serverless", and "Agent".
     :vartype category: str or ~azure.ai.client.models.EndpointType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
-    :vartype credentials: ~azure.ai.client.models.CredentialsSASAuth
+    :vartype credentials: ~azure.ai.client.models._models.CredentialsSASAuth
     :ivar target: to do. Required.
     :vartype target: str
     """
@@ -156,31 +185,13 @@ class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
     auth_type: Literal[AuthenticationType.SAS] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. Shared Access Signature (SAS)
      authentication"""
-    category: Union[str, "_models.EndpointType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
-    credentials: "_models.CredentialsSASAuth" = rest_field()
+    category: Union[str, "_models._enums.EndpointType"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\", and
+     \"Agent\"."""
+    credentials: "_models._models.CredentialsSASAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
     target: str = rest_field()
     """to do. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        category: Union[str, "_models.EndpointType"],
-        credentials: "_models.CredentialsSASAuth",
-        target: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, auth_type=AuthenticationType.SAS, **kwargs)
 
 
 class ConnectionsListResponse(_model_base.Model):
@@ -188,28 +199,11 @@ class ConnectionsListResponse(_model_base.Model):
 
 
     :ivar value: to do. Required.
-    :vartype value: list[~azure.ai.client.models.ConnectionsListSecretsResponse]
+    :vartype value: list[~azure.ai.client.models._models.ConnectionsListSecretsResponse]
     """
 
-    value: List["_models.ConnectionsListSecretsResponse"] = rest_field()
+    value: List["_models._models.ConnectionsListSecretsResponse"] = rest_field()
     """to do. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: List["_models.ConnectionsListSecretsResponse"],
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class ConnectionsListSecretsResponse(_model_base.Model):
@@ -219,31 +213,13 @@ class ConnectionsListSecretsResponse(_model_base.Model):
     :ivar name: The name of the resource. Required.
     :vartype name: str
     :ivar properties: The properties of the resource. Required.
-    :vartype properties: ~azure.ai.client.models.ConnectionProperties
+    :vartype properties: ~azure.ai.client.models._models.ConnectionProperties
     """
 
     name: str = rest_field()
     """The name of the resource. Required."""
-    properties: "_models.ConnectionProperties" = rest_field()
+    properties: "_models._models.ConnectionProperties" = rest_field()
     """The properties of the resource. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        properties: "_models.ConnectionProperties",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class CredentialsApiKeyAuth(_model_base.Model):
@@ -257,11 +233,112 @@ class CredentialsApiKeyAuth(_model_base.Model):
     key: str = rest_field()
     """to do. Required."""
 
+
+class CredentialsSASAuth(_model_base.Model):
+    """to do.
+
+
+    :ivar sas: to do. Required.
+    :vartype sas: str
+    """
+
+    sas: str = rest_field(name="SAS")
+    """to do. Required."""
+
+
+class Dataset(InputData, discriminator="dataset"):
+    """Dataset as source for evaluation.
+
+
+    :ivar id: Evaluation input data. Required.
+    :vartype id: str
+    :ivar type: Required. Default value is "dataset".
+    :vartype type: str
+    """
+
+    type: Literal["dataset"] = rest_discriminator(name="type")  # type: ignore
+    """Required. Default value is \"dataset\"."""
+
     @overload
     def __init__(
         self,
         *,
-        key: str,
+        id: str,  # pylint: disable=redefined-builtin
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="dataset", **kwargs)
+
+
+class Evaluation(_model_base.Model):
+    """Evaluation Definition.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar id: Identifier of the evaluation.
+    :vartype id: str
+    :ivar data: Data for evaluation. Required.
+    :vartype data: ~azure.ai.client.models.InputData
+    :ivar display_name: Update stage to 'Archive' to archive the asset. Default is Development,
+     which means the asset is under development.
+    :vartype display_name: str
+    :ivar description: Description of the evaluation. It can be used to store additional
+     information about the evaluation and is mutable.
+    :vartype description: str
+    :ivar system_data: Metadata containing createdBy and modifiedBy information.
+    :vartype system_data: ~azure.ai.client.models.SystemData
+    :ivar status: Status of the evaluation. It is set by service and is read-only.
+    :vartype status: str
+    :ivar tags: Evaluation's tags. Unlike properties, tags are fully mutable.
+    :vartype tags: dict[str, str]
+    :ivar properties: Evaluation's properties. Unlike tags, properties are add-only. Once added, a
+     property cannot be removed.
+    :vartype properties: dict[str, str]
+    :ivar evaluators: Evaluators to be used for the evaluation. Required.
+    :vartype evaluators: dict[str, ~azure.ai.client.models.EvaluatorConfiguration]
+    """
+
+    id: Optional[str] = rest_field()
+    """Identifier of the evaluation."""
+    data: "_models.InputData" = rest_field()
+    """Data for evaluation. Required."""
+    display_name: Optional[str] = rest_field(name="displayName")
+    """Update stage to 'Archive' to archive the asset. Default is Development, which means the asset
+     is under development."""
+    description: Optional[str] = rest_field()
+    """Description of the evaluation. It can be used to store additional information about the
+     evaluation and is mutable."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Metadata containing createdBy and modifiedBy information."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Status of the evaluation. It is set by service and is read-only."""
+    tags: Optional[Dict[str, str]] = rest_field()
+    """Evaluation's tags. Unlike properties, tags are fully mutable."""
+    properties: Optional[Dict[str, str]] = rest_field()
+    """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
+     removed."""
+    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field()
+    """Evaluators to be used for the evaluation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: "_models.InputData",
+        evaluators: Dict[str, "_models.EvaluatorConfiguration"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, str]] = None,
     ): ...
 
     @overload
@@ -275,22 +352,99 @@ class CredentialsApiKeyAuth(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CredentialsSASAuth(_model_base.Model):
-    """to do.
+class EvaluatorConfiguration(_model_base.Model):
+    """Evaluator Configuration.
 
 
-    :ivar sas: to do. Required.
-    :vartype sas: str
+    :ivar id: Identifier of the evaluator. Required.
+    :vartype id: str
+    :ivar init_params: Initialization parameters of the evaluator.
+    :vartype init_params: dict[str, any]
+    :ivar data_mapping: Data parameters of the evaluator.
+    :vartype data_mapping: dict[str, str]
     """
 
-    sas: str = rest_field(name="SAS")
-    """to do. Required."""
+    id: str = rest_field()
+    """Identifier of the evaluator. Required."""
+    init_params: Optional[Dict[str, Any]] = rest_field(name="initParams")
+    """Initialization parameters of the evaluator."""
+    data_mapping: Optional[Dict[str, str]] = rest_field(name="dataMapping")
+    """Data parameters of the evaluator."""
 
     @overload
     def __init__(
         self,
         *,
-        sas: str,
+        id: str,  # pylint: disable=redefined-builtin
+        init_params: Optional[Dict[str, Any]] = None,
+        data_mapping: Optional[Dict[str, str]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class SystemData(_model_base.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar created_at: The timestamp the resource was created at.
+    :vartype created_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The identity type that created the resource.
+    :vartype created_by_type: str
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """The timestamp the resource was created at."""
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """The identity that created the resource."""
+    created_by_type: Optional[str] = rest_field(name="createdByType", visibility=["read"])
+    """The identity type that created the resource."""
+    last_modified_at: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedAt", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp of resource last modification (UTC)."""
+
+
+class UpdateEvaluationRequest(_model_base.Model):
+    """Update Evaluation Request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar tags: Tags to be updated. Required.
+    :vartype tags: dict[str, str]
+    :ivar display_name: Display Name. Required.
+    :vartype display_name: str
+    :ivar description: Description. Required.
+    :vartype description: str
+    """
+
+    tags: Dict[str, str] = rest_field()
+    """Tags to be updated. Required."""
+    display_name: str = rest_field(name="displayName")
+    """Display Name. Required."""
+    description: str = rest_field()
+    """Description. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Dict[str, str],
+        display_name: str,
+        description: str,
     ): ...
 
     @overload

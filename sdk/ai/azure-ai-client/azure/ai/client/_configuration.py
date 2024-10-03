@@ -23,11 +23,16 @@ class ClientConfiguration:  # pylint: disable=too-many-instance-attributes
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param subscription_id: The ID of the target subscription. Required.
+    :param host_name: The Azure AI Studio project host name, in the format
+     ``<azure-region>.api.azureml.ms`` or ``<private-link-guid>.<azure-region>.api.azureml.ms``\\ ,
+     where :code:`<azure-region>` is the Azure region where the project is deployed (e.g. westus)
+     and :code:`<private-link-guid>` is the GUID of the Enterprise private link. Required.
+    :type host_name: str
+    :param subscription_id: The Azure subscription ID. Required.
     :type subscription_id: str
-    :param resource_group_name: The name of the Resource Group. Required.
+    :param resource_group_name: The name of the Azure Resource Group. Required.
     :type resource_group_name: str
-    :param workspace_name: The name of the workspace (Azure AI Studio hub). Required.
+    :param workspace_name: The name of the Azure AI Studio hub. Required.
     :type workspace_name: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
@@ -39,6 +44,7 @@ class ClientConfiguration:  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
+        host_name: str,
         subscription_id: str,
         resource_group_name: str,
         workspace_name: str,
@@ -47,6 +53,8 @@ class ClientConfiguration:  # pylint: disable=too-many-instance-attributes
     ) -> None:
         api_version: str = kwargs.pop("api_version", "2024-07-01-preview")
 
+        if host_name is None:
+            raise ValueError("Parameter 'host_name' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if resource_group_name is None:
@@ -56,6 +64,7 @@ class ClientConfiguration:  # pylint: disable=too-many-instance-attributes
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
+        self.host_name = host_name
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
         self.workspace_name = workspace_name

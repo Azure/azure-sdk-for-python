@@ -9,7 +9,8 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterable, List, Optional, Type, TypeVar, Union, overload
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -21,6 +22,7 @@ from azure.core.exceptions import (
     StreamConsumedError,
     map_error,
 )
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
@@ -89,6 +91,113 @@ def build_endpoints_list_secrets_request(connection_name_in_url: str, **kwargs: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_evaluations_evaluations_get_request(  # pylint: disable=name-too-long
+    id: str, *, api_version: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluations/{id}"
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluations_evaluations_create_request(  # pylint: disable=name-too-long
+    *, api_version: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluations/create"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluations_evaluations_list_request(  # pylint: disable=name-too-long
+    *,
+    api_version: str,
+    top: Optional[int] = None,
+    skip: Optional[int] = None,
+    maxpagesize: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluations"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluations_evaluations_update_request(  # pylint: disable=name-too-long
+    id: str, *, api_version: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluations/{id}"
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 class EndpointsOperations:
     """
     .. warning::
@@ -107,11 +216,11 @@ class EndpointsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def _list(self, **kwargs: Any) -> _models.ConnectionsListResponse:
+    def _list(self, **kwargs: Any) -> _models._models.ConnectionsListResponse:  # pylint: disable=protected-access
         """List the details of all the connections (not including their credentials).
 
         :return: ConnectionsListResponse. The ConnectionsListResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.client.models.ConnectionsListResponse
+        :rtype: ~azure.ai.client.models._models.ConnectionsListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
@@ -125,7 +234,9 @@ class EndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ConnectionsListResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ConnectionsListResponse] = kwargs.pop(  # pylint: disable=protected-access
+            "cls", None
+        )
 
         _request = build_endpoints_list_request(
             api_version=self._config.api_version,
@@ -133,6 +244,7 @@ class EndpointsOperations:
             params=_params,
         )
         path_format_arguments = {
+            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
             "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
@@ -160,7 +272,9 @@ class EndpointsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ConnectionsListResponse, response.json())
+            deserialized = _deserialize(
+                _models._models.ConnectionsListResponse, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -168,26 +282,11 @@ class EndpointsOperations:
         return deserialized  # type: ignore
 
     @overload
-    def _list_secrets(
+    def _list_secrets(  # pylint: disable=protected-access
         self, connection_name_in_url: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ConnectionsListSecretsResponse:
-        """Get the details of a single connection, including credential (if available).
-
-        :param connection_name_in_url: Connection Name. Required.
-        :type connection_name_in_url: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ConnectionsListSecretsResponse. The ConnectionsListSecretsResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.client.models.ConnectionsListSecretsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
-    def _list_secrets(
+    def _list_secrets(  # pylint: disable=protected-access
         self,
         connection_name_in_url: str,
         *,
@@ -198,52 +297,14 @@ class EndpointsOperations:
         api_version_in_body: str,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ConnectionsListSecretsResponse:
-        """Get the details of a single connection, including credential (if available).
-
-        :param connection_name_in_url: Connection Name. Required.
-        :type connection_name_in_url: str
-        :keyword connection_name: Connection Name (should be the same as the connection name in the URL
-         path). Required.
-        :paramtype connection_name: str
-        :keyword subscription_id: The ID of the target subscription. Required.
-        :paramtype subscription_id: str
-        :keyword resource_group_name: The name of the Resource Group. Required.
-        :paramtype resource_group_name: str
-        :keyword workspace_name: The name of the workspace (Azure AI Studio hub). Required.
-        :paramtype workspace_name: str
-        :keyword api_version_in_body: The api version. Required.
-        :paramtype api_version_in_body: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ConnectionsListSecretsResponse. The ConnectionsListSecretsResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.client.models.ConnectionsListSecretsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models._models.ConnectionsListSecretsResponse: ...
     @overload
-    def _list_secrets(
+    def _list_secrets(  # pylint: disable=protected-access
         self, connection_name_in_url: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ConnectionsListSecretsResponse:
-        """Get the details of a single connection, including credential (if available).
-
-        :param connection_name_in_url: Connection Name. Required.
-        :type connection_name_in_url: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ConnectionsListSecretsResponse. The ConnectionsListSecretsResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.client.models.ConnectionsListSecretsResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models._models.ConnectionsListSecretsResponse: ...
 
     @distributed_trace
-    def _list_secrets(
+    def _list_secrets(  # pylint: disable=protected-access
         self,
         connection_name_in_url: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -254,7 +315,7 @@ class EndpointsOperations:
         workspace_name: str = _Unset,
         api_version_in_body: str = _Unset,
         **kwargs: Any
-    ) -> _models.ConnectionsListSecretsResponse:
+    ) -> _models._models.ConnectionsListSecretsResponse:
         """Get the details of a single connection, including credential (if available).
 
         :param connection_name_in_url: Connection Name. Required.
@@ -274,7 +335,7 @@ class EndpointsOperations:
         :paramtype api_version_in_body: str
         :return: ConnectionsListSecretsResponse. The ConnectionsListSecretsResponse is compatible with
          MutableMapping
-        :rtype: ~azure.ai.client.models.ConnectionsListSecretsResponse
+        :rtype: ~azure.ai.client.models._models.ConnectionsListSecretsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
@@ -289,7 +350,9 @@ class EndpointsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ConnectionsListSecretsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models._models.ConnectionsListSecretsResponse] = kwargs.pop(  # pylint: disable=protected-access
+            "cls", None
+        )
 
         if body is _Unset:
             if connection_name is _Unset:
@@ -326,6 +389,7 @@ class EndpointsOperations:
             params=_params,
         )
         path_format_arguments = {
+            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
             "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
@@ -353,7 +417,9 @@ class EndpointsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ConnectionsListSecretsResponse, response.json())
+            deserialized = _deserialize(
+                _models._models.ConnectionsListSecretsResponse, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -361,14 +427,14 @@ class EndpointsOperations:
         return deserialized  # type: ignore
 
 
-class AssistantsOperations:
+class AgentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.client.Client`'s
-        :attr:`assistants` attribute.
+        :attr:`agents` attribute.
     """
 
     def __init__(self, *args, **kwargs):
@@ -395,3 +461,449 @@ class EvaluationsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+        self.evaluations = EvaluationsEvaluationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+
+
+class EvaluationsEvaluationsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.client.Client`'s
+        :attr:`evaluations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get(self, id: str, **kwargs: Any) -> _models.Evaluation:
+        """Get an evaluation.
+
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
+
+        _request = build_evaluations_evaluations_get_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Evaluation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create(
+        self, body: _models.Evaluation, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation:
+        """Creates an evaluation.
+
+        :param body: Properties of Evaluation. Required.
+        :type body: ~azure.ai.client.models.Evaluation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Evaluation:
+        """Creates an evaluation.
+
+        :param body: Properties of Evaluation. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Evaluation:
+        """Creates an evaluation.
+
+        :param body: Properties of Evaluation. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(self, body: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
+        """Creates an evaluation.
+
+        :param body: Properties of Evaluation. Is one of the following types: Evaluation, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.client.models.Evaluation or JSON or IO[bytes]
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluations_evaluations_create_request(
+            api_version=self._config.api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Evaluation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> Iterable["_models.Evaluation"]:
+        """List evaluations.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of Evaluation
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.client.models.Evaluation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[List[_models.Evaluation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_evaluations_evaluations_list_request(
+                    api_version=self._config.api_version,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                    ),
+                    "workspaceName": self._serialize.url(
+                        "self._config.workspace_name", self._config.workspace_name, "str"
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                    ),
+                    "workspaceName": self._serialize.url(
+                        "self._config.workspace_name", self._config.workspace_name, "str"
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Evaluation], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def update(
+        self, id: str, body: _models.UpdateEvaluationRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation:
+        """Update an evaluation.
+
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
+        :param body: Update evaluation request. Required.
+        :type body: ~azure.ai.client.models.UpdateEvaluationRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation:
+        """Update an evaluation.
+
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
+        :param body: Update evaluation request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation:
+        """Update an evaluation.
+
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
+        :param body: Update evaluation request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update(
+        self, id: str, body: Union[_models.UpdateEvaluationRequest, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.Evaluation:
+        """Update an evaluation.
+
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
+        :param body: Update evaluation request. Is one of the following types: UpdateEvaluationRequest,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.ai.client.models.UpdateEvaluationRequest or JSON or IO[bytes]
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluations_evaluations_update_request(
+            id=id,
+            api_version=self._config.api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Evaluation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

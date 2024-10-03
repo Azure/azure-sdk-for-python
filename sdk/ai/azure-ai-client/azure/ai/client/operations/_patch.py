@@ -7,20 +7,17 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Iterable
-#from zoneinfo import ZoneInfo
+
+# from zoneinfo import ZoneInfo
 from ._operations import EndpointsOperations as EndpointsOperationsGenerated
 from ..models._enums import AuthenticationType, EndpointType
 from ..models._models import ConnectionsListSecretsResponse, ConnectionsListResponse
 from ..models._patch import EndpointProperties
 
+
 class EndpointsOperations(EndpointsOperationsGenerated):
 
-    def get_default(
-        self,
-        *,
-        endpoint_type: EndpointType,
-        populate_secrets: bool = False
-    ) -> EndpointProperties:
+    def get_default(self, *, endpoint_type: EndpointType, populate_secrets: bool = False) -> EndpointProperties:
         if not endpoint_type:
             raise ValueError("You must specify an endpoint type")
         endpoint_properties_list = self.list(endpoint_type=endpoint_type, populate_secrets=populate_secrets)
@@ -30,13 +27,7 @@ class EndpointsOperations(EndpointsOperationsGenerated):
         else:
             return None
 
-
-    def get(
-        self,
-        *,
-        endpoint_name: str,
-        populate_secrets: bool = False
-    ) -> ConnectionsListSecretsResponse:
+    def get(self, *, endpoint_name: str, populate_secrets: bool = False) -> ConnectionsListSecretsResponse:
         if not endpoint_name:
             raise ValueError("Endpoint name cannot be empty")
         if populate_secrets:
@@ -52,13 +43,15 @@ class EndpointsOperations(EndpointsOperationsGenerated):
                 return EndpointProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from .._patch import SASTokenCredential
+
                 token_credential = SASTokenCredential(
                     sas_token=connection.properties.credentials.sas,
                     credential=self._config.credential,
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
                     workspace_name=self._config.workspace_name,
-                    connection_name=endpoint_name)
+                    connection_name=endpoint_name,
+                )
                 return EndpointProperties(connection=connection, token_credential=token_credential)
 
             return EndpointProperties(connection=connection)
@@ -70,10 +63,7 @@ class EndpointsOperations(EndpointsOperationsGenerated):
             return None
 
     def list(
-        self,
-        *,
-        endpoint_type: EndpointType | None = None,
-        populate_secrets: bool = False
+        self, *, endpoint_type: EndpointType | None = None, populate_secrets: bool = False
     ) -> Iterable[EndpointProperties]:
 
         # First make a REST call to /list to get all the connections, without secrets

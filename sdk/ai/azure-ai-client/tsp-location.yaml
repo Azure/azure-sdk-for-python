@@ -1,4 +1,4 @@
 directory: specification/ai/Azure.AI.Client
-commit: fa158c4ec75da8d4c5abb2aa3ca503372b465815
+commit: 5792edd5d87a7fae361e5bcc5852091e7bb4c264
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 
