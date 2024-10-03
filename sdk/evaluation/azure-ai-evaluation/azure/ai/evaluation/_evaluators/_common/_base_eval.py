@@ -4,7 +4,7 @@
 
 import inspect
 from abc import ABC
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, Union, final
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
@@ -269,9 +269,8 @@ class EvaluatorBase(ABC):
         # Otherwise, aggregate results.
         return self._aggregate_results(per_turn_results=per_turn_results)
 
-    # ~~~ METHODS THAT SHOULD NEVER BE OVERRIDDEN BY CHILDREN~~~
-
-    def _to_async(self):
+    @final
+    def _to_async(self) -> "AsyncEvaluatorBase":
         return self._async_evaluator
 
 
