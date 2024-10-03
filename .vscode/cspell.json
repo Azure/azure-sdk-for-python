@@ -1890,6 +1890,12 @@
         "deidentify",
         "deidentified"
       ]
+    },
+    {
+      "filename": "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/utils.py",
+      "words": [
+        "stringized"
+      ]
     }
   ],
   "allowCompoundWords": true
