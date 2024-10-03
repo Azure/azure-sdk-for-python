@@ -106,10 +106,10 @@ class AdversarialSimulator:
         api_call_retry_sleep_sec: int = 1,
         api_call_delay_sec: int = 0,
         concurrent_async_task: int = 3,
-        _jailbreak_type: Optional[str] = None,
         language: SupportedLanguages = SupportedLanguages.English,
         randomize_order: bool = True,
         randomization_seed: Optional[int] = None,
+        **kwargs,
     ):
         """
         Executes the adversarial simulation against a specified target function asynchronously.
@@ -216,6 +216,7 @@ class AdversarialSimulator:
                 total_tasks,
             )
         total_tasks = min(total_tasks, max_simulation_results)
+        _jailbreak_type = kwargs.get("_jailbreak_type", None)
         if _jailbreak_type:
             jailbreak_dataset = await self.rai_client.get_jailbreaks_dataset(type=_jailbreak_type)
         progress_bar = tqdm(
