@@ -27,6 +27,7 @@
 ### Other Changes
 
 - The Azure Core OpenTelemetry tracing plugin will now be the preferred tracing plugin over the OpenCensus plugin. If both plugins are installed and `opentelemetry` is imported, then OpenTelemetry will be used to trace Azure SDK operations.  #35050
+- Remove `six` as a dependency, as it's not used anymore in the code base.
 
 ## 1.30.2 (2024-06-06)
 
