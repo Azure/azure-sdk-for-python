@@ -10,6 +10,7 @@
 #### Bugs Fixed
 * Consolidated Container Properties Cache to be in the Client to cache partition key definition and container rid to avoid unnecessary container reads. See [PR 35731](https://github.com/Azure/azure-sdk-for-python/pull/35731)
 * Fixed SDK regex validation that would not allow for item ids to be longer than 255 characters. See [PR 36569](https://github.com/Azure/azure-sdk-for-python/pull/36569).
+* Fixed issue where 'NoneType' object has no attribute error was raised when a session retry happened during a query. See [PR 37578](https://github.com/Azure/azure-sdk-for-python/pull/37578).
 
 #### Other Changes
 * Getting offer thoughput when it has not been defined in a container will now give a 404/10004 instead of just a 404. See [PR 36043](https://github.com/Azure/azure-sdk-for-python/pull/36043)

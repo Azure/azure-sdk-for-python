@@ -4,24 +4,25 @@
 
 import json
 import logging
+import math
 import os
 import re
 
-import numpy as np
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
-from ...._common.utils import construct_prompty_model_config
+from ..._common.math import list_mean_nan_safe
+from ..._common.utils import construct_prompty_model_config
 
 logger = logging.getLogger(__name__)
 
 try:
-    from ...._user_agent import USER_AGENT
+    from .._user_agent import USER_AGENT
 except ImportError:
     USER_AGENT = None
 
 
-class _AsyncRetrievalChatEvaluator:
+class _AsyncRetrievalScoreEvaluator:
     # Constants must be defined within eval's directory to be save/loadable
     PROMPTY_FILE = "retrieval.prompty"
     LLM_CALL_TIMEOUT = 600
@@ -68,7 +69,7 @@ class _AsyncRetrievalChatEvaluator:
                 llm_output = await self._flow(
                     query=query, history=history, documents=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs
                 )
-                score = np.nan
+                score = math.nan
                 if llm_output:
                     parsed_score_response = re.findall(r"\d+", llm_output.split("# Result")[-1].strip())
                     if len(parsed_score_response) > 0:
@@ -81,10 +82,10 @@ class _AsyncRetrievalChatEvaluator:
                     "Evaluator %s failed for turn %s with exception: %s", self.__class__.__name__, turn_num + 1, e
                 )
 
-                per_turn_scores.append(np.nan)
+                per_turn_scores.append(math.nan)
 
         return {
-            "gpt_retrieval": np.nanmean(per_turn_scores),
+            "gpt_retrieval": list_mean_nan_safe(per_turn_scores),
             "evaluation_per_turn": {
                 "gpt_retrieval": {
                     "score": per_turn_scores,
@@ -93,7 +94,7 @@ class _AsyncRetrievalChatEvaluator:
         }
 
 
-class RetrievalChatEvaluator:
+class RetrievalEvaluator:
     """
     Initialize an evaluator configured for a specific Azure OpenAI model.
 
@@ -102,11 +103,12 @@ class RetrievalChatEvaluator:
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
+
     **Usage**
 
     .. code-block:: python
 
-        chat_eval = RetrievalChatEvaluator(model_config)
+        chat_eval = RetrievalScoreEvaluator(model_config)
         conversation = [
             {"role": "user", "content": "What is the value of 2 + 2?"},
             {"role": "assistant", "content": "2 + 2 = 4", "context": {
@@ -122,18 +124,18 @@ class RetrievalChatEvaluator:
 
     .. code-block:: python
 
-    {
-        "gpt_retrieval": 3.0
-        "evaluation_per_turn": {
-            "gpt_retrieval": {
-                "score": [1.0, 2.0, 3.0]
+        {
+            "gpt_retrieval": 3.0
+            "evaluation_per_turn": {
+                "gpt_retrieval": {
+                    "score": [1.0, 2.0, 3.0]
+                }
             }
         }
-    }
     """
 
     def __init__(self, model_config: dict):
-        self._async_evaluator = _AsyncRetrievalChatEvaluator(model_config)
+        self._async_evaluator = _AsyncRetrievalScoreEvaluator(model_config)
 
     def __call__(self, *, conversation, **kwargs):
         """Evaluates retrieval score chat scenario.
