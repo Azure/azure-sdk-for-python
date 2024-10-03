@@ -1,10 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# flake8: noqa
+# type: ignore
 import os
-from typing import Any
+from typing import Any, Dict
 from urllib.parse import urljoin, urlparse
-
+import json
+import asyncio
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client, get_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
@@ -162,3 +165,71 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             category=ErrorCategory.UNKNOWN,
             blame=ErrorBlame.USER_ERROR,
         )
+    
+    async def customize_first_turn(
+            self, 
+            *, 
+            template_key: str, 
+            personality: str,
+            application_scenario: str,
+            other_template_kwargs: Any = {},
+        ) -> Any:
+        token = self.token_manager.get_token()
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "User-Agent": USER_AGENT,
+        }
+        # TODO: change URL
+        json_payload = {
+            "url": "", # https://int.api.azureml-test.ms 
+            "headers": {
+                "Content-Type": "application/json", 
+            }, 
+            "json": '{"messages": [{"role": "system", "content": "{{ch_template_placeholder}}"}], "temperature": 0.0, "max_tokens": 1200, "n": 1, "frequency_penalty": 0, "presence_penalty": 0, "stop": ["<|im_end|>", "<|endoftext|>"]}', 
+            "params": {'api-version': '2023-07-01-preview'}, 
+            "templatekey": str(template_key), 
+            "templateParameters": {
+                "personality": str(personality),
+                "application_scenario": str(application_scenario),
+                **other_template_kwargs
+            },
+            "simulationType": "CustomPersona"
+        }
+        session = self._create_async_client()
+        async with session:
+            response = await session.post(
+                url="", # https://int.api.azureml-test.ms 
+                headers=headers, 
+                json=json_payload
+            )  # pylint: disable=unexpected-keyword-arg
+        
+        if response.status_code != 202:
+            raise HttpResponseError(
+                message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
+            )
+
+        response = response.json()
+        result_url = response["location"]
+
+        retry_policy = AsyncRetryPolicy(  # set up retry configuration
+            retry_on_status_codes=[202],  # on which statuses to retry
+            retry_total=7,
+            retry_backoff_factor=10.0,
+            retry_backoff_max=180,
+            retry_mode=RetryMode.Exponential,
+        )
+
+        # # initial 15 seconds wait before attempting to fetch result
+        await asyncio.sleep(15)
+        import time
+        time.sleep(15)
+
+        async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
+            response = await exp_retry_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+                result_url, headers=headers
+            )
+        response.raise_for_status()
+        
+        response_data = response.json()
+        return response_data['choices'][0]['message']['content']

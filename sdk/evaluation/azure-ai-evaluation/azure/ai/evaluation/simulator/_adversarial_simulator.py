@@ -224,36 +224,35 @@ class AdversarialSimulator:
             ncols=100,
             unit="simulations",
         )
+        template_parameter_pairs = []
         for template in templates:
-            parameter_order = list(range(len(template.template_parameters)))
-            if randomize_order:
-                # The template parameter lists are persistent across sim runs within a session,
-                # So randomize a the selection instead of the parameter list directly,
-                # or a potentially large deep copy.
-                if randomization_seed is not None:
-                    random.seed(randomization_seed)
-                random.shuffle(parameter_order)
-            for index in parameter_order:
-                parameter = template.template_parameters[index].copy()
-                if _jailbreak_type == "upia":
-                    parameter = self._join_conversation_starter(parameter, random.choice(jailbreak_dataset))
-                tasks.append(
-                    asyncio.create_task(
-                        self._simulate_async(
-                            target=target,
-                            template=template,
-                            parameters=parameter,
-                            max_conversation_turns=max_conversation_turns,
-                            api_call_retry_limit=api_call_retry_limit,
-                            api_call_retry_sleep_sec=api_call_retry_sleep_sec,
-                            api_call_delay_sec=api_call_delay_sec,
-                            language=language,
-                            semaphore=semaphore,
-                        )
+            for parameter in template.template_parameters:
+                template_parameter_pairs.append((template, parameter.copy()))
+
+        # Randomize the flattened list
+        if randomize_order:
+            if randomization_seed is not None:
+                random.seed(randomization_seed)
+            random.shuffle(template_parameter_pairs)
+        tasks = []
+        for template, parameter in template_parameter_pairs:
+            if _jailbreak_type == "upia":
+                parameter = self._join_conversation_starter(parameter, random.choice(jailbreak_dataset))
+            tasks.append(
+                asyncio.create_task(
+                    self._simulate_async(
+                        target=target,
+                        template=template,
+                        parameters=parameter,
+                        max_conversation_turns=max_conversation_turns,
+                        api_call_retry_limit=api_call_retry_limit,
+                        api_call_retry_sleep_sec=api_call_retry_sleep_sec,
+                        api_call_delay_sec=api_call_delay_sec,
+                        language=language,
+                        semaphore=semaphore,
                     )
                 )
-                if len(tasks) >= max_simulation_results:
-                    break
+            )
             if len(tasks) >= max_simulation_results:
                 break
         for task in asyncio.as_completed(tasks):

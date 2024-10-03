@@ -148,7 +148,6 @@ class Simulator:
             prompty_model_config=prompty_model_config,
             **kwargs,
         )
-
         return await self._create_conversations_from_query_responses(
             query_responses=query_responses,
             max_conversation_turns=max_conversation_turns,
