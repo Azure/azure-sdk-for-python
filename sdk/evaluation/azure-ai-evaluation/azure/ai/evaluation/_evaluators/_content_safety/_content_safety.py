@@ -21,13 +21,13 @@ class ContentSafetyEvaluator:
     """
     Initialize a content safety evaluator configured to evaluate content safetry metrics for QA scenario.
 
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
         Default is True.
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
     :return: A function that evaluates content-safety metrics for "question-answering" scenario.
     :rtype: Callable
 
@@ -66,7 +66,7 @@ class ContentSafetyEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: dict, parallel: bool = True, credential=None):
+    def __init__(self, credential, azure_ai_project: dict, parallel: bool = True):
         self._parallel = parallel
         self._evaluators = [
             ViolenceEvaluator(azure_ai_project, credential),

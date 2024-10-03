@@ -141,11 +141,10 @@ class TestEvaluateTelemetry:
         mock_trace_destination_to_cloud,
         mock_validate_trace_destination,
     ):
-        hate_unfairness = HateUnfairnessEvaluator(azure_ai_project=None)
 
         data = _get_file("evaluate_test_data.jsonl")
         evaluators = {
-            "hate_unfairness": hate_unfairness,
+            "hate_unfairness": HateUnfairnessEvaluator,
         }
 
         dummy_evaluate_function(

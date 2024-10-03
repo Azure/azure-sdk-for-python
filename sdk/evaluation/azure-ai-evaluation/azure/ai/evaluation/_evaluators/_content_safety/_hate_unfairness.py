@@ -11,11 +11,11 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase):
     """
     Initialize a hate-unfairness evaluator for hate unfairness score.
 
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: Optional[~azure.core.credentials.TokenCredential]
 
     **Usage**
 
@@ -43,8 +43,8 @@ class HateUnfairnessEvaluator(RaiServiceEvaluatorBase):
     @override
     def __init__(
         self,
+        credential,
         azure_ai_project: dict,
-        credential: Optional[dict] = None,
         eval_last_turn: bool = False,
     ):
         super().__init__(
