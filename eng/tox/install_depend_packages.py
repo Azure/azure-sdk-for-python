@@ -104,12 +104,12 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
 
     additional_filter_fn = None
     if dependency_type == "Minimum":
-        additionalFilterFn = handle_incompatible_minimum_dev_reqs
+        additional_filter_fn = handle_incompatible_minimum_dev_reqs
 
     # before september 2024, filter_dev_requirements only would remove any packages present in released_packages from the dev_requirements,
     # then create a new file "new_dev_requirements.txt" without the problematic packages.
     # after september 2024, filter_dev_requirements will also check for **compatibility** with the packages being installed when filtering the dev_requirements.
-    dev_req_file_path = filter_dev_requirements(setup_py_file_path, released_packages, temp_dir, additionalFilterFn)
+    dev_req_file_path = filter_dev_requirements(setup_py_file_path, released_packages, temp_dir, additional_filter_fn)
 
     if override_added_packages:
         logging.info(f"Expanding the requirement set by the packages {override_added_packages}.")
