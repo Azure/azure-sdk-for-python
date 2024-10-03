@@ -1,10 +1,10 @@
 # Release History
 
-## 1.0.0b10 (Unreleased)
+## 1.0.0b10 (2024-10-03)
 
-### Other Changes
+### Bugs Fixed
 
-- Marked as inactive.
+- Bug fixes
 
 ## 1.0.0b9 (2024-09-16)
 
