@@ -96,7 +96,7 @@ class EndpointsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
             "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
@@ -241,7 +241,7 @@ class EndpointsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
             "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
@@ -366,7 +366,7 @@ class EvaluationsEvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
             "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
@@ -487,7 +487,7 @@ class EvaluationsEvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
             "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
@@ -562,7 +562,7 @@ class EvaluationsEvaluationsOperations:
                     params=_params,
                 )
                 path_format_arguments = {
-                    "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                     "subscriptionId": self._serialize.url(
                         "self._config.subscription_id", self._config.subscription_id, "str"
                     ),
@@ -589,7 +589,7 @@ class EvaluationsEvaluationsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
                     "subscriptionId": self._serialize.url(
                         "self._config.subscription_id", self._config.subscription_id, "str"
                     ),
@@ -727,7 +727,7 @@ class EvaluationsEvaluationsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
             "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"

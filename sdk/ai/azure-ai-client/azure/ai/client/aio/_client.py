@@ -32,11 +32,12 @@ class Client:  # pylint: disable=client-accepts-api-version-keyword
     :vartype agents: azure.ai.client.aio.operations.AgentsOperations
     :ivar evaluations: EvaluationsOperations operations
     :vartype evaluations: azure.ai.client.aio.operations.EvaluationsOperations
-    :param host_name: The Azure AI Studio project host name, in the format
-     ``<azure-region>.api.azureml.ms`` or ``<private-link-guid>.<azure-region>.api.azureml.ms``\\\\
-     , where :code:`<azure-region>` is the Azure region where the project is deployed (e.g. westus)
-     and :code:`<private-link-guid>` is the GUID of the Enterprise private link. Required.
-    :type host_name: str
+    :param endpoint: The Azure AI Studio project endpoint, in the form
+     ``https://<azure-region>.api.azureml.ms`` or
+     ``https://<private-link-guid>.<azure-region>.api.azureml.ms``\\\\ , where
+     :code:`<azure-region>` is the Azure region where the project is deployed (e.g. westus) and
+     :code:`<private-link-guid>` is the GUID of the Enterprise private link. Required.
+    :type endpoint: str
     :param subscription_id: The Azure subscription ID. Required.
     :type subscription_id: str
     :param resource_group_name: The name of the Azure Resource Group. Required.
@@ -53,16 +54,16 @@ class Client:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(
         self,
-        host_name: str,
+        endpoint: str,
         subscription_id: str,
         resource_group_name: str,
         workspace_name: str,
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        _endpoint = "https://{hostName}/{subscriptionId}/{resourceGroupName}/{workspaceName}"
+        _endpoint = "{endpoint}/{subscriptionId}/{resourceGroupName}/{workspaceName}"
         self._config = ClientConfiguration(
-            host_name=host_name,
+            endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
@@ -117,7 +118,7 @@ class Client:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "hostName": self._serialize.url("self._config.host_name", self._config.host_name, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
             "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
