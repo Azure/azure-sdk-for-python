@@ -36,6 +36,6 @@ args: >-
 
 resources:
   instance_type: standard_e8s_v3
-  runtime_version: 3.2
+  runtime_version: 3.3
 
 environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33

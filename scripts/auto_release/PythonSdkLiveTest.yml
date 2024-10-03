@@ -25,6 +25,7 @@ jobs:
   strategy:
     maxParallel: 5
   pool:
+    name: azsdk-pool-mms-ubuntu-2004-general
     vmImage: 'ubuntu-20.04'
   variables:
     Codeql.Enabled: false

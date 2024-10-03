@@ -6,12 +6,12 @@ import os
 import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type
 
-import numpy as np
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
 from promptflow.client import PFClient
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._common.math import list_sum
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
@@ -73,7 +73,7 @@ def _aggregate_content_safety_metrics(
         defect_rate_name = col.replace("_score", "_defect_rate")
         col_with_numeric_values = pd.to_numeric(content_safety_df[col], errors="coerce")
         defect_rates[defect_rate_name] = round(
-            np.sum(col_with_numeric_values >= CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT)
+            list_sum(col_with_numeric_values >= CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT)
             / col_with_numeric_values.count(),
             2,
         )
@@ -107,7 +107,7 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
         defect_rate_name = col.replace("_label", "_defect_rate")
         col_with_boolean_values = pd.to_numeric(label_df[col], errors="coerce")
         defect_rates[defect_rate_name] = round(
-            np.sum(col_with_boolean_values) / col_with_boolean_values.count(),
+            list_sum(col_with_boolean_values) / col_with_boolean_values.count(),
             2,
         )
     return label_cols, defect_rates
@@ -158,6 +158,12 @@ def _validate_input_data_for_evaluator(evaluator, evaluator_name, df_data, is_ta
     ]
 
     missing_inputs = [col for col in required_inputs if col not in df_data.columns]
+    if missing_inputs and "conversation" in required_inputs:
+        non_conversation_inputs = [val for val in required_inputs if val != "conversation"]
+        if len(missing_inputs) == len(non_conversation_inputs) and [
+            input in non_conversation_inputs for input in missing_inputs
+        ]:
+            missing_inputs = []
     if missing_inputs:
         if not is_target_fn:
             msg = f"Missing required inputs for evaluator {evaluator_name} : {missing_inputs}."

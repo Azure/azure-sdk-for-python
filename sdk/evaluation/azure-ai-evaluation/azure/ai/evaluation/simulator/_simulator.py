@@ -326,6 +326,7 @@ class Simulator:
             resource_name = "task_simulate.prompty"
             try:
                 # Access the resource as a file path
+                # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
             except FileNotFoundError as e:
@@ -440,6 +441,7 @@ class Simulator:
             resource_name = "task_query_response.prompty"
             try:
                 # Access the resource as a file path
+                # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
             except FileNotFoundError as e:
