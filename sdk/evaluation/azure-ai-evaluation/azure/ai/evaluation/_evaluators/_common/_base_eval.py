@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import inspect
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, List, Union, final
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
@@ -63,8 +63,7 @@ class EvaluatorBase(ABC):
         """
         return async_run_allowing_running_loop(self._async_evaluator, **kwargs)
 
-    # Probably the only thing that can't be simplified. Each evaluator, or at least each family
-    # of evaluators, will need to implement their own version of this function.
+    @abstractmethod
     async def _do_eval(self, eval_input: Any) -> Dict:
         """Evaluate the input and produce a response. Must be overridden to produce a functional evaluator.
         In the default case, all required inputs are assumed to be within eval_input, as user-friendly
@@ -75,12 +74,7 @@ class EvaluatorBase(ABC):
         :type eval_input: Any
         :return: A single evaluation result
         :rtype: Dict
-
         """
-        raise EvaluationException(
-            message="Not implemented",
-            internal_message="BaseConversationEval's _do_eval method called somehow. This should be overridden.",
-        )
 
     # ~~~ METHODS THAT MIGHT NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
