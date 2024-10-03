@@ -3,7 +3,8 @@
 ## 1.0.0b10 (2024-10-03)
 
 ### Bugs Fixed
- - security bug - code injection
+
+- Bug fixes
 
 ## 1.0.0b9 (2024-09-16)
 
