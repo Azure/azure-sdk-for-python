@@ -21,6 +21,7 @@ from ._client import Client as ClientGenerated
 
 logger = logging.getLogger(__name__)
 
+
 class AzureAIClient(ClientGenerated):
 
     def __init__(
@@ -30,7 +31,7 @@ class AzureAIClient(ClientGenerated):
         resource_group_name: str,
         workspace_name: str,
         credential: "TokenCredential",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         kwargs1 = kwargs.copy()
         kwargs2 = kwargs.copy()
@@ -46,7 +47,7 @@ class AzureAIClient(ClientGenerated):
             credential=credential,
             api_version="2024-07-01-preview",
             credential_scopes="https://management.azure.com",
-            **kwargs1
+            **kwargs1,
         )
         _policies1 = kwargs1.pop("policies", None)
         if _policies1 is None:
@@ -75,9 +76,9 @@ class AzureAIClient(ClientGenerated):
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             credential=credential,
-            api_version="2024-07-01-preview", # TODO: Update me
+            api_version="2024-07-01-preview",  # TODO: Update me
             credential_scopes="https://ml.azure.com",
-            **kwargs2
+            **kwargs2,
         )
         _policies2 = kwargs2.pop("policies", None)
         if _policies2 is None:
@@ -106,9 +107,9 @@ class AzureAIClient(ClientGenerated):
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             credential=credential,
-            api_version="2024-07-01-preview", # TODO: Update me
+            api_version="2024-07-01-preview",  # TODO: Update me
             credential_scopes="https://ml.azure.com",
-            **kwargs3
+            **kwargs3,
         )
         _policies3 = kwargs3.pop("policies", None)
         if _policies3 is None:
@@ -136,7 +137,6 @@ class AzureAIClient(ClientGenerated):
         self.endpoints = EndpointsOperations(self._client1, self._config1, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
-
 
     @classmethod
     def from_connection_string(cls, connection: str, credential: "TokenCredential", **kwargs) -> "AzureAIClient":
@@ -166,7 +166,7 @@ class SASTokenCredential(TokenCredential):
         subscription_id: str,
         resource_group_name: str,
         workspace_name: str,
-        connection_name: str
+        connection_name: str,
     ):
         self._sas_token = sas_token
         self._credential = credential
