@@ -95,7 +95,9 @@ class AadClientBase(abc.ABC):
             expires_on = int(token["expires_on"])
             if expires_on > int(time.time()):
                 refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
-                return AccessTokenInfo(token["secret"], expires_on, refresh_on=refresh_on)
+                return AccessTokenInfo(
+                    token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
+                )
         return None
 
     def get_cached_refresh_tokens(self, scopes: Iterable[str], **kwargs) -> List[Dict]:
@@ -178,7 +180,9 @@ class AadClientBase(abc.ABC):
             content["refresh_in"] = expires_in // 2
 
         refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
-        token = AccessTokenInfo(content["access_token"], expires_on, refresh_on=refresh_on)
+        token = AccessTokenInfo(
+            content["access_token"], expires_on, token_type=content.get("token_type", "Bearer"), refresh_on=refresh_on
+        )
 
         # caching is the final step because 'add' mutates 'content'
         cache.add(
