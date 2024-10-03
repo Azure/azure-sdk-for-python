@@ -1,5 +1,5 @@
 # flake8: noqa
-# pylint: disable=W0102,W0613,R0914,C0301,E0401,E0611
+# pylint: disable=W0102,W0613,R0914,C0301,E0401,E0611,C0411
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
