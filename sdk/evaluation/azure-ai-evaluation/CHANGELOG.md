@@ -66,10 +66,7 @@ azure_ai_project = {
 ```
 After:
 ```python
-azure_ai_project = {
-    "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
-    "resource_group_name": os.environ.get("RESOURCE_GROUP"),
-    "project_name": os.environ.get("PROJECT_NAME"),
+model_config = {
     "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
     "azure_deployment": os.environ.get("AZURE_DEPLOYMENT"),
 }
