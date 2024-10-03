@@ -10,9 +10,8 @@ import os
 import re
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
-
-from promptflow.client import load_flow
-from promptflow.core import AzureOpenAIModelConfiguration, Flow
+from promptflow.core import AsyncPrompty
+from azure.ai.evaluation._common.utils import construct_prompty_model_config
 from tqdm import tqdm
 
 from .._user_agent import USER_AGENT
@@ -128,7 +127,7 @@ class Simulator:
         num_queries = min(num_queries, len(tasks))
         max_conversation_turns *= 2  # account for both user and assistant turns
 
-        prompty_model_config = self._build_prompty_model_config()
+        prompty_model_config = self.azure_ai_project
         if conversation_turns:
             return await self._simulate_with_predefined_turns(
                 target=target,
@@ -148,7 +147,6 @@ class Simulator:
             prompty_model_config=prompty_model_config,
             **kwargs,
         )
-
         return await self._create_conversations_from_query_responses(
             query_responses=query_responses,
             max_conversation_turns=max_conversation_turns,
@@ -158,18 +156,6 @@ class Simulator:
             target=target,
             api_call_delay_sec=api_call_delay_sec,
         )
-
-    def _build_prompty_model_config(self) -> Dict[str, Any]:
-        """
-        Constructs the configuration for the prompty model.
-
-        :return: A dictionary containing the prompty model configuration, including API version and user agent headers if applicable.
-        :rtype: Dict[str, Any]
-        """
-        config = {"configuration": self.azure_ai_project}
-        if USER_AGENT and isinstance(self.azure_ai_project, AzureOpenAIModelConfiguration):
-            config.update({"parameters": {"extra_headers": {"x-ms-useragent": USER_AGENT}}})
-        return config
 
     async def _simulate_with_predefined_turns(
         self,
@@ -280,13 +266,13 @@ class Simulator:
         :paramtype progress_bar: tqdm,
         """
         user_flow = self._load_user_simulation_flow(
-            user_simulator_prompty=user_simulator_prompty,
+            user_simulator_prompty=user_simulator_prompty, # type: ignore
             prompty_model_config=prompty_model_config,
             user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
         )
 
         while len(current_simulation) < max_conversation_turns:
-            user_response_content = user_flow(
+            user_response_content = await user_flow(
                 task="Continue the conversation",
                 conversation_history=current_simulation.to_list(),
                 **user_simulator_prompty_kwargs,
@@ -308,7 +294,7 @@ class Simulator:
         user_simulator_prompty: Union[str, os.PathLike],
         prompty_model_config: Dict[str, Any],
         user_simulator_prompty_kwargs: Dict[str, Any],
-    ) -> Flow:
+    ) -> "Prompty": # type: ignore
         """
         Loads the flow for simulating user interactions.
 
@@ -328,11 +314,21 @@ class Simulator:
                 # Access the resource as a file path
                 # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
-                    return load_flow(source=str(prompty_path), model=prompty_model_config)
+                    prompty_model_config = construct_prompty_model_config(
+                        model_config=prompty_model_config, # type: ignore
+                        default_api_version="2024-06-01",
+                        user_agent=USER_AGENT,
+                    )
+                    return AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
             except FileNotFoundError as e:
                 raise f"Flow path for {resource_name} does not exist in package {package}." from e
-        return load_flow(
-            source=user_simulator_prompty,
+        prompty_model_config = construct_prompty_model_config(
+            model_config=prompty_model_config, # type: ignore
+            default_api_version="2024-06-01",
+            user_agent=USER_AGENT,
+        )
+        return AsyncPrompty.load(
+            source=user_simulator_prompty, 
             model=prompty_model_config,
             **user_simulator_prompty_kwargs,
         )
@@ -404,12 +400,12 @@ class Simulator:
         :raises RuntimeError: If an error occurs during query generation.
         """
         query_flow = self._load_query_generation_flow(
-            query_response_generating_prompty=query_response_generating_prompty,
+            query_response_generating_prompty=query_response_generating_prompty, # type: ignore
             prompty_model_config=prompty_model_config,
             query_response_generating_prompty_kwargs=query_response_generating_prompty_kwargs,
         )
         try:
-            query_responses = query_flow(text=text, num_queries=num_queries)
+            query_responses = await query_flow(text=text, num_queries=num_queries)
             if isinstance(query_responses, dict):
                 keys = list(query_responses.keys())
                 return query_responses[keys[0]]
@@ -423,7 +419,7 @@ class Simulator:
         query_response_generating_prompty: Union[str, os.PathLike],
         prompty_model_config: Dict[str, Any],
         query_response_generating_prompty_kwargs: Dict[str, Any],
-    ) -> Flow:
+    ) -> "Prompty": # type: ignore
         """
         Loads the flow for generating query responses.
 
@@ -443,13 +439,23 @@ class Simulator:
                 # Access the resource as a file path
                 # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
-                    return load_flow(source=str(prompty_path), model=prompty_model_config)
+                    prompty_model_config = construct_prompty_model_config(
+                        model_config=prompty_model_config, # type: ignore
+                        default_api_version="2024-06-01",
+                        user_agent=USER_AGENT,
+                    )
+                    return AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
             except FileNotFoundError as e:
                 raise f"Flow path for {resource_name} does not exist in package {package}." from e
-        return load_flow(
-            source=query_response_generating_prompty,
+        prompty_model_config = construct_prompty_model_config(
+            model_config=prompty_model_config, # type: ignore
+            default_api_version="2024-06-01",
+            user_agent=USER_AGENT,
+        )
+        return AsyncPrompty.load(
+            source=query_response_generating_prompty, 
             model=prompty_model_config,
-            **query_response_generating_prompty_kwargs,
+            **query_response_generating_prompty_kwargs
         )
 
     async def _create_conversations_from_query_responses(
@@ -501,7 +507,7 @@ class Simulator:
             conversation = await self._complete_conversation(
                 conversation_starter=query,
                 max_conversation_turns=max_conversation_turns,
-                task=task,
+                task=task, # type: ignore
                 user_simulator_prompty=user_simulator_prompty,
                 user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
                 target=target,
@@ -565,11 +571,11 @@ class Simulator:
 
         while len(conversation_history) < max_conversation_turns:
             user_flow = self._load_user_simulation_flow(
-                user_simulator_prompty=user_simulator_prompty,
-                prompty_model_config=self._build_prompty_model_config(),
+                user_simulator_prompty=user_simulator_prompty, # type: ignore
+                prompty_model_config=self.azure_ai_project,
                 user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
             )
-            conversation_starter_from_simulated_user = user_flow(
+            conversation_starter_from_simulated_user = await user_flow(
                 task=task,
                 conversation_history=[
                     {
@@ -595,41 +601,6 @@ class Simulator:
 
         return conversation_history.to_list()
 
-    async def _build_user_simulation_response(
-        self,
-        task: str,
-        conversation_history: List[Dict[str, Any]],
-        user_simulator_prompty: Optional[str],
-        user_simulator_prompty_kwargs: Dict[str, Any],
-    ) -> str:
-        """
-        Builds a response from the user simulator based on the current conversation history.
-
-        :param task: A string representing the task details.
-        :type task: str
-        :param conversation_history: The current conversation history as a list of dictionaries.
-        :type conversation_history: List[Dict[str, Any]]
-        :param user_simulator_prompty: Path to the user simulator prompty file.
-        :type user_simulator_prompty: Optional[str]
-        :param user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :type user_simulator_prompty_kwargs: Dict[str, Any]
-        :return: The generated response content from the user simulator.
-        :rtype: str
-        :raises RuntimeError: If an error occurs during response generation.
-        """
-        user_flow = self._load_user_simulation_flow(
-            user_simulator_prompty=user_simulator_prompty,
-            prompty_model_config=self._build_prompty_model_config(),
-            user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
-        )
-        try:
-            response_content = user_flow(
-                task=task, conversation_history=conversation_history, **user_simulator_prompty_kwargs
-            )
-            user_response = self._parse_prompty_response(response=response_content)
-            return user_response["content"]
-        except Exception as e:
-            raise RuntimeError("Error building user simulation response") from e
 
     async def _get_target_response(
         self, *, target: Callable, api_call_delay_sec: float, conversation_history: ConversationHistory

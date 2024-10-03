@@ -119,11 +119,6 @@ name: ApplicationPrompty
 description: Simulates an application
 model:
   api: chat
-  configuration:
-    type: azure_openai
-    azure_deployment: ${env:AZURE_DEPLOYMENT}
-    api_key: ${env:AZURE_OPENAI_API_KEY}
-    azure_endpoint: ${env:AZURE_OPENAI_ENDPOINT}
   parameters:
     temperature: 0.0
     top_p: 1.0
@@ -158,7 +153,9 @@ import os
 azure_ai_project = {
     "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
     "resource_group_name": os.environ.get("RESOURCE_GROUP"),
-    "project_name": os.environ.get("PROJECT_NAME")
+    "project_name": os.environ.get("PROJECT_NAME"),
+    "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+    "azure_deployment": os.environ.get("AZURE_DEPLOYMENT"),
 }
 
 import wikipedia
@@ -228,7 +225,6 @@ if __name__ == "__main__":
     os.environ["AZURE_SUBSCRIPTION_ID"] = ""
     os.environ["RESOURCE_GROUP"] = ""
     os.environ["PROJECT_NAME"] = ""
-    os.environ["AZURE_OPENAI_API_KEY"] = ""
     os.environ["AZURE_OPENAI_ENDPOINT"] = ""
     os.environ["AZURE_DEPLOYMENT"] = ""
     asyncio.run(main())

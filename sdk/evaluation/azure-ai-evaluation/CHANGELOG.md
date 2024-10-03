@@ -55,6 +55,26 @@ evaluate(
 )
 ```
 
+- Simulator now requires configuration to call the prompty within the `azure_ai_project`. This enables key-less usage of the simulator.
+Before:
+```python
+azure_ai_project = {
+    "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
+    "resource_group_name": os.environ.get("RESOURCE_GROUP"),
+    "project_name": os.environ.get("PROJECT_NAME"),
+}
+```
+After:
+```python
+azure_ai_project = {
+    "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
+    "resource_group_name": os.environ.get("RESOURCE_GROUP"),
+    "project_name": os.environ.get("PROJECT_NAME"),
+    "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+    "azure_deployment": os.environ.get("AZURE_DEPLOYMENT"),
+}
+```
+
 ### Bugs Fixed
 
 - Fixed issue where Entra ID authentication was not working with `AzureOpenAIModelConfiguration` 
