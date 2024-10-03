@@ -62,7 +62,7 @@ class AzureAIClient(ClientGenerated):
             workspace_name=workspace_name,
             credential=credential,
             api_version="2024-07-01-preview",
-            credential_scopes="https://management.azure.com",
+            credential_scopes=["https://management.azure.com"],
             **kwargs1,
         )
         _policies1 = kwargs1.pop("policies", None)
@@ -93,7 +93,7 @@ class AzureAIClient(ClientGenerated):
             workspace_name=workspace_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes="https://ml.azure.com",
+            credential_scopes=["https://ml.azure.com"],
             **kwargs2,
         )
         _policies2 = kwargs2.pop("policies", None)
@@ -124,7 +124,7 @@ class AzureAIClient(ClientGenerated):
             workspace_name=workspace_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes="https://ml.azure.com",
+            credential_scopes=["https://ml.azure.com"],
             **kwargs3,
         )
         _policies3 = kwargs3.pop("policies", None)

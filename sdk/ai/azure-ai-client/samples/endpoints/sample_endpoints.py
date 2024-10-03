@@ -17,26 +17,23 @@ from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from azure.core.credentials import AzureKeyCredential
 
-
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
+# At the moment, it should be in the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
     connection=os.environ["AI_CLIENT_CONNECTION_STRING"],
-    #logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging    
+    #logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
 )
 
 # Or, you can create the Azure AI Client by giving all required parameters directly
-"""
 ai_client = AzureAIClient(
     credential=DefaultAzureCredential(),
-    host_name=os.environ["AI_CLIENT_HOST_NAME"],
+    endpoint=os.environ["AI_CLIENT_ENDPOINT"],
     subscription_id=os.environ["AI_CLIENT_SUBSCRIPTION_ID"],
     resource_group_name=os.environ["AI_CLIENT_RESOURCE_GROUP_NAME"],
     workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
     logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
 )
-"""
 
 # You can list all endpoints of a particular "type", with or without their credentials:
 endpoints = ai_client.endpoints.list(
@@ -58,7 +55,7 @@ print(endpoint)
 
 # You can get an endpoint by its name:
 endpoint = ai_client.endpoints.get(
-    endpoint_name=os.environ["AI_CLIENT_ENDPOINT_NAME"], # Required.
+    endpoint_name=os.environ["AI_CLIENT_CONNECTION_NAME"], # Required.
     populate_secrets=True
 )
 print("====> Print properties of a particular endpoint:")
