@@ -14,7 +14,7 @@ from azure.core.credentials import TokenCredential
 from . import EvaluatorBase
 
 
-class RaiServiceEvaluatorBase(EvaluatorBase):
+class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
     """Base class for all evaluators that require the use of the Azure AI RAI service for evaluation.
     This includes content safety evaluators, protected material evaluators, and others. These evaluators
     are all assumed to be of the "query and response or conversation" input variety.
@@ -68,7 +68,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase):
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
 
     @override
-    async def _do_eval(self, eval_input: Dict):
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:
         """Perform the evaluation using the Azure AI RAI service.
         The exact evaluation performed is determined by the evaluation metric supplied
         by the child class initializer.

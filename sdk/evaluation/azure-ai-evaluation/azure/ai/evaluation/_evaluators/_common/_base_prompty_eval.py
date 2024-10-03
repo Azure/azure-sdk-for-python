@@ -10,15 +10,15 @@ from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
 from ..._common.utils import construct_prompty_model_config, validate_model_config
+from . import EvaluatorBase
 
 try:
     from ..._user_agent import USER_AGENT
 except ImportError:
     USER_AGENT = "None"
-from . import EvaluatorBase
 
 
-class PromptyEvaluatorBase(EvaluatorBase):
+class PromptyEvaluatorBase(EvaluatorBase[float]):
     """Base class for all evaluators that make use of context as an input. It's also assumed that such evaluators
     make use of a prompty file, and return their results as a dictionary, with a single key-value pair
     linking the result name to a float value (unless multi-turn evaluation occurs, in which case the
@@ -56,7 +56,7 @@ class PromptyEvaluatorBase(EvaluatorBase):
     # defining a default here.
 
     @override
-    async def _do_eval(self, eval_input: Dict) -> Dict:
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
         """Do a relevance evaluation.
 
         :param eval_input: The input to the evaluator. Expected to contain
