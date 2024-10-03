@@ -664,7 +664,11 @@ def is_package_compatible(
                 # if the dev_req line has a requirement that conflicts with the immutable requirement,
                 # we need to resolve it. We KNOW that the immutable requirement will be of form package==version,
                 # so we can reliably pull out the version and check it against the specifier of the dev_req line.
-                immutable_version = next(iter(immutable_requirement.specifier)).version
+                try:
+                    immutable_version = next(iter(immutable_requirement.specifier)).version
+                # we have no specifier set, so we don't even need to check this
+                except StopIteration:
+                    continue
 
                 if not package_requirement.specifier.contains(immutable_version):
                     if should_log:
@@ -711,7 +715,10 @@ def resolve_compatible_package(package_name: str, immutable_requirements: List[R
     # if we find one that is, we will return a new requirement string for that package which will replace this dev_req line.
     for pkg in immovable_pkgs:
         required_package = immovable_pkgs[pkg].name
-        required_pkg_version = next(iter(immovable_pkgs[pkg].specifier)).version
+        try:
+            required_pkg_version = next(iter(immovable_pkgs[pkg].specifier)).version
+        except StopIteration:
+            required_pkg_version = None
 
         versions = pypi.get_ordered_versions(package_name, True)
         versions.reverse()

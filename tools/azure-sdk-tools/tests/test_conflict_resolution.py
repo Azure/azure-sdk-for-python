@@ -24,3 +24,11 @@ def test_identity_resolution():
         [Requirement("azure-core>=1.28.0"), Requirement("isodate>=0.6.1"), Requirement("typing-extensions>=4.0.1")],
     )
     assert result == "azure-identity==1.16.0"
+
+
+def test_resolution_no_requirement():
+    result = resolve_compatible_package(
+        "azure-identity",
+        [Requirement("azure-core")],
+    )
+    assert result == "azure-identity==1.18.0"
