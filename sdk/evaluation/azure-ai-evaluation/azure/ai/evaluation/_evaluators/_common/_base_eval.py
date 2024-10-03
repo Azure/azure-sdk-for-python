@@ -7,10 +7,10 @@ import inspect
 
 from abc import ABC
 
-import numpy as np
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._common.math import list_mean
 
 
 # TODO exception target pass down?
@@ -241,7 +241,7 @@ class EvaluatorBase(ABC):
         # Find and average all numeric values
         for metric, values in evaluation_per_turn.items():
             if all(isinstance(value, (int, float)) for value in values):
-                aggregated[metric] = np.mean(values)
+                aggregated[metric] = list_mean(values)
         # Slap the per-turn results back in.
         aggregated["evaluation_per_turn"] = evaluation_per_turn
 

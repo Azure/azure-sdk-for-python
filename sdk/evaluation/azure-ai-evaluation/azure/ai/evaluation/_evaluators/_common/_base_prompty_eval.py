@@ -2,15 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import math
 import re
 from typing import Dict
 
-from typing_extensions import override
-
-
-import numpy as np
-
 from promptflow.core import AsyncPrompty
+from typing_extensions import override
 
 from ..._common.utils import construct_prompty_model_config
 
@@ -71,7 +68,7 @@ class PromptyEvaluatorBase(EvaluatorBase):
         """
         llm_output = await self._flow(timeout=self.LLM_CALL_TIMEOUT, **eval_input)
 
-        score = np.nan
+        score = math.nan
         if llm_output:
             match = re.search(r"\d", llm_output)
             if match:
