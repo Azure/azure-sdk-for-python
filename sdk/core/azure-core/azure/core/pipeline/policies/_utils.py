@@ -123,7 +123,7 @@ def get_challenge_parameter(headers, challenge_scheme: str, challenge_parameter:
     header_span = header_value
 
     # Iterate through each challenge value.
-    while get_next_challenge(header_span):
+    while True:
         challenge = get_next_challenge(header_span)
         if not challenge:
             break
