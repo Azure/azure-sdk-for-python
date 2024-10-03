@@ -1,14 +1,11 @@
 # Release History
 
-<<<<<<< Updated upstream
-=======
 ## 5.12.3 (2024-10-09)
 
 ### Bugs Fixed
 
 - Fixed a bug where creating the SSL context in the async clients was making a blocking call outside of the constructor.([#37246](https://github.com/Azure/azure-sdk-for-python/issues/37246))
 
->>>>>>> Stashed changes
 ## 5.12.2 (2024-10-02)
 
 ### Bugs Fixed
