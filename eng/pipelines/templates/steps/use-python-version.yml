@@ -12,6 +12,16 @@ steps:
       python -m pip install packaging==23.1
     displayName: Prep Environment
 
+
+  - script: |
+      curl -L -o pypy3.9-v7.3.16-macos_x86_64.tar.bz2 https://downloads.python.org/pypy/pypy3.9-v7.3.16-macos_x86_64.tar.bz2
+
+      # Unzip (untar) the file to the target directory
+      mkdir -P $(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4
+      tar -xvjf pypy3.9-v7.3.16-macos_x86_64.tar.bz2 -C $(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4 --strip-components=1
+    displayName: Install pypy39 to hosted tool cache
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
+
   # select the appropriate version from manifest if present
   - task: PythonScript@0
     displayName: 'Install ${{ parameters.versionSpec }} from Python Manifest If Necessary'
@@ -25,7 +35,7 @@ steps:
 
       if($incoming.Contains("pypy3")){
         Write-Host "##vso[task.setvariable variable=ManualInstallNecessary]true"
-      } 
+      }
     displayName: Check UsePythonVersion Necessity
 
   - task: PythonScript@0
