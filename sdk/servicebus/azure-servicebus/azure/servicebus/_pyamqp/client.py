@@ -1014,19 +1014,15 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         """
         self.open()
         self._timeout_reached = False
-        receiving = True
         message = None
         self._last_activity_timestamp = time.time()
         self._timeout = timeout if timeout else self._timeout
         try:
-            while receiving and not self._timeout_reached:
+            while not self._timeout_reached:
+                self._link.flow(link_credit=self._link_credit)
                 if self._timeout > 0:
                     if time.time() - self._last_activity_timestamp >= self._timeout:
                         self._timeout_reached = True
-
-                if not self._timeout_reached:
-                    # receiving = self.do_work()
-                    time.sleep(1)
 
                 while not self._received_messages.empty():
                     message = self._received_messages.get()
