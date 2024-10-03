@@ -69,10 +69,10 @@ class ContentSafetyEvaluator:
     def __init__(self, credential, azure_ai_project: dict, parallel: bool = True):
         self._parallel = parallel
         self._evaluators = [
-            ViolenceEvaluator(azure_ai_project, credential),
-            SexualEvaluator(azure_ai_project, credential),
-            SelfHarmEvaluator(azure_ai_project, credential),
-            HateUnfairnessEvaluator(azure_ai_project, credential),
+            ViolenceEvaluator(credential, azure_ai_project),
+            SexualEvaluator(credential, azure_ai_project),
+            SelfHarmEvaluator(credential, azure_ai_project),
+            HateUnfairnessEvaluator(credential, azure_ai_project),
         ]
 
     def __call__(self, *, query: str, response: str, **kwargs):
