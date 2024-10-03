@@ -1,6 +1,6 @@
+import math
 import platform
 
-import numpy as np
 import pytest
 from devtools_testutils import is_live
 
@@ -330,11 +330,11 @@ class TestBuiltInEvaluators:
         # Test Q/A below would cause NaNs in the evaluation metrics before the fix.
         score = qa_eval(query="This's the color?", response="Black", ground_truth="gray", context="gray")
 
-        assert score["gpt_groundedness"] is not np.nan
-        assert score["gpt_relevance"] is not np.nan
-        assert score["gpt_coherence"] is not np.nan
-        assert score["gpt_fluency"] is not np.nan
-        assert score["gpt_similarity"] is not np.nan
+        assert not math.isnan(score["gpt_groundedness"])
+        assert not math.isnan(score["gpt_relevance"])
+        assert not math.isnan(score["gpt_coherence"])
+        assert not math.isnan(score["gpt_fluency"])
+        assert not math.isnan(score["gpt_similarity"])
 
     def test_composite_evaluator_content_safety(self, project_scope, azure_cred):
         safety_eval = ContentSafetyEvaluator(project_scope, parallel=False, credential=azure_cred)

@@ -177,7 +177,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 client.last_response_headers[
                     HttpHeaders.ThrottleRetryWaitTimeInMs
                 ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
-                if args and args[0].should_clear_session_token_on_session_read_failure:
+                if args and args[0].should_clear_session_token_on_session_read_failure and client.session:
                     client.session.clear_session_token(client.last_response_headers)
                 raise
 

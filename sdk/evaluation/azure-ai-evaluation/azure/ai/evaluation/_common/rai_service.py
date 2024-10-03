@@ -5,12 +5,12 @@ import asyncio
 import importlib.metadata
 import re
 import time
+import math
 from ast import literal_eval
 from typing import Dict, List
 from urllib.parse import urlparse
 
 import jwt
-import numpy as np
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
@@ -229,21 +229,21 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         parsed_response = literal_eval(response)
         result = {}
         # Use label instead of score since these are assumed to be boolean results.
-        # Use np.nan as null value since it's ignored by aggregations rather than treated as 0.
-        result[metric_name + "_label"] = parsed_response["label"] if "label" in parsed_response else np.nan
+        # Use math.nan as null value since it's ignored by aggregations rather than treated as 0.
+        result[metric_name + "_label"] = parsed_response["label"] if "label" in parsed_response else math.nan
         result[metric_name + "_reason"] = parsed_response["reasoning"] if "reasoning" in parsed_response else ""
 
         if metric_name == EvaluationMetrics.XPIA:
             # Add "manipulated_content", "intrusion" and "information_gathering" to the result
-            # if present else set them to np.nan
+            # if present else set them to math.nan
             result[metric_name + "_manipulated_content"] = (
-                parsed_response["manipulated_content"] if "manipulated_content" in parsed_response else np.nan
+                parsed_response["manipulated_content"] if "manipulated_content" in parsed_response else math.nan
             )
             result[metric_name + "_intrusion"] = (
-                parsed_response["intrusion"] if "intrusion" in parsed_response else np.nan
+                parsed_response["intrusion"] if "intrusion" in parsed_response else math.nan
             )
             result[metric_name + "_information_gathering"] = (
-                parsed_response["information_gathering"] if "information_gathering" in parsed_response else np.nan
+                parsed_response["information_gathering"] if "information_gathering" in parsed_response else math.nan
             )
         return result
     return _parse_content_harm_response(batch_response, metric_name)
@@ -265,7 +265,7 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
     if key == EvaluationMetrics.HATE_FAIRNESS:
         key = EvaluationMetrics.HATE_UNFAIRNESS
 
-    result = {key: np.nan, key + "_score": np.nan, key + "_reason": ""}
+    result = {key: math.nan, key + "_score": math.nan, key + "_reason": ""}
 
     response = batch_response[0]
     if metric_name not in response:
@@ -285,9 +285,9 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
         if "label" in harm_response:
             metric_value = harm_response["label"]
         elif "valid" in harm_response:
-            metric_value = 0 if harm_response["valid"] else np.nan
+            metric_value = 0 if harm_response["valid"] else math.nan
         else:
-            metric_value = np.nan
+            metric_value = math.nan
 
         # get reason
         if "reasoning" in harm_response:
@@ -301,21 +301,21 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
         if metric_value_match:
             metric_value = int(metric_value_match[0])
         else:
-            metric_value = np.nan
+            metric_value = math.nan
         reason = harm_response
     elif harm_response != "" and isinstance(harm_response, (int, float)):
         if 0 < harm_response <= 7:
             metric_value = harm_response
         else:
-            metric_value = np.nan
+            metric_value = math.nan
         reason = ""
     else:
-        metric_value = np.nan
+        metric_value = math.nan
         reason = ""
 
     harm_score = metric_value
-    if not np.isnan(metric_value):
-        # int(np.nan) causes a value error, and np.nan is already handled
+    if not math.isnan(metric_value):
+        # int(math.nan) causes a value error, and math.nan is already handled
         # by get_harm_severity_level
         harm_score = int(metric_value)
     result[key] = get_harm_severity_level(harm_score)

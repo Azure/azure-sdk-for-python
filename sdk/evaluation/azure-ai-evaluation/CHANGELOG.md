@@ -1,6 +1,18 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+- Removed `numpy` dependency. All NaN values returned by the SDK have been changed to from `numpy.nan` to `math.nan`.
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b3 (2024-10-01)
 
 ### Features Added
 
@@ -19,7 +31,6 @@
 - Surfaced `RetrievalScoreEvaluator`, formally an internal part of `ChatEvaluator` as a standalone conversation-only evaluator.
 
 ### Breaking Changes
-
 
 - Removed `ContentSafetyChatEvaluator` and `ChatEvaluator`
 - The `evaluator_config` parameter of `evaluate` now maps in evaluator name to a dictionary `EvaluatorConfig`, which is a `TypedDict`. The
@@ -58,8 +69,6 @@ evaluate(
 ### Bugs Fixed
 
 - Fixed issue where Entra ID authentication was not working with `AzureOpenAIModelConfiguration` 
-
-### Other Changes
 
 ## 1.0.0b2 (2024-09-24)
 

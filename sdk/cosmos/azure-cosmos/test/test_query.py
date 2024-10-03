@@ -12,7 +12,7 @@ import azure.cosmos._retry_utility as retry_utility
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import http_constants, DatabaseProxy
+from azure.cosmos import http_constants, DatabaseProxy, _endpoint_discovery_retry_policy
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
@@ -861,6 +861,90 @@ class TestQuery(unittest.TestCase):
             created_collection.query_items(query='Select * from c Where c.cp_str_len = 3', partition_key="test"))
         self.assertEqual(len(queried_items), 0)
         self.created_db.delete_container(created_collection.id)
+
+    def test_query_request_params_none_retry_policy(self):
+        created_collection = self.created_db.create_container(
+            "query_request_params_none_retry_policy_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
+        items = [
+            {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5}]
+
+        for item in items:
+            created_collection.create_item(body=item)
+
+        self.OriginalExecuteFunction = retry_utility.ExecuteFunction
+        # Test session retry will properly push the exception when retries run out
+        retry_utility.ExecuteFunction = self._MockExecuteFunctionSessionRetry
+        try:
+            query = "SELECT * FROM c"
+            items = created_collection.query_items(
+                query=query,
+                enable_cross_partition_query=True
+            )
+            fetch_results = list(items)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, 404)
+            self.assertEqual(e.sub_status, 1002)
+
+        # Test endpoint discovery retry
+        retry_utility.ExecuteFunction = self._MockExecuteFunctionEndPointRetry
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = 3
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = 10
+        try:
+            query = "SELECT * FROM c"
+            items = created_collection.query_items(
+                query=query,
+                enable_cross_partition_query=True
+            )
+            fetch_results = list(items)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, http_constants.StatusCodes.FORBIDDEN)
+            self.assertEqual(e.sub_status, http_constants.SubStatusCodes.WRITE_FORBIDDEN)
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = 120
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = 1000
+
+        # Finally lets test timeout failover retry
+        retry_utility.ExecuteFunction = self._MockExecuteFunctionTimeoutFailoverRetry
+        try:
+            query = "SELECT * FROM c"
+            items = created_collection.query_items(
+                query=query,
+                enable_cross_partition_query=True
+            )
+            fetch_results = list(items)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, http_constants.StatusCodes.REQUEST_TIMEOUT)
+            retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+        retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+        self.created_db.delete_container(created_collection.id)
+
+
+    def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):
+        if args:
+            if args[1].operation_type == 'SqlQuery':
+                ex_to_raise = exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.NOT_FOUND,
+                                                                 message="Read Session is Not Available")
+                ex_to_raise.sub_status = http_constants.SubStatusCodes.READ_SESSION_NOTAVAILABLE
+                raise ex_to_raise
+        return self.OriginalExecuteFunction(function, *args, **kwargs)
+
+    def _MockExecuteFunctionEndPointRetry(self, function, *args, **kwargs):
+        if args:
+            if args[1].operation_type == 'SqlQuery':
+                ex_to_raise = exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.FORBIDDEN,
+                                                                 message="End Point Discovery")
+                ex_to_raise.sub_status = http_constants.SubStatusCodes.WRITE_FORBIDDEN
+                raise ex_to_raise
+        return self.OriginalExecuteFunction(function, *args, **kwargs)
+
+    def _MockExecuteFunctionTimeoutFailoverRetry(self, function, *args, **kwargs):
+        if args:
+            if args[1].operation_type == 'SqlQuery':
+                ex_to_raise = exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.REQUEST_TIMEOUT,
+                                                                 message="Timeout Failover")
+                raise ex_to_raise
+        return self.OriginalExecuteFunction(function, *args, **kwargs)
 
     def _MockNextFunction(self):
         if self.count < len(self.payloads):
