@@ -149,52 +149,52 @@ from azure.ai.evaluation.simulator import Simulator
 from promptflow.client import load_flow
 from azure.identity import DefaultAzureCredential
 import os
+import wikipedia
 
-azure_ai_project = {
-    "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
-    "resource_group_name": os.environ.get("RESOURCE_GROUP"),
-    "project_name": os.environ.get("PROJECT_NAME"),
+# Set up the model configuration without api_key, using DefaultAzureCredential
+model_config = {
     "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
     "azure_deployment": os.environ.get("AZURE_DEPLOYMENT"),
 }
 
-import wikipedia
-wiki_search_term = "Leonardo da vinci"
+# Use Wikipedia to get some text for the simulation
+wiki_search_term = "Leonardo da Vinci"
 wiki_title = wikipedia.search(wiki_search_term)[0]
 wiki_page = wikipedia.page(wiki_title)
 text = wiki_page.summary[:1000]
 
-def method_to_invoke_application_prompty(query: str):
+def method_to_invoke_application_prompty(query: str, messages_list: List[Dict], context: Optional[Dict]):
     try:
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, "application.prompty")
-        _flow = load_flow(source=prompty_path, model={
-            "configuration": azure_ai_project
-        })
+        _flow = load_flow(
+            source=prompty_path,
+            model=model_config,
+            credential=DefaultAzureCredential()
+        )
         response = _flow(
             query=query,
             context=context,
             conversation_history=messages_list
         )
         return response
-    except:
-        print("Something went wrong invoking the prompty")
+    except Exception as e:
+        print(f"Something went wrong invoking the prompty: {e}")
         return "something went wrong"
 
 async def callback(
-    messages: List[Dict],
+    messages: Dict[str, List[Dict]],
     stream: bool = False,
     session_state: Any = None,  # noqa: ANN401
     context: Optional[Dict[str, Any]] = None,
 ) -> dict:
     messages_list = messages["messages"]
-    # get last message
+    # Get the last message from the user
     latest_message = messages_list[-1]
     query = latest_message["content"]
-    context = None
-    # call your endpoint or ai application here
-    response = method_to_invoke_application_prompty(query)
-    # we are formatting the response to follow the openAI chat protocol format
+    # Call your endpoint or AI application here
+    response = method_to_invoke_application_prompty(query, messages_list, context)
+    # Format the response to follow the OpenAI chat protocol format
     formatted_response = {
         "content": response,
         "role": "assistant",
@@ -205,10 +205,8 @@ async def callback(
     messages["messages"].append(formatted_response)
     return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}
 
-
-
 async def main():
-    simulator = Simulator(azure_ai_project=azure_ai_project, credential=DefaultAzureCredential())
+    simulator = Simulator(model_config=model_config, credential=DefaultAzureCredential())
     outputs = await simulator(
         target=callback,
         text=text,
@@ -219,16 +217,17 @@ async def main():
             f"I am a teacher and I want to teach my students about {wiki_search_term}"
         ],
     )
-    print(json.dumps(outputs))
+    print(json.dumps(outputs, indent=2))
 
 if __name__ == "__main__":
-    os.environ["AZURE_SUBSCRIPTION_ID"] = ""
-    os.environ["RESOURCE_GROUP"] = ""
-    os.environ["PROJECT_NAME"] = ""
-    os.environ["AZURE_OPENAI_ENDPOINT"] = ""
-    os.environ["AZURE_DEPLOYMENT"] = ""
+    # Ensure that the following environment variables are set in your environment:
+    # AZURE_OPENAI_ENDPOINT and AZURE_DEPLOYMENT
+    # Example:
+    # os.environ["AZURE_OPENAI_ENDPOINT"] = "https://your-endpoint.openai.azure.com/"
+    # os.environ["AZURE_DEPLOYMENT"] = "your-deployment-name"
     asyncio.run(main())
     print("done!")
+
 ```
 
 #### Adversarial Simulator
