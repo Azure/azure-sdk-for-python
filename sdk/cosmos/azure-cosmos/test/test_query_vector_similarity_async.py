@@ -182,7 +182,7 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
             # disk_ann_list = [item async for item in self.created_diskANN_dotproduct_container.query_items(query=vanilla_query)]
             # verify_ordering(disk_ann_list, "dotproduct")
 
-    async def test_vector_query_pagination(self):
+    async def test_vector_query_pagination_async(self):
         # load up previously calculated embedding for the given string
         vector_string = vector_test_data.get_embedding_string("I am having a wonderful day.")
 
@@ -202,7 +202,7 @@ class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
         assert len(all_fetched_res) == 8
         verify_ordering(all_fetched_res, "cosine")
 
-    async def test_vector_query_large_data(self):
+    async def test_vector_query_large_data_async(self):
         # test different limit queries on a larger data set
         embedding_value = 0.0001
         for i in range(2000):
