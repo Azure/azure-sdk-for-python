@@ -18,7 +18,9 @@ class AzureAuthorityHostsMeta(type):
     def __getattr__(cls, name):
         if name == "AZURE_GERMANY":
             warnings.warn(
-                "AZURE_GERMANY is deprecated. Please use other clouds instead.", DeprecationWarning, stacklevel=2
+                "AZURE_GERMANY is deprecated. Microsoft Cloud Germany was closed on October 29th, 2021.",
+                DeprecationWarning,
+                stacklevel=2
             )
             return "login.microsoftonline.de"
         raise AttributeError(f"{name} not found in {cls.__name__}")
