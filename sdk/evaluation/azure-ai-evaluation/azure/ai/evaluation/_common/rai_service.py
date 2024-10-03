@@ -10,7 +10,11 @@ from typing import Dict, List
 from urllib.parse import urlparse
 
 import jwt
+import json
 import numpy as np
+
+from azure.ai.inference._model_base import SdkJSONEncoder
+from azure.ai.inference.models import ChatRequestMessage
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
@@ -130,6 +134,45 @@ def generate_payload(normalized_user_text: str, metric: str) -> Dict:
         }
     )
 
+def generate_payload_multimodal(content_type: str, contents: str, metric: str) -> Dict:
+    """Generate the payload for the annotation request
+
+    :param content_type: The type of the content representing multimodal or images.
+    :type content_type: str
+    :param messages: The normalized list of messages (conversation) to be entered as the "Contents" in the payload.
+    :type messages: str
+    :param metric: The evaluation metric to use. This determines the task type, and whether a "MetricList" is needed
+        in the payload.
+    :type metric: str
+    :return: The payload for the annotation request.
+    :rtype: Dict
+    """
+    include_metric = False
+    task = Tasks.CONTENT_HARM
+    if metric == EvaluationMetrics.PROTECTED_MATERIAL:
+        task = Tasks.PROTECTED_MATERIAL
+        include_metric = False
+    elif metric == _InternalEvaluationMetrics.ECI:
+        task = _InternalAnnotationTasks.ECI
+        include_metric = False
+    elif metric == EvaluationMetrics.XPIA:
+        task = Tasks.XPIA
+        include_metric = False
+    return (
+        {
+            "ContentType": content_type,
+            "Contents": [{"messages" : contents }],
+            "AnnotationTask": task,
+            "MetricList": [metric],
+        }
+        if include_metric
+        else {
+            "ContentType": content_type,
+            "Contents": [{"messages" : contents }],
+            "AnnotationTask": task,
+        }
+    )
+
 
 async def submit_request(query: str, response: str, metric: str, rai_svc_url: str, token: str) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
@@ -161,6 +204,44 @@ async def submit_request(query: str, response: str, metric: str, rai_svc_url: st
 
     if response.status_code != 202:
         print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], response.text))
+        response.raise_for_status()
+
+    result = response.json()
+    operation_id = result["location"].split("/")[-1]
+    return operation_id
+
+async def submit_multimodal_request(messages: List[Dict], metric: str, rai_svc_url: str, token: str) -> str:
+    """Submit request to Responsible AI service for evaluation and return operation ID
+
+    :param query: The messages aka converstation to evaluate.
+    :type query: List[Dict]
+    :param metric: The evaluation metric to use.
+    :type metric: str
+    :param rai_svc_url: The Responsible AI service URL.
+    :type rai_svc_url: str
+    :param token: The Azure authentication token.
+    :type token: str
+    :return: The operation ID.
+    :rtype: str
+    """
+    if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
+        json_text = generate_payload_multimodal("multimodal", messages, metric)
+        messages_text = json.dumps(json_text, cls=SdkJSONEncoder, exclude_readonly=True)
+        payload = json.loads(messages_text)
+    
+    else:
+        payload = generate_payload_multimodal("multimodal", messages, metric)
+
+    url = rai_svc_url + "/submitannotation"
+    headers = get_common_headers(token)
+
+    async with get_async_http_client() as client:
+        response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+            url, json=payload, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
+        )
+
+    if response.status_code != 202:
+        print("Fail evaluating '%s' with error message: %s" % (payload["Contents"], response.text))
         response.raise_for_status()
 
     result = response.json()
@@ -446,6 +527,40 @@ async def evaluate_with_rai_service(
 
     # Submit annotation request and fetch result
     operation_id = await submit_request(query, response, metric_name, rai_svc_url, token)
+    annotation_response = await fetch_result(operation_id, rai_svc_url, credential, token)
+    result = parse_response(annotation_response, metric_name)
+
+    return result
+
+async def evaluate_with_rai_service_multimodal(
+    messages: List[Dict], metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
+):
+    """ "Evaluate the content safety of the response using Responsible AI service
+
+       :param query: The list of messages (conversation) to evaluate.
+       :type query: list
+       :param metric_name: The evaluation metric to use.
+       :type metric_name: str
+       :param project_scope: The Azure AI project scope details.
+       :type project_scope: Dict
+       :param credential: The Azure authentication credential.
+       :type credential:
+    ~azure.core.credentials.TokenCredential
+       :return: The parsed annotation result.
+       :rtype: List[List[Dict]]
+    """
+    # Use DefaultAzureCredential if no credential is provided
+    # This is for the for batch run scenario as the credential cannot be serialized by promoptflow
+    if credential is None or credential == {}:
+        credential = DefaultAzureCredential()
+
+    # Get RAI service URL from discovery service and check service availability
+    token = await fetch_or_reuse_token(credential)
+    rai_svc_url = await get_rai_svc_url(project_scope, token)
+    await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
+
+    # Submit annotation request and fetch result
+    operation_id = await submit_multimodal_request(messages, metric_name, rai_svc_url, token)
     annotation_response = await fetch_result(operation_id, rai_svc_url, credential, token)
     result = parse_response(annotation_response, metric_name)
 

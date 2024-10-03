@@ -57,6 +57,7 @@ class ErrorTarget(Enum):
     CHAT_EVALUATOR = "ChatEvaluator"
     COHERENCE_EVALUATOR = "CoherenceEvaluator"
     CONTENT_SAFETY_CHAT_EVALUATOR = "ContentSafetyEvaluator"
+    CONTENT_SAFETY_MULTIMODAL_EVALUATOR = "ContentSafetyMultimodalEvaluator"
     ECI_EVALUATOR = "ECIEvaluator"
     F1_EVALUATOR = "F1Evaluator"
     GROUNDEDNESS_EVALUATOR = "GroundednessEvaluator"

@@ -1,5 +1,15 @@
 import platform
 
+from azure.ai.inference.models import (
+    UserMessage, 
+    SystemMessage,
+    TextContentItem,
+    ImageContentItem, 
+    ImageUrl,
+)
+
+from azure.ai.inference.models._enums import ImageDetailLevel
+
 import numpy as np
 import pytest
 from devtools_testutils import is_live
@@ -26,6 +36,7 @@ from azure.ai.evaluation import (
     SexualEvaluator,
     SimilarityEvaluator,
     ViolenceEvaluator,
+    ContentSafetyMultimodalEvaluator,
 )
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
@@ -414,6 +425,108 @@ class TestBuiltInEvaluators:
         assert len(score["evaluation_per_turn"]["hate_unfairness"]["reason"]) == turn_count
         assert len(score["evaluation_per_turn"]["hate_unfairness"]["severity"]) == turn_count
 
+    def test_multimodal_evaluator_content_safety_json(self, project_scope, azure_cred):
+        chat_eval = ContentSafetyMultimodalEvaluator(
+            project_scope, credential=azure_cred
+        )
+
+        conversation = [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "What is in this image?"},
+                    {"type": "image_url", "image_url": {"url": "https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg"}},
+                ],
+            },
+        ]
+
+        score = chat_eval(messages=conversation)
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+
+        assert score["evaluation_per_turn"] is not None
+
+        turn_count = 1
+        assert score["evaluation_per_turn"]["violence"] is not None
+        assert len(score["evaluation_per_turn"]["violence"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["violence"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["violence"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["sexual"] is not None
+        assert len(score["evaluation_per_turn"]["sexual"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["sexual"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["sexual"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["self_harm"] is not None
+        assert len(score["evaluation_per_turn"]["self_harm"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["self_harm"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["self_harm"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["hate_unfairness"] is not None
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["severity"]) == turn_count
+        
+    def test_multimodal_evaluator_content_safety_inference(self, project_scope, azure_cred):
+        chat_eval = ContentSafetyMultimodalEvaluator(
+            project_scope, credential=azure_cred
+        )
+
+        messages = [ 
+           UserMessage( 
+               content=[ 
+                   TextContentItem(text="What is in this image?"), 
+                   ImageContentItem( 
+                    image_url=
+                        ImageUrl( 
+                                url="https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg" 
+                        ),
+                   ), 
+               ], 
+           ) 
+       ]
+
+        score = chat_eval(messages=messages)
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+
+        assert score["evaluation_per_turn"] is not None
+
+        turn_count = 1
+        assert score["evaluation_per_turn"]["violence"] is not None
+        assert len(score["evaluation_per_turn"]["violence"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["violence"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["violence"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["sexual"] is not None
+        assert len(score["evaluation_per_turn"]["sexual"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["sexual"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["sexual"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["self_harm"] is not None
+        assert len(score["evaluation_per_turn"]["self_harm"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["self_harm"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["self_harm"]["severity"]) == turn_count
+
+        assert score["evaluation_per_turn"]["hate_unfairness"] is not None
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["score"]) == turn_count
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["reason"]) == turn_count
+        assert len(score["evaluation_per_turn"]["hate_unfairness"]["severity"]) == turn_count
+    
     @pytest.mark.skipif(is_live(), reason="API not fully released yet. Don't run in live mode unless connected to INT.")
     def test_protected_material_evaluator(self, project_scope, azure_cred):
         ip_eval = ProtectedMaterialEvaluator(project_scope, credential=azure_cred)

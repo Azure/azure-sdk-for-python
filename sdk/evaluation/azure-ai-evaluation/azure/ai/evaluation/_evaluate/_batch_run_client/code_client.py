@@ -161,7 +161,7 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
         result_df = run.get_result_df(exclude_inputs=not all_results)
         return result_df
 
-    def get_metrics(self, run: CodeRun) -> Optional[None]:
+    def get_metrics(self, run: CodeRun) -> Optional[dict]:
         try:
             aggregated_metrics = run.get_aggregated_metrics()
             print("Aggregated metrics")
