@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: send_image_notification_messages.py
+FILE: send_document_notification_messages.py
 
 DESCRIPTION:
-    This sample demonstrates sending an Whatsapp message with image from business phone number to a single user. The NotificationMessageClient is 
+    This sample demonstrates sending an Whatsapp message from business phone number to a single user. The NotificationMessageClient is 
     authenticated using a connection string.
 USAGE:
-    python send_image_notification_messages.py
+    python send_document_notification_messages.py
 
     Set the environment variable with your own value before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS resource
@@ -29,30 +29,31 @@ sys.path.append("..")
 
 class SendWhatsAppMessageSample(object):
 
-    connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-    phone_number = os.getenv("RECIPIENT_PHONE_NUMBER")
-    channel_id = os.getenv("WHATSAPP_CHANNEL_ID")
+    connection_string: str = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING") # type: ignore
+    phone_number:str = os.getenv("RECIPIENT_PHONE_NUMBER") # type: ignore
+    channel_id:str = os.getenv("WHATSAPP_CHANNEL_ID") # type: ignore
 
-    def send_image_send_message(self):
+    def send_document_message(self):
 
         from azure.communication.messages import NotificationMessagesClient
-        from azure.communication.messages.models import ImageNotificationContent
+        from azure.communication.messages.models import DocumentNotificationContent
 
         messaging_client = NotificationMessagesClient.from_connection_string(self.connection_string)
 
-        image_options = ImageNotificationContent(
+        text_options = DocumentNotificationContent(
             channel_registration_id=self.channel_id,
             to=[self.phone_number],
-            caption="Hello World via Notification Messaging SDK.",
-            media_uri="https://sample-videos.com/img/Sample-jpg-image-50kb.jpg",
+            content="Hello World via Advanced Messaging SDK.This is document message",
+            file_name="Product roadmap timeline.pptx",
+            media_uri="https://sample-videos.com/ppt/Sample-PPT-File-500kb.ppt",
         )
 
         # calling send() with whatsapp message details
-        message_responses = messaging_client.send(image_options)
+        message_responses = messaging_client.send(text_options)
         response = message_responses.receipts[0]
         print("Message with message id {} was successful sent to {}".format(response.message_id, response.to))
 
 
 if __name__ == "__main__":
     sample = SendWhatsAppMessageSample()
-    sample.send_image_send_message()
+    sample.send_document_message()
