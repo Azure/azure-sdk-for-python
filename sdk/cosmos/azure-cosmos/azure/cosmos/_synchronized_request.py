@@ -27,6 +27,7 @@ import time
 
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
+from azure.cosmos.http_constants import StatusCodes
 
 from . import exceptions
 from . import http_constants
@@ -144,6 +145,22 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     data = response.body()
     if data:
         data = data.decode("utf-8")
+
+    # if request_params.resource_type == 'docs':
+    #     if request_params.operation_type == 'Read' and request_params.location_endpoint_to_route.__contains__("east"):
+    #         response.status_code = 503
+    #
+    # if request_params.resource_type == 'docs':
+    #     if request_params.operation_type == 'Create' and request_params.location_endpoint_to_route.__contains__("east"):
+    #         response.status_code = 503
+    #
+    # if request_params.resource_type == 'docs':
+    #     if request_params.operation_type == 'Read' and not(request_params.location_endpoint_to_route.__contains__("east") or request_params.location_endpoint_to_route.__contains__("west")):
+    #         response.status_code = 503
+
+    if request_params.resource_type == 'docs':
+        if request_params.operation_type == 'Create' and not(request_params.location_endpoint_to_route.__contains__("east") or request_params.location_endpoint_to_route.__contains__("west")):
+            response.status_code = 503
 
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
