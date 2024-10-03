@@ -34,6 +34,7 @@
 
 
 from __future__ import absolute_import, unicode_literals
+from typing import Dict, Optional, Any
 
 import errno
 import re
@@ -45,8 +46,6 @@ from contextlib import contextmanager
 from io import BytesIO
 import logging
 from threading import Lock
-
-import certifi
 
 from ._platform import KNOWN_TCP_OPTS, SOL_TCP
 from ._encode import encode_frame
@@ -171,7 +170,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         socket_timeout=SOCKET_TIMEOUT,
         socket_settings=None,
         raise_on_initial_eintr=True,
-        use_tls: bool =True,
+        use_tls: bool = True,
         **kwargs
     ):
         self._quick_recv = None
@@ -516,19 +515,15 @@ class SSLTransport(_AbstractTransport):
             self.sock = self._wrap_socket(self.sock, **self.sslopts)
         self._quick_recv = self.sock.recv
 
-    def _wrap_socket(self, sock, context=None, **sslopts):
-        if context:
-            return self._wrap_context(sock, sslopts, **context)
-        return self._wrap_socket_sni(sock, **sslopts)
-
-    def _wrap_context(
-        self, sock, sslopts, check_hostname=None, **ctx_options
+    def _wrap_socket(
+        self,
+        sock: socket.socket,
+        context: Optional[ssl.SSLContext] = None,
+        **sslopts: Dict[str, Any]
     ):
-        ctx = ssl.create_default_context(**ctx_options)
-        ctx.verify_mode = ssl.CERT_REQUIRED
-        ctx.load_verify_locations(cafile=certifi.where())
-        ctx.check_hostname = check_hostname
-        return ctx.wrap_socket(sock, **sslopts)
+        if context:
+            return context.wrap_socket(sock, **sslopts)
+        return self._wrap_socket_sni(sock, **sslopts)
 
     def _wrap_socket_sni(
         self,
