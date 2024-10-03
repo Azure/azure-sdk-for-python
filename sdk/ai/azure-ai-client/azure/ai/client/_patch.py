@@ -37,7 +37,7 @@ class AzureAIClient(ClientGenerated):
         kwargs3 = kwargs.copy()
 
         # For Endpoints operations (enumerating connections, getting SAS tokens)
-        _endpoint1 = "https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"  # pylint: disable=line-too-long
+        _endpoint1 = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
         self._config1 = ClientConfiguration(
             host_name=host_name,
             subscription_id=subscription_id,
@@ -45,7 +45,7 @@ class AzureAIClient(ClientGenerated):
             workspace_name=workspace_name,
             credential=credential,
             api_version="2024-07-01-preview",
-            credential_scopes="https://management.azure.com/.default",
+            credential_scopes="https://management.azure.com",
             **kwargs1
         )
         _policies1 = kwargs1.pop("policies", None)
@@ -68,7 +68,7 @@ class AzureAIClient(ClientGenerated):
         self._client1: PipelineClient = PipelineClient(base_url=_endpoint1, policies=_policies1, **kwargs1)
 
         # For Agents operations
-        _endpoint2 = "https://{host_hame}/assistants/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"  # pylint: disable=line-too-long
+        _endpoint2 = f"https://{host_name}/assistants/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
         self._config2 = ClientConfiguration(
             host_name=host_name,
             subscription_id=subscription_id,
@@ -76,7 +76,7 @@ class AzureAIClient(ClientGenerated):
             workspace_name=workspace_name,
             credential=credential,
             api_version="2024-07-01-preview", # TODO: Update me
-            credential_scopes="https://ml.azure.com/.default",
+            credential_scopes="https://ml.azure.com",
             **kwargs2
         )
         _policies2 = kwargs2.pop("policies", None)
@@ -99,7 +99,7 @@ class AzureAIClient(ClientGenerated):
         self._client2: PipelineClient = PipelineClient(base_url=_endpoint2, policies=_policies2, **kwargs2)
 
         # For Cloud Evaluations operations
-        _endpoint3 = "https://{host_name}/raisvc/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"  # pylint: disable=line-too-long
+        _endpoint3 = f"https://{host_name}/raisvc/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
         self._config3 = ClientConfiguration(
             host_name=host_name,
             subscription_id=subscription_id,
@@ -107,7 +107,7 @@ class AzureAIClient(ClientGenerated):
             workspace_name=workspace_name,
             credential=credential,
             api_version="2024-07-01-preview", # TODO: Update me
-            credential_scopes="https://ml.azure.com/.default",
+            credential_scopes="https://ml.azure.com",
             **kwargs3
         )
         _policies3 = kwargs3.pop("policies", None)

@@ -1,4 +1,5 @@
 
+"""
 # These are needed for SDK logging. You can ignore them.
 import sys
 import logging
@@ -6,7 +7,7 @@ logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 # End of logging setup
-
+"""
 import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import EndpointType, AuthenticationType
@@ -22,7 +23,7 @@ from azure.core.credentials import AzureKeyCredential
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
     connection=os.environ["AI_CLIENT_CONNECTION_STRING"],
-    logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging    
+    #logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging    
 )
 
 # Or, you can create the Azure AI Client by giving all required parameters directly
