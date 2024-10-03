@@ -517,11 +517,11 @@ class SSLTransport(_AbstractTransport):
 
     def _wrap_socket(
         self,
-        sock: socket.socket,
-        context: Optional[ssl.SSLContext] = None,
-        **sslopts: Dict[str, Any]
+        sock,
+        **sslopts
     ):
-        if context:
+        if "context" in sslopts:
+            context = sslopts.pop("context")
             return context.wrap_socket(sock, **sslopts)
         return self._wrap_socket_sni(sock, **sslopts)
 

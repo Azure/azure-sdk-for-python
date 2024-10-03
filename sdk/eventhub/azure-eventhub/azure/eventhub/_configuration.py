@@ -60,6 +60,7 @@ class Configuration:  # pylint:disable=too-many-instance-attributes
         self.receive_timeout = receive_timeout
         self.send_timeout = send_timeout
         self.custom_endpoint_address = custom_endpoint_address
+        self.connection_verify: Optional[Union[str, "SSLContext"]]
         if ssl_context:
             if connection_verify:
                 warnings.warn("ssl_context is specified, connection_verify will be ignored.")

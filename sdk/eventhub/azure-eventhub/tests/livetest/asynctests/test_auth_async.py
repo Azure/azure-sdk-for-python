@@ -232,14 +232,25 @@ async def test_client_with_ssl_context_async(
     assert isinstance(on_error.error, ConnectError)
 
     # Check that SSLContext with valid cert file doesn't raise an error
-    async def verify_context():
+    async def verify_context_async():
+        # asyncio.to_thread only available in Python 3.9+
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-        asyncio.to_thread(context.load_verify_locations(certifi.where()))
+        await asyncio.to_thread(context.load_verify_locations(certifi.where()))
         purpose = ssl.Purpose.SERVER_AUTH
-        asyncio.to_thread(context.load_default_certs(purpose=purpose))
+        await asyncio.to_thread(context.load_default_certs(purpose=purpose))
         return context
 
-    context = await verify_context()
+    def verify_context():   # for Python 3.8
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.load_verify_locations(certifi.where())
+        purpose = ssl.Purpose.SERVER_AUTH
+        context.load_default_certs(purpose=purpose)
+        return context
+
+    if hasattr(asyncio, "to_thread"):
+        context = await verify_context_async()
+    else:
+        context = verify_context()
 
     producer = EventHubProducerClient(
         fully_qualified_namespace=fully_qualified_namespace,

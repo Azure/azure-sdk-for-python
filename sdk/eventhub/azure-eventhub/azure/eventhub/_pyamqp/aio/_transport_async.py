@@ -40,11 +40,6 @@ import struct
 from ssl import SSLError
 from io import BytesIO
 import logging
-from typing import Dict, Optional, Any
-
-
-
-import certifi
 
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
 from .._encode import encode_frame

@@ -12,7 +12,6 @@ import queue
 from functools import partial
 from typing import Any, Callable, Coroutine, List, Dict, Optional, Tuple, Union, overload, cast
 from typing_extensions import Literal
-import certifi
 
 from ..outcomes import Accepted, Modified, Received, Rejected, Released
 from ._connection_async import Connection
