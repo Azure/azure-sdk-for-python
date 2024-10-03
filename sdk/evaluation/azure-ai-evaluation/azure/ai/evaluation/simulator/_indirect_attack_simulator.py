@@ -1,13 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=C0301,C0114,R0913,R0903
 # noqa: E501
-import functools
 import logging
 from typing import Callable
-
-from promptflow._sdk._telemetry import ActivityType, monitor_operation
-
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.ai.evaluation.simulator import AdversarialScenario

@@ -94,7 +94,7 @@ class AdversarialSimulator:
                 blame=ErrorBlame.USER_ERROR,
             )
 
-    # @monitor_adversarial_scenario
+    # pylint: disable=too-many-locals
     async def __call__(
         self,
         *,
