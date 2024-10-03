@@ -60,7 +60,8 @@ _COMMON_OPTIONS = {
     'is_query_plan_request': 'isQueryPlanRequest',
     'supported_query_features': 'supportedQueryFeatures',
     'query_version': 'queryVersion',
-    'priority': 'priorityLevel'
+    'priority': 'priorityLevel',
+    'no_response': 'responsePayloadOnWriteDisabled'
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -317,6 +318,15 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("correlatedActivityId"):
         headers[http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
+
+    if resource_type == "docs" and verb != "get":
+        if "responsePayloadOnWriteDisabled" in options:
+            responsePayloadOnWriteDisabled = options["responsePayloadOnWriteDisabled"]
+        else:
+            responsePayloadOnWriteDisabled = cosmos_client_connection.connection_policy.ResponsePayloadOnWriteDisabled
+
+        if responsePayloadOnWriteDisabled:
+            headers[http_constants.HttpHeaders.Prefer] = "return=minimal"
 
     # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
     # refreshed.
