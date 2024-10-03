@@ -1,11 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from typing_extensions import override
 
-from azure.ai.evaluation._common.constants import EvaluationMetrics
+from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
@@ -32,7 +32,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase):
     @override
     def __init__(
         self,
-        eval_metric: EvaluationMetrics,
+        eval_metric: Union[EvaluationMetrics, _InternalEvaluationMetrics],
         azure_ai_project: dict,
         credential: TokenCredential,
         eval_last_turn: bool = False,

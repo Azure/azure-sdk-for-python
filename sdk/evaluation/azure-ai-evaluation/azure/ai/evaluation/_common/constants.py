@@ -58,7 +58,7 @@ class EvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     XPIA = "xpia"
 
 
-class _InternalEvaluationMetrics:
+class _InternalEvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation metrics that are not publicly supported.
     These metrics are experimental and subject to potential change or migration to the main
     enum over time.
