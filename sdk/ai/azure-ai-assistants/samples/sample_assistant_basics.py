@@ -11,6 +11,8 @@ DESCRIPTION:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
+    pip install opentelemetry-sdk, opentelemetry-instrumentation-requests
+
     python sample_assistant_basics.py
 
     Set these two environment variables before running the sample:
@@ -28,6 +30,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants import AssistantsClient
 from azure.core.credentials import AzureKeyCredential
+from azure.identity import get_bearer_token_provider, AzureCliCredential
 
 import os, time, json
 
@@ -48,18 +51,24 @@ def sample_assistant_basic_operation():
 
     try:
         endpoint = os.environ["AZUREAI_ENDPOINT_URL"]
-        key = os.environ["AZUREAI_ENDPOINT_KEY"]
+        key = os.environ.get("AZUREAI_ENDPOINT_KEY")
+        if not key:
+            print("'AZUREAI_ENDPOINT_KEY' environment variable was not set, trying CLI authentication.")
+        credential = AzureKeyCredential(key) if key else AzureCliCredential()
         api_version = os.environ.get("AZUREAI_API_VERSION", "2024-07-01-preview")
     except KeyError:
-        print("Missing environment variable 'AZUREAI_ENDPOINT_URL' or 'AZUREAI_ENDPOINT_KEY'")
+        print("Missing environment variable 'AZUREAI_ENDPOINT_URL' or ")
         print("Set them before running this sample.")
         exit()
 
-    assistant_client = AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version)
+    assistant_client = AssistantsClient(
+        endpoint=endpoint, credential=credential, api_version=api_version,
+        credential_scopes=["https://management.core.windows.net"]
+    )
     print("Created assistant client")
 
     assistant = assistant_client.create_assistant(
-        model="gpt", name="my-assistant", instructions="You are helpful assistant"
+        model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
     )
     print("Created assistant, assistant ID", assistant.id)
 

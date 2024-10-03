@@ -58,7 +58,7 @@ def build_assistants_create_assistant_request(**kwargs: Any) -> HttpRequest:  # 
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/openai/assistants"
+    _url = "/assistants"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -168,7 +168,7 @@ def build_assistants_delete_assistant_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/openai/assistants/{assistantId}"
+    _url = "/assistants/{assistantId}"
     path_format_arguments = {
         "assistantId": _SERIALIZER.url("assistant_id", assistant_id, "str"),
     }
@@ -193,7 +193,7 @@ def build_assistants_create_thread_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/openai/threads"
+    _url = "/threads"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -290,7 +290,7 @@ def build_assistants_create_message_request(thread_id: str, **kwargs: Any) -> Ht
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/openai/threads/{threadId}/messages"
+    _url = "/threads/{threadId}/messages"
     path_format_arguments = {
         "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
@@ -325,7 +325,7 @@ def build_assistants_list_messages_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/openai/threads/{threadId}/messages"
+    _url = "/threads/{threadId}/messages"
     path_format_arguments = {
         "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
@@ -413,7 +413,7 @@ def build_assistants_create_run_request(thread_id: str, **kwargs: Any) -> HttpRe
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/openai/threads/{threadId}/runs"
+    _url = "/threads/{threadId}/runs"
     path_format_arguments = {
         "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
@@ -479,7 +479,7 @@ def build_assistants_get_run_request(thread_id: str, run_id: str, **kwargs: Any)
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/openai/threads/{threadId}/runs/{runId}"
+    _url = "/threads/{threadId}/runs/{runId}"
     path_format_arguments = {
         "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
         "runId": _SERIALIZER.url("run_id", run_id, "str"),
