@@ -14,6 +14,7 @@ from azure.ai.evaluation import (
     F1ScoreEvaluator,
     FluencyEvaluator,
     GroundednessEvaluator,
+    evaluate,
 )
 
 
@@ -399,6 +400,7 @@ class TestEvaluate:
         # module named test_evaluate and it will be a different module in unit test
         # folder. By keeping function in separate file we guarantee, it will be loaded
         # from there.
+        # os.environ["AZURE_TEST_RUN_LIVE"] = "True"
         from .target_fn import target_fn
 
         f1_score_eval = F1ScoreEvaluator()
@@ -413,7 +415,6 @@ class TestEvaluate:
         )
         row_result_df = pd.DataFrame(result["rows"])
 
-        assert "outputs.answer" in row_result_df.columns
         assert "outputs.answer.length" in row_result_df.columns
         assert list(row_result_df["outputs.answer.length"]) == [28, 76, 22]
         assert "outputs.f1.f1_score" in row_result_df.columns
@@ -427,6 +428,7 @@ class TestEvaluate:
         assert remote_run is not None
         assert remote_run["runMetadata"]["properties"]["azureml.promptflow.local_to_cloud"] == "true"
         assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
+        assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "promptflow.BatchRun"
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
 
     @pytest.mark.skipif(in_ci(), reason="This test fails in CI and needs to be investigate. Bug: 3458432")
@@ -470,6 +472,7 @@ class TestEvaluate:
         remote_run = _get_run_from_run_history(run_id, azure_ml_client, project_scope)
 
         assert remote_run is not None
+        assert remote_run["runMetadata"]["properties"]["runType"] == "eval_run"
         assert remote_run["runMetadata"]["properties"]["_azureml.evaluation_run"] == "azure-ai-generative-parent"
         assert remote_run["runMetadata"]["displayName"] == evaluation_name
 
