@@ -30,6 +30,6 @@ managed_network:
       service_resource_id: /subscriptions/0caf7ec9-615a-4491-bad8-64ce023324e1/resourceGroups/joharrin-sdk-tests/providers/Microsoft.Network/applicationGateways/mvnettestappgw
       spark_enabled: false
       subresource_target: appGwPrivateFrontendIpIPv4
-    fqdns: ["contoso.com", "contoso2.com"]
+    fqdns: ["test.1.fake.com", "test.2.fake.com"]
     type: private_endpoint
 tags: {}
