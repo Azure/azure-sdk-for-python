@@ -19,29 +19,57 @@ from ._generated.models import (
     CommunicationIdentifierModel,
     CommunicationUserIdentifierModel,
     PhoneNumberIdentifierModel,
-    CallLocator
+    CallLocator,
+    ExternalStorage,
+    RecordingStorageKind
 )
 if TYPE_CHECKING:
-    from ._models import ServerCallLocator, GroupCallLocator
+    from ._models import (
+        ServerCallLocator,
+        GroupCallLocator,
+        RoomCallLocator,
+        AzureBlobContainerRecordingStorage,
+        AzureCommunicationsRecordingStorage
+        )
 
+def build_external_storage(
+    recording_storage: Union['AzureCommunicationsRecordingStorage',
+                                      'AzureBlobContainerRecordingStorage'] = None
+) -> Optional[ExternalStorage]:
+    request: Optional[ExternalStorage] = None
+    if recording_storage:
+        if recording_storage.kind == RecordingStorageKind.AZURE_BLOB_STORAGE:
+            if not recording_storage.container_url:
+                raise ValueError(
+                    "Please provide container_url"
+                    "when you set the recording_storage as AzureBlobContainerRecordingStorage"
+                    )
+            request = ExternalStorage(
+                recording_storage_kind=recording_storage.kind,
+                recording_destination_container_url=recording_storage.container_url
+                )
+    return request
 
 def build_call_locator(
-    args: List[Union['ServerCallLocator', 'GroupCallLocator']],
-    call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator']],
+    args: List[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']],
+    call_locator: Optional[Union['ServerCallLocator', 'GroupCallLocator','RoomCallLocator']],
     server_call_id: Optional[str],
-    group_call_id: Optional[str]
+    group_call_id: Optional[str],
+    room_id: Optional[str],
 ) -> CallLocator:
     """Build the generated callLocator object from args in kwargs with support for legacy models.
 
     :param args: Any positional parameters provided. This may include the legacy model. The new method signature
      does not support positional params, so if there's anything here, it's the old model.
-    :type args: list[ServerCallLocator or GroupCallLocator]
+    :type args: list[ServerCallLocator or GroupCallLocator or RoomCallLocator]
     :param call_locator: If the legacy call_locator was provided via keyword arg.
-    :type call_locator: ServerCallLocator or GroupCallLocator or None
+    :type call_locator: ServerCallLocator or GroupCallLocator or RoomCallLocator or None
     :param server_call_id: If the new server_call_id was provided via keyword arg.
     :type server_call_id: str or None
     :param group_call_id: If the new group_call_id was provided via keyword arg.
     :type group_call_id: str or None
+    :param room_id: If the new room_id was provided via keyword arg.
+    :type room_id: str or None
     :return: Generated CallLocator for the request body.
     """
     request: Optional[CallLocator] = None
@@ -71,8 +99,16 @@ def build_call_locator(
                 "Please provide either 'group_call_id' or 'server_call_id'."
             )
         request = CallLocator(server_call_id=server_call_id, kind="serverCallLocator")
+    if room_id:
+        if request is not None:
+            raise ValueError(
+                "Received multiple values for call locator. "
+                "Please provide either 'group_call_id' or 'server_call_id' or 'room_id'."
+            )
+        request = CallLocator(room_id=room_id, kind="roomCallLocator")
     if request is None:
-        raise ValueError("Call locator required. Please provide either 'group_call_id' or 'server_call_id'.")
+        raise ValueError("Call locator required."
+                        "Please provide either 'group_call_id' or 'server_call_id' or 'room_id'.")
     return request
 
 

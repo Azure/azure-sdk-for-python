@@ -11,10 +11,6 @@ from ._models import AddParticipantRequest
 from ._models import AddParticipantResponse
 from ._models import AddParticipantSucceeded
 from ._models import AnswerCallRequest
-from ._models import AnswerFailed
-from ._models import AzureOpenAIDialog
-from ._models import AzureOpenAIDialogUpdate
-from ._models import BaseDialog
 from ._models import CallConnected
 from ._models import CallConnectionProperties
 from ._models import CallDisconnected
@@ -30,39 +26,29 @@ from ._models import CancelAddParticipantSucceeded
 from ._models import ChannelAffinity
 from ._models import Choice
 from ._models import ChoiceResult
-from ._models import CollectTonesResult
 from ._models import CommunicationError
 from ._models import CommunicationErrorResponse
 from ._models import CommunicationIdentifierModel
 from ._models import CommunicationUserIdentifierModel
+from ._models import ConnectFailed
+from ._models import ConnectRequest
 from ._models import ContinuousDtmfRecognitionRequest
 from ._models import ContinuousDtmfRecognitionStopped
 from ._models import ContinuousDtmfRecognitionToneFailed
 from ._models import ContinuousDtmfRecognitionToneReceived
-from ._models import CreateCallFailed
 from ._models import CreateCallRequest
 from ._models import CustomCallingContext
-from ._models import DialogCompleted
-from ._models import DialogConsent
-from ._models import DialogFailed
-from ._models import DialogHangup
-from ._models import DialogLanguageChange
-from ._models import DialogSensitivityUpdate
-from ._models import DialogStarted
-from ._models import DialogStateResponse
-from ._models import DialogTransfer
-from ._models import DialogUpdateBase
-from ._models import DialogUpdated
 from ._models import DtmfOptions
 from ._models import DtmfResult
 from ._models import ExternalStorage
 from ._models import FileSource
 from ._models import HoldFailed
 from ._models import HoldRequest
-from ._models import MediaStreamingConfiguration
 from ._models import MediaStreamingFailed
+from ._models import MediaStreamingOptions
 from ._models import MediaStreamingStarted
 from ._models import MediaStreamingStopped
+from ._models import MediaStreamingSubscription
 from ._models import MediaStreamingUpdate
 from ._models import MicrosoftTeamsAppIdentifierModel
 from ._models import MicrosoftTeamsUserIdentifierModel
@@ -76,7 +62,7 @@ from ._models import PlayFailed
 from ._models import PlayOptions
 from ._models import PlayRequest
 from ._models import PlaySource
-from ._models import PowerVirtualAgentsDialog
+from ._models import PlayStarted
 from ._models import RecognizeCanceled
 from ._models import RecognizeCompleted
 from ._models import RecognizeFailed
@@ -99,40 +85,34 @@ from ._models import SpeechOptions
 from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
-from ._models import StartDialogRequest
-from ._models import StartHoldMusicRequest
 from ._models import StartMediaStreamingRequest
 from ._models import StartTranscriptionRequest
-from ._models import StopHoldMusicRequest
 from ._models import StopMediaStreamingRequest
 from ._models import StopTranscriptionRequest
 from ._models import TextSource
-from ._models import TranscriptionConfiguration
 from ._models import TranscriptionFailed
+from ._models import TranscriptionOptions
 from ._models import TranscriptionStarted
 from ._models import TranscriptionStopped
+from ._models import TranscriptionSubscription
 from ._models import TranscriptionUpdate
 from ._models import TranscriptionUpdated
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 from ._models import UnholdRequest
-from ._models import UnmuteParticipantsRequest
-from ._models import UnmuteParticipantsResponse
-from ._models import UpdateDialogRequest
 from ._models import UpdateTranscriptionRequest
-from ._models import UserConsent
 
 from ._enums import CallConnectionState
 from ._enums import CallLocatorKind
 from ._enums import CallRejectReason
 from ._enums import CommunicationCloudEnvironmentModel
 from ._enums import CommunicationIdentifierModelKind
-from ._enums import DialogInputType
 from ._enums import DtmfTone
 from ._enums import MediaStreamingAudioChannelType
 from ._enums import MediaStreamingContentType
 from ._enums import MediaStreamingStatus
 from ._enums import MediaStreamingStatusDetails
+from ._enums import MediaStreamingSubscriptionState
 from ._enums import MediaStreamingTransportType
 from ._enums import PlaySourceType
 from ._enums import RecognitionType
@@ -143,8 +123,10 @@ from ._enums import RecordingFormat
 from ._enums import RecordingKind
 from ._enums import RecordingState
 from ._enums import RecordingStorageKind
+from ._enums import TranscriptionResultState
 from ._enums import TranscriptionStatus
 from ._enums import TranscriptionStatusDetails
+from ._enums import TranscriptionSubscriptionState
 from ._enums import TranscriptionTransportType
 from ._enums import VoiceKind
 from ._patch import __all__ as _patch_all
@@ -157,10 +139,6 @@ __all__ = [
     "AddParticipantResponse",
     "AddParticipantSucceeded",
     "AnswerCallRequest",
-    "AnswerFailed",
-    "AzureOpenAIDialog",
-    "AzureOpenAIDialogUpdate",
-    "BaseDialog",
     "CallConnected",
     "CallConnectionProperties",
     "CallDisconnected",
@@ -176,39 +154,29 @@ __all__ = [
     "ChannelAffinity",
     "Choice",
     "ChoiceResult",
-    "CollectTonesResult",
     "CommunicationError",
     "CommunicationErrorResponse",
     "CommunicationIdentifierModel",
     "CommunicationUserIdentifierModel",
+    "ConnectFailed",
+    "ConnectRequest",
     "ContinuousDtmfRecognitionRequest",
     "ContinuousDtmfRecognitionStopped",
     "ContinuousDtmfRecognitionToneFailed",
     "ContinuousDtmfRecognitionToneReceived",
-    "CreateCallFailed",
     "CreateCallRequest",
     "CustomCallingContext",
-    "DialogCompleted",
-    "DialogConsent",
-    "DialogFailed",
-    "DialogHangup",
-    "DialogLanguageChange",
-    "DialogSensitivityUpdate",
-    "DialogStarted",
-    "DialogStateResponse",
-    "DialogTransfer",
-    "DialogUpdateBase",
-    "DialogUpdated",
     "DtmfOptions",
     "DtmfResult",
     "ExternalStorage",
     "FileSource",
     "HoldFailed",
     "HoldRequest",
-    "MediaStreamingConfiguration",
     "MediaStreamingFailed",
+    "MediaStreamingOptions",
     "MediaStreamingStarted",
     "MediaStreamingStopped",
+    "MediaStreamingSubscription",
     "MediaStreamingUpdate",
     "MicrosoftTeamsAppIdentifierModel",
     "MicrosoftTeamsUserIdentifierModel",
@@ -222,7 +190,7 @@ __all__ = [
     "PlayOptions",
     "PlayRequest",
     "PlaySource",
-    "PowerVirtualAgentsDialog",
+    "PlayStarted",
     "RecognizeCanceled",
     "RecognizeCompleted",
     "RecognizeFailed",
@@ -245,39 +213,33 @@ __all__ = [
     "SpeechResult",
     "SsmlSource",
     "StartCallRecordingRequest",
-    "StartDialogRequest",
-    "StartHoldMusicRequest",
     "StartMediaStreamingRequest",
     "StartTranscriptionRequest",
-    "StopHoldMusicRequest",
     "StopMediaStreamingRequest",
     "StopTranscriptionRequest",
     "TextSource",
-    "TranscriptionConfiguration",
     "TranscriptionFailed",
+    "TranscriptionOptions",
     "TranscriptionStarted",
     "TranscriptionStopped",
+    "TranscriptionSubscription",
     "TranscriptionUpdate",
     "TranscriptionUpdated",
     "TransferCallResponse",
     "TransferToParticipantRequest",
     "UnholdRequest",
-    "UnmuteParticipantsRequest",
-    "UnmuteParticipantsResponse",
-    "UpdateDialogRequest",
     "UpdateTranscriptionRequest",
-    "UserConsent",
     "CallConnectionState",
     "CallLocatorKind",
     "CallRejectReason",
     "CommunicationCloudEnvironmentModel",
     "CommunicationIdentifierModelKind",
-    "DialogInputType",
     "DtmfTone",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
     "MediaStreamingStatus",
     "MediaStreamingStatusDetails",
+    "MediaStreamingSubscriptionState",
     "MediaStreamingTransportType",
     "PlaySourceType",
     "RecognitionType",
@@ -288,8 +250,10 @@ __all__ = [
     "RecordingKind",
     "RecordingState",
     "RecordingStorageKind",
+    "TranscriptionResultState",
     "TranscriptionStatus",
     "TranscriptionStatusDetails",
+    "TranscriptionSubscriptionState",
     "TranscriptionTransportType",
     "VoiceKind",
 ]
