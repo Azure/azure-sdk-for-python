@@ -148,6 +148,9 @@ steps:
       displayName: Test Samples (AzurePowerShell@5)
       condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
       env:
+        # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
+        # so "execute samples" step correctly picks up Powershell credential.
+        AZURE_POD_IDENTITY_AUTHORITY_HOST: "FakeAuthorityHost"
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         ${{ insert }}: ${{ parameters.EnvVars }}
       inputs:
@@ -187,7 +190,11 @@ steps:
           --service="${{ parameters.ServiceDirectory }}" `
           --toxenv="samples"
         exit $LASTEXITCODE;
-      env: ${{ parameters.EnvVars }}
+      env:
+        # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
+        # so "execute samples" step correctly picks up Powershell credential.
+        AZURE_POD_IDENTITY_AUTHORITY_HOST: "FakeAuthorityHost"
+        ${{ insert }}: ${{ parameters.EnvVars }}
       displayName: 'Test Samples'
       condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
 

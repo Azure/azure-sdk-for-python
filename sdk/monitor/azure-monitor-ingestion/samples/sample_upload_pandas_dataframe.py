@@ -19,7 +19,7 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) DATA_COLLECTION_ENDPOINT - your data collection endpoint
-    2) LOGS_DCR_RULE_ID - your data collection rule immutable ID
+    2) LOGS_DCR_ID - your data collection rule immutable ID
     3) LOGS_DCR_STREAM_NAME - your data collection rule stream name
 
     If using an application service principal for authentication, set the following:
@@ -55,6 +55,6 @@ df = pd.DataFrame.from_dict(data)
 # into a Python object that can be used for upload.
 body = json.loads(df.to_json(orient="records", date_format="iso"))
 try:
-    client.upload(rule_id=os.environ["LOGS_DCR_RULE_ID"], stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=body)
+    client.upload(rule_id=os.environ["LOGS_DCR_ID"], stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=body)
 except HttpResponseError as e:
     print(f"Upload failed: {e}")

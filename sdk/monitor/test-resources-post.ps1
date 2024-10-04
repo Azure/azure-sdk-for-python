@@ -24,6 +24,7 @@ $dcrImmutableId = $DeploymentOutputs['AZURE_MONITOR_DCR_ID']
 $dceEndpoint = $DeploymentOutputs['AZURE_MONITOR_DCE']
 $streamName = $DeploymentOutputs['AZURE_MONITOR_STREAM_NAME']
 $environment = $DeploymentOutputs['MONITOR_ENVIRONMENT']
+$location = $DeploymentOutputs['MONITOR_LOCATION']
 
 ##################
 ### Step 0: Wait for role assignment to propagate
@@ -41,7 +42,18 @@ $audienceMappings = @{
     "AzureChinaCloud" = "https://monitor.azure.cn";
 }
 
+$tldMappings = @{
+    "AzureCloud" = "com";
+    "AzureUSGovernment" = "us";
+    "AzureChinaCloud" = "cn";
+}
+
 $audience = $audienceMappings[$environment]
+
+$tld = $tldMappings[$environment]
+$env:AZURE_METRICS_ENDPOINT = "https://$location.metrics.monitor.azure.$tld"
+Write-Host "##vso[task.setvariable variable=AZURE_METRICS_ENDPOINT]$($env:AZURE_METRICS_ENDPOINT)"
+Write-Host "Setting AZURE_METRICS_ENDPOINT to $env:AZURE_METRICS_ENDPOINT"
 
 az cloud set --name $environment
 
