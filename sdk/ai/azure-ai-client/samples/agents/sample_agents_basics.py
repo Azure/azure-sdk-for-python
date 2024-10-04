@@ -54,7 +54,7 @@ while run.status in ["queued", "in_progress", "requires_action"]:
 
 logging.info("Run completed with status:", run.status)
 
-ai_client.agents.delete_assistant(agent.id)
+ai_client.agents.delete_agent(agent.id)
 logging.info("Deleted agent")
 
 messages = ai_client.agents.list_messages(thread_id=thread.id)
