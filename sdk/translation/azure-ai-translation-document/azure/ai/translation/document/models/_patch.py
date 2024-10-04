@@ -28,14 +28,14 @@ if TYPE_CHECKING:
 
 def convert_status(status, ll=False):
     if ll is False:
-        if status == "Cancelled":
+        if status.lower() == "cancelled":
             return "Canceled"
-        if status == "Cancelling":
+        if status.lower() == "cancelling":
             return "Canceling"
     elif ll is True:
-        if status == "Canceled":
+        if status.lower() == "canceled":
             return "Cancelled"
-        if status == "Canceling":
+        if status.lower() == "canceling":
             return "Cancelling"
     return status
 
@@ -168,18 +168,7 @@ class TranslationTarget(GeneratedTranslationTarget):
     """List of Glossary."""
     storage_source: Optional[Union[str, "_models.StorageSource"]]
     """Storage Source. \"AzureBlob\""""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        target_url: str,
-        language: str,
-        category_id: Optional[str] = None,
-        glossaries: Optional[List["TranslationGlossary"]] = None,
-        storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
-    ): ...
-
+  
     @overload
     def __init__(
         self,
@@ -240,16 +229,6 @@ class TranslationGlossary(GeneratedTranslationGlossary):
     """Optional Version.  If not specified, default is used."""
     storage_source: Optional[Union[str, "_models.StorageSource"]]
     """Storage Source. \"AzureBlob\""""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        glossary_url: str,
-        file_format: str,
-        format_version: Optional[str] = None,
-        storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
-    ): ...
 
     @overload
     def __init__(
