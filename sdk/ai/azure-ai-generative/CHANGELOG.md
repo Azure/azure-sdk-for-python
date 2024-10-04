@@ -2,9 +2,8 @@
 
 ## 1.0.0b11 (2024-10-04)
 
-This package is no longer being maintained. Please refer to new SDK [Azure AI Evaluation](https://pypi.org/project/azure-ai-evaluation/) instead.
-
-For additional support, please open a new issue in the [Issues](https://github.com/Azure/azure-sdk-for-python/issues) section of the Microsoft Azure SDK for Python repo with a label "Evaluation". 
+### Other Changes
+- Deprecation message added. 
 
 ## 1.0.0b10 (2024-10-03)
 
