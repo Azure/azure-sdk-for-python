@@ -95,7 +95,7 @@ class TestSimAndEval:
             file.writelines([json.dumps({"conversation": conversation}) + "\n" for conversation in simulator_output])
 
         # Evaluator simulator output
-        violence_eval = ViolenceEvaluator(project_scope, credential=DefaultAzureCredential())
+        violence_eval = ViolenceEvaluator(DefaultAzureCredential(), project_scope)
         # run the evaluation
         eval_output = evaluate(
             data=file_name,
