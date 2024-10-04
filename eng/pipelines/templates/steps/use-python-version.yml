@@ -22,6 +22,12 @@ steps:
     displayName: Install pypy39 to hosted tool cache
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
 
+  - pwsh: |
+      Get-ChildItem -Force -Recurse $(AGENT_TOOLSDIRECTORY)/PyPy
+    displayName: Dump Hosted Tool Cache for PyPy
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
+
+
   # select the appropriate version from manifest if present
   - task: PythonScript@0
     displayName: 'Install ${{ parameters.versionSpec }} from Python Manifest If Necessary'
