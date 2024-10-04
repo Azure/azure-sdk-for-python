@@ -17,7 +17,7 @@ from azure.core.pipeline import policies
 from ._configuration import ClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperations
-from .operations._patch import InferenceOperations
+from .operations._patch import InferenceOperations, TracingOperations
 from ._client import Client as ClientGenerated
 
 logger = logging.getLogger(__name__)
@@ -155,6 +155,7 @@ class AzureAIClient(ClientGenerated):
         self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
         self.inference = InferenceOperations(self)
+        self.tracing = TracingOperations(self)
 
     @classmethod
     def from_connection_string(cls, connection: str, credential: "TokenCredential", **kwargs) -> "AzureAIClient":
