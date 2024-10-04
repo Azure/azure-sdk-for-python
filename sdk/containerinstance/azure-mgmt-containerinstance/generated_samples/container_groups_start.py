@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.containerinstance import ContainerInstanceManagementClient
 
 """
@@ -29,13 +30,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.container_groups.begin_start(
+    client.container_groups.begin_start(
         resource_group_name="demo",
         container_group_name="demo1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/stable/2023-05-01/examples/ContainerGroupsStart.json
+# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/preview/2024-10-01-preview/examples/ContainerGroupsStart.json
 if __name__ == "__main__":
     main()
