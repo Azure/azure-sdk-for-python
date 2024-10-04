@@ -44,6 +44,7 @@ Currently the Azure App Configuration Provider enables:
 * Selecting multiple sets of configurations using `SettingSelector`.
 * Loading Feature Flags
 * Dynamic Refresh
+* Geo-Replication support
 * Trim prefixes off key names.
 * Resolving Key Vault References, requires AAD.
 * Secret Resolver, resolve Key Vault References locally without connecting to Key Vault.
@@ -53,7 +54,6 @@ Currently the Azure App Configuration Provider enables:
 
 List of features we are going to add to the Python Provider in the future.
 
-* Geo-Replication support
 * Configuration Placeholders
 
 ## Examples
@@ -166,6 +166,19 @@ def secret_resolver(uri):
 key_vault_options = AzureAppConfigurationKeyVaultOptions(
     secret_resolver=secret_resolver)
 config = load(endpoint=endpoint, credential=DefaultAzureCredential(), key_vault_options=key_vault_options)
+```
+
+## Geo Replication
+
+The Azure App Configuration Provider library will automatically discover the provided configuration store's replicas and use the replicas if any issue arises. From more information see [Geo-Replication](https://learn.microsoft.com/azure/azure-app-configuration/howto-geo-replication).
+
+Replica discovery is enabled by default. If you want to disable it, you can set `replica_discovery_enabled` to `False`.
+
+```python
+from azure.appconfiguration.provider import load
+from azure.identity import DefaultAzureCredential
+
+config = load(endpoint=endpoint, credential=DefaultAzureCredential(), replica_discovery_enabled=False)
 ```
 
 ## Loading Feature Flags

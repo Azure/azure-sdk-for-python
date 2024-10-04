@@ -1,5 +1,11 @@
 # Azure Cosmos DB SQL API client library for Python (conda)
 
+## 2024.09.01
+
+### Packages included
+
+- azure-cosmos-4.7.0
+
 ## 2024.06.01
 
 ### Packages included

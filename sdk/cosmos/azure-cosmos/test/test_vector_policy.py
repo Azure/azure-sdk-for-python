@@ -163,7 +163,8 @@ class TestVectorPolicy(unittest.TestCase):
             pytest.fail("Container replace should have failed for indexing policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert "Vector Indexing Policy cannot be changed in Collection Replace" in e.http_error_message
+            assert "Paths in existing vector indexing policy cannot be modified in Collection Replace." \
+                   " They can only be added or removed." in e.http_error_message
         self.test_db.delete_container(container_id)
 
     def test_fail_create_vector_embedding_policy(self):

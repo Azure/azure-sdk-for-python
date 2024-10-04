@@ -32,9 +32,9 @@ steps:
         $packages = Get-ChildItem "$(Pipeline.Workspace)/${{ parameters.ArtifactName }}/${{ parameters.Artifact.name }}/*.tar.gz"
         Write-Host "Artifacts found:"
         $artifacts = $packages | ForEach-Object {
-          if ($_.Name -match "([a-zA-Z\-]+)\-(.*).tar.gz") {
+          if ($_.Name -match "([a-zA-Z\-_]+)\-(.*).tar.gz") {
             Write-Host "$($matches[1]): $($matches[2])"
-            return @{ "name" = $matches[1]; "version" = $matches[2] }
+            return @{ "name" = $matches[1].ToString().Replace("_", "-"); "version" = $matches[2] }
           }
         }
         if ($artifacts.name -notcontains "${{parameters.Artifact.name}}") {
@@ -58,7 +58,7 @@ steps:
       displayName: Override requirements with pipeline build artifact versions
 
     # Retry for pip install due to delay in package availability after publish
-    # The package is expected to be available for download/installation within 10 minutes 
+    # The package is expected to be available for download/installation within 10 minutes
     - pwsh: |
         $ErrorActionPreference = "Continue"
         while ($retries++ -lt 15) {

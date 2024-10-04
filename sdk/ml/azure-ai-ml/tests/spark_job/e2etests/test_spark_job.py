@@ -36,7 +36,7 @@ class TestSparkJob(AzureRecordedTestCase):
         assert spark_job.description == "simply the best"
         assert spark_job.type == "spark"
         assert spark_job.resources.instance_type == "standard_e8s_v3"
-        assert spark_job.resources.runtime_version == "3.2"
+        assert spark_job.resources.runtime_version == "3.3"
 
     @pytest.mark.e2etest
     def test_spark_job_word_count_inputs(sef, randstr: Callable[[], str], client: MLClient) -> None:
@@ -53,7 +53,7 @@ class TestSparkJob(AzureRecordedTestCase):
         assert spark_job.description == "submit a hobo spark job testing inputs"
         assert spark_job.type == "spark"
         assert spark_job.resources.instance_type == "standard_e8s_v3"
-        assert spark_job.resources.runtime_version == "3.2"
+        assert spark_job.resources.runtime_version == "3.3"
 
     @pytest.mark.e2etest
     def test_spark_job_builder(self, client: MLClient) -> None:
@@ -90,7 +90,7 @@ class TestSparkJob(AzureRecordedTestCase):
             args="--input1 ${{inputs.input1}} --output1 ${{outputs.output1}} --my_sample_rate 0.01",
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.2.0",
+                "runtime_version": "3.3.0",
             },
         )
 

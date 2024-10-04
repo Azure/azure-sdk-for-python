@@ -16597,7 +16597,7 @@ class LoadBalancerSku(_serialization.Model):
 
     :ivar name: Name of a load balancer SKU. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.network.v2020_08_01.models.LoadBalancerSkuName
-    :ivar tier: Tier of a load balancer SKU. Known values are: "Regional" and "Global".
+    :ivar tier: Tier of a load balancer SKU. Known values are: "Regional", "Global", and "Global".
     :vartype tier: str or ~azure.mgmt.network.v2020_08_01.models.LoadBalancerSkuTier
     """
 
@@ -16616,7 +16616,8 @@ class LoadBalancerSku(_serialization.Model):
         """
         :keyword name: Name of a load balancer SKU. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.network.v2020_08_01.models.LoadBalancerSkuName
-        :keyword tier: Tier of a load balancer SKU. Known values are: "Regional" and "Global".
+        :keyword tier: Tier of a load balancer SKU. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.network.v2020_08_01.models.LoadBalancerSkuTier
         """
         super().__init__(**kwargs)
@@ -22635,7 +22636,8 @@ class PublicIPAddressSku(_serialization.Model):
 
     :ivar name: Name of a public IP address SKU. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.network.v2020_08_01.models.PublicIPAddressSkuName
-    :ivar tier: Tier of a public IP address SKU. Known values are: "Regional" and "Global".
+    :ivar tier: Tier of a public IP address SKU. Known values are: "Regional", "Global", and
+     "Global".
     :vartype tier: str or ~azure.mgmt.network.v2020_08_01.models.PublicIPAddressSkuTier
     """
 
@@ -22654,7 +22656,8 @@ class PublicIPAddressSku(_serialization.Model):
         """
         :keyword name: Name of a public IP address SKU. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.network.v2020_08_01.models.PublicIPAddressSkuName
-        :keyword tier: Tier of a public IP address SKU. Known values are: "Regional" and "Global".
+        :keyword tier: Tier of a public IP address SKU. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.network.v2020_08_01.models.PublicIPAddressSkuTier
         """
         super().__init__(**kwargs)
@@ -22841,7 +22844,8 @@ class PublicIPPrefixSku(_serialization.Model):
 
     :ivar name: Name of a public IP prefix SKU. "Standard"
     :vartype name: str or ~azure.mgmt.network.v2020_08_01.models.PublicIPPrefixSkuName
-    :ivar tier: Tier of a public IP prefix SKU. Known values are: "Regional" and "Global".
+    :ivar tier: Tier of a public IP prefix SKU. Known values are: "Regional", "Global", and
+     "Global".
     :vartype tier: str or ~azure.mgmt.network.v2020_08_01.models.PublicIPPrefixSkuTier
     """
 
@@ -22860,7 +22864,8 @@ class PublicIPPrefixSku(_serialization.Model):
         """
         :keyword name: Name of a public IP prefix SKU. "Standard"
         :paramtype name: str or ~azure.mgmt.network.v2020_08_01.models.PublicIPPrefixSkuName
-        :keyword tier: Tier of a public IP prefix SKU. Known values are: "Regional" and "Global".
+        :keyword tier: Tier of a public IP prefix SKU. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.network.v2020_08_01.models.PublicIPPrefixSkuTier
         """
         super().__init__(**kwargs)
@@ -23233,6 +23238,7 @@ class Route(SubResource):
     _validation = {
         "etag": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "has_bgp_override": {"readonly": True},
     }
 
     _attribute_map = {
@@ -23256,7 +23262,6 @@ class Route(SubResource):
         address_prefix: Optional[str] = None,
         next_hop_type: Optional[Union[str, "_models.RouteNextHopType"]] = None,
         next_hop_ip_address: Optional[str] = None,
-        has_bgp_override: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -23275,9 +23280,6 @@ class Route(SubResource):
         :keyword next_hop_ip_address: The IP address packets should be forwarded to. Next hop values
          are only allowed in routes where the next hop type is VirtualAppliance.
         :paramtype next_hop_ip_address: str
-        :keyword has_bgp_override: A value indicating whether this route overrides overlapping BGP
-         routes regardless of LPM.
-        :paramtype has_bgp_override: bool
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -23287,7 +23289,7 @@ class Route(SubResource):
         self.next_hop_type = next_hop_type
         self.next_hop_ip_address = next_hop_ip_address
         self.provisioning_state = None
-        self.has_bgp_override = has_bgp_override
+        self.has_bgp_override = None
 
 
 class RouteFilter(Resource):

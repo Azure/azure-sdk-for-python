@@ -57,7 +57,6 @@ class TestDACAnalyzeCustomModelAsync(AsyncDocumentIntelligenceTest):
                 )
         assert "Resource not found" in str(e.value)
 
-    @pytest.mark.live_test_only("Needs re-recording to work with new common sanitizers")
     @DocumentIntelligencePreparer()
     @recorded_by_proxy_async
     async def test_analyze_document_empty_model_id_from_url(self, **kwargs):

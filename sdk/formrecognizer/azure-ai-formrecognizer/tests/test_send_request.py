@@ -9,18 +9,17 @@ from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.rest import HttpRequest
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, FormTrainingClient
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
-FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
+get_dma_client = functools.partial(get_sync_client, DocumentModelAdministrationClient)
+get_ft_client = functools.partial(get_sync_client, FormTrainingClient)
 
 
 class TestSendRequest(FormRecognizerTest):
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_get_resource_details(self, client, **kwargs):
+    def test_get_resource_details(self, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         resource_details = client.get_resource_details()
 
@@ -81,9 +80,9 @@ class TestSendRequest(FormRecognizerTest):
         assert received_info5["summary"]["limit"] == received_info4["summary"]["limit"]
 
     @FormRecognizerPreparer()
-    @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy
-    def test_get_account_properties_v2(self, client):
+    def test_get_account_properties_v2(self):
+        client = get_ft_client(api_version="2.1")
         set_bodiless_matcher()
         account_properties = client.get_account_properties()
 

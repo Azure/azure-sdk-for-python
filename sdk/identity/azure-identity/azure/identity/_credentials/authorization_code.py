@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import Optional, Any
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.exceptions import ClientAuthenticationError
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
@@ -90,10 +90,35 @@ class AuthorizationCodeCredential(GetTokenMixin):
             *scopes, claims=claims, tenant_id=tenant_id, client_secret=self._client_secret, **kwargs
         )
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        The first time this method is called, the credential will redeem its authorization code. On subsequent calls
+        the credential will return a cached access token or redeem a refresh token, if it acquired a refresh token upon
+        redeeming the authorization code.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+          attribute gives a reason. Any error response from Microsoft Entra ID is available as the error's
+          ``response`` attribute.
+        """
+        return super()._get_token_base(
+            *scopes, options=options, client_secret=self._client_secret, base_method_name="get_token_info"
+        )
+
+    def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessTokenInfo]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def _request_token(self, *scopes: str, **kwargs) -> AccessTokenInfo:
         if self._authorization_code:
             token = self._client.obtain_token_by_authorization_code(
                 scopes=scopes, code=self._authorization_code, redirect_uri=self._redirect_uri, **kwargs

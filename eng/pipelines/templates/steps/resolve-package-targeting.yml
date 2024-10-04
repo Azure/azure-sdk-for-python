@@ -1,0 +1,53 @@
+parameters:
+  - name: BuildTargetingString
+    type: string
+    default: 'azure-*'
+  - name: PackagePropertiesFolder
+    type: string
+    default: ''
+  - name: IncludeIndirect
+    type: boolean
+    default: true
+
+steps:
+  # whether we are running within a PR build or not, we need to walk the package properties and save them to
+  # variable $(TargetingString) so that every other check and accept it as an argument.
+  - pwsh: |
+      $setting = "${{ parameters.BuildTargetingString }}"
+
+      # if the variable is not set, it'll just come back as the variable name. otherwise it's set.
+      if ('$(BuildTargetingString)' -ne ('$' + '(BuildTargetingString)')) {
+          Write-Host "The variable named BuildTargetingString is set to $(BuildTargetingString)"
+          $setting = "$(BuildTargetingString)"
+      }
+      else {
+        if (Test-Path "${{ parameters.PackagePropertiesFolder }}") {
+          if ("${{ parameters.IncludeIndirect }}" -eq "true") {
+            $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
+                | ForEach-Object { $_.Name.Replace(".json", "") }
+          }
+          else {
+            $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
+              | Where-Object { (Get-Content -Raw $_ | ConvertFrom-Json).IncludedForValidation -eq $false } `
+              | ForEach-Object { $_.Name.Replace(".json", "") }
+          }
+
+          $setting = $packageProperties -join ","
+
+          # in case we don't expect any packages, we should set the variable to null, which will match NO packages and cause whatever the check
+          # is to skip with exit 0 (which is what we want!)
+          if (-not $setting) {
+            $setting = "null"
+          }
+        }
+      }
+
+      Write-Host "##vso[task.setvariable variable=TargetingString;]$setting"
+    displayName: Resolve Targeted Packages
+    # if targeting has been set by matrix, this value will already be populated
+    condition: eq(variables['TargetingString'], '')
+
+  - pwsh: |
+      Write-Host "This run is targeting: `n$(TargetingString)"
+    displayName: Display Targeted Packages
+    condition: ne(variables['TargetingString'], '')

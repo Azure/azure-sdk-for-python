@@ -6,6 +6,7 @@ import pytest
 from ci_tools.parsing import ParsedSetup, compare_string_to_glob_array
 from typing import List
 
+
 @pytest.mark.parametrize(
     "input_string, glob_array, expected_result",
     [

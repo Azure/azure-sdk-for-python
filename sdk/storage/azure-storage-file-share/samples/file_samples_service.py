@@ -22,6 +22,7 @@ USAGE:
 """
 
 import os
+import sys
 
 SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
@@ -32,6 +33,11 @@ class FileShareServiceSamples(object):
     connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 
     def file_service_properties(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: file_service_properties")
+            sys.exit(1)
+
         # Instantiate the ShareServiceClient from a connection string
         from azure.storage.fileshare import ShareServiceClient
         file_service = ShareServiceClient.from_connection_string(self.connection_string)
@@ -70,6 +76,11 @@ class FileShareServiceSamples(object):
         # [END get_service_properties]
 
     def list_shares_in_service(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: list_shares_in_service")
+            sys.exit(1)
+
         # Instantiate the ShareServiceClient from a connection string
         from azure.storage.fileshare import ShareServiceClient
         file_service = ShareServiceClient.from_connection_string(self.connection_string)
@@ -93,6 +104,11 @@ class FileShareServiceSamples(object):
             # [END fsc_delete_shares]
 
     def get_share_client(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: get_share_client")
+            sys.exit(1)
+
         # [START get_share_client]
         from azure.storage.fileshare import ShareServiceClient
         file_service = ShareServiceClient.from_connection_string(self.connection_string)

@@ -12,6 +12,8 @@ from azure.cosmos import DatabaseProxy
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from devtools_testutils.azure_recorded_testcase import get_credential
+from devtools_testutils.helpers import is_live
 
 try:
     import urllib3
@@ -22,14 +24,19 @@ except:
 
 
 class TestConfig(object):
+    local_host = 'https://localhost:8081/'
     # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
     masterKey = os.getenv('ACCOUNT_KEY',
                           'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
-    host = os.getenv('ACCOUNT_HOST', 'https://localhost:8081/')
+    host = os.getenv('ACCOUNT_HOST', local_host)
     connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
 
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.DisableSSLVerification = True
+    is_emulator = host == local_host
+    is_live._cache = True if not is_emulator else False
+    credential =  masterKey if is_emulator else get_credential()
+    credential_async = masterKey if is_emulator else get_credential(is_async=True)
 
     global_host = os.getenv('GLOBAL_ACCOUNT_HOST', host)
     write_location_host = os.getenv('WRITE_LOCATION_HOST', host)

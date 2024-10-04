@@ -18,10 +18,7 @@ class PerfTestProxyPolicy(SansIOHTTPPolicy):
     def redirect_to_test_proxy(self, request):
         if self.recording_id and self.mode:
             live_endpoint = urlparse(request.http_request.url)
-            redirected = live_endpoint._replace(
-                scheme=self._proxy_url.scheme,
-                netloc=self._proxy_url.netloc
-            )
+            redirected = live_endpoint._replace(scheme=self._proxy_url.scheme, netloc=self._proxy_url.netloc)
             request.http_request.url = redirected.geturl()
             request.http_request.headers["x-recording-id"] = self.recording_id
             request.http_request.headers["x-recording-mode"] = self.mode

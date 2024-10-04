@@ -119,6 +119,7 @@ known_content_issues:
   - ['sdk/core/azure-common/README.rst', 'common']
   - ['sdk/core/azure-core/README.md', 'common']
   - ['sdk/core/azure-core/samples/README.md', 'common']
+  - ['sdk/core/azure-core-tracing-opentelemetry/README.md', 'common']
   - ['sdk/core/corehttp/README.md', 'common']
   - ['sdk/core/corehttp/samples/README.md', 'common']
   - ['sdk/search/azure-search-documents/README.md', 'common']

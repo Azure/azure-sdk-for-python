@@ -87,14 +87,14 @@ The `credential` parameter may be provided in a number of different forms, depen
 
    Use the returned token credential to authenticate the client:
     ```python
-        from azure.identity import DefaultAzureCredential
-        from azure.storage.blob import BlobServiceClient
-        token_credential = DefaultAzureCredential()
+    from azure.identity import DefaultAzureCredential
+    from azure.storage.blob import BlobServiceClient
+    token_credential = DefaultAzureCredential()
 
-        blob_service_client = BlobServiceClient(
-            account_url="https://<my_account_name>.blob.core.windows.net",
-            credential=token_credential
-        )
+    blob_service_client = BlobServiceClient(
+        account_url="https://<my_account_name>.blob.core.windows.net",
+        credential=token_credential
+    )
     ```
 
 2. To use a [shared access signature (SAS) token](https://docs.microsoft.com/azure/storage/common/storage-sas-overview),

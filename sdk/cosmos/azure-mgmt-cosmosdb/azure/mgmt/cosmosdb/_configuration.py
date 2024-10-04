@@ -28,13 +28,13 @@ class CosmosDBManagementClientConfiguration:  # pylint: disable=too-many-instanc
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :keyword api_version: Api Version. Default value is "2024-05-15". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-09-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2024-05-15")
+        api_version: str = kwargs.pop("api_version", "2024-09-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

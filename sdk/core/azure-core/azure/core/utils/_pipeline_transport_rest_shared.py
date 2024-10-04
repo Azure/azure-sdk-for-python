@@ -335,7 +335,9 @@ def _parts_helper(
     return responses
 
 
-def _format_data_helper(data: "FileType") -> Union[Tuple[Optional[str], str], Tuple[Optional[str], "FileContent", str]]:
+def _format_data_helper(
+    data: "FileType",
+) -> Union[Tuple[Optional[str], str], Tuple[Optional[str], "FileContent", str]]:
     """Helper for _format_data.
 
     Format field data according to whether it is a stream or

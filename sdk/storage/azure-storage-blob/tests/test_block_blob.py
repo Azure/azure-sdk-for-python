@@ -199,6 +199,38 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
+    def test_upload_blob_from_url_with_metadata(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key, container_name="testcontainer")
+        blob = self._create_blob()
+        self.bsc.get_blob_client(self.container_name, blob.blob_name)
+        sas = self.generate_sas(
+            generate_blob_sas,
+            account_name=storage_account_name,
+            account_key=storage_account_key,
+            container_name=self.container_name,
+            blob_name=blob.blob_name,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1)
+        )
+        # Act
+        source_blob = '{0}/{1}/{2}?{3}'.format(
+            self.account_url(storage_account_name, "blob"), self.container_name, blob.blob_name, sas)
+
+        blob_name = self.get_resource_name("blobcopy")
+        new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        new_blob.upload_blob_from_url(source_blob, metadata={'blobdata': 'data1'})
+
+        new_blob_properties = new_blob.get_blob_properties()
+
+        # Assert
+        assert new_blob_properties.metadata == {'blobdata': 'data1'}
+
+    @BlobPreparer()
+    @recorded_by_proxy
     def test_upload_blob_from_url_with_cold_tier_specified(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

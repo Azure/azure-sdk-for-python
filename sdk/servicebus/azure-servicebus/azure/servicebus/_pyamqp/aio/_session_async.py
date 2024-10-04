@@ -334,6 +334,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             delivery.transfer_state = SessionTransferState.OKAY
 
     async def _incoming_transfer(self, frame):
+        # TODO: should this be only if more=False?
         self.next_incoming_id += 1
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
@@ -369,13 +370,14 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         await self._connection._process_outgoing_frame(self.channel, frame)  # pylint: disable=protected-access
 
     async def _incoming_detach(self, frame):
+        # pylint: disable=protected-access
         try:
             link = self._input_handles[frame[0]]  # handle
-            await link._incoming_detach(frame)  # pylint: disable=protected-access
-            # if link._is_closed:  TODO
-            #     self.links.pop(link.name, None)
-            #     self._input_handles.pop(link.remote_handle, None)
-            #     self._output_handles.pop(link.handle, None)
+            await link._incoming_detach(frame)
+            if link._is_closed:
+                self.links.pop(link.name)
+                self._input_handles.pop(link.remote_handle)
+                self._output_handles.pop(link.handle)
         except KeyError:
             await self._set_state(SessionState.DISCARDING)
             await self._connection.close(

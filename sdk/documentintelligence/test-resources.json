@@ -84,6 +84,45 @@
                 "signedPermission": "rl",
                 "signedResource": "c"
             }
+        },
+        "batchTrainingDataContainer": {
+            "type": "string",
+            "defaultValue": "trainingdata-batch"
+        },
+        "batchTrainingSasProperties": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('batchTrainingDataContainer'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'P2M')]",
+                "signedPermission": "rwl",
+                "signedResource": "c"
+            }
+        },
+        "batchTrainingResultDataContainer": {
+            "type": "string",
+            "defaultValue": "trainingdata-batch"
+        },
+        "batchTrainingResultSasProperties": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('batchTrainingResultDataContainer'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'P2M')]",
+                "signedPermission": "rwl",
+                "signedResource": "c"
+            }
+        },
+        "batchTrainingAsyncResultDataContainer": {
+            "type": "string",
+            "defaultValue": "trainingdata-batch"
+        },
+        "batchTrainingAsyncResultSasProperties": {
+            "type": "object",
+            "defaultValue": {
+                "canonicalizedResource": "[concat('/blob/', parameters('blobStorageAccount'), '/', parameters('batchTrainingAsyncResultDataContainer'))]",
+                "signedExpiry": "[dateTimeAdd(utcNow('u'), 'P2M')]",
+                "signedPermission": "rwl",
+                "signedResource": "c"
+            }
         }
     },
     "variables": {
@@ -138,6 +177,18 @@
         "DOCUMENTINTELLIGENCE_TRAINING_DATA_CLASSIFIER_SAS_URL": {
           "type": "string",
           "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataClassifierContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataClassifierSasProperties')).serviceSasToken)]"
+        },
+        "DOCUMENTINTELLIGENCE_BATCH_TRAINING_DATA_CONTAINER_SAS_URL": {
+            "type": "string",
+            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('batchTrainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('batchTrainingSasProperties')).serviceSasToken)]"
+        },
+        "DOCUMENTINTELLIGENCE_BATCH_TRAINING_RESULT_DATA_CONTAINER_SAS_URL": {
+            "type": "string",
+            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('batchTrainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('batchTrainingResultSasProperties')).serviceSasToken)]"
+        },
+        "DOCUMENTINTELLIGENCE_BATCH_TRAINING_ASYNC_RESULT_DATA_CONTAINER_SAS_URL": {
+            "type": "string",
+            "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('batchTrainingDataContainer'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('batchTrainingAsyncResultSasProperties')).serviceSasToken)]"
         },
         "DOCUMENTINTELLIGENCE_RESOURCE_REGION": {
             "type": "string",

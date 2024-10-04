@@ -11,7 +11,7 @@ import time
 from devtools_testutils.perfstress_tests import EventPerfTest
 
 
-class MockEventProcessor():
+class MockEventProcessor:
 
     def __init__(self, partitions, process_event, process_error, error_after=None, max_events_per_second=None):
         self.partitions = partitions
@@ -20,13 +20,13 @@ class MockEventProcessor():
         self.shutdown = False
         self._error_raised = False
         self._error_lock = threading.Lock()
-        self._event_args = [{'partition': i, 'data': 'hello'} for i in range(self.partitions)]
+        self._event_args = [{"partition": i, "data": "hello"} for i in range(self.partitions)]
         self._events_raised = [0] * self.partitions
         self._starttime = None
         self._process_event = process_event
         self._process_error = process_error
         self._executor = ThreadPoolExecutor(max_workers=self.partitions)
-    
+
     def _process_error_after(self, partition):
         with self._error_lock:
             if not self._error_raised:
@@ -65,7 +65,7 @@ class MockEventProcessor():
                     self._process_event(**event_args)
 
 
-class AsyncMockEventProcessor():
+class AsyncMockEventProcessor:
 
     def __init__(self, partitions, process_event, process_error, error_after=None, max_events_per_second=None):
         self.partitions = partitions
@@ -77,7 +77,7 @@ class AsyncMockEventProcessor():
         self._starttime = None
         self._process_event = process_event
         self._process_error = process_error
-        self._event_args = [{'partition': i, 'data': 'hello'} for i in range(self.partitions)]
+        self._event_args = [{"partition": i, "data": "hello"} for i in range(self.partitions)]
         self._events_raised = [0] * self.partitions
 
     async def _process_error_after(self, partition):
@@ -131,14 +131,14 @@ class SampleEventTest(EventPerfTest):
             self.process_event_sync,
             self.process_error_sync,
             error_after=self.args.error_after_seconds,
-            max_events_per_second=self.args.max_events_per_second
+            max_events_per_second=self.args.max_events_per_second,
         )
         self.async_event_processor = AsyncMockEventProcessor(
             self.args.partitions,
             self.process_event_async,
             self.process_error_async,
             error_after=self.args.error_after_seconds,
-            max_events_per_second=self.args.max_events_per_second
+            max_events_per_second=self.args.max_events_per_second,
         )
 
     def process_event_sync(self, **kwargs):
@@ -176,10 +176,14 @@ class SampleEventTest(EventPerfTest):
         Stop the process for receiving events.
         """
         self.async_event_processor.shutdown = True
-    
+
     @staticmethod
     def add_arguments(parser):
         super(SampleEventTest, SampleEventTest).add_arguments(parser)
-        parser.add_argument('--error-after-seconds', nargs='?', type=int, help='Raise error after this number of seconds.')
-        parser.add_argument('--max-events-per-second', nargs='?', type=int, help='Maximum events per second across all partitions.')
-        parser.add_argument('--partitions', nargs='?', type=int, help="Number of partitions. Default is 8.", default=8)
+        parser.add_argument(
+            "--error-after-seconds", nargs="?", type=int, help="Raise error after this number of seconds."
+        )
+        parser.add_argument(
+            "--max-events-per-second", nargs="?", type=int, help="Maximum events per second across all partitions."
+        )
+        parser.add_argument("--partitions", nargs="?", type=int, help="Number of partitions. Default is 8.", default=8)

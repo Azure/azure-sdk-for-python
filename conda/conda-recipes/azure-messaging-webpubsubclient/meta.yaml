@@ -1,0 +1,70 @@
+{% set name = "azure-messaging-webpubsubclient" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('WEBPUBSUB_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - cryptography
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - pip
+    - pyjwt
+    - python
+    - six
+    - typing_extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+    - websocket-client >=1.6.0
+  run:
+    - cryptography
+    - pyjwt
+    - python
+    - six
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - typing_extensions
+    - requests-oauthlib >=0.5.0
+    - aiohttp
+    - isodate
+    - websocket-client >=1.6.0
+
+test:
+  imports:
+    - azure.messaging.webpubsubclient
+    - azure.messaging.webpubsubclient.aio
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/webpubsub/azure-messaging-webpubsubclient"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure WebPubSub Client Library for Python"
+  description: |
+    Azure Web PubSub is a cloud service that helps developers easily build real-time features in web applications with publish-subscribe patterns at scale.
+    Any scenario that requires real-time messaging between server and clients or among clients following publish-subscribe patterns can benefit from using Web PubSub. Developers no longer need to poll the server by sending repeated HTTP requests at intervals, which is wasteful and hard-to-scale.
+    As shown in the diagram below, your clients establish WebSocket connections with your Web PubSub resource. This client library:
+    
+        - simplifies managing client connections
+        - simplifies sending messages among clients
+        - automatically retries after unintended drops of client connection
+        - reliably deliveries messages in number and in order after recovering from connection drops
+    Please see https://aka.ms/azsdk/conda/releases/webpubsubclient for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

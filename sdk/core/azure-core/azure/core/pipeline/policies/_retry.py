@@ -52,7 +52,11 @@ from ..._enum_meta import CaseInsensitiveEnumMeta
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 AllHttpResponseType = TypeVar(
-    "AllHttpResponseType", HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse
+    "AllHttpResponseType",
+    HttpResponse,
+    LegacyHttpResponse,
+    AsyncHttpResponse,
+    LegacyAsyncHttpResponse,
 )
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 ClsRetryPolicy = TypeVar("ClsRetryPolicy", bound="RetryPolicyBase")
@@ -203,7 +207,9 @@ class RetryPolicyBase:
         return True
 
     def is_retry(
-        self, settings: Dict[str, Any], response: PipelineResponse[HTTPRequestType, AllHttpResponseType]
+        self,
+        settings: Dict[str, Any],
+        response: PipelineResponse[HTTPRequestType, AllHttpResponseType],
     ) -> bool:
         """Checks if method/status code is retryable.
 
@@ -257,7 +263,10 @@ class RetryPolicyBase:
         self,
         settings: Dict[str, Any],
         response: Optional[
-            Union[PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, AllHttpResponseType]]
+            Union[
+                PipelineRequest[HTTPRequestType],
+                PipelineResponse[HTTPRequestType, AllHttpResponseType],
+            ]
         ] = None,
         error: Optional[Exception] = None,
     ) -> bool:
@@ -276,7 +285,11 @@ class RetryPolicyBase:
         """
         # FIXME This code is not None safe: https://github.com/Azure/azure-sdk-for-python/issues/31528
         response = cast(
-            Union[PipelineRequest[HTTPRequestType], PipelineResponse[HTTPRequestType, AllHttpResponseType]], response
+            Union[
+                PipelineRequest[HTTPRequestType],
+                PipelineResponse[HTTPRequestType, AllHttpResponseType],
+            ],
+            response,
         )
 
         settings["total"] -= 1
@@ -343,7 +356,10 @@ class RetryPolicyBase:
             context["history"] = retry_settings["history"]
 
     def _configure_timeout(
-        self, request: PipelineRequest[HTTPRequestType], absolute_timeout: float, is_response_error: bool
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        absolute_timeout: float,
+        is_response_error: bool,
     ) -> None:
         if absolute_timeout <= 0:
             if is_response_error:
@@ -461,7 +477,9 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
         return False
 
     def _sleep_backoff(
-        self, settings: Dict[str, Any], transport: HttpTransport[HTTPRequestType, HTTPResponseType]
+        self,
+        settings: Dict[str, Any],
+        transport: HttpTransport[HTTPRequestType, HTTPResponseType],
     ) -> None:
         """Sleep using exponential backoff. Immediately returns if backoff is 0.
 
@@ -524,7 +542,8 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
             # The correct fix is to make PipelineContext generic, but that's a breaking change and a lot of
             # generic to update in Pipeline, PipelineClient, PipelineRequest, PipelineResponse, etc.
             transport: HttpTransport[HTTPRequestType, HTTPResponseType] = cast(
-                HttpTransport[HTTPRequestType, HTTPResponseType], request.context.transport
+                HttpTransport[HTTPRequestType, HTTPResponseType],
+                request.context.transport,
             )
             try:
                 self._configure_timeout(request, absolute_timeout, is_response_error)
@@ -537,7 +556,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HTTPRequestType, HTTPResponseType]
                         is_response_error = True
                         continue
                 break
-            except ClientAuthenticationError:  # pylint:disable=try-except-raise
+            except ClientAuthenticationError:
                 # the authentication policy failed such that the client's request can't
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise

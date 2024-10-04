@@ -9,7 +9,7 @@ from azure.identity import CredentialUnavailableError, EnvironmentCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
-from helpers import mock
+from helpers import mock, GET_TOKEN_METHODS
 
 
 ALL_VARIABLES = {
@@ -20,17 +20,18 @@ ALL_VARIABLES = {
 }
 
 
-def test_incomplete_configuration():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_incomplete_configuration(get_token_method):
     """get_token should raise CredentialUnavailableError for incomplete configuration."""
 
     with mock.patch.dict(os.environ, {}, clear=True):
         with pytest.raises(CredentialUnavailableError) as ex:
-            EnvironmentCredential().get_token("scope")
+            getattr(EnvironmentCredential(), get_token_method)("scope")
 
     for a, b in itertools.combinations(ALL_VARIABLES, 2):  # all credentials require at least 3 variables set
         with mock.patch.dict(os.environ, {a: "a", b: "b"}, clear=True):
             with pytest.raises(CredentialUnavailableError) as ex:
-                EnvironmentCredential().get_token("scope")
+                getattr(EnvironmentCredential(), get_token_method)("scope")
 
 
 @pytest.mark.parametrize(

@@ -23,6 +23,7 @@ from conftest import (
 audio_test_file = pathlib.Path(__file__).parent / "./assets/hello.m4a"
 
 
+@pytest.mark.live_test_only
 class TestCLI(AzureRecordedTestCase):
     """No support for embeddings CLI cmd"""
 

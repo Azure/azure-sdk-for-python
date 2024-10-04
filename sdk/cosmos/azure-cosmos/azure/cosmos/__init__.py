@@ -42,6 +42,7 @@ from .documents import (
 )
 from .partition_key import PartitionKey
 from .permission import Permission
+from ._feed_range import FeedRange
 
 __all__ = (
     "CosmosClient",
@@ -64,5 +65,6 @@ __all__ = (
     "TriggerType",
     "ConnectionRetryPolicy",
     "ThroughputProperties",
+    "FeedRange"
 )
 __version__ = VERSION

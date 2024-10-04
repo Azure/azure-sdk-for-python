@@ -2,20 +2,14 @@ parameters:
   ServiceDirectory: ''
   Condition: 'succeededOrFailed()'
 
-# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
-#     eng/pipelines/templates/jobs/ci.tests.yml
-#     eng/pipelines/templates/jobs/ci.yml
-#     eng/pipelines/templates/jobs/live.test.yml
-
-# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
 steps:
+  # this will never call save Save-Package-Properties directly as ServiceDirectory is not present
+  # it will however set an indicator for  whether or not we're in a nightly build though.
+  # we will handle the Save-Package-Properties call ourselves
   - template: /eng/common/pipelines/templates/steps/daily-dev-build-variable.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      Condition: ${{ parameters.Condition }}
 
   - pwsh: |
       python -m pip install "tools/azure-sdk-tools[build]"
-      sdk_set_dev_version "$(TargetingString)" --service="${{parameters.ServiceDirectory}}" --build-id="$(Build.BuildNumber)"
+      sdk_set_dev_version "*" --build-id="$(Build.BuildNumber)"
     displayName: "Update package versions for dev build"
     condition: and(succeededOrFailed(), eq(variables['SetDevVersion'],'true'), ${{ parameters.Condition }})

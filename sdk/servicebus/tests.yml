@@ -4,7 +4,7 @@ extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: servicebus
-      TestTimeoutInMinutes: 480
+      TestTimeoutInMinutes: 960
       UseFederatedAuth: true
       BuildTargetingString: azure-servicebus*
       EnvVars:

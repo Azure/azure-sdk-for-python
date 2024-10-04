@@ -85,5 +85,5 @@ class AzureMonitorMetric:
         self.mmap.measure_int_put(self.error_measure, 1)
         self.mmap.record()
         self.azure_logger.exception(
-            "Error happened when running {}: {}. Extra info: {}".format(self.name, repr(error), extra)
+            "Error happened when running %s: %s. Extra info: %s", self.name, repr(error), extra
         )

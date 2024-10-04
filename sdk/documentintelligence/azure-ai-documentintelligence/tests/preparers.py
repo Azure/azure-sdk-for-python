@@ -20,6 +20,9 @@ DocumentIntelligencePreparer = functools.partial(
     documentintelligence_storage_container_sas_url="https://blob_sas_url",
     documentintelligence_testing_data_container_sas_url="https://blob_sas_url",
     documentintelligence_training_data_classifier_sas_url="https://blob_sas_url",
+    documentintelligence_batch_training_data_container_sas_url="https://blob_sas_url",
+    documentintelligence_batch_training_result_data_container_sas_url="https://blob_sas_url",
+    documentintelligence_batch_training_async_result_data_container_sas_url="https://blob_sas_url",
     documentintelligence_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.CognitiveServices/accounts/documentintelligencename",
     documentintelligence_resource_region="region",
 )

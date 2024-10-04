@@ -21,11 +21,11 @@ import subprocess
 from enum import Enum
 from typing import Dict, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
-from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
+from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
 from pathlib import Path
-from checkers.method_overloads_checker import MethodOverloadsChecker
+from supported_checkers import CHECKERS
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 _LOGGER = logging.getLogger(__name__)
@@ -350,6 +350,9 @@ def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
     public_func_nodes = [func for func in func_nodes if not func.name.startswith("_") or func.name.startswith("__init__")]
     # Check for method overloads on a class
     for func in public_func_nodes:
+        if func.name not in cls_methods:
+            _LOGGER.debug(f"Skipping overloads check for method {func.name}.")
+            continue
         if "overloads" not in cls_methods[func.name]:
             cls_methods[func.name]["overloads"] = []
         is_async = False
@@ -437,18 +440,20 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         stable = json.load(fd)
     with open(os.path.join(pkg_dir, target_report), "r") as fd:
         current = json.load(fd)
-    diff = jsondiff.diff(stable, current)
+
+    if "azure-mgmt-" in package_name:
+        stable = report_azure_mgmt_versioned_module(stable)
+        current = report_azure_mgmt_versioned_module(current)
+
     checker = BreakingChangesTracker(
         stable,
         current,
-        diff, # TODO in preparation for generic trackers, the diff can be created during init
         package_name,
-        checkers = [
-            MethodOverloadsChecker(),
-        ]
+        checkers = CHECKERS,
+        ignore = IGNORE_BREAKING_CHANGES
     )
     if changelog:
-        checker = ChangelogTracker(stable, current, diff, package_name)
+        checker = ChangelogTracker(stable, current, package_name, checkers = CHECKERS, ignore = IGNORE_BREAKING_CHANGES)
     checker.run_checks()
 
     remove_json_files(pkg_dir)
@@ -467,6 +472,30 @@ def remove_json_files(pkg_dir: str) -> None:
     if os.path.isfile(current_json):
         os.remove(current_json)
     _LOGGER.info("cleaning up")
+
+
+def report_azure_mgmt_versioned_module(code_report):
+    
+    def parse_module_name(module):
+        split_module = module.split(".")
+        # Azure mgmt packages are typically in the form of: azure.mgmt.<service>
+        # If the module has a version, it will be in the form of: azure.mgmt.<service>.<version> or azure.mgmt.<service>.<version>.<submodule>
+        if len(split_module) >= 4:
+            for i in range(3, len(split_module)):
+                if re.search(r"v\d{4}_\d{2}_\d{2}", split_module[i]):
+                    split_module.pop(i)
+                    break
+        return ".".join(split_module)
+
+    sorted_modules = sorted(code_report.keys())
+    merged_report = {}
+    for module in sorted_modules:
+        non_version_module_name = parse_module_name(module)
+        if non_version_module_name not in merged_report:
+            merged_report[non_version_module_name] = code_report[module]
+            continue
+        merged_report[non_version_module_name].update(code_report[module])
+    return merged_report
 
 
 def main(

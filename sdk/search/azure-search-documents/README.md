@@ -162,8 +162,9 @@ exposes operations on these resources through three main client types.
 Azure AI Search provides two powerful features: **semantic ranking** and **vector search**.
 
 **Semantic ranking** enhances the quality of search results for text-based queries. By enabling semantic ranking on your search service, you can improve the relevance of search results in two ways:
-- It applies secondary ranking to the initial result set, promoting the most semantically relevant results to the top.
-- It extracts and returns captions and answers in the response, which can be displayed on a search page to enhance the user's search experience.
+
+* It applies secondary ranking to the initial result set, promoting the most semantically relevant results to the top.
+* It extracts and returns captions and answers in the response, which can be displayed on a search page to enhance the user's search experience.
 
 To learn more about semantic ranking, you can refer to the [documentation](https://learn.microsoft.com/azure/search/vector-search-overview).
 
@@ -184,13 +185,11 @@ that you can [import into your own index from the Azure portal.](https://docs.mi
 These are just a few of the basics - please [check out our Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples) for
 much more.
 
-
 * [Querying](#querying)
 * [Creating an index](#creating-an-index)
 * [Adding documents to your index](#adding-documents-to-your-index)
 * [Retrieving a specific document from your index](#retrieving-a-specific-document-from-your-index)
 * [Async APIs](#async-apis)
-
 
 ### Querying
 
@@ -226,7 +225,6 @@ for result in results:
     print("{}: {})".format(result["hotelId"], result["hotelName"]))
 ```
 
-
 ### Creating an index
 
 You can use the `SearchIndexClient` to create a search index. Fields can be
@@ -240,6 +238,7 @@ client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 name = "hotels"
 fields = [
     SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+    SimpleField(name="hotelName", type=SearchFieldDataType.String, searchable=True),
     SimpleField(name="baseRate", type=SearchFieldDataType.Double),
     SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
     ComplexField(
@@ -271,10 +270,7 @@ to be aware of.
 
 ```python
 DOCUMENT = {
-    "category": "Hotel",
     "hotelId": "1000",
-    "rating": 4.0,
-    "rooms": [],
     "hotelName": "Azure Inn",
 }
 
@@ -289,8 +285,8 @@ print("Upload of new document succeeded: {}".format(result[0].succeeded))
 
 To authenticate in a [National Cloud](https://docs.microsoft.com/azure/active-directory/develop/authentication-national-cloud), you will need to make the following additions to your client configuration:
 
-- Set the `AuthorityHost` in the credential options or via the `AZURE_AUTHORITY_HOST` environment variable
-- Set the `audience` in `SearchClient`, `SearchIndexClient`, or `SearchIndexerClient`
+* Set the `AuthorityHost` in the credential options or via the `AZURE_AUTHORITY_HOST` environment variable
+* Set the `audience` in `SearchClient`, `SearchIndexClient`, or `SearchIndexerClient`
 
 ```python
 # Create a SearchClient that will authenticate through AAD in the China national cloud.
@@ -325,8 +321,6 @@ result = search_client.get_document(key="23")
 
 print("Details for hotel '23' are:")
 print("        Name: {}".format(result["hotelName"]))
-print("      Rating: {}".format(result["rating"]))
-print("    Category: {}".format(result["category"]))
 ```
 
 <!-- END SNIPPET -->

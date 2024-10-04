@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime, timedelta
+from typing import Any, cast, Dict, Optional, Union
+
 from ._generated._serialization import Serializer
 
 _ERROR_TOO_MANY_FILE_PERMISSIONS = 'file_permission and file_permission_key should not be set at the same time'
@@ -45,3 +47,14 @@ def _datetime_to_str(datetime_obj):
     if isinstance(datetime_obj, str):
         return datetime_obj
     return Serializer.serialize_iso(datetime_obj)[:-1].ljust(27, "0") + "Z"
+
+
+def _parse_snapshot(
+    snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+    path_snapshot: Optional[str] = None
+) -> Optional[str]:
+    if hasattr(snapshot, 'snapshot'):
+        return snapshot.snapshot  # type: ignore
+    if isinstance(snapshot, Dict):
+        return cast(str, snapshot['snapshot'])
+    return snapshot or path_snapshot

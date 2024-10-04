@@ -132,7 +132,7 @@ class RsaKey(Key):  # pylint:disable=too-many-public-methods
         else:
             key_impl = pub.public_key(default_backend())
 
-        rsa_key._rsa_impl = key_impl  # pylint:disable=protected-access
+        rsa_key._rsa_impl = key_impl
 
         return rsa_key
 

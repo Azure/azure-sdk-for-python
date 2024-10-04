@@ -26,7 +26,7 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             agent_pool_name="str",
-            api_version="2023-07-02-preview",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestContainerServiceMachinesOperationsAsync(AzureMgmtRecordedTestCase):
             resource_name="str",
             agent_pool_name="str",
             machine_name="str",
-            api_version="2023-07-02-preview",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

@@ -78,30 +78,28 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
+    feature_flag_enabled: bool = False,
+    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_refresh_enabled: bool = False,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
 
     :param str endpoint: Endpoint for App Configuration resource.
-    :param credential: Credential for App Configuration resource.
-    :type credential: ~azure.core.credentials.TokenCredential
-    :keyword selects: List of setting selectors to filter configuration settings
-    :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
-    :keyword trim_prefixes: List of prefixes to trim from configuration keys
-    :paramtype trim_prefixes: Optional[List[str]]
-    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if
-     keyvault_client_configs is provided.
-    :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
-    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
-     azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential isn't provided a
-     credential will need to be in each set for each.
-    :paramtype keyvault_client_configs: Mapping[str, Mapping]
-    :keyword secret_resolver: A function that takes a URI and returns a value.
-    :paramtype secret_resolver: Callable[[str], str]
-    :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
-    This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
-    :paramtype refresh_on: List[Tuple[str, str]]
+    :param  ~azure.core.credentials.TokenCredential credential: Credential for App Configuration resource.
+    :keyword Optional[List[~azure.appconfiguration.provider.SettingSelector]] selects: List of setting selectors to
+    filter configuration settings
+    :keyword Optional[List[str]] trim_prefixes: List of prefixes to trim from configuration keys
+    :keyword  ~azure.core.credentials.TokenCredential keyvault_credential: A credential for authenticating with the key
+    vault. This is optional if keyvault_client_configs is provided.
+    :keyword Mapping[str, Mapping] keyvault_client_configs: A Mapping of SecretClient endpoints to client
+    configurations from azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential
+    isn't provided a credential will need to be in each set for each.
+    :keyword Callable[[str], str] secret_resolver: A function that takes a URI and returns a value.
+    :keyword List[Tuple[str, str]] refresh_on: One or more settings whose modification will trigger a full refresh
+    after a fixed interval. This should be a list of Key-Label pairs for specific settings (filters and wildcards are
+    not supported).
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
     :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has
@@ -138,25 +136,27 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     refresh_interval: int = 30,
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
+    feature_flag_enabled: bool = False,
+    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_refresh_enabled: bool = False,
     **kwargs
 ) -> "AzureAppConfigurationProvider":
     """
     Loads configuration settings from Azure App Configuration into a Python application.
 
     :keyword str connection_string: Connection string for App Configuration resource.
-    :keyword selects: List of setting selectors to filter configuration settings
-    :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
-    :keyword trim_prefixes: List of prefixes to trim from configuration keys
-    :paramtype trim_prefixes: Optional[List[str]]
-    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if
-     keyvault_client_configs is provided.
-    :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
-    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
-     azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential isn't provided a
-     credential will need to be in each set for each.
-    :paramtype keyvault_client_configs: Mapping[str, Mapping]
-    :keyword secret_resolver: A function that takes a URI and returns a value.
-    :paramtype secret_resolver: Callable[[str], str]
+    :keyword Optional[List[~azure.appconfiguration.provider.SettingSelector]] selects: List of setting selectors to
+    filter configuration settings
+    :keyword trim_prefixes: Optional[List[str]] trim_prefixes: List of prefixes to trim from configuration keys
+    :keyword  ~azure.core.credentials.TokenCredential keyvault_credential: A credential for authenticating with the key
+    vault. This is optional if keyvault_client_configs is provided.
+    :keyword Mapping[str, Mapping] keyvault_client_configs: A Mapping of SecretClient endpoints to client
+    configurations from azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential
+    isn't provided a credential will need to be in each set for each.
+    :keyword Callable[[str], str] secret_resolver: A function that takes a URI and returns a value.
+    :keyword List[Tuple[str, str]] refresh_on: One or more settings whose modification will trigger a full refresh
+    after a fixed interval. This should be a list of Key-Label pairs for specific settings (filters and wildcards are
+    not supported).
     :keyword refresh_on: One or more settings whose modification will trigger a full refresh after a fixed interval.
     This should be a list of Key-Label pairs for specific settings (filters and wildcards are not supported).
     :paramtype refresh_on: List[Tuple[str, str]]
@@ -231,9 +231,9 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         kwargs.pop("headers", {}),
         "Startup",
         provider._replica_client_manager.get_client_count() - 1,  # pylint:disable=protected-access
-        kwargs.pop("uses_feature_flags", False),
-        kwargs.pop("feature_filters_used", {}),
-        uses_key_vault,
+        provider._feature_flag_enabled,  # pylint:disable=protected-access
+        provider._feature_filter_usage,  # pylint:disable=protected-access
+        provider._uses_key_vault,  # pylint:disable=protected-access
     )
 
     try:
@@ -316,36 +316,12 @@ def _buildprovider(
         endpoint = connection_string.split(";")[0].split("=")[1]
     if not endpoint:
         raise ValueError("No endpoint specified.")
-    retry_total = kwargs.pop("retry_total", 2)
-    retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
-    replica_discovery_enabled = kwargs.pop("replica_discovery_enabled", True)
 
-    if "user_agent" in kwargs:
-        user_agent = kwargs.pop("user_agent") + " " + USER_AGENT
-    else:
-        user_agent = USER_AGENT
+    kwargs["endpoint"] = endpoint
+    kwargs["connection_string"] = connection_string
+    kwargs["credential"] = credential
 
-    interval: int = kwargs.get("refresh_interval", 30)
-    if interval < 1:
-        raise ValueError("Refresh interval must be greater than or equal to 1 second.")
-
-    min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
-    max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
-
-    replica_client_manager = ConfigurationClientManager(
-        connection_string,
-        endpoint,
-        credential,
-        user_agent,
-        retry_total,
-        retry_backoff_max,
-        replica_discovery_enabled,
-        min_backoff,
-        max_backoff,
-        **kwargs
-    )
-    provider = AzureAppConfigurationProvider(endpoint, replica_client_manager, **kwargs)
-    return provider
+    return AzureAppConfigurationProvider(**kwargs)
 
 
 def _resolve_keyvault_reference(
@@ -475,9 +451,34 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
     keys. Enables resolution of Key Vault references in configuration settings.
     """
 
-    def __init__(self, endpoint, replica_client_manager, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
+        endpoint = kwargs.pop("endpoint", None)
         self._origin_endpoint = endpoint
-        self._replica_client_manager = replica_client_manager
+
+        if "user_agent" in kwargs:
+            user_agent = kwargs.pop("user_agent") + " " + USER_AGENT
+        else:
+            user_agent = USER_AGENT
+
+        interval: int = kwargs.get("refresh_interval", 30)
+        if interval < 1:
+            raise ValueError("Refresh interval must be greater than or equal to 1 second.")
+
+        min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
+        max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
+
+        self._replica_client_manager = ConfigurationClientManager(
+            connection_string=kwargs.pop("connection_string", None),
+            endpoint=endpoint,
+            credential=kwargs.pop("credential", None),
+            user_agent=user_agent,
+            retry_total=kwargs.pop("retry_total", 2),
+            retry_backoff_max=kwargs.pop("retry_backoff_max", 60),
+            replica_discovery_enabled=kwargs.pop("replica_discovery_enabled", True),
+            min_backoff_sec=min_backoff,
+            max_backoff_sec=max_backoff,
+            **kwargs
+        )
         self._dict: Dict[str, Any] = {}
         self._secret_clients: Dict[str, SecretClient] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
@@ -522,25 +523,24 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         success = False
         need_refresh = False
         error_message = """
-                        Failed to refresh configuration settings. No Azure App Configuration stores successfully
-                        refreshed.
+                        Failed to refresh configuration settings from Azure App Configuration.
                         """
         exception: Exception = RuntimeError(error_message)
         try:
             self._replica_client_manager.refresh_clients()
             active_clients = self._replica_client_manager.get_active_clients()
 
+            headers = _get_headers(
+                kwargs.pop("headers", {}),
+                "Watch",
+                self._replica_client_manager.get_client_count() - 1,
+                self._feature_flag_enabled,
+                self._feature_filter_usage,
+                self._uses_key_vault,
+            )
             for client in active_clients:
                 try:
                     if self._refresh_on:
-                        headers = _get_headers(
-                            kwargs.pop("headers", {}),
-                            "Watch",
-                            self._replica_client_manager.get_client_count() - 1,
-                            self._feature_flag_enabled,
-                            self._feature_filter_usage,
-                            self._uses_key_vault,
-                        )
                         need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
                             self._selects, self._refresh_on, headers, **kwargs
                         )
@@ -556,14 +556,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         if need_refresh:
                             self._dict = configuration_settings_processed
                     if self._feature_flag_refresh_enabled:
-                        headers = _get_headers(
-                            kwargs.pop("headers", {}),
-                            "Watch",
-                            self._replica_client_manager.get_client_count() - 1,
-                            self._feature_flag_enabled,
-                            self._feature_filter_usage,
-                            self._uses_key_vault,
-                        )
                         need_ff_refresh, self._refresh_on_feature_flags, feature_flags, filters_used = (
                             client.refresh_feature_flags(
                                 self._refresh_on_feature_flags, self._feature_flag_selectors, headers, **kwargs
@@ -670,7 +662,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         """
         Returns the value of the specified key.
         """
-        return self._dict[key]
+        with self._update_lock:
+            return self._dict[key]
 
     def __iter__(self) -> Iterator[str]:
         return self._dict.__iter__()

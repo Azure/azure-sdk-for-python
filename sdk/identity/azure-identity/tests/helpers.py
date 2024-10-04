@@ -6,15 +6,15 @@ import base64
 import json
 import time
 from urllib.parse import urlparse
+from unittest import mock
 
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
+from azure.core.credentials import AccessToken, AccessTokenInfo
 
 
 FAKE_CLIENT_ID = "fake-client-id"
 INVALID_CHARACTERS = "|\\`;{&' "
+ACCESS_TOKEN_CLASSES = (AccessToken, AccessTokenInfo)
+GET_TOKEN_METHODS = ("get_token", "get_token_info")
 
 
 def build_id_token(

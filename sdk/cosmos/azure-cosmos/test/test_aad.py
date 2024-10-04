@@ -12,7 +12,7 @@ from azure.core.credentials import AccessToken
 
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import exceptions, DatabaseProxy, ContainerProxy
+from azure.cosmos import DatabaseProxy, ContainerProxy, exceptions
 
 
 def _remove_padding(encoded_string):
@@ -93,21 +93,15 @@ class TestAAD(unittest.TestCase):
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
+    credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-    def test_emulator_aad_credentials(self):
-        if self.host != 'https://localhost:8081/':
-            print("This test is only configured to run on the emulator, skipping now.")
-            return
-
-        aad_client = cosmos_client.CosmosClient(self.host, CosmosEmulatorCredential())
-        # Do any R/W data operations with your authorized AAD client
-
+    def test_aad_credentials(self):
         print("Container info: " + str(self.container.read()))
         self.container.create_item(get_test_item(0))
         print("Point read result: " + str(self.container.read_item(item='Item_0', partition_key='pk')))
@@ -118,7 +112,7 @@ class TestAAD(unittest.TestCase):
 
         # Attempting to do management operations will return a 403 Forbidden exception
         try:
-            aad_client.delete_database(self.configs.TEST_DATABASE_ID)
+            self.client.delete_database(self.configs.TEST_DATABASE_ID)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 403
             print("403 error assertion success")

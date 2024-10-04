@@ -4,9 +4,10 @@
 # ------------------------------------
 import logging
 import os
-from typing import Optional, Union, Any
+from typing import Optional, Union, Any, cast
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
+from azure.core.credentials_async import AsyncSupportsTokenInfo
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
@@ -124,3 +125,29 @@ class EnvironmentCredential(AsyncContextManager):
             )
             raise CredentialUnavailableError(message=message)
         return await self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+
+    @log_get_token_async
+    async def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scope for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+
+        :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete.
+        """
+        if not self._credential:
+            message = (
+                "EnvironmentCredential authentication unavailable. Environment variables are not fully configured.\n"
+                "Visit https://aka.ms/azsdk/python/identity/environmentcredential/troubleshoot to troubleshoot "
+                "this issue."
+            )
+            raise CredentialUnavailableError(message=message)
+        return await cast(AsyncSupportsTokenInfo, self._credential).get_token_info(*scopes, options=options)

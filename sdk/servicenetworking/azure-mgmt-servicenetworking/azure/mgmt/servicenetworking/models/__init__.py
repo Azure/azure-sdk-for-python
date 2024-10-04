@@ -22,16 +22,26 @@ from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import Resource
 from ._models_py3 import ResourceId
+from ._models_py3 import SecurityPolicy
+from ._models_py3 import SecurityPolicyConfigurations
+from ._models_py3 import SecurityPolicyConfigurationsUpdate
+from ._models_py3 import SecurityPolicyListResult
+from ._models_py3 import SecurityPolicyUpdate
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import TrafficController
 from ._models_py3 import TrafficControllerListResult
 from ._models_py3 import TrafficControllerUpdate
+from ._models_py3 import WafPolicy
+from ._models_py3 import WafPolicyUpdate
+from ._models_py3 import WafSecurityPolicy
+from ._models_py3 import WafSecurityPolicyUpdate
 
 from ._service_networking_mgmt_client_enums import ActionType
 from ._service_networking_mgmt_client_enums import AssociationType
 from ._service_networking_mgmt_client_enums import CreatedByType
 from ._service_networking_mgmt_client_enums import Origin
+from ._service_networking_mgmt_client_enums import PolicyType
 from ._service_networking_mgmt_client_enums import ProvisioningState
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -54,15 +64,25 @@ __all__ = [
     "OperationListResult",
     "Resource",
     "ResourceId",
+    "SecurityPolicy",
+    "SecurityPolicyConfigurations",
+    "SecurityPolicyConfigurationsUpdate",
+    "SecurityPolicyListResult",
+    "SecurityPolicyUpdate",
     "SystemData",
     "TrackedResource",
     "TrafficController",
     "TrafficControllerListResult",
     "TrafficControllerUpdate",
+    "WafPolicy",
+    "WafPolicyUpdate",
+    "WafSecurityPolicy",
+    "WafSecurityPolicyUpdate",
     "ActionType",
     "AssociationType",
     "CreatedByType",
     "Origin",
+    "PolicyType",
     "ProvisioningState",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

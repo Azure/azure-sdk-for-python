@@ -38,6 +38,7 @@ def _synchronize(stages, ignore_error=False):
         if not ignore_error:
             raise
 
+
 async def _start_tests(index, test_class, num_tests, args, test_stages, results, status):
     """Create test classes, run setup, tests and cleanup."""
     # Create all parallel tests with a global unique index value
@@ -111,10 +112,7 @@ async def _run_tests(duration: int, args, tests, results, status, *, with_profil
     """Run the listed tests either in parallel asynchronously or in a thread pool."""
     # Kick of a status monitoring thread.
     stop_status = threading.Event()
-    status_thread = threading.Thread(
-        target=_report_status,
-        args=(status, tests, stop_status),
-        daemon=True)
+    status_thread = threading.Thread(target=_report_status, args=(status, tests, stop_status), daemon=True)
     status_thread.start()
 
     try:

@@ -12,22 +12,21 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from conftest import skip_flaky_test
 
 
-FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
+get_fr_client = functools.partial(get_async_client, FormRecognizerClient)
 
 class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_passing_enum_content_type(self, client):
+    async def test_passing_enum_content_type(self):
+        client = get_fr_client()
         with open(self.receipt_png, "rb") as fd:
             my_file = fd.read()
         async with client:
@@ -39,9 +38,8 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         assert result is not None
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     async def test_damaged_file_bytes_fails_autodetect_content_type(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             async with client:
@@ -52,9 +50,7 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     async def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
-        formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
-        formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
+        client = get_fr_client()
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             async with client:
@@ -64,9 +60,8 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
                 result = await poller.result()
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     async def test_passing_bad_content_type_param_passed(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         with open(self.receipt_jpg, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ValueError):
@@ -79,9 +74,9 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_receipt_jpg_include_field_elements(self, client):
+    async def test_receipt_jpg_include_field_elements(self):
+        client = get_fr_client()
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         async with client:
@@ -114,9 +109,8 @@ class TestReceiptFromStreamAsync(AsyncFormRecognizerTest):
         assert receipt_type.value ==  'Itemized'
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     async def test_receipt_locale_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         with pytest.raises(ValueError) as e:

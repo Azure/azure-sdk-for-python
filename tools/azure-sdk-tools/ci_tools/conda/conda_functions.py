@@ -10,14 +10,13 @@
 # Check CondaConfiguration.py for an larger example configuration blob that showcases all supported download methodologies.
 
 import argparse
-import sys
+import fnmatch
 import os
 import shutil
 import re
 import json
 import shlex
 import subprocess
-import stat
 import urllib3
 
 from shutil import rmtree
@@ -241,6 +240,11 @@ def create_setup_files(
         f.write(SETUP_CFG)
 
 
+def tolerant_match(pkg_name, input_string):
+    pattern = pkg_name.replace("-", "[-_]")
+    return fnmatch.fnmatch(input_string, f"*{pattern}*")
+
+
 def create_combined_sdist(
     conda_build: CondaConfiguration, config_assembly_folder: str, config_assembled_folder: str
 ) -> str:
@@ -274,7 +278,8 @@ def create_combined_sdist(
                     [
                         os.path.join(config_assembled_folder, a)
                         for a in os.listdir(config_assembled_folder)
-                        if os.path.isfile(os.path.join(config_assembled_folder, a)) and conda_build.name in a
+                        if os.path.isfile(os.path.join(config_assembled_folder, a))
+                        and tolerant_match(conda_build.name, a)
                     ]
                 )
             )
@@ -524,15 +529,22 @@ def prep_and_create_environment(environment_dir: str) -> None:
 
     subprocess.run(["conda", "env", "create", "--prefix", environment_dir], cwd=environment_dir, check=True)
     subprocess.run(
-        ["conda", "install", "--yes", "--quiet", "--prefix", environment_dir, "conda-build", "conda-verify", "typing-extensions", "conda-index"],
+        [
+            "conda",
+            "install",
+            "--yes",
+            "--quiet",
+            "--prefix",
+            environment_dir,
+            "conda-build",
+            "conda-verify",
+            "typing-extensions",
+            "conda-index",
+        ],
         cwd=environment_dir,
-        check=True
+        check=True,
     )
-    subprocess.run(
-        ["conda", "run", "--prefix", environment_dir, "conda", "list"],
-        cwd=environment_dir,
-        check=True
-    )
+    subprocess.run(["conda", "run", "--prefix", environment_dir, "conda", "list"], cwd=environment_dir, check=True)
 
 
 def copy_channel_files(coalescing_channel_dir: str, additional_channel_dir: str) -> None:
@@ -571,9 +583,17 @@ def build_conda_packages(
     if additional_channel_folders:
         for channel in additional_channel_folders:
             copy_channel_files(conda_output_dir, channel)
-            subprocess.run(["conda", "run", "--prefix", conda_env_dir, "python", "-m", "conda_index", conda_output_dir], cwd=repo_root, check=True)
+            subprocess.run(
+                ["conda", "run", "--prefix", conda_env_dir, "python", "-m", "conda_index", conda_output_dir],
+                cwd=repo_root,
+                check=True,
+            )
     else:
-        subprocess.run(["conda", "run", "--prefix", conda_env_dir, "python", "-m", "conda_index", conda_output_dir], cwd=repo_root, check=True)
+        subprocess.run(
+            ["conda", "run", "--prefix", conda_env_dir, "python", "-m", "conda_index", conda_output_dir],
+            cwd=repo_root,
+            check=True,
+        )
 
     for conda_build in conda_configurations:
         conda_build_folder = os.path.join(conda_sdist_dir, conda_build.name).replace("\\", "/")
@@ -593,7 +613,18 @@ def invoke_conda_build(
     channels: List[str] = [],
 ) -> None:
 
-    command = ["conda", "run", "--prefix", conda_env_dir, "conda-build", ".", "--output-folder", conda_output_dir, "-c", conda_output_dir]
+    command = [
+        "conda",
+        "run",
+        "--prefix",
+        conda_env_dir,
+        "conda-build",
+        ".",
+        "--output-folder",
+        conda_output_dir,
+        "-c",
+        conda_output_dir,
+    ]
     for channel in channels:
         command.extend(["-c", channel])
 
@@ -639,8 +670,10 @@ def entrypoint():
 
     args = parser.parse_args()
 
-    if (not args.config and not args.config_file):
-        raise argparse.ArgumentError("config arg", "One of either -c (--config) or -f (--file) argument must be provided.")
+    if not args.config and not args.config_file:
+        raise argparse.ArgumentError(
+            "config arg", "One of either -c (--config) or -f (--file) argument must be provided."
+        )
 
     if args.config_file:
         with open(args.config_file, "r") as f:

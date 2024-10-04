@@ -22,7 +22,9 @@ class TestSearchIndexingBufferedSenderAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_search_client_index_buffered_sender(self, endpoint, index_name):
         client = SearchClient(endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60)
-        batch_client = SearchIndexingBufferedSender(endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60)
+        batch_client = SearchIndexingBufferedSender(
+            endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60
+        )
         try:
             async with client:
                 async with batch_client:

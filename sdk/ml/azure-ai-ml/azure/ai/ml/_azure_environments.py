@@ -80,44 +80,56 @@ def _get_cloud(cloud: str) -> Dict[str, str]:
 
 def _get_default_cloud_name() -> str:
     """
-    :return: Configured cloud, defaults to 'AzureCloud'
+    :return: Configured cloud, defaults to 'AzureCloud' if
+    AZUREML_CURRENT_CLOUD and ARM_CLOUD_METADATA_URL are not set to dynamically retrieve cloud info.
+    AZUREML_CURRENT_CLOUD is also set by the SDK based on ARM_CLOUD_METADATA_URL.
     :rtype: str
     """
-    return os.getenv(AZUREML_CLOUD_ENV_NAME, AzureEnvironments.ENV_DEFAULT)
+    current_cloud_env = os.getenv(AZUREML_CLOUD_ENV_NAME)
+    if current_cloud_env is not None:
+        return current_cloud_env
+    arm_metadata_url = os.getenv(ArmConstants.METADATA_URL_ENV_NAME)
+    if arm_metadata_url is not None:
+        clouds = _get_clouds_by_metadata_url(arm_metadata_url)  # prefer ARM metadata url when set
+        for cloud_name in clouds:  # pylint: disable=consider-using-dict-items
+            if clouds[cloud_name][EndpointURLS.RESOURCE_MANAGER_ENDPOINT] in arm_metadata_url:
+                _set_cloud(cloud_name)
+                return cloud_name
+    return AzureEnvironments.ENV_DEFAULT
 
 
-def _get_cloud_details(cloud: Optional[str] = AzureEnvironments.ENV_DEFAULT) -> Dict[str, str]:
+def _get_cloud_details(cloud_name: Optional[str] = None) -> Dict[str, str]:
     """Returns a Cloud endpoints object for the specified Azure Cloud.
 
-    :param cloud: cloud name
-    :type cloud: str
+    :param cloud_name: cloud name
+    :type cloud_name: str
     :return: azure environment endpoint.
     :rtype: Dict[str, str]
     """
-    if cloud is None:
+    if cloud_name is None:
+        cloud_name = _get_default_cloud_name()
         module_logger.debug(
             "Using the default cloud configuration: '%s'.",
-            AzureEnvironments.ENV_DEFAULT,
+            cloud_name,
         )
-        cloud = _get_default_cloud_name()
-    return _get_cloud(cloud)
+    return _get_cloud(cloud_name)
 
 
-def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
+def _set_cloud(cloud_name: Optional[str] = None):
     """Sets the current cloud.
 
-    :param cloud: cloud name
-    :type cloud: str
+    :param cloud_name: cloud name
+    :type cloud_name: str
     """
-    if cloud is not None:
+    if cloud_name is not None:
         try:
-            _get_cloud(cloud)
+            _get_cloud(cloud_name)
         except Exception as e:
-            msg = 'Unknown cloud environment supplied: "{0}".'.format(cloud)
+            msg = 'Unknown cloud environment supplied: "{0}".'.format(cloud_name)
             raise MlException(message=msg, no_personal_data_message=msg) from e
     else:
-        cloud = _get_default_cloud_name()
-    os.environ[AZUREML_CLOUD_ENV_NAME] = cloud
+        cloud_name = _get_default_cloud_name()
+    os.environ[AZUREML_CLOUD_ENV_NAME] = cloud_name
 
 
 def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: bool = False) -> str:
@@ -253,16 +265,15 @@ def _get_registry_discovery_url(cloud: dict, cloud_suffix: str = "") -> str:
     """
     cloud_name = cloud["name"]
     if cloud_name in _environments:
-        return _environments[cloud_name].registry_url  # type: ignore[attr-defined]
-
+        return _environments[cloud_name][EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT]
+    registry_discovery_from_env = os.getenv(ArmConstants.REGISTRY_ENV_URL)
+    if registry_discovery_from_env is not None:
+        return registry_discovery_from_env
     registry_discovery_region = os.environ.get(
         ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,
         ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION,
     )
-    registry_discovery_region_default = "https://{}{}.api.azureml.{}/".format(
-        cloud_name.lower(), registry_discovery_region, cloud_suffix
-    )
-    return os.environ.get(ArmConstants.REGISTRY_ENV_URL, registry_discovery_region_default)
+    return f"https://{cloud_name.lower()}{registry_discovery_region}.api.ml.azure.{cloud_suffix}/"
 
 
 def _get_clouds_by_metadata_url(metadata_url: str) -> Dict[str, Dict[str, str]]:

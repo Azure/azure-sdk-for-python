@@ -1,2 +1,5 @@
 [tool.azure-sdk-build]
 pyright = false
+
+[tool.generate]
+autorest-post-process = true

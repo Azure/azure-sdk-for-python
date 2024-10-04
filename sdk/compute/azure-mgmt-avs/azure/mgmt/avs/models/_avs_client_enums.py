@@ -541,12 +541,14 @@ class ScriptParameterTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """is secure string"""
     CREDENTIAL = "Credential"
     """is credential"""
-    INT_ENUM = "Int"
+    INT = "Int"
     """is int"""
     BOOL = "Bool"
     """is bool"""
     FLOAT = "Float"
     """is float"""
+    INT_ENUM = "Int"
+    """is int"""
 
 
 class SegmentStatusEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):

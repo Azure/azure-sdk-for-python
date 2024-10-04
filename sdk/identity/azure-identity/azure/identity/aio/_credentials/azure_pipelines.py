@@ -5,7 +5,7 @@
 from typing import Any, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from azure.core.rest import HttpResponse
 
 from .client_assertion import ClientAssertionCredential
@@ -102,6 +102,25 @@ class AzurePipelinesCredential(AsyncContextManager):
         return await self._client_assertion_credential.get_token(
             *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
         )
+
+    async def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scope for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
+            attribute gives a reason.
+        """
+        validate_env_vars()
+        return await self._client_assertion_credential.get_token_info(*scopes, options=options)
 
     def _get_oidc_token(self) -> str:
         request = build_oidc_request(self._service_connection_id, self._system_access_token)

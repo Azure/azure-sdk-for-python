@@ -1,6 +1,6 @@
 # Release History
 
-## 5.12.2 (Unreleased)
+## 5.12.3 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,12 @@
 
 ### Bugs Fixed
 
-- Fixed a bug where the consumer waited indefinitely when the primary key was rotated while receiving, rather than raising an authentication error. ([#33926](https://github.com/Azure/azure-sdk-for-python/issues/33926))
-
 ### Other Changes
+
+## 5.12.2 (2024-10-02)
+
+### Bugs Fixed
+- Implemented backpressure for  async consumer  to address a memory leak issue. ([#36398](https://github.com/Azure/azure-sdk-for-python/issues/36398))
 
 ## 5.12.1 (2024-06-11)
 

@@ -665,6 +665,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    @pytest.mark.skip("Skipping due to Spark version Upgrade")
     def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component_with_optional_inputs.yml"
         spark_with_optional_inputs_component_func = load_component(source=component_yaml)
@@ -676,7 +677,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         )
         def sample_pipeline(job_in_file, sample_rate):
             node1 = spark_with_optional_inputs_component_func(input1=job_in_file, sample_rate=sample_rate)
-            node1.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"}
+            node1.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.3.0"}
             return {"pipeline_output": node1.outputs.output1}
 
         pipeline = sample_pipeline(
@@ -727,7 +728,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                     "name": "node1",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
+                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.3.0"},
                     "type": "spark",
                 }
             },
@@ -2342,9 +2343,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         @dsl.pipeline()
         def spark_pipeline_from_yaml(iris_data):
             add_greeting_column_node = add_greeting_column(file_input=iris_data)
-            add_greeting_column_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"}
+            add_greeting_column_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.3.0"}
             count_by_row_node = count_by_row(file_input=iris_data)
-            count_by_row_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"}
+            count_by_row_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.3.0"}
             return {"output": count_by_row_node.outputs.output}
 
         pipeline = spark_pipeline_from_yaml(

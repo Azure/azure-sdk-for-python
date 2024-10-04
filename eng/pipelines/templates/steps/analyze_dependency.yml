@@ -9,14 +9,13 @@ steps:
      versionSpec: '$(PythonVersion)'
 
   - pwsh: |
-      python -m pip install setuptools==58.3.0
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Install Python Tools'
     condition: succeededOrFailed()
 
-  - template: /eng/common/pipelines/templates/steps/verify-readme.yml
+  - template: /eng/common/pipelines/templates/steps/verify-readmes.yml
     parameters:
-      ScanPath: ${{ parameters.ScanPath }}
+      PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
       Condition: succeededOrFailed()
 
   - pwsh: |

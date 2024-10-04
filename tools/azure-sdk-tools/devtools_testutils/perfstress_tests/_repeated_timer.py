@@ -6,6 +6,7 @@
 import itertools
 from threading import Timer, Lock
 
+
 # Credit to https://stackoverflow.com/questions/3393612/run-certain-code-every-n-seconds
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, start_now: bool = True, **kwargs):
@@ -46,7 +47,7 @@ class AtomicCounter(object):
 
     def increment(self):
         next(self._counter)
-    
+
     def reset(self):
         with self._read_lock:
             self._number_of_read = 0

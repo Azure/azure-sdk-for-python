@@ -10,7 +10,7 @@ from azure.ai.ml.entities import (
     Hub,
 )
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2024_07_01_preview.models import (
     Workspace as RestWorkspace,
     ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
@@ -26,7 +26,7 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     # this one only for workspace hubs
     WorkspaceHubConfig as RestWorkspaceHubConfig,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.operations import (
+from azure.ai.ml._restclient.v2024_07_01_preview.operations import (
     WorkspacesOperations as RestClientWorkspacesOperations,
     ManagedNetworkSettingsRuleOperations as RestClientManagedNetworkSettingsRuleOperations,
 )
@@ -44,13 +44,17 @@ def get_test_rest_workspace_with_all_details() -> RestWorkspace:
         outbound_rules={
             "fqdn-rule": RestFqdnOutboundRule(destination="google.com"),
             "pe-rule": RestPrivateEndpointOutboundRule(
+                fqdns=["contoso.com", "contoso2.com"],
                 destination=RestPrivateEndpointOutboundRuleDestination(
                     service_resource_id="/somestorageid", spark_enabled=False, subresource_target="blob"
-                )
+                ),
             ),
             "servicetag-rule": RestServiceTagOutboundRule(
                 destination=RestServiceTagOutboundRuleDestination(
-                    service_tag="sometag", protocol="*", port_ranges="1,2"
+                    service_tag="sometag",
+                    protocol="*",
+                    port_ranges="1,2",
+                    address_prefixes=["168.63.129.16", "10.0.0.0/24"],
                 )
             ),
         },
@@ -121,11 +125,15 @@ class TestWorkspaceEntity:
         assert rules[1].service_resource_id == "/somestorageid"
         assert rules[1].spark_enabled == False
         assert rules[1].subresource_target == "blob"
+        assert "contoso.com" in rules[1].fqdns
+        assert "contoso2.com" in rules[1].fqdns
 
         assert isinstance(rules[2], ServiceTagDestination)
         assert rules[2].service_tag == "sometag"
         assert rules[2].protocol == "*"
         assert rules[2].port_ranges == "1,2"
+        assert "168.63.129.16" in rules[2].address_prefixes
+        assert "10.0.0.0/24" in rules[2].address_prefixes
 
         assert sdk_ws.identity.user_assigned_identities[0] is not None
         assert sdk_ws.identity.type == "system_assigned"
@@ -151,11 +159,15 @@ class TestWorkspaceEntity:
         assert rules[1].service_resource_id == "/somestorageid"
         assert rules[1].spark_enabled == False
         assert rules[1].subresource_target == "blob"
+        assert "contoso.com" in rules[1].fqdns
+        assert "contoso2.com" in rules[1].fqdns
 
         assert isinstance(rules[2], ServiceTagDestination)
         assert rules[2].service_tag == "sometag"
         assert rules[2].protocol == "*"
         assert rules[2].port_ranges == "1,2"
+        assert "168.63.129.16" in rules[2].address_prefixes
+        assert "10.0.0.0/24" in rules[2].address_prefixes
 
         assert sdk_hub.identity.user_assigned_identities[0] is not None
         assert sdk_hub.identity.type == "system_assigned"
@@ -177,11 +189,15 @@ class TestWorkspaceEntity:
         assert rules[1].service_resource_id == "/somestorageid"
         assert rules[1].spark_enabled == False
         assert rules[1].subresource_target == "blob"
+        assert "contoso.com" in rules[1].fqdns
+        assert "contoso2.com" in rules[1].fqdns
 
         assert isinstance(rules[2], ServiceTagDestination)
         assert rules[2].service_tag == "sometag"
         assert rules[2].protocol == "*"
         assert rules[2].port_ranges == "1,2"
+        assert "168.63.129.16" in rules[2].address_prefixes
+        assert "10.0.0.0/24" in rules[2].address_prefixes
 
         assert sdk_featurestore.identity.user_assigned_identities[0] is not None
         assert sdk_featurestore.identity.type == "system_assigned"

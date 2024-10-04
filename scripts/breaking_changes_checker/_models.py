@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+import re
 from typing import List, Optional, NamedTuple, Protocol, runtime_checkable, Union
 
 class BreakingChange(NamedTuple):
@@ -21,6 +22,15 @@ class Suppression(NamedTuple):
     class_name: Optional[str] = None
     function_name: Optional[str] = None
     parameter_or_property_name: Optional[str] = None
+
+class RegexSuppression:
+    value: str
+
+    def __init__(self, value: str):
+        self.value = value
+
+    def match(self, compare_value: str) -> bool:
+        return True if re.fullmatch(self.value, compare_value) else False
 
 @runtime_checkable
 class ChangesChecker(Protocol):

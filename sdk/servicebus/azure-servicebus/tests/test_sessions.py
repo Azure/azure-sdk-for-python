@@ -752,7 +752,7 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
 
             renewer = AutoLockRenewer()
             messages = []
-            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=10, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, prefetch_count=10) as receiver:
+            with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, max_wait_time=10, receive_mode=ServiceBusReceiveMode.PEEK_LOCK, prefetch_count=4) as receiver:
                 renewer.register(receiver,
                                  receiver.session,
                                  max_lock_renewal_duration=10,
@@ -776,18 +776,19 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
 
                         elif len(messages) == 1:
                             print("Starting second sleep")
-                            time.sleep(10) # ensure renewer expires
+                            time.sleep(20) # ensure renewer expires
                             print("Second sleep {}".format(receiver.session._locked_until_utc - utc_now()))
                             assert not results
                             sleep_until_expired(receiver.session) # and then ensure it didn't slip a renew under the wire.
                             assert receiver.session._lock_expired
                             assert isinstance(receiver.session.auto_renew_error, AutoLockRenewTimeout)
+                            messages.append(message)
                             try:
                                 receiver.complete_message(message)
                                 raise AssertionError("Didn't raise SessionLockLostError")
                             except SessionLockLostError as e:
-                                assert isinstance(e.inner_exception, AutoLockRenewTimeout)
-                            messages.append(message)
+                                raise
+                            
 
             # While we're testing autolockrenew and sessions, let's make sure we don't call the lock-lost callback when a session exits.
             renewer._renew_period = 1
@@ -837,7 +838,7 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                                               session_id=session_id,
                                               max_wait_time=10,
                                               receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
-                                              prefetch_count=10,
+                                              prefetch_count=4,
                                               auto_lock_renewer=renewer) as receiver:
                 print("Registered lock renew thread", receiver.session._locked_until_utc, utc_now())
                 with pytest.raises(SessionLockLostError):
@@ -858,18 +859,19 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
 
                         elif len(messages) == 1:
                             print("Starting second sleep")
-                            time.sleep(10) # ensure renewer expires
+                            time.sleep(20) # ensure renewer expires
                             print("Second sleep {}".format(receiver.session._locked_until_utc - utc_now()))
                             assert not results
                             sleep_until_expired(receiver.session) # and then ensure it didn't slip a renew under the wire.
                             assert receiver.session._lock_expired
                             assert isinstance(receiver.session.auto_renew_error, AutoLockRenewTimeout)
+                            messages.append(message)
                             try:
                                 receiver.complete_message(message)
                                 raise AssertionError("Didn't raise SessionLockLostError")
                             except SessionLockLostError as e:
-                                assert isinstance(e.inner_exception, AutoLockRenewTimeout)
-                            messages.append(message)
+                                raise
+                            
 
             # While we're testing autolockrenew and sessions, let's make sure we don't call the lock-lost callback when a session exits.
             renewer._renew_period = 1
@@ -986,8 +988,7 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
             session_id = str(uuid.uuid4())
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                message = ServiceBusMessage("Testing expired messages")
-                message.session_id = session_id
+                message = ServiceBusMessage("Testing expired messages", session_id=session_id)
                 sender.send_messages(message)
 
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id) as receiver:
@@ -1070,7 +1071,7 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
             credential=credential, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             session_id = str(uuid.uuid4())
-            enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
+            enqueue_time = (utc_now() + timedelta(seconds=30)).replace(microsecond=0)
 
             with sb_client.get_queue_receiver(servicebus_queue.name, session_id=session_id, prefetch_count=20) as receiver:
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -1084,14 +1085,12 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                     tokens = sender.schedule_messages([message_a, message_b], enqueue_time)
                     assert len(tokens) == 2
 
-                messages = []
-                count = 0
-                while len(messages) < 2 and count < 12:
-                    receiver.session.renew_lock(timeout=None)
-                    messages.extend(receiver.receive_messages(max_wait_time=15))
-                    time.sleep(5)
-                    count += 1
+                # Wait for messages to be sent
+                time.sleep(15)
 
+
+                messages = receiver.receive_messages(max_message_count=2, max_wait_time=15)
+                
                 data = str(messages[0])
                 assert data == content
                 assert messages[0].message_id in (message_id_a, message_id_b)

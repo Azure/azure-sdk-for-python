@@ -23,7 +23,7 @@ class DeviceCodeCredential(InteractiveCredential):
     SSH session. If a web browser is available, :class:`~azure.identity.InteractiveBrowserCredential` is more
     convenient because it automatically opens a browser to the login page.
 
-    :keyword str client_id: Client ID of the Microsoft Entra application that users will sign into. It is recommended
+    :param str client_id: Client ID of the Microsoft Entra application that users will sign into. It is recommended
         that developers register their applications and assign appropriate roles. For more information,
         visit https://aka.ms/azsdk/identity/AppRegistrationAndRoleAssignment. If not specified, users will
         authenticate to an Azure development application, which is not recommended for production scenarios.

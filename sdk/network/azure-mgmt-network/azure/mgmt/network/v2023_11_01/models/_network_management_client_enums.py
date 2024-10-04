@@ -871,7 +871,7 @@ class GatewayLoadBalancerTunnelProtocol(str, Enum, metaclass=CaseInsensitiveEnum
 class Geo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Geo for CIDR advertising. Should be an Geo code."""
 
-    GLOBAL_ENUM = "GLOBAL"
+    GLOBAL = "GLOBAL"
     AFRI = "AFRI"
     APAC = "APAC"
     EURO = "EURO"
@@ -880,6 +880,7 @@ class Geo(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ME = "ME"
     OCEANIA = "OCEANIA"
     AQ = "AQ"
+    GLOBAL_ENUM = "GLOBAL"
 
 
 class GroupConnectivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1079,6 +1080,7 @@ class LoadBalancerSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a load balancer SKU."""
 
     REGIONAL = "Regional"
+    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 
@@ -1170,8 +1172,9 @@ class NextStep(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported next step behaviors after a rule is applied to a matched route."""
 
     UNKNOWN = "Unknown"
-    CONTINUE_ENUM = "Continue"
+    CONTINUE = "Continue"
     TERMINATE = "Terminate"
+    CONTINUE_ENUM = "Continue"
 
 
 class NicTypeInRequest(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1387,6 +1390,7 @@ class PublicIPAddressSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a public IP address SKU."""
 
     REGIONAL = "Regional"
+    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 
@@ -1400,6 +1404,7 @@ class PublicIPPrefixSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of a public IP prefix SKU."""
 
     REGIONAL = "Regional"
+    GLOBAL = "Global"
     GLOBAL_ENUM = "Global"
 
 

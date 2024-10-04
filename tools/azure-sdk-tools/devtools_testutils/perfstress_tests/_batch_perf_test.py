@@ -26,7 +26,7 @@ class BatchPerfTest(_PerfTestBase):
 
         if self.args.insecure:
             # Disable SSL verification for SDK Client
-            self._client_kwargs['connection_verify'] = False
+            self._client_kwargs["connection_verify"] = False
 
             # Disable SSL verification for test proxy session
             self._session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False))
@@ -34,7 +34,8 @@ class BatchPerfTest(_PerfTestBase):
             # Suppress warnings
             import warnings
             from urllib3.exceptions import InsecureRequestWarning
-            warnings.simplefilter('ignore', InsecureRequestWarning)
+
+            warnings.simplefilter("ignore", InsecureRequestWarning)
         else:
             self._session = aiohttp.ClientSession()
 
@@ -42,7 +43,7 @@ class BatchPerfTest(_PerfTestBase):
             # Add policy to redirect requests to the test proxy
             self._test_proxy = self.args.test_proxies[self._parallel_index % len(self.args.test_proxies)]
             self._test_proxy_policy = PerfTestProxyPolicy(self._test_proxy)
-            self._client_kwargs['per_retry_policies'] = [self._test_proxy_policy]
+            self._client_kwargs["per_retry_policies"] = [self._test_proxy_policy]
 
     async def post_setup(self) -> None:
         """
@@ -78,11 +79,8 @@ class BatchPerfTest(_PerfTestBase):
         """
         # cSpell:ignore inmemory
         # Only stop playback if it was successfully started
-        if self._test_proxy_policy and self._test_proxy_policy.mode == 'playback':
-            headers = {
-                "x-recording-id": self._recording_id,
-                "x-purge-inmemory-recording": "true"
-            }
+        if self._test_proxy_policy and self._test_proxy_policy.mode == "playback":
+            headers = {"x-recording-id": self._recording_id, "x-purge-inmemory-recording": "true"}
             url = urljoin(self._test_proxy, "/playback/stop")
             async with self._session.post(url, headers=headers) as resp:
                 assert resp.status == 200

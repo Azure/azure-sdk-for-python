@@ -57,7 +57,7 @@ class ACRExchangeClient(object):
         self._expiration_time: float = 0
 
     async def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator-async
-        self, challenge: str, **kwargs
+        self, challenge: str, **kwargs: Any
     ) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         refresh_token = await self.get_refresh_token(parsed_challenge["service"], **kwargs)
@@ -66,7 +66,7 @@ class ACRExchangeClient(object):
         )
 
     async def get_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator-async
-        self, service: str, **kwargs
+        self, service: str, **kwargs: Any
     ) -> str:
         if not self._refresh_token or self._expiration_time - time.time() > 300:
             self._refresh_token = await self.exchange_aad_token_for_refresh_token(service, **kwargs)
@@ -74,7 +74,7 @@ class ACRExchangeClient(object):
         return self._refresh_token
 
     async def exchange_aad_token_for_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator-async
-        self, service: str, **kwargs
+        self, service: str, **kwargs: Any
     ) -> str:
         auth_operation = cast(AuthenticationOperations, self._client.authentication)
         token = await self._credential.get_token(*self.credential_scopes)
@@ -84,7 +84,7 @@ class ACRExchangeClient(object):
         return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
 
     async def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator-async
-        self, refresh_token: str, service: str, scope: str, **kwargs
+        self, refresh_token: str, service: str, scope: str, **kwargs: Any
     ) -> Optional[str]:
         auth_operation = cast(AuthenticationOperations, self._client.authentication)
         access_token = await auth_operation.exchange_acr_refresh_token_for_acr_access_token(

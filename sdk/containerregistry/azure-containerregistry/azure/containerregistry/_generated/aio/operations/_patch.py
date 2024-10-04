@@ -60,7 +60,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AcrRefreshToken, or the result of cls(response)
         :rtype: ~container_registry.models.AcrRefreshToken
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -134,7 +134,7 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AcrAccessToken, or the result of cls(response)
         :rtype: ~container_registry.models.AcrAccessToken
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})

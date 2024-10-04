@@ -1,6 +1,20 @@
 import os
 
 
+def str_to_bool(input_string: str) -> bool:
+    """
+    Takes a boolean string representation and returns a bool type value.
+    """
+    if isinstance(input_string, bool):
+        return input_string
+    elif input_string.lower() in ("true", "t", "1"):
+        return True
+    elif input_string.lower() in ("false", "f", "0"):
+        return False
+    else:
+        return False
+
+
 def discover_repo_root(input_repo: str = None):
     """
     Resolves the root of the repository given a current working directory. This function should be used if a target repo argument is not provided.
@@ -67,10 +81,14 @@ def in_public() -> int:
 
     return 0
 
+
 def in_analyze_weekly() -> int:
     # Returns 4 if the build originates from the tests-weekly analyze job
     # 0 otherwise
-    if "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "") and os.getenv("SYSTEM_STAGEDISPLAYNAME", "") == "Analyze_Test":
+    if (
+        "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "")
+        and os.getenv("SYSTEM_STAGEDISPLAYNAME", "") == "Analyze_Test"
+    ):
         return 4
     return 0
 

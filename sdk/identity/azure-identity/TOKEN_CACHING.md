@@ -92,7 +92,7 @@ The following table indicates the state of in-memory and persistent caching in e
 | `AzureDeveloperCliCredential`  | Not Supported                                                          | Not Supported                 |
 | `AzurePipelinesCredential`     | Supported                                                              | Not Supported                 |
 | `AzurePowershellCredential`    | Not Supported                                                          | Not Supported                 |
-| `ClientAssertionCredential`    | Supported                                                              | Not Supported                 |
+| `ClientAssertionCredential`    | Supported                                                              | Supported                     |
 | `CertificateCredential`        | Supported                                                              | Supported                     |
 | `ClientSecretCredential`       | Supported                                                              | Supported                     |
 | `DefaultAzureCredential`       | Supported if the target credential in the credential chain supports it | Not Supported                 |

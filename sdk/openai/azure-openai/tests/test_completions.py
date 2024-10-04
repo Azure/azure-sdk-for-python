@@ -10,6 +10,7 @@ from devtools_testutils import AzureRecordedTestCase
 from conftest import AZURE, OPENAI, PREVIEW, GA, configure
 
 
+@pytest.mark.live_test_only
 class TestCompletions(AzureRecordedTestCase):
     """Missing tests for keyword argument `suffix`"""
 

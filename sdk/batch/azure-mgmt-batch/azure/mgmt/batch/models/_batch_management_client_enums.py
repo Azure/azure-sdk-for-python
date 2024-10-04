@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Direction of Access Rule."""
+
+    INBOUND = "Inbound"
+    """Applies to inbound network traffic to the secured resources."""
+    OUTBOUND = "Outbound"
+    """Applies to outbound network traffic from the secured resources"""
+
+
 class AccountKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of account key to regenerate."""
 
@@ -24,13 +33,13 @@ class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     STEADY = "Steady"
     """The pool is not resizing. There are no changes to the number of nodes in the pool in progress.
-    #: A pool enters this state when it is created and when no operations are being performed on the
-    #: pool to change the number of nodes."""
+    A pool enters this state when it is created and when no operations are being performed on the
+    pool to change the number of nodes."""
     RESIZING = "Resizing"
     """The pool is resizing; that is, compute nodes are being added to or removed from the pool."""
     STOPPING = "Stopping"
     """The pool was resizing, but the user has requested that the resize be stopped, but the stop
-    #: request has not yet been completed."""
+    request has not yet been completed."""
 
 
 class AuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -51,7 +60,7 @@ class AutoStorageAuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """The Batch service will authenticate requests to auto-storage using storage account keys."""
     BATCH_ACCOUNT_MANAGED_IDENTITY = "BatchAccountManagedIdentity"
     """The Batch service will authenticate requests to auto-storage using the managed identity
-    #: assigned to the Batch account."""
+    assigned to the Batch account."""
 
 
 class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -65,7 +74,7 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies that the service should create a new user for the task."""
     POOL = "Pool"
     """Specifies that the task runs as the common auto user account which is created on every node in
-    #: a pool."""
+    a pool."""
 
 
 class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -95,24 +104,23 @@ class CertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """The certificate is available for use in pools."""
     DELETING = "Deleting"
     """The user has requested that the certificate be deleted, but the delete operation has not yet
-    #: completed. You may not reference the certificate when creating or updating pools."""
+    completed. You may not reference the certificate when creating or updating pools."""
     FAILED = "Failed"
     """The user requested that the certificate be deleted, but there are pools that still have
-    #: references to the certificate, or it is still installed on one or more compute nodes. (The
-    #: latter can occur if the certificate has been removed from the pool, but the node has not yet
-    #: restarted. Nodes refresh their certificates only when they restart.) You may use the cancel
-    #: certificate delete operation to cancel the delete, or the delete certificate operation to retry
-    #: the delete."""
+    references to the certificate, or it is still installed on one or more compute nodes. (The
+    latter can occur if the certificate has been removed from the pool, but the node has not yet
+    restarted. Nodes refresh their certificates only when they restart.) You may use the cancel
+    certificate delete operation to cancel the delete, or the delete certificate operation to retry
+    the delete."""
 
 
 class CertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default value is currentUser. This property is applicable only for pools configured with
-    Windows nodes (that is, created with cloudServiceConfiguration, or with
-    virtualMachineConfiguration using a Windows image reference). For Linux compute nodes, the
-    certificates are stored in a directory inside the task working directory and an environment
-    variable AZ_BATCH_CERTIFICATES_DIR is supplied to the task to query for this location. For
-    certificates with visibility of 'remoteUser', a 'certs' directory is created in the user's home
-    directory (e.g., /home/{user-name}/certs) and certificates are placed in that directory.
+    Windows compute nodes. For Linux compute nodes, the certificates are stored in a directory
+    inside the task working directory and an environment variable AZ_BATCH_CERTIFICATES_DIR is
+    supplied to the task to query for this location. For certificates with visibility of
+    'remoteUser', a 'certs' directory is created in the user's home directory (e.g.,
+    /home/{user-name}/certs) and certificates are placed in that directory.
     """
 
     CURRENT_USER = "CurrentUser"
@@ -126,13 +134,13 @@ class CertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     START_TASK = "StartTask"
     """The certificate should be visible to the user account under which the start task is run. Note
-    #: that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
-    #: visible to the Task as well."""
+    that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
+    visible to the Task as well."""
     TASK = "Task"
     """The certificate should be visible to the user accounts under which job tasks are run."""
     REMOTE_USER = "RemoteUser"
     """The certificate should be visible to the user accounts under which users remotely access the
-    #: node."""
+    node."""
 
 
 class ComputeNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -142,17 +150,17 @@ class ComputeNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
     REQUEUE = "Requeue"
     """Terminate running task processes and requeue the tasks. The tasks will run again when a node is
-    #: available. Remove nodes as soon as tasks have been terminated."""
+    available. Remove nodes as soon as tasks have been terminated."""
     TERMINATE = "Terminate"
     """Terminate running tasks. The tasks will be completed with failureInfo indicating that they were
-    #: terminated, and will not run again. Remove nodes as soon as tasks have been terminated."""
+    terminated, and will not run again. Remove nodes as soon as tasks have been terminated."""
     TASK_COMPLETION = "TaskCompletion"
     """Allow currently running tasks to complete. Schedule no new tasks while waiting. Remove nodes
-    #: when all tasks have completed."""
+    when all tasks have completed."""
     RETAINED_DATA = "RetainedData"
     """Allow currently running tasks to complete, then wait for all task data retention periods to
-    #: expire. Schedule no new tasks while waiting. Remove nodes when all task retention periods have
-    #: expired."""
+    expire. Schedule no new tasks while waiting. Remove nodes when all task retention periods have
+    expired."""
 
 
 class ComputeNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -162,7 +170,24 @@ class ComputeNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tasks should be assigned evenly across all nodes in the pool."""
     PACK = "Pack"
     """As many tasks as possible (taskSlotsPerNode) should be assigned to each node in the pool before
-    #: any tasks are assigned to the next node in the pool."""
+    any tasks are assigned to the next node in the pool."""
+
+
+class ContainerHostDataPath(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The paths which will be mounted to container task's container."""
+
+    SHARED = "Shared"
+    """The path for multi-instances task to shared their files."""
+    STARTUP = "Startup"
+    """The path for start task."""
+    VFS_MOUNTS = "VfsMounts"
+    """The path contains all virtual file systems are mounted on this node."""
+    TASK = "Task"
+    """The task path."""
+    JOB_PREP = "JobPrep"
+    """The job-prep task path."""
+    APPLICATIONS = "Applications"
+    """The applications path."""
 
 
 class ContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -181,10 +206,19 @@ class ContainerWorkingDirectory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TASK_WORKING_DIRECTORY = "TaskWorkingDirectory"
     """Use the standard Batch service task working directory, which will contain the Task resource
-    #: files populated by Batch."""
+    files populated by Batch."""
     CONTAINER_IMAGE_DEFAULT = "ContainerImageDefault"
     """Using container image defined working directory. Beware that this directory will not contain
-    #: the resource files downloaded by Batch."""
+    the resource files downloaded by Batch."""
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
 
 
 class DiskEncryptionTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -194,7 +228,7 @@ class DiskEncryptionTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The OS Disk on the compute node is encrypted."""
     TEMPORARY_DISK = "TemporaryDisk"
     """The temporary disk on the compute node is encrypted. On Linux this encryption applies to other
-    #: partitions (such as those on mounted data disks) when encryption occurs at boot time."""
+    partitions (such as those on mounted data disks) when encryption occurs at boot time."""
 
 
 class DynamicVNetAssignmentScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -204,7 +238,7 @@ class DynamicVNetAssignmentScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No dynamic VNet assignment is enabled."""
     JOB = "job"
     """Dynamic VNet assignment is done per-job. If this value is set, the network configuration subnet
-    #: ID must also be set. This feature requires approval before use, please contact support"""
+    ID must also be set. This feature requires approval before use, please contact support"""
 
 
 class ElevationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -251,11 +285,27 @@ class IPAddressProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BATCH_MANAGED = "BatchManaged"
     """A public IP will be created and managed by Batch. There may be multiple public IPs depending on
-    #: the size of the Pool."""
+    the size of the Pool."""
     USER_MANAGED = "UserManaged"
     """Public IPs are provided by the user and will be used to provision the Compute Nodes."""
     NO_PUBLIC_IP_ADDRESSES = "NoPublicIPAddresses"
     """No public IP Address will be created for the Compute Nodes in the Pool."""
+
+
+class IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of issue."""
+
+    UNKNOWN = "Unknown"
+    """Unknown issue type"""
+    CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
+    """An error occurred while applying the network security perimeter (NSP) configuration."""
+    MISSING_PERIMETER_CONFIGURATION = "MissingPerimeterConfiguration"
+    """A network connectivity issue is happening on the resource which could be addressed either by
+    adding new resources to the network security perimeter (NSP) or by modifying access rules."""
+    MISSING_IDENTITY_CONFIGURATION = "MissingIdentityConfiguration"
+    """An managed identity hasn't been associated with the resource. The resource will still be able
+    to validate inbound traffic from the network security perimeter (NSP) or matching inbound
+    access rules, but it won't be able to perform outbound access as a member of the NSP."""
 
 
 class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -265,22 +315,20 @@ class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Batch creates and manages the encryption keys used to protect the account data."""
     MICROSOFT_KEY_VAULT = "Microsoft.KeyVault"
     """The encryption keys used to protect the account data are stored in an external key vault. If
-    #: this is set then the Batch Account identity must be set to ``SystemAssigned`` and a valid Key
-    #: Identifier must also be supplied under the keyVaultProperties."""
+    this is set then the Batch Account identity must be set to ``SystemAssigned`` and a valid Key
+    Identifier must also be supplied under the keyVaultProperties."""
 
 
 class LoginMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies login mode for the user. The default value for VirtualMachineConfiguration pools is
-    interactive mode and for CloudServiceConfiguration pools is batch mode.
-    """
+    """Specifies login mode for the user. The default value is Interactive."""
 
     BATCH = "Batch"
     """The LOGON32_LOGON_BATCH Win32 login mode. The batch login mode is recommended for long running
-    #: parallel processes."""
+    parallel processes."""
     INTERACTIVE = "Interactive"
     """The LOGON32_LOGON_INTERACTIVE Win32 login mode. Some applications require having permissions
-    #: associated with the interactive login mode. If this is the case for an application used in your
-    #: task, then this option is recommended."""
+    associated with the interactive login mode. If this is the case for an application used in your
+    task, then this option is recommended."""
 
 
 class NameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -303,6 +351,20 @@ class NetworkSecurityGroupRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMet
     """Deny access."""
 
 
+class NetworkSecurityPerimeterConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of a network security perimeter configuration that is being created or
+    updated.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    ACCEPTED = "Accepted"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+
+
 class NodeCommunicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines how a pool communicates with the Batch service."""
 
@@ -310,11 +372,11 @@ class NodeCommunicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The node communication mode is automatically set by the Batch service."""
     CLASSIC = "Classic"
     """Nodes using the Classic communication mode require inbound TCP communication on ports 29876 and
-    #: 29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on
-    #: port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags."""
+    29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on
+    port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags."""
     SIMPLIFIED = "Simplified"
     """Nodes using the Simplified communication mode require outbound TCP communication on port 443 to
-    #: the "BatchNodeManagement.{region}" service tag. No open inbound ports are required."""
+    the "BatchNodeManagement.{region}" service tag. No open inbound ports are required."""
 
 
 class NodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -351,7 +413,7 @@ class PoolIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Batch pool has user assigned identities with it."""
     NONE = "None"
     """Batch pool has no identity associated with it. Setting ``None`` in update pool will remove
-    #: existing identities."""
+    existing identities."""
 
 
 class PoolProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -361,7 +423,7 @@ class PoolProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The pool is available to run tasks subject to the availability of compute nodes."""
     DELETING = "Deleting"
     """The user has requested that the pool be deleted, but the delete operation has not yet
-    #: completed."""
+    completed."""
 
 
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -371,14 +433,14 @@ class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsens
     """The connection is creating."""
     UPDATING = "Updating"
     """The user has requested that the connection status be updated, but the update operation has not
-    #: yet completed. You may not reference the connection when connecting the Batch account."""
+    yet completed. You may not reference the connection when connecting the Batch account."""
     DELETING = "Deleting"
     """The connection is deleting."""
     SUCCEEDED = "Succeeded"
     """The connection status is final and is ready for use if Status is Approved."""
     FAILED = "Failed"
     """The user requested that the connection be updated and it failed. You may retry the update
-    #: operation."""
+    operation."""
     CANCELLED = "Cancelled"
     """The user has cancelled the connection creation."""
 
@@ -420,7 +482,20 @@ class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enables connectivity to Azure Batch through public DNS."""
     DISABLED = "Disabled"
     """Disables public connectivity and enables private connectivity to Azure Batch Service through
-    #: private endpoint resource."""
+    private endpoint resource."""
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
+    """Secures connectivity to Azure Batch through NSP configuration."""
+
+
+class ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access mode of the resource association."""
+
+    ENFORCED = "Enforced"
+    """Enforced access mode - traffic to the resource that failed access checks is blocked"""
+    LEARNING = "Learning"
+    """Learning access mode - traffic to the resource is enabled for analysis but not blocked"""
+    AUDIT = "Audit"
+    """Audit access mode - traffic to the resource that fails access checks is logged but not blocked"""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -432,7 +507,39 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Batch account has user assigned identities with it."""
     NONE = "None"
     """Batch account has no identity associated with it. Setting ``None`` in update account will
-    #: remove existing identities."""
+    remove existing identities."""
+
+
+class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the EncryptionType of the managed disk. It is set to VMGuestStateOnly for encryption
+    of just the VMGuestState blob, and NonPersistedTPM for not persisting firmware state in the
+    VMGuestState blob. **Note**\\ : It can be set for only Confidential VMs and required when using
+    Confidential VMs.
+    """
+
+    NON_PERSISTED_TPM = "NonPersistedTPM"
+    VM_GUEST_STATE_ONLY = "VMGuestStateOnly"
+
+
+class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the SecurityType of the virtual machine. It has to be set to any specified value to
+    enable UefiSettings.
+    """
+
+    TRUSTED_LAUNCH = "trustedLaunch"
+    """Trusted launch protects against advanced and persistent attack techniques."""
+    CONFIDENTIAL_VM = "confidentialVM"
+    """Azure confidential computing offers confidential VMs are for tenants with high security and
+    confidentiality requirements. These VMs provide a strong, hardware-enforced boundary to help
+    meet your security needs. You can use confidential VMs for migrations without making changes to
+    your code, with the platform protecting your VM's state from being read or modified."""
+
+
+class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of the issue."""
+
+    WARNING = "Warning"
+    ERROR = "Error"
 
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -459,8 +566,8 @@ class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """All virtual machines in the scale set are automatically updated at the same time."""
     MANUAL = "manual"
     """You control the application of updates to virtual machines in the scale set. You do this by
-    #: using the manualUpgrade action."""
+    using the manualUpgrade action."""
     ROLLING = "rolling"
     """The existing instances in a scale set are brought down in batches to be upgraded. Once the
-    #: upgraded batch is complete, the instances will begin taking traffic again and the next batch
-    #: will begin. This continues until all instances brought up-to-date."""
+    upgraded batch is complete, the instances will begin taking traffic again and the next batch
+    will begin. This continues until all instances brought up-to-date."""

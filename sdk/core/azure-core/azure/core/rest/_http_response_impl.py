@@ -91,7 +91,7 @@ class _HttpResponseBackcompatMixinBase:
         :rtype: bytes
         """
         self.read()
-        return self.content  # pylint: disable=no-member
+        return self.content
 
     def _decode_parts(self, message, http_response_type, requests):
         """Helper for _decode_parts.

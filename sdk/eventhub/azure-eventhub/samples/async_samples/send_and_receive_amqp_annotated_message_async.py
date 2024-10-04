@@ -11,9 +11,10 @@ Example to show sending, receiving and parsing amqp annotated message(s) to Even
 
 import os
 import asyncio
+from azure.eventhub import TransportType
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
-from azure.identity.aio import DefaultAzureCredential
+from azure.identity.aio import AzureCliCredential
 
 FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -97,7 +98,8 @@ async def main():
     producer = EventHubProducerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
         eventhub_name=EVENTHUB_NAME,
-        credential=DefaultAzureCredential(),
+        credential=AzureCliCredential(),
+        transport_type=TransportType.AmqpOverWebsocket
     )
     async with producer:
         await send_data_message(producer)
@@ -107,9 +109,10 @@ async def main():
     # Receive
     consumer = EventHubConsumerClient(
         fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
-        credential=DefaultAzureCredential(),
+        credential=AzureCliCredential(),
         consumer_group='$Default',
         eventhub_name=EVENTHUB_NAME,
+        transport_type=TransportType.AmqpOverWebsocket
     )
     await receive_and_parse_message(consumer)
 

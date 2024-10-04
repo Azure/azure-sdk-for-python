@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, AsyncIterable, Callable, Dict, Optional, Type, TypeVar
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -19,21 +20,24 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
-from ...operations._enrollment_accounts_operations import build_get_request, build_list_request
+from ...operations._enrollment_accounts_operations import (
+    build_get_by_department_request,
+    build_get_request,
+    build_list_by_billing_account_request,
+    build_list_by_department_request,
+)
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -57,26 +61,122 @@ class EnrollmentAccountsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.EnrollmentAccountSummary"]:
-        """Lists the enrollment accounts the caller has access to.
+    @distributed_trace_async
+    async def get_by_department(
+        self, billing_account_name: str, department_name: str, enrollment_account_name: str, **kwargs: Any
+    ) -> _models.EnrollmentAccount:
+        """Gets an enrollment account by department. The operation is supported only for billing accounts
+        with agreement type Enterprise Agreement.
 
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either EnrollmentAccountSummary or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.billing.models.EnrollmentAccountSummary]
+        .. seealso::
+           - https://docs.microsoft.com/en-us/rest/api/billing/
+
+        :param billing_account_name: The ID that uniquely identifies a billing account. Required.
+        :type billing_account_name: str
+        :param department_name: The name of the department. Required.
+        :type department_name: str
+        :param enrollment_account_name: The name of the enrollment account. Required.
+        :type enrollment_account_name: str
+        :return: EnrollmentAccount or the result of cls(response)
+        :rtype: ~azure.mgmt.billing.models.EnrollmentAccount
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.EnrollmentAccount] = kwargs.pop("cls", None)
+
+        _request = build_get_by_department_request(
+            billing_account_name=billing_account_name,
+            department_name=department_name,
+            enrollment_account_name=enrollment_account_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("EnrollmentAccount", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_by_department(
+        self,
+        billing_account_name: str,
+        department_name: str,
+        filter: Optional[str] = None,
+        order_by: Optional[str] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        count: Optional[bool] = None,
+        search: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EnrollmentAccount"]:
+        """Lists the enrollment accounts for a department. The operation is supported only for billing
+        accounts with agreement type Enterprise Agreement.
+
+        .. seealso::
+           - https://docs.microsoft.com/en-us/rest/api/billing/
+
+        :param billing_account_name: The ID that uniquely identifies a billing account. Required.
+        :type billing_account_name: str
+        :param department_name: The name of the department. Required.
+        :type department_name: str
+        :param filter: The filter query option allows clients to filter a collection of resources that
+         are addressed by a request URL. Default value is None.
+        :type filter: str
+        :param order_by: The orderby query option allows clients to request resources in a particular
+         order. Default value is None.
+        :type order_by: str
+        :param top: The top query option requests the number of items in the queried collection to be
+         included in the result. The maximum supported value for top is 50. Default value is None.
+        :type top: int
+        :param skip: The skip query option requests the number of items in the queried collection that
+         are to be skipped and not included in the result. Default value is None.
+        :type skip: int
+        :param count: The count query option allows clients to request a count of the matching
+         resources included with the resources in the response. Default value is None.
+        :type count: bool
+        :param search: The search query option allows clients to request items within a collection
+         matching a free-text search expression. search is only supported for string fields. Default
+         value is None.
+        :type search: str
+        :return: An iterator like instance of either EnrollmentAccount or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.billing.models.EnrollmentAccount]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnrollmentAccountListResult]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.EnrollmentAccountListResult] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -87,34 +187,51 @@ class EnrollmentAccountsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_by_department_request(
+                    billing_account_name=billing_account_name,
+                    department_name=department_name,
+                    filter=filter,
+                    order_by=order_by,
+                    top=top,
+                    skip=skip,
+                    count=count,
+                    search=search,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                _request.url = self._client.format_url(_request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
-                request.method = "GET"
-            return request
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("EnrollmentAccountListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -127,20 +244,25 @@ class EnrollmentAccountsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.Billing/enrollmentAccounts"}  # type: ignore
-
     @distributed_trace_async
-    async def get(self, name: str, **kwargs: Any) -> _models.EnrollmentAccountSummary:
-        """Gets a enrollment account by name.
+    async def get(
+        self, billing_account_name: str, enrollment_account_name: str, **kwargs: Any
+    ) -> _models.EnrollmentAccount:
+        """Gets an enrollment account by ID. The operation is supported only for billing accounts with
+        agreement type Enterprise Agreement.
 
-        :param name: Enrollment Account name. Required.
-        :type name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: EnrollmentAccountSummary or the result of cls(response)
-        :rtype: ~azure.mgmt.billing.models.EnrollmentAccountSummary
+        .. seealso::
+           - https://docs.microsoft.com/en-us/rest/api/billing/
+
+        :param billing_account_name: The ID that uniquely identifies a billing account. Required.
+        :type billing_account_name: str
+        :param enrollment_account_name: The name of the enrollment account. Required.
+        :type enrollment_account_name: str
+        :return: EnrollmentAccount or the result of cls(response)
+        :rtype: ~azure.mgmt.billing.models.EnrollmentAccount
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -151,23 +273,21 @@ class EnrollmentAccountsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", "2018-03-01-preview")
-        )  # type: Literal["2018-03-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnrollmentAccountSummary]
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.EnrollmentAccount] = kwargs.pop("cls", None)
 
-        request = build_get_request(
-            name=name,
+        _request = build_get_request(
+            billing_account_name=billing_account_name,
+            enrollment_account_name=enrollment_account_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -177,11 +297,125 @@ class EnrollmentAccountsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("EnrollmentAccountSummary", pipeline_response)
+        deserialized = self._deserialize("EnrollmentAccount", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    get.metadata = {"url": "/providers/Microsoft.Billing/enrollmentAccounts/{name}"}  # type: ignore
+    @distributed_trace
+    def list_by_billing_account(
+        self,
+        billing_account_name: str,
+        filter: Optional[str] = None,
+        order_by: Optional[str] = None,
+        top: Optional[int] = None,
+        skip: Optional[int] = None,
+        count: Optional[bool] = None,
+        search: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.EnrollmentAccount"]:
+        """Lists the enrollment accounts for a billing account. The operation is supported only for
+        billing accounts with agreement type Enterprise Agreement.
+
+        .. seealso::
+           - https://docs.microsoft.com/en-us/rest/api/billing/
+
+        :param billing_account_name: The ID that uniquely identifies a billing account. Required.
+        :type billing_account_name: str
+        :param filter: The filter query option allows clients to filter a collection of resources that
+         are addressed by a request URL. Default value is None.
+        :type filter: str
+        :param order_by: The orderby query option allows clients to request resources in a particular
+         order. Default value is None.
+        :type order_by: str
+        :param top: The top query option requests the number of items in the queried collection to be
+         included in the result. The maximum supported value for top is 50. Default value is None.
+        :type top: int
+        :param skip: The skip query option requests the number of items in the queried collection that
+         are to be skipped and not included in the result. Default value is None.
+        :type skip: int
+        :param count: The count query option allows clients to request a count of the matching
+         resources included with the resources in the response. Default value is None.
+        :type count: bool
+        :param search: The search query option allows clients to request items within a collection
+         matching a free-text search expression. search is only supported for string fields. Default
+         value is None.
+        :type search: str
+        :return: An iterator like instance of either EnrollmentAccount or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.billing.models.EnrollmentAccount]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.EnrollmentAccountListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_list_by_billing_account_request(
+                    billing_account_name=billing_account_name,
+                    filter=filter,
+                    order_by=order_by,
+                    top=top,
+                    skip=skip,
+                    count=count,
+                    search=search,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("EnrollmentAccountListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

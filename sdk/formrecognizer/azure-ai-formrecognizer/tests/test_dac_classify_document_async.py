@@ -11,22 +11,21 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
 from azure.ai.formrecognizer import AnalyzeResult, ClassifierDocumentTypeDetails, BlobSource
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from conftest import skip_flaky_test
 
 
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
+get_dma_client = functools.partial(get_async_client, DocumentModelAdministrationClient)
 
 
 class TestDACClassifyDocumentAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_classify_document(self, client, formrecognizer_training_data_classifier, **kwargs):
+    async def test_classify_document(self, formrecognizer_training_data_classifier, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 
@@ -92,9 +91,9 @@ class TestDACClassifyDocumentAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_classify_document_from_url(self, client, formrecognizer_training_data_classifier, **kwargs):
+    async def test_classify_document_from_url(self, formrecognizer_training_data_classifier, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         da_client = client.get_document_analysis_client()
 

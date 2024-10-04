@@ -59,6 +59,24 @@ stages:
               workingDirectory: $(Build.SourcesDirectory)
               filePath: eng/common/scripts/Verify-Resource-Ref.ps1
 
+          - task: UsePythonVersion@0
+            displayName: 'Use Python 3.11'
+            inputs:
+              versionSpec: '3.11'
+
+          - script: |
+              python -m pip install -r scripts/repo_health_status_report/dev_requirements.txt
+            displayName: 'Prep Environment'
+
+          - task: PythonScript@0
+            condition: succeededOrFailed()
+            env:
+              SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+              GH_TOKEN: $(azuresdk-github-pat)
+            inputs:
+              scriptPath: 'scripts/repo_health_status_report/output_health_report.py'
+            displayName: 'Generate Health Status Report'
+
           - template: ../common/pipelines/templates/steps/verify-links.yml
             parameters:
               Directory: ""

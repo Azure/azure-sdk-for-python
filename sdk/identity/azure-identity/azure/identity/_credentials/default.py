@@ -4,9 +4,9 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, TYPE_CHECKING, Any, Optional, cast
+from typing import List, Any, Optional, cast
 
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority, within_dac
 from .azure_powershell import AzurePowerShellCredential
@@ -20,14 +20,12 @@ from .azd_cli import AzureDeveloperCliCredential
 from .vscode import VisualStudioCodeCredential
 from .workload_identity import WorkloadIdentityCredential
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-
 _LOGGER = logging.getLogger(__name__)
 
 
 class DefaultAzureCredential(ChainedTokenCredential):
-    """A default credential capable of handling most Azure SDK authentication scenarios.
+    """A credential capable of handling most Azure SDK authentication scenarios. See
+    https://aka.ms/azsdk/python/identity/credential-chains#usage-guidance-for-defaultazurecredential.
 
     The identity it uses depends on the environment. When an access token is needed, it requests one using these
     identities in turn, stopping when one provides a token:
@@ -144,7 +142,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
-        credentials: List["TokenCredential"] = []
+        credentials: List[SupportsTokenInfo] = []
+        within_dac.set(True)
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
         if not exclude_workload_identity_credential:
@@ -192,7 +191,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 )
             else:
                 credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id, **kwargs))
-
+        within_dac.set(False)
         super(DefaultAzureCredential, self).__init__(*credentials)
 
     def get_token(
@@ -213,10 +212,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :rtype: ~azure.core.credentials.AccessToken
 
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
-          `message` attribute listing each authentication attempt and its error message.
+            `message` attribute listing each authentication attempt and its error message.
         """
         if self._successful_credential:
-            token = self._successful_credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+            token = cast(TokenCredential, self._successful_credential).get_token(
+                *scopes, claims=claims, tenant_id=tenant_id, **kwargs
+            )
             _LOGGER.info(
                 "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
             )
@@ -225,3 +226,32 @@ class DefaultAzureCredential(ChainedTokenCredential):
         token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
         within_dac.set(False)
         return token
+
+    def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
+        """Request an access token for `scopes`.
+
+        This is an alternative to `get_token` to enable certain scenarios that require additional properties
+        on the token. This method is called automatically by Azure SDK clients.
+
+        :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
+        :keyword options: A dictionary of options for the token request. Unknown options will be ignored. Optional.
+        :paramtype options: ~azure.core.credentials.TokenRequestOptions
+
+        :rtype: AccessTokenInfo
+        :return: An AccessTokenInfo instance containing information about the token.
+
+        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
+           `message` attribute listing each authentication attempt and its error message.
+        """
+        if self._successful_credential:
+            token_info = cast(SupportsTokenInfo, self._successful_credential).get_token_info(*scopes, options=options)
+            _LOGGER.info(
+                "%s acquired a token from %s", self.__class__.__name__, self._successful_credential.__class__.__name__
+            )
+            return token_info
+
+        within_dac.set(True)
+        token_info = cast(SupportsTokenInfo, super()).get_token_info(*scopes, options=options)
+        within_dac.set(False)
+        return token_info

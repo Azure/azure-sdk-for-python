@@ -22,6 +22,7 @@ jobs:
   strategy:
     maxParallel: 1
   pool:
+    name: azsdk-pool-mms-ubuntu-2004-general
     vmImage: 'ubuntu-20.04'
   steps:
     - task: UsePythonVersion@0

@@ -11,7 +11,7 @@ from ._models import AnalyzeBatchDocumentsRequest
 from ._models import AnalyzeBatchOperationDetail
 from ._models import AnalyzeBatchResult
 from ._models import AnalyzeBatchResultOperation
-from ._models import AnalyzeDocumentRequest
+from ._patch import AnalyzeDocumentRequest
 from ._models import AnalyzeResult
 from ._models import AnalyzeResultOperation
 from ._models import AuthorizeClassifierCopyRequest
@@ -23,7 +23,7 @@ from ._models import BuildDocumentClassifierRequest
 from ._models import BuildDocumentModelRequest
 from ._models import ClassifierCopyAuthorization
 from ._models import ClassifierDocumentTypeDetails
-from ._models import ClassifyDocumentRequest
+from ._patch import ClassifyDocumentRequest
 from ._models import ComposeDocumentModelRequest
 from ._models import CopyAuthorization
 from ._models import CurrencyValue
@@ -83,8 +83,7 @@ from ._enums import OperationStatus
 from ._enums import ParagraphRole
 from ._enums import SplitMode
 from ._enums import StringIndexType
-from ._patch import __all__ as _patch_all
-from ._patch import *  # pylint: disable=unused-wildcard-import
+
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -165,5 +164,5 @@ __all__ = [
     "SplitMode",
     "StringIndexType",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
+
 _patch_sdk()

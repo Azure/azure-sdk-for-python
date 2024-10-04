@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class CheckNameAvailabilityParameter(_serialization.Model):
     """Parameter supplied to check Namespace name availability operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name to check the namespace name availability. Required.
     :vartype name: str
@@ -96,7 +96,7 @@ class ConsumerGroupCreateOrUpdateParameters(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Location of the resource. Required.
     :vartype location: str
@@ -296,7 +296,7 @@ class EventHubCreateOrUpdateParameters(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Location of the resource. Required.
     :vartype location: str
@@ -498,7 +498,7 @@ class NamespaceCreateOrUpdateParameters(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar location: Namespace location. Required.
     :vartype location: str
@@ -962,7 +962,7 @@ class ResourceListKeys(_serialization.Model):
         self.key_name = None
 
 
-class SharedAccessAuthorizationRuleCreateOrUpdateParameters(_serialization.Model):
+class SharedAccessAuthorizationRuleCreateOrUpdateParameters(_serialization.Model):  # pylint: disable=name-too-long
     """Parameters supplied to the Create Or Update Authorization Rules operation.
 
     :ivar location: Data center location.
@@ -1088,7 +1088,7 @@ class SharedAccessAuthorizationRuleResource(Resource):
 class Sku(_serialization.Model):
     """SKU parameters supplied to the create Namespace operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Name of this SKU. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.eventhub.v2015_08_01.models.SkuName

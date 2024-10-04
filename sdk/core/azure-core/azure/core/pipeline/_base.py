@@ -25,7 +25,17 @@
 # --------------------------------------------------------------------------
 from __future__ import annotations
 import logging
-from typing import Generic, TypeVar, Union, Any, List, Dict, Optional, Iterable, ContextManager
+from typing import (
+    Generic,
+    TypeVar,
+    Union,
+    Any,
+    List,
+    Dict,
+    Optional,
+    Iterable,
+    ContextManager,
+)
 from azure.core.pipeline import (
     PipelineRequest,
     PipelineResponse,
@@ -84,7 +94,7 @@ class _SansIOHTTPPolicyRunner(HTTPPolicy[HTTPRequestType, HTTPResponseType]):
         _await_result(self._policy.on_request, request)
         try:
             response = self.next.send(request)
-        except Exception:  # pylint: disable=broad-except
+        except Exception:
             _await_result(self._policy.on_exception, request)
             raise
         _await_result(self._policy.on_response, request, response)
@@ -146,7 +156,8 @@ class Pipeline(ContextManager["Pipeline"], Generic[HTTPRequestType, HTTPResponse
         policies: Optional[
             Iterable[
                 Union[
-                    HTTPPolicy[HTTPRequestType, HTTPResponseType], SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]
+                    HTTPPolicy[HTTPRequestType, HTTPResponseType],
+                    SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType],
                 ]
             ]
         ] = None,
@@ -168,7 +179,7 @@ class Pipeline(ContextManager["Pipeline"], Generic[HTTPRequestType, HTTPResponse
         self._transport.__enter__()
         return self
 
-    def __exit__(self, *exc_details: Any) -> None:  # pylint: disable=arguments-differ
+    def __exit__(self, *exc_details: Any) -> None:
         self._transport.__exit__(*exc_details)
 
     @staticmethod

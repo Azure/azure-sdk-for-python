@@ -310,7 +310,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             process_storage_error(error)
 
     @distributed_trace_async
-    async def upload_blob_from_url(self, source_url: str, **kwargs: Any) -> Dict[str, Any]:
+    async def upload_blob_from_url(
+        self, source_url: str,
+        *,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """
         Creates a new Block Blob where the content of the blob is read from a given URL.
         The content of an existing blob is overwritten with the new blob.
@@ -327,6 +332,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
 
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
+        :keyword dict(str, str) metadata:
+            Name-value pairs associated with the blob as metadata.
         :keyword bool overwrite: Whether the blob to be uploaded should overwrite the current data.
             If True, upload_blob will overwrite the existing data. If set to False, the
             operation will fail with ResourceExistsError.
@@ -412,6 +419,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _upload_blob_from_url_options(
             source_url=source_url,
+            metadata=metadata,
             **kwargs)
         try:
             return cast(Dict[str, Any], await self._client.block_blob.put_blob_from_url(**options))

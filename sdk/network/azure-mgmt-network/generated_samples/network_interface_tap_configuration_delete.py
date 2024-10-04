@@ -31,12 +31,12 @@ def main():
     )
 
     client.network_interface_tap_configurations.begin_delete(
-        resource_group_name="rg1",
-        network_interface_name="test-networkinterface",
-        tap_configuration_name="test-tapconfiguration",
+        resource_group_name="testrg",
+        network_interface_name="mynic",
+        tap_configuration_name="tapconfiguration1",
     ).result()
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-01-01/examples/NetworkInterfaceTapConfigurationDelete.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-03-01/examples/NetworkInterfaceTapConfigurationDelete.json
 if __name__ == "__main__":
     main()

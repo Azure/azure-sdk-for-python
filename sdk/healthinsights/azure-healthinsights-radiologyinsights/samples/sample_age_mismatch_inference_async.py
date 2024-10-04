@@ -30,6 +30,7 @@ import os
 import uuid
 from azure.healthinsights.radiologyinsights import models
 
+
 async def radiology_insights_async() -> None:
 
     from azure.identity.aio import DefaultAzureCredential
@@ -151,6 +152,7 @@ def display_age_mismatch(radiology_insights_result, doc_content1):
                                         if not evidence in Tokens:
                                             Tokens = Tokens + " " + evidence
                 print(f"Age Mismatch: Evidence: {Tokens}")
+
 
 # [END display_age_mismatch]
 

@@ -75,7 +75,7 @@ class AsyncTransportWrapper(AsyncHttpTransport):
     def __init__(self, async_transport):
         self._transport = async_transport
 
-    async def send(self, request, **kwargs):
+    async def send(self, request, **kwargs: Any):
         return await self._transport.send(request, **kwargs)
 
     async def open(self):

@@ -4,46 +4,80 @@
 
 ## Getting started
 
-### Install the package
+You can enable distributed tracing in Azure client libraries by configuring the OpenTelemetry SDK.
+OpenTelemetry is a popular open-source observability framework for generating, capturing, and collecting telemetry data for cloud-native software.
 
-Install the Azure Core OpenTelemetry Tracing plugin for Python with [pip](https://pypi.org/project/pip/):
+There are two key concepts related to tracing: span and trace. A span represents a single operation in a trace. A span can represent an HTTP request,
+a remote procedure call (RPC), a database query, or even the path that your code takes. A trace is a tree of spans showing the path of work through
+a system. You can distinguish a trace on its own by a unique 16-byte sequence called a TraceID. For more information on these concepts and how they
+relate to OpenTelemetry, see the [OpenTelemetry documentation](https://opentelemetry.io/docs/).
 
-```bash
-pip install azure-core-tracing-opentelemetry
+## Tracing with Azure Monitor OpenTelemetry Distro
+
+[Azure Monitor OpenTelemetry Distro](https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-enable?tabs=python) supports tracing for Azure
+SDKs by default. Just install and configure the distro and use Azure clients as usual.
+
+```python
+
+# Enable Azure Monitor OpenTelemetry Distro
+# It confiures Azure SDKs to use OpenTelemetry as well
+from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry import trace
+
+configure_azure_monitor(
+   connection_string="<your-connection-string>"
+)
+
+# Use Azure SDKs as usual, here as an example with Storage SDKs
+# you may also report your own spans for it.
+from azure.storage.blob import BlobServiceClient
+
+tracer = trace.get_tracer(__name__)
+with tracer.start_as_current_span(name="MyApplication"):
+    client = BlobServiceClient.from_connection_string('connectionstring')
+    client.create_container('my_container')  # Call will be traced
 ```
 
-Now you can use OpenTelemetry for Python as usual with any SDKs that are compatible
-with azure-core tracing. This includes (not exhaustive list), azure-storage-blob, azure-keyvault-secrets, azure-eventhub, etc.
+The Azure Monitor OpenTelemetry Distro can be found in the [`azure-monitor-opentelemetry`](https://pypi.org/project/azure-monitor-opentelemetry) package.
 
-## Key concepts
+## Tracing with generic OpenTelemetry
 
-* You don't need to pass any context, SDK will get it for you
-* There are two ways to enable the tracing plugin in code:
+Check out your observability provider documentation on how to enable distributed tracing with OpenTelemetry
+or follow [OpenTelemetry Python documentation](https://opentelemetry.io/docs/languages/python/) on generic configuration.
 
-  ```python
-  from azure.core.settings import settings
-  from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-  settings.tracing_implementation = OpenTelemetrySpan
-  ```
+In addition to common OpenTelemetry configuration, follow this steps to configure Azure SDKs:
 
-  or
+1. Install the Azure Core OpenTelemetry Tracing plugin for Python with [pip](https://pypi.org/project/pip/):
 
-  ```python
-  from azure.core.settings import settings
-  settings.tracing_implementation = "opentelemetry"
-  ```
+   ```bash
+   pip install azure-core-tracing-opentelemetry
+   ```
 
-* Alternatively, if you have the latest version of `azure-core` installed, you can also set the following environment variable to enable tracing with OpenTelemetry:
+  Now you can use Azure Core OpenTelemetry Tracing plugin for Python as usual with any SDKs that are compatible
+  with azure-core tracing. This includes (not exhaustive list), `azure-storage-blob`, `azure-keyvault-secrets`, `azure-eventhub`, etc.
 
-  ```bash
-  AZURE_SDK_TRACING_IMPLEMENTATION=opentelemetry
-  ```
+2. Specify which tracing implementation Azure SDK should use in one of the following ways:
+   - By setting `AZURE_SDK_TRACING_IMPLEMENTATION` environment variable to `opentelemetry`
+     (just make sure you use a fresh version of `azure-core` and `azure-core-tracing-opentelemetry`)
 
-## Examples
+     ```bash
+     AZURE_SDK_TRACING_IMPLEMENTATION=opentelemetry
+     ```
 
-There is no explicit context to pass, you just create your usual opentelemetry tracer and
-call any SDK code that is compatible with azure-core tracing. This is an example
-using Azure Monitor exporter, but you can use any exporter (Zipkin, etc.).
+   - Alternatively, you can set it up in the code:
+
+     ```python
+     from azure.core.settings import settings
+     settings.tracing_implementation = "opentelemetry"
+     ```
+
+This configuration instructs Azure SDK clients to emit spans using global OpenTelemetry instance and
+corresponding tracer provider.
+
+There is no need to write any additional code to trace Azure SDK calls or pass trace context explicitly -
+Azure SDKs and OpenTelemetry will do it for you.
+
+Here's a full example:
 
 ```python
 
@@ -52,16 +86,10 @@ from azure.core.settings import settings
 
 settings.tracing_implementation = "opentelemetry"
 
-# In the below example, we use a simple console exporter, uncomment these lines to use
-# the OpenTelemetry exporter for Azure Monitor.
-# Example of a trace exporter for Azure Monitor, but you can use anything OpenTelemetry supports
-# from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
-# exporter = AzureMonitorTraceExporter(
-#     connection_string="the connection string used for your Application Insights resource"
-# )
+# In the below example, we use a simple console exporter.
 
-# Regular open telemetry usage from here, see https://github.com/open-telemetry/opentelemetry-python
-# for details
+# See https://opentelemetry.io/docs/languages/python/ for more details on OpenTelemetry configuration
+
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
@@ -71,7 +99,6 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 exporter = ConsoleSpanExporter()
 
 trace.set_tracer_provider(TracerProvider())
-tracer = trace.get_tracer(__name__)
 trace.get_tracer_provider().add_span_processor(
     SimpleSpanProcessor(exporter)
 )
@@ -80,28 +107,19 @@ trace.get_tracer_provider().add_span_processor(
 
 from azure.storage.blob import BlobServiceClient
 
+tracer = trace.get_tracer(__name__)
 with tracer.start_as_current_span(name="MyApplication"):
     client = BlobServiceClient.from_connection_string('connectionstring')
     client.create_container('my_container')  # Call will be traced
 ```
 
-The Azure Monitor OpenTelemetry Exporter can be found in the [`azure-monitor-opentelemetry-exporter`](https://pypi.org/project/azure-monitor-opentelemetry-exporter/) package.
-
-
 ## HTTP instrumentation
 
 With the Azure Core OpenTelemetry Tracing plugin enabled, HTTP requests made by Azure SDK clients are typically instrumented via the [`DistributedTracingPolicy`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/pipeline/policies/_distributed_tracing.py) automatically. Since Azure Core handles HTTP instrumentation for Azure service calls, automatic HTTP instrumentation from other libraries such as `opentelemetry-requests-instrumentation` are suppressed to avoid duplicate spans from being created.
 
-
 ## Troubleshooting
 
 This client raises exceptions defined in [Azure Core](https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions?view=azure-python).
-
-
-## Next steps
-
-More documentation on OpenTelemetry configuration can be found on the [OpenTelemetry website](https://opentelemetry.io)
-
 
 ## Contributing
 

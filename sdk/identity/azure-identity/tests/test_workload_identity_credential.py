@@ -4,9 +4,10 @@
 # ------------------------------------
 from unittest.mock import mock_open, MagicMock, patch
 
+import pytest
 from azure.identity import WorkloadIdentityCredential
 
-from helpers import mock_response, build_aad_response
+from helpers import mock_response, build_aad_response, GET_TOKEN_METHODS
 
 
 def test_workload_identity_credential_initialize():
@@ -18,7 +19,8 @@ def test_workload_identity_credential_initialize():
     )
 
 
-def test_workload_identity_credential_get_token():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_workload_identity_credential_get_token(get_token_method):
     tenant_id = "tenant-id"
     client_id = "client-id"
     access_token = "foo"
@@ -38,7 +40,7 @@ def test_workload_identity_credential_get_token():
 
     open_mock = mock_open(read_data=assertion)
     with patch("builtins.open", open_mock):
-        token = credential.get_token("scope")
+        token = getattr(credential, get_token_method)("scope")
         assert token.token == access_token
 
     open_mock.assert_called_once_with(token_file_path, encoding="utf-8")

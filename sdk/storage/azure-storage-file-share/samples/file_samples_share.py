@@ -22,6 +22,8 @@ USAGE:
 """
 
 import os
+import sys
+
 from azure.storage.fileshare import ShareAccessTier
 
 SOURCE_FILE = './SampleSource.txt'
@@ -33,6 +35,11 @@ class ShareSamples(object):
     connection_string = os.getenv('AZURE_STORAGE_CONNECTION_STRING')
 
     def create_share_snapshot(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: create_share_snapshot")
+            sys.exit(1)
+
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples1")
@@ -51,6 +58,11 @@ class ShareSamples(object):
             # [END delete_share]
 
     def set_share_quota_and_metadata(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: set_share_quota_and_metadata")
+            sys.exit(1)
+
         # [START create_share_client_from_conn_string]
         from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples2")
@@ -78,6 +90,11 @@ class ShareSamples(object):
             share.delete_share()
 
     def set_share_properties(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: set_share_properties")
+            sys.exit(1)
+
         from azure.storage.fileshare import ShareClient
         share1 = ShareClient.from_connection_string(self.connection_string, "sharesamples3a")
         share2 = ShareClient.from_connection_string(self.connection_string, "sharesamples3b")
@@ -108,6 +125,11 @@ class ShareSamples(object):
             share2.delete_share()
 
     def list_directories_and_files(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: list_directories_and_files")
+            sys.exit(1)
+
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples4")
@@ -133,6 +155,11 @@ class ShareSamples(object):
             share.delete_share()
 
     def get_directory_or_file_client(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: get_directory_or_file_client")
+            sys.exit(1)
+
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples5")
@@ -144,6 +171,11 @@ class ShareSamples(object):
         my_file = share.get_file_client("dir1/myfile")
 
     def acquire_share_lease(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: acquire_share_lease")
+            sys.exit(1)
+
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "sharesamples")

@@ -4,6 +4,8 @@
 # ------------------------------------
 import sys
 import time
+from unittest import mock
+from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -12,14 +14,9 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
-from urllib.parse import urlparse
 
 from helpers import build_aad_response, mock_response, Request, validating_transport
 
-try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock
 
 GET_REFRESH_TOKEN = VisualStudioCodeCredential.__module__ + ".get_refresh_token"
 GET_USER_SETTINGS = VisualStudioCodeCredential.__module__ + ".get_user_settings"
@@ -259,7 +256,6 @@ def test_custom_cloud_no_authority():
     (
         ("AzureCloud", AzureAuthorityHosts.AZURE_PUBLIC_CLOUD),
         ("AzureChinaCloud", AzureAuthorityHosts.AZURE_CHINA),
-        ("AzureGermanCloud", AzureAuthorityHosts.AZURE_GERMANY),
         ("AzureUSGovernment", AzureAuthorityHosts.AZURE_GOVERNMENT),
     ),
 )

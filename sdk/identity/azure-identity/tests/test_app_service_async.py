@@ -11,7 +11,6 @@ import pytest
 from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from helpers_async import await_test
 from recorded_test_case import RecordedTestCase
 from test_app_service import PLAYBACK_URL
 
@@ -33,7 +32,7 @@ class TestAppServiceAsync(RecordedTestCase):
             self.patch = mock.patch.dict(os.environ, env, clear=True)
 
     @pytest.mark.manual
-    @await_test
+    @pytest.mark.asyncio
     @recorded_by_proxy_async
     async def test_system_assigned(self):
         self.load_settings()
@@ -44,7 +43,7 @@ class TestAppServiceAsync(RecordedTestCase):
         assert isinstance(token.expires_on, int)
 
     @pytest.mark.manual
-    @await_test
+    @pytest.mark.asyncio
     @recorded_by_proxy_async
     async def test_system_assigned_tenant_id(self):
         with self.patch:
@@ -55,7 +54,7 @@ class TestAppServiceAsync(RecordedTestCase):
 
     @pytest.mark.manual
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
-    @await_test
+    @pytest.mark.asyncio
     @recorded_by_proxy_async
     async def test_user_assigned(self):
         self.load_settings()
@@ -67,7 +66,7 @@ class TestAppServiceAsync(RecordedTestCase):
 
     @pytest.mark.manual
     @pytest.mark.usefixtures("user_assigned_identity_client_id")
-    @await_test
+    @pytest.mark.asyncio
     @recorded_by_proxy_async
     async def test_user_assigned_tenant_id(self):
         with self.patch:

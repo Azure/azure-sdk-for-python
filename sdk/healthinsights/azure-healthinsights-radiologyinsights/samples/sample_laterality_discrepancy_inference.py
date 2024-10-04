@@ -28,13 +28,14 @@ from azure.identity import DefaultAzureCredential
 from azure.healthinsights.radiologyinsights import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 
+
 def radiology_insights_sync() -> None:
     credential = DefaultAzureCredential()
     ENDPOINT = os.environ["AZURE_HEALTH_INSIGHTS_ENDPOINT"]
 
     job_id = str(uuid.uuid4())
 
-    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential = credential)
+    radiology_insights_client = RadiologyInsightsClient(endpoint=ENDPOINT, credential=credential)
 
     doc_content1 = """Exam:   US LT BREAST TARGETED
     Technique:  Targeted imaging of the  right breast  is performed.
@@ -107,6 +108,7 @@ def radiology_insights_sync() -> None:
     except Exception as ex:
         raise ex
 
+
 def display_laterality_discrepancy(radiology_insights_result):
     for patient_result in radiology_insights_result.patient_results:
         for ri_inference in patient_result.inferences:
@@ -114,10 +116,9 @@ def display_laterality_discrepancy(radiology_insights_result):
                 print(f"Laterality Discrepancy Inference found")
                 indication = ri_inference.laterality_indication
                 for code in indication.coding:
-                    print(
-                        f"Laterality Discrepancy: Laterality Indication: {code.system} {code.code} {code.display}"
-                    )
+                    print(f"Laterality Discrepancy: Laterality Indication: {code.system} {code.code} {code.display}")
                 print(f"Laterality Discrepancy: Discrepancy Type: {ri_inference.discrepancy_type}")
+
 
 if __name__ == "__main__":
     radiology_insights_sync()

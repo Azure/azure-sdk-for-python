@@ -13,29 +13,28 @@ from azure.ai.formrecognizer._generated.v2_1.models import AnalyzeOperationResul
 from azure.ai.formrecognizer._response_handlers import prepare_content_result
 from azure.ai.formrecognizer.aio import FormRecognizerClient
 from azure.ai.formrecognizer import FormRecognizerApiVersion
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from conftest import skip_flaky_test
 
-FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
+get_fr_client = functools.partial(get_async_client, FormRecognizerClient)
 
 
 class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_content_url_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = FormRecognizerClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
+    async def test_content_url_auth_bad_key(self, **kwargs):
+        client = get_fr_client(api_key="xxxx")
         with pytest.raises(ClientAuthenticationError):
             async with client:
                 poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
                 result = await poller.result()
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_url_pass_stream(self, client):
+    async def test_content_url_pass_stream(self):
+        client = get_fr_client()
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
@@ -46,9 +45,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_url_transform_pdf(self, client):
+    async def test_content_url_transform_pdf(self):
+        client = get_fr_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -70,9 +69,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_url_pdf(self, client):
+    async def test_content_url_pdf(self):
+        client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.invoice_url_pdf)
             result = await poller.result()
@@ -86,9 +85,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_multipage_url(self, client):
+    async def test_content_multipage_url(self):
+        client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf)
             result = await poller.result()
@@ -97,9 +96,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_multipage_transform_url(self, client):
+    async def test_content_multipage_transform_url(self):
+        client = get_fr_client()
         responses = []
 
         def callback(raw_response, _, headers):
@@ -122,9 +121,8 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     async def test_content_continuation_token(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         async with client:
             initial_poller = await client.begin_recognize_content_from_url(self.form_url_jpg)
             cont_token = initial_poller.continuation_token()
@@ -136,9 +134,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_multipage_table_span_pdf(self, client):
+    async def test_content_multipage_table_span_pdf(self):
+        client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.multipage_table_url_pdf)
             result = await poller.result()
@@ -162,9 +160,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_selection_marks(self, client):
+    async def test_content_selection_marks(self):
+        client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
             result = await poller.result()
@@ -175,9 +173,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy_async
-    async def test_content_selection_marks_v2(self, client):
+    async def test_content_selection_marks_v2(self):
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         async with client:
             poller = await client.begin_recognize_content_from_url(form_url=self.selection_mark_url_pdf)
             result = await poller.result()
@@ -188,9 +186,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_specify_pages(self, client):
+    async def test_content_specify_pages(self):
+        client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.multipage_url_pdf, pages=["1"])
             result = await poller.result()
@@ -210,9 +208,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_reading_order(self, client):
+    async def test_content_reading_order(self):
+        client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.form_url_jpg, reading_order="natural")
 
@@ -222,9 +220,9 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_language_specified(self, client):
+    async def test_content_language_specified(self):
+        client = get_fr_client()
         async with client:
             poller = await client.begin_recognize_content_from_url(self.form_url_jpg, language="de")
             assert 'de' == poller._polling_method._initial_response.http_response.request.query['language']
@@ -232,18 +230,17 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             assert result
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
-    async def test_content_language_error(self, client):
+    async def test_content_language_error(self):
+        client = get_fr_client()
         async with client:
             with pytest.raises(HttpResponseError) as e:
                 await client.begin_recognize_content_from_url(self.form_url_jpg, language="not a language")
             assert "NotSupportedLanguage" == e.value.error.code
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     async def test_content_language_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         async with client:
             with pytest.raises(ValueError) as e:
                 await client.begin_recognize_content_from_url(self.form_url_jpg, language="en")

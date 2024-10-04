@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -483,8 +484,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
      ManagedInstanceAdvancedThreatProtectionSettingsOperations operations
     :vartype managed_instance_advanced_threat_protection_settings:
      azure.mgmt.sql.operations.ManagedInstanceAdvancedThreatProtectionSettingsOperations
-    :ivar replication_links: ReplicationLinksOperations operations
-    :vartype replication_links: azure.mgmt.sql.operations.ReplicationLinksOperations
     :ivar managed_database_move_operations: ManagedDatabaseMoveOperationsOperations operations
     :vartype managed_database_move_operations:
      azure.mgmt.sql.operations.ManagedDatabaseMoveOperationsOperations
@@ -598,6 +597,8 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar servers: ServersOperations operations
     :vartype servers: azure.mgmt.sql.operations.ServersOperations
+    :ivar replication_links: ReplicationLinksOperations operations
+    :vartype replication_links: azure.mgmt.sql.operations.ReplicationLinksOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription ID that identifies an Azure subscription. Required.
@@ -936,9 +937,6 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
                 self._client, self._config, self._serialize, self._deserialize
             )
         )
-        self.replication_links = ReplicationLinksOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.managed_database_move_operations = ManagedDatabaseMoveOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -1048,6 +1046,9 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
         self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.replication_links = ReplicationLinksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -1074,7 +1075,7 @@ class SqlManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "SqlManagementClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

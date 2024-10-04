@@ -1,5 +1,6 @@
 from promptflow import tool
 import json
+import ast
 
 
 def normalize_user_text(user_text):
@@ -29,7 +30,7 @@ def construct_groundedness_requests(parsed_chat: dict) -> str:
         question = parsed_chat["questions"][i]
         answer = parsed_chat["answers"][i]
         try:
-            retrieved_documents = eval(
+            retrieved_documents = ast.literal_eval(
                 parsed_chat["retrieved_documents"][i])
         except Exception:
             retrieved_documents = [

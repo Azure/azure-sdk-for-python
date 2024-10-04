@@ -72,9 +72,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     ERROR_CONDITIONS = [condition.value for condition in errors.ErrorCondition]
 
-    # define exceptions
-    AUTHENTICATION_EXCEPTION = errors.AuthenticationException
-
     @staticmethod
     def build_message(**kwargs):
         """

@@ -59,5 +59,5 @@ pip install azure-purview-sharing
 
 ## Next steps
 
-Check out the [API reference documentation](https://aka.ms/azsdk-purview-sharing-ref) to learn more about
+Check out the [API reference documentation](https://aka.ms/azsdk/python/purviewcatalog/ref-docs) to learn more about
 what you can do with the Azure Purview Sharing API client library.

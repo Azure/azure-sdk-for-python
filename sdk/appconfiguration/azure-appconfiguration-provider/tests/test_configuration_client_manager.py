@@ -33,7 +33,7 @@ class TestConfigurationClientManager(unittest.TestCase):
             assert (
                 str(ex.exception) == "Please pass either endpoint and credential, or a connection string with a value."
             )
-        mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
+        mock_find_auto_failover_endpoints.assert_not_called()
         mock_client.assert_not_called()
 
         connection_string = "Endpoint=https://fake.endpoint/;Id=fake_id;Secret=fake_secret"
@@ -60,7 +60,11 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
         connection_string2 = "Endpoint=https://fake.endpoint2/;Id=fake_id;Secret=fake_secret"
         mock_client.assert_has_calls(
-            [call(endpoint, connection_string, "", 0, 0), call("https://fake.endpoint2", connection_string2, "", 0, 0)]
+            [
+                call(endpoint, connection_string, "", 0, 0),
+                call().endpoint.__eq__("https://fake.endpoint2"),
+                call("https://fake.endpoint2", connection_string2, "", 0, 0),
+            ]
         )
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
@@ -74,7 +78,7 @@ class TestConfigurationClientManager(unittest.TestCase):
             assert (
                 str(ex.exception) == "Please pass either endpoint and credential, or a connection string with a value."
             )
-        mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
+        mock_find_auto_failover_endpoints.assert_not_called()
         mock_client.assert_not_called()
 
         mock_find_auto_failover_endpoints.reset_mock()
@@ -98,7 +102,11 @@ class TestConfigurationClientManager(unittest.TestCase):
         assert len(manager._replica_clients) == 2
         mock_find_auto_failover_endpoints.assert_called_once_with(endpoint, False)
         mock_client.assert_has_calls(
-            [call(endpoint, "fake-credential", "", 0, 0), call("https://fake.endpoint2", "fake-credential", "", 0, 0)]
+            [
+                call(endpoint, "fake-credential", "", 0, 0),
+                call().endpoint.__eq__("https://fake.endpoint2"),
+                call("https://fake.endpoint2", "fake-credential", "", 0, 0),
+            ]
         )
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")

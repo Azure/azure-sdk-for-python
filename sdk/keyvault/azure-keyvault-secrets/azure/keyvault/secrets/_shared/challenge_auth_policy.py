@@ -67,7 +67,7 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
 
     def __init__(self, credential: TokenCredential, *scopes: str, **kwargs: Any) -> None:
         super(ChallengeAuthPolicy, self).__init__(credential, *scopes, **kwargs)
-        self._credential = credential
+        self._credential: TokenCredential = credential
         self._token: Optional[AccessToken] = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
         self._request_copy: Optional[HttpRequest] = None

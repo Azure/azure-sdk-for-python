@@ -25,7 +25,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperationsAsync(AzureMgmtReco
         response = self.client.trusted_access_role_bindings.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2022-04-02-preview",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             resource_name="str",
             trusted_access_role_binding_name="str",
-            api_version="2022-04-02-preview",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -46,42 +46,46 @@ class TestContainerServiceTrustedAccessRoleBindingsOperationsAsync(AzureMgmtReco
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
-        response = await self.client.trusted_access_role_bindings.create_or_update(
-            resource_group_name=resource_group.name,
-            resource_name="str",
-            trusted_access_role_binding_name="str",
-            trusted_access_role_binding={
-                "roles": ["str"],
-                "sourceResourceId": "str",
-                "id": "str",
-                "name": "str",
-                "provisioningState": "str",
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
+    async def test_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.trusted_access_role_bindings.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                trusted_access_role_binding_name="str",
+                trusted_access_role_binding={
+                    "roles": ["str"],
+                    "sourceResourceId": "str",
+                    "id": "str",
+                    "name": "str",
+                    "provisioningState": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
                 },
-                "type": "str",
-            },
-            api_version="2022-04-02-preview",
-        )
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
-        response = await self.client.trusted_access_role_bindings.delete(
-            resource_group_name=resource_group.name,
-            resource_name="str",
-            trusted_access_role_binding_name="str",
-            api_version="2022-04-02-preview",
-        )
+    async def test_begin_delete(self, resource_group):
+        response = await (
+            await self.client.trusted_access_role_bindings.begin_delete(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                trusted_access_role_binding_name="str",
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

@@ -93,6 +93,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert str(job.jobs["a"].component).startswith("azureml://registries/")
         assert str(job.jobs["a"].component).endswith("/components/hello_world_asset/versions/1")
 
+    @pytest.mark.skip("Skipping due to Spark version Upgrade")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -1412,6 +1413,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
+    @pytest.mark.skip("Skipping due to Spark version Upgrade")
     def test_register_output_yaml(
         self,
         client: MLClient,

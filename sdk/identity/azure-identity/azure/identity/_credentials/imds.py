@@ -8,7 +8,7 @@ from typing import Any, Optional, Dict
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.transport import HttpRequest
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessTokenInfo
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
@@ -76,7 +76,7 @@ class ImdsCredential(MsalManagedIdentityClient):
     def close(self) -> None:
         self.__exit__()
 
-    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
 
         if within_credential_chain.get() and not self._endpoint_available:
             # If within a chain (e.g. DefaultAzureCredential), we do a quick check to see if the IMDS endpoint
@@ -96,7 +96,7 @@ class ImdsCredential(MsalManagedIdentityClient):
                 raise CredentialUnavailableError(error_message) from ex
 
         try:
-            token = super()._request_token(*scopes)
+            token_info = super()._request_token(*scopes)
         except CredentialUnavailableError:
             # Response is not json, skip the IMDS credential
             raise
@@ -123,7 +123,7 @@ class ImdsCredential(MsalManagedIdentityClient):
             # if anything else was raised, assume the endpoint is unavailable
             error_message = "ManagedIdentityCredential authentication unavailable, no response from the IMDS endpoint."
             raise CredentialUnavailableError(error_message) from ex
-        return token
+        return token_info
 
     def get_unavailable_message(self, desc: str = "") -> str:
         return f"ManagedIdentityCredential authentication unavailable, no response from the IMDS endpoint. {desc}"

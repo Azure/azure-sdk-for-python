@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 import hmac
 import hashlib
 import base64
+import certifi
 try:
     from urllib.parse import quote as url_parse_quote
 except ImportError:
@@ -689,7 +690,15 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
         hostname = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         credential = AzureNamedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
 
-        client = ServiceBusClient(hostname, credential, connection_verify="cacert.pem", uamqp_transport=uamqp_transport)
+        # ensure regular connection_verify works
+        certfile = certifi.where()
+        client = ServiceBusClient(hostname, credential, connection_verify=certfile, uamqp_transport=uamqp_transport)
+        with client:
+            with client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(ServiceBusMessage("foo"))
+
+        # invalid cert file to connection_verify should fail
+        client = ServiceBusClient(hostname, credential, connection_verify="fakecertfile.pem", uamqp_transport=uamqp_transport)
         with client:
             with pytest.raises(ServiceBusError):
                 with client.get_queue_sender(servicebus_queue.name) as sender:
@@ -697,6 +706,7 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
 
         # Skipping on OSX uamqp - it's raising an Authentication/TimeoutError
         if not uamqp_transport or not sys.platform.startswith('darwin'):
+            # invalid custom endpoint should fail
             fake_addr = "fakeaddress.com:1111"
             client = ServiceBusClient(
                 hostname,
@@ -706,7 +716,12 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
                 uamqp_transport=uamqp_transport
             )
             with client:
-                with pytest.raises(ServiceBusConnectionError):
+                if not uamqp_transport:
+                    error = ServiceBusConnectionError
+                else:
+                    # if uamqp, catches an "Authorization timeout" error and raises ServiceBusError
+                    error = ServiceBusError
+                with pytest.raises(error):
                     with client.get_queue_sender(servicebus_queue.name) as sender:
                         sender.send_messages(ServiceBusMessage("foo"))
 
@@ -714,7 +729,7 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
                 hostname,
                 credential,
                 custom_endpoint_address=fake_addr,
-                connection_verify="cacert.pem",
+                connection_verify=certfile,
                 retry_total=0,
                 uamqp_transport=uamqp_transport,
             )

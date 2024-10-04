@@ -88,7 +88,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         await await_result(self.on_request, request)
         try:
             response = await self.next.send(request)
-        except Exception:  # pylint:disable=broad-except
+        except Exception:
             await await_result(self.on_exception, request)
             raise
         await await_result(self.on_response, request, response)
@@ -100,7 +100,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                 if request_authorized:
                     try:
                         response = await self.next.send(request)
-                    except Exception:  # pylint:disable=broad-except
+                    except Exception:
                         await await_result(self.on_exception, request)
                         raise
                     await await_result(self.on_response, request, response)

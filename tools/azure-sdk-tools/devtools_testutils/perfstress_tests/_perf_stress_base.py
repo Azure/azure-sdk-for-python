@@ -93,7 +93,7 @@ class _PerfTestABC(abc.ABC):
         """
         Run all async tests, including both warmup and duration.
         """
-    
+
     @staticmethod
     @abc.abstractmethod
     def add_arguments(parser: argparse.ArgumentParser) -> None:
@@ -225,20 +225,15 @@ class _PerfTestBase(_PerfTestABC):
         """
         if self._profile:
             profile_name = output_path or "{}/cProfile-{}-{}-{}.pstats".format(
-                os.getcwd(),
-                self.__class__.__name__,
-                self._parallel_index,
-                sync)
+                os.getcwd(), self.__class__.__name__, self._parallel_index, sync
+            )
             print("Dumping profile data to {}".format(profile_name))
             self._profile.dump_stats(profile_name)
         else:
             print("No profile generated.")
 
     def _print_profile_stats(
-        self,
-        *,
-        sort_key: pstats.SortKey = PSTATS_PRINT_DEFAULT_SORT_KEY,
-        count: int = PSTATS_PRINT_DEFAULT_LINE_COUNT
+        self, *, sort_key: pstats.SortKey = PSTATS_PRINT_DEFAULT_SORT_KEY, count: int = PSTATS_PRINT_DEFAULT_LINE_COUNT
     ) -> None:
         """Print the profile stats to stdout.
 

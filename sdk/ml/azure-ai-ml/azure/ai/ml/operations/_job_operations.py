@@ -725,7 +725,8 @@ class JobOperations(_ScopeDependentOperations):
             service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
             service_client_operation = self.service_client_01_2024_preview.jobs
-
+        if rest_job_resource.properties.job_type == RestJobType.AUTO_ML:
+            service_client_operation = self.service_client_01_2024_preview.jobs
         if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             service_client_operation = self.service_client_01_2024_preview.jobs
 

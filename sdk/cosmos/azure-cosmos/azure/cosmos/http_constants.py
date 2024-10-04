@@ -34,7 +34,6 @@ class HttpMethods:
     Head = "HEAD"
     Options = "OPTIONS"
 
-
 class HttpHeaders:
     """Constants of http headers.
     """
@@ -135,6 +134,7 @@ class HttpHeaders:
     ResourceQuota = "x-ms-resource-quota"
     ResourceUsage = "x-ms-resource-usage"
     IntendedCollectionRID = "x-ms-cosmos-intended-collection-rid"
+    Prefer = "Prefer"
 
     # Quota Info
     MaxEntityCount = "x-ms-root-entity-max-count"

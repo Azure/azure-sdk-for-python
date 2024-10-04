@@ -43,7 +43,10 @@ class PollingMethod(Generic[PollingReturnType_co]):
     """ABC class for polling method."""
 
     def initialize(
-        self, client: Any, initial_response: Any, deserialization_callback: DeserializationCallbackType
+        self,
+        client: Any,
+        initial_response: Any,
+        deserialization_callback: DeserializationCallbackType,
     ) -> None:
         raise NotImplementedError("This method needs to be implemented")
 

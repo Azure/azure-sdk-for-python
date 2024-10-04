@@ -133,7 +133,9 @@ def create_package_and_install(
                         logging.info("Installed packages: {}".format(installed_pkgs))
 
                         # parse the specifier
-                        req_name, req_specifier = parse_require(req)
+                        requirement = parse_require(req)
+                        req_name = requirement.key
+                        req_specifier = requirement.specifier if len(requirement.specifier) else None
 
                         # if we have the package already present...
                         if req_name in installed_pkgs:
@@ -160,8 +162,8 @@ def create_package_and_install(
                                     env=dict(os.environ, PIP_EXTRA_INDEX_URL=""),
                                 )
                             except subprocess.CalledProcessError as e:
-                                req_name, req_specifier = parse_require(addition)
-                                non_present_reqs.append(req_name)
+                                requirement = parse_require(addition)
+                                non_present_reqs.append(requirement.key)
 
                         additional_downloaded_reqs = [
                             os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)

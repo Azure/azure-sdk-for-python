@@ -71,7 +71,7 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        "azure-core>=1.14.0",
+        "azure-core>=1.27.0",
         "typing-extensions>=4.0.1",
     ]
 )

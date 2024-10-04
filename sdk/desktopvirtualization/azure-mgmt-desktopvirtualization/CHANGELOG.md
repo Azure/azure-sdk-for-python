@@ -1,5 +1,53 @@
 # Release History
 
+## 2.0.0 (2024-09-23)
+
+### Features Added
+
+  - The 'DesktopVirtualizationMgmtClient' client had operation group 'app_attach_package_info' added in the current version
+  - The 'DesktopVirtualizationMgmtClient' client had operation group 'app_attach_package' added in the current version
+  - The model or publicly exposed class 'ExpandMsixImage' had property 'certificate_name' added in the current version
+  - The model or publicly exposed class 'ExpandMsixImage' had property 'certificate_expiry' added in the current version
+  - The model or publicly exposed class 'HostPool' had property 'app_attach_package_references' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnection' had property 'group_ids' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'group_ids' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'private_endpoint' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'private_link_service_connection_state' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'provisioning_state' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'id' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'name' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'type' added in the current version
+  - The model or publicly exposed class 'PrivateEndpointConnectionWithSystemData' had property 'additional_properties' added in the current version
+  - The model or publicly exposed class 'Resource' had property 'system_data' added in the current version
+  - The model or publicly exposed class 'AppAttachPackage' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageArchitectures' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageInfoProperties' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageList' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackagePatch' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackagePatchProperties' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageProperties' was added in the current version
+  - The model or publicly exposed class 'ErrorAdditionalInfo' was added in the current version
+  - The model or publicly exposed class 'ErrorDetail' was added in the current version
+  - The model or publicly exposed class 'ErrorResponse' was added in the current version
+  - The model or publicly exposed class 'FailHealthCheckOnStagingFailure' was added in the current version
+  - The model or publicly exposed class 'ImportPackageInfoRequest' was added in the current version
+  - The model or publicly exposed class 'PackageTimestamped' was added in the current version
+  - The model or publicly exposed class 'ProvisioningState' was added in the current version
+  - The model or publicly exposed class 'RegistrationTokenList' was added in the current version
+  - The model or publicly exposed class 'RegistrationTokenMinimal' was added in the current version
+  - The model or publicly exposed class 'TrackedResource' was added in the current version
+  - The 'HostPoolsOperations' method 'list_registration_tokens' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageInfoOperations' was added in the current version
+  - The model or publicly exposed class 'AppAttachPackageOperations' was added in the current version
+
+### Breaking Changes
+
+  - Parameter `location` of model `ApplicationGroup` is now required
+  - Parameter `location` of model `HostPool` is now required
+  - Parameter `location` of model `ResourceModelWithAllowedPropertySet` is now required
+  - Parameter `location` of model `ScalingPlan` is now required
+  - Parameter `location` of model `Workspace` is now required
+
 ## 1.1.0 (2023-10-23)
 
 ### Features Added

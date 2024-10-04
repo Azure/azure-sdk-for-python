@@ -49,7 +49,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python",
     keywords="azure, azure sdk",  # update with search keywords relevant to the azure service / product
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -75,6 +75,7 @@ setup(
     },
     install_requires=[
         "isodate>=0.6.1",
+        "typing-extensions>=4.6.0",
         "azure-common>=1.1",
         "azure-mgmt-core>=1.3.2",
     ],

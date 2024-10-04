@@ -16,8 +16,8 @@ autorest SWAGGER.md
 ### Settings
 ``` yaml
 package-version: 1.0.0
-tag: package-2023-03-31
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/ac29c822ecd5f6054cd17c46839e7c04a1114c6d/specification/communication/data-plane/Email/readme.md
+tag: package-2024-07-01-preview
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/e64ad693df24b47d4009eece6663c8d95cf94be6/specification/communication/data-plane/Email/readme.md
 output-folder: ../azure/communication/email/_generated
 namespace: azure.communication.email
 no-namespace-folders: true
@@ -32,4 +32,17 @@ security: Anonymous
 title: Azure Communication Email Service
 use-extension:
   "@autorest/python": "6.1.1"
+```
+
+### Ensure contentInBase64 is a string
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions.EmailAttachment.properties.contentInBase64
+    transform: >
+      $["type"] = "string";
+      if ($["format"]) {
+        delete $["format"];
+      }
 ```

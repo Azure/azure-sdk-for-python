@@ -28,7 +28,7 @@ class CleanupPolicyRetentionDescription(str, Enum, metaclass=CaseInsensitiveEnum
     """Enumerates the possible values for cleanup policy."""
 
     DELETE = "Delete"
-    COMPACTION = "Compaction"
+    COMPACT = "Compact"
 
 
 class ClusterSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -18,6 +18,53 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AdministratorProperties(_model_base.Model):
+    """The local administrator login properties.
+
+    :ivar user_name: The administrator user name.
+    :vartype user_name: str
+    :ivar password: The administrator password.
+    :vartype password: str
+    """
+
+    user_name: Optional[str] = rest_field(name="userName", visibility=["read", "create", "update"])
+    """The administrator user name."""
+    password: Optional[str] = rest_field(visibility=["create", "update"])
+    """The administrator password."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        user_name: Optional[str] = None,
+        password: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class BackupProperties(_model_base.Model):
+    """The backup properties of the cluster. This includes the earliest restore time and retention
+    settings.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar earliest_restore_time: Earliest restore timestamp in UTC ISO8601 format.
+    :vartype earliest_restore_time: str
+    """
+
+    earliest_restore_time: Optional[str] = rest_field(name="earliestRestoreTime", visibility=["read"])
+    """Earliest restore timestamp in UTC ISO8601 format."""
+
+
 class CheckNameAvailabilityRequest(_model_base.Model):
     """The check availability request body.
 
@@ -91,6 +138,37 @@ class CheckNameAvailabilityResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class ComputeProperties(_model_base.Model):
+    """The compute properties of the cluster. This includes the virtual-cores/memory and scaling
+    options applied to servers in the cluster.
+
+    :ivar tier: The compute tier to assign to the cluster, where each tier maps to a virtual-core
+     and memory size. Example values: 'M30', 'M40'.
+    :vartype tier: str
+    """
+
+    tier: Optional[str] = rest_field()
+    """The compute tier to assign to the cluster, where each tier maps to a virtual-core and memory
+     size. Example values: 'M30', 'M40'."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tier: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class ConnectionString(_model_base.Model):
     """Connection string for the mongo cluster.
 
@@ -100,12 +178,16 @@ class ConnectionString(_model_base.Model):
     :vartype connection_string: str
     :ivar description: Description of the connection string.
     :vartype description: str
+    :ivar name: Name of the connection string.
+    :vartype name: str
     """
 
     connection_string: Optional[str] = rest_field(name="connectionString", visibility=["read"])
     """Value of the connection string."""
     description: Optional[str] = rest_field(visibility=["read"])
     """Description of the connection string."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """Name of the connection string."""
 
 
 class ErrorAdditionalInfo(_model_base.Model):
@@ -281,7 +363,6 @@ class FirewallRuleProperties(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar provisioning_state: The provisioning state of the firewall rule. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", "Updating", and "Dropping".
@@ -323,6 +404,36 @@ class FirewallRuleProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class HighAvailabilityProperties(_model_base.Model):
+    """The high availability properties of the cluster.
+
+    :ivar target_mode: The target high availability mode requested for the cluster. Known values
+     are: "Disabled", "SameZone", and "ZoneRedundantPreferred".
+    :vartype target_mode: str or ~azure.mgmt.mongocluster.models.HighAvailabilityMode
+    """
+
+    target_mode: Optional[Union[str, "_models.HighAvailabilityMode"]] = rest_field(name="targetMode")
+    """The target high availability mode requested for the cluster. Known values are: \"Disabled\",
+     \"SameZone\", and \"ZoneRedundantPreferred\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_mode: Optional[Union[str, "_models.HighAvailabilityMode"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class ListConnectionStringsResult(_model_base.Model):
     """The connection strings for the given mongo cluster.
 
@@ -344,7 +455,6 @@ class TrackedResource(Resource):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
@@ -392,7 +502,6 @@ class MongoCluster(TrackedResource):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
@@ -441,22 +550,20 @@ class MongoClusterProperties(_model_base.Model):  # pylint: disable=too-many-ins
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar create_mode: The mode to create a mongo cluster. Known values are: "Default" and
-     "PointInTimeRestore".
+    :ivar create_mode: The mode to create a mongo cluster. Known values are: "Default",
+     "PointInTimeRestore", "GeoReplica", and "Replica".
     :vartype create_mode: str or ~azure.mgmt.mongocluster.models.CreateMode
     :ivar restore_parameters: The parameters to create a point-in-time restore mongo cluster.
     :vartype restore_parameters: ~azure.mgmt.mongocluster.models.MongoClusterRestoreParameters
-    :ivar administrator_login: The administrator's login for the mongo cluster.
-    :vartype administrator_login: str
-    :ivar administrator_login_password: The password of the administrator login.
-    :vartype administrator_login_password: str
+    :ivar replica_parameters: The parameters to create a replica mongo cluster.
+    :vartype replica_parameters: ~azure.mgmt.mongocluster.models.MongoClusterReplicaParameters
+    :ivar administrator: The local administrator properties for the mongo cluster.
+    :vartype administrator: ~azure.mgmt.mongocluster.models.AdministratorProperties
     :ivar server_version: The Mongo DB server version. Defaults to the latest available version if
      not specified.
     :vartype server_version: str
     :ivar connection_string: The default mongo connection string for the cluster.
     :vartype connection_string: str
-    :ivar earliest_restore_time: Earliest restore timestamp in UTC ISO8601 format.
-    :vartype earliest_restore_time: str
     :ivar provisioning_state: The provisioning state of the mongo cluster. Known values are:
      "Succeeded", "Failed", "Canceled", "InProgress", "Updating", and "Dropping".
     :vartype provisioning_state: str or ~azure.mgmt.mongocluster.models.ProvisioningState
@@ -466,31 +573,44 @@ class MongoClusterProperties(_model_base.Model):  # pylint: disable=too-many-ins
     :ivar public_network_access: Whether or not public endpoint access is allowed for this mongo
      cluster. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or ~azure.mgmt.mongocluster.models.PublicNetworkAccess
-    :ivar node_group_specs: The list of node group specs in the cluster.
-    :vartype node_group_specs: list[~azure.mgmt.mongocluster.models.NodeGroupSpec]
+    :ivar high_availability: The high availability properties of the mongo cluster.
+    :vartype high_availability: ~azure.mgmt.mongocluster.models.HighAvailabilityProperties
+    :ivar storage: The storage properties of the mongo cluster.
+    :vartype storage: ~azure.mgmt.mongocluster.models.StorageProperties
+    :ivar sharding: The sharding properties of the mongo cluster.
+    :vartype sharding: ~azure.mgmt.mongocluster.models.ShardingProperties
+    :ivar compute: The compute properties of the mongo cluster.
+    :vartype compute: ~azure.mgmt.mongocluster.models.ComputeProperties
+    :ivar backup: The backup properties of the mongo cluster.
+    :vartype backup: ~azure.mgmt.mongocluster.models.BackupProperties
     :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.mongocluster.models.PrivateEndpointConnection]
+    :ivar preview_features: List of private endpoint connections.
+    :vartype preview_features: list[str or ~azure.mgmt.mongocluster.models.PreviewFeature]
+    :ivar replica: The replication properties for the mongo cluster.
+    :vartype replica: ~azure.mgmt.mongocluster.models.ReplicationProperties
+    :ivar infrastructure_version: The infrastructure version the cluster is provisioned on.
+    :vartype infrastructure_version: str
     """
 
     create_mode: Optional[Union[str, "_models.CreateMode"]] = rest_field(name="createMode", visibility=["create"])
-    """The mode to create a mongo cluster. Known values are: \"Default\" and \"PointInTimeRestore\"."""
+    """The mode to create a mongo cluster. Known values are: \"Default\", \"PointInTimeRestore\",
+     \"GeoReplica\", and \"Replica\"."""
     restore_parameters: Optional["_models.MongoClusterRestoreParameters"] = rest_field(
         name="restoreParameters", visibility=["create"]
     )
     """The parameters to create a point-in-time restore mongo cluster."""
-    administrator_login: Optional[str] = rest_field(name="administratorLogin", visibility=["read", "create", "update"])
-    """The administrator's login for the mongo cluster."""
-    administrator_login_password: Optional[str] = rest_field(
-        name="administratorLoginPassword", visibility=["create", "update"]
+    replica_parameters: Optional["_models.MongoClusterReplicaParameters"] = rest_field(
+        name="replicaParameters", visibility=["create"]
     )
-    """The password of the administrator login."""
+    """The parameters to create a replica mongo cluster."""
+    administrator: Optional["_models.AdministratorProperties"] = rest_field()
+    """The local administrator properties for the mongo cluster."""
     server_version: Optional[str] = rest_field(name="serverVersion")
     """The Mongo DB server version. Defaults to the latest available version if not specified."""
     connection_string: Optional[str] = rest_field(name="connectionString", visibility=["read"])
     """The default mongo connection string for the cluster."""
-    earliest_restore_time: Optional[str] = rest_field(name="earliestRestoreTime", visibility=["read"])
-    """Earliest restore timestamp in UTC ISO8601 format."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -504,12 +624,26 @@ class MongoClusterProperties(_model_base.Model):  # pylint: disable=too-many-ins
     public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(name="publicNetworkAccess")
     """Whether or not public endpoint access is allowed for this mongo cluster. Known values are:
      \"Enabled\" and \"Disabled\"."""
-    node_group_specs: Optional[List["_models.NodeGroupSpec"]] = rest_field(name="nodeGroupSpecs")
-    """The list of node group specs in the cluster."""
+    high_availability: Optional["_models.HighAvailabilityProperties"] = rest_field(name="highAvailability")
+    """The high availability properties of the mongo cluster."""
+    storage: Optional["_models.StorageProperties"] = rest_field()
+    """The storage properties of the mongo cluster."""
+    sharding: Optional["_models.ShardingProperties"] = rest_field()
+    """The sharding properties of the mongo cluster."""
+    compute: Optional["_models.ComputeProperties"] = rest_field()
+    """The compute properties of the mongo cluster."""
+    backup: Optional["_models.BackupProperties"] = rest_field()
+    """The backup properties of the mongo cluster."""
     private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = rest_field(
         name="privateEndpointConnections", visibility=["read"]
     )
     """List of private endpoint connections."""
+    preview_features: Optional[List[Union[str, "_models.PreviewFeature"]]] = rest_field(name="previewFeatures")
+    """List of private endpoint connections."""
+    replica: Optional["_models.ReplicationProperties"] = rest_field(visibility=["read"])
+    """The replication properties for the mongo cluster."""
+    infrastructure_version: Optional[str] = rest_field(name="infrastructureVersion", visibility=["read"])
+    """The infrastructure version the cluster is provisioned on."""
 
     @overload
     def __init__(
@@ -517,11 +651,50 @@ class MongoClusterProperties(_model_base.Model):  # pylint: disable=too-many-ins
         *,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         restore_parameters: Optional["_models.MongoClusterRestoreParameters"] = None,
-        administrator_login: Optional[str] = None,
-        administrator_login_password: Optional[str] = None,
+        replica_parameters: Optional["_models.MongoClusterReplicaParameters"] = None,
+        administrator: Optional["_models.AdministratorProperties"] = None,
         server_version: Optional[str] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
-        node_group_specs: Optional[List["_models.NodeGroupSpec"]] = None,
+        high_availability: Optional["_models.HighAvailabilityProperties"] = None,
+        storage: Optional["_models.StorageProperties"] = None,
+        sharding: Optional["_models.ShardingProperties"] = None,
+        compute: Optional["_models.ComputeProperties"] = None,
+        backup: Optional["_models.BackupProperties"] = None,
+        preview_features: Optional[List[Union[str, "_models.PreviewFeature"]]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class MongoClusterReplicaParameters(_model_base.Model):
+    """Parameters used for replica operations.
+
+
+    :ivar source_resource_id: The id of the replication source cluster. Required.
+    :vartype source_resource_id: str
+    :ivar source_location: The location of the source cluster. Required.
+    :vartype source_location: str
+    """
+
+    source_resource_id: str = rest_field(name="sourceResourceId")
+    """The id of the replication source cluster. Required."""
+    source_location: str = rest_field(name="sourceLocation")
+    """The location of the source cluster. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_resource_id: str,
+        source_location: str,
     ): ...
 
     @overload
@@ -538,13 +711,13 @@ class MongoClusterProperties(_model_base.Model):  # pylint: disable=too-many-ins
 class MongoClusterRestoreParameters(_model_base.Model):
     """Parameters used for restore operations.
 
-    :ivar point_in_time_u_t_c: UTC point in time to restore a mongo cluster.
-    :vartype point_in_time_u_t_c: ~datetime.datetime
+    :ivar point_in_time_utc: UTC point in time to restore a mongo cluster.
+    :vartype point_in_time_utc: ~datetime.datetime
     :ivar source_resource_id: Resource ID to locate the source cluster to restore.
     :vartype source_resource_id: str
     """
 
-    point_in_time_u_t_c: Optional[datetime.datetime] = rest_field(name="pointInTimeUTC", format="rfc3339")
+    point_in_time_utc: Optional[datetime.datetime] = rest_field(name="pointInTimeUTC", format="rfc3339")
     """UTC point in time to restore a mongo cluster."""
     source_resource_id: Optional[str] = rest_field(name="sourceResourceId")
     """Resource ID to locate the source cluster to restore."""
@@ -553,7 +726,7 @@ class MongoClusterRestoreParameters(_model_base.Model):
     def __init__(
         self,
         *,
-        point_in_time_u_t_c: Optional[datetime.datetime] = None,
+        point_in_time_utc: Optional[datetime.datetime] = None,
         source_resource_id: Optional[str] = None,
     ): ...
 
@@ -573,13 +746,14 @@ class MongoClusterUpdate(_model_base.Model):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar properties:
+    :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.mongocluster.models.MongoClusterUpdateProperties
     """
 
     tags: Optional[Dict[str, str]] = rest_field()
     """Resource tags."""
     properties: Optional["_models.MongoClusterUpdateProperties"] = rest_field()
+    """The resource-specific properties for this resource."""
 
     @overload
     def __init__(
@@ -603,94 +777,61 @@ class MongoClusterUpdate(_model_base.Model):
 class MongoClusterUpdateProperties(_model_base.Model):
     """The updatable properties of the MongoCluster.
 
-    :ivar administrator_login: The administrator's login for the mongo cluster.
-    :vartype administrator_login: str
-    :ivar administrator_login_password: The password of the administrator login.
-    :vartype administrator_login_password: str
+    :ivar administrator: The local administrator properties for the mongo cluster.
+    :vartype administrator: ~azure.mgmt.mongocluster.models.AdministratorProperties
     :ivar server_version: The Mongo DB server version. Defaults to the latest available version if
      not specified.
     :vartype server_version: str
     :ivar public_network_access: Whether or not public endpoint access is allowed for this mongo
      cluster. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or ~azure.mgmt.mongocluster.models.PublicNetworkAccess
-    :ivar node_group_specs: The list of node group specs in the cluster.
-    :vartype node_group_specs: list[~azure.mgmt.mongocluster.models.NodeGroupSpec]
+    :ivar high_availability: The high availability properties of the mongo cluster.
+    :vartype high_availability: ~azure.mgmt.mongocluster.models.HighAvailabilityProperties
+    :ivar storage: The storage properties of the mongo cluster.
+    :vartype storage: ~azure.mgmt.mongocluster.models.StorageProperties
+    :ivar sharding: The sharding properties of the mongo cluster.
+    :vartype sharding: ~azure.mgmt.mongocluster.models.ShardingProperties
+    :ivar compute: The compute properties of the mongo cluster.
+    :vartype compute: ~azure.mgmt.mongocluster.models.ComputeProperties
+    :ivar backup: The backup properties of the mongo cluster.
+    :vartype backup: ~azure.mgmt.mongocluster.models.BackupProperties
+    :ivar preview_features: List of private endpoint connections.
+    :vartype preview_features: list[str or ~azure.mgmt.mongocluster.models.PreviewFeature]
     """
 
-    administrator_login: Optional[str] = rest_field(name="administratorLogin", visibility=["read", "create", "update"])
-    """The administrator's login for the mongo cluster."""
-    administrator_login_password: Optional[str] = rest_field(
-        name="administratorLoginPassword", visibility=["create", "update"]
-    )
-    """The password of the administrator login."""
+    administrator: Optional["_models.AdministratorProperties"] = rest_field()
+    """The local administrator properties for the mongo cluster."""
     server_version: Optional[str] = rest_field(name="serverVersion")
     """The Mongo DB server version. Defaults to the latest available version if not specified."""
     public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(name="publicNetworkAccess")
     """Whether or not public endpoint access is allowed for this mongo cluster. Known values are:
      \"Enabled\" and \"Disabled\"."""
-    node_group_specs: Optional[List["_models.NodeGroupSpec"]] = rest_field(name="nodeGroupSpecs")
-    """The list of node group specs in the cluster."""
+    high_availability: Optional["_models.HighAvailabilityProperties"] = rest_field(name="highAvailability")
+    """The high availability properties of the mongo cluster."""
+    storage: Optional["_models.StorageProperties"] = rest_field()
+    """The storage properties of the mongo cluster."""
+    sharding: Optional["_models.ShardingProperties"] = rest_field()
+    """The sharding properties of the mongo cluster."""
+    compute: Optional["_models.ComputeProperties"] = rest_field()
+    """The compute properties of the mongo cluster."""
+    backup: Optional["_models.BackupProperties"] = rest_field()
+    """The backup properties of the mongo cluster."""
+    preview_features: Optional[List[Union[str, "_models.PreviewFeature"]]] = rest_field(name="previewFeatures")
+    """List of private endpoint connections."""
 
     @overload
     def __init__(
         self,
         *,
-        administrator_login: Optional[str] = None,
-        administrator_login_password: Optional[str] = None,
+        administrator: Optional["_models.AdministratorProperties"] = None,
         server_version: Optional[str] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
-        node_group_specs: Optional[List["_models.NodeGroupSpec"]] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class NodeGroupSpec(_model_base.Model):
-    """Specification for a node group.
-
-    :ivar sku: The resource sku for the node group. This defines the size of CPU and memory that is
-     provisioned for each node. Example values: 'M30', 'M40'.
-    :vartype sku: str
-    :ivar disk_size_g_b: The disk storage size for the node group in GB. Example values: 128, 256,
-     512, 1024.
-    :vartype disk_size_g_b: int
-    :ivar enable_ha: Whether high availability is enabled on the node group.
-    :vartype enable_ha: bool
-    :ivar kind: The node type deployed in the node group. "Shard"
-    :vartype kind: str or ~azure.mgmt.mongocluster.models.NodeKind
-    :ivar node_count: The number of nodes in the node group.
-    :vartype node_count: int
-    """
-
-    sku: Optional[str] = rest_field()
-    """The resource sku for the node group. This defines the size of CPU and memory that is
-     provisioned for each node. Example values: 'M30', 'M40'."""
-    disk_size_g_b: Optional[int] = rest_field(name="diskSizeGB")
-    """The disk storage size for the node group in GB. Example values: 128, 256, 512, 1024."""
-    enable_ha: Optional[bool] = rest_field(name="enableHa")
-    """Whether high availability is enabled on the node group."""
-    kind: Optional[Union[str, "_models.NodeKind"]] = rest_field()
-    """The node type deployed in the node group. \"Shard\""""
-    node_count: Optional[int] = rest_field(name="nodeCount")
-    """The number of nodes in the node group."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        sku: Optional[str] = None,
-        disk_size_g_b: Optional[int] = None,
-        enable_ha: Optional[bool] = None,
-        kind: Optional[Union[str, "_models.NodeKind"]] = None,
-        node_count: Optional[int] = None,
+        high_availability: Optional["_models.HighAvailabilityProperties"] = None,
+        storage: Optional["_models.StorageProperties"] = None,
+        sharding: Optional["_models.ShardingProperties"] = None,
+        compute: Optional["_models.ComputeProperties"] = None,
+        backup: Optional["_models.BackupProperties"] = None,
+        preview_features: Optional[List[Union[str, "_models.PreviewFeature"]]] = None,
     ): ...
 
     @overload
@@ -733,7 +874,7 @@ class Operation(_model_base.Model):
     is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
     """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
      \"false\" for Azure Resource Manager/control-plane operations."""
-    display: Optional["_models.OperationDisplay"] = rest_field()
+    display: Optional["_models.OperationDisplay"] = rest_field(visibility=["read"])
     """Localized display information for this particular operation."""
     origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
@@ -747,7 +888,6 @@ class Operation(_model_base.Model):
     def __init__(
         self,
         *,
-        display: Optional["_models.OperationDisplay"] = None,
         action_type: Optional[Union[str, "_models.ActionType"]] = None,
     ): ...
 
@@ -765,6 +905,8 @@ class Operation(_model_base.Model):
 class OperationDisplay(_model_base.Model):
     """Localized display information for and operation.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
     :vartype provider: str
@@ -779,38 +921,18 @@ class OperationDisplay(_model_base.Model):
     :vartype description: str
     """
 
-    provider: Optional[str] = rest_field()
+    provider: Optional[str] = rest_field(visibility=["read"])
     """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
      Insights\" or \"Microsoft Compute\"."""
-    resource: Optional[str] = rest_field()
+    resource: Optional[str] = rest_field(visibility=["read"])
     """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
      Machines\" or \"Job Schedule Collections\"."""
-    operation: Optional[str] = rest_field()
+    operation: Optional[str] = rest_field(visibility=["read"])
     """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
      or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: Optional[str] = rest_field()
+    description: Optional[str] = rest_field(visibility=["read"])
     """The short, localized friendly description of the operation; suitable for tool tips and detailed
      views."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class PrivateEndpoint(_model_base.Model):
@@ -872,7 +994,6 @@ class PrivateEndpointConnectionProperties(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar group_ids: The group ids for the private endpoint resource.
     :vartype group_ids: list[str]
@@ -1073,6 +1194,169 @@ class PrivateLinkServiceConnectionState(_model_base.Model):
         status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class PromoteReplicaRequest(_model_base.Model):
+    """Promote replica request properties.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar promote_option: The promote option to apply to the operation. Required. "Forced"
+    :vartype promote_option: str or ~azure.mgmt.mongocluster.models.PromoteOption
+    :ivar mode: The mode to apply to the promote operation. Value is optional and default value is
+     'Switchover'. "Switchover"
+    :vartype mode: str or ~azure.mgmt.mongocluster.models.PromoteMode
+    """
+
+    promote_option: Union[str, "_models.PromoteOption"] = rest_field(name="promoteOption")
+    """The promote option to apply to the operation. Required. \"Forced\""""
+    mode: Optional[Union[str, "_models.PromoteMode"]] = rest_field()
+    """The mode to apply to the promote operation. Value is optional and default value is
+     'Switchover'. \"Switchover\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        promote_option: Union[str, "_models.PromoteOption"],
+        mode: Optional[Union[str, "_models.PromoteMode"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class Replica(ProxyResource):
+    """Represents a mongo cluster replica.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.mongocluster.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.mongocluster.models.MongoClusterProperties
+    """
+
+    properties: Optional["_models.MongoClusterProperties"] = rest_field()
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.MongoClusterProperties"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class ReplicationProperties(_model_base.Model):
+    """Replica properties of the mongo cluster.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar source_resource_id: The resource id the source cluster for the replica cluster.
+    :vartype source_resource_id: str
+    :ivar role: The replication role of the cluster. Known values are: "Primary", "AsyncReplica",
+     and "GeoAsyncReplica".
+    :vartype role: str or ~azure.mgmt.mongocluster.models.ReplicationRole
+    :ivar replication_state: The replication link state of the replica cluster. Known values are:
+     "Active", "Catchup", "Provisioning", "Updating", "Broken", and "Reconfiguring".
+    :vartype replication_state: str or ~azure.mgmt.mongocluster.models.ReplicationState
+    """
+
+    source_resource_id: Optional[str] = rest_field(name="sourceResourceId", visibility=["read"])
+    """The resource id the source cluster for the replica cluster."""
+    role: Optional[Union[str, "_models.ReplicationRole"]] = rest_field(visibility=["read"])
+    """The replication role of the cluster. Known values are: \"Primary\", \"AsyncReplica\", and
+     \"GeoAsyncReplica\"."""
+    replication_state: Optional[Union[str, "_models.ReplicationState"]] = rest_field(
+        name="replicationState", visibility=["read"]
+    )
+    """The replication link state of the replica cluster. Known values are: \"Active\", \"Catchup\",
+     \"Provisioning\", \"Updating\", \"Broken\", and \"Reconfiguring\"."""
+
+
+class ShardingProperties(_model_base.Model):
+    """The sharding properties of the cluster. This includes the shard count and scaling options for
+    the cluster.
+
+    :ivar shard_count: Number of shards to provision on the cluster.
+    :vartype shard_count: int
+    """
+
+    shard_count: Optional[int] = rest_field(name="shardCount")
+    """Number of shards to provision on the cluster."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        shard_count: Optional[int] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class StorageProperties(_model_base.Model):
+    """The storage properties of the cluster. This includes the data storage size and scaling applied
+    to servers in the cluster.
+
+    :ivar size_gb: The size of the data disk assigned to each server.
+    :vartype size_gb: int
+    """
+
+    size_gb: Optional[int] = rest_field(name="sizeGb")
+    """The size of the data disk assigned to each server."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        size_gb: Optional[int] = None,
     ): ...
 
     @overload

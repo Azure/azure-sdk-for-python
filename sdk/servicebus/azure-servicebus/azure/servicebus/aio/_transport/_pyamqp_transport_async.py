@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 import functools
-from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast
+from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast, List
 import time
 import math
 import random
@@ -22,11 +22,17 @@ from ..._pyamqp.error import (
     AMQPException,
     MessageException,
     ErrorCondition,
+    AMQPLinkError
 )
 
 from ._base_async import AmqpTransportAsync
 from ..._common.utils import utc_from_timestamp, utc_now
-from ..._common.tracing import get_receive_links, receive_trace_context_manager
+from ..._common.tracing import (
+        get_receive_links,
+        receive_trace_context_manager,
+        settle_trace_context_manager,
+        get_span_link_from_message,
+    )
 from ..._common.constants import (
     DATETIMEOFFSET_EPOCH,
     SESSION_LOCKED_UNTIL,
@@ -45,7 +51,10 @@ from ..._common.constants import (
 from ..._transport._pyamqp_transport import PyamqpTransport
 from ...exceptions import (
     OperationTimeoutError,
+    SessionLockLostError,
     ServiceBusConnectionError,
+    MessageSettlementError,
+    MessageLockLostError
 )
 
 if TYPE_CHECKING:
@@ -251,6 +260,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             await receiver._open()
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = await receiver._handler.receive_messages_iter_async(timeout=wait_time)
+            if receiver._handler._link.current_link_credit <= 0:
+                await receiver._amqp_transport.reset_link_credit_async(receiver._handler,
+                                                                       link_credit=receiver._handler._link_credit)
             pyamqp_message = await cast(AsyncIterator["Message"], receiver._message_iter).__anext__()
             message = receiver._build_received_message(pyamqp_message)
             if (
@@ -299,26 +311,31 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def reset_link_credit_async(
-        handler: "ReceiveClientAsync", link_credit: int
+        handler: "ReceiveClientAsync", link_credit: int, *, drain: bool = False
     ) -> None:
         """
         Resets the link credit on the link.
         :param ReceiveClientAsync handler: Client with link to reset link credit.
-        :param int link_credit: Link credit needed.
+        :param int link_credit: Total link credit wanted.
         :rtype: None
         """
-        await handler._link.flow(link_credit=link_credit)   # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        await handler._link.flow(link_credit=link_credit, drain=drain)
 
     @staticmethod
     async def settle_message_via_receiver_link_async(
         handler: "ReceiveClientAsync",
         message: "ServiceBusReceivedMessage",
         settle_operation: str,
+        logger: "Logger",
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         # pylint: disable=protected-access
         try:
+            # if handler._link._is_closed:
+            #     raise AMQPLinkError(condition=ErrorCondition.LinkDetachForced,
+            #                         description="Link is closed.", retryable=True)
             if settle_operation == MESSAGE_COMPLETE:
                 return await handler.settle_messages_async(message._delivery_id, message._delivery_tag, 'accepted')
             if settle_operation == MESSAGE_ABANDON:
@@ -349,23 +366,32 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     message._delivery_tag,
                     'modified',
                     delivery_failed=True,
-                    undeliverable_here=True
+                    undeliverable_here=True,
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
-
+        except AMQPLinkError as le:
+            raise PyamqpTransport.create_servicebus_exception(logger, le)
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
-
+        except TimeoutError as te:
+            raise MessageSettlementError(message="Settlement operation timed out.", error=te) from te
         except AMQPException as ae:
+            from ..._common.constants import ERROR_CODE_SESSION_LOCK_LOST, ERROR_CODE_MESSAGE_LOCK_LOST
             if (
                 ae.condition == ErrorCondition.IllegalState
             ):
                 raise RuntimeError("Link error occurred during settle operation.") from ae
+            if (
+                ae.condition == ERROR_CODE_SESSION_LOCK_LOST
+            ):
+                raise SessionLockLostError() from ae
+            if (
+                ae.condition == ERROR_CODE_MESSAGE_LOCK_LOST
+            ):
+                raise MessageLockLostError() from ae
 
             raise ServiceBusConnectionError(message="Link error occurred during settle operation.") from ae
-
-
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )
@@ -457,3 +483,136 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
         )
         return callback(status, response, description, amqp_transport=PyamqpTransportAsync)
+
+    @staticmethod
+    async def receive_loop_async(
+        receiver: "ServiceBusReceiver",
+        amqp_receive_client: "ReceiveClientAsync",
+        max_message_count: int,
+        batch: List["Message"],
+        abs_timeout,
+        timeout,
+        **kwargs: Any
+    ) -> List["ServiceBusReceivedMessage"]:
+        # pylint: disable=protected-access
+        receive_drain_timeout = 2 # 200 ms
+        first_message_received = expired = False
+        receiving = True
+        sent_drain = False
+        time_sent = time.time()
+        while receiving and not expired and len(batch) < max_message_count:
+            while receiving and amqp_receive_client._received_messages.qsize() < max_message_count:
+                if (
+                    abs_timeout
+                    and receiver._amqp_transport.get_current_time(amqp_receive_client)
+                    > abs_timeout
+                ):
+                    # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
+                    if not sent_drain:
+                        await receiver._amqp_transport.reset_link_credit_async(
+                            amqp_receive_client, max_message_count, drain=True)
+                        sent_drain = True
+                        time_sent = time.time()
+
+                    # If we have sent a drain and we havent received messages in X time
+                    # or gotten back the responding flow, lets close the link
+                    async with receiver._handler._link._drain_lock:
+                        if (not receiver._handler._link._received_drain_response and sent_drain) \
+                            and (time.time() - time_sent > receive_drain_timeout):
+                            expired = True
+                            await receiver._handler._close_link_async()
+                            # await receiver._handler._link.detach(close=True,
+                            # error= AMQPError(ErrorCondition.InternalError,
+                            # 'The drain response was not received', None))
+                            break
+
+                        # if you have received the drain -> break out of the loop
+                        if receiver._handler._link._received_drain_response:
+                            expired = True
+                            break
+
+                    # TODO: Figure this out - getting stuck in receive if we are below max_message_count
+                    #  and we are not exiting this loop to go to complete_message?
+
+                before = amqp_receive_client._received_messages.qsize()
+                receiving = await amqp_receive_client.do_work_async()
+                received = amqp_receive_client._received_messages.qsize() - before
+
+                async with receiver._handler._link._drain_lock:
+                    if received > 0 or receiver._handler._link._still_receiving:
+                        # If we received messages, reset the drain timeout
+                        time_sent = time.time()
+
+                if (
+                    not first_message_received
+                    and amqp_receive_client._received_messages.qsize() > 0
+                    and received > 0
+                ):
+                    # first message(s) received, continue receiving for some time
+                    first_message_received = True
+                    abs_timeout = (
+                        receiver._amqp_transport.get_current_time(amqp_receive_client)
+                        + receiver._further_pull_receive_timeout
+                    )
+            while (
+                not amqp_receive_client._received_messages.empty() and len(batch) < max_message_count
+            ):
+                batch.append(amqp_receive_client._received_messages.get())
+                amqp_receive_client._received_messages.task_done()
+
+
+        return [receiver._build_received_message(message) for message in batch]
+
+    @staticmethod
+    async def _settle_message_with_retry_async(
+        receiver,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+    ):
+        # pylint: disable=protected-access
+        link = get_span_link_from_message(message)
+        trace_links = [link] if link else []
+        with settle_trace_context_manager(receiver, settle_operation, links=trace_links):
+            await receiver._do_retryable_operation(
+                receiver._settle_message,
+                timeout=None,
+                message=message,
+                settle_operation=settle_operation,
+                dead_letter_reason=dead_letter_reason,
+                dead_letter_error_description=dead_letter_error_description,
+            )
+            message._settled = True
+
+    @staticmethod
+    async def check_if_exception_is_retriable_async(receiver, error):
+        """
+        Check if exception is retriable.
+        :param ServiceBusReceiver receiver: The receiver.
+        :param Exception error: The error.
+        """
+        # pylint: disable=protected-access
+        try:
+            # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
+            # the receiver should no longer be used and should create a new session receiver
+            # instance to receive from session. There are pitfalls WRT both next session IDs,
+            # and the diversity of session failure modes, that motivates us to disallow this.
+            if (
+                receiver._session
+                and receiver._running
+                and isinstance(error, (SessionLockLostError, ServiceBusConnectionError))
+            ):
+                receiver._session._lock_lost = True
+                raise error
+        except AttributeError:
+            pass
+
+    @staticmethod
+    def check_live(receiver):
+        # pylint: disable=protected-access
+        if receiver._shutdown.is_set():
+            raise ValueError(
+                "The handler has already been shutdown. Please use ServiceBusClient to "
+                "create a new instance."
+            )

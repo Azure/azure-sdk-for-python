@@ -13,15 +13,13 @@ import logging
 import re
 from subprocess import check_call
 from typing import TYPE_CHECKING
-from pkg_resources import parse_version
+from pkg_resources import parse_version, Requirement
 from pypi_tools.pypi import PyPIClient
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse
-import pdb
 
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.functions import compare_python_version
-
 
 from typing import List
 
@@ -43,7 +41,7 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "azure-core": "1.11.0",
     "requests": "2.19.0",
     "six": "1.12.0",
-    "cryptography": "3.3.2",
+    "cryptography": "38.0.3",
     "msal": "1.23.0",
     "azure-storage-file-datalake": "12.2.0",
 }
@@ -104,7 +102,7 @@ def install_dependent_packages(setup_py_file_path, dependency_type, temp_dir):
 
     logging.info("%s released packages: %s", dependency_type, released_packages)
     # filter released packages from dev_requirements and create a new file "new_dev_requirements.txt"
-    dev_req_file_path = filter_dev_requirements(setup_py_file_path, released_packages, temp_dir)
+    dev_req_file_path = filter_dev_requirements(setup_py_file_path, released_packages, temp_dir, dependency_type)
 
     if override_added_packages:
         logging.info(f"Expanding the requirement set by the packages {override_added_packages}.")
@@ -231,7 +229,18 @@ def process_requirement(req, dependency_type, orig_pkg_name):
     # this method finds either latest or minimum version of a package that is available on PyPI
 
     # find package name and requirement specifier from requires
-    pkg_name, spec = parse_require(req)
+    requirement = parse_require(req)
+    pkg_name = requirement.key
+    spec = requirement.specifier if len(requirement.specifier) else None
+
+    # Filter out requirements with environment markers that don't match the current environment
+    # e.g. `; python_version > 3.10` when running on Python3.9
+    if not (requirement.marker is None or requirement.marker.evaluate()):
+        logging.info(
+            f"Skipping requirement {req!r}. Environment marker {str(requirement.marker)!r} "
+            + "does not apply to current environment."
+        )
+        return ""
 
     # get available versions on PyPI
     client = PyPIClient()
@@ -292,8 +301,17 @@ def check_req_against_exclusion(req, req_to_exclude):
 
     return req_id == req_to_exclude
 
+# todo: remove when merging #37450
+def replace_identity(dev_requirement_line) -> str:
+    regex = r"azure[-_]identity"
 
-def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
+    if re.search(regex, dev_requirement_line):
+        return "azure-identity==1.17.0\n"
+    else:
+        return dev_requirement_line
+
+
+def filter_dev_requirements(setup_py_path, released_packages, temp_dir, dependency_type):
     # This method returns list of requirements from dev_requirements by filtering out packages in given list
     dev_req_path = os.path.join(os.path.dirname(setup_py_path), DEV_REQ_FILE)
     requirements = []
@@ -315,6 +333,10 @@ def filter_dev_requirements(setup_py_path, released_packages, temp_dir):
         if os.path.basename(req.replace("\n", "")) not in req_to_exclude
         and not any([check_req_against_exclusion(req, i) for i in req_to_exclude])
     ]
+
+    if dependency_type == "Minimum":
+        # replace identity with the minimum version of the package
+        filtered_req = [replace_identity(req) for req in filtered_req]
 
     logging.info("Filtered dev requirements: %s", filtered_req)
 

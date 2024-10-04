@@ -35,9 +35,17 @@ from azure.mgmt.core.policies._authentication import (
 )
 
 from azure.core.pipeline.transport import HttpRequest
+from devtools_testutils.fake_credentials import FakeTokenCredential
+
 
 import pytest
 from unittest.mock import Mock
+
+
+CLAIM_TOKEN = base64.b64encode(b'{"access_token": {"foo": "bar"}}').decode()
+CLAIM_NBF = base64.b64encode(b'{"access_token":{"nbf":{"essential":true, "value":"1603742800"}}}').decode()
+ip_claim = b'{"access_token":{"nbf":{"essential":true,"value":"1610563006"},"xms_rp_ipaddr":{"value":"1.2.3.4"}}}'
+CLAIM_IP = base64.b64encode(ip_claim).decode()[:-2]  # Trim off padding = characters
 
 
 @pytest.mark.parametrize(
@@ -45,17 +53,17 @@ from unittest.mock import Mock
     (
         # CAE - insufficient claims
         (
-            'Bearer realm="", authorization_uri="https://login.microsoftonline.com/common/oauth2/authorize", client_id="00000003-0000-0000-c000-000000000000", error="insufficient_claims", claims="eyJhY2Nlc3NfdG9rZW4iOiB7ImZvbyI6ICJiYXIifX0="',
+            f'Bearer realm="", authorization_uri="https://login.microsoftonline.com/common/oauth2/authorize", client_id="00000003-0000-0000-c000-000000000000", error="insufficient_claims", claims="{CLAIM_TOKEN}"',
             '{"access_token": {"foo": "bar"}}',
         ),
         # CAE - sessions revoked
         (
-            'Bearer authorization_uri="https://login.windows-ppe.net/", error="invalid_token", error_description="User session has been revoked", claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwgInZhbHVlIjoiMTYwMzc0MjgwMCJ9fX0="',
+            f'Bearer authorization_uri="https://login.windows-ppe.net/", error="invalid_token", error_description="User session has been revoked", claims={CLAIM_NBF}',
             '{"access_token":{"nbf":{"essential":true, "value":"1603742800"}}}',
         ),
         # CAE - IP policy
         (
-            'Bearer authorization_uri="https://login.windows.net/", error="invalid_token", error_description="Tenant IP Policy validate failed.", claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwidmFsdWUiOiIxNjEwNTYzMDA2In0sInhtc19ycF9pcGFkZHIiOnsidmFsdWUiOiIxLjIuMy40In19fQ"',
+            f'Bearer authorization_uri="https://login.windows.net/", error="invalid_token", error_description="Tenant IP Policy validate failed.", claims={CLAIM_IP}',
             '{"access_token":{"nbf":{"essential":true,"value":"1610563006"},"xms_rp_ipaddr":{"value":"1.2.3.4"}}}',
         ),
         # ARM
@@ -171,14 +179,14 @@ def test_multiple_claims_challenges():
         return Mock(status_code=401, headers={"WWW-Authenticate": expected_header})
 
     transport = Mock(send=Mock(wraps=send))
-    credential = Mock()
+    credential = FakeTokenCredential()
     policies = [ARMChallengeAuthenticationPolicy(credential, "scope")]
     pipeline = Pipeline(transport=transport, policies=policies)
 
     response = pipeline.run(HttpRequest("GET", "https://localhost"))
 
     assert transport.send.call_count == 1
-    assert credential.get_token.call_count == 1
+    assert credential.get_token_count == 1
 
     # the policy should have returned the error response because it was unable to handle the challenge
     assert response.http_response.status_code == 401

@@ -9,6 +9,7 @@ from devtools_testutils import AzureRecordedTestCase
 from conftest import configure_async, AZURE, OPENAI, PREVIEW, GA
 
 
+@pytest.mark.live_test_only
 class TestEmbeddingsAsync(AzureRecordedTestCase):
 
     @configure_async

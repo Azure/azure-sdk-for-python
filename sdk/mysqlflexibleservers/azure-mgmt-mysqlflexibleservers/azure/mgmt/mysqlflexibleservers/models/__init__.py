@@ -45,6 +45,7 @@ from ._models_py3 import LogFile
 from ._models_py3 import LogFileListResult
 from ._models_py3 import Maintenance
 from ._models_py3 import MaintenanceListResult
+from ._models_py3 import MaintenancePolicy
 from ._models_py3 import MaintenanceUpdate
 from ._models_py3 import MaintenanceWindow
 from ._models_py3 import MySQLServerIdentity
@@ -114,6 +115,7 @@ from ._my_sql_management_client_enums import MaintenanceType
 from ._my_sql_management_client_enums import ManagedServiceIdentityType
 from ._my_sql_management_client_enums import ObjectType
 from ._my_sql_management_client_enums import OperationStatus
+from ._my_sql_management_client_enums import PatchStrategy
 from ._my_sql_management_client_enums import PrivateEndpointConnectionProvisioningState
 from ._my_sql_management_client_enums import PrivateEndpointServiceConnectionStatus
 from ._my_sql_management_client_enums import ProvisioningState
@@ -167,6 +169,7 @@ __all__ = [
     "LogFileListResult",
     "Maintenance",
     "MaintenanceListResult",
+    "MaintenancePolicy",
     "MaintenanceUpdate",
     "MaintenanceWindow",
     "MySQLServerIdentity",
@@ -235,6 +238,7 @@ __all__ = [
     "ManagedServiceIdentityType",
     "ObjectType",
     "OperationStatus",
+    "PatchStrategy",
     "PrivateEndpointConnectionProvisioningState",
     "PrivateEndpointServiceConnectionStatus",
     "ProvisioningState",

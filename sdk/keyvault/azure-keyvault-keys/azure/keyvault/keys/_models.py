@@ -11,14 +11,12 @@ from ._shared import parse_key_vault_id
 from ._generated.models import JsonWebKey as _JsonWebKey
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
     from ._generated import models as _models
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
 
 class JsonWebKey(object):
-    # pylint:disable=too-many-instance-attributes
     """As defined in http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18. All parameters are optional.
 
     :keyword str kid: Key identifier.
@@ -409,7 +407,7 @@ class KeyVaultKey(object):
     def __init__(self, key_id: str, jwk: Optional[Dict[str, Any]] = None, **kwargs) -> None:
         self._properties: KeyProperties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
         if isinstance(jwk, dict):
-            if any(field in kwargs for field in JsonWebKey._FIELDS):  # pylint:disable=protected-access
+            if any(field in kwargs for field in JsonWebKey._FIELDS):
                 raise ValueError(
                     "Individual keyword arguments for key material and the 'jwk' argument are mutually exclusive."
                 )
