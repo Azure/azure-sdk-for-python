@@ -147,7 +147,6 @@ import asyncio
 from typing import Any, Dict, List, Optional
 from azure.ai.evaluation.simulator import Simulator
 from promptflow.client import load_flow
-from azure.identity import DefaultAzureCredential
 import os
 import wikipedia
 
@@ -155,6 +154,8 @@ import wikipedia
 model_config = {
     "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
     "azure_deployment": os.environ.get("AZURE_DEPLOYMENT"),
+    # not providing key would make the SDK pick up `DefaultAzureCredential`
+    # use "api_key": "<your API key>"
 }
 
 # Use Wikipedia to get some text for the simulation
@@ -206,7 +207,7 @@ async def callback(
     return {"messages": messages["messages"], "stream": stream, "session_state": session_state, "context": context}
 
 async def main():
-    simulator = Simulator(model_config=model_config, credential=DefaultAzureCredential())
+    simulator = Simulator(model_config=model_config)
     outputs = await simulator(
         target=callback,
         text=text,

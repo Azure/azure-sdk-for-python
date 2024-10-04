@@ -5,6 +5,7 @@
 # ---------------------------------------------------------
 import asyncio
 import importlib.resources as pkg_resources
+from tqdm import tqdm
 import json
 import os
 import re
@@ -13,7 +14,6 @@ from typing import Any, Callable, Dict, List, Optional, Union
 from promptflow.core import AsyncPrompty
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._common.utils import construct_prompty_model_config
-from tqdm import tqdm
 
 from .._user_agent import USER_AGENT
 from ._conversation.constants import ConversationRole
@@ -31,23 +31,19 @@ class Simulator:
 
     def __init__(
         self,
-        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-        credential: Optional[Any] = None,
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
     ):
         """
         Initializes the task simulator with the model configuration.
 
         :param model_config: A dictionary defining the configuration for the model. Acceptable types are AzureOpenAIModelConfiguration and OpenAIModelConfiguration.
         :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration, ~azure.ai.evaluation.OpenAIModelConfiguration]
-        :param credential: Azure credentials to authenticate the user. If None, the default credentials are used.
-        :paramtype credential: Optional[Any]
         :raises ValueError: If the model_config does not contain the required keys or any value is None.
         """
         self._validate_model_config(model_config)
         self.model_config = model_config
         if "api_version" not in self.model_config:
             self.model_config["api_version"] = "2024-06-01"
-        self.credential = credential
 
     @staticmethod
     def _validate_model_config(model_config: Dict[str, Any]):
