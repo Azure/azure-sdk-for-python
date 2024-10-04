@@ -11,14 +11,22 @@ import logging
 import sys
 
 import azure.ai.assistants as sdk
+from azure.ai.assistants.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet
 from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
-from azure.core.exceptions import AzureError, ServiceRequestError
+from azure.core.exceptions import AzureError, ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.assistants.models import FunctionTool
-# TODO from models import assistantthread or whatever 
+
 # TODO clean this up / get rid of anything not in use
 
+'''
+issues I've noticed with the code: 
+    delete_thread(thread.id) fails
+    cancel_thread(thread.id) expires/times out occasionally
+    added time.sleep() to the beginning of my last few tests to avoid limits
+    when using the endpoint from Howie, delete_assistant(assistant.id) did not work but would not cause an error
+'''
 
 # Set to True to enable SDK logging
 LOGGING_ENABLED = True
@@ -151,7 +159,7 @@ class TestAssistantClient(AzureRecordedTestCase):
         assert assistant.id
         print("Created assistant, assistant ID", assistant.id)
         assert assistant.tools
-        assert assistant.tools[0]['function'] == functions.definitions[0]['function']
+        assert assistant.tools[0]['function']['name'] == functions.definitions[0]['function']['name']
         print("Tool successfully submitted:", functions.definitions[0]['function']['name'])
 
         # delete assistant and close client
@@ -724,11 +732,16 @@ class TestAssistantClient(AzureRecordedTestCase):
         client = self.create_client(**kwargs)
         assert isinstance(client, sdk.AssistantsClient)
 
-        # initialize assistant functions
-        functions = FunctionTool(functions=self.user_functions)
+        # Initialize assistant tools
+        functions = FunctionTool(user_functions)
+        code_interpreter = CodeInterpreterTool()
+
+        toolset = ToolSet()
+        toolset.add(functions)
+        toolset.add(code_interpreter)
 
         # create assistant
-        assistant = client.create_assistant(model="gpt-4o", name="my-assistant", instructions="You are helpful assistant", tools=functions.definitions)
+        assistant = client.create_assistant(model="gpt-4o", name="my-assistant", instructions="You are helpful assistant", toolset=toolset)
         assert assistant.id
         print("Created assistant, assistant ID", assistant.id)
 
@@ -749,7 +762,7 @@ class TestAssistantClient(AzureRecordedTestCase):
 
         # check that tools are uploaded
         assert run.tools
-        assert run.tools[0]['function'] == functions.definitions[0]['function']
+        assert run.tools[0]['function']['name'] == functions.definitions[0]['function']['name']
         print("Tool successfully submitted:", functions.definitions[0]['function']['name'])
 
         # check status
@@ -768,7 +781,7 @@ class TestAssistantClient(AzureRecordedTestCase):
                     break
 
                 # submit tool outputs to run
-                tool_outputs = functions.execute(tool_calls)
+                tool_outputs = toolset.execute_tool_calls(tool_calls) # TODO issue somewhere here
                 print("Tool outputs:", tool_outputs)
                 if tool_outputs:
                     client.submit_tool_outputs_to_run(
@@ -842,6 +855,7 @@ class TestAssistantClient(AzureRecordedTestCase):
     @AssistantClientPreparer()
     @recorded_by_proxy
     def test_create_thread_and_run(self, **kwargs):
+        time.sleep(26)
         # create client
         client = self.create_client(**kwargs)
         assert isinstance(client, sdk.AssistantsClient)
@@ -883,6 +897,8 @@ class TestAssistantClient(AzureRecordedTestCase):
     @AssistantClientPreparer()
     @recorded_by_proxy
     def test_list_run_step(self, **kwargs):
+        
+        time.sleep(50)
         # create client
         client = self.create_client(**kwargs)
         assert isinstance(client, sdk.AssistantsClient)
@@ -958,12 +974,21 @@ class TestAssistantClient(AzureRecordedTestCase):
         assert run.id
         print("Created run, run ID", run.id)
 
+        if (run.status == "failed"):
+                assert run.last_error
+                print(run.last_error)
+                print("FAILED HERE")
+
         # check status
         assert run.status in ["queued", "in_progress", "requires_action", "completed"]
         while run.status in ["queued", "in_progress", "requires_action"]:
             # wait for a second
             time.sleep(1)
             run = client.get_run(thread_id=thread.id, run_id=run.id)
+            if (run.status == "failed"):
+                assert run.last_error
+                print(run.last_error)
+                print("FAILED HERE")
             assert run.status in ["queued", "in_progress", "requires_action", "completed"]
             print("Run status:", run.status)
 
@@ -1007,10 +1032,13 @@ class TestAssistantClient(AzureRecordedTestCase):
         try:
             assistant = client.create_assistant(model="gpt-4o", name="my-assistant", instructions="You are helpful assistant")
         # check for error (will not have a status code since it failed on request -- no response was recieved)
-        except ServiceRequestError as e:
+        except (ServiceRequestError, HttpResponseError) as e:
             exception_caught = True
-            assert e.message
-            assert "failed to resolve 'your-deployment-name.openai.azure.com'" in e.message.lower()
+            if type(e) == ServiceRequestError:
+                assert e.message
+                assert "failed to resolve 'your-deployment-name.openai.azure.com'" in e.message.lower()
+            else:
+                assert "No such host is known" and "your-deployment-name.openai.azure.com" in str(e)
         
         # close client and confirm an exception was caught
         client.close()

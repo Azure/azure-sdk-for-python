@@ -4,14 +4,14 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to use assistants operations with user function call from
-    the Azure Assistants service using a synchronous client.
+    This sample demonstrates how to use assistants client for code interpreter and processing 
+    with a synchronous client.
 
     See package documentation:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
-    python sample_assistant_functions.py
+    python sample_assistant_code_interpreter.py
 
     Set these two environment variables before running the sample:
     1) AZUREAI_ENDPOINT_URL - Your endpoint URL, in the form 
@@ -27,7 +27,7 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants import AssistantsClient
-from azure.ai.assistants.models import FunctionTool
+from azure.ai.assistants.models import CodeInterpreterTool, ToolSet
 from azure.core.credentials import AzureKeyCredential
 from user_functions import user_functions
 
@@ -44,7 +44,7 @@ def setup_console_trace_exporter():
     RequestsInstrumentor().instrument()
 
 
-def sample_assistant_functions():
+def sample_assistant_run():
 
     # Setup console trace exporter
     setup_console_trace_exporter()
@@ -62,12 +62,17 @@ def sample_assistant_functions():
     assistant_client = AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version)
     logging.info("Created assistant client")
 
-    # Initialize assistant functions
-    functions = FunctionTool(functions=user_functions)
+    # Create code interpreter tool
+    code_interpreter = CodeInterpreterTool()
+    openai_file = assistant_client.upload_file(file_path="nifty_500_quarterly_results.csv", purpose="assistants")
+    code_interpreter.add_file(openai_file.id)
+
+    toolset = ToolSet()
+    toolset.add(code_interpreter)
 
     # Create assistant
     assistant = assistant_client.create_assistant(
-        model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
+        model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant that can analyze data and create charts", toolset=toolset
     )
     logging.info("Created assistant, ID: %s", assistant.id)
 
@@ -75,48 +80,24 @@ def sample_assistant_functions():
     thread = assistant_client.create_thread()
     logging.info("Created thread, ID: %s", thread.id)
 
-    # Create and send message
-    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
+    # Create message to thread
+    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, please provide bar chart on METALS & MINING sector?")
     logging.info("Created message, ID: %s", message.id)
 
-    # Create and run assistant task
-    run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
-    logging.info("Created run, ID: %s", run.id)
+    # Create and process assistant run in thread with tools
+    run = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+    logging.info("Run finished with status: %s", run.status)
 
-    # Polling loop for run status
-    while run.status in ["queued", "in_progress", "requires_action"]:
-        time.sleep(1)
-        run = assistant_client.get_run(thread_id=thread.id, run_id=run.id)
-
-        if run.status == "requires_action" and run.required_action.submit_tool_outputs:
-            tool_calls = run.required_action.submit_tool_outputs.tool_calls
-            if not tool_calls:
-                logging.warning("No tool calls provided - cancelling run")
-                assistant_client.cancel_run(thread_id=thread.id, run_id=run.id)
-                break
-
-            tool_outputs = []
-            for tool_call in tool_calls:
-                output = functions.execute(tool_call)
-                tool_output = {
-                        "tool_call_id": tool_call.id,
-                        "output": output,
-                    }
-                tool_outputs.append(tool_output)
-
-            logging.info("Tool outputs: %s", tool_outputs)
-            if tool_outputs:
-                assistant_client.submit_tool_outputs_to_run(
-                    thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
-                )
-
-        logging.info("Current run status: %s", run.status)
-
-    logging.info("Run completed with status: %s", run.status)
+    if run.status == "failed":
+        logging.error("Run failed: %s", run.last_error)
 
     # Fetch and log all messages
     messages = assistant_client.list_messages(thread_id=thread.id)
     logging.info("Messages: %s", messages)
+
+    # Delete the file when done
+    assistant_client.delete_file(openai_file.id)
+    logging.info("Deleted file")
 
     # Delete the assistant when done
     assistant_client.delete_assistant(assistant.id)
@@ -126,4 +107,4 @@ def sample_assistant_functions():
 if __name__ == "__main__":
     # Set logging level
     logging.basicConfig(level=logging.INFO)
-    sample_assistant_functions()
+    sample_assistant_run()

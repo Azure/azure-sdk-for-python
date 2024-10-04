@@ -4,14 +4,14 @@
 # ------------------------------------
 """
 DESCRIPTION:
-    This sample demonstrates how to use assistants client convenience methods for user functions and run creation and processing 
+    This sample demonstrates how to use assistants client with multiple tools and run creation and processing 
     with a synchronous client.
 
     See package documentation:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-assistants/README.md#key-concepts
 
 USAGE:
-    python sample_assistant_run.py
+    python sample_assistant_run_with_toolset.py
 
     Set these two environment variables before running the sample:
     1) AZUREAI_ENDPOINT_URL - Your endpoint URL, in the form 
@@ -62,22 +62,17 @@ def sample_assistant_run():
     assistant_client = AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version)
     logging.info("Created assistant client")
 
-    # Initialize assistant functions
+    # Initialize assistant tools
     functions = FunctionTool(user_functions)
-    # functions.add_function(...)
-    # code_interpreter = CodeInterpreterTool()
-    # code_interpreter.add_file()
-    # file_search = FileSearchTool()
-    # file_search.add_vector_store(...)
+    code_interpreter = CodeInterpreterTool()
 
     toolset = ToolSet()
     toolset.add(functions)
-    # tools.add(code_interpreter)
-    # tools.add(file_search)
+    toolset.add(code_interpreter)
 
     # Create assistant
-    assistant = assistant_client.create_assistant_with_toolset(
-        model="gpt", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+    assistant = assistant_client.create_assistant(
+        model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
     )
     logging.info("Created assistant, ID: %s", assistant.id)
 
@@ -86,12 +81,15 @@ def sample_assistant_run():
     logging.info("Created thread, ID: %s", thread.id)
 
     # Create message to thread
-    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
+    message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York?")
     logging.info("Created message, ID: %s", message.id)
 
-    # Create and process assistant run in thread with functions
-    run_status = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
-    logging.info("Run finished with status: %s", run_status)
+    # Create and process assistant run in thread with tools
+    run = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
+    logging.info("Run finished with status: %s", run.status)
+
+    if run.status == "failed":
+        logging.error("Run failed: %s", run.last_error)
 
     # Fetch and log all messages
     messages = assistant_client.list_messages(thread_id=thread.id)

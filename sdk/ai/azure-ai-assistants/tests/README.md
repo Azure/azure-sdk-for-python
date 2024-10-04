@@ -1,28 +1,22 @@
-# copied from azure-ai-inference 
+# copied from azure-ai-inference TODO update
 
-# Azure AI Model Inference client library tests for Python
+# Azure AI Assistants client library tests for Python
 
 The instructions below are for running tests locally, on a Windows machine, against the live service.
 
 ## Prerequisites
 
-The live tests were written against the AI models mentioned below. You will need to deploy these two in [Azure AI Studio](https://ai.azure.com/) and have the endpoint and key for each one of them.
+The live tests were written against the AI models mentioned below. You will need to deploy a gpt-4o model in the Azure OpenAI Studio, and have the endpoint and key for it:
 
-- `Mistral-Large` for chat completion tests, including tool tests
-- `Cohere-embed-v3-english` for embedding tests
-<!-- - `TBD` for image generation tests -->
-
-In addition, you will need to deploy a gpt-4o model in the Azure OpenAI Studio, and have the endpoint and key for it:
-
-- `gpt-4o` on Azure OpenAI (AOAI), for chat completions tests with image input
+- `gpt-4o` on Azure OpenAI (AOAI), for assistants tests
 
 ## Setup
 
 - Clone or download this sample repository.
-- Open a command prompt window in the folder `sdk\ai\azure-ai-inference`.
+- Open a command prompt window in the folder `sdk\ai\azure-ai-assistants`.
 - If you want to run tests against the latest published client library, install it by running:
    ```bash
-   pip install azure-ai-inference
+   pip install azure-ai-assistants
    ```
 - If you want to run tests against a locally built client library:
     - First build the wheel:
@@ -41,17 +35,9 @@ In addition, you will need to deploy a gpt-4o model in the Azure OpenAI Studio, 
 Here is the list of environment variables used by the tests:
 
 ```bash
-# For chat completions test, including tools
-set AZURE_AI_CHAT_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
-set AZURE_AI_CHAT_KEY=<32-char-api-key>
-
-# For chat completions tests using image input
-set AZURE_OPENAI_CHAT_ENDPOINT=https://<endpont-name>.openai.azure.com/openai/deployments/gpt-4o
-set AZURE_OPENAI_CHAT_KEY=<32-char-api-key>
-
-# For text embedding tests
-set AZURE_AI_EMBEDDINGS_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
-set AZURE_AI_EMBEDDINGS_KEY=<32-char-api-key>
+# For assistants, including tools
+set AZURE_AI_ASSISTANTS_ENDPOINT=https://<endpoint-name>.openai.azure.com/
+set AZURE_AI_ASSISTANTS_KEY=<32-char-api-key>
 ```
 
 In addition, the following environment values **must be** defined, although not used. Assign any value to them:
