@@ -133,7 +133,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """Creates a new agent.
 
@@ -207,7 +207,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """
         Creates a new agent with toolset.
@@ -254,7 +254,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Agent:
         """
         Creates a new agent with various configurations, delegating to the generated operations.
@@ -278,9 +278,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
         if body is not _Unset:
             if isinstance(body, IOBase):
-                return super().create_agent(
-                    body=body, content_type=content_type, **kwargs
-                )
+                return super().create_agent(body=body, content_type=content_type, **kwargs)
             return super().create_agent(body=body, **kwargs)
 
         if toolset is not None:
@@ -299,7 +297,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             top_p=top_p,
             response_format=response_format,
             metadata=metadata,
-            **kwargs
+            **kwargs,
         )
 
     def get_toolset(self) -> Optional[_models.ToolSet]:
@@ -307,7 +305,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         Get the toolset for the agent.
 
         :return: The toolset for the agent. If not set, returns None.
-        :rtype: ~azure.ai.client.models.ToolSet        
+        :rtype: ~azure.ai.client.models.ToolSet
         """
         if hasattr(self, "_toolset"):
             return self._toolset
@@ -353,7 +351,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         event_handler: Optional[_models.AgentEventHandler] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Union[_models.ThreadRun, _models.AgentRunStream]:
         """Creates a new run for an agent thread.
 
@@ -477,7 +475,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
         event_handler: Optional[_models.AgentEventHandler] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Union[_models.ThreadRun, _models.AgentRunStream]:
         """Creates a new run for an agent thread.
 
@@ -583,7 +581,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 tool_choice=tool_choice,
                 response_format=response_format,
                 metadata=metadata,
-                **kwargs
+                **kwargs,
             )
 
         elif isinstance(body, io.IOBase):  # Handle overload with binary body.
@@ -620,7 +618,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         metadata: Optional[Dict[str, str]] = None,
         event_handler: Optional[_models.AgentEventHandler] = None,
         sleep_interval: int = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Union[_models.ThreadRun, _models.AgentRunStream]:
         """Creates a new run for an agent thread and processes the run.
 
@@ -700,8 +698,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :keyword sleep_interval: The time in seconds to wait between polling the service for run status.
             Default value is 1.
-        :paramtype sleep_interval: int        
-        :return: str or AgentRunStream. The run completion status if streaming is disabled, otherwise 
+        :paramtype sleep_interval: int
+        :return: str or AgentRunStream. The run completion status if streaming is disabled, otherwise
          the AgentRunStream object.
         :rtype: str or ~azure.ai.client.models.AgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -725,7 +723,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             response_format=response_format,
             metadata=metadata,
             event_handler=event_handler,
-            **kwargs
+            **kwargs,
         )
 
         # Return the run stream object if streaming is enabled
@@ -749,7 +747,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                     tool_outputs = toolset.execute_tool_calls(tool_calls)
                 else:
                     raise ValueError("Toolset is not available in the client.")
-                    
+
                 logging.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
                     self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
@@ -790,7 +788,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         content_type: str = "application/json",
         stream: Optional[bool] = None,
         event_handler: Optional[_models.AgentEventHandler] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Union[_models.ThreadRun, _models.AgentRunStream]:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
@@ -847,7 +845,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_outputs: List[_models.ToolOutput] = _Unset,
         stream: Optional[bool] = None,
         event_handler: Optional[_models.AgentEventHandler] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Union[_models.ThreadRun, _models.AgentRunStream]:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
@@ -874,9 +872,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if isinstance(body, dict):
             content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, body, content_type=content_type, **kwargs
-            )
+            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs_to_run(
@@ -885,19 +881,17 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         elif isinstance(body, io.IOBase):
             content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, body, content_type=content_type, **kwargs
-            )
+            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
-        
+
         # If streaming is enabled, return the custom stream object
         if stream:
             return _models.AgentRunStream(response, event_handler)
         else:
             return response
-        
+
     @overload
     def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
@@ -928,9 +922,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    def upload_file(
-        self, file_path: str, *, purpose: str, **kwargs: Any
-    ) -> _models.OpenAIFile:
+    def upload_file(self, file_path: str, *, purpose: str, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param file_path: Required.
@@ -941,7 +933,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
-        """        
+        """
 
     @distributed_trace
     def upload_file(
@@ -952,7 +944,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         file_path: Optional[str] = None,
         purpose: Optional[Union[str, _models.FilePurpose]] = None,
         filename: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.OpenAIFile:
         """
         Uploads a file for use by other operations, delegating to the generated operations.
@@ -971,7 +963,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
         if body is not None:
             return super().upload_file(body=body, **kwargs)
-        
+
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
@@ -983,7 +975,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 raise FileNotFoundError(f"The file path provided does not exist: {file_path}")
 
             try:
-                with open(file_path, 'rb') as f:
+                with open(file_path, "rb") as f:
                     content = f.read()
 
                 # Determine filename and create correct FileType
@@ -999,7 +991,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
 __all__: List[str] = [
     "AgentsOperations",
-    "EndpointsOperations"
+    "EndpointsOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 

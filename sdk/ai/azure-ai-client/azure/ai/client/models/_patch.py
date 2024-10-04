@@ -14,21 +14,22 @@ from ._models import ConnectionsListSecretsResponse
 from ._enums import AgentStreamEvent
 from ._models import MessageDeltaChunk, ThreadRun, RunStep, ThreadMessage, RunStepDeltaChunk
 from ._models import (
-    FunctionToolDefinition, 
-    FunctionDefinition, 
-    ToolDefinition, 
-    ToolResources, 
-    FileSearchToolDefinition, 
-    FileSearchToolResource, 
-    CodeInterpreterToolDefinition, 
-    CodeInterpreterToolResource, 
-    RequiredFunctionToolCall
+    FunctionToolDefinition,
+    FunctionDefinition,
+    ToolDefinition,
+    ToolResources,
+    FileSearchToolDefinition,
+    FileSearchToolResource,
+    CodeInterpreterToolDefinition,
+    CodeInterpreterToolResource,
+    RequiredFunctionToolCall,
 )
 
 from abc import ABC, abstractmethod
 from typing import AsyncIterator, List, Dict, Any, Type, Optional, Iterator, Tuple, get_origin
 
 import inspect, json, logging
+
 
 class EndpointProperties:
 
@@ -69,11 +70,11 @@ type_map = {
     "int": "integer",
     "float": "number",
     "bool": "boolean",
-    "bytes": "string",      # Typically encoded as base64-encoded strings in JSON
+    "bytes": "string",  # Typically encoded as base64-encoded strings in JSON
     "NoneType": "null",
-    "datetime": "string",   # Use format "date-time"
-    "date": "string",       # Use format "date"
-    "UUID": "string",       # Use format "uuid"
+    "datetime": "string",  # Use format "date-time"
+    "date": "string",  # Use format "date"
+    "UUID": "string",  # Use format "uuid"
 }
 
 
@@ -83,7 +84,7 @@ def _map_type(annotation) -> str:
         return "string"  # Default type if annotation is missing
 
     origin = get_origin(annotation)
-    
+
     if origin in {list, List}:
         return "array"
     elif origin in {dict, Dict}:
@@ -92,7 +93,7 @@ def _map_type(annotation) -> str:
         return type_map.get(annotation.__name__, "string")
     elif isinstance(annotation, type):
         return type_map.get(annotation.__name__, "string")
-    
+
     return "string"  # Fallback to "string" if type is unrecognized
 
 
@@ -100,6 +101,7 @@ class Tool(ABC):
     """
     An abstract class representing a tool that can be used by an agent.
     """
+
     @property
     @abstractmethod
     def definitions(self) -> List[ToolDefinition]:
@@ -113,7 +115,7 @@ class Tool(ABC):
         pass
 
     @abstractmethod
-    def execute(self, tool_call : Any) -> Any:
+    def execute(self, tool_call: Any) -> Any:
         """
         Execute the tool with the provided tool call.
 
@@ -151,19 +153,23 @@ class FunctionTool(Tool):
                 param_description = param.annotation.__doc__ if param.annotation != inspect.Parameter.empty else None
                 properties[param_name] = {"type": param_type, "description": param_description}
 
-            function_def = FunctionDefinition(name=name, description=description, parameters={"type": "object", "properties": properties, "required": list(params.keys())})
+            function_def = FunctionDefinition(
+                name=name,
+                description=description,
+                parameters={"type": "object", "properties": properties, "required": list(params.keys())},
+            )
             tool_def = FunctionToolDefinition(function=function_def)
             specs.append(tool_def)
         return specs
-    
+
     def _get_func_and_args(self, tool_call: RequiredFunctionToolCall) -> Tuple[Any, Dict[str, Any]]:
         function_name = tool_call.function.name
         arguments = tool_call.function.arguments
-                
+
         if function_name not in self._functions:
             logging.error(f"Function '{function_name}' not found.")
             raise ValueError(f"Function '{function_name}' not found.")
-        
+
         function = self._functions[function_name]
 
         try:
@@ -175,9 +181,9 @@ class FunctionTool(Tool):
         if not isinstance(parsed_arguments, dict):
             logging.error(f"Arguments must be a JSON object for function '{function_name}'.")
             raise TypeError("Arguments must be a JSON object.")
-        
+
         return function, parsed_arguments
-    
+
     def execute(self, tool_call: RequiredFunctionToolCall) -> Any:
         function, parsed_arguments = self._get_func_and_args(tool_call)
 
@@ -212,13 +218,14 @@ class AsyncFunctionTool(FunctionTool):
         function, parsed_arguments = self._get_func_and_args(tool_call)
 
         try:
-            if inspect.iscoroutinefunction(function):                
+            if inspect.iscoroutinefunction(function):
                 return await function(**parsed_arguments) if parsed_arguments else await function()
             else:
                 return function(**parsed_arguments) if parsed_arguments else function()
         except TypeError as e:
             logging.error(f"Error executing function '{tool_call.function.name}': {e}")
             raise
+
 
 class FileSearchTool(Tool):
     """
@@ -241,17 +248,13 @@ class FileSearchTool(Tool):
         Get the file search tool definitions.
         """
         return [FileSearchToolDefinition()]
-    
+
     @property
     def resources(self) -> ToolResources:
         """
-        Get the file search resources.       
+        Get the file search resources.
         """
-        return ToolResources(
-            file_search=FileSearchToolResource(
-                vector_store_ids=self.vector_store_ids
-            )
-        )
+        return ToolResources(file_search=FileSearchToolResource(vector_store_ids=self.vector_store_ids))
 
     def execute(self, tool_call: Any) -> Any:
         pass
@@ -285,11 +288,7 @@ class CodeInterpreterTool(Tool):
         """
         Get the code interpreter resources.
         """
-        return ToolResources(
-            code_interpreter=CodeInterpreterToolResource(
-                file_ids=self.file_ids
-            )
-        )
+        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=self.file_ids))
 
     def execute(self, tool_call: Any) -> Any:
         pass
@@ -311,7 +310,9 @@ class ToolSet:
         :raises ValueError: If the tool type is not a subclass of Tool.
         """
         if isinstance(tool_type, AsyncFunctionTool):
-            raise ValueError("AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.client.aio.")
+            raise ValueError(
+                "AsyncFunctionTool is not supported in ToolSet.  To use async functions, use AsyncToolSet and agents operations in azure.ai.client.aio."
+            )
 
     def add(self, tool: Tool):
         """
@@ -321,7 +322,7 @@ class ToolSet:
         :raises ValueError: If a tool of the same type already exists.
         """
         self.validate_tool_type(type(tool))
-        
+
         if any(isinstance(existing_tool, type(tool)) for existing_tool in self._tools):
             raise ValueError("Tool of type {type(tool).__name__} already exists in the ToolSet.")
         self._tools.append(tool)
@@ -414,8 +415,9 @@ class ToolSet:
 
         return tool_outputs
 
+
 class AsyncToolSet(ToolSet):
-    
+
     def validate_tool_type(self, tool_type: Type[Tool]) -> None:
         """
         Validate the type of the tool.
@@ -424,8 +426,10 @@ class AsyncToolSet(ToolSet):
         :raises ValueError: If the tool type is not a subclass of Tool.
         """
         if isinstance(tool_type, FunctionTool):
-            raise ValueError("FunctionTool is not supported in AsyncToolSet.  Please use AsyncFunctionTool instead and provide sync and/or async function(s).")
-    
+            raise ValueError(
+                "FunctionTool is not supported in AsyncToolSet.  Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
+            )
+
     async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
         Execute a tool of the specified type with the provided tool calls.
@@ -449,6 +453,7 @@ class AsyncToolSet(ToolSet):
                 logging.error(f"Failed to execute tool call {tool_call}: {e}")
 
         return tool_outputs
+
 
 class AgentEventHandler:
 
@@ -483,8 +488,8 @@ class AgentEventHandler:
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         """Handle any unhandled event types."""
         pass
-    
-    
+
+
 class AsyncAgentEventHandler:
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
@@ -517,14 +522,12 @@ class AsyncAgentEventHandler:
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         """Handle any unhandled event types."""
-        pass    
+        pass
 
 
-class BaseAgentRunStream:            
+class BaseAgentRunStream:
     def __enter__(self):
         return self
-
-
 
     def process_event(self, event_data_str: str) -> Tuple[str, Any]:
         event_lines = event_data_str.strip().split("\n")
@@ -546,11 +549,7 @@ class BaseAgentRunStream:
             parsed_data = event_data
 
         # Workaround for service bug: Rename 'expires_at' to 'expired_at'
-        if (
-            event_type.startswith("thread.run.step")
-            and isinstance(parsed_data, dict)
-            and "expires_at" in parsed_data
-        ):
+        if event_type.startswith("thread.run.step") and isinstance(parsed_data, dict) and "expires_at" in parsed_data:
             parsed_data["expired_at"] = parsed_data.pop("expires_at")
 
         # Map to the appropriate class instance
@@ -602,15 +601,15 @@ class AsyncAgentRunStream(BaseAgentRunStream, AsyncIterator[Tuple[str, Any]]):
         self.event_handler = event_handler
         self.done = False
         self.buffer = ""
-        
+
     async def __aenter__(self):
         return self
-            
+
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         close_method = getattr(self.response_iterator, "close", None)
         if callable(close_method):
-            await close_method()   
-        
+            await close_method()
+
     def __aiter__(self):
         return self
 
@@ -629,7 +628,7 @@ class AsyncAgentRunStream(BaseAgentRunStream, AsyncIterator[Tuple[str, Any]]):
             while "\n\n" in self.buffer:
                 event_data_str, self.buffer = self.buffer.split("\n\n", 1)
                 return await self.process_event(event_data_str)
-            
+
     async def process_event(self, event_data_str: str) -> Tuple[str, Any]:
         event_type, event_data_obj = super().process_event(event_data_str)
 
@@ -665,7 +664,7 @@ class AsyncAgentRunStream(BaseAgentRunStream, AsyncIterator[Tuple[str, Any]]):
             async for _ in self:
                 pass  # The EventHandler handles the events
         except StopAsyncIteration:
-            pass            
+            pass
 
 
 class AgentRunStream(BaseAgentRunStream, Iterator[Tuple[str, Any]]):
@@ -678,11 +677,11 @@ class AgentRunStream(BaseAgentRunStream, Iterator[Tuple[str, Any]]):
         self.event_handler = event_handler
         self.done = False
         self.buffer = ""
-        
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         close_method = getattr(self.response_iterator, "close", None)
         if callable(close_method):
-            close_method()    
+            close_method()
 
     def __iter__(self):
         return self
