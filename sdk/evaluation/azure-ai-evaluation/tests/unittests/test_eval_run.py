@@ -9,8 +9,9 @@ import jwt
 import pytest
 from promptflow.azure._utils._token_cache import ArmTokenCache
 
-import azure.ai.evaluation.evaluate._utils as ev_utils
-from azure.ai.evaluation.evaluate._eval_run import EvalRun, RunStatus
+from azure.ai.evaluation._exceptions import EvaluationException
+import azure.ai.evaluation._evaluate._utils as ev_utils
+from azure.ai.evaluation._evaluate._eval_run import EvalRun, RunStatus
 
 
 def generate_mock_token():
@@ -65,7 +66,7 @@ class TestEvalRun:
         ), caplog.at_level(logging.INFO):
             with EvalRun(run_name=None, **TestEvalRun._MOCK_CREDS) as run:
                 if should_raise:
-                    with pytest.raises(ValueError) as cm:
+                    with pytest.raises(EvaluationException) as cm:
                         run._end_run(status)
                     assert status in cm.value.args[0]
                 else:
@@ -260,7 +261,7 @@ class TestEvalRun:
                     kwargs = {"artifact_folder": tmp_path}
                 else:
                     kwargs = {"key": "f1", "value": 0.5}
-                with patch("azure.ai.evaluation.evaluate._eval_run.BlobServiceClient", return_value=MagicMock()):
+                with patch("azure.ai.evaluation._evaluate._eval_run.BlobServiceClient", return_value=MagicMock()):
                     fn(**kwargs)
         assert len(caplog.records) == 1
         assert mock_response.text() in caplog.records[0].message
@@ -338,7 +339,7 @@ class TestEvalRun:
         ) as run:
             assert len(caplog.records) == 1
             assert "The results will be saved locally, but will not be logged to Azure." in caplog.records[0].message
-            with patch("azure.ai.evaluation.evaluate._eval_run.EvalRun.request_with_retry") as mock_request:
+            with patch("azure.ai.evaluation._evaluate._eval_run.EvalRun.request_with_retry") as mock_request:
                 run.log_artifact("mock_dir")
                 run.log_metric("foo", 42)
                 run.write_properties_to_run_history({"foo": "bar"})
@@ -468,6 +469,6 @@ class TestEvalRun:
             run._start_run()
             if status == RunStatus.TERMINATED:
                 run._end_run("FINISHED")
-        with pytest.raises(RuntimeError) as cm:
+        with pytest.raises(EvaluationException) as cm:
             run._start_run()
         assert f"Unable to start run due to Run status={status}" in cm.value.args[0], cm.value.args[0]

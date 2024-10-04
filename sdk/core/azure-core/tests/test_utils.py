@@ -8,7 +8,7 @@ from unittest.mock import patch
 import pytest
 from azure.core.utils import case_insensitive_dict
 from azure.core.utils._utils import get_running_async_lock
-from azure.core.pipeline.policies._utils import parse_retry_after
+from azure.core.pipeline.policies._utils import parse_retry_after, get_challenge_parameter
 
 
 @pytest.fixture()
@@ -146,3 +146,58 @@ def test_parse_retry_after():
     assert ret == 0
     ret = parse_retry_after("0.9")
     assert ret == 0.9
+
+
+def test_get_challenge_parameter():
+    headers = {
+        "WWW-Authenticate": 'Bearer authorization_uri="https://login.microsoftonline.com/tenant-id", resource="https://vault.azure.net"'
+    }
+    assert (
+        get_challenge_parameter(headers, "Bearer", "authorization_uri") == "https://login.microsoftonline.com/tenant-id"
+    )
+    assert get_challenge_parameter(headers, "Bearer", "resource") == "https://vault.azure.net"
+    assert get_challenge_parameter(headers, "Bearer", "foo") is None
+
+    headers = {
+        "WWW-Authenticate": 'Bearer realm="", authorization_uri="https://login.microsoftonline.com/common/oauth2/authorize", error="insufficient_claims", claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwidmFsdWUiOiIxNzI2MDc3NTk1In0sInhtc19jYWVlcnJvciI6eyJ2YWx1ZSI6IjEwMDEyIn19fQ=="'
+    }
+    assert (
+        get_challenge_parameter(headers, "Bearer", "authorization_uri")
+        == "https://login.microsoftonline.com/common/oauth2/authorize"
+    )
+    assert get_challenge_parameter(headers, "Bearer", "error") == "insufficient_claims"
+    assert (
+        get_challenge_parameter(headers, "Bearer", "claims")
+        == "eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwidmFsdWUiOiIxNzI2MDc3NTk1In0sInhtc19jYWVlcnJvciI6eyJ2YWx1ZSI6IjEwMDEyIn19fQ=="
+    )
+
+
+def test_get_challenge_parameter_not_found():
+    headers = {
+        "WWW-Authenticate": 'Pop authorization_uri="https://login.microsoftonline.com/tenant-id", resource="https://vault.azure.net"'
+    }
+    assert get_challenge_parameter(headers, "Bearer", "resource") is None
+
+
+def test_get_multi_challenge_parameter():
+    headers = {
+        "WWW-Authenticate": 'Bearer authorization_uri="https://login.microsoftonline.com/tenant-id", resource="https://vault.azure.net" Bearer authorization_uri="https://login.microsoftonline.com/tenant-id", resource="https://vault.azure.net"'
+    }
+    assert (
+        get_challenge_parameter(headers, "Bearer", "authorization_uri") == "https://login.microsoftonline.com/tenant-id"
+    )
+    assert get_challenge_parameter(headers, "Bearer", "resource") == "https://vault.azure.net"
+    assert get_challenge_parameter(headers, "Bearer", "foo") is None
+
+    headers = {
+        "WWW-Authenticate": 'Digest realm="foo@test.com", qop="auth,auth-int", nonce="123456abcdefg", opaque="123456", Bearer realm="", authorization_uri="https://login.microsoftonline.com/common/oauth2/authorize", error="insufficient_claims", claims="eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwidmFsdWUiOiIxNzI2MDc3NTk1In0sInhtc19jYWVlcnJvciI6eyJ2YWx1ZSI6IjEwMDEyIn19fQ=="'
+    }
+    assert (
+        get_challenge_parameter(headers, "Bearer", "authorization_uri")
+        == "https://login.microsoftonline.com/common/oauth2/authorize"
+    )
+    assert get_challenge_parameter(headers, "Bearer", "error") == "insufficient_claims"
+    assert (
+        get_challenge_parameter(headers, "Bearer", "claims")
+        == "eyJhY2Nlc3NfdG9rZW4iOnsibmJmIjp7ImVzc2VudGlhbCI6dHJ1ZSwidmFsdWUiOiIxNzI2MDc3NTk1In0sInhtc19jYWVlcnJvciI6eyJ2YWx1ZSI6IjEwMDEyIn19fQ=="
+    )

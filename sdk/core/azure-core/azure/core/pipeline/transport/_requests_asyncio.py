@@ -82,7 +82,6 @@ def _get_running_loop():
     return asyncio.get_running_loop()
 
 
-# pylint: disable=too-many-ancestors
 class AsyncioRequestsTransport(RequestsAsyncTransportBase):
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the built-in asyncio event loop.
