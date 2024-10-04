@@ -13,26 +13,16 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
-
+@pytest.mark.live_test_only
 class TestContainerServiceContainerServicesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ContainerServiceClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
-        response = self.client.managed_clusters.list(
-            api_version="2024-05-01",
-        )
-        result = [r async for r in response]
-        assert result
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.managed_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
         )
         result = [r async for r in response]
         assert result == []

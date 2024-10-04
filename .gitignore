@@ -123,6 +123,9 @@ sdk/storage/azure-storage-blob-changefeed/tests/settings/settings_real.py
 !sdk/ml/azure-ai-ml/tests/test_configs/*/*/environment*
 !sdk/ml/azure-ai-ml/tests/environment*
 
+# azure-ai-evaluation connections file
+sdk/evaluation/azure-ai-evaluation/connections.json
+
 
 # The locations below are deprecated - keep to prevent any accidental secrets leakage ==========
 sdk/storage/azure-storage-blob/tests/_shared/settings_real.py
