@@ -388,7 +388,6 @@ class AsyncToolSet(ToolSet):
         """
         if isinstance(tool_type, FunctionTool):
             raise ValueError("FunctionTool is not supported in AsyncToolSet.  Please use AsyncFunctionTool instead and provide sync and/or async function(s).")
-
     
     async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """

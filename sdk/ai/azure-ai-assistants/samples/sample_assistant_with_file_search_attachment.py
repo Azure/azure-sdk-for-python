@@ -89,7 +89,7 @@ def sample_assistant_basic_operation():
 
     # create a message with the attachment
     attachment = MessageAttachment(file_id=file.id, tools=[file_search_tool])
-    message = assistant_client.create_message(thread_id=thread.id, role="user", content="What featrue does Smart Eyewear offer?", attachments=[attachment])
+    message = assistant_client.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment])
     logging.info("Created message, message ID", message.id)
 
     run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
