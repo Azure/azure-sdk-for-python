@@ -26,13 +26,29 @@ class AzureAIClient(ClientGenerated):
 
     def __init__(
         self,
-        host_name: str,
+        endpoint: str,
         subscription_id: str,
         resource_group_name: str,
         workspace_name: str,
         credential: "TokenCredential",
         **kwargs: Any,
     ) -> None:
+        # TODO: Validate input formats with regex match (e.g. subscription ID)
+        if not endpoint:
+            raise ValueError("endpoint is required")
+        if not subscription_id:
+            raise ValueError("subscription_id ID is required")
+        if not resource_group_name:
+            raise ValueError("resource_group_name is required")
+        if not workspace_name:
+            raise ValueError("workspace_name is required")
+        if not credential:
+            raise ValueError("Credential is required")
+        if "api_version" in kwargs:
+            raise ValueError("No support for overriding the API version")
+        if "credential_scopes" in kwargs:
+            raise ValueError("No support for overriding the credential scopes")
+
         kwargs1 = kwargs.copy()
         kwargs2 = kwargs.copy()
         kwargs3 = kwargs.copy()
@@ -40,13 +56,13 @@ class AzureAIClient(ClientGenerated):
         # For Endpoints operations (enumerating connections, getting SAS tokens)
         _endpoint1 = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
         self._config1 = ClientConfiguration(
-            host_name=host_name,
+            endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             credential=credential,
             api_version="2024-07-01-preview",
-            credential_scopes="https://management.azure.com",
+            credential_scopes=["https://management.azure.com"],
             **kwargs1,
         )
         _policies1 = kwargs1.pop("policies", None)
@@ -69,15 +85,15 @@ class AzureAIClient(ClientGenerated):
         self._client1: PipelineClient = PipelineClient(base_url=_endpoint1, policies=_policies1, **kwargs1)
 
         # For Agents operations
-        _endpoint2 = f"https://{host_name}/assistants/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
+        _endpoint2 = f"{endpoint}/agents/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
         self._config2 = ClientConfiguration(
-            host_name=host_name,
+            endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes="https://ml.azure.com",
+            credential_scopes=["https://ml.azure.com"],
             **kwargs2,
         )
         _policies2 = kwargs2.pop("policies", None)
@@ -100,15 +116,15 @@ class AzureAIClient(ClientGenerated):
         self._client2: PipelineClient = PipelineClient(base_url=_endpoint2, policies=_policies2, **kwargs2)
 
         # For Cloud Evaluations operations
-        _endpoint3 = f"https://{host_name}/raisvc/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
+        _endpoint3 = f"{endpoint}/raisvc/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
         self._config3 = ClientConfiguration(
-            host_name=host_name,
+            endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes="https://ml.azure.com",
+            credential_scopes=["https://ml.azure.com"],
             **kwargs3,
         )
         _policies3 = kwargs3.pop("policies", None)
@@ -150,11 +166,11 @@ class AzureAIClient(ClientGenerated):
         parts = connection.split(";")
         if len(parts) != 4:
             raise ValueError("Invalid connection string format")
-        host_name = parts[0]
+        endpoint = parts[0]
         subscription_id = parts[1]
         resource_group_name = parts[2]
         workspace_name = parts[3]
-        return cls(host_name, subscription_id, resource_group_name, workspace_name, credential, **kwargs)
+        return cls(endpoint, subscription_id, resource_group_name, workspace_name, credential, **kwargs)
 
 
 class SASTokenCredential(TokenCredential):
