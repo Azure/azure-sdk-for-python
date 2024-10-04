@@ -53,7 +53,12 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
         now = int(time.time())
         if result and "access_token" in result and "expires_in" in result:
             refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
-            return AccessTokenInfo(result["access_token"], now + int(result["expires_in"]), refresh_on=refresh_on)
+            return AccessTokenInfo(
+                result["access_token"],
+                now + int(result["expires_in"]),
+                token_type=result.get("token_type", "Bearer"),
+                refresh_on=refresh_on,
+            )
         if result and "error" in result:
             error_desc = cast(str, result["error"])
         error_message = self.get_unavailable_message(error_desc)
