@@ -324,6 +324,8 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         Retry Configuration to be used for connection retries.
     :vartype ConnectionRetryConfiguration:
         int or ~azure.cosmos.ConnectionRetryPolicy
+    :ivar boolean ResponsePayloadOnWriteDisabled:
+        Indicates whether service should be instructed to skip sending response payloads
     """
 
     __defaultRequestTimeout: int = 60  # seconds
@@ -339,6 +341,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False
         self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
+        self.ResponsePayloadOnWriteDisabled: bool = False
 
 
 class _OperationType:

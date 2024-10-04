@@ -186,8 +186,15 @@ class SilentAuthenticationCredential:
             result = client_application.acquire_token_silent_with_error(
                 list(scopes), account=account, claims_challenge=kwargs.get("claims")
             )
+
             if result and "access_token" in result and "expires_in" in result:
-                return AccessTokenInfo(result["access_token"], now + int(result["expires_in"]))
+                refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
+                return AccessTokenInfo(
+                    result["access_token"],
+                    now + int(result["expires_in"]),
+                    token_type=result.get("token_type", "Bearer"),
+                    refresh_on=refresh_on,
+                )
 
         # if we get this far, the cache contained a matching account but MSAL failed to authenticate it silently
         if result:

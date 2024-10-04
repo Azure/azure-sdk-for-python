@@ -54,6 +54,20 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Create a replica cluster in the same geographic region as the source cluster."""
 
 
+class HighAvailabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The high availability modes for a cluster."""
+
+    DISABLED = "Disabled"
+    """High availability mode is disabled. This mode is can see availability impact during faults or
+    maintenance and is not recommended for production."""
+    SAME_ZONE = "SameZone"
+    """High availability mode is enabled, where each server in a shard is placed in the same
+    availability zone."""
+    ZONE_REDUNDANT_PREFERRED = "ZoneRedundantPreferred"
+    """High availability mode is enabled and preferences ZoneRedundant if availability zones capacity
+    is available in the region, otherwise falls-back to provisioning with SameZone."""
+
+
 class MongoClusterStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the Mongo cluster resource."""
 
@@ -71,13 +85,6 @@ class MongoClusterStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mongo cluster resource is stopped."""
     DROPPING = "Dropping"
     """The mongo cluster resource is being dropped."""
-
-
-class NodeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the node on the cluster."""
-
-    SHARD = "Shard"
-    """The node is a shard kind."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):

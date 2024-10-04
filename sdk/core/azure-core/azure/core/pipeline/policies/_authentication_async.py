@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
+import base64
 from typing import Any, Awaitable, Optional, cast, TypeVar, Union
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
@@ -23,6 +24,7 @@ from azure.core.pipeline.transport import (
 )
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.utils._utils import get_running_async_lock
+from ._utils import get_challenge_parameter
 
 from .._tools_async import await_result
 
@@ -138,6 +140,22 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :rtype: bool
         """
         # pylint:disable=unused-argument
+        headers = response.http_response.headers
+        error = get_challenge_parameter(headers, "Bearer", "error")
+        if error == "insufficient_claims":
+            encoded_claims = get_challenge_parameter(headers, "Bearer", "claims")
+            if not encoded_claims:
+                return False
+            try:
+                padding_needed = -len(encoded_claims) % 4
+                claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
+                if claims:
+                    token = await self._get_token(*self._scopes, claims=claims)
+                    bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], token).token
+                    request.http_request.headers["Authorization"] = "Bearer " + bearer_token
+                    return True
+            except Exception:  # pylint:disable=broad-except
+                return False
         return False
 
     def on_response(
@@ -169,13 +187,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         refresh_on = getattr(self._token, "refresh_on", None)
         return not self._token or (refresh_on and refresh_on <= now) or self._token.expires_on - now < 300
 
-    async def _request_token(self, *scopes: str, **kwargs: Any) -> None:
-        """Request a new token from the credential.
-
-        This will call the credential's appropriate method to get a token and store it in the policy.
-
-        :param str scopes: The type of access needed.
-        """
+    async def _get_token(self, *scopes: str, **kwargs: Any) -> Union["AccessToken", "AccessTokenInfo"]:
         if self._enable_cae:
             kwargs.setdefault("enable_cae", self._enable_cae)
 
@@ -186,14 +198,22 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                 if key in TokenRequestOptions.__annotations__:  # pylint: disable=no-member
                     options[key] = kwargs.pop(key)  # type: ignore[literal-required]
 
-            self._token = await await_result(
+            return await await_result(
                 cast(AsyncSupportsTokenInfo, self._credential).get_token_info,
                 *scopes,
                 options=options,
             )
-        else:
-            self._token = await await_result(
-                cast(AsyncTokenCredential, self._credential).get_token,
-                *scopes,
-                **kwargs,
-            )
+        return await await_result(
+            cast(AsyncTokenCredential, self._credential).get_token,
+            *scopes,
+            **kwargs,
+        )
+
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> None:
+        """Request a new token from the credential.
+
+        This will call the credential's appropriate method to get a token and store it in the policy.
+
+        :param str scopes: The type of access needed.
+        """
+        self._token = await self._get_token(*scopes, **kwargs)

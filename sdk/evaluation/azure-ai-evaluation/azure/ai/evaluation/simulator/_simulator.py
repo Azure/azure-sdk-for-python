@@ -1,5 +1,5 @@
 # flake8: noqa
-# pylint: disable=W0102,W0613,R0914,C0301,E0401,E0611
+# pylint: disable=W0102,W0613,R0914,C0301,E0401,E0611,C0114,R0913,E0702,R0903
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
@@ -41,7 +41,7 @@ class Simulator:
         """
         self._validate_project_config(azure_ai_project)
         self.azure_ai_project = azure_ai_project
-        self.azure_ai_project["api_version"] = "2024-02-15-preview"
+        self.azure_ai_project["api_version"] = "2024-06-01"
         self.credential = credential
 
     @staticmethod
@@ -129,7 +129,6 @@ class Simulator:
         max_conversation_turns *= 2  # account for both user and assistant turns
 
         prompty_model_config = self._build_prompty_model_config()
-
         if conversation_turns:
             return await self._simulate_with_predefined_turns(
                 target=target,
@@ -234,8 +233,16 @@ class Simulator:
                     target=target,
                     progress_bar=progress_bar,
                 )
-
-            simulated_conversations.append(current_simulation.to_list())
+            simulated_conversations.append(
+                JsonLineChatProtocol(
+                    {
+                        "messages": current_simulation.to_list(),
+                        "finish_reason": ["stop"],
+                        "context": {},
+                        "$schema": "http://azureml/sdk-2-0/ChatConversation.json",
+                    }
+                )
+            )
 
         progress_bar.close()
         return simulated_conversations
@@ -280,7 +287,9 @@ class Simulator:
 
         while len(current_simulation) < max_conversation_turns:
             user_response_content = user_flow(
-                task="Continue the conversation", conversation_history=current_simulation.to_list()
+                task="Continue the conversation",
+                conversation_history=current_simulation.to_list(),
+                **user_simulator_prompty_kwargs,
             )
             user_response = self._parse_prompty_response(response=user_response_content)
             user_turn = Turn(role=ConversationRole.USER, content=user_response["content"])
@@ -317,6 +326,7 @@ class Simulator:
             resource_name = "task_simulate.prompty"
             try:
                 # Access the resource as a file path
+                # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
             except FileNotFoundError as e:
@@ -398,7 +408,6 @@ class Simulator:
             prompty_model_config=prompty_model_config,
             query_response_generating_prompty_kwargs=query_response_generating_prompty_kwargs,
         )
-
         try:
             query_responses = query_flow(text=text, num_queries=num_queries)
             if isinstance(query_responses, dict):
@@ -432,6 +441,7 @@ class Simulator:
             resource_name = "task_query_response.prompty"
             try:
                 # Access the resource as a file path
+                # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     return load_flow(source=str(prompty_path), model=prompty_model_config)
             except FileNotFoundError as e:
@@ -612,9 +622,10 @@ class Simulator:
             prompty_model_config=self._build_prompty_model_config(),
             user_simulator_prompty_kwargs=user_simulator_prompty_kwargs,
         )
-
         try:
-            response_content = user_flow(task=task, conversation_history=conversation_history)
+            response_content = user_flow(
+                task=task, conversation_history=conversation_history, **user_simulator_prompty_kwargs
+            )
             user_response = self._parse_prompty_response(response=response_content)
             return user_response["content"]
         except Exception as e:
