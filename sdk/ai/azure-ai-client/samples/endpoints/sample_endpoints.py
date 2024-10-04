@@ -1,5 +1,4 @@
 
-"""
 # These are needed for SDK logging. You can ignore them.
 import sys
 import logging
@@ -7,7 +6,7 @@ logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 # End of logging setup
-"""
+
 import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import EndpointType, AuthenticationType
@@ -22,7 +21,7 @@ from azure.core.credentials import AzureKeyCredential
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
     connection=os.environ["AI_CLIENT_CONNECTION_STRING"],
-    #logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
+    logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
 )
 
 # Or, you can create the Azure AI Client by giving all required parameters directly
@@ -34,6 +33,32 @@ ai_client = AzureAIClient(
     workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
     logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
 )
+
+# You can get an authenticated azure.ai.inference client directly, if you have a serverless endpoint in your project:
+client = ai_client.inference.get_chat_completions_client()
+
+response = client.complete(
+    messages=[
+        UserMessage(content="How many feet are in a mile?")
+    ]
+)
+
+print(response.choices[0].message.content)
+
+# You can get an authenticated AzureOpenAI client directly, if you have an Azure OpenAI endpoint in your project:
+client = ai_client.inference.get_azure_openai_client()
+
+response = client.chat.completions.create(
+    model="gpt-4-0613",
+    messages=[
+        {
+            "role": "user",
+            "content": "How many feet are in a mile?",
+        },
+    ],
+)
+
+print(response.choices[0].message.content)
 
 # You can list all endpoints of a particular "type", with or without their credentials:
 endpoints = ai_client.endpoints.list(
@@ -106,7 +131,7 @@ elif endpoint.endpoint_type == EndpointType.SERVERLESS:
         print("====> Creating ChatCompletionsClient using API key authentication")
         client = ChatCompletionsClient(
            endpoint=endpoint.endpoint_url,
-           credential=AzureKeyCredential(endpoint.properties.credentials.key)
+           credential=AzureKeyCredential(endpoint.key)
         )
     elif endpoint.authentication_type == AuthenticationType.AAD:
         # MaaS models do not yet support EntraID auth
