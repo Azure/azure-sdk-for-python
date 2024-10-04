@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- Deprecated `AzureAuthorityHosts.AZURE_GERMANY`
+
 ## 1.18.0 (2024-09-19)
 
 ### Features Added
