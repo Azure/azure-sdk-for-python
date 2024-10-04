@@ -168,7 +168,7 @@ class TranslationTarget(GeneratedTranslationTarget):
     """List of Glossary."""
     storage_source: Optional[Union[str, "_models.StorageSource"]]
     """Storage Source. \"AzureBlob\""""
-  
+
     @overload
     def __init__(
         self,
