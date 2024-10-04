@@ -10,16 +10,15 @@ from ._models import BatchRequest
 from ._models import DocumentFilter
 from ._patch import DocumentStatus
 from ._models import DocumentTranslateContent
+from ._models import DocumentTranslationError
 from ._models import DocumentTranslationFileFormat
-from ._patch import TranslationGlossary
 from ._models import InnerTranslationError
 from ._models import SourceInput
 from ._models import StartTranslationDetails
 from ._models import StatusSummary
-from ._patch import TranslationTarget
-from ._models import DocumentTranslationError
+from ._patch import TranslationGlossary
 from ._patch import TranslationStatus
-from ._patch import DocumentTranslationInput
+from ._patch import TranslationTarget
 
 from ._enums import FileFormatType
 from ._enums import Status
@@ -27,28 +26,29 @@ from ._enums import StorageInputType
 from ._enums import StorageSource
 from ._enums import TranslationErrorCode
 
+from ._patch import DocumentTranslationInput
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "DocumentTranslationInput",
     "BatchRequest",
     "DocumentFilter",
     "DocumentStatus",
     "DocumentTranslateContent",
+    "DocumentTranslationError",
     "DocumentTranslationFileFormat",
-    "TranslationGlossary",
     "InnerTranslationError",
     "SourceInput",
     "StartTranslationDetails",
     "StatusSummary",
-    "TranslationTarget",
-    "DocumentTranslationError",
+    "TranslationGlossary",
     "TranslationStatus",
+    "TranslationTarget",
     "FileFormatType",
     "Status",
     "StorageInputType",
     "StorageSource",
     "TranslationErrorCode",
-    "DocumentTranslationInput",
 ]
 
 _patch_sdk()
