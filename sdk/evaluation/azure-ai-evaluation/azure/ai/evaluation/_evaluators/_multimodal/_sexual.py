@@ -42,8 +42,10 @@ class SexualMultimodalEvaluator:
             "sexual_reason": "Some reason"
         }
     """
+    
     def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncSexualMultimodalEvaluator(azure_ai_project, credential)
+    
     def __call__(self, *, messages: List[Dict], **kwargs):
         """
         Evaluates sexual content.
@@ -55,5 +57,6 @@ class SexualMultimodalEvaluator:
         :rtype: dict
         """
         return async_run_allowing_running_loop(self._async_evaluator, messages=messages, **kwargs)
+    
     def _to_async(self):
         return self._async_evaluator

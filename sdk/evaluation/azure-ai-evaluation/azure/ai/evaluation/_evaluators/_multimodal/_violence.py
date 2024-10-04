@@ -20,12 +20,15 @@ class _AsyncViolenceMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
 class ViolenceMultimodalEvaluator:
     """
     Initialize a violence evaluator for violence score.
+    
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param credential: The credential for connecting to Azure AI project.
     :type credential: ~azure.core.credentials.TokenCredential
+    
     **Usage**
+    
     .. code-block:: python
         azure_ai_project = {
             "subscription_id": "<subscription_id>",
@@ -34,7 +37,9 @@ class ViolenceMultimodalEvaluator:
         }
         eval_fn = ViolenceEvaluator(azure_ai_project)
         result = eval_fn(query="What is the capital of France?", response="Paris.")
+    
     **Output format**
+    
     .. code-block:: python
         {
             "violence": "High",
@@ -42,8 +47,10 @@ class ViolenceMultimodalEvaluator:
             "violence_reason": "Some reason"
         }
     """
+    
     def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncViolenceMultimodalEvaluator(azure_ai_project, credential)
+    
     def __call__(self, *, messages: List[Dict], **kwargs):
         """
         Evaluates violence content.
@@ -55,5 +62,6 @@ class ViolenceMultimodalEvaluator:
         :rtype: dict
         """
         return async_run_allowing_running_loop(self._async_evaluator, messages=messages, **kwargs)
+    
     def _to_async(self):
         return self._async_evaluator

@@ -19,6 +19,7 @@ class _AsyncHateUnfairnessMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBa
             azure_ai_project=azure_ai_project,
             credential=credential,
         )
+    
     async def __call__(self, *, messages: List[Dict], **kwargs):
         return await super().__call__(messages=messages, **kwargs)
 
