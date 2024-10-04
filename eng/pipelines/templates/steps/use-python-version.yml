@@ -50,7 +50,7 @@ steps:
 
   - task: UsePythonVersion@0
     displayName: "Use pypy3.9"
-    condition: and(succeeded(), eq(eq(variables.ManualInstallNecessary, 'true')))
+    condition: and(succeeded(), eq(variables.ManualInstallNecessary, 'true'))
     inputs:
       versionSpec: pypy3.9
 
