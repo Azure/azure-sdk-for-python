@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import sys, io, logging, os, time
 from io import IOBase
-from typing import List, Iterable, Union, IO, Any, Dict, Optional, IOBase, overload, TYPE_CHECKING
+from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING
 
 # from zoneinfo import ZoneInfo
 from ._operations import EndpointsOperations as EndpointsOperationsGenerated
@@ -352,7 +352,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentsEventHandler] = None,
+        event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any
     ) -> Union[_models.ThreadRun, _models.AgentRunStream]:
         """Creates a new run for an agent thread.
@@ -431,7 +431,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentsEventHandler
+        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -476,7 +476,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentsEventHandler] = None,
+        event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any
     ) -> Union[_models.ThreadRun, _models.AgentRunStream]:
         """Creates a new run for an agent thread.
@@ -554,7 +554,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentsEventHandler
+        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -618,7 +618,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentsEventHandler] = None,
+        event_handler: Optional[_models.AgentEventHandler] = None,
         sleep_interval: int = 1,
         **kwargs: Any
     ) -> Union[_models.ThreadRun, _models.AgentRunStream]:
@@ -697,7 +697,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentsEventHandler
+        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :keyword sleep_interval: The time in seconds to wait between polling the service for run status.
             Default value is 1.
         :paramtype sleep_interval: int        
