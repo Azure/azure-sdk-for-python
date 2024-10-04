@@ -2,7 +2,7 @@
 
 ## 1.0.0 (2024-10-07)
 
-**Features**
+### Features Added
 
   - Upgrade api-version to `2024-08-01`
   - Storage auto growth
