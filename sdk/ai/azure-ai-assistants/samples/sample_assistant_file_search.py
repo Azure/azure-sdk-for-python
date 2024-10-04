@@ -97,10 +97,6 @@ def sample_assistant_run():
         # Check if you got "Rate limit is exceeded.", then you want to get more quota
         logging.error("Run failed: %s", run.last_error)
 
-    # Fetch and log all messages
-    messages = assistant_client.list_messages(thread_id=thread.id)
-    logging.info("Messages: %s", messages)
-
     # Delete the file when done
     assistant_client.delete_vector_store(openai_vectorstore.id)
     logging.info("Deleted vector store")
@@ -108,6 +104,10 @@ def sample_assistant_run():
     # Delete the assistant when done
     assistant_client.delete_assistant(assistant.id)
     logging.info("Deleted assistant")
+
+    # Fetch and log all messages
+    messages = assistant_client.list_messages(thread_id=thread.id)
+    logging.info("Messages: %s", messages)
 
 
 if __name__ == "__main__":

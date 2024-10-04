@@ -20,6 +20,7 @@ USAGE:
         `your-azure-region` is the Azure region where your model is deployed.
     2) AZUREAI_ENDPOINT_KEY - Your model key (a 32-character string). Keep it secret.
 """
+import logging
 from opentelemetry import trace
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
@@ -51,26 +52,26 @@ def sample_assistant_basic_operation():
         key = os.environ["AZUREAI_ENDPOINT_KEY"]
         api_version = os.environ.get("AZUREAI_API_VERSION", "2024-07-01-preview")
     except KeyError:
-        print("Missing environment variable 'AZUREAI_ENDPOINT_URL' or 'AZUREAI_ENDPOINT_KEY'")
-        print("Set them before running this sample.")
+        logging.error("Missing environment variable 'AZUREAI_ENDPOINT_URL' or 'AZUREAI_ENDPOINT_KEY'")
+        logging.error("Set them before running this sample.")
         exit()
 
     assistant_client = AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version)
-    print("Created assistant client")
+    logging.info("Created assistant client")
 
     assistant = assistant_client.create_assistant(
         model="gpt", name="my-assistant", instructions="You are helpful assistant"
     )
-    print("Created assistant, assistant ID", assistant.id)
+    logging.info("Created assistant, assistant ID", assistant.id)
 
     thread = assistant_client.create_thread()
-    print("Created thread, thread ID", thread.id)
+    logging.info("Created thread, thread ID", thread.id)
 
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-    print("Created message, message ID", message.id)
+    logging.info("Created message, message ID", message.id)
 
     run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
-    print("Created run, run ID", run.id)
+    logging.info("Created run, run ID", run.id)
 
     # poll the run as long as run status is queued or in progress
     while run.status in ["queued", "in_progress", "requires_action"]:
@@ -78,16 +79,17 @@ def sample_assistant_basic_operation():
         time.sleep(1)
         run = assistant_client.get_run(thread_id=thread.id, run_id=run.id)
 
-        print("Run status:", run.status)
+        logging.info("Run status:", run.status)
 
-    print("Run completed with status:", run.status)
-
-    messages = assistant_client.list_messages(thread_id=thread.id)
-    print("messages:", messages)
+    logging.info("Run completed with status:", run.status)
 
     assistant_client.delete_assistant(assistant.id)
-    print("Deleted assistant")
+    logging.info("Deleted assistant")
+
+    messages = assistant_client.list_messages(thread_id=thread.id)
+    logging.info("messages:", messages)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)    
     sample_assistant_basic_operation()

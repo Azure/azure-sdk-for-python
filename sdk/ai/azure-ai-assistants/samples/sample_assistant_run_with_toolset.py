@@ -91,13 +91,13 @@ def sample_assistant_run():
     if run.status == "failed":
         logging.error("Run failed: %s", run.last_error)
 
-    # Fetch and log all messages
-    messages = assistant_client.list_messages(thread_id=thread.id)
-    logging.info("Messages: %s", messages)
-
     # Delete the assistant when done
     assistant_client.delete_assistant(assistant.id)
     logging.info("Deleted assistant")
+
+    # Fetch and log all messages
+    messages = assistant_client.list_messages(thread_id=thread.id)
+    logging.info("Messages: %s", messages)
 
 
 if __name__ == "__main__":

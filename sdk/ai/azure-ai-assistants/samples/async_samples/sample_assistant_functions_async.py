@@ -28,19 +28,13 @@ from opentelemetry.sdk.trace.export import ConsoleSpanExporter
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 from azure.ai.assistants.aio import AssistantsClient
-from azure.ai.assistants.models import FunctionTool
+from azure.ai.assistants.models import AsyncFunctionTool
 from azure.core.credentials import AzureKeyCredential
 
-import os, time, logging, asyncio, sys
+import os, time, logging, asyncio
 import asyncio.threads
 
-# Add parent directory to sys.path to import user_functions
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.abspath(os.path.join(current_dir, '..'))
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
-
-from user_functions import user_functions
+from user_async_functions import user_async_functions
 
 
 def setup_console_trace_exporter():
@@ -74,7 +68,7 @@ async def sample_assistant_functions():
         logging.info("Created assistant client")
 
         # Initialize assistant functions
-        functions = FunctionTool(functions=user_functions)
+        functions = AsyncFunctionTool(functions=user_async_functions)
 
         # Create assistant
         assistant = await assistant_client.create_assistant(
@@ -108,7 +102,7 @@ async def sample_assistant_functions():
 
                 tool_outputs = []
                 for tool_call in tool_calls:
-                    output = await asyncio.threads.to_thread(functions.execute, tool_call)
+                    output = await functions.execute(tool_call)
                     tool_output = {
                             "tool_call_id": tool_call.id,
                             "output": output,
@@ -125,14 +119,15 @@ async def sample_assistant_functions():
 
         logging.info("Run completed with status: %s", run.status)
 
-        # Fetch and log all messages
-        messages = await assistant_client.list_messages(thread_id=thread.id)
-        logging.info("Messages: %s", messages)
-
         # Delete the assistant when done
         await assistant_client.delete_assistant(assistant.id)
         logging.info("Deleted assistant")
 
+        # Fetch and log all messages
+        messages = await assistant_client.list_messages(thread_id=thread.id)
+        logging.info("Messages: %s", messages)
+
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     asyncio.run(sample_assistant_functions());

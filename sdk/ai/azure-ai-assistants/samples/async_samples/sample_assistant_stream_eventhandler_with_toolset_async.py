@@ -21,7 +21,6 @@ USAGE:
     2) AZUREAI_ENDPOINT_KEY - Your model key (a 32-character string). Keep it secret.
 """
 import asyncio
-import sys
 from opentelemetry import trace
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.sdk.trace import TracerProvider
@@ -38,8 +37,7 @@ from azure.ai.assistants.models import (
     ThreadRun,
 )
 
-from azure.ai.assistants.models import FunctionTool, ToolSet
-from azure.ai.assistants.models._patch import AsyncAssistantEventHandler
+from azure.ai.assistants.models import AsyncFunctionTool, AsyncAssistantEventHandler, AsyncToolSet
 
 
 from azure.core.credentials import AzureKeyCredential
@@ -47,13 +45,8 @@ from azure.core.credentials import AzureKeyCredential
 import os, logging
 from typing import Any
 
-# Add parent directory to sys.path to import user_functions
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.abspath(os.path.join(current_dir, '..'))
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
     
-from user_functions import user_functions    
+from user_async_functions import user_async_functions
     
     
 def setup_console_trace_exporter():
@@ -87,7 +80,7 @@ class MyEventHandler(AsyncAssistantEventHandler):
             logging.error(f"Run failed. Error: {run.last_error}")
 
         if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            self._handle_submit_tool_outputs(run)
+            await self._handle_submit_tool_outputs(run)
 
     async def on_run_step(self, step: "RunStep") -> None:
         logging.info(f"RunStep type: {step.type}, Status: {step.status}")
@@ -115,20 +108,20 @@ class MyEventHandler(AsyncAssistantEventHandler):
 
         toolset = self._client.get_toolset()
         if toolset:
-            tool_outputs = toolset.execute_tool_calls(tool_calls)
+            tool_outputs = await toolset.execute_tool_calls(tool_calls)
         else:
             raise ValueError("Toolset is not available in the client.")
         
         logging.info("Tool outputs: %s", tool_outputs)
         if tool_outputs:
-            with self._client.submit_tool_outputs_to_run(
+            async with await self._client.submit_tool_outputs_to_run(
                 thread_id=run.thread_id, 
                 run_id=run.id, 
                 tool_outputs=tool_outputs, 
                 stream=True,
                 event_handler=self
         ) as stream:
-                stream.until_done()
+                await stream.until_done()
 
 
 async def sample_assistant_stream_iteration():
@@ -140,15 +133,15 @@ async def sample_assistant_stream_iteration():
         key = os.environ["AZUREAI_ENDPOINT_KEY"]
         api_version = os.environ.get("AZUREAI_API_VERSION", "2024-07-01-preview")
     except KeyError:
-        print("Missing environment variable 'AZUREAI_ENDPOINT_URL' or 'AZUREAI_ENDPOINT_KEY'")
-        print("Set them before running this sample.")
+        logging.error("Missing environment variable 'AZUREAI_ENDPOINT_URL' or 'AZUREAI_ENDPOINT_KEY'")
+        logging.error("Set them before running this sample.")
         exit()
 
     async with AssistantsClient(endpoint=endpoint, credential=AzureKeyCredential(key), api_version=api_version) as assistant_client:
         logging.info("Created assistant client")
 
-        functions = FunctionTool(user_functions)
-        toolset = ToolSet()
+        functions = AsyncFunctionTool(user_async_functions)
+        toolset = AsyncToolSet()
         toolset.add(functions)
 
         assistant = await assistant_client.create_assistant(
@@ -170,14 +163,13 @@ async def sample_assistant_stream_iteration():
         ) as stream:
             await stream.until_done()
 
-        messages = await assistant_client.list_messages(thread_id=thread.id)
-        logging.info(f"Messages: {messages}")
-
         await assistant_client.delete_assistant(assistant.id)
         logging.info("Deleted assistant")
 
+        messages = await assistant_client.list_messages(thread_id=thread.id)
+        logging.info(f"Messages: {messages}")
+
 
 if __name__ == "__main__":
-    # Set logging level
     logging.basicConfig(level=logging.INFO)
     asyncio.run(sample_assistant_stream_iteration())
