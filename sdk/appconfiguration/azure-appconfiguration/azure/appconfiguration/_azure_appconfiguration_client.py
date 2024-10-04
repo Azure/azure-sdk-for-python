@@ -12,24 +12,19 @@ from azure.core.credentials import TokenCredential, AzureKeyCredential
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import (
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceModifiedError,
-    ResourceNotModifiedError,
-)
+from azure.core.exceptions import ResourceNotModifiedError
 from azure.core.rest import HttpRequest, HttpResponse
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
-from ._generated import AzureAppConfiguration
+from ._generated import AzureAppConfigurationClient as AzureAppConfigurationClientGenerated
 from ._generated.models import (
-    SnapshotUpdateParameters,
     SnapshotStatus,
     SnapshotFields,
     SnapshotComposition,
     LabelFields,
     ConfigurationSettingFields,
 )
+from ._generated.models._models import SnapshotUpdateParameters
 from ._models import (
     ConfigurationSetting,
     ConfigurationSettingPropertiesPaged,
@@ -38,8 +33,6 @@ from ._models import (
     ConfigurationSettingLabel,
 )
 from ._utils import (
-    prep_if_match,
-    prep_if_none_match,
     get_key_filter,
     get_label_filter,
     parse_connection_string,
@@ -91,8 +84,8 @@ class AzureAppConfigurationClient:
                 f"Unsupported credential: {type(credential)}. Use an instance of token credential from azure.identity"
             )
         # mypy doesn't compare the credential type hint with the API surface in patch.py
-        self._impl = AzureAppConfiguration(
-            credential, base_url, per_call_policies=self._sync_token_policy, **kwargs  # type: ignore[arg-type]
+        self._impl = AzureAppConfigurationClientGenerated(
+            base_url, credential, per_call_policies=self._sync_token_policy, **kwargs  # type: ignore[arg-type]
         )
 
     @classmethod
@@ -138,7 +131,7 @@ class AzureAppConfigurationClient:
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         """
-        return self._impl._send_request(request, stream=stream, **kwargs)
+        return self._impl.send_request(request, stream=stream, **kwargs)
 
     @overload
     def list_configuration_settings(
@@ -285,23 +278,13 @@ class AzureAppConfigurationClient:
         """
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
-
-        error_map: Dict[int, Any] = {}
-        if match_condition == MatchConditions.IfNotModified:
-            error_map.update({412: ResourceModifiedError})
-        if match_condition == MatchConditions.IfPresent:
-            error_map.update({412: ResourceNotFoundError})
-        if match_condition == MatchConditions.IfMissing:
-            error_map.update({412: ResourceExistsError})
-
         try:
             key_value = self._impl.get_key_value(
                 key=key,
                 label=label,
                 accept_datetime=accept_datetime,
-                if_match=prep_if_match(etag, match_condition),
-                if_none_match=prep_if_none_match(etag, match_condition),
-                error_map=error_map,
+                etag=etag,
+                match_condition=match_condition,
                 **kwargs,
             )
             return ConfigurationSetting._from_generated(key_value)
@@ -336,13 +319,11 @@ class AzureAppConfigurationClient:
             added_config_setting = client.add_configuration_setting(config_setting)
         """
         key_value = configuration_setting._to_generated()
-        error_map = {412: ResourceExistsError}
-        key_value_added = self._impl.put_key_value(
+        key_value_added = self._impl._put_key_value(
             entity=key_value,
             key=key_value.key,  # type: ignore
             label=key_value.label,
-            if_none_match="*",
-            error_map=error_map,
+            match_condition=MatchConditions.IfMissing,
             **kwargs,
         )
         return ConfigurationSetting._from_generated(key_value_added)
@@ -393,21 +374,12 @@ class AzureAppConfigurationClient:
         """
         key_value = configuration_setting._to_generated()
         error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
-        if match_condition == MatchConditions.IfNotModified:
-            error_map.update({412: ResourceModifiedError})
-        if match_condition == MatchConditions.IfModified:
-            error_map.update({412: ResourceNotModifiedError})
-        if match_condition == MatchConditions.IfPresent:
-            error_map.update({412: ResourceNotFoundError})
-        if match_condition == MatchConditions.IfMissing:
-            error_map.update({412: ResourceExistsError})
-
-        key_value_set = self._impl.put_key_value(
+        key_value_set = self._impl._put_key_value(
             entity=key_value,
             key=key_value.key,  # type: ignore
             label=key_value.label,
-            if_match=prep_if_match(configuration_setting.etag, match_condition),
-            if_none_match=prep_if_none_match(etag or configuration_setting.etag, match_condition),
+            etag=etag or configuration_setting.etag,
+            match_condition=match_condition,
             error_map=error_map,
             **kwargs,
         )
@@ -452,19 +424,11 @@ class AzureAppConfigurationClient:
             )
         """
         error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
-        if match_condition == MatchConditions.IfNotModified:
-            error_map.update({412: ResourceModifiedError})
-        if match_condition == MatchConditions.IfModified:
-            error_map.update({412: ResourceNotModifiedError})
-        if match_condition == MatchConditions.IfPresent:
-            error_map.update({412: ResourceNotFoundError})
-        if match_condition == MatchConditions.IfMissing:
-            error_map.update({412: ResourceExistsError})
-
         key_value_deleted = self._impl.delete_key_value(
             key=key,
             label=label,
-            if_match=prep_if_match(etag, match_condition),
+            etag=etag,
+            match_condition=match_condition,
             error_map=error_map,
             **kwargs,
         )
@@ -573,32 +537,20 @@ class AzureAppConfigurationClient:
             read_only_config_setting = client.set_read_only(config_setting)
             read_only_config_setting = client.set_read_only(config_setting, read_only=False)
         """
-        error_map: Dict[int, Any] = {}
-        if match_condition == MatchConditions.IfNotModified:
-            error_map.update({412: ResourceModifiedError})
-        if match_condition == MatchConditions.IfModified:
-            error_map.update({412: ResourceNotModifiedError})
-        if match_condition == MatchConditions.IfPresent:
-            error_map.update({412: ResourceNotFoundError})
-        if match_condition == MatchConditions.IfMissing:
-            error_map.update({412: ResourceExistsError})
-
         if read_only:
             key_value = self._impl.put_lock(
                 key=configuration_setting.key,
                 label=configuration_setting.label,
-                if_match=prep_if_match(configuration_setting.etag, match_condition),
-                if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
-                error_map=error_map,
+                etag=configuration_setting.etag,
+                match_condition=match_condition,
                 **kwargs,
             )
         else:
             key_value = self._impl.delete_lock(
                 key=configuration_setting.key,
                 label=configuration_setting.label,
-                if_match=prep_if_match(configuration_setting.etag, match_condition),
-                if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
-                error_map=error_map,
+                etag=configuration_setting.etag,
+                match_condition=match_condition,
                 **kwargs,
             )
         return ConfigurationSetting._from_generated(key_value)
@@ -710,21 +662,11 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        error_map: Dict[int, Any] = {}
-        if match_condition == MatchConditions.IfNotModified:
-            error_map.update({412: ResourceModifiedError})
-        if match_condition == MatchConditions.IfModified:
-            error_map.update({412: ResourceNotModifiedError})
-        if match_condition == MatchConditions.IfPresent:
-            error_map.update({412: ResourceNotFoundError})
-        if match_condition == MatchConditions.IfMissing:
-            error_map.update({412: ResourceExistsError})
-        generated_snapshot = self._impl.update_snapshot(
+        generated_snapshot = self._impl._update_snapshot(
             name=name,
             entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
-            if_match=prep_if_match(etag, match_condition),
-            if_none_match=prep_if_none_match(etag, match_condition),
-            error_map=error_map,
+            etag=etag,
+            match_condition=match_condition,
             **kwargs,
         )
         return ConfigurationSnapshot._from_generated(generated_snapshot)
@@ -750,21 +692,11 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        error_map: Dict[int, Any] = {}
-        if match_condition == MatchConditions.IfNotModified:
-            error_map.update({412: ResourceModifiedError})
-        if match_condition == MatchConditions.IfModified:
-            error_map.update({412: ResourceNotModifiedError})
-        if match_condition == MatchConditions.IfPresent:
-            error_map.update({412: ResourceNotFoundError})
-        if match_condition == MatchConditions.IfMissing:
-            error_map.update({412: ResourceExistsError})
-        generated_snapshot = self._impl.update_snapshot(
+        generated_snapshot = self._impl._update_snapshot(
             name=name,
             entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
-            if_match=prep_if_match(etag, match_condition),
-            if_none_match=prep_if_none_match(etag, match_condition),
-            error_map=error_map,
+            etag=etag,
+            match_condition=match_condition,
             **kwargs,
         )
         return ConfigurationSnapshot._from_generated(generated_snapshot)
@@ -784,9 +716,7 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        generated_snapshot = self._impl.get_snapshot(
-            name=name, if_match=None, if_none_match=None, select=fields, **kwargs
-        )
+        generated_snapshot = self._impl.get_snapshot(name=name, select=fields, **kwargs)
         return ConfigurationSnapshot._from_generated(generated_snapshot)
 
     @distributed_trace
