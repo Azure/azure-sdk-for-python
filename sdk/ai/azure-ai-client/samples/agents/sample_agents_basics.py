@@ -1,14 +1,9 @@
-"""
-# These are needed for SDK logging. You can ignore them.
-import sys
-import logging
-logger = logging.getLogger("azure")
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-# End of logging setup
-"""
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
-import os
+import os, time, logging
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
 
@@ -35,10 +30,32 @@ ai_client = AzureAIClient(
     logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
 )
 """
-assistant = ai_client.agents.create_agent(
+agent = ai_client.agents.create_agent(
     model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
 )
-print("Created assistant, assistant ID", assistant.id)
+logging.info("Created agent, agent ID", agent.id)
 
-ai_client.agents.delete_agent(assistant.id)
-print("Deleted assistant")
+thread = ai_client.agents.create_thread()
+logging.info("Created thread, thread ID", thread.id)
+
+message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+logging.info("Created message, message ID", message.id)
+
+run = ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+logging.info("Created run, run ID", run.id)
+
+# poll the run as long as run status is queued or in progress
+while run.status in ["queued", "in_progress", "requires_action"]:
+    # wait for a second
+    time.sleep(1)
+    run = ai_client.agents.get_run(thread_id=thread.id, run_id=run.id)
+
+    logging.info("Run status:", run.status)
+
+logging.info("Run completed with status:", run.status)
+
+ai_client.agents.delete_assistant(agent.id)
+logging.info("Deleted agent")
+
+messages = ai_client.agents.list_messages(thread_id=thread.id)
+logging.info("messages:", messages)
