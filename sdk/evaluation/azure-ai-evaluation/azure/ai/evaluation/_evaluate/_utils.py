@@ -12,7 +12,8 @@ from typing import Dict
 
 import pandas as pd
 
-from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, DefaultOpenEncoding, Prefixes, EvaluationRunProperties
+from azure.ai.evaluation._constants import (DEFAULT_EVALUATION_RESULTS_FILE_NAME, DefaultOpenEncoding,
+                                            Prefixes, EvaluationRunProperties)
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 

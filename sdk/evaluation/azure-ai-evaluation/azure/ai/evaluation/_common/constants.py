@@ -63,4 +63,3 @@ class _InternalEvaluationMetrics:
     """
 
     ECI = "eci"
-
