@@ -3233,6 +3233,85 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
+    def test_snapshot_immutability_policy_and_legal_hold(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        self._setup(versioned_storage_account_name, versioned_storage_account_key)
+
+        blob_name = self._create_block_blob()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        snapshot_blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob.create_snapshot())
+
+        try:
+            expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
+            immutability_policy = ImmutabilityPolicy(
+                expiry_time=expiry_time,
+                policy_mode=BlobImmutabilityPolicyMode.Unlocked
+            )
+
+            snapshot_blob.set_immutability_policy(immutability_policy=immutability_policy)
+            props = snapshot_blob.get_blob_properties()
+            assert props['immutability_policy']['expiry_time'] is not None
+            assert props['immutability_policy']['policy_mode'] == "unlocked"
+
+            snapshot_blob.delete_immutability_policy()
+            props = snapshot_blob.get_blob_properties()
+            assert props['immutability_policy']['expiry_time'] is None
+            assert props['immutability_policy']['policy_mode'] is None
+
+            snapshot_blob.set_legal_hold(True)
+            props = snapshot_blob.get_blob_properties()
+            assert props['has_legal_hold']
+        finally:
+            snapshot_blob.set_legal_hold(False)
+            blob.delete_blob(delete_snapshots="include")
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_versioning_immutability_policy_and_legal_hold(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+        variables = kwargs.pop("variables", {})
+
+        self._setup(versioned_storage_account_name, versioned_storage_account_key)
+
+        blob_name = self.get_resource_name('blob')
+        root_blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        old_version_dict = root_blob.upload_blob(b"abc", overwrite=True)
+        root_blob.upload_blob(b"abcdef", overwrite=True)
+
+        try:
+            expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
+            immutability_policy = ImmutabilityPolicy(
+                expiry_time=expiry_time,
+                policy_mode=BlobImmutabilityPolicyMode.Unlocked
+            )
+            old_version_blob = self.bsc.get_blob_client(
+                self.container_name, blob_name,
+                version_id=old_version_dict['version_id']
+            )
+
+            old_version_blob.set_immutability_policy(immutability_policy=immutability_policy)
+            props = old_version_blob.get_blob_properties()
+            assert props['immutability_policy']['expiry_time'] is not None
+            assert props['immutability_policy']['policy_mode'] == "unlocked"
+
+            old_version_blob.delete_immutability_policy()
+            props = old_version_blob.get_blob_properties()
+            assert props['immutability_policy']['expiry_time'] is None
+            assert props['immutability_policy']['policy_mode'] is None
+
+            old_version_blob.set_legal_hold(True)
+            props = old_version_blob.get_blob_properties()
+            assert props['has_legal_hold']
+        finally:
+            old_version_blob.set_legal_hold(False)
+            root_blob.delete_blob(delete_snapshots="include")
+
+    @BlobPreparer()
+    @recorded_by_proxy
     def test_validate_empty_blob(self, **kwargs):
         """Test that we can upload an empty blob with validate=True."""
         storage_account_name = kwargs.pop("storage_account_name")
