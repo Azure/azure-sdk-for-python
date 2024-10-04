@@ -86,7 +86,7 @@ class AzureAIClient(ClientGenerated):
         self._client1: PipelineClient = PipelineClient(base_url=_endpoint1, policies=_policies1, **kwargs1)
 
         # For Agents operations
-        _endpoint2 = f"{endpoint}/assistants/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
+        _endpoint2 = f"{endpoint}/agents/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
         self._config2 = ClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,

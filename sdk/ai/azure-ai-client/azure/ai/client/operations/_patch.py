@@ -18,9 +18,25 @@ from ..models._models import ConnectionsListSecretsResponse, ConnectionsListResp
 from .._types import AgentsApiResponseFormatOption
 from ..models._patch import EndpointProperties
 from ..models._enums import FilePurpose
+from .._vendor import FileType
 from .. import models as _models
 
+from azure.core.tracing.decorator import distributed_trace
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    import _types
+
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+_Unset: Any = object()
+
 logger = logging.getLogger(__name__)
+
 
 class InferenceOperations():
 
@@ -28,7 +44,7 @@ class InferenceOperations():
         self.outer_instance = outer_instance
 
 
-    def get_chat_completions_client(self) -> "ChatComletionsClient":
+    def get_chat_completions_client(self) -> "ChatCompletionsClient":
         endpoint = self.outer_instance.endpoints.get_default(
             endpoint_type=EndpointType.SERVERLESS,
             populate_secrets=True
