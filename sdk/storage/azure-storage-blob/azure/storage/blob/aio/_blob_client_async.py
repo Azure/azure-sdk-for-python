@@ -1136,8 +1136,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         version_id = get_version_id(self.version_id, kwargs)
         kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-        return cast(Dict[str, str],
-                    await self._client.blob.set_immutability_policy(cls=return_response_headers, version_id=version_id, **kwargs))
+        return cast(Dict[str, str], await self._client.blob.set_immutability_policy(
+            cls=return_response_headers,version_id=version_id, **kwargs))
 
     @distributed_trace_async
     async def delete_immutability_policy(self, **kwargs: Any) -> None:
@@ -1185,8 +1185,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        return cast(Dict[str, Union[str, datetime, bool]],
-                    await self._client.blob.set_legal_hold(legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
+        return cast(Dict[str, Union[str, datetime, bool]], await self._client.blob.set_legal_hold(
+            legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
 
     @distributed_trace_async
     async def create_page_blob(

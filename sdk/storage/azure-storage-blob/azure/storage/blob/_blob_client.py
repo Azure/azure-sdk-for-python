@@ -1235,10 +1235,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :returns: Key value pairs of blob tags.
         :rtype: Dict[str, str]
         """
+
         version_id = get_version_id(self.version_id, kwargs)
         kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-        return cast(Dict[str, str], self._client.blob.set_immutability_policy(cls=return_response_headers, version_id=version_id, **kwargs))
+        return cast(Dict[str, str], self._client.blob.set_immutability_policy(
+            cls=return_response_headers, version_id=version_id, **kwargs))
 
     @distributed_trace
     def delete_immutability_policy(self, **kwargs: Any) -> None:
@@ -1286,8 +1288,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        return cast(Dict[str, Union[str, datetime, bool]],
-                    self._client.blob.set_legal_hold(legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
+        return cast(Dict[str, Union[str, datetime, bool]], self._client.blob.set_legal_hold(
+            legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
 
     @distributed_trace
     def create_page_blob(
