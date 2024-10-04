@@ -26,7 +26,8 @@ if (!(Test-Path $venvPath)) {
     $invokingPython = (Get-Command "python").Source
     python -m pip install virtualenv==20.25.1
     python -m virtualenv "$venvPath"
-    Write-Host "Virtual environment '$VenvName' created at directory path '$venvPath'"
+    $pythonVersion = python --version
+    Write-Host "Virtual environment '$VenvName' created at directory path '$venvPath' utilizing python version $pythonVersion."
     Write-Host "##vso[task.setvariable variable=$($VenvName)_LOCATION]$venvPath"
     Write-Host "##vso[task.setvariable variable=$($VenvName)_ACTIVATION_SCRIPT]if(`$IsWindows){. $venvPath/Scripts/Activate.ps1;}else {. $venvPath/bin/activate.ps1}"
 }
