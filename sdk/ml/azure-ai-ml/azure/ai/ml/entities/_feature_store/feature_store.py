@@ -162,7 +162,9 @@ class FeatureStore(Workspace):
         self.managed_network = managed_network
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> Optional["FeatureStore"]:
+    def _from_rest_object(
+        cls, rest_obj: RestWorkspace, v2_service_context: Optional[object] = None
+    ) -> Optional["FeatureStore"]:
         if not rest_obj:
             return None
 
