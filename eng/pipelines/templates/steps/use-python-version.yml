@@ -18,6 +18,7 @@ steps:
       # Unzip (untar) the file to the target directory
       mkdir -p $(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4
       tar -xvjf pypy3.9-v7.3.16-macos_x86_64.tar.bz2 -C $(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4 --strip-components=1
+      chmod -R 0755 $(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4/bin
     displayName: Install pypy39 to hosted tool cache
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'))
 
