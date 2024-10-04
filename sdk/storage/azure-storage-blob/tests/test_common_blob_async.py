@@ -3192,6 +3192,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             await snapshot_blob.set_legal_hold(False)
             await blob.delete_blob(delete_snapshots="include")
 
+        return variables
+
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_versioning_immutability_policy_and_legal_hold(self, **kwargs):
@@ -3233,6 +3235,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         finally:
             await old_version_blob.set_legal_hold(False)
             await root_blob.delete_blob(delete_snapshots="include")
+
+        return variables
 
     @BlobPreparer()
     @recorded_by_proxy_async

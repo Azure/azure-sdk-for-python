@@ -3268,6 +3268,8 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             snapshot_blob.set_legal_hold(False)
             blob.delete_blob(delete_snapshots="include")
 
+        return variables
+
     @BlobPreparer()
     @recorded_by_proxy
     def test_versioning_immutability_policy_and_legal_hold(self, **kwargs):
@@ -3309,6 +3311,8 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         finally:
             old_version_blob.set_legal_hold(False)
             root_blob.delete_blob(delete_snapshots="include")
+
+        return variables
 
     @BlobPreparer()
     @recorded_by_proxy
