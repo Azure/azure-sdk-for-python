@@ -49,8 +49,8 @@ steps:
     displayName: Check UsePythonVersion Necessity
 
   - pwsh: |
-      Write-Host "##vso[task.prependpath]$(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4/x64"
-      Write-Host "##vso[task.prependpath]$(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4/x64/bin"
+      Write-Host "##vso[task.prependpath]$(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4/"
+      Write-Host "##vso[task.prependpath]$(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4/bin"
     displayName: 'PyPy3 Specific Path Prepend'
     condition: and(succeeded(), eq(variables.ManualInstallNecessary, 'true'))
 
