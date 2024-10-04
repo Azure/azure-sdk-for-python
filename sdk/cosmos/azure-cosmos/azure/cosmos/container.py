@@ -829,7 +829,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 options=request_options,
                 **kwargs
             )
-        return result or {}
+        return result
 
     @distributed_trace
     def create_item(  # pylint:disable=docstring-missing-param
