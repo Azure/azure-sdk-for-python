@@ -51,6 +51,8 @@ from azure.core.utils import CaseInsensitiveDict
 from .. import _base as base
 from .._base import _set_properties_cache
 from .. import documents
+from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
+from .._change_feed.change_feed_state import ChangeFeedState
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
@@ -2285,7 +2287,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
         else:
             options = dict(options)
-        options["changeFeed"] = True
 
         resource_key_map = {"Documents": "docs"}
 
@@ -2320,11 +2321,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return AsyncItemPaged(
             self,
-            None,
             options,
             fetch_function=fetch_fn,
             collection_link=collection_link,
-            page_iterator_class=query_iterable.QueryIterable
+            page_iterator_class=ChangeFeedIterable
         )
 
     def QueryOffers(
@@ -2822,6 +2822,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed
             )
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
+
+            change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
+            if change_feed_state is not None:
+                await change_feed_state.populate_request_headers_async(self._routing_map_provider, headers)
+
             result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
             if response_hook:
                 response_hook(self.last_response_headers, result)
