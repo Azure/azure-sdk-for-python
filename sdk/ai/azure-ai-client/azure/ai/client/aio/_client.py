@@ -15,7 +15,7 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import ClientConfiguration
+from ._configuration import AzureAIClientConfiguration
 from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperations
 
 if TYPE_CHECKING:
@@ -23,8 +23,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class Client:  # pylint: disable=client-accepts-api-version-keyword
-    """Client.
+class AzureAIClient:  # pylint: disable=client-accepts-api-version-keyword
+    """AzureAIClient.
 
     :ivar endpoints: EndpointsOperations operations
     :vartype endpoints: azure.ai.client.aio.operations.EndpointsOperations
@@ -62,7 +62,7 @@ class Client:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}/{subscriptionId}/{resourceGroupName}/{workspaceName}"
-        self._config = ClientConfiguration(
+        self._config = AzureAIClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,

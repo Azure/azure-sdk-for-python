@@ -91,38 +91,12 @@ def build_endpoints_list_secrets_request(connection_name_in_url: str, **kwargs: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_evaluations_get_request(  # pylint: disable=name-too-long
-    id: str, *, api_version: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluations/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluations_evaluations_create_request(  # pylint: disable=name-too-long
-    *, api_version: str, **kwargs: Any
-) -> HttpRequest:
+def build_evaluations_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -139,17 +113,13 @@ def build_evaluations_evaluations_create_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_evaluations_list_request(  # pylint: disable=name-too-long
-    *,
-    api_version: str,
-    top: Optional[int] = None,
-    skip: Optional[int] = None,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+def build_evaluations_list_request(
+    *, top: Optional[int] = None, skip: Optional[int] = None, maxpagesize: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -170,13 +140,12 @@ def build_evaluations_evaluations_list_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluations_evaluations_update_request(  # pylint: disable=name-too-long
-    id: str, *, api_version: str, **kwargs: Any
-) -> HttpRequest:
+def build_evaluations_update_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -198,13 +167,37 @@ def build_evaluations_evaluations_update_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_evaluations_get_request(id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluations/{id}"
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 class EndpointsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.client.Client`'s
+        :class:`~azure.ai.client.AzureAIClient`'s
         :attr:`endpoints` attribute.
     """
 
@@ -433,7 +426,7 @@ class AgentsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.client.Client`'s
+        :class:`~azure.ai.client.AzureAIClient`'s
         :attr:`agents` attribute.
     """
 
@@ -451,7 +444,7 @@ class EvaluationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.client.Client`'s
+        :class:`~azure.ai.client.AzureAIClient`'s
         :attr:`evaluations` attribute.
     """
 
@@ -461,102 +454,15 @@ class EvaluationsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-        self.evaluations = EvaluationsEvaluationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-
-
-class EvaluationsEvaluationsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.client.Client`'s
-        :attr:`evaluations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(self, id: str, **kwargs: Any) -> _models.Evaluation:
-        """Get an evaluation.
-
-        :param id: Identifier of the evaluation. Required.
-        :type id: str
-        :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.client.models.Evaluation
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
-
-        _request = build_evaluations_evaluations_get_request(
-            id=id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
-            "resourceGroupName": self._serialize.url(
-                "self._config.resource_group_name", self._config.resource_group_name, "str"
-            ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.Evaluation, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
     @overload
     def create(
-        self, body: _models.Evaluation, *, content_type: str = "application/json", **kwargs: Any
+        self, evaluation: _models.Evaluation, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Evaluation:
         """Creates an evaluation.
 
-        :param body: Properties of Evaluation. Required.
-        :type body: ~azure.ai.client.models.Evaluation
+        :param evaluation: Properties of Evaluation. Required.
+        :type evaluation: ~azure.ai.client.models.Evaluation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -566,11 +472,11 @@ class EvaluationsEvaluationsOperations:
         """
 
     @overload
-    def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Evaluation:
+    def create(self, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Evaluation:
         """Creates an evaluation.
 
-        :param body: Properties of Evaluation. Required.
-        :type body: JSON
+        :param evaluation: Properties of Evaluation. Required.
+        :type evaluation: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -580,11 +486,13 @@ class EvaluationsEvaluationsOperations:
         """
 
     @overload
-    def create(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Evaluation:
+    def create(
+        self, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Evaluation:
         """Creates an evaluation.
 
-        :param body: Properties of Evaluation. Required.
-        :type body: IO[bytes]
+        :param evaluation: Properties of Evaluation. Required.
+        :type evaluation: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -594,12 +502,12 @@ class EvaluationsEvaluationsOperations:
         """
 
     @distributed_trace
-    def create(self, body: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
+    def create(self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
         """Creates an evaluation.
 
-        :param body: Properties of Evaluation. Is one of the following types: Evaluation, JSON,
+        :param evaluation: Properties of Evaluation. Is one of the following types: Evaluation, JSON,
          IO[bytes] Required.
-        :type body: ~azure.ai.client.models.Evaluation or JSON or IO[bytes]
+        :type evaluation: ~azure.ai.client.models.Evaluation or JSON or IO[bytes]
         :return: Evaluation. The Evaluation is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -620,14 +528,14 @@ class EvaluationsEvaluationsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(evaluation, (IOBase, bytes)):
+            _content = evaluation
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(evaluation, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_evaluations_evaluations_create_request(
-            api_version=self._config.api_version,
+        _request = build_evaluations_create_request(
             content_type=content_type,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -699,11 +607,11 @@ class EvaluationsEvaluationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_evaluations_evaluations_list_request(
-                    api_version=self._config.api_version,
+                _request = build_evaluations_list_request(
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -776,14 +684,19 @@ class EvaluationsEvaluationsOperations:
 
     @overload
     def update(
-        self, id: str, body: _models.UpdateEvaluationRequest, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        id: str,
+        update_request: _models.UpdateEvaluationRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Evaluation:
         """Update an evaluation.
 
         :param id: Identifier of the evaluation. Required.
         :type id: str
-        :param body: Update evaluation request. Required.
-        :type body: ~azure.ai.client.models.UpdateEvaluationRequest
+        :param update_request: Update evaluation request. Required.
+        :type update_request: ~azure.ai.client.models.UpdateEvaluationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -794,14 +707,14 @@ class EvaluationsEvaluationsOperations:
 
     @overload
     def update(
-        self, id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, id: str, update_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Evaluation:
         """Update an evaluation.
 
         :param id: Identifier of the evaluation. Required.
         :type id: str
-        :param body: Update evaluation request. Required.
-        :type body: JSON
+        :param update_request: Update evaluation request. Required.
+        :type update_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -812,14 +725,14 @@ class EvaluationsEvaluationsOperations:
 
     @overload
     def update(
-        self, id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, id: str, update_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Evaluation:
         """Update an evaluation.
 
         :param id: Identifier of the evaluation. Required.
         :type id: str
-        :param body: Update evaluation request. Required.
-        :type body: IO[bytes]
+        :param update_request: Update evaluation request. Required.
+        :type update_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -830,15 +743,15 @@ class EvaluationsEvaluationsOperations:
 
     @distributed_trace
     def update(
-        self, id: str, body: Union[_models.UpdateEvaluationRequest, JSON, IO[bytes]], **kwargs: Any
+        self, id: str, update_request: Union[_models.UpdateEvaluationRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Evaluation:
         """Update an evaluation.
 
         :param id: Identifier of the evaluation. Required.
         :type id: str
-        :param body: Update evaluation request. Is one of the following types: UpdateEvaluationRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.ai.client.models.UpdateEvaluationRequest or JSON or IO[bytes]
+        :param update_request: Update evaluation request. Is one of the following types:
+         UpdateEvaluationRequest, JSON, IO[bytes] Required.
+        :type update_request: ~azure.ai.client.models.UpdateEvaluationRequest or JSON or IO[bytes]
         :return: Evaluation. The Evaluation is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -859,16 +772,81 @@ class EvaluationsEvaluationsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(update_request, (IOBase, bytes)):
+            _content = update_request
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(update_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_evaluations_evaluations_update_request(
+        _request = build_evaluations_update_request(
+            id=id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Evaluation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get(self, id: str, **kwargs: Any) -> _models.Evaluation:
+        """Get an evaluation.
+
+        :param id: Identifier of the evaluation. Required.
+        :type id: str
+        :return: Evaluation. The Evaluation is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.Evaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Evaluation] = kwargs.pop("cls", None)
+
+        _request = build_evaluations_get_request(
             id=id,
             api_version=self._config.api_version,
-            content_type=content_type,
-            content=_content,
             headers=_headers,
             params=_params,
         )

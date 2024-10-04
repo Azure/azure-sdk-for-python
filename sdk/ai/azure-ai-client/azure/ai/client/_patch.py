@@ -14,11 +14,11 @@ from typing import List, Tuple, Union, Any
 from azure.core.credentials import TokenCredential, AccessToken
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
-from ._configuration import ClientConfiguration
+from ._configuration import AzureAIClientConfiguration as ClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperations
+from ._client import AzureAIClient as ClientGenerated
 from .operations._patch import InferenceOperations
-from ._client import Client as ClientGenerated
 
 logger = logging.getLogger(__name__)
 
@@ -125,7 +125,7 @@ class AzureAIClient(ClientGenerated):
             workspace_name=workspace_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes=["https://ml.azure.com"],
+            credential_scopes=["https://management.azure.com"],  # TODO: Update once service changes are ready
             **kwargs3,
         )
         _policies3 = kwargs3.pop("policies", None)

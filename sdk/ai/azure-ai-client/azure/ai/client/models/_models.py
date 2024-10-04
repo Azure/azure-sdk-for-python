@@ -35,7 +35,7 @@ class InputData(_model_base.Model):
     __mapping__: Dict[str, _model_base.Model] = {}
     type: str = rest_discriminator(name="type")
     """Discriminator property for InputData. Required. Default value is None."""
-    id: str = rest_field()
+    id: str = rest_field(name="Uri")
     """Evaluation input data. Required."""
 
     @overload
@@ -249,6 +249,8 @@ class CredentialsSASAuth(_model_base.Model):
 class Dataset(InputData, discriminator="dataset"):
     """Dataset as source for evaluation.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
 
     :ivar id: Evaluation input data. Required.
     :vartype id: str
@@ -256,7 +258,7 @@ class Dataset(InputData, discriminator="dataset"):
     :vartype type: str
     """
 
-    type: Literal["dataset"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["dataset"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"dataset\"."""
 
     @overload
