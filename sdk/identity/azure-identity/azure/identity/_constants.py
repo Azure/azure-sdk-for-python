@@ -20,7 +20,7 @@ class AzureAuthorityHostsMeta(type):
             warnings.warn(
                 "AZURE_GERMANY is deprecated. Microsoft Cloud Germany was closed on October 29th, 2021.",
                 DeprecationWarning,
-                stacklevel=2
+                stacklevel=2,
             )
             return "login.microsoftonline.de"
         raise AttributeError(f"{name} not found in {cls.__name__}")
