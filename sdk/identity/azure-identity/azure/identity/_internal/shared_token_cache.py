@@ -243,7 +243,9 @@ class SharedTokenCacheBase(ABC):  # pylint: disable=too-many-instance-attributes
                 expires_on = int(token["expires_on"])
                 refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
                 if expires_on - 300 > int(time.time()):
-                    return AccessTokenInfo(token["secret"], expires_on, refresh_on=refresh_on)
+                    return AccessTokenInfo(
+                        token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
+                    )
         except Exception as ex:  # pylint:disable=broad-except
             message = "Error accessing cached data: {}".format(ex)
             raise CredentialUnavailableError(message=message) from ex

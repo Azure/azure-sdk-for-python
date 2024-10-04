@@ -6,7 +6,6 @@ model:
   configuration:
     type: azure_openai
     azure_deployment: ${env:AZURE_DEPLOYMENT}
-    api_key: ${env:AZURE_OPENAI_API_KEY}
     azure_endpoint: ${env:AZURE_OPENAI_ENDPOINT}
   parameters:
     temperature: 0.0
@@ -33,7 +32,8 @@ Answer must not be more than 5 words
 Answer must be picked from Text as is
 Question should be as descriptive as possible and must include as much context as possible from Text
 Output must always have the provided number of QnAs
-Output must be in JSON format
+Output must be in JSON format.
+Output must have {{num_queries}} objects in the format specified below. Any other count is unacceptable.
 Text:
 <|text_start|>
 On January 24, 1984, former Apple CEO Steve Jobs introduced the first Macintosh. In late 2003, Apple had 2.06 percent of the desktop share in the United States.

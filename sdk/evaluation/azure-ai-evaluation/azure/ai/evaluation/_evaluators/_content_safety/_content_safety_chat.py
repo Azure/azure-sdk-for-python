@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
+import math
 from concurrent.futures import as_completed
 from typing import Dict, List
 
-import numpy as np
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
+from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 try:
@@ -28,6 +29,8 @@ class ContentSafetyChatEvaluator:
     """
     Initialize a content safety chat evaluator configured to evaluate content safetry metrics for chat scenario.
 
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
@@ -37,8 +40,6 @@ class ContentSafetyChatEvaluator:
     :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
         Default is True.
     :type parallel: bool
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 
@@ -87,7 +88,7 @@ class ContentSafetyChatEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: dict, eval_last_turn: bool = False, parallel: bool = True, credential=None):
+    def __init__(self, credential, azure_ai_project: dict, eval_last_turn: bool = False, parallel: bool = True):
         self._eval_last_turn = eval_last_turn
         self._parallel = parallel
         self._evaluators = [
@@ -198,7 +199,7 @@ class ContentSafetyChatEvaluator:
             score_key = f"{metric}_score"
             reason_key = f"{metric}_reason"
 
-            aggregated_score = np.nanmean(scores[score_key])
+            aggregated_score = list_mean_nan_safe(scores[score_key])
             aggregated[metric] = self._get_harm_severity_level(aggregated_score)
             aggregated[score_key] = aggregated_score
 
@@ -291,11 +292,11 @@ class ContentSafetyChatEvaluator:
             "High": [6, 7],
         }
 
-        if harm_score == np.nan or harm_score is None:
-            return np.nan
+        if math.isnan(harm_score) or harm_score is None:
+            return math.nan
 
         for harm_level, harm_score_range in HARM_SEVERITY_LEVEL_MAPPING.items():
             if harm_score_range[0] <= harm_score <= harm_score_range[1]:
                 return harm_level
 
-        return np.nan
+        return math.nan
