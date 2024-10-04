@@ -10,6 +10,8 @@
 import datetime
 from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
+from azure.core.exceptions import ODataV4Format
+
 from .. import _model_base
 from .._model_base import rest_field
 
@@ -53,90 +55,6 @@ class Error(_model_base.Model):
         name: Optional[str] = None,
         detail: Optional[str] = None,
         status: Optional[int] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class ErrorDetail(_model_base.Model):
-    """The details of an error.
-
-
-    :ivar code: One of a server-defined set of error codes. Required.
-    :vartype code: str
-    :ivar message: A human-readable representation of the error. Required.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    :ivar details: An array of details about specific errors that led to this reported error.
-    :vartype details: list[~azure.appconfiguration.models.ErrorDetail]
-    :ivar innererror: An object containing more specific information than the current object about
-     the error.
-    :vartype innererror: ~azure.appconfiguration.models.InnerError
-    """
-
-    code: str = rest_field()
-    """One of a server-defined set of error codes. Required."""
-    message: str = rest_field()
-    """A human-readable representation of the error. Required."""
-    target: Optional[str] = rest_field()
-    """The target of the error."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field()
-    """An array of details about specific errors that led to this reported error."""
-    innererror: Optional["_models.InnerError"] = rest_field()
-    """An object containing more specific information than the current object about the error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        target: Optional[str] = None,
-        details: Optional[List["_models.ErrorDetail"]] = None,
-        innererror: Optional["_models.InnerError"] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class InnerError(_model_base.Model):
-    """An object containing specific information about an error.
-
-    :ivar code: One of a server-defined set of error codes.
-    :vartype code: str
-    :ivar innererror: An object containing more specific information than the current object about
-     the error.
-    :vartype innererror: ~azure.appconfiguration.models.InnerError
-    """
-
-    code: Optional[str] = rest_field()
-    """One of a server-defined set of error codes."""
-    innererror: Optional["_models.InnerError"] = rest_field()
-    """An object containing more specific information than the current object about the error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        innererror: Optional["_models.InnerError"] = None,
     ): ...
 
     @overload
@@ -309,7 +227,7 @@ class OperationDetails(_model_base.Model):
     :vartype status: str or ~azure.appconfiguration.models.OperationState
     :ivar error: An error, available when the status is ``Failed``\\ , describing why the operation
      failed.
-    :vartype error: ~azure.appconfiguration.models.ErrorDetail
+    :vartype error: ~azure.core.ODataV4Format
     """
 
     id: str = rest_field()
@@ -317,7 +235,7 @@ class OperationDetails(_model_base.Model):
     status: Union[str, "_models.OperationState"] = rest_field()
     """The current status of the operation. Required. Known values are: \"NotStarted\", \"Running\",
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
-    error: Optional["_models.ErrorDetail"] = rest_field()
+    error: Optional[ODataV4Format] = rest_field()
     """An error, available when the status is ``Failed``\ , describing why the operation
      failed."""
 
@@ -327,7 +245,7 @@ class OperationDetails(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         status: Union[str, "_models.OperationState"],
-        error: Optional["_models.ErrorDetail"] = None,
+        error: Optional[ODataV4Format] = None,
     ): ...
 
     @overload

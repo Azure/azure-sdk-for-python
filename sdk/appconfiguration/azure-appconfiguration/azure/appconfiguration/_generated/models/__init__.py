@@ -7,8 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._models import Error
-from ._models import ErrorDetail
-from ._models import InnerError
 from ._models import Key
 from ._models import KeyValue
 from ._models import KeyValueFilter
@@ -28,8 +26,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Error",
-    "ErrorDetail",
-    "InnerError",
     "Key",
     "KeyValue",
     "KeyValueFilter",
