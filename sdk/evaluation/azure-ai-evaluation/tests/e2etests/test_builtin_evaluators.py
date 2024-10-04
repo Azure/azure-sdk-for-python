@@ -179,7 +179,7 @@ class TestBuiltInEvaluators:
         assert score["gpt_fluency"] > 0.0
 
     def test_content_safety_evaluator_violence(self, project_scope, azure_cred, simple_conversation):
-        eval_fn = ViolenceEvaluator(project_scope, azure_cred)
+        eval_fn = ViolenceEvaluator(azure_cred, project_scope)
         score = eval_fn(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
@@ -202,7 +202,7 @@ class TestBuiltInEvaluators:
         assert all(score2["evaluation_per_turn"]["violence_reason"]), "violence_reason must not be None or empty."
 
     def test_content_safety_evaluator_sexual(self, project_scope, azure_cred, simple_conversation):
-        eval_fn = SexualEvaluator(project_scope, azure_cred)
+        eval_fn = SexualEvaluator(azure_cred, project_scope)
         score = eval_fn(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
@@ -221,7 +221,7 @@ class TestBuiltInEvaluators:
         assert all(score2["evaluation_per_turn"]["sexual_reason"]), "sexual_reason must not be None or empty."
 
     def test_content_safety_evaluator_self_harm(self, project_scope, azure_cred, simple_conversation):
-        eval_fn = SelfHarmEvaluator(project_scope, azure_cred)
+        eval_fn = SelfHarmEvaluator(azure_cred, project_scope)
         score = eval_fn(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
@@ -243,14 +243,14 @@ class TestBuiltInEvaluators:
         assert all(score2["evaluation_per_turn"]["self_harm_reason"]), "self_harm_reason must not be None or empty."
 
         # Test eval_last_turn behavior
-        eval_fn_last = SelfHarmEvaluator(project_scope, azure_cred, eval_last_turn=True)
+        eval_fn_last = SelfHarmEvaluator(azure_cred, project_scope, eval_last_turn=True)
         score3 = eval_fn_last(conversation=simple_conversation)
         assert score3["self_harm"] != "Very low"
         assert score3["self_harm_score"] > 0
         assert score3["self_harm_reason"], "self_harm_reason must not be None or empty."
 
     def test_content_safety_evaluator_hate_unfairness(self, project_scope, azure_cred, simple_conversation):
-        eval_fn = HateUnfairnessEvaluator(project_scope, azure_cred)
+        eval_fn = HateUnfairnessEvaluator(azure_cred, project_scope)
         score = eval_fn(
             query="What is the capital of Japan?",
             response="The capital of Japan is Tokyo.",
@@ -278,7 +278,7 @@ class TestBuiltInEvaluators:
 
     @pytest.mark.skipif(True, reason="Content safety service IS available now!")
     def test_content_safety_service_unavailable(self, project_scope, azure_cred):
-        eval_fn = ViolenceEvaluator(project_scope, azure_cred)
+        eval_fn = ViolenceEvaluator(azure_cred, project_scope)
         # Doing this is replay mode breaks causes mismatch between scrubbed recordings
         # and the actual request made.
         if is_live():
@@ -345,7 +345,7 @@ class TestBuiltInEvaluators:
         assert not math.isnan(score["gpt_similarity"])
 
     def test_composite_evaluator_content_safety(self, project_scope, azure_cred):
-        safety_eval = ContentSafetyEvaluator(project_scope, parallel=False, credential=azure_cred)
+        safety_eval = ContentSafetyEvaluator(azure_cred, project_scope, parallel=False)
         score = safety_eval(
             query="Tokyo is the capital of which country?",
             response="Japan",
@@ -366,7 +366,7 @@ class TestBuiltInEvaluators:
         assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
 
     def test_protected_material_evaluator(self, project_scope, azure_cred, simple_conversation):
-        ip_eval = ProtectedMaterialEvaluator(project_scope, credential=azure_cred)
+        ip_eval = ProtectedMaterialEvaluator(azure_cred, project_scope)
         good_result = ip_eval(
             query="What shape has 4 equilateral sides?",
             response="Rhombus",
@@ -412,7 +412,7 @@ class TestBuiltInEvaluators:
         ), "protected_material_reason must not be None or empty."
 
     def test_eci_evaluator(self, project_scope, azure_cred, simple_conversation):
-        eci_eval = ECIEvaluator(project_scope, credential=azure_cred)
+        eci_eval = ECIEvaluator(azure_cred, project_scope)
         unrelated_result = eci_eval(
             query="What shape has 4 equilateral sides?",
             response="Rhombus",
@@ -429,7 +429,7 @@ class TestBuiltInEvaluators:
 
     def test_xpia_evaluator(self, project_scope, azure_cred, simple_conversation):
 
-        xpia_eval = IndirectAttackEvaluator(project_scope, credential=azure_cred)
+        xpia_eval = IndirectAttackEvaluator(azure_cred, project_scope)
         unrelated_result = xpia_eval(
             query="What shape has 4 equilateral sides?",
             response="Rhombus",

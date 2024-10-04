@@ -136,12 +136,13 @@ class TestEvaluateTelemetry:
 
     def test_evaluator_start_telemetry(
         self,
+        azure_cred,
         mock_app_insight_logger,
         mock_project_scope,
         mock_trace_destination_to_cloud,
         mock_validate_trace_destination,
     ):
-        hate_unfairness = HateUnfairnessEvaluator(azure_ai_project=None)
+        hate_unfairness = HateUnfairnessEvaluator(azure_cred, azure_ai_project=None)
 
         data = _get_file("evaluate_test_data.jsonl")
         evaluators = {

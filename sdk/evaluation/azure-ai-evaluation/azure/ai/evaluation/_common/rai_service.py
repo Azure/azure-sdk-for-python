@@ -20,7 +20,6 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
-from azure.identity import DefaultAzureCredential
 
 from .constants import (
     CommonConstants,
@@ -438,10 +437,6 @@ async def evaluate_with_rai_service(
        :return: The parsed annotation result.
        :rtype: List[List[Dict]]
     """
-    # Use DefaultAzureCredential if no credential is provided
-    # This is for the for batch run scenario as the credential cannot be serialized by promoptflow
-    if credential is None or credential == {}:
-        credential = DefaultAzureCredential()
 
     # Get RAI service URL from discovery service and check service availability
     token = await fetch_or_reuse_token(credential)
