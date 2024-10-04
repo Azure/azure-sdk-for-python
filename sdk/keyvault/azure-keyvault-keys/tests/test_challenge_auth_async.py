@@ -33,9 +33,9 @@ from test_challenge_auth import (
     empty_challenge_cache,
     get_random_url,
     add_url_port,
-    CAE_CHALLENGE_HEADER,
+    CAE_CHALLENGE_RESPONSE,
     CAE_DECODED_CLAIM,
-    KV_CHALLENGE_HEADER,
+    KV_CHALLENGE_RESPONSE,
     KV_CHALLENGE_TENANT,
     RESOURCE,
 )
@@ -534,7 +534,7 @@ async def test_cae():
                 assert not request.body
                 assert "Authorization" not in request.headers
                 assert request.headers["Content-Length"] == "0"
-                return KV_CHALLENGE_HEADER
+                return KV_CHALLENGE_RESPONSE
             elif Requests.count == 2:
                 # second request should be authorized according to challenge and have the expected content
                 assert request.headers["Content-Length"]
@@ -558,14 +558,14 @@ async def test_cae():
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
                 assert expected_token in request.headers["Authorization"]
-                return KV_CHALLENGE_HEADER
+                return KV_CHALLENGE_RESPONSE
             elif Requests.count == 6:
                 # sixth request should respond to the KV challenge WITHOUT including claims
                 # we return another challenge to confirm that the policy will return consecutive 401s to the user
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
                 assert first_token in request.headers["Authorization"]
-                return KV_CHALLENGE_HEADER
+                return KV_CHALLENGE_RESPONSE
             raise ValueError("unexpected request")
 
         async def get_token(*scopes, **kwargs):
@@ -598,7 +598,7 @@ async def test_cae():
         # get_token is called for the CAE challenge and first two KV challenges, but not the final KV challenge
         assert credential.get_token.call_count == 3
 
-    await test_with_challenge(CAE_CHALLENGE_HEADER, CAE_DECODED_CLAIM)
+    await test_with_challenge(CAE_CHALLENGE_RESPONSE, CAE_DECODED_CLAIM)
 
 
 @pytest.mark.asyncio
@@ -622,7 +622,7 @@ async def test_cae_consecutive_challenges():
                 assert not request.body
                 assert "Authorization" not in request.headers
                 assert request.headers["Content-Length"] == "0"
-                return KV_CHALLENGE_HEADER
+                return KV_CHALLENGE_RESPONSE
             elif Requests.count == 2:
                 # second request will trigger a CAE challenge response in this test scenario
                 assert request.headers["Content-Length"]
@@ -660,4 +660,4 @@ async def test_cae_consecutive_challenges():
         # get_token is called for the KV challenge and first CAE challenge, but not the second CAE challenge
         assert credential.get_token.call_count == 2
 
-    await test_with_challenge(CAE_CHALLENGE_HEADER, CAE_DECODED_CLAIM)
+    await test_with_challenge(CAE_CHALLENGE_RESPONSE, CAE_DECODED_CLAIM)

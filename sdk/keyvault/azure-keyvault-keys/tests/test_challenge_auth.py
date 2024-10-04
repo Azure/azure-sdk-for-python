@@ -94,12 +94,12 @@ CAE_DECODED_CLAIM = '{"access_token": {"foo": "bar"}}'
 CLAIM_TOKEN = base64.b64encode(CAE_DECODED_CLAIM.encode()).decode()
 # Note that no resource or scope is necessarily provided in a CAE challenge
 CLAIM_CHALLENGE = f'Bearer realm="", {URL}, {CLIENT_ID}, {CAE_ERROR}, claims="{CLAIM_TOKEN}"'
-CAE_CHALLENGE_HEADER = Mock(status_code=401, headers={"WWW-Authenticate": CLAIM_CHALLENGE})
+CAE_CHALLENGE_RESPONSE = Mock(status_code=401, headers={"WWW-Authenticate": CLAIM_CHALLENGE})
 
 KV_CHALLENGE_TENANT = "tenant-id"
 ENDPOINT = f"https://authority.net/{KV_CHALLENGE_TENANT}"
 RESOURCE = "https://vault.azure.net"
-KV_CHALLENGE_HEADER = Mock(
+KV_CHALLENGE_RESPONSE = Mock(
     status_code=401,
     headers={"WWW-Authenticate": f'Bearer authorization="{ENDPOINT}", resource={RESOURCE}'},
 )
@@ -578,7 +578,7 @@ def test_cae():
                 assert not request.body
                 assert "Authorization" not in request.headers
                 assert request.headers["Content-Length"] == "0"
-                return KV_CHALLENGE_HEADER
+                return KV_CHALLENGE_RESPONSE
             elif Requests.count == 2:
                 # second request should be authorized according to challenge and have the expected content
                 assert request.headers["Content-Length"]
@@ -602,14 +602,14 @@ def test_cae():
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
                 assert expected_token in request.headers["Authorization"]
-                return KV_CHALLENGE_HEADER
+                return KV_CHALLENGE_RESPONSE
             elif Requests.count == 6:
                 # sixth request should respond to the KV challenge WITHOUT including claims
                 # we return another challenge to confirm that the policy will return consecutive 401s to the user
                 assert request.headers["Content-Length"]
                 assert request.body == expected_content
                 assert first_token in request.headers["Authorization"]
-                return KV_CHALLENGE_HEADER
+                return KV_CHALLENGE_RESPONSE
             raise ValueError("unexpected request")
 
         def get_token(*scopes, **kwargs):
@@ -642,7 +642,7 @@ def test_cae():
         # get_token is called for the CAE challenge and first two KV challenges, but not the final KV challenge
         assert credential.get_token.call_count == 3
 
-    test_with_challenge(CAE_CHALLENGE_HEADER, CAE_DECODED_CLAIM)
+    test_with_challenge(CAE_CHALLENGE_RESPONSE, CAE_DECODED_CLAIM)
 
 
 @empty_challenge_cache
@@ -665,7 +665,7 @@ def test_cae_consecutive_challenges():
                 assert not request.body
                 assert "Authorization" not in request.headers
                 assert request.headers["Content-Length"] == "0"
-                return KV_CHALLENGE_HEADER
+                return KV_CHALLENGE_RESPONSE
             elif Requests.count == 2:
                 # second request will trigger a CAE challenge response in this test scenario
                 assert request.headers["Content-Length"]
@@ -703,4 +703,4 @@ def test_cae_consecutive_challenges():
         # get_token is called for the KV challenge and first CAE challenge, but not the second CAE challenge
         assert credential.get_token.call_count == 2
 
-    test_with_challenge(CAE_CHALLENGE_HEADER, CAE_DECODED_CLAIM)
+    test_with_challenge(CAE_CHALLENGE_RESPONSE, CAE_DECODED_CLAIM)
