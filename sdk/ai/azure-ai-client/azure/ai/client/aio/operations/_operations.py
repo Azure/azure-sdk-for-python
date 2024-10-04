@@ -5169,6 +5169,27 @@ class EndpointsOperations:
         return deserialized  # type: ignore
 
 
+<<<<<<< HEAD
+=======
+class AgentsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.client.aio.AzureAIClient`'s
+        :attr:`agents` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+
+>>>>>>> dargilco/azure-ai-client
 class EvaluationsOperations:
     """
     .. warning::

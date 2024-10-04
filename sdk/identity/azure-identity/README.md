@@ -162,13 +162,42 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 
 ### Examples
 
+These examples demonstrate authenticating `SecretClient` from the [`azure-keyvault-secrets`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets) library with `ManagedIdentityCredential`.
+
+
 #### Authenticate with a user-assigned managed identity
+
+To authenticate with a user-assigned managed identity, you must specify one of the following IDs for the managed identity.
+
+##### Client ID
 
 ```python
 from azure.identity import ManagedIdentityCredential
 from azure.keyvault.secrets import SecretClient
 
-credential = ManagedIdentityCredential(client_id=managed_identity_client_id)
+credential = ManagedIdentityCredential(client_id="managed_identity_client_id")
+client = SecretClient("https://my-vault.vault.azure.net", credential)
+```
+
+##### Resource ID
+
+```python
+from azure.identity import ManagedIdentityCredential
+from azure.keyvault.secrets import SecretClient
+
+resource_id = "/subscriptions/<id>/resourceGroups/<rg>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<mi-name>"
+
+credential = ManagedIdentityCredential(identity_config={"resource_id": resource_id})
+client = SecretClient("https://my-vault.vault.azure.net", credential)
+```
+
+##### Object ID
+
+```python
+from azure.identity import ManagedIdentityCredential
+from azure.keyvault.secrets import SecretClient
+
+credential = ManagedIdentityCredential(identity_config={"object_id": "managed_identity_object_id"})
 client = SecretClient("https://my-vault.vault.azure.net", credential)
 ```
 
