@@ -32,8 +32,35 @@ from ._http_response_impl import HttpResponseImpl
 from ._http_response_impl_async import AsyncHttpResponseImpl
 from ..rest import HttpRequest
 from ..runtime.pipeline import Pipeline
+from httpx._models import Headers
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class _Headers(Headers):
+    """Overriding default httpx dict so that we can override
+       the behavior to accept any value type for the heades.
+    """
+
+    def __setitem__(self, key: str, value: str) -> None:
+        set_key = key.encode(self._encoding or "utf-8")
+        set_value = value
+        lookup_key = set_key.lower()
+
+        found_indexes = [
+            idx
+            for idx, (_, item_key, _) in enumerate(self._list)
+            if item_key == lookup_key
+        ]
+
+        for idx in reversed(found_indexes[1:]):
+            del self._list[idx]
+
+        if found_indexes:
+            idx = found_indexes[0]
+            self._list[idx] = (set_key, lookup_key, set_value)
+        else:
+            self._list.append((set_key, lookup_key, set_value))
 
 
 class HttpXTransportResponse(HttpResponseImpl):
@@ -46,6 +73,7 @@ class HttpXTransportResponse(HttpResponseImpl):
     """
 
     def __init__(self, request: HttpRequest, internal_response: httpx.Response, **kwargs) -> None:
+        headers = _Headers(internal_response.headers)
         super().__init__(
             request=request,
             internal_response=internal_response,
@@ -56,6 +84,14 @@ class HttpXTransportResponse(HttpResponseImpl):
             stream_download_generator=HttpXStreamDownloadGenerator,
             **kwargs
         )
+    
+    def body(self) -> bytes:
+        """Return the whole body as bytes.
+
+        :return: The whole body as bytes.
+        :rtype: bytes
+        """
+        return self.internal_response.content
 
 
 # pylint: disable=unused-argument
@@ -124,11 +160,12 @@ class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
     """
 
     def __init__(self, request: HttpRequest, internal_response: httpx.Response, **kwargs) -> None:
+        headers = _Headers(internal_response.headers)
         super().__init__(
             request=request,
             internal_response=internal_response,
             status_code=internal_response.status_code,
-            headers=internal_response.headers,
+            headers=headers,
             reason=internal_response.reason_phrase,
             content_type=internal_response.headers.get("content-type"),
             stream_download_generator=AsyncHttpXStreamDownloadGenerator,
@@ -144,6 +181,14 @@ class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
         if not self.is_closed:
             self._is_closed = True
             await self._internal_response.aclose()
+    
+    def body(self) -> bytes:
+        """Return the whole body as bytes.
+
+        :return: The whole body as bytes.
+        :rtype: bytes
+        """
+        return self._internal_response.content
 
 
 # pylint: disable=unused-argument
