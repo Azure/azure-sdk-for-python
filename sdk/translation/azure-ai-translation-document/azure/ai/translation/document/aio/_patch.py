@@ -267,7 +267,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             returned for each translation on a document.
         :rtype: AsyncDocumentTranslationLROPoller[~azure.core.async_paging.AsyncItemPaged[DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    """
 
     @overload
     async def begin_translation(
@@ -379,6 +379,43 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
                 **kwargs
             ),
         )
+
+    # pylint: disable=arguments-renamed
+    @distributed_trace_async
+    async def get_translation_status(  # type: ignore[override]
+        self,
+        translation_id: str,
+        **kwargs: Any
+    ) -> TranslationStatus:
+        """Gets the status of the translation operation.
+
+        Includes the overall status, as well as a summary of
+        the documents that are being translated as part of that translation operation.
+
+        :param str translation_id: The translation operation ID.
+        :return: A TranslationStatus with information on the status of the translation operation.
+        :rtype: ~azure.ai.translation.document.TranslationStatus
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        return await super().get_translation_status(translation_id, **kwargs)
+
+    # pylint: disable=arguments-renamed
+    @distributed_trace_async
+    async def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:  # type: ignore[override]
+        """Cancel a currently processing or queued translation operation.
+
+        A translation will not be canceled if it is already completed, failed, or canceling.
+        All documents that have completed translation will not be canceled and will be charged.
+        If possible, all pending documents will be canceled.
+
+        :param str translation_id: The translation operation ID.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        await super().cancel_translation(translation_id, **kwargs)
 
     @distributed_trace
     def list_translation_statuses(
@@ -500,7 +537,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         return cast(
             AsyncItemPaged[DocumentStatus],
             super().list_document_statuses(
-                translation_id=translation_id,
+                id=translation_id,
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=document_ids,
@@ -511,6 +548,22 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
                 **kwargs
             ),
         )
+
+    # pylint: disable=arguments-renamed
+    @distributed_trace_async
+    async def get_document_status(  # type: ignore[override]
+        self, translation_id: str, document_id: str, **kwargs: Any
+    ) -> DocumentStatus:
+        """Get the status of an individual document within a translation operation.
+
+        :param str translation_id: The translation operation ID.
+        :param str document_id: The ID for the document.
+        :return: A DocumentStatus with information on the status of the document.
+        :rtype: ~azure.ai.translation.document.DocumentStatus
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        return await super().get_document_status(translation_id, document_id, **kwargs)
 
     @distributed_trace_async
     async def get_supported_glossary_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:

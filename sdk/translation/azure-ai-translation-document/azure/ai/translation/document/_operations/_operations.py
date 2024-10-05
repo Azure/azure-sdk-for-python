@@ -127,7 +127,7 @@ def build_document_translation_list_translation_statuses_request(  # pylint: dis
 
 
 def build_document_translation_get_document_status_request(  # pylint: disable=name-too-long
-    translation_id: str, document_id: str, **kwargs: Any
+    id: str, document_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -138,7 +138,7 @@ def build_document_translation_get_document_status_request(  # pylint: disable=n
     # Construct URL
     _url = "/document/batches/{id}/documents/{documentId}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("translation_id", translation_id, "str"),
+        "id": _SERIALIZER.url("id", id, "str"),
         "documentId": _SERIALIZER.url("document_id", document_id, "str"),
     }
 
@@ -154,7 +154,7 @@ def build_document_translation_get_document_status_request(  # pylint: disable=n
 
 
 def build_document_translation_get_translation_status_request(  # pylint: disable=name-too-long
-    translation_id: str, **kwargs: Any
+    id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -165,7 +165,7 @@ def build_document_translation_get_translation_status_request(  # pylint: disabl
     # Construct URL
     _url = "/document/batches/{id}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("translation_id", translation_id, "str"),
+        "id": _SERIALIZER.url("id", id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -180,7 +180,7 @@ def build_document_translation_get_translation_status_request(  # pylint: disabl
 
 
 def build_document_translation_cancel_translation_request(  # pylint: disable=name-too-long
-    translation_id: str, **kwargs: Any
+    id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -191,7 +191,7 @@ def build_document_translation_cancel_translation_request(  # pylint: disable=na
     # Construct URL
     _url = "/document/batches/{id}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("translation_id", translation_id, "str"),
+        "id": _SERIALIZER.url("id", id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -206,7 +206,7 @@ def build_document_translation_cancel_translation_request(  # pylint: disable=na
 
 
 def build_document_translation_list_document_statuses_request(  # pylint: disable=name-too-long
-    translation_id: str,
+    id: str,
     *,
     top: Optional[int] = None,
     skip: Optional[int] = None,
@@ -227,7 +227,7 @@ def build_document_translation_list_document_statuses_request(  # pylint: disabl
     # Construct URL
     _url = "/document/batches/{id}/documents"
     path_format_arguments = {
-        "id": _SERIALIZER.url("translation_id", translation_id, "str"),
+        "id": _SERIALIZER.url("id", id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -860,14 +860,14 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> _models.DocumentStatus:
+    def get_document_status(self, id: str, document_id: str, **kwargs: Any) -> _models.DocumentStatus:
         """Returns the status for a specific document.
 
         Returns the translation status for a specific document based on the request Id
         and document Id.
 
-        :param translation_id: Format - uuid.  The batch id. Required.
-        :type translation_id: str
+        :param id: Format - uuid.  The batch id. Required.
+        :type id: str
         :param document_id: Format - uuid.  The document id. Required.
         :type document_id: str
         :return: DocumentStatus. The DocumentStatus is compatible with MutableMapping
@@ -915,7 +915,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         cls: ClsType[_models.DocumentStatus] = kwargs.pop("cls", None)
 
         _request = build_document_translation_get_document_status_request(
-            translation_id=translation_id,
+            id=id,
             document_id=document_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -953,7 +953,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_translation_status(self, translation_id: str, **kwargs: Any) -> _models.TranslationStatus:
+    def get_translation_status(self, id: str, **kwargs: Any) -> _models.TranslationStatus:
         """Returns the status for a document translation request.
 
         Returns the status for a document translation request.
@@ -961,8 +961,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         overall request status, as well as the status for documents that are being
         translated as part of that request.
 
-        :param translation_id: Format - uuid.  The operation id. Required.
-        :type translation_id: str
+        :param id: Format - uuid.  The operation id. Required.
+        :type id: str
         :return: TranslationStatus. The TranslationStatus is compatible with MutableMapping
         :rtype: ~azure.ai.translation.document.models.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1012,7 +1012,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         cls: ClsType[_models.TranslationStatus] = kwargs.pop("cls", None)
 
         _request = build_document_translation_get_translation_status_request(
-            translation_id=translation_id,
+            id=id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1049,7 +1049,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @distributed_trace
-    def cancel_translation(self, translation_id: str, **kwargs: Any) -> _models.TranslationStatus:
+    def cancel_translation(self, id: str, **kwargs: Any) -> _models.TranslationStatus:
         """Cancel a currently processing or queued translation.
 
         Cancel a currently processing or queued translation.
@@ -1061,8 +1061,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         All pending documents will be cancelled if
         possible.
 
-        :param translation_id: Format - uuid.  The operation-id. Required.
-        :type translation_id: str
+        :param id: Format - uuid.  The operation-id. Required.
+        :type id: str
         :return: TranslationStatus. The TranslationStatus is compatible with MutableMapping
         :rtype: ~azure.ai.translation.document.models.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1112,7 +1112,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         cls: ClsType[_models.TranslationStatus] = kwargs.pop("cls", None)
 
         _request = build_document_translation_cancel_translation_request(
-            translation_id=translation_id,
+            id=id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1151,7 +1151,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
     @distributed_trace
     def list_document_statuses(
         self,
-        translation_id: str,
+        id: str,
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
@@ -1209,8 +1209,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         This reduces the risk of the client making assumptions about
         the data returned.
 
-        :param translation_id: Format - uuid.  The operation id. Required.
-        :type translation_id: str
+        :param id: Format - uuid.  The operation id. Required.
+        :type id: str
         :keyword top: top indicates the total number of records the user wants to be returned across
          all pages.
 
@@ -1300,7 +1300,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             if not next_link:
 
                 _request = build_document_translation_list_document_statuses_request(
-                    translation_id=translation_id,
+                    id=id,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,

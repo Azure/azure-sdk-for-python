@@ -84,7 +84,9 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :rtype: ~azure.ai.translation.document.TranslationStatus
         """
         if self._polling_method._current_body:
-            return TranslationStatus(self._polling_method._current_body)
+            return TranslationStatus(
+                self._polling_method._current_body
+            )
         return TranslationStatus(id=self._polling_method._get_id_from_headers())  # type: ignore
 
     @classmethod
