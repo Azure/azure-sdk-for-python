@@ -23,7 +23,7 @@ steps:
       $TOOL_LOCATION/bin/python -m ensurepip
       touch $TOOL_LOCATION/../x64.complete
     displayName: Install pypy39 to hosted tool cache
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'), startsWith(parameters['versionSpec'], 'pypy'))
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'), startsWith(parameters.VersionSpec, 'pypy'))
 
   # # select the appropriate version from manifest if present
   # - task: PythonScript@0
@@ -49,6 +49,6 @@ steps:
   #     arguments: '${{ parameters.versionSpec }}'
 
   - task: UsePythonVersion@0
-    displayName: "Use Python $(PythonVersion)"
+    displayName: "Use Python ${{ parameters.versionSpec }}"
     inputs:
       versionSpec: ${{ parameters.versionSpec }}
