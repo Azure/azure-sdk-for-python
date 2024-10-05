@@ -12,12 +12,15 @@ steps:
       python -m pip install packaging==23.1
     displayName: Prep Environment
 
+  # as of macos-14, pypy of all stripes is no longer available on the predefined MAC agents
+  # this script installs the newest version of pypy39 from the official pypy site into the hosted tool cache
   - script: |
+      TOOL_LOCATION=$(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4/x64
       curl -L -o pypy3.9-v7.3.16-macos_x86_64.tar.bz2 https://downloads.python.org/pypy/pypy3.9-v7.3.16-macos_x86_64.tar.bz2
-      mkdir -p $(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4/x64
-      tar -xvjf pypy3.9-v7.3.16-macos_x86_64.tar.bz2 -C $(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4/x64 --strip-components=1
-      chmod -R 0755 $(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4/x64/bin
-      $(AGENT_TOOLSDIRECTORY)/PyPy/3.9.4/bin/python -m ensurepip
+      mkdir -p $TOOL_LOCATION
+      tar -xvjf pypy3.9-v7.3.16-macos_x86_64.tar.bz2 -C $TOOL_LOCATION --strip-components=1
+      chmod -R 0755 $TOOL_LOCATION/bin
+      $TOOL_LOCATION/bin/python -m ensurepip
     displayName: Install pypy39 to hosted tool cache
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'), startsWith(parameters['versionSpec'], 'pypy'))
 
