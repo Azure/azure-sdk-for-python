@@ -22,7 +22,7 @@ steps:
       chmod -R 0755 $TOOL_LOCATION/bin
       $TOOL_LOCATION/bin/python -m ensurepip
     displayName: Install pypy39 to hosted tool cache
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'), startsWith(parameters.VersionSpec, 'pypy'))
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'), startsWith(parameters.versionSpec, 'pypy'))
 
   # select the appropriate version from manifest if present
   - task: PythonScript@0
