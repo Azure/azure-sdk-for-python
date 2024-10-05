@@ -63,6 +63,44 @@ class InferenceOperations():
 
         return client
 
+    def get_embeddings_client(self) -> "EmbeddingsClient":
+        endpoint = self.outer_instance.endpoints.get_default(
+            endpoint_type=EndpointType.SERVERLESS,
+            populate_secrets=True
+        )
+        if not endpoint:
+            raise ValueError("No serverless endpoint found")
+
+        try:
+            from azure.ai.inference import EmbeddingsClient
+        except ModuleNotFoundError as _:
+            raise ModuleNotFoundError("Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'")
+
+        if endpoint.authentication_type == AuthenticationType.API_KEY:
+            logger.debug("[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using API key authentication")
+            from azure.core.credentials import AzureKeyCredential
+            client = EmbeddingsClient(
+                endpoint=endpoint.endpoint_url,
+                credential=AzureKeyCredential(endpoint.key)
+            )
+        elif endpoint.authentication_type == AuthenticationType.AAD:
+            # MaaS models do not yet support EntraID auth
+            logger.debug("[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using Entra ID authentication")
+            client = EmbeddingsClient(
+                endpoint=endpoint.endpoint_url,
+                credential=endpoint.properties.token_credential
+            )
+        elif endpoint.authentication_type == AuthenticationType.SAS:
+            # TODO - Not yet supported by the service. Expected 9/27.
+            logger.debug("[InferenceOperations.get_embeddings_client] Creating EmbeddingsClient using SAS authentication")
+            client = EmbeddingsClient(
+                endpoint=endpoint.endpoint_url,
+                credential=endpoint.token_credential
+            )
+        else:
+            raise ValueError("Unknown authentication type")
+
+        return client
 
     def get_azure_openai_client(self) -> "AzureOpenAI":
         endpoint = self.outer_instance.endpoints.get_default(

@@ -33,7 +33,7 @@ ai_client = AzureAIClient(
     logging_enable=True,  # Optional. Remove this line if you don't want to show how to enable logging
 )
 
-# You can get an authenticated azure.ai.inference client directly, if you have a serverless endpoint in your project:
+# You can get an authenticated azure.ai.inference chat completions client directly, if you have a serverless endpoint in your project:
 client = ai_client.inference.get_chat_completions_client()
 
 response = client.complete(
@@ -43,6 +43,24 @@ response = client.complete(
 )
 
 print(response.choices[0].message.content)
+
+# You can get an authenticated azure.ai.inference embeddings client directly, if you have a serverless endpoint in your project:
+client = ai_client.inference.get_embeddings_client()
+
+response = client.embed(
+    input=[
+        "first phrase",
+        "second phrase",
+        "third phrase"
+    ]
+)
+
+for item in response.data:
+    length = len(item.embedding)
+    print(
+        f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+    )
 
 # You can get an authenticated AzureOpenAI client directly, if you have an Azure OpenAI endpoint in your project:
 client = ai_client.inference.get_azure_openai_client()
