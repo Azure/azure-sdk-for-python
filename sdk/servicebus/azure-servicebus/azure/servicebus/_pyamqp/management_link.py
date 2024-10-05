@@ -9,6 +9,7 @@ import logging
 from functools import partial
 from collections import namedtuple
 from typing import Optional, Union
+from threading import Lock
 
 from .sender import SenderLink
 from .receiver import ReceiverLink
@@ -66,6 +67,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
 
         self._sender_connected = False
         self._receiver_connected = False
+        self._mgmt_operation_lock = Lock()
 
     def __enter__(self):
         self.open()
@@ -135,29 +137,30 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
             return
 
     def _on_message_received(self, _, message):
-        message_properties = message.properties
-        correlation_id = message_properties[5]
-        response_detail = message.application_properties
+        with self._mgmt_operation_lock:
+            message_properties = message.properties
+            correlation_id = message_properties[5]
+            response_detail = message.application_properties
 
-        status_code = response_detail.get(self._status_code_field)
-        status_description = response_detail.get(self._status_description_field)
+            status_code = response_detail.get(self._status_code_field)
+            status_description = response_detail.get(self._status_description_field)
 
-        to_remove_operation = None
-        for operation in self._pending_operations:
-            if operation.message.properties.message_id == correlation_id:
-                to_remove_operation = operation
-                break
-        if to_remove_operation:
-            mgmt_result = ManagementExecuteOperationResult.OK \
-                if 200 <= status_code <= 299 else ManagementExecuteOperationResult.FAILED_BAD_STATUS
-            to_remove_operation.on_execute_operation_complete(
-                mgmt_result,
-                status_code,
-                status_description,
-                message,
-                response_detail.get(b'error-condition')
-            )
-            self._pending_operations.remove(to_remove_operation)
+            to_remove_operation = None
+            for operation in self._pending_operations:
+                if operation.message.properties.message_id == correlation_id:
+                    to_remove_operation = operation
+                    break
+            if to_remove_operation:
+                mgmt_result = ManagementExecuteOperationResult.OK \
+                    if 200 <= status_code <= 299 else ManagementExecuteOperationResult.FAILED_BAD_STATUS
+                to_remove_operation.on_execute_operation_complete(
+                    mgmt_result,
+                    status_code,
+                    status_description,
+                    message,
+                    response_detail.get(b'error-condition')
+                )
+                self._pending_operations.remove(to_remove_operation)
 
     def _on_send_complete(self, message_delivery, reason, state):  # todo: reason is never used, should check spec
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED and SEND_DISPOSITION_REJECT in state:
