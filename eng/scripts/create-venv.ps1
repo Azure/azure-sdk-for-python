@@ -22,9 +22,6 @@ param(
 
 $venvPath = Join-Path $RepoRoot $VenvName
 if (!(Test-Path $venvPath)) {
-    Write-Host $env:PATH
-
-    Get-ChildItem env:
     $invokingPython = (Get-Command "python").Source
     Write-Host "Creating virtual environment '$VenvName' using python located at '$invokingPython'."
     python -m pip install virtualenv==20.25.1
