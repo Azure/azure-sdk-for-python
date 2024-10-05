@@ -3401,19 +3401,29 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         session_tokens.append(subsets[k][1])
                         merged_indices.append(subsets[k][2])
                     if feed_range_cmp == merged_range:
-                        all_global_lsns_larger = True
+                        # if it is the bigger one remove the smaller ranges
+                        # if it is the smaller ranges remove the bigger range
+                        # if it is neither compound
+                        child_lsns_larger = True
+                        child_lsns_smaller = True
                         for session_token in session_tokens:
                             tokens = session_token.split(":")
                             vector_session_token = VectorSessionToken.create(tokens[1])
                             if vector_session_token.global_lsn <  vector_session_token_cmp.global_lsn:
-                                all_global_lsns_larger = False
-                                break
+                                child_lsns_smaller = False
+                            else:
+                                child_lsns_larger = False
                         feed_ranges_to_remove = [overlapping_ranges[i] for i in merged_indices]
                         for feed_range_to_remove in feed_ranges_to_remove:
                             overlapping_ranges.remove(feed_range_to_remove)
-                        if all_global_lsns_larger:
+                        if child_lsns_larger:
+                            session_tokens.remove(session_token_cmp)
                             overlapping_ranges.append((merged_range, ','.join(map(str, session_tokens))))
                             overlapping_ranges.remove(overlapping_ranges[0])
+                        elif child_lsns_smaller:
+                            overlapping_ranges.append((merged_range, ','.join(map(str, session_tokens))))
+                            overlapping_ranges.remove(overlapping_ranges[0])
+
                         not_found = False
                         break
                 j += 1
