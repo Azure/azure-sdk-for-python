@@ -36,6 +36,11 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml@self
 
+  - pwsh: |
+      WRite-Host "YEah!"
+    displayName: Check condition
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Darwin'), startsWith('${{ parameters.ServiceDirectory }}', 'core'))
+
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - template: auth-dev-feed.yml
       parameters:
