@@ -1655,7 +1655,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def get_agent(self, agent_id: str, **kwargs: Any) -> _models.Agent:
         """Retrieves an existing agent.
 
-        :param agent_id: Required.
+        :param agent_id: Identifier of the agent. Required.
         :type agent_id: str
         :return: Agent. The Agent is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.Agent
@@ -1969,7 +1969,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def delete_agent(self, agent_id: str, **kwargs: Any) -> _models.AgentDeletionStatus:
         """Deletes an agent.
 
-        :param agent_id: Required.
+        :param agent_id: Identifier of the agent. Required.
         :type agent_id: str
         :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.AgentDeletionStatus
@@ -2199,7 +2199,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def get_thread(self, thread_id: str, **kwargs: Any) -> _models.AgentThread:
         """Gets information about an existing thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :return: AgentThread. The AgentThread is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.AgentThread
@@ -2432,7 +2432,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def delete_thread(self, thread_id: str, **kwargs: Any) -> _models.ThreadDeletionStatus:
         """Deletes an existing thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :return: ThreadDeletionStatus. The ThreadDeletionStatus is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadDeletionStatus
@@ -2499,7 +2499,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadMessage:
         """Creates a new message on a specified thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :param body: Required.
         :type body: JSON
@@ -2525,7 +2525,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadMessage:
         """Creates a new message on a specified thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :keyword role: The role of the entity that is creating the message. Allowed values include:
 
@@ -2562,7 +2562,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadMessage:
         """Creates a new message on a specified thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :param body: Required.
         :type body: IO[bytes]
@@ -2588,7 +2588,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadMessage:
         """Creates a new message on a specified thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -2703,7 +2703,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.OpenAIPageableListOfThreadMessage:
         """Gets a list of messages that exist on a thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :keyword run_id: Filter messages by the run ID that generated them. Default value is None.
         :paramtype run_id: str
@@ -2792,9 +2792,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def get_message(self, thread_id: str, message_id: str, **kwargs: Any) -> _models.ThreadMessage:
         """Gets an existing message from an existing thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param message_id: Required.
+        :param message_id: Identifier of the message. Required.
         :type message_id: str
         :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadMessage
@@ -2862,9 +2862,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadMessage:
         """Modifies an existing message on an existing thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param message_id: Required.
+        :param message_id: Identifier of the message. Required.
         :type message_id: str
         :param body: Required.
         :type body: JSON
@@ -2888,9 +2888,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadMessage:
         """Modifies an existing message on an existing thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param message_id: Required.
+        :param message_id: Identifier of the message. Required.
         :type message_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -2911,9 +2911,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadMessage:
         """Modifies an existing message on an existing thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param message_id: Required.
+        :param message_id: Identifier of the message. Required.
         :type message_id: str
         :param body: Required.
         :type body: IO[bytes]
@@ -2937,9 +2937,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadMessage:
         """Modifies an existing message on an existing thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param message_id: Required.
+        :param message_id: Identifier of the message. Required.
         :type message_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -3027,7 +3027,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :param body: Required.
         :type body: JSON
@@ -3064,7 +3064,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :keyword agent_id: The ID of the agent that should run the thread. Required.
         :paramtype agent_id: str
@@ -3147,7 +3147,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :param body: Required.
         :type body: IO[bytes]
@@ -3184,7 +3184,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -3358,7 +3358,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.OpenAIPageableListOfThreadRun:
         """Gets a list of runs for a specified thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the default is 20. Default value is None.
@@ -3444,9 +3444,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def get_run(self, thread_id: str, run_id: str, **kwargs: Any) -> _models.ThreadRun:
         """Gets an existing run from an existing thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
@@ -3514,9 +3514,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadRun:
         """Modifies an existing thread run.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
         :param body: Required.
         :type body: JSON
@@ -3540,9 +3540,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadRun:
         """Modifies an existing thread run.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -3563,9 +3563,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadRun:
         """Modifies an existing thread run.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
         :param body: Required.
         :type body: IO[bytes]
@@ -3589,9 +3589,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.ThreadRun:
         """Modifies an existing thread run.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -3681,9 +3681,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
         :param body: Required.
         :type body: JSON
@@ -3710,16 +3710,17 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
-        :keyword tool_outputs: Required.
+        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Required.
         :paramtype tool_outputs: list[~azure.ai.client.models.ToolOutput]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword stream_parameter: Default value is None.
+        :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
+         server-sent events, terminating when the run enters a terminal state. Default value is None.
         :paramtype stream_parameter: bool
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
@@ -3734,9 +3735,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
         :param body: Required.
         :type body: IO[bytes]
@@ -3763,15 +3764,16 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword tool_outputs: Required.
+        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Required.
         :paramtype tool_outputs: list[~azure.ai.client.models.ToolOutput]
-        :keyword stream_parameter: Default value is None.
+        :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
+         server-sent events, terminating when the run enters a terminal state. Default value is None.
         :paramtype stream_parameter: bool
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
@@ -3852,9 +3854,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def cancel_run(self, thread_id: str, run_id: str, **kwargs: Any) -> _models.ThreadRun:
         """Cancels a run of an in progress thread.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
@@ -4231,11 +4233,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def get_run_step(self, thread_id: str, run_id: str, step_id: str, **kwargs: Any) -> _models.RunStep:
         """Gets a single run step from a thread run.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
-        :param step_id: Required.
+        :param step_id: Identifier of the run step. Required.
         :type step_id: str
         :return: RunStep. The RunStep is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.RunStep
@@ -4312,9 +4314,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.OpenAIPageableListOfRunStep:
         """Gets a list of run steps from a thread run.
 
-        :param thread_id: Required.
+        :param thread_id: Identifier of the thread. Required.
         :type thread_id: str
-        :param run_id: Required.
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the default is 20. Default value is None.
@@ -4403,8 +4405,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.FileListResponse:
         """Gets a list of previously uploaded files.
 
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Default value is None.
+        :keyword purpose: The purpose of the file. Known values are: "fine-tune", "fine-tune-results",
+         "assistants", "assistants_output", "batch", "batch_output", and "vision". Default value is
+         None.
         :paramtype purpose: str or ~azure.ai.client.models.FilePurpose
         :return: FileListResponse. The FileListResponse is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.FileListResponse
@@ -4482,12 +4485,14 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
-        :keyword file: Required.
+        :keyword file: The file data, in bytes. Required.
         :paramtype file: ~azure.ai.client._vendor.FileType
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
+         Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
+         ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
+         "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.client.models.FilePurpose
-        :keyword filename: Default value is None.
+        :keyword filename: The name of the file. Default value is None.
         :paramtype filename: str
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.OpenAIFile
@@ -4508,12 +4513,14 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param body: Is one of the following types: JSON Required.
         :type body: JSON
-        :keyword file: Required.
+        :keyword file: The file data, in bytes. Required.
         :paramtype file: ~azure.ai.client._vendor.FileType
-        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
-         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :keyword purpose: The intended purpose of the uploaded file. Use ``assistants`` for Agents and
+         Message files, ``vision`` for Agents image file inputs, ``batch`` for Batch API, and
+         ``fine-tune`` for Fine-tuning. Known values are: "fine-tune", "fine-tune-results",
+         "assistants", "assistants_output", "batch", "batch_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.client.models.FilePurpose
-        :keyword filename: Default value is None.
+        :keyword filename: The name of the file. Default value is None.
         :paramtype filename: str
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.OpenAIFile
@@ -5054,7 +5061,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def get_vector_store(self, vector_store_id: str, **kwargs: Any) -> _models.VectorStore:
         """Returns the vector store object matching the specified ID.
 
-        :param vector_store_id: The ID of the vector store to retrieve. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.VectorStore
@@ -5121,7 +5128,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStore:
         """The ID of the vector store to modify.
 
-        :param vector_store_id: The ID of the vector store to modify. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :param body: Required.
         :type body: JSON
@@ -5146,7 +5153,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStore:
         """The ID of the vector store to modify.
 
-        :param vector_store_id: The ID of the vector store to modify. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -5171,7 +5178,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStore:
         """The ID of the vector store to modify.
 
-        :param vector_store_id: The ID of the vector store to modify. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :param body: Required.
         :type body: IO[bytes]
@@ -5196,7 +5203,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStore:
         """The ID of the vector store to modify.
 
-        :param vector_store_id: The ID of the vector store to modify. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
@@ -5285,7 +5292,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def delete_vector_store(self, vector_store_id: str, **kwargs: Any) -> _models.VectorStoreDeletionStatus:
         """Deletes the vector store object matching the specified ID.
 
-        :param vector_store_id: The ID of the vector store to delete. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :return: VectorStoreDeletionStatus. The VectorStoreDeletionStatus is compatible with
          MutableMapping
@@ -5361,7 +5368,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.OpenAIPageableListOfVectorStoreFile:
         """Returns a list of vector store files.
 
-        :param vector_store_id: The ID of the vector store that the files belong to. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :keyword filter: Filter by file status. Known values are: "in_progress", "completed", "failed",
          and "cancelled". Default value is None.
@@ -5453,7 +5460,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
-        :param vector_store_id: The ID of the vector store for which to create a File. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :param body: Required.
         :type body: JSON
@@ -5477,10 +5484,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
-        :param vector_store_id: The ID of the vector store for which to create a File. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
-        :keyword file_id: A File ID that the vector store should use. Useful for tools like
-         ``file_search`` that can access files. Required.
+        :keyword file_id: Identifier of the file. Required.
         :paramtype file_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -5499,7 +5505,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
-        :param vector_store_id: The ID of the vector store for which to create a File. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :param body: Required.
         :type body: IO[bytes]
@@ -5523,12 +5529,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStoreFile:
         """Create a vector store file by attaching a file to a vector store.
 
-        :param vector_store_id: The ID of the vector store for which to create a File. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword file_id: A File ID that the vector store should use. Useful for tools like
-         ``file_search`` that can access files. Required.
+        :keyword file_id: Identifier of the file. Required.
         :paramtype file_id: str
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
@@ -5611,9 +5616,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def get_vector_store_file(self, vector_store_id: str, file_id: str, **kwargs: Any) -> _models.VectorStoreFile:
         """Retrieves a vector store file.
 
-        :param vector_store_id: The ID of the vector store that the file belongs to. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
-        :param file_id: The ID of the file being retrieved. Required.
+        :param file_id: Identifier of the file. Required.
         :type file_id: str
         :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.VectorStoreFile
@@ -5683,9 +5688,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         will not be deleted.
         To delete the file, use the delete file endpoint.
 
-        :param vector_store_id: The ID of the vector store that the file belongs to. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
-        :param file_id: The ID of the file to delete its relationship to the vector store. Required.
+        :param file_id: Identifier of the file. Required.
         :type file_id: str
         :return: VectorStoreFileDeletionStatus. The VectorStoreFileDeletionStatus is compatible with
          MutableMapping
@@ -5754,7 +5759,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch.
 
-        :param vector_store_id: The ID of the vector store for which to create a File Batch. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :param body: Required.
         :type body: JSON
@@ -5778,10 +5783,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch.
 
-        :param vector_store_id: The ID of the vector store for which to create a File Batch. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
-        :keyword file_ids: A list of File IDs that the vector store should use. Useful for tools like
-         ``file_search`` that can access files. Required.
+        :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -5800,7 +5804,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch.
 
-        :param vector_store_id: The ID of the vector store for which to create a File Batch. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :param body: Required.
         :type body: IO[bytes]
@@ -5824,12 +5828,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStoreFileBatch:
         """Create a vector store file batch.
 
-        :param vector_store_id: The ID of the vector store for which to create a File Batch. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword file_ids: A list of File IDs that the vector store should use. Useful for tools like
-         ``file_search`` that can access files. Required.
+        :keyword file_ids: List of file identifiers. Required.
         :paramtype file_ids: list[str]
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Default value is None.
@@ -5914,9 +5917,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.VectorStoreFileBatch:
         """Retrieve a vector store file batch.
 
-        :param vector_store_id: The ID of the vector store that the file batch belongs to. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
-        :param batch_id: The ID of the file batch being retrieved. Required.
+        :param batch_id: Identifier of the file batch. Required.
         :type batch_id: str
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.VectorStoreFileBatch
@@ -5985,9 +5988,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """Cancel a vector store file batch. This attempts to cancel the processing of files in this batch
         as soon as possible.
 
-        :param vector_store_id: The ID of the vector store that the file batch belongs to. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
-        :param batch_id: The ID of the file batch to cancel. Required.
+        :param batch_id: Identifier of the file batch. Required.
         :type batch_id: str
         :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.VectorStoreFileBatch
@@ -6064,9 +6067,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.OpenAIPageableListOfVectorStoreFile:
         """Returns a list of vector store files in a batch.
 
-        :param vector_store_id: The ID of the vector store that the file batch belongs to. Required.
+        :param vector_store_id: Identifier of the vector store. Required.
         :type vector_store_id: str
-        :param batch_id: The ID of the file batch that the files belong to. Required.
+        :param batch_id: Identifier of the file batch. Required.
         :type batch_id: str
         :keyword filter: Filter by file status. Known values are: "in_progress", "completed", "failed",
          and "cancelled". Default value is None.

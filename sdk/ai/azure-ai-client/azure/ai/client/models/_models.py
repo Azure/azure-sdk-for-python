@@ -839,12 +839,12 @@ class FileContentResponse(_model_base.Model):
     """A response from a file get content operation.
 
 
-    :ivar content: Required.
+    :ivar content: The content of the file, in bytes. Required.
     :vartype content: bytes
     """
 
     content: bytes = rest_field(format="base64")
-    """Required."""
+    """The content of the file, in bytes. Required."""
 
     @overload
     def __init__(
@@ -4350,7 +4350,8 @@ class ThreadRun(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      storing additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required.
     :vartype metadata: dict[str, str]
-    :ivar tool_resources:
+    :ivar tool_resources: Override the tools the agent can use for this run. This is useful for
+     modifying the behavior on a per-run basis.
     :vartype tool_resources: ~azure.ai.client.models.UpdateToolResourcesOptions
     :ivar parallel_tool_calls: Determines if tools can be executed in parallel within the run.
     :vartype parallel_tool_calls: bool
@@ -4419,6 +4420,8 @@ class ThreadRun(_model_base.Model):  # pylint: disable=too-many-instance-attribu
      additional information about that object in a structured format. Keys may be up to 64
      characters in length and values may be up to 512 characters in length. Required."""
     tool_resources: Optional["_models.UpdateToolResourcesOptions"] = rest_field()
+    """Override the tools the agent can use for this run. This is useful for modifying the behavior on
+     a per-run basis."""
     parallel_tool_calls: Optional[bool] = rest_field(name="parallelToolCalls")
     """Determines if tools can be executed in parallel within the run."""
 

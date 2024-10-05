@@ -38,16 +38,14 @@ _Unset: Any = object()
 logger = logging.getLogger(__name__)
 
 
-class InferenceOperations():
+class InferenceOperations:
 
     def __init__(self, outer_instance):
         self.outer_instance = outer_instance
 
-
     def get_chat_completions_client(self) -> "ChatCompletionsClient":
         endpoint = self.outer_instance.endpoints.get_default(
-            endpoint_type=EndpointType.SERVERLESS,
-            populate_secrets=True
+            endpoint_type=EndpointType.SERVERLESS, populate_secrets=True
         )
         if not endpoint:
             raise ValueError("No serverless endpoint found")
@@ -55,39 +53,39 @@ class InferenceOperations():
         try:
             from azure.ai.inference import ChatCompletionsClient
         except ModuleNotFoundError as _:
-            raise ModuleNotFoundError("Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'")
+            raise ModuleNotFoundError(
+                "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
+            )
 
         if endpoint.authentication_type == AuthenticationType.API_KEY:
-            logger.debug("[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using API key authentication")
-            from azure.core.credentials import AzureKeyCredential
-            client = ChatCompletionsClient(
-                endpoint=endpoint.endpoint_url,
-                credential=AzureKeyCredential(endpoint.key)
+            logger.debug(
+                "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using API key authentication"
             )
+            from azure.core.credentials import AzureKeyCredential
+
+            client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key))
         elif endpoint.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
-            logger.debug("[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication")
+            logger.debug(
+                "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using Entra ID authentication"
+            )
             client = ChatCompletionsClient(
-                endpoint=endpoint.endpoint_url,
-                credential=endpoint.properties.token_credential
+                endpoint=endpoint.endpoint_url, credential=endpoint.properties.token_credential
             )
         elif endpoint.authentication_type == AuthenticationType.SAS:
             # TODO - Not yet supported by the service. Expected 9/27.
-            logger.debug("[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using SAS authentication")
-            client = ChatCompletionsClient(
-                endpoint=endpoint.endpoint_url,
-                credential=endpoint.token_credential
+            logger.debug(
+                "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using SAS authentication"
             )
+            client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=endpoint.token_credential)
         else:
             raise ValueError("Unknown authentication type")
 
         return client
 
-
     def get_azure_openai_client(self) -> "AzureOpenAI":
         endpoint = self.outer_instance.endpoints.get_default(
-            endpoint_type=EndpointType.AZURE_OPEN_AI,
-            populate_secrets=True
+            endpoint_type=EndpointType.AZURE_OPEN_AI, populate_secrets=True
         )
         if not endpoint:
             raise ValueError("No Azure OpenAI endpoint found")
@@ -98,28 +96,38 @@ class InferenceOperations():
             raise ModuleNotFoundError("OpenAI SDK is not installed. Please install it using 'pip install openai'")
 
         if endpoint.authentication_type == AuthenticationType.API_KEY:
-            logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication")
+            logger.debug(
+                "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
+            )
             client = AzureOpenAI(
                 api_key=endpoint.key,
                 azure_endpoint=endpoint.endpoint_url,
-                api_version="2024-08-01-preview", # TODO: Is this needed?
+                api_version="2024-08-01-preview",  # TODO: Is this needed?
             )
         elif endpoint.authentication_type == AuthenticationType.AAD:
-            logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using Entra ID authentication")
+            logger.debug(
+                "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using Entra ID authentication"
+            )
             try:
                 from azure.identity import get_bearer_token_provider
             except ModuleNotFoundError as _:
-                raise ModuleNotFoundError("azure.identity package not installed. Please install it using 'pip install azure.identity'")
+                raise ModuleNotFoundError(
+                    "azure.identity package not installed. Please install it using 'pip install azure.identity'"
+                )
             client = AzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
-                azure_ad_token_provider=get_bearer_token_provider(endpoint.token_credential, "https://cognitiveservices.azure.com/.default"),
+                azure_ad_token_provider=get_bearer_token_provider(
+                    endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
+                ),
                 azure_endpoint=endpoint.endpoint_url,
                 api_version="2024-08-01-preview",
             )
         elif endpoint.authentication_type == AuthenticationType.SAS:
             logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using SAS authentication")
             client = AzureOpenAI(
-                azure_ad_token_provider=get_bearer_token_provider(endpoint.token_credential, "https://cognitiveservices.azure.com/.default"),
+                azure_ad_token_provider=get_bearer_token_provider(
+                    endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
+                ),
                 azure_endpoint=endpoint.endpoint_url,
                 api_version="2024-08-01-preview",
             )
@@ -1084,7 +1092,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 __all__: List[str] = [
     "AgentsOperations",
     "EndpointsOperations",
-    "InferenceOperations"
+    "InferenceOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 
