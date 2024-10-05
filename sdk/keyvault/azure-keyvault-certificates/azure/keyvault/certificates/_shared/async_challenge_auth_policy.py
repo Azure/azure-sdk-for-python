@@ -68,7 +68,7 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
     """
 
     def __init__(self, credential: AsyncTokenCredential, *scopes: str, **kwargs: Any) -> None:
-        # Pass `enable_cae` so `enable_cae=True` is always passed to get_token
+        # Pass `enable_cae` so `enable_cae=True` is always passed through self.authorize_request
         super().__init__(credential, *scopes, enable_cae=True, **kwargs)
         self._credential: AsyncTokenCredential = credential
         self._token: Optional[AccessToken] = None
@@ -159,9 +159,11 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
                 scope = challenge.get_scope() or challenge.get_resource() + "/.default"
                 # Exclude tenant for AD FS authentication
                 if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
-                    self._token = await self._credential.get_token(scope)
+                    self._token = await self._credential.get_token(scope, enable_cae=True)
                 else:
-                    self._token = await self._credential.get_token(scope, tenant_id=challenge.tenant_id)
+                    self._token = await self._credential.get_token(
+                        scope, tenant_id=challenge.tenant_id, enable_cae=True
+                    )
 
             # ignore mypy's warning -- although self._token is Optional, get_token raises when it fails to get a token
             request.http_request.headers["Authorization"] = f"Bearer {self._token.token}"  # type: ignore
