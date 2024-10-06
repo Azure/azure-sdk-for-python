@@ -1,0 +1,6 @@
+pydantic
+Flask
+flask_wtf
+
+../../../azure-cloudmachine
+../../.
