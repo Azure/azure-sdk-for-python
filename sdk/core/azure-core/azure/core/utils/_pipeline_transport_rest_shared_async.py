@@ -5,7 +5,16 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
-from typing import TYPE_CHECKING, List, Generic, TypeVar, Type, Optional, AsyncIterator, Iterator
+from typing import (
+    TYPE_CHECKING,
+    List,
+    Generic,
+    TypeVar,
+    Type,
+    Optional,
+    AsyncIterator,
+    Iterator,
+)
 from ..pipeline import PipelineContext, PipelineRequest, PipelineResponse
 from ..pipeline._tools_async import await_result as _await_result
 

@@ -30,8 +30,6 @@ from typing_extensions import TypedDict
 from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
-
-from ._change_feed.feed_range import FeedRange
 from ._session_token_helpers import is_compound_session_token, merge_session_tokens
 from ._vector_session_token import VectorSessionToken
 from azure.core.credentials import TokenCredential
@@ -1167,7 +1165,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
         else:
             options = dict(options)
-        options["changeFeed"] = True
 
         resource_key_map = {"Documents": "docs"}
 

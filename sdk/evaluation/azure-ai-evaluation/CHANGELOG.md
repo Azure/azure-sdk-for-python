@@ -1,5 +1,82 @@
 # Release History
 
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+- Removed `numpy` dependency. All NaN values returned by the SDK have been changed to from `numpy.nan` to `math.nan`.
+- `credential` is now required to be passed in for all content safety evaluators and `ProtectedMaterialsEvaluator`. `DefaultAzureCredential` will no longer be chosen if a credential is not passed. 
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b3 (2024-10-01)
+
+### Features Added
+
+- Added `type` field to `AzureOpenAIModelConfiguration` and `OpenAIModelConfiguration`
+- The following evaluators now support `conversation` as an alternative input to their usual single-turn inputs:
+  - `ViolenceEvaluator`
+  - `SexualEvaluator`
+  - `SelfHarmEvaluator`
+  - `HateUnfairnessEvaluator`
+  - `ProtectedMaterialEvaluator`
+  - `IndirectAttackEvaluator`
+  - `CoherenceEvaluator`
+  - `RelevanceEvaluator`
+  - `FluencyEvaluator`
+  - `GroundednessEvaluator`
+- Surfaced `RetrievalScoreEvaluator`, formally an internal part of `ChatEvaluator` as a standalone conversation-only evaluator.
+
+### Breaking Changes
+
+- Removed `ContentSafetyChatEvaluator` and `ChatEvaluator`
+- The `evaluator_config` parameter of `evaluate` now maps in evaluator name to a dictionary `EvaluatorConfig`, which is a `TypedDict`. The
+`column_mapping` between `data` or `target` and evaluator field names should now be specified inside this new dictionary:
+
+Before:
+```python
+evaluate(
+    ...,
+    evaluator_config={
+        "hate_unfairness": {
+            "query": "${data.question}",
+            "response": "${data.answer}",
+        }
+    },
+    ...
+)
+```
+
+After
+```python
+evaluate(
+    ...,
+    evaluator_config={
+        "hate_unfairness": {
+            "column_mapping": {
+                "query": "${data.question}",
+                "response": "${data.answer}",
+             }
+        }
+    },
+    ...
+)
+```
+
+### Bugs Fixed
+
+- Fixed issue where Entra ID authentication was not working with `AzureOpenAIModelConfiguration` 
+
+## 1.0.0b2 (2024-09-24)
+
+### Breaking Changes
+
+- `data` and `evaluators` are now required keywords in `evaluate`.
+
 ## 1.0.0b1 (2024-09-20)
 
 ### Breaking Changes

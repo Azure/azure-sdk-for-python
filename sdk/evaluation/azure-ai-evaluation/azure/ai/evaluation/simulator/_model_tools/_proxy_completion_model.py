@@ -8,11 +8,10 @@ import time
 import uuid
 from typing import Dict, List
 
-from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
-
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._user_agent import USER_AGENT
+from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
 from .models import OpenAIChatCompletionsModel
 

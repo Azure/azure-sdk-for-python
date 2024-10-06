@@ -25,7 +25,7 @@ ENV_FILE = os.environ.get('ENV_FILE')
 
 
 def handle_exception(error, ignore_send_failure, stress_logger, azure_monitor_metric):
-    err_msg = "Sync send failed due to error: {}".format(repr(error))
+    err_msg = "Sync send failed due to error: %s", repr(error)
     azure_monitor_metric.record_error(error)
     if ignore_send_failure:
         stress_logger.warning(err_msg)
@@ -262,8 +262,12 @@ class StressTestRunner:
 
     def run_sync(self):
         self.debug_level = getattr(logging, self.args.debug_level.upper(), logging.ERROR)
-
-        with ProcessMonitor("monitor_{}".format(self.args.log_filename), "producer_stress_sync", print_console=self.args.print_console) as process_monitor:
+        log_filename = self.args.log_filename if self.args.log_filename else "producer_sync"
+        if self.args.transport_type == 1:
+            log_filename += "_ws.log"
+        else:
+            log_filename += ".log"
+        with ProcessMonitor("monitor_{}".format(log_filename), "producer_stress_sync", print_console=self.args.print_console) as process_monitor:
             class EventHubProducerClientTest(EventHubProducerClient):
                 def get_partition_ids(self_inner):
                     if self.args.partitions != 0:
@@ -272,8 +276,15 @@ class StressTestRunner:
                         return super(EventHubProducerClientTest, self_inner).get_partition_ids()
 
             method_name = self.args.method
-            logger = get_logger(self.args.log_filename, method_name,
-                                level=self.debug_level, print_console=self.args.print_console)
+            logdir = os.environ.get("DEBUG_SHARE")
+            logfilepath = f"{logdir}/{log_filename}"
+
+            logger = get_logger(
+                        logfilepath,
+                        method_name,
+                        level=self.debug_level,
+                        print_console=self.args.print_console,
+                    )
             test_method = globals()[method_name]
             self.running = True
 
@@ -365,7 +376,12 @@ class StressTestRunner:
 
     async def run_async(self):
         self.debug_level = getattr(logging, self.args.debug_level.upper(), logging.ERROR)
-        with ProcessMonitor("monitor_{}".format(self.args.log_filename), "producer_stress_async", print_console=self.args.print_console) as process_monitor:
+        log_filename = self.args.log_filename if self.args.log_filename else "producer_async"
+        if self.args.transport_type == 1:
+            log_filename += "_ws.log"
+        else:
+            log_filename += ".log"
+        with ProcessMonitor("monitor_{}".format(log_filename), "producer_stress_async", print_console=self.args.print_console) as process_monitor:
             class EventHubProducerClientTestAsync(EventHubProducerClientAsync):
                 async def get_partition_ids(self_inner):
                     if self.args.partitions != 0:
@@ -374,8 +390,15 @@ class StressTestRunner:
                         return await super(EventHubProducerClientTestAsync, self_inner).get_partition_ids()
 
             method_name = self.args.method
-            logger = get_logger(self.args.log_filename, method_name,
-                                level=self.debug_level, print_console=self.args.print_console)
+            logdir = os.environ.get("DEBUG_SHARE")
+            logfilepath = f"{logdir}/{log_filename}"
+
+            logger = get_logger(
+                logfilepath,
+                method_name,
+                level=self.debug_level,
+                print_console=self.args.print_console
+            )
             test_method = globals()[method_name]
             self.running = True
 

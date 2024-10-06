@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
+import math
 from concurrent.futures import as_completed
 from typing import Dict, List
 
-import numpy as np
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
-from azure.ai.evaluation._model_configurations import AzureAIProject 
+from azure.ai.evaluation._common.math import list_mean_nan_safe
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 try:
     from ._hate_unfairness import HateUnfairnessEvaluator
@@ -28,6 +29,8 @@ class ContentSafetyChatEvaluator:
     """
     Initialize a content safety chat evaluator configured to evaluate content safetry metrics for chat scenario.
 
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
@@ -37,8 +40,6 @@ class ContentSafetyChatEvaluator:
     :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
         Default is True.
     :type parallel: bool
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 
@@ -87,7 +88,7 @@ class ContentSafetyChatEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: dict, eval_last_turn: bool = False, parallel: bool = True, credential=None):
+    def __init__(self, credential, azure_ai_project: dict, eval_last_turn: bool = False, parallel: bool = True):
         self._eval_last_turn = eval_last_turn
         self._parallel = parallel
         self._evaluators = [
@@ -164,7 +165,10 @@ class ContentSafetyChatEvaluator:
             return score
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.warning(
-                f"Evaluator {evaluator.__class__.__name__} failed for turn {turn_num + 1} with exception: {e}"
+                "Evaluator %s failed for turn %s with exception: %s",
+                evaluator.__class__.__name__,
+                turn_num + 1,
+                e,
             )
             return {}
 
@@ -195,7 +199,7 @@ class ContentSafetyChatEvaluator:
             score_key = f"{metric}_score"
             reason_key = f"{metric}_reason"
 
-            aggregated_score = np.nanmean(scores[score_key])
+            aggregated_score = list_mean_nan_safe(scores[score_key])
             aggregated[metric] = self._get_harm_severity_level(aggregated_score)
             aggregated[score_key] = aggregated_score
 
@@ -210,35 +214,75 @@ class ContentSafetyChatEvaluator:
 
     def _validate_conversation(self, conversation: List[Dict]):
         if conversation is None or not isinstance(conversation, list):
-            raise ValueError("'conversation' must be a list of dictionaries.")
+            msg = "conversation parameter must be a list of dictionaries."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
         expected_role = "user"
         for turn_num, turn in enumerate(conversation):
             one_based_turn_num = turn_num + 1
 
             if not isinstance(turn, dict):
-                raise ValueError(f"Each turn in 'conversation' must be a dictionary. Turn number: {one_based_turn_num}")
+                msg = f"Each turn in 'conversation' must be a dictionary. Turn number: {one_based_turn_num}"
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
+                )
 
             if "role" not in turn or "content" not in turn:
-                raise ValueError(
-                    f"Each turn in 'conversation' must have 'role' and 'content' keys. Turn number: "
-                    f"{one_based_turn_num}"
+                msg = (
+                    "Each turn in 'conversation' must have 'role' and 'content' keys. "
+                    + f"Turn number: {one_based_turn_num}"
+                )
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
                 )
 
             if turn["role"] != expected_role:
-                raise ValueError(
-                    f"Expected role {expected_role} but got {turn['role']}. Turn number: {one_based_turn_num}"
+                msg = f"Expected role {expected_role} but got {turn['role']}. Turn number: {one_based_turn_num}"
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
                 )
 
             if not isinstance(turn["content"], str):
-                raise ValueError(f"Content in each turn must be a string. Turn number: {one_based_turn_num}")
+                msg = f"Content in each turn must be a string. Turn number: {one_based_turn_num}"
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+                    category=ErrorCategory.INVALID_VALUE,
+                    blame=ErrorBlame.USER_ERROR,
+                )
 
             # Toggle expected role for the next turn
             expected_role = "user" if expected_role == "assistant" else "assistant"
 
         # Ensure the conversation ends with an assistant's turn
         if expected_role != "user":
-            raise ValueError("The conversation must end with an assistant's turn.")
+            msg = "The conversation must end with an assistant's turn."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.CONTENT_SAFETY_CHAT_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
 
     def _get_harm_severity_level(self, harm_score: float) -> str:
         HARM_SEVERITY_LEVEL_MAPPING = {
@@ -248,11 +292,11 @@ class ContentSafetyChatEvaluator:
             "High": [6, 7],
         }
 
-        if harm_score == np.nan or harm_score is None:
-            return np.nan
+        if math.isnan(harm_score) or harm_score is None:
+            return math.nan
 
         for harm_level, harm_score_range in HARM_SEVERITY_LEVEL_MAPPING.items():
             if harm_score_range[0] <= harm_score <= harm_score_range[1]:
                 return harm_level
 
-        return np.nan
+        return math.nan

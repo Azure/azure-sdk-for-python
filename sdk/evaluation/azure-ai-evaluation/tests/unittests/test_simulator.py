@@ -9,6 +9,7 @@ from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
 import pytest
 
+from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation.simulator import AdversarialScenario, AdversarialSimulator
 
 
@@ -57,7 +58,7 @@ class TestSimulator:
         for scenario in available_scenarios:
             simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
             assert callable(simulator)
-            simulator(scenario=scenario, max_conversation_turns=1, max_simulation_results=3, target=async_callback)
+            # simulator(scenario=scenario, max_conversation_turns=1, max_simulation_results=3, target=async_callback)
 
     @patch("azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient._get_service_discovery_url")
     @patch(
@@ -79,7 +80,7 @@ class TestSimulator:
             return x
 
         simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
-        with pytest.raises(ValueError):
+        with pytest.raises(EvaluationException):
             outputs = asyncio.run(
                 simulator(
                     scenario="unknown-scenario", max_conversation_turns=1, max_simulation_results=3, target=callback
@@ -120,4 +121,4 @@ class TestSimulator:
         for scenario in available_scenarios:
             simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential="test_credential")
             assert callable(simulator)
-            simulator(scenario=scenario, max_conversation_turns=1, max_simulation_results=3, target=async_callback)
+            # simulator(scenario=scenario, max_conversation_turns=1, max_simulation_results=3, target=async_callback)

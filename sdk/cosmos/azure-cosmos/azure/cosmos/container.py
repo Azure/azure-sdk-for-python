@@ -40,9 +40,9 @@ from ._base import (
     ParsePaths,
     TrimBeginningAndEndingSlashes
 )
-from ._change_feed.feed_range import FeedRange, FeedRangeEpk
 from ._cosmos_client_connection import CosmosClientConnection
-from ._routing.routing_range import Range, partition_key_range_to_range_string, PartitionKeyRange
+from ._feed_range import FeedRange, FeedRangeEpk
+from ._routing.routing_range import Range
 from .offer import Offer, ThroughputProperties
 from .partition_key import (
     NonePartitionKeyValue,
@@ -358,7 +358,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def query_items_change_feed(
             self,
             *,
-            feed_range: str,
+            feed_range: FeedRange,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
@@ -367,7 +367,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :keyword str feed_range: The feed range that is used to define the scope.
+        :keyword feed_range: The feed range that is used to define the scope.
+        :type feed_range: ~azure.cosmos.FeedRange
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
@@ -440,6 +441,31 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             *args: Any,
             **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
+
+        """Get a sorted list of items that were changed, in the order in which they were modified.
+
+        :keyword str continuation: The continuation token retrieved from previous response.
+        :keyword feed_range: The feed range that is used to define the scope.
+        :type feed_range: ~azure.cosmos.FeedRange
+        :keyword partition_key: The partition key that is used to define the scope
+            (logical partition or a subset of a container)
+        :type partition_key: Union[str, int, float, bool, List[Union[str, int, float, bool]]]
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword start_time: The start time to start processing chang feed items.
+            Beginning: Processing the change feed items from the beginning of the change feed.
+            Now: Processing change feed from the current time, so only events for all future changes will be retrieved.
+            ~datetime.datetime: processing change feed from a point of time. Provided value will be converted to UTC.
+            By default, it is start from current ("Now")
+        :type start_time: Union[~datetime.datetime, Literal["Now", "Beginning"]]
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :param Any args: args
+        :returns: An Iterable of items (dicts).
+        :rtype: Iterable[Dict[str, Any]]
+        """
+
         # pylint: disable=too-many-statements
         if kwargs.get("priority") is not None:
             kwargs['priority'] = kwargs['priority']
@@ -508,6 +534,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         if kwargs.get("feed_range") is not None:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
+            feed_range: FeedRangeEpk = kwargs.pop('feed_range')
+            change_feed_state_context["feedRange"] = feed_range._feed_range_internal
 
         container_properties = self._get_properties()
         feed_options["changeFeedStateContext"] = change_feed_state_context
@@ -672,6 +700,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        no_response: Optional[bool] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Replaces the specified item if it exists in the container.
@@ -693,7 +722,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: A dict representing the item after replace went through.
+        :keyword bool no_response: Indicates whether service should be instructed to skip
+            sending response payloads. When not specified explicitly here, the default value will be determined from 
+            kwargs or when also not specified there from client-level kwargs.  
+        :returns: A dict representing the item after replace went through. The dict will be empty if `no_response` 
+            is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
         :rtype: Dict[str, Any]
@@ -713,6 +746,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if no_response is not None:
+            kwargs['no_response'] = no_response
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
@@ -729,7 +764,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             document_link=item_link, new_document=body, request_context=request_context, options=request_options, **kwargs
         )
         self._add_request_context(request_context)
-        return result
+        return result or {}
 
     @distributed_trace
     def upsert_item(  # pylint:disable=docstring-missing-param
@@ -744,6 +779,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        no_response: Optional[bool] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Insert or update the specified item.
@@ -764,7 +800,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: A dict representing the upserted item.
+        :keyword bool no_response: Indicates whether service should be instructed to skip sending 
+            response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
+            when also not specified there from client-level kwargs.   
+        :returns: A dict representing the upserted item. The dict will be empty if `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :rtype: Dict[str, Any]
         """
@@ -782,6 +821,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if no_response is not None:
+            kwargs['no_response'] = no_response
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         if populate_query_metrics is not None:
@@ -801,7 +842,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs
         )
         self._add_request_context(request_context)
-        return result
+        return result or {}
 
     @distributed_trace
     def create_item(  # pylint:disable=docstring-missing-param
@@ -818,6 +859,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        no_response: Optional[bool] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Create an item in the container.
@@ -842,7 +884,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: A dict representing the new item.
+        :keyword bool no_response: Indicates whether service should be instructed to skip sending 
+            response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
+            when also not specified there from client-level kwargs.
+        :returns: A dict representing the new item. The dict will be empty if `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :rtype: Dict[str, Any]
         """
@@ -860,6 +905,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if no_response is not None:
+            kwargs['no_response'] = no_response
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if populate_query_metrics:
@@ -876,7 +923,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         result = self.client_connection.CreateItem(
             database_or_container_link=self.container_link, document=body, request_context=request_context, options=request_options, **kwargs)
         self._add_request_context(request_context)
-        return result
+        return result or {}
 
     @distributed_trace
     def patch_item(
@@ -892,6 +939,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
+        no_response: Optional[bool] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """ Patches the specified item with the provided operations if it
@@ -916,10 +964,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :returns: A dict representing the item after the patch operations went through.
+        :keyword bool no_response: Indicates whether service should be instructed to skip sending 
+            response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
+            when also not specified there from client-level kwargs.
+        :returns: A dict representing the item after the patch operations went through. The dict will be empty 
+            if `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -933,6 +985,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs['etag'] = etag
         if match_condition is not None:
             kwargs['match_condition'] = match_condition
+        if no_response is not None:
+            kwargs['no_response'] = no_response
         request_options = build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = self._set_partition_key(partition_key)
@@ -946,7 +1000,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         result = self.client_connection.PatchItem(
             document_link=item_link, operations=patch_operations, request_context=request_context, options=request_options, **kwargs)
         self._add_request_context(request_context)
-        return result
+        return result or {}
 
     @distributed_trace
     def execute_item_batch(
@@ -1335,7 +1389,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             self,
             *,
             force_refresh: Optional[bool] = False,
-            **kwargs: Any) -> List[str]:
+            **kwargs: Any) -> List[FeedRange]:
 
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
 
@@ -1354,7 +1408,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 [Range("", "FF", True, False)], # default to full range
                 **kwargs)
 
-        return [partition_key_range_to_range_string(partitionKeyRange) for partitionKeyRange in partition_key_ranges]
+        return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange))
+            for partitionKeyRange in partition_key_ranges]
 
     def get_updated_session_token(self,
                              feed_ranges_to_session_tokens: List,

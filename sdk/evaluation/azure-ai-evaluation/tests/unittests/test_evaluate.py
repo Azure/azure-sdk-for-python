@@ -1,9 +1,9 @@
 import json
+import math
 import os
 import pathlib
 from unittest.mock import patch
 
-import numpy as np
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
@@ -23,6 +23,7 @@ from azure.ai.evaluation import (
     GroundednessEvaluator,
     ProtectedMaterialEvaluator,
 )
+from azure.ai.evaluation._exceptions import EvaluationException
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 
 
@@ -68,6 +69,11 @@ def questions_answers_file():
     return _get_file("questions_answers.jsonl")
 
 
+@pytest.fixture
+def questions_answers_basic_file():
+    return _get_file("questions_answers_basic.jsonl")
+
+
 def _target_fn(query):
     """An example target function."""
     if "LV-426" in query:
@@ -90,57 +96,63 @@ def _target_fn2(query):
     return response
 
 
+def _new_answer_target():
+    return {"response": "new response"}
+
+
+def _question_override_target(query):
+    return {"query": "new query"}
+
+
+def _question_answer_override_target(query, response):
+    return {"query": "new query", "response": "new response"}
+
+
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
 class TestEvaluate:
-    def test_evaluate_missing_data(self, mock_model_config):
-        with pytest.raises(ValueError) as exc_info:
-            evaluate(evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)})
-
-        assert "data must be provided for evaluation." in exc_info.value.args[0]
-
     def test_evaluate_evaluators_not_a_dict(self, mock_model_config):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data="data",
                 evaluators=[GroundednessEvaluator(model_config=mock_model_config)],
             )
 
-        assert "evaluators must be a dictionary." in exc_info.value.args[0]
+        assert "evaluators parameter must be a dictionary." in exc_info.value.args[0]
 
     def test_evaluate_invalid_data(self, mock_model_config):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=123,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
             )
 
-        assert "data must be a string." in exc_info.value.args[0]
+        assert "data parameter must be a string." in exc_info.value.args[0]
 
     def test_evaluate_invalid_jsonl_data(self, mock_model_config, invalid_jsonl_file):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=invalid_jsonl_file,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
             )
 
         assert "Failed to load data from " in exc_info.value.args[0]
-        assert "Please validate it is a valid jsonl data" in exc_info.value.args[0]
+        assert "Confirm that it is valid jsonl data." in exc_info.value.args[0]
 
     def test_evaluate_missing_required_inputs(self, missing_columns_jsonl_file):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(data=missing_columns_jsonl_file, evaluators={"g": F1ScoreEvaluator()})
 
         assert "Missing required inputs for evaluator g : ['ground_truth']." in exc_info.value.args[0]
 
     def test_evaluate_missing_required_inputs_target(self, questions_wrong_file):
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(data=questions_wrong_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
         assert "Missing required inputs for target : ['query']." in exc_info.value.args[0]
 
     def test_wrong_target(self, questions_file):
         """Test error, when target function does not generate required column."""
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             # target_fn will generate the "response", but not ground truth.
             evaluate(data=questions_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
 
@@ -149,7 +161,7 @@ class TestEvaluate:
     def test_target_raises_on_outputs(self):
         """Test we are raising exception if the output is column is present in the input."""
         data = _get_file("questions_answers_outputs.jsonl")
-        with pytest.raises(ValueError) as cm:
+        with pytest.raises(EvaluationException) as cm:
             evaluate(
                 data=data,
                 target=_target_fn,
@@ -314,15 +326,15 @@ class TestEvaluate:
 
     def test_evaluate_invalid_evaluator_config(self, mock_model_config, evaluate_test_data_jsonl_file):
         # Invalid source reference
-        with pytest.raises(ValueError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=evaluate_test_data_jsonl_file,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
-                evaluator_config={"g": {"query": "${foo.query}"}},
+                evaluator_config={"g": {"column_mapping": {"query": "${foo.query}"}}},
             )
 
         assert (
-            "Unexpected references detected in 'evaluator_config'. Ensure only ${target.} and ${data.} are used."
+            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
             in exc_info.value.args[0]
         )
 
@@ -388,9 +400,9 @@ class TestEvaluate:
         expected.rename(columns={"query": "inputs.query", "response": "inputs.response"}, inplace=True)
 
         expected["outputs.yeti.result"] = expected["inputs.response"].str.len()
-        expected.at[0, "outputs.yeti.result"] = np.nan
-        expected.at[2, "outputs.yeti.result"] = np.nan
-        expected.at[3, "outputs.yeti.result"] = np.nan
+        expected.at[0, "outputs.yeti.result"] = math.nan
+        expected.at[2, "outputs.yeti.result"] = math.nan
+        expected.at[3, "outputs.yeti.result"] = math.nan
         assert_frame_equal(expected, result_df)
 
     @patch("azure.ai.evaluation._evaluate._evaluate._evaluate")
@@ -401,7 +413,7 @@ class TestEvaluate:
         )
         mock_evaluate.side_effect = RuntimeError(err_msg)
 
-        with pytest.raises(RuntimeError) as exc_info:
+        with pytest.raises(EvaluationException) as exc_info:
             evaluate(
                 data=evaluate_test_data_jsonl_file,
                 evaluators={"f1_score": F1ScoreEvaluator()},
@@ -507,3 +519,88 @@ class TestEvaluate:
         assert aggregation["thing.metric"] == 3
         assert aggregation["other_thing.other_meteric"] == -3
         assert aggregation["final_thing.final_metric"] == 0.4
+
+    @pytest.mark.parametrize("use_pf_client", [True, False])
+    def test_optional_inputs_with_data(self, questions_file, questions_answers_basic_file, use_pf_client):
+        from test_evaluators.test_inputs_evaluators import NonOptionalEval, HalfOptionalEval, OptionalEval, NoInputEval
+
+        # All variants work with both keyworded inputs
+        results = evaluate(
+            data=questions_answers_basic_file,
+            evaluators={
+                "non": NonOptionalEval(),
+                "half": HalfOptionalEval(),
+                "opt": OptionalEval(),
+                "no": NoInputEval(),
+            },
+            _use_pf_client=use_pf_client,
+        )  # type: ignore
+
+        first_row = results["rows"][0]
+        assert first_row["outputs.non.non_score"] == 0
+        assert first_row["outputs.half.half_score"] == 1
+        assert first_row["outputs.opt.opt_score"] == 3
+        # CodeClient doesn't like no-input evals.
+        if use_pf_client:
+            assert first_row["outputs.no.no_score"] == 0
+
+        # Variant with no default inputs fails on single input
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluate(
+                data=questions_file,
+                evaluators={
+                    "non": NonOptionalEval(),
+                },
+                _use_pf_client=use_pf_client,
+            )  # type: ignore
+        assert exc_info._excinfo[1].__str__() == "Missing required inputs for evaluator non : ['response']."  # type: ignore
+
+        # Variants with default answer work when only question is inputted
+        only_question_results = evaluate(
+            data=questions_file,
+            evaluators={"half": HalfOptionalEval(), "opt": OptionalEval(), "no": NoInputEval()},
+            _use_pf_client=use_pf_client,
+        )  # type: ignore
+
+        first_row_2 = only_question_results["rows"][0]
+        assert first_row_2["outputs.half.half_score"] == 0
+        assert first_row_2["outputs.opt.opt_score"] == 1
+        if use_pf_client:
+            assert first_row["outputs.no.no_score"] == 0
+
+    @pytest.mark.parametrize("use_pf_client", [True, False])
+    def test_optional_inputs_with_target(self, questions_file, questions_answers_basic_file, use_pf_client):
+        from test_evaluators.test_inputs_evaluators import EchoEval
+
+        # Check that target overrides default inputs
+        target_answer_results = evaluate(
+            data=questions_file,
+            target=_new_answer_target,
+            evaluators={"echo": EchoEval()},
+            _use_pf_client=use_pf_client,
+        )  # type: ignore
+
+        assert target_answer_results["rows"][0]["outputs.echo.echo_query"] == "How long is flight from Earth to LV-426?"
+        assert target_answer_results["rows"][0]["outputs.echo.echo_response"] == "new response"
+
+        # Check that target replaces inputs from data (I.E. if both data and target have same output
+        # the target output is sent to the evaluator.)
+        question_override_results = evaluate(
+            data=questions_answers_basic_file,
+            target=_question_override_target,
+            evaluators={"echo": EchoEval()},
+            _use_pf_client=use_pf_client,
+        )  # type: ignore
+
+        assert question_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
+        assert question_override_results["rows"][0]["outputs.echo.echo_response"] == "There is nothing good there."
+
+        # Check that target can replace default and data inputs at the same time.
+        double_override_results = evaluate(
+            data=questions_answers_basic_file,
+            target=_question_answer_override_target,
+            evaluators={"echo": EchoEval()},
+            _use_pf_client=use_pf_client,
+        )  # type: ignore
+        assert double_override_results["rows"][0]["outputs.echo.echo_query"] == "new query"
+        assert double_override_results["rows"][0]["outputs.echo.echo_response"] == "new response"

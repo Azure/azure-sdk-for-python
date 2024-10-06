@@ -97,7 +97,7 @@ def raise_with_traceback(exception: Callable, *args: Any, message: str = "", **k
     exc_msg = "{}, {}: {}".format(message, exc_type.__name__, exc_value)
     error = exception(exc_msg, *args, **kwargs)
     try:
-        raise error.with_traceback(exc_traceback)  # pylint: disable=raise-missing-from
+        raise error.with_traceback(exc_traceback)
     except AttributeError:  # Python 2
         error.__traceback__ = exc_traceback
         raise error  # pylint: disable=raise-missing-from
@@ -150,7 +150,9 @@ class ErrorMap(Generic[KeyType, ValueType]):
 
 
 def map_error(
-    status_code: int, response: _HttpResponseCommonAPI, error_map: Mapping[int, Type[HttpResponseError]]
+    status_code: int,
+    response: _HttpResponseCommonAPI,
+    error_map: Mapping[int, Type[HttpResponseError]],
 ) -> None:
     if not error_map:
         return
@@ -309,7 +311,7 @@ class AzureError(Exception):
            This method is deprecated as we don't support Python 2 anymore. Use raise/from instead.
         """
         try:
-            raise super(AzureError, self).with_traceback(self.exc_traceback)  # pylint: disable=raise-missing-from
+            raise super(AzureError, self).with_traceback(self.exc_traceback)
         except AttributeError:
             self.__traceback__: Optional[TracebackType] = self.exc_traceback
             raise self  # pylint: disable=raise-missing-from
@@ -355,7 +357,10 @@ class HttpResponseError(AzureError):
     """
 
     def __init__(
-        self, message: Optional[object] = None, response: Optional[_HttpResponseCommonAPI] = None, **kwargs: Any
+        self,
+        message: Optional[object] = None,
+        response: Optional[_HttpResponseCommonAPI] = None,
+        **kwargs: Any,
     ) -> None:
         # Don't want to document this one yet.
         error_format = kwargs.get("error_format", ODataV4Format)
@@ -453,7 +458,10 @@ class TooManyRedirectsError(HttpResponseError, Generic[HTTPRequestType, HTTPResp
     """
 
     def __init__(
-        self, history: "List[RequestHistory[HTTPRequestType, HTTPResponseType]]", *args: Any, **kwargs: Any
+        self,
+        history: "List[RequestHistory[HTTPRequestType, HTTPResponseType]]",
+        *args: Any,
+        **kwargs: Any,
     ) -> None:
         self.history = history
         message = "Reached maximum redirect attempts."

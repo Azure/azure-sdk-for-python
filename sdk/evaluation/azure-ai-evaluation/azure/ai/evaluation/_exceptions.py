@@ -9,9 +9,9 @@ from azure.core.exceptions import AzureError
 
 
 class ErrorCategory(Enum):
-    """Error category to be specified when using PromptflowEvalsException class.
+    """Error category to be specified when using EvaluationException class.
 
-    When using PromptflowEvalsException, specify the type that best describes the nature of the error being captured.
+    When using EvaluationException, specify the type that best describes the nature of the error being captured.
 
     * INVALID_VALUE -> One or more inputs are invalid (e.g. incorrect type or format)
     * UNKNOWN_FIELD -> A least one unrecognized parameter is specified
@@ -19,6 +19,7 @@ class ErrorCategory(Enum):
     * FILE_OR_FOLDER_NOT_FOUND -> One or more files or folder paths do not exist
     * RESOURCE_NOT_FOUND -> Resource could not be found
     * FAILED_EXECUTION -> Execution failed
+    * SERVICE_UNAVAILABLE -> Service is unavailable
     * UNKNOWN -> Undefined placeholder. Avoid using.
     """
 
@@ -28,13 +29,14 @@ class ErrorCategory(Enum):
     FILE_OR_FOLDER_NOT_FOUND = "FILE OR FOLDER NOT FOUND"
     RESOURCE_NOT_FOUND = "RESOURCE NOT FOUND"
     FAILED_EXECUTION = "FAILED_EXECUTION"
+    SERVICE_UNAVAILABLE = "SERVICE UNAVAILABLE"
     UNKNOWN = "UNKNOWN"
 
 
 class ErrorBlame(Enum):
-    """Source of blame to be specified when using PromptflowEvalsException class.
+    """Source of blame to be specified when using EvaluationException class.
 
-    When using PromptflowEvalsException, specify whether the error is due to user actions or the system.
+    When using EvaluationException, specify whether the error is due to user actions or the system.
     """
 
     USER_ERROR = "UserError"
@@ -43,16 +45,35 @@ class ErrorBlame(Enum):
 
 
 class ErrorTarget(Enum):
-    """Error target to be specified when using PromptflowEvalsException class.
+    """Error target to be specified when using EvaluationException class.
 
-    When using PromptflowEvalsException, specify the code are that was being targeted when the
+    When using EvaluationException, specify the code area that was being targeted when the
     exception was triggered.
     """
 
+    EVAL_RUN = "EvalRun"
+    CODE_CLIENT = "CodeClient"
+    RAI_CLIENT = "RAIClient"
+    COHERENCE_EVALUATOR = "CoherenceEvaluator"
+    CONTENT_SAFETY_CHAT_EVALUATOR = "ContentSafetyEvaluator"
+    ECI_EVALUATOR = "ECIEvaluator"
+    F1_EVALUATOR = "F1Evaluator"
+    GROUNDEDNESS_EVALUATOR = "GroundednessEvaluator"
+    PROTECTED_MATERIAL_EVALUATOR = "ProtectedMaterialEvaluator"
+    RELEVANCE_EVALUATOR = "RelevanceEvaluator"
+    SIMILARITY_EVALUATOR = "SimilarityEvaluator"
+    INDIRECT_ATTACK_EVALUATOR = "IndirectAttackEvaluator"
+    INDIRECT_ATTACK_SIMULATOR = "IndirectAttackSimulator"
+    ADVERSARIAL_SIMULATOR = "AdversarialSimulator"
+    DIRECT_ATTACK_SIMULATOR = "DirectAttackSimulator"
+    EVALUATE = "Evaluate"
+    CALLBACK_CONVERSATION_BOT = "CallbackConversationBot"
+    MODELS = "Models"
     UNKNOWN = "Unknown"
+    CONVERSATION = "Conversation"
 
 
-class PromptflowEvalsException(AzureError):
+class EvaluationException(AzureError):
     """The base class for all exceptions raised in pazure-ai-evaluation. If there is a need to define a custom
     exception type, that custom exception type should extend from this class.
 

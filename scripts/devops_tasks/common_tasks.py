@@ -205,7 +205,7 @@ def is_required_version_on_pypi(package_name: str, spec: str) -> bool:
             versions = [str(v) for v in versions if v in specifier]
     except:
         logging.error("Package {} is not found on PyPI".format(package_name))
-    return versions
+    return bool(versions)
 
 
 def find_packages_missing_on_pypi(path: str) -> Iterable[str]:
