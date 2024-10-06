@@ -31,18 +31,18 @@ Running a local deployment will still deploy backend resources in Azure, which m
 3. Run the Flask app using the `cm` CLI:
 
     ```shell
-    python3 -m flask --app app cm run
+    flask --app app cm run
     ```
 
 4. The app will now be running at the default endpoint `http://127.0.0.1:5000`. In order to configure the Flask development server, settings can be passed in before `cm`:
 
     ```shell
-    python3 -m flask --app app --debug -p 5001 cm run
+    flask --app app --debug -p 5001 cm run
     ```
 5. The development server can be shutdown with `CTRL+C`. But please note that this will not automatically teardown the backend resources. Running the `cm run` command again will update the resource deployment if any modifications have been made to the `CloudMachineDeployment`.
 
 6. To shutdown the backend app deployment, run:
 
     ```shell
-    python3 -m flask --app app cm down
+    flask --app app cm down
     ```

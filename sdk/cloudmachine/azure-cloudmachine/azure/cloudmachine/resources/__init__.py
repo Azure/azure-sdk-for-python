@@ -78,14 +78,13 @@ def init_project(root_path: str, deployment: 'CloudMachineDeployment', label: Op
     azure_dir = os.path.join(root_path, ".azure")
     azure_yaml = os.path.join(root_path, "azure.yaml")
     project_name = azd_env_name(deployment.name, deployment.host, label)
+    if not os.path.isfile(azure_yaml):  # TODO proper yaml editing
+        print(f"No azure config found, building: {azure_yaml}.")
+        with open(azure_yaml, 'w') as config:
+            #TODO update config according to name and host.
+            config.write("# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json\n\n")
+            config.write(f"name: {deployment.name}\n\n")
     if not os.path.isdir(azure_dir):
-        print("No azure environments found. Building...")
-        if not os.path.isfile(azure_yaml):
-            print(f"No azure config found, building: {azure_yaml}.")
-            with open(azure_yaml, 'w') as config:
-                #TODO update config according to name and host.
-                config.write("# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json\n\n")
-                config.write(f"name: {deployment.name}\n\n")
         print(f"Adding environment: {project_name}.")
         output = subprocess.run(['azd', 'env', 'new', project_name])
         print(output)
@@ -128,6 +127,7 @@ class CloudMachineDeployment:
     location: Optional[str]
     groups: List[ResourceGroup]
     host: str
+    identity: ManagedIdentity
 
     def __init__(
         self,
@@ -148,8 +148,8 @@ class CloudMachineDeployment:
             friendly_name=self.name,
             tags={"abc": "def"},
         )
-        self._identity = ManagedIdentity()
-        rg.add(self._identity)
+        self.identity = ManagedIdentity()
+        rg.add(self.identity)
         self._storage = self._define_storage()
         rg.add(self._storage)
         self._messaging = self._define_messaging()
@@ -174,7 +174,7 @@ class CloudMachineDeployment:
                 RoleAssignment(
                     properties=RoleAssignmentProperties(
                         role_definition_id=SubscriptionResourceId('Microsoft.Authorization/roleDefinitions', ServiceBusRoleAssignments.DATA_SENDER),
-                        principal_id=PrincipalId(self._identity),
+                        principal_id=PrincipalId(self.identity),
                         principal_type="ServicePrincipal"
                     )
                 )
@@ -265,7 +265,7 @@ class CloudMachineDeployment:
             ),
             identity=Identity(
                 type='UserAssigned',
-                user_assigned_identities=UserAssignedIdentities((self._identity, {}))),
+                user_assigned_identities=UserAssignedIdentities((self.identity, {}))),
             roles=[
                 RoleAssignment(
                     properties=RoleAssignmentProperties(
@@ -288,7 +288,7 @@ class CloudMachineDeployment:
         return SystemTopics(
             identity=IdentityInfo(
                 type="UserAssigned",
-                user_assigned_identities=UserAssignedIdentities((self._identity, {}))
+                user_assigned_identities=UserAssignedIdentities((self.identity, {}))
             ),
             properties=SystemTopicProperties(
                 source=ResourceId(self._storage),
@@ -300,7 +300,7 @@ class CloudMachineDeployment:
                         delivery_with_resource_identity=DeliveryWithResourceIdentity(
                             identity=EventSubscriptionIdentity(
                                 type="UserAssigned",
-                                user_assigned_identity=ResourceId(self._identity)
+                                user_assigned_identity=ResourceId(self.identity)
                             ),
                             destination=ServiceBusTopicEventSubscriptionDestination(
                                 properties=ServiceBusTopicEventSubscriptionDestinationProperties(

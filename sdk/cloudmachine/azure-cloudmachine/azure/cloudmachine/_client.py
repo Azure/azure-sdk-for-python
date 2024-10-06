@@ -35,7 +35,12 @@ def load_dev_environment(name: str) -> Dict[str, str]:
             f"No cloudmachine infrastructure loaded for env: '{env_name}'.\n"
             " Please run 'flask cm run' to provision cloudmachine resources."
         )
-    return dotenv_values(os.path.join(azd_dir, env_name, ".env"))
+    full_env = dotenv_values(os.path.join(azd_dir, env_name, ".env"))
+    trimmed_env = {}
+    for key, value in full_env.items():
+        if key.startswith('AZURE_CLOUDMACHINE_'):
+            trimmed_env[key[19:]] = value
+    return trimmed_env
 
 
 class CloudMachineStorage:

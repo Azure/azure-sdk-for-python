@@ -69,8 +69,7 @@ class CloudMachineSession:
 
 
 class CloudMachine:
-    name: str
-    deployment: CloudMachineDeployment
+    deployment: Optional[CloudMachineDeployment]
     label: Optional[str]
 
     @overload
@@ -78,7 +77,7 @@ class CloudMachine:
             self,
             app: Optional[Flask] = None,
             *,
-            name: str,
+            name: Optional[str] = None,
             label: Optional[str] = None,
             location: Optional[str] = None,
             host: Literal["local", "appservice", "containerapp"] = "local"
@@ -89,29 +88,17 @@ class CloudMachine:
             self,
             app: Optional[Flask] = None,
             *,
-            deployment: Optional[CloudMachineDeployment] = None,
-            host: Literal["local", "appservice", "containerapp"] = "local"
+            deployment: Optional[CloudMachineDeployment],
+            label: Optional[str] = None,
     ):
         ...
     def __init__(self, app = None, **kwargs):
-        # read config file to determine endpoints for each resource.
-        name: Optional[str] = None
-        location: Optional[str] = None
-        host: str = 'local'
-        label: Optional[str] = None
-        if app:
-            name = app.config.get('AZURE_CLOUDMACHINE_NAME', name)
-            location = app.config.get('AZURE_CLOUDMACHINE_LOCATION', location)
-            host = app.config.get('AZURE_CLOUDMACHINE_HOST', host)
-            label = app.config.get('AZURE_CLOUDMACHINE_LABEL', label)
-
-        self.deployment = kwargs.get('deployment') or CloudMachineDeployment(
-            name=kwargs.get('name', name),
-            location=kwargs.get('location', location),
-            host=kwargs.get('host', host))
-        self.name = self.deployment.name
-        self.label = kwargs.get('label', label)
         self._session: Optional[CloudMachineSession] = None
+        self._location = kwargs.get('location')
+        self._host = kwargs.get('host')
+        self._name = kwargs.get('name')
+        self.deployment = kwargs.get('deployment')
+        self.label = kwargs.get('label') 
         if app is not None:
             self.init_app(app)
 
@@ -124,6 +111,16 @@ class CloudMachine:
         return self._session
 
     def init_app(self, app: Flask) -> None:
+        if not self._name and 'CLOUDMACHINE_NAME' not in app.config:
+            raise ValueError("CloudMachine must have a name, either passed at constructor, or via CLOUDMACHINE_NAME config.")
+        self.label = self.label or app.config.get('CLOUDMACHINE_LABEL')
+        if not self.deployment:
+            self.deployment = CloudMachineDeployment(
+                name=self._name or app.config.get('CLOUDMACHINE_NAME'),
+                location=self._location or app.config.get('CLOUDMACHINE_LOCATION'),
+                host=self._host or app.config.get('CLOUDMACHINE_HOST') or 'local'
+            )
+
         if 'cm' in sys.argv:
             cmd_infra = functools.partial(cm_infra, self)
             if self.deployment.host == 'local':
@@ -143,7 +140,10 @@ class CloudMachine:
             )
         else:
             if self.deployment.host == 'local':
-                load_dev_environment(self.name)
+                # TODO: rmeove dotenv to use app.config.from_file
+                app.config.update(load_dev_environment(self.deployment.name))
+            else:
+                app.config.from_prefixed_env(prefix='AZURE_CLOUDMACHINE_')
         app.before_request(self._create_session)
         app.teardown_appcontext(self._close_session)
         
@@ -165,7 +165,7 @@ def cm_infra(cm: CloudMachine) -> None:
 
 def cm_run_local(cm: CloudMachine) -> None:
     cm_infra(cm)
-    args = sys.argv[0: sys.argv.index('cm')]
+    args = sys.argv[sys.argv.index('flask'): sys.argv.index('cm')]
     run_project(cm.deployment, cm.label, args)
 
 def cm_down(cm: CloudMachine) -> None:

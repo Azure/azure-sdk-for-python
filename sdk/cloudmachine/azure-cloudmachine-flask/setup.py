@@ -34,8 +34,8 @@ exclude_packages = [
         'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
-        'cloudmachine',
-        'cloudmachine.ext',
+        'azure.cloudmachine',
+        'azure.cloudmachine.ext',
     ]
 
 setup(
