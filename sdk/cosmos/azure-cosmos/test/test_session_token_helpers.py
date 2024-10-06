@@ -8,7 +8,7 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos import DatabaseProxy
-from azure.cosmos._change_feed.feed_range import FeedRangeEpk
+from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 from test.test_config import TestConfig
 
@@ -20,7 +20,7 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(TestSessionTokenHelpers.host, TestConfig.credential),
+    test_client = cosmos_client.CosmosClient(TestSessionTokenHelpers.host, TestConfig.masterKey),
     created_db = test_client[0].get_database_client(TestSessionTokenHelpers.TEST_DATABASE_ID)
     return {
         "created_db": created_db,
@@ -38,9 +38,9 @@ def create_split_ranges():
     for test_param in test_params:
         split_ranges = []
         for feed_range, session_token in test_param[0]:
-            split_ranges.append((FeedRangeEpk(Range(feed_range[0], feed_range[1],
+            split_ranges.append((FeedRangeInternalEpk(Range(feed_range[0], feed_range[1],
                                             True, False)), session_token))
-        target_feed_range = FeedRangeEpk(Range(test_param[1][0], test_param[1][1], True, False))
+        target_feed_range = FeedRangeInternalEpk(Range(test_param[1][0], test_param[1][1], True, False))
         actual_test_params.append((split_ranges, target_feed_range, test_param[2]))
     return actual_test_params
 
@@ -74,7 +74,7 @@ class TestSessionTokenHelpers:
         assert session_token == "0:1#54#3=52"
 
     def test_many_session_tokens_update_same_range(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
+        feed_range = FeedRangeInternalEpk(Range("AA", "BB", True, False))
         feed_ranges_and_session_tokens = []
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))

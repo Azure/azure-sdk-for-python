@@ -259,8 +259,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
-        self._add_request_context(request_options)
-        return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+        request_context = {"partitionKey": request_options["partitionKey"]}
+        items = self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+        self._add_request_context(request_context)
+        return items
 
     @distributed_trace
     def read_all_items(  # pylint:disable=docstring-missing-param
@@ -317,7 +319,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
-        # Change to be full range
         self._add_request_context({})
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
@@ -643,6 +644,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["populateQueryMetrics"] = populate_query_metrics
         if populate_index_metrics is not None:
             feed_options["populateIndexMetrics"] = populate_index_metrics
+        request_context = {}
         if partition_key is not None:
             partition_key_value = self._set_partition_key(partition_key)
             if self.__is_prefix_partitionkey(partition_key):
@@ -652,6 +654,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 kwargs["partitionKeyDefinition"]["partition_key"] = partition_key_value
             else:
                 feed_options["partitionKey"] = partition_key_value
+            request_context["partitionKey"]  = feed_options["partitionKey"]
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
         if max_integrated_cache_staleness_in_ms:
@@ -673,7 +676,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook=response_hook,
             **kwargs
         )
-        request_context = {"partitionKey": feed_options["partitionKey"]}
         self._add_request_context(request_context)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
@@ -1447,10 +1449,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
         """
-        return child_feed_range.get_normalized_range().is_subset(parent_feed_range.get_normalized_range())
+        return child_feed_range._feed_range_internal.get_normalized_range().is_subset(parent_feed_range._feed_range_internal.get_normalized_range())
 
     def _add_request_context(self, request_context):
         request_context['session_token'] = self.client_connection.last_response_headers['x-ms-session-token']
         if 'partitionKey' in request_context:
-            request_context["feed_range"] =  self._get_epk_range_for_partition_key(request_context['partitionKey'])
+            request_context["feed_range"] =  FeedRangeEpk(self._get_epk_range_for_partition_key(request_context['partitionKey']))
+        else:
+            # default to full range
+            request_context["feed_range"] = FeedRangeEpk(Range("", "FF", True, False))
         self.client_connection.last_response_headers["request_context"] = request_context

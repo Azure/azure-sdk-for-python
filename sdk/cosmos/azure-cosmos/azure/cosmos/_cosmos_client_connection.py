@@ -1299,6 +1299,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         database_or_container_link: str,
         document: Dict[str, Any],
+        request_context: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1325,6 +1326,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # link in case of client side partitioning
         if base.IsItemContainerLink(database_or_container_link):
             options = self._AddPartitionKey(database_or_container_link, document, options)
+        request_context["partitionKey"] = options["partitionKey"]
 
         collection_id, document, path = self._GetContainerIdWithPathForItem(
             database_or_container_link, document, options
@@ -2010,6 +2012,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # Extract the document collection link and add the partition key to options
         collection_link = base.GetItemContainerLink(document_link)
         options = self._AddPartitionKey(collection_link, new_document, options)
+        request_context["partitionKey"] = options["partitionKey"]
 
         return self.Replace(new_document, path, "docs", document_id, None, options, **kwargs)
 
