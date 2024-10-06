@@ -81,7 +81,10 @@ class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-att
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     async def _unpack(self, block):
-        self._last_response_headers = block.get_response_headers() or self._client.last_response_headers
+        try:
+            self._last_response_headers = block.get_response_headers()
+        except AttributeError:
+            self._last_response_headers = self._client.last_response_headers
         continuation = self._last_response_headers.get("x-ms-continuation") or self._last_response_headers.get('etag')
         if block:
             self._did_a_call_already = False
