@@ -538,9 +538,9 @@ class ShareProperties(DictMixin):
     """The maximum throughput the file share can support in MiB/s."""
     paid_bursting_iops: Optional[int] = None
     """The maximum IOPS the file share can support."""
-    next_provisioned_iops_downgrade: "datetime"
+    next_provisioned_iops_downgrade: Optional["datetime"]
     """The share's next allowed provisioned throughput downgrade time."""
-    next_provisioned_bandwidth_downgrade: "datetime"
+    next_provisioned_bandwidth_downgrade: Optional["datetime"]
     """The share's next allowed provisioned bandwidth downgrade time."""
 
     def __init__(self, **kwargs: Any) -> None:
