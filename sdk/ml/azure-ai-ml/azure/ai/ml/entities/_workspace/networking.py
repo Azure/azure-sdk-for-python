@@ -191,9 +191,9 @@ class ServiceTagDestination(OutboundRule):
     :param port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535".
         Traffics should be allowed to these port ranges.
     :type port_ranges: str
-    :ivar address_prefixes: Optional list of CIDR prefixes or IP ranges, when provided, service_tag argument will
+    :param address_prefixes: Optional list of CIDR prefixes or IP ranges, when provided, service_tag argument will
         be ignored and address_prefixes will be used instead.
-    :vartype address_prefixes: List[str]
+    :type address_prefixes: List[str]
     :ivar type: Type of the outbound rule. Set to "ServiceTag" for this class.
     :vartype type: str
 

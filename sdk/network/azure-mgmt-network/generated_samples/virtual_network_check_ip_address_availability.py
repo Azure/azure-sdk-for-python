@@ -33,10 +33,11 @@ def main():
     response = client.virtual_networks.check_ip_address_availability(
         resource_group_name="rg1",
         virtual_network_name="test-vnet",
+        ip_address="10.0.1.4",
     )
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-01-01/examples/VirtualNetworkCheckIPAddressAvailability.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-03-01/examples/VirtualNetworkCheckIPAddressAvailability.json
 if __name__ == "__main__":
     main()

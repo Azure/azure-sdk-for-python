@@ -137,7 +137,7 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                           "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}], false, {{'distanceFunction': 'euclidean'}})" \
                 .format(str(i), vector_string, vector_string)
 
-            flat_list = list(self.created_flat_euclidean_container.query_items(query=specs_query,
+            flat_list = list(self.created_flat_euclidean_container.query_items(query=vanilla_query,
                                                                                enable_cross_partition_query=True))
             verify_ordering(flat_list, "euclidean")
 
@@ -210,10 +210,10 @@ class TestVectorSimilarityQuery(unittest.TestCase):
                                                                              max_item_count=3)
         all_fetched_res = []
         count = 0
-        for page in query_iterable.by_page():
-            fetched_res = list(page)
-            all_fetched_res.extend(fetched_res)
+        item_pages = query_iterable.by_page()
+        for items in item_pages:
             count += 1
+            all_fetched_res.extend(list(items))
         assert count == 3
         assert len(all_fetched_res) == 8
         verify_ordering(all_fetched_res, "cosine")

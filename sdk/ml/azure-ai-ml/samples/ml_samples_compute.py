@@ -216,7 +216,7 @@ class ComputeConfigurationOptions(object):
         # [START compute_runtime]
         from azure.ai.ml.entities import ComputeRuntime
 
-        compute_runtime = ComputeRuntime(spark_runtime_version="3.2.0")
+        compute_runtime = ComputeRuntime(spark_runtime_version="3.3.0")
         # [END compute_runtime]
 
         # [START compute_start_stop_schedule]

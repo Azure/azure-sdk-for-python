@@ -5,13 +5,11 @@ import collections
 import os
 import uuid
 
-import azure.cosmos.documents as documents
-import azure.cosmos.exceptions as exceptions
-from azure.cosmos import ContainerProxy
-from azure.cosmos import DatabaseProxy
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos import ContainerProxy, DatabaseProxy, documents, exceptions, ConnectionRetryPolicy
+from azure.core.exceptions import ServiceRequestError
 from devtools_testutils.azure_recorded_testcase import get_credential
 from devtools_testutils.helpers import is_live
 
@@ -186,8 +184,63 @@ def get_vector_embedding_policy(distance_function, data_type, dimensions):
         ]
     }
 
+
 class FakeResponse:
     def __init__(self, headers):
         self.headers = headers
         self.reason = "foo"
         self.status_code = "bar"
+
+
+class FakePipelineResponse:
+    def __init__(self, headers=None, status_code=200, message="test-message"):
+        self.http_response = FakeHttpResponse(headers, status_code, message)
+
+
+class FakeHttpResponse:
+    def __init__(self, headers=None, status_code=200, message="test-message"):
+        if headers is None:
+            headers = {}
+        self.headers = headers
+        self.status_code = status_code
+        self.reason = message
+
+    def body(self):
+        return None
+
+
+class MockConnectionRetryPolicy(ConnectionRetryPolicy):
+    """Mocks the ConnectionRetryPolicy, adding a counter to see retries happening.
+    """
+    def __init__(self, **kwargs):
+        clean_kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        super(MockConnectionRetryPolicy, self).__init__(**clean_kwargs)
+        self.count = 0
+
+    def send(self, request):
+        """Mocks the response for the policy. ServiceRequestError handling logic was left in exactly as it is in
+        the SDK in order to test it.
+        """
+        retry_active = True
+        response = None
+        retry_settings = self.configure_retries(request.context.options)
+        while retry_active:
+            try:
+                response = self.mock_send()
+            except ServiceRequestError as err:
+                # the request ran into a socket timeout or failed to establish a new connection
+                # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
+                if retry_settings['connect'] > 0:
+                    self.count += 1
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport)
+                        continue
+                raise err
+
+        self.update_context(response.context, retry_settings)
+        return response
+
+    def mock_send(self):
+        raise ServiceRequestError("mock-service")
+

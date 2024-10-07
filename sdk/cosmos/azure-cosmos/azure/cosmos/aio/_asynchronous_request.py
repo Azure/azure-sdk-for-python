@@ -31,16 +31,15 @@ from azure.core.exceptions import DecodeError  # type: ignore
 from .. import exceptions
 from .. import http_constants
 from . import _retry_utility_async
-from .._synchronized_request import _request_body_from_data
+from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 
 
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs):
     """Makes one http request using the requests module.
 
     :param _GlobalEndpointManager global_endpoint_manager:
-    :param dict request_params:
-        contains the resourceType, operationType, endpointOverride,
-        useWriteEndpoint, useAlternateWriteEndpoint information
+    :param ~azure.cosmos._request_object.RequestObject request_params:
+        contains information for the request, like the resource_type, operation_type, and endpoint_override
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client:
         Pipeline client to process the request
@@ -58,7 +57,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     # Every request tries to perform a refresh
     client_timeout = kwargs.get('timeout')
     start_time = time.time()
-    await global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
+    if request_params.resource_type != http_constants.ResourceType.DatabaseAccount:
+        await global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
     if client_timeout is not None:
         kwargs['timeout'] = client_timeout - (time.time() - start_time)
         if kwargs['timeout'] <= 0:
@@ -68,8 +68,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         base_url = request_params.endpoint_override
     else:
         base_url = global_endpoint_manager.resolve_service_endpoint(request_params)
-    if base_url != pipeline_client._base_url:
-        request.url = request.url.replace(pipeline_client._base_url, base_url)
+    if not request.url.startswith(base_url):
+        request.url = _replace_url_prefix(request.url, base_url)
 
     parse_result = urlparse(request.url)
 

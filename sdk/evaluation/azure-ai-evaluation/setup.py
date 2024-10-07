@@ -57,7 +57,7 @@ setup(
     include_package_data=True,
     packages=find_packages(
         exclude=[
-            "tests",
+            "tests*",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
             "azure.ai",
@@ -67,12 +67,12 @@ setup(
     install_requires=[
         "promptflow-devkit>=1.15.0",
         "promptflow-core>=1.15.0",
-        "websocket-client>=1.2.0",
-        "jsonpath_ng>=1.5.0",
-        "numpy>=1.22",
         "pyjwt>=2.8.0",
-        "azure-identity",
+        # pickle support for credentials was added to this release
+        "azure-identity>=1.16.0",
         "azure-core>=1.30.2",
+        "nltk>=3.9.1",
+        "rouge-score>=0.1.2",
     ],
     extras_require={
         "pf-azure": [
@@ -85,5 +85,6 @@ setup(
     },
     package_data={
         "pytyped": ["py.typed"],
+        "azure.ai.evaluation.simulator._prompty": ["*.prompty"],
     },
 )

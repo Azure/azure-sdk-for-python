@@ -25,7 +25,7 @@ def verify_ordering(item_list, distance_function):
             assert item_list[i]["SimilarityScore"] >= item_list[i + 1]["SimilarityScore"]
 
 
-class TestVectorSimilarityQueryAsync(unittest.TestCase):
+class TestVectorSimilarityQueryAsync(unittest.IsolatedAsyncioTestCase):
     """Test to check vector similarity queries behavior."""
 
     created_db: DatabaseProxy = None
@@ -137,7 +137,7 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
                           "SimilarityScore FROM c ORDER BY VectorDistance(c.embedding, [{}], false, {{'distanceFunction': 'euclidean'}})" \
                 .format(str(i), vector_string, vector_string)
 
-            flat_list = [item async for item in self.created_flat_euclidean_container.query_items(query=specs_query)]
+            flat_list = [item async for item in self.created_flat_euclidean_container.query_items(query=vanilla_query)]
             verify_ordering(flat_list, "euclidean")
 
             quantized_list = [item async for item in self.created_quantized_cosine_container.query_items(query=specs_query)]
@@ -182,7 +182,7 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
             # disk_ann_list = [item async for item in self.created_diskANN_dotproduct_container.query_items(query=vanilla_query)]
             # verify_ordering(disk_ann_list, "dotproduct")
 
-    async def test_vector_query_pagination(self):
+    async def test_vector_query_pagination_async(self):
         # load up previously calculated embedding for the given string
         vector_string = vector_test_data.get_embedding_string("I am having a wonderful day.")
 
@@ -194,15 +194,15 @@ class TestVectorSimilarityQueryAsync(unittest.TestCase):
                                                                              max_item_count=3)
         all_fetched_res = []
         count = 0
-        pages = query_iterable.by_page()
-        async for items in await pages.__anext__():
+        item_pages = query_iterable.by_page()
+        async for items in item_pages:
             count += 1
-            all_fetched_res.extend(items)
-        assert count >= 3
+            all_fetched_res.extend([item async for item in items])
+        assert count == 3
         assert len(all_fetched_res) == 8
         verify_ordering(all_fetched_res, "cosine")
 
-    async def test_vector_query_large_data(self):
+    async def test_vector_query_large_data_async(self):
         # test different limit queries on a larger data set
         embedding_value = 0.0001
         for i in range(2000):

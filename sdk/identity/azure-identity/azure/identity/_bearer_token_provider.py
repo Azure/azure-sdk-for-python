@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import Callable
 
-from azure.core.credentials import TokenCredential
+from azure.core.credentials import TokenProvider
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.pipeline import PipelineRequest, PipelineContext
 from azure.core.rest import HttpRequest
@@ -14,7 +14,7 @@ def _make_request() -> PipelineRequest[HttpRequest]:
     return PipelineRequest(HttpRequest("CredentialWrapper", "https://fakeurl"), PipelineContext(None))
 
 
-def get_bearer_token_provider(credential: TokenCredential, *scopes: str) -> Callable[[], str]:
+def get_bearer_token_provider(credential: TokenProvider, *scopes: str) -> Callable[[], str]:
     """Returns a callable that provides a bearer token.
 
     It can be used for instance to write code like:
