@@ -29,6 +29,8 @@ class ContentSafetyChatEvaluator:
     """
     Initialize a content safety chat evaluator configured to evaluate content safetry metrics for chat scenario.
 
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
@@ -38,8 +40,6 @@ class ContentSafetyChatEvaluator:
     :param parallel: If True, use parallel execution for evaluators. Else, use sequential execution.
         Default is True.
     :type parallel: bool
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 
@@ -88,7 +88,7 @@ class ContentSafetyChatEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: dict, eval_last_turn: bool = False, parallel: bool = True, credential=None):
+    def __init__(self, credential, azure_ai_project: dict, eval_last_turn: bool = False, parallel: bool = True):
         self._eval_last_turn = eval_last_turn
         self._parallel = parallel
         self._evaluators = [

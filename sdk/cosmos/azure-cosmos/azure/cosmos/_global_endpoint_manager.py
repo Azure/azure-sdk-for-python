@@ -31,6 +31,7 @@ from . import _constants as constants
 from . import exceptions
 from ._location_cache import LocationCache
 
+
 # pylint: disable=protected-access
 
 
@@ -89,29 +90,29 @@ class _GlobalEndpointManager(object):
         self.refresh_endpoint_list(database_account)
 
     def refresh_endpoint_list(self, database_account, **kwargs):
-        with self.refresh_lock:
-            # if refresh is not needed or refresh is already taking place, return
-            if not self.refresh_needed:
-                return
-            try:
-                self._refresh_endpoint_list_private(database_account, **kwargs)
-            except Exception as e:
-                raise e
+        if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
+            self.refresh_needed = True
+        if self.refresh_needed:
+            with self.refresh_lock:
+                # if refresh is not needed or refresh is already taking place, return
+                if not self.refresh_needed:
+                    return
+                try:
+                    self._refresh_endpoint_list_private(database_account, **kwargs)
+                except Exception as e:
+                    raise e
 
     def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
         if database_account:
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
-
-        if (
-            self.location_cache.should_refresh_endpoints()
-            and self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms
-        ):
-            if not database_account:
+            self.last_refresh_time = self.location_cache.current_time_millis()
+        else:
+            if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
+                self.refresh_needed = False
+                self.last_refresh_time = self.location_cache.current_time_millis()
                 database_account = self._GetDatabaseAccount(**kwargs)
                 self.location_cache.perform_on_database_account_read(database_account)
-                self.last_refresh_time = self.location_cache.current_time_millis()
-                self.refresh_needed = False
 
     def _GetDatabaseAccount(self, **kwargs):
         """Gets the database account.
