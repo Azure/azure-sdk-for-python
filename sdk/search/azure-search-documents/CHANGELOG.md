@@ -1,16 +1,10 @@
 # Release History
 
-## 11.6.0b6 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 11.6.0b6 (2024-10-08)
 
 ### Bugs Fixed
 
 - Fixed the issue that `encryptionKey` in `SearchIndexer` was lost during serialization.  #37521
-
-### Other Changes
 
 ## 11.6.0b5 (2024-09-19)
 
