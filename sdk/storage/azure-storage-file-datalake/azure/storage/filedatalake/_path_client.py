@@ -7,7 +7,7 @@
 
 import re
 from datetime import datetime
-from typing import ( # pylint: disable=unused-import
+from typing import (
     Any, Dict, Optional, Tuple, Union,
     TYPE_CHECKING
 )
@@ -125,7 +125,7 @@ class PathClient(StorageAccountHostsMixin):
 
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, file_system=file_system_name,
                                                    path=path_name, pipeline=self._pipeline)
-        self._client._config.version = api_version  # pylint: disable=protected-access
+        self._client._config.version = api_version
 
         self._datalake_client_for_blob_operation = AzureDataLakeStorageRESTAPI(
             self._blob_client.url,
@@ -133,7 +133,7 @@ class PathClient(StorageAccountHostsMixin):
             file_system=file_system_name,
             path=path_name,
             pipeline=self._pipeline)
-        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
+        self._datalake_client_for_blob_operation._config.version = api_version
 
     def __exit__(self, *args):
         self._blob_client.close()

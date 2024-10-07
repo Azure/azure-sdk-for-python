@@ -5,25 +5,8 @@ extends:
     parameters:
       ServiceDirectory: eventhub
       TestTimeoutInMinutes: 240
-      UseFederatedAuth: true
       BuildTargetingString: azure-eventhub*
       SupportedClouds: 'Public,UsGov,China'
-      CloudConfig:
-        Public:
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
-        UsGov:
-          ServiceConnection: usgov_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureUsGovMsft.json
-        China:
-          ServiceConnection: china_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureChinaMsft.json
-          Location: 'chinanorth3'
-      MatrixReplace:
-        - TestSamples=.*/true
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       EnvVars:
@@ -32,4 +15,6 @@ extends:
         # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
         # so "execute samples" step correctly picks up Powershell credential.
         AZURE_POD_IDENTITY_AUTHORITY_HOST: "FakeAuthorityHost"
+      MatrixReplace:
+        - TestSamples=.*/true
       Clouds: 'Public,Canary'
