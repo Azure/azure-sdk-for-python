@@ -20,7 +20,6 @@ from opentelemetry.trace import StatusCode, Span
 
 # pylint: disable = no-name-in-module
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
-from azure.ai.inference import models as _models
 
 # pylint: disable = no-name-in-module
 from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore
@@ -203,25 +202,56 @@ class TraceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):  # pylint: disabl
 
 
 class AIInferenceInstrumentor:
-    def str_to_bool(self, s):
+    """
+    A class for managing the trace instrumentation of AI Inference.
+
+    This class allows enabling or disabling tracing for AI Inference.
+    and provides functionality to check whether instrumentation is active.
+    """
+    def _str_to_bool(self, s):
         if s is None:
             return False
         return str(s).lower() == "true"
 
     def instrument(self):
+        """
+        Enable trace instrumentation for AI Inference.
+
+        Raises:
+            RuntimeError: If instrumentation is already enabled.
+
+        This method checks the environment variable
+        'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to determine
+        whether to enable content tracing.
+        """        
         if self.is_instrumented():
             raise RuntimeError("Already instrumented")
 
         var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
-        enable_content_tracing = self.str_to_bool(var_value)
+        enable_content_tracing = self._str_to_bool(var_value)
         self._instrument_inference(enable_content_tracing)
 
     def uninstrument(self):
+        """
+        Disable trace instrumentation for AI Inference.
+
+        Raises:
+            RuntimeError: If instrumentation is not currently enabled.
+
+        This method removes any active instrumentation, stopping the tracing
+        of AI Inference.
+        """        
         if not self.is_instrumented():
             raise RuntimeError("Not instrumented")
         self._uninstrument_inference()
 
     def is_instrumented(self):
+        """
+        Check if trace instrumentation for AI Inference is currently enabled.
+
+        :return: True if instrumentation is active, False otherwise.
+        :rtype: bool
+        """
         return self._is_instrumented()
 
     def _set_attributes(self, span: AbstractSpan, *attrs: Tuple[str, Any]) -> None:
@@ -229,7 +259,6 @@ class AIInferenceInstrumentor:
             key, value = attr
             if value is not None:
                 span.add_attribute(key, value)
-
 
     def _add_request_chat_message_event(self, span: AbstractSpan, **kwargs: Any) -> None:
         for message in kwargs.get("messages", []):
@@ -245,18 +274,16 @@ class AIInferenceInstrumentor:
                     attributes={"gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME, "gen_ai.event.content": json.dumps(message)},
                 )
 
-
-    def parse_url(self, url):
+    def _parse_url(self, url):
         parsed = urlparse(url)
         server_address = parsed.hostname
         port = parsed.port
         return server_address, port
 
-
     def _add_request_chat_attributes(self, span: AbstractSpan, *args: Any, **kwargs: Any) -> None:
         client = args[0]
         endpoint = client._config.endpoint  # pylint: disable=protected-access
-        server_address, port = self.parse_url(endpoint)
+        server_address, port = self._parse_url(endpoint)
         model = "chat"
         if kwargs.get("model") is not None:
             model_value = kwargs.get("model")
@@ -276,8 +303,7 @@ class AIInferenceInstrumentor:
         if port is not None and port != 443:
             span.add_attribute("server.port", port)
 
-
-    def remove_function_call_names_and_arguments(self,tool_calls: list) -> list:
+    def _remove_function_call_names_and_arguments(self,tool_calls: list) -> list:
         tool_calls_copy = copy.deepcopy(tool_calls)
         for tool_call in tool_calls_copy:
             if "function" in tool_call:
@@ -289,32 +315,43 @@ class AIInferenceInstrumentor:
                     del tool_call["function"]
         return tool_calls_copy
 
-
-    def get_finish_reasons(self, result):
+    def _get_finish_reasons(result):
         if hasattr(result, "choices") and result.choices:
-            return [
-                (
-                    getattr(choice, "finish_reason", None).value
-                    if getattr(choice, "finish_reason", None) is not None
-                    else "none"
-                )
-                for choice in result.choices
-            ]
+            finish_reasons = []
+            for choice in result.choices:
+                finish_reason = getattr(choice, "finish_reason", None)
+
+                if finish_reason is None:
+                    # If finish_reason is None, default to "none"
+                    finish_reasons.append("none")
+                elif hasattr(finish_reason, "value"):
+                    # If finish_reason has a 'value' attribute (i.e., it's an enum), use it
+                    finish_reasons.append(finish_reason.value)
+                elif isinstance(finish_reason, str):
+                    # If finish_reason is a string, use it directly
+                    finish_reasons.append(finish_reason)
+                else:
+                    # For any other type, you might want to handle it or default to "none"
+                    finish_reasons.append("none")
+
+            return finish_reasons
         return None
 
-
-    def get_finish_reason_for_choice(self, choice):
+    def _get_finish_reason_for_choice(self, choice):
         return (
             getattr(choice, "finish_reason", None).value if getattr(choice, "finish_reason", None) is not None else "none"
         )
 
-
-    def _add_response_chat_message_event(self, span: AbstractSpan, result: _models.ChatCompletions) -> None:
+    def _add_response_chat_message_event(self, span: AbstractSpan, result: '_models.ChatCompletions') -> None:
+        try:
+            from azure.ai.inference import models as _models
+        except ModuleNotFoundError as _:
+            raise ModuleNotFoundError("Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'")
         for choice in result.choices:
             if _trace_inference_content:
                 full_response: Dict[str, Any] = {
                     "message": {"content": choice.message.content},
-                    "finish_reason": self.get_finish_reason_for_choice(choice),
+                    "finish_reason": self._get_finish_reason_for_choice(choice),
                     "index": choice.index,
                 }
                 if choice.message.tool_calls:
@@ -325,34 +362,33 @@ class AIInferenceInstrumentor:
                 }
             else:
                 response: Dict[str, Any] = {
-                    "finish_reason": self.get_finish_reason_for_choice(choice),
+                    "finish_reason": self._get_finish_reason_for_choice(choice),
                     "index": choice.index,
                 }
                 if choice.message.tool_calls:
                     response["message"] = {}
-                    tool_calls_function_names_and_arguments_removed = self.remove_function_call_names_and_arguments(
+                    tool_calls_function_names_and_arguments_removed = self._remove_function_call_names_and_arguments(
                         choice.message.tool_calls
                     )
                     response["message"]["tool_calls"] = [
                         tool.as_dict() for tool in tool_calls_function_names_and_arguments_removed
                     ]
-                    attributes = {
-                        "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                        "gen_ai.event.content": json.dumps(response),
-                    }
-                else:
-                    attributes = {
-                        "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                        "gen_ai.event.content": json.dumps(response),
-                    }
+
+                attributes = {
+                    "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                    "gen_ai.event.content": json.dumps(response),
+                }
             span.span_instance.add_event(name="gen_ai.choice", attributes=attributes)
 
 
     def _add_response_chat_attributes(
         self,
-        span: AbstractSpan, result: Union[_models.ChatCompletions, _models.StreamingChatCompletionsUpdate]
+        span: AbstractSpan, result: 'Union[_models.ChatCompletions, _models.StreamingChatCompletionsUpdate]'
     ) -> None:
-
+        try:
+            from azure.ai.inference import models as _models
+        except ModuleNotFoundError as _:
+            raise ModuleNotFoundError("Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'")
         self._set_attributes(
             span,
             ("gen_ai.response.id", result.id),
@@ -366,22 +402,23 @@ class AIInferenceInstrumentor:
                 result.usage.completion_tokens if hasattr(result, "usage") and result.usage else None,
             ),
         )
-        finish_reasons = self.get_finish_reasons(result)
+        finish_reasons = self._get_finish_reasons(result)
         span.add_attribute("gen_ai.response.finish_reasons", finish_reasons)
-
 
     def _add_request_span_attributes(self, span: AbstractSpan, _span_name: str, args: Any, kwargs: Any) -> None:
         self._add_request_chat_attributes(span, *args, **kwargs)
         if _trace_inference_content:
             self._add_request_chat_message_event(span, **kwargs)
 
-
     def _add_response_span_attributes(self, span: AbstractSpan, result: object) -> None:
+        try:
+            from azure.ai.inference import models as _models
+        except ModuleNotFoundError as _:
+            raise ModuleNotFoundError("Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'")        
         if isinstance(result, _models.ChatCompletions):
             self._add_response_chat_attributes(span, result)
             self._add_response_chat_message_event(span, result)
         # TODO add more models here
-
 
     def _accumulate_response(self, item, accumulate: Dict[str, Any]) -> None:
         if item.finish_reason:
@@ -408,11 +445,14 @@ class AIInferenceInstrumentor:
                     if tool_call.function and tool_call.function.arguments:
                         accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
 
-
     def _wrapped_stream(
         self,
-        stream_obj: _models.StreamingChatCompletions, span: AbstractSpan
-    ) -> _models.StreamingChatCompletions:
+        stream_obj:'_models.StreamingChatCompletions', span: AbstractSpan
+    ) -> '_models.StreamingChatCompletions':
+        try:
+            from azure.ai.inference import models as _models
+        except ModuleNotFoundError as _:
+            raise ModuleNotFoundError("Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'")    
         class StreamWrapper(_models.StreamingChatCompletions):
             def __init__(self, stream_obj, instrumentor):
                 super().__init__(stream_obj._response)
@@ -456,7 +496,7 @@ class AIInferenceInstrumentor:
                             if "message" in accumulate:
                                 if "tool_calls" in accumulate["message"]:
                                     tool_calls_function_names_and_arguments_removed = (
-                                        remove_function_call_names_and_arguments(accumulate["message"]["tool_calls"])
+                                        self._instrumentor._remove_function_call_names_and_arguments(accumulate["message"]["tool_calls"])
                                     )
                                     accumulate["message"]["tool_calls"] = list(
                                         tool_calls_function_names_and_arguments_removed
@@ -472,7 +512,6 @@ class AIInferenceInstrumentor:
                     span.finish()
 
         return StreamWrapper(stream_obj, self)
-
 
     def _trace_sync_function(
         self,
@@ -529,7 +568,8 @@ class AIInferenceInstrumentor:
                     # Set the span status to error
                     if isinstance(span.span_instance, Span):
                         span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
-                    module = exc.__module__ if hasattr(exc, '__module__') and exc.__module__ != "builtins" else ""
+                    module = getattr(exc, "__module__", "")
+                    module = module if module != "builtins" else ""
                     error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                     self._set_attributes(span, ("error.type", error_type))
                     span.finish()
@@ -542,7 +582,6 @@ class AIInferenceInstrumentor:
             return None  # Ensure all paths return
 
         return inner
-
 
     def _trace_async_function(
         self,
@@ -599,29 +638,30 @@ class AIInferenceInstrumentor:
                     # Set the span status to error
                     if isinstance(span.span_instance, Span):
                         span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
-                    module = exc.__module__ if hasattr(exc, '__module__') and exc.__module__ != "builtins" else ""
+                    module = getattr(exc, "__module__", "")
+                    module = module if module != "builtins" else ""
                     error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                    self.get_finish_reasons_set_attributes(span, ("error.type", error_type))
+                    self._get_finish_reasons_set_attributes(span, ("error.type", error_type))
                     span.finish()
                     raise
 
                 span.finish()
                 return result
 
-        return inner
+            # Handle the default case (if the function name does not match)
+            return None  # Ensure all paths return
 
+        return inner
 
     def _inject_async(self, f, _trace_type, _name):
         wrapper_fun = self._trace_async_function(f)
         wrapper_fun._original = f  # pylint: disable=protected-access
         return wrapper_fun
 
-
     def _inject_sync(self, f, _trace_type, _name):
         wrapper_fun = self._trace_sync_function(f)
         wrapper_fun._original = f  # pylint: disable=protected-access
         return wrapper_fun
-
 
     def _inference_apis(self):
         sync_apis = (
@@ -644,12 +684,10 @@ class AIInferenceInstrumentor:
         )
         return sync_apis, async_apis
 
-
     def _inference_api_list(self):
         sync_apis, async_apis = self._inference_apis()
         yield sync_apis, self._inject_sync
         yield async_apis, self._inject_async
-
 
     def _generate_api_and_injector(self, apis):
         for api, injector in apis:
@@ -668,8 +706,7 @@ class AIInferenceInstrumentor:
                     # Log other exceptions as a warning, as we're not sure what they might be
                     logging.warning("An unexpected error occurred: '%s'", str(e))
 
-
-    def available_inference_apis_and_injectors(self):
+    def _available_inference_apis_and_injectors(self):
         """
         Generates a sequence of tuples containing Inference API classes, method names, and
         corresponding injector functions.
@@ -678,7 +715,6 @@ class AIInferenceInstrumentor:
         :rtype: tuple
         """
         yield from self._generate_api_and_injector(self._inference_api_list())
-
 
     def _instrument_inference(self, enable_content_tracing: bool = False):
         """This function modifies the methods of the Inference API classes to
@@ -697,11 +733,10 @@ class AIInferenceInstrumentor:
             raise RuntimeError("Traces already started for azure.ai.inference")
         _inference_traces_enabled = True
         _trace_inference_content = enable_content_tracing
-        for api, method, trace_type, injector, name in self.available_inference_apis_and_injectors():
+        for api, method, trace_type, injector, name in self._available_inference_apis_and_injectors():
             # Check if the method of the api class has already been modified
             if not hasattr(getattr(api, method), "_original"):
                 setattr(api, method, injector(getattr(api, method), trace_type, name))
-
 
     def _uninstrument_inference(self):
         """This function restores the original methods of the Inference API classes
@@ -711,11 +746,10 @@ class AIInferenceInstrumentor:
         global _inference_traces_enabled
         global _trace_inference_content
         _trace_inference_content = False
-        for api, method, _, _, _ in self.available_inference_apis_and_injectors():
+        for api, method, _, _, _ in self._available_inference_apis_and_injectors():
             if hasattr(getattr(api, method), "_original"):
                 setattr(api, method, getattr(getattr(api, method), "_original"))
         _inference_traces_enabled = False
-
 
     def _is_instrumented(self):
         """This function returns True if Inference libary has already been instrumented
