@@ -109,7 +109,7 @@ class MyEventHandler(AssistantEventHandler):
         else:
             raise ValueError("Toolset is not available in the client.")
         
-        logging.info("Tool outputs: %s", tool_outputs)
+        logging.info(f"Tool outputs: {tool_outputs}")
         if tool_outputs:
             with self._client.submit_tool_outputs_to_run(
                 thread_id=run.thread_id, 

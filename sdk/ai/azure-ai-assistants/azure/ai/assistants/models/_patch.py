@@ -124,7 +124,7 @@ class FunctionTool(Tool):
         arguments = tool_call.function.arguments
                 
         if function_name not in self._functions:
-            logging.error(f"Function '{function_name}' not found.")
+            logging.error("Function '{function_name}' not found.")
             raise ValueError(f"Function '{function_name}' not found.")
         
         function = self._functions[function_name]
@@ -180,7 +180,7 @@ class AsyncFunctionTool(FunctionTool):
             else:
                 return function(**parsed_arguments) if parsed_arguments else function()
         except TypeError as e:
-            logging.error(f"Error executing function '{tool_call.function.name}': {e}")
+            logging.error("Error executing function '{tool_call.function.name}': {e}")
             raise
 
 class FileSearchTool(Tool):
@@ -299,7 +299,7 @@ class ToolSet:
         for i, tool in enumerate(self._tools):
             if isinstance(tool, tool_type):
                 del self._tools[i]
-                logging.info(f"Tool of type {tool_type.__name__} removed from the ToolSet.")
+                logging.info("Tool of type {tool_type.__name__} removed from the ToolSet.")
                 return
         raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
@@ -373,7 +373,7 @@ class ToolSet:
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:
-                logging.error(f"Failed to execute tool call {tool_call}: {e}")
+                logging.error("Failed to execute tool call {tool_call}: {e}")
 
         return tool_outputs
 
@@ -409,7 +409,7 @@ class AsyncToolSet(ToolSet):
                     }
                     tool_outputs.append(tool_output)
             except Exception as e:
-                logging.error(f"Failed to execute tool call {tool_call}: {e}")
+                logging.error("Failed to execute tool call {tool_call}: {e}")
 
         return tool_outputs
 
@@ -616,7 +616,7 @@ class AsyncAssistantRunStream(BaseAssistantRunStream, AsyncIterator[Tuple[str, A
                 else:
                     await self.event_handler.on_unhandled_event(event_type, event_data_obj)
             except Exception as e:
-                logging.error(f"Error in event handler for event '{event_type}': {e}")
+                logging.error("Error in event handler for event '{event_type}': {e}")
 
         return event_type, event_data_obj
 
@@ -691,7 +691,7 @@ class AssistantRunStream(BaseAssistantRunStream, Iterator[Tuple[str, Any]]):
                 else:
                     self.event_handler.on_unhandled_event(event_type, event_data_obj)
             except Exception as e:
-                logging.error(f"Error in event handler for event '{event_type}': {e}")
+                logging.error("Error in event handler for event '{event_type}': {e}")
 
         return event_type, event_data_obj
 
