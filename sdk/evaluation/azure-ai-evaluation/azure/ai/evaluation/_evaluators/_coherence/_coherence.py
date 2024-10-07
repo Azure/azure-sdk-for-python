@@ -1,69 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
 import os
-import re
+from typing import Optional
+from typing_extensions import override
 
-import numpy as np
-from promptflow._utils.async_utils import async_run_allowing_running_loop
-from promptflow.core import AsyncPrompty
-
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-
-from ..._common.utils import construct_prompty_model_config
-
-try:
-    from ..._user_agent import USER_AGENT
-except ImportError:
-    USER_AGENT = None
+from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 
 
-class _AsyncCoherenceEvaluator:
-    # Constants must be defined within eval's directory to be save/loadable
-    PROMPTY_FILE = "coherence.prompty"
-    LLM_CALL_TIMEOUT = 600
-    DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
-
-    def __init__(self, model_config: dict):
-        prompty_model_config = construct_prompty_model_config(
-            model_config,
-            self.DEFAULT_OPEN_API_VERSION,
-            USER_AGENT,
-        )
-
-        current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
-        self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
-
-    async def __call__(self, *, query: str, response: str, **kwargs):
-        # Validate input parameters
-        query = str(query or "")
-        response = str(response or "")
-
-        if not (query.strip() and response.strip()):
-            msg = "Both 'query' and 'response' must be non-empty strings."
-            raise EvaluationException(
-                message=msg,
-                internal_message=msg,
-                error_category=ErrorCategory.INVALID_VALUE,
-                error_blame=ErrorBlame.USER_ERROR,
-                error_target=ErrorTarget.COHERENCE_EVALUATOR,
-            )
-
-        # Run the evaluation flow
-        llm_output = await self._flow(query=query, response=response, timeout=self.LLM_CALL_TIMEOUT, **kwargs)
-
-        score = np.nan
-        if llm_output:
-            match = re.search(r"\d", llm_output)
-            if match:
-                score = float(match.group())
-
-        return {"gpt_coherence": float(score)}
-
-
-class CoherenceEvaluator:
+class CoherenceEvaluator(PromptyEvaluatorBase):
     """
     Initialize a coherence evaluator configured for a specific Azure OpenAI model.
 
@@ -89,21 +34,37 @@ class CoherenceEvaluator:
         }
     """
 
+    PROMPTY_FILE = "coherence.prompty"
+    RESULT_KEY = "gpt_coherence"
+
+    @override
     def __init__(self, model_config: dict):
-        self._async_evaluator = _AsyncCoherenceEvaluator(model_config)
+        current_dir = os.path.dirname(__file__)
+        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
 
-    def __call__(self, *, query: str, response: str, **kwargs):
-        """
-        Evaluate coherence.
+    @override
+    def __call__(
+        self,
+        *,
+        query: Optional[str] = None,
+        response: Optional[str] = None,
+        conversation: Optional[dict] = None,
+        **kwargs
+    ):
+        """Evaluate coherence. Accepts either a query and response for a single evaluation,
+        or a conversation for a potentially multi-turn evaluation. If the conversation has more than one pair of
+        turns, the evaluator will aggregate the results of each turn.
 
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
         :keyword response: The response to be evaluated.
-        :paramtype response: str
-        :return: The coherence score.
-        :rtype: Dict[str, float]
+        :paramtype response: Optional[str]
+        :keyword context: The context to be evaluated.
+        :paramtype context: Optional[str]
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages". Conversation turns are expected
+            to be dictionaries with keys "content" and "role".
+        :paramtype conversation: Optional[Dict]
+        :return: The relevance score.
+        :rtype: dict
         """
-        return async_run_allowing_running_loop(self._async_evaluator, query=query, response=response, **kwargs)
-
-    def _to_async(self):
-        return self._async_evaluator
+        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

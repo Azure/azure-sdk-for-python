@@ -1,5 +1,6 @@
 """Pure git tools for managing local folder Git.
 """
+
 import logging
 
 from git import Repo, GitCommandError

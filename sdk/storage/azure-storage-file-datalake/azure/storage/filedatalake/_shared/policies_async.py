@@ -19,7 +19,7 @@ from .policies import encode_base64, is_retry, StorageContentValidation, Storage
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline import (  # pylint: disable=non-abstract-transport-import
+    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
         PipelineRequest,
         PipelineResponse
     )
@@ -58,7 +58,7 @@ async def is_checksum_retry(response):
 
 class AsyncStorageResponseHook(AsyncHTTPPolicy):
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs):
         self._response_callback = kwargs.get('raw_response_hook')
         super(AsyncStorageResponseHook, self).__init__()
 
@@ -210,7 +210,7 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any] settings: The configurable values pertaining to the backoff time.
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -262,7 +262,7 @@ class LinearRetry(AsyncStorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any] settings: The configurable values pertaining to the backoff time.
         :return:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.

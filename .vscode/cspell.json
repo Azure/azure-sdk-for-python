@@ -353,6 +353,7 @@
     "prevsnapshot",
     "pschema",
     "PSECRET",
+    "pydantic",
     "pyfetch",
     "pyfuncitem",
     "pygobject",
@@ -470,7 +471,8 @@
     "dicom",
     "WINDOWSVMIMAGE",
     "LINUXVMIMAGE",
-    "MACVMIMAGE"
+    "MACVMIMAGE",
+    "myuseragent"
   ],
   "overrides": [
     {
