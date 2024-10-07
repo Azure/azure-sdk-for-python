@@ -523,18 +523,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 feed_options["maxItemCount"] = kwargs.pop('max_item_count')
             except KeyError:
                 feed_options["maxItemCount"] = args[3]
-
+        request_context = {}
         if kwargs.get("partition_key") is not None:
             change_feed_state_context["partitionKey"] =\
                 self._set_partition_key(cast(PartitionKeyType, kwargs.get('partition_key')))
-            request_context = {"partitionKey": change_feed_state_context["partitionKey"]}
+            request_context["partitionKey"] = change_feed_state_context["partitionKey"]
             change_feed_state_context["partitionKeyFeedRange"] =\
                 self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
         if kwargs.get("feed_range") is not None:
-            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
             feed_range: FeedRangeEpk = kwargs.pop('feed_range')
             change_feed_state_context["feedRange"] = feed_range._feed_range_internal
+            request_context["feed_range"] = feed_range
 
         container_properties = self._get_properties()
         feed_options["changeFeedStateContext"] = change_feed_state_context
@@ -1450,10 +1450,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return child_feed_range._feed_range_internal.get_normalized_range().is_subset(parent_feed_range._feed_range_internal.get_normalized_range())
 
     def _add_request_context(self, request_context):
-        request_context['session_token'] = self.client_connection.last_response_headers['x-ms-session-token']
+        if 'x-ms-session-token' in self.client_connection.last_response_headers:
+            request_context['session_token'] = self.client_connection.last_response_headers['x-ms-session-token']
         if 'partitionKey' in request_context:
             request_context["feed_range"] =  FeedRangeEpk(self._get_epk_range_for_partition_key(request_context['partitionKey']))
-        else:
-            # default to full range
-            request_context["feed_range"] = FeedRangeEpk(Range("", "FF", True, False))
         self.client_connection.last_response_headers["request_context"] = request_context
