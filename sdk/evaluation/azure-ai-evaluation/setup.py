@@ -68,7 +68,8 @@ setup(
         "promptflow-devkit>=1.15.0",
         "promptflow-core>=1.15.0",
         "pyjwt>=2.8.0",
-        "azure-identity>=1.12.0",
+        # pickle support for credentials was added to this release
+        "azure-identity>=1.16.0",
         "azure-core>=1.30.2",
         "nltk>=3.9.1",
         "rouge-score>=0.1.2",

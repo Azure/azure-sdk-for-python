@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 import logging
 
-from typing import Optional
 from typing_extensions import override
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
@@ -17,14 +16,14 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
 
     Detect whether cross domain injected attacks are present in your AI system's response.
 
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project. It contains subscription id, resource group, and project
         name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
     :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
     :type eval_last_turn: bool
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: Optional[~azure.core.credentials.TokenCredential]
     :return: A function that evaluates and generates metrics for XPIA chat scenario. Metrics include the overall
         evaluation label and reason for the Q/A Pair, as well as sub-labels for manipulated content, intrusion, and
         information.
@@ -53,8 +52,8 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
     @override
     def __init__(
         self,
+        credential,
         azure_ai_project: dict,
-        credential: Optional[dict] = None,
         eval_last_turn: bool = False,
     ):
         super().__init__(

@@ -244,7 +244,6 @@ async def test_custom_cloud_no_authority():
     (
         ("AzureCloud", AzureAuthorityHosts.AZURE_PUBLIC_CLOUD),
         ("AzureChinaCloud", AzureAuthorityHosts.AZURE_CHINA),
-        ("AzureGermanCloud", AzureAuthorityHosts.AZURE_GERMANY),
         ("AzureUSGovernment", AzureAuthorityHosts.AZURE_GOVERNMENT),
     ),
 )
