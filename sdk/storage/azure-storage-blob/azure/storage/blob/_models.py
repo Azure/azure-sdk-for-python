@@ -472,7 +472,7 @@ class ContainerProperties(DictMixin):
             )
 
     @classmethod
-    def _from_generated(cls, generated):  # pylint: disable=name-too-long
+    def _from_generated(cls, generated):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
@@ -934,7 +934,7 @@ class ContainerSasPermissions(object):
         delete_previous_version: bool = False,
         tag: bool = False,
         **kwargs: Any
-    ) -> None:  # pylint: disable=redefined-builtin
+    ) -> None:
         self.read = read
         self.add = kwargs.pop('add', False)
         self.create = kwargs.pop('create', False)
@@ -1443,7 +1443,8 @@ class BlobProperties(DictMixin):
         self.snapshot = kwargs.get('x-ms-snapshot')
         self.version_id = kwargs.get('x-ms-version-id')
         self.is_current_version = kwargs.get('x-ms-is-current-version')
-        self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None  # type: ignore [assignment] # pylint: disable=line-too-long
+        self.blob_type = BlobType(kwargs['x-ms-blob-type']) if (
+            kwargs.get('x-ms-blob-type')) else None  # type: ignore [assignment]
         self.metadata = kwargs.get('metadata')  # type: ignore [assignment]
         self.encrypted_metadata = kwargs.get('encrypted_metadata')
         self.last_modified = kwargs.get('Last-Modified')  # type: ignore [assignment]

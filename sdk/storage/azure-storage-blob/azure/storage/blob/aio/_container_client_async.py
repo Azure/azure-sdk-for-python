@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines, invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
 import functools
 import warnings
@@ -597,7 +597,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop('timeout', None)
         try:
-            return await self._client.container.set_metadata( # type: ignore
+            return await self._client.container.set_metadata(  # type: ignore
                 timeout=timeout,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
@@ -608,7 +608,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
             process_storage_error(error)
 
     @distributed_trace
-    def _get_blob_service_client(self) -> "BlobServiceClient":  # pylint: disable=client-method-missing-kwargs
+    def _get_blob_service_client(self) -> "BlobServiceClient":
         """Get a client to interact with the container's parent service account.
 
         Defaults to current container's credentials.
@@ -632,7 +632,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, S
                 policies=self._pipeline._impl_policies #type: ignore [arg-type] # pylint: disable = protected-access
             )
         else:
-            _pipeline = self._pipeline  # pylint: disable = protected-access
+            _pipeline = self._pipeline
         return BlobServiceClient(
             f"{self.scheme}://{self.primary_hostname}",
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
