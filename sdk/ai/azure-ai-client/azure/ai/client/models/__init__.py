@@ -163,6 +163,9 @@ from ._enums import VectorStoreStatus
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+from ._models import CredentialsSASAuth
+from ._enums import AuthenticationType
+from ._enums import EndpointType
 
 __all__ = [
     "Agent",
@@ -172,9 +175,12 @@ __all__ = [
     "AgentsApiResponseFormat",
     "AgentsNamedToolChoice",
     "AppInsightsConfiguration",
+    "AuthenticationType",
     "CodeInterpreterToolDefinition",
     "CodeInterpreterToolResource",
+    "CredentialsSASAuth",
     "Dataset",
+    "EndpointType",
     "Evaluation",
     "EvaluatorConfiguration",
     "FileContentResponse",
@@ -292,7 +298,6 @@ __all__ = [
     "AgentsApiToolChoiceOptionMode",
     "AgentsNamedToolChoiceType",
     "ApiResponseFormat",
-    "DoneEvent",
     "ErrorEvent",
     "FilePurpose",
     "FileState",
@@ -309,13 +314,11 @@ __all__ = [
     "RunStepType",
     "RunStreamEvent",
     "ThreadStreamEvent",
-    "TruncationStrategy",
     "VectorStoreChunkingStrategyRequestType",
     "VectorStoreChunkingStrategyResponseType",
     "VectorStoreExpirationPolicyAnchor",
     "VectorStoreFileBatchStatus",
     "VectorStoreFileErrorCode",
-    "VectorStoreFileStatus",
     "VectorStoreFileStatusFilter",
     "VectorStoreStatus",
 ]
