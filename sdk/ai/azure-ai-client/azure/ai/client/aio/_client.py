@@ -26,10 +26,10 @@ if TYPE_CHECKING:
 class AzureAIClient:  # pylint: disable=client-accepts-api-version-keyword
     """AzureAIClient.
 
-    :ivar endpoints: EndpointsOperations operations
-    :vartype endpoints: azure.ai.client.aio.operations.EndpointsOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.client.aio.operations.AgentsOperations
+    :ivar endpoints: EndpointsOperations operations
+    :vartype endpoints: azure.ai.client.aio.operations.EndpointsOperations
     :ivar evaluations: EvaluationsOperations operations
     :vartype evaluations: azure.ai.client.aio.operations.EvaluationsOperations
     :param endpoint: The Azure AI Studio project endpoint, in the form
@@ -92,8 +92,8 @@ class AzureAIClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.endpoints = EndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.endpoints = EndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
