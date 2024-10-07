@@ -22,9 +22,14 @@ extends:
           SubscriptionConfigurationFilePaths:
             - eng/common/TestResources/sub-config/AzureChinaMsft.json
           Location: 'chinanorth3'
+      MatrixReplace:
+        - TestSamples=.*/true
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       EnvVars:
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SUBSCRIPTION_ID: $(EVENTHUB_SUBSCRIPTION_ID)
+        # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
+        # so "execute samples" step correctly picks up Powershell credential.
+        AZURE_POD_IDENTITY_AUTHORITY_HOST: "FakeAuthorityHost"
       Clouds: 'Public,Canary'
