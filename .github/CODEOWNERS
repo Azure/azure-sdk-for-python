@@ -130,7 +130,7 @@
 
 # ServiceLabel: %Communication - SMS
 # PRLabel: %Communication - SMS
-/sdk/communication/azure-communication-sms/                           @gfeitosa-msft @besh2014 @phermanov-msft @ilyapaliakou-msft @dinazavyr @ihuseynov-msft @ktimofejev-msft
+/sdk/communication/azure-communication-sms/                           @gfeitosa-msft @besh2014 @phermanov-msft @ilyapaliakou-msft @dinazavyr
 
 # ServiceLabel: %Communication - Messages
 # PRLabel: %Communication - Messages
