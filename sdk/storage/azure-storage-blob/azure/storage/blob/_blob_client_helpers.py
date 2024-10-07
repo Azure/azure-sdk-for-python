@@ -188,7 +188,10 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
         raise ValueError(f"Unsupported BlobType: {blob_type}")
     return kwargs
 
-def _upload_blob_from_url_options(source_url: str, **kwargs: Any ) -> Dict[str, Any]:
+def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, Any]:
+    metadata = kwargs.pop('metadata', None)
+    headers = kwargs.pop('headers', {})
+    headers.update(add_metadata_headers(metadata))
     source_url = _encode_source_url(source_url=source_url)
     tier = kwargs.pop('standard_blob_tier', None)
     overwrite = kwargs.pop('overwrite', False)
@@ -222,7 +225,8 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any ) -> Dict[str, 
         'tier': tier.value if tier else None,
         'source_modified_access_conditions': get_source_conditions(kwargs),
         'cpk_info': cpk_info,
-        'cpk_scope_info': get_cpk_scope_info(kwargs)
+        'cpk_scope_info': get_cpk_scope_info(kwargs),
+        'headers': headers,
     }
     options.update(kwargs)
     if not overwrite and not _any_conditions(**options): # pylint: disable=protected-access
