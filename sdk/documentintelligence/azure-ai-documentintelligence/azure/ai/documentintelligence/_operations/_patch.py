@@ -317,7 +317,7 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         return LROPoller[_models.DocumentModelDetails](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-    
+
     @distributed_trace
     def begin_copy_classifier_to(
         self,

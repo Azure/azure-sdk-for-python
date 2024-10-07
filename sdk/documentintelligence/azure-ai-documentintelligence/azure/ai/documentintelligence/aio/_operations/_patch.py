@@ -309,9 +309,9 @@ class DocumentIntelligenceAdministrationClientOperationsMixin(
         return AsyncLROPoller[_models.DocumentModelDetails](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-    
+
     @distributed_trace_async
-    async def begin_copy_classifier_to(
+    async def begin_copy_classifier_to(  # type: ignore[override]
         self,
         classifier_id: str,
         copy_to_request: Union[_models.ClassifierCopyAuthorization, JSON, IO[bytes]],
