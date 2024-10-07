@@ -3236,13 +3236,23 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
     def test_snapshot_immutability_policy_and_legal_hold(self, **kwargs):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+        storage_resource_group_name = kwargs.pop("storage_resource_group_name")
         variables = kwargs.pop("variables", {})
 
         self._setup(versioned_storage_account_name, versioned_storage_account_key)
+        container_name = self.get_resource_name('container')
+        if self.is_live:
+            token_credential = self.get_credential(BlobServiceClient)
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
 
-        blob_name = self._create_block_blob()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        snapshot_blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob.create_snapshot())
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(container_name, blob_name)
+        blob.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=True)
+        snapshot_blob = self.bsc.get_blob_client(container_name, blob_name, snapshot=blob.create_snapshot())
 
         try:
             expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
@@ -3275,12 +3285,22 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
     def test_versioning_immutability_policy_and_legal_hold(self, **kwargs):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+        storage_resource_group_name = kwargs.pop("storage_resource_group_name")
         variables = kwargs.pop("variables", {})
 
         self._setup(versioned_storage_account_name, versioned_storage_account_key)
+        container_name = self.get_resource_name('container')
+        if self.is_live:
+            token_credential = self.get_credential(BlobServiceClient)
+            subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
+            mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
+            property = mgmt_client.models().BlobContainer(
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
+            mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name,
+                                               container_name, blob_container=property)
 
-        blob_name = self.get_resource_name('blob')
-        root_blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_name = self._get_blob_reference()
+        root_blob = self.bsc.get_blob_client(container_name, blob_name)
         old_version_dict = root_blob.upload_blob(b"abc", overwrite=True)
         root_blob.upload_blob(b"abcdef", overwrite=True)
 
@@ -3291,7 +3311,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
                 policy_mode=BlobImmutabilityPolicyMode.Unlocked
             )
             old_version_blob = self.bsc.get_blob_client(
-                self.container_name, blob_name,
+                container_name, blob_name,
                 version_id=old_version_dict['version_id']
             )
 
