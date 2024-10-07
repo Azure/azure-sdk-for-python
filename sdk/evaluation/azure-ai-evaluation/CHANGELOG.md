@@ -66,7 +66,7 @@ evaluate(
 )
 ```
 
-- Simulator now requires configuration to call the prompty within the `azure_ai_project`. This enables key-less usage of the simulator.
+- Simulator now requires configuration to call the prompty within the `azure_ai_project`. This enables the usage of simulator with Entra ID based auth.
 Before:
 ```python
 azure_ai_project = {
