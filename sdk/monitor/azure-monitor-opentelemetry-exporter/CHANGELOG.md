@@ -4,6 +4,7 @@
 
 ### Features Added
 
+
 - Allow tracking of whether in a Azure Functions attach scenario
     ([#37717](https://github.com/Azure/azure-sdk-for-python/pull/37717))
 
