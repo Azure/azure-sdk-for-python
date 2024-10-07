@@ -186,7 +186,6 @@ class Range(object):
 
     @staticmethod
     def overlaps(range1, range2):
-
         if range1 is None or range2 is None:
             return False
         if range1.isEmpty() or range2.isEmpty():
@@ -195,7 +194,7 @@ class Range(object):
         cmp1 = Range._compare_helper(range1.min, range2.max)
         cmp2 = Range._compare_helper(range2.min, range1.max)
 
-        if cmp1 <= 0 or cmp2 <= 0:
+        if cmp1 <= 0 and cmp2 <= 0:
             if (cmp1 == 0 and not (range1.isMinInclusive and range2.isMaxInclusive)) or (
                 cmp2 == 0 and not (range2.isMinInclusive and range1.isMaxInclusive)
             ):

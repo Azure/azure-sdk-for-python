@@ -36,9 +36,7 @@ from ._base import (
     _deserialize_throughput,
     _replace_throughput,
     GenerateGuidId,
-    _set_properties_cache,
-    ParsePaths,
-    TrimBeginningAndEndingSlashes
+    _set_properties_cache
 )
 from ._cosmos_client_connection import CosmosClientConnection
 from ._feed_range import FeedRange, FeedRangeEpk

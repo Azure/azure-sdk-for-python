@@ -11,9 +11,6 @@ import azure.cosmos.partition_key as partition_key
 import test_config
 from azure.cosmos._feed_range import FeedRangeEpk
 from azure.cosmos._routing.routing_range import Range
-from test.test_config import TestConfig
-
-
 
 @pytest.fixture(scope="class")
 def setup():
@@ -23,12 +20,57 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(TestFeedRange.host, TestConfig.masterKey),
+    test_client = cosmos_client.CosmosClient(TestFeedRange.host, test_config.TestConfig.masterKey),
     created_db = test_client[0].get_database_client(TestFeedRange.TEST_DATABASE_ID)
     return {
         "created_db": created_db,
         "created_collection": created_db.get_container_client(TestFeedRange.TEST_CONTAINER_ID)
     }
+
+test_subset_ranges = [(Range("", "FF", True, False),
+                       Range("3F", "7F", True, False),
+                       True),
+                      (Range("3F", "7F", True, False),
+                Range("", "FF", True, False),
+                False),
+                      (Range("3F", "7F", True, False),
+                Range("", "5F", True, False),
+                False),
+                      (Range("3F", "7F", True, True),
+                Range("3F", "7F", True, True),
+                True),
+                      (Range("3F", "7F", False, True),
+                Range("3F", "7F", True, True),
+                False),
+                      (Range("3F", "7F", True, False),
+                Range("3F", "7F", True, True),
+                False),
+                      (Range("3F", "7F", True, False),
+                Range("", "2F", True, False),
+                False)]
+
+
+test_overlaps_ranges = [(Range("", "FF", True, False),
+                       Range("3F", "7F", True, False),
+                       True),
+                      (Range("3F", "7F", True, False),
+                       Range("", "FF", True, False),
+                       True),
+                      (Range("3F", "7F", True, False),
+                       Range("", "5F", True, False),
+                       True),
+                      (Range("3F", "7F", True, False),
+                       Range("3F", "7F", True, False),
+                       True),
+                      (Range("3F", "7F", True, False),
+                       Range("", "2F", True, False),
+                       False),
+                      (Range("3F", "7F", True, False),
+                       Range("6F", "FF", True, False),
+                       True),
+                      (Range("AA", "BB", True, False),
+                       Range("CC", "FF", True, False),
+                       False)]
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.unittest
@@ -53,29 +95,7 @@ class TestFeedRange:
                         "3c80b1b7310bb39f29cc4ea05bdd461f", True, False)
         setup["created_db"].delete_container(created_container)
 
-    test_ranges = [(Range("", "FF", True, False),
-                    Range("3F", "7F", True, False),
-                    True),
-                   (Range("3F", "7F", True, False),
-                    Range("", "FF", True, False),
-                    False),
-                   (Range("3F", "7F", True, False),
-                    Range("", "5F", True, False),
-                    False),
-                   (Range("3F", "7F", True, True),
-                    Range("3F", "7F", True, True),
-                    True),
-                   (Range("3F", "7F", False, True),
-                    Range("3F", "7F", True, True),
-                    False),
-                   (Range("3F", "7F", True, False),
-                    Range("3F", "7F", True, True),
-                    False),
-                   (Range("3F", "7F", True, False),
-                   Range("", "2F", True, False),
-                   False)]
-
-    @pytest.mark.parametrize("parent_feed_range, child_feed_range, is_subset", test_ranges)
+    @pytest.mark.parametrize("parent_feed_range, child_feed_range, is_subset", test_subset_ranges)
     def test_feed_range_is_subset(self, setup, parent_feed_range, child_feed_range, is_subset):
         epk_parent_feed_range = FeedRangeEpk(parent_feed_range)
         epk_child_feed_range = FeedRangeEpk(child_feed_range)
@@ -85,6 +105,11 @@ class TestFeedRange:
         epk_parent_feed_range = FeedRangeEpk(Range("", "FF", True, False))
         epk_child_feed_range = setup["created_collection"].feed_range_from_partition_key("1")
         assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
+
+    @pytest.mark.parametrize("range1, range2, overlaps", test_overlaps_ranges)
+    def test_overlaps(self, setup, range1, range2, overlaps):
+        assert Range.overlaps(range1, range2) == overlaps
+
 
 if __name__ == '__main__':
     unittest.main()

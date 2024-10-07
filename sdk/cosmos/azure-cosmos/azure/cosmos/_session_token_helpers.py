@@ -36,12 +36,45 @@ def merge_session_tokens(session_token1, session_token2):
     pk_range_id = pk_range_id1
     if pk_range_id1 != pk_range_id2:
         pk_range_id = pk_range_id1 \
-            if vector_session_token1.global_lsn > vector_session_token2.global_lsn else pk_range_id2
+            if vector_session_token1.is_greater(vector_session_token2) else pk_range_id2
     vector_session_token = vector_session_token1.merge(vector_session_token2)
     return pk_range_id + ":" +  vector_session_token.session_token
 
 def is_compound_session_token(session_token):
     return "," in session_token
 
+def split_compound_session_tokens(compound_session_tokens):
+    session_tokens = []
+    for _, session_token in compound_session_tokens:
+            if is_compound_session_token(session_token):
+                tokens = session_token.split(",")
+                for token in tokens:
+                    session_tokens.append(token)
+            else:
+                session_tokens.append(session_token)
+    return session_tokens
 
+def merge_session_tokens_with_same_pkrangeid(session_tokens):
+    new_session_tokens = []
+    i = 0
+    while i < len(session_tokens):
+        j = i + 1
+        while j < len(session_tokens):
+            tokens1 = session_tokens[i].split(":")
+            tokens2 = session_tokens[j].split(":")
+            pk_range_id1 = tokens1[0]
+            pk_range_id2 = tokens2[0]
+            if pk_range_id1 == pk_range_id2:
+                vector_session_token1 = VectorSessionToken.create(tokens1[1])
+                vector_session_token2 = VectorSessionToken.create(tokens2[1])
+                vector_session_token = vector_session_token1.merge(vector_session_token2)
+                new_session_tokens.append(pk_range_id1 + ":" + vector_session_token.session_token)
+                remove_session_tokens = [session_tokens[i], session_tokens[j]]
+                for token in remove_session_tokens:
+                    session_tokens.remove(token)
+                i = -1
+            j += 1
+        i += 1
 
+    new_session_tokens.extend(session_tokens)
+    return new_session_tokens

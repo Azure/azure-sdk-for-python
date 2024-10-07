@@ -9,9 +9,6 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
 from azure.cosmos._routing.routing_range import Range
-from test.test_config import TestConfig
-
-
 
 @pytest.fixture(scope="class")
 def setup():
@@ -21,7 +18,7 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(TestRequestContext.host, TestConfig.masterKey),
+    test_client = cosmos_client.CosmosClient(TestRequestContext.host, test_config.TestConfig.masterKey),
     created_db = test_client[0].get_database_client(TestRequestContext.TEST_DATABASE_ID)
     return {
         "created_db": created_db,
@@ -52,7 +49,7 @@ def createItem(id = 'item' + str(uuid.uuid4()), pk='A', name='sample'):
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
 class TestRequestContext:
-    """Tests to verify methods for operations on feed ranges
+    """Tests to verify request context gets populated correctly
     """
 
     host = test_config.TestConfig.host
