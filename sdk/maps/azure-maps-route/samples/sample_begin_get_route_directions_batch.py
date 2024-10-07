@@ -18,7 +18,7 @@ USAGE:
 """
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def begin_get_route_directions_batch():
     from azure.core.credentials import AzureKeyCredential

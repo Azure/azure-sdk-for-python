@@ -18,12 +18,13 @@ USAGE:
 """
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 def get_route_directions_batch_sync():
     # [START get_route_directions_batch_sync]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.route import MapsRouteClient
+    from azure.maps.route.models import BatchRequest, BatchRequestItem
 
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
 
@@ -34,8 +35,8 @@ def get_route_directions_batch_sync():
     )
 
     print("Get route directions batch sync")
-    print(result.summary.total_requests)
-    print(result.items[0].response.routes[0].sections[0])
+    print(result.batch_summary.total_requests)
+    print(result.batch_items[0].response.routes[0].sections[0])
     # [END get_route_directions_batch_sync]
 
 if __name__ == '__main__':

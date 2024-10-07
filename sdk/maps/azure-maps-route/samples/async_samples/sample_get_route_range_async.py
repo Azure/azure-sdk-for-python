@@ -19,20 +19,19 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
-
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def get_route_range():
     # [START get_route_range_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.route.aio import MapsRouteClient
-    from azure.maps.route.models import LatLon
+    from azure.maps.route.models import LatLongPair
 
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
 
     async with maps_route_client:
         result = await maps_route_client.get_route_range(
-            coordinates=LatLon(52.50931,13.42936),
+            coordinates=LatLongPair(latitude=52.50931, longitude=13.42936),
             time_budget_in_sec=6000
         )
 

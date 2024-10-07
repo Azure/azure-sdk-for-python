@@ -21,7 +21,7 @@ from ._configuration import MapsRouteClientConfiguration
 from .operations import RouteOperations
 
 
-class MapsRouteClient:
+class MapsRouteClient(RouteOperations):
     """Azure Maps Route REST APIs.
 
     :ivar route: RouteOperations operations
@@ -74,7 +74,12 @@ class MapsRouteClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.route = RouteOperations(self._client, self._config, self._serialize, self._deserialize)
+        super().__init__(
+            client=self._client,
+            config=self._config,
+            serializer=self._serialize,
+            deserializer=self._deserialize
+        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
