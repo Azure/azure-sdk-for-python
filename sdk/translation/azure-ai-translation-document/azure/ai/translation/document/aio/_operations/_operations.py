@@ -615,14 +615,14 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_document_status(self, id: str, document_id: str, **kwargs: Any) -> _models.DocumentStatus:
+    async def get_document_status(self, translation_id: str, document_id: str, **kwargs: Any) -> _models.DocumentStatus:
         """Returns the status for a specific document.
 
         Returns the translation status for a specific document based on the request Id
         and document Id.
 
-        :param id: Format - uuid.  The batch id. Required.
-        :type id: str
+        :param translation_id: Format - uuid.  The batch id. Required.
+        :type translation_id: str
         :param document_id: Format - uuid.  The document id. Required.
         :type document_id: str
         :return: DocumentStatus. The DocumentStatus is compatible with MutableMapping
@@ -670,7 +670,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         cls: ClsType[_models.DocumentStatus] = kwargs.pop("cls", None)
 
         _request = build_document_translation_get_document_status_request(
-            id=id,
+            translation_id=translation_id,
             document_id=document_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -708,7 +708,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_translation_status(self, id: str, **kwargs: Any) -> _models.TranslationStatus:
+    async def get_translation_status(self, translation_id: str, **kwargs: Any) -> _models.TranslationStatus:
         """Returns the status for a document translation request.
 
         Returns the status for a document translation request.
@@ -716,8 +716,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         overall request status, as well as the status for documents that are being
         translated as part of that request.
 
-        :param id: Format - uuid.  The operation id. Required.
-        :type id: str
+        :param translation_id: Format - uuid.  The operation id. Required.
+        :type translation_id: str
         :return: TranslationStatus. The TranslationStatus is compatible with MutableMapping
         :rtype: ~azure.ai.translation.document.models.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -767,7 +767,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         cls: ClsType[_models.TranslationStatus] = kwargs.pop("cls", None)
 
         _request = build_document_translation_get_translation_status_request(
-            id=id,
+            translation_id=translation_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -804,7 +804,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def cancel_translation(self, id: str, **kwargs: Any) -> _models.TranslationStatus:
+    async def cancel_translation(self, translation_id: str, **kwargs: Any) -> _models.TranslationStatus:
         """Cancel a currently processing or queued translation.
 
         Cancel a currently processing or queued translation.
@@ -816,8 +816,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         All pending documents will be cancelled if
         possible.
 
-        :param id: Format - uuid.  The operation-id. Required.
-        :type id: str
+        :param translation_id: Format - uuid.  The operation-id. Required.
+        :type translation_id: str
         :return: TranslationStatus. The TranslationStatus is compatible with MutableMapping
         :rtype: ~azure.ai.translation.document.models.TranslationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -867,7 +867,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         cls: ClsType[_models.TranslationStatus] = kwargs.pop("cls", None)
 
         _request = build_document_translation_cancel_translation_request(
-            id=id,
+            translation_id=translation_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -906,7 +906,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
     @distributed_trace
     def list_document_statuses(
         self,
-        id: str,
+        translation_id: str,
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
@@ -964,8 +964,8 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         This reduces the risk of the client making assumptions about
         the data returned.
 
-        :param id: Format - uuid.  The operation id. Required.
-        :type id: str
+        :param translation_id: Format - uuid.  The operation id. Required.
+        :type translation_id: str
         :keyword top: top indicates the total number of records the user wants to be returned across
          all pages.
 
@@ -1056,7 +1056,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
             if not next_link:
 
                 _request = build_document_translation_list_document_statuses_request(
-                    id=id,
+                    translation_id=translation_id,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
