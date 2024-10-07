@@ -10,14 +10,12 @@ from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import AutoNCrossValidations
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import Classification as RestClassification
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ClassificationPrimaryMetrics
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     ClassificationTrainingSettings as RestClassificationTrainingSettings,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import CustomNCrossValidations
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import Forecasting as RestForecasting
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ForecastingPrimaryMetrics
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
@@ -37,7 +35,13 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     TableVerticalLimitSettings as RestTableVerticalLimitSettings,
 )
-from azure.ai.ml._restclient.v2024_01_01_preview.models._models_py3 import JobBase, LogVerbosity, MLTableJobInput
+from azure.ai.ml._restclient.v2024_01_01_preview.models._models_py3 import (
+    AutoNCrossValidations,
+    CustomNCrossValidations,
+    JobBase,
+    LogVerbosity,
+    MLTableJobInput,
+)
 from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake, to_iso_duration_format_mins
