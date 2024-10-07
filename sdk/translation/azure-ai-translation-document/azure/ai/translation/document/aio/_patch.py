@@ -500,7 +500,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         return cast(
             AsyncItemPaged[DocumentStatus],
             super().list_document_statuses(
-                id=translation_id,
+                translation_id=translation_id,
                 created_date_time_utc_start=created_after,
                 created_date_time_utc_end=created_before,
                 ids=document_ids,
