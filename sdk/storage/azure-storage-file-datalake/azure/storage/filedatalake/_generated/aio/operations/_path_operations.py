@@ -15,16 +15,16 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._path_operations import (
     build_append_data_request,
     build_create_request,
@@ -292,7 +292,6 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -541,7 +540,6 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -578,7 +576,7 @@ class PathOperations:
             response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
             response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
-            deserialized = self._deserialize("SetAccessControlRecursiveResponse", pipeline_response)
+            deserialized = self._deserialize("SetAccessControlRecursiveResponse", pipeline_response.http_response)
 
         if response.status_code == 202:
             response_headers["Content-MD5"] = self._deserialize("str", response.headers.get("Content-MD5"))
@@ -619,7 +617,7 @@ class PathOperations:
          the current lease ID in "x-ms-lease-id" and the new lease ID in "x-ms-proposed-lease-id" to
          change the lease ID of an active lease. Use "renew" and specify the "x-ms-lease-id" to renew an
          existing lease. Use "release" and specify the "x-ms-lease-id" to release a lease. Known values
-         are: "acquire", "break", "change", "renew", and "release". Required.
+         are: "acquire", "break", "change", "renew", "release", and "break". Required.
         :type x_ms_lease_action: str or ~azure.storage.filedatalake.models.PathLeaseAction
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
@@ -689,7 +687,6 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -830,9 +827,9 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -841,6 +838,10 @@ class PathOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 206]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
             raise HttpResponseError(response=response, model=error)
@@ -879,8 +880,6 @@ class PathOperations:
                 "str", response.headers.get("x-ms-encryption-key-sha256")
             )
 
-            deserialized = response.stream_download(self._client._pipeline)
-
         if response.status_code == 206:
             response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
             response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
@@ -915,7 +914,7 @@ class PathOperations:
                 "str", response.headers.get("x-ms-encryption-key-sha256")
             )
 
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1012,7 +1011,6 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1146,7 +1144,6 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1270,7 +1267,6 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1381,7 +1377,6 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1405,7 +1400,7 @@ class PathOperations:
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
 
-        deserialized = self._deserialize("SetAccessControlRecursiveResponse", pipeline_response)
+        deserialized = self._deserialize("SetAccessControlRecursiveResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1573,7 +1568,6 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1734,7 +1728,6 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1826,7 +1819,6 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1904,7 +1896,6 @@ class PathOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False

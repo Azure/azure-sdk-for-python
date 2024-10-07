@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
-from typing import Any, Union, Dict
+from typing import Any, Union, Dict, Optional
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -42,7 +42,7 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
         self._max_retries_per_action = max_retries_per_action
         self._endpoint = endpoint
         self._index_name = index_name
-        self._index_key = None
+        self._index_key: Optional[str] = None
         self._credential = credential
         self._on_new = kwargs.pop("on_new", None)
         self._on_progress = kwargs.pop("on_progress", None)
