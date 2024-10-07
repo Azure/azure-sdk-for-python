@@ -292,7 +292,7 @@ class ShareSasPermissions(object):
         delete: bool = False,
         list: bool = False,
         create: bool = False
-    ) -> None:  # pylint: disable=redefined-builtin
+    ) -> None:
         self.read = read
         self.create = create
         self.write = write
@@ -866,7 +866,7 @@ class NTFSAttributes(object):
 
         parsed = cls(read_only, hidden, system, none, directory, archive, temporary, offline, not_content_indexed,
                      no_scrub_data)
-        parsed._str = string  # pylint: disable = protected-access
+        parsed._str = string
         return parsed
 
 
@@ -1246,6 +1246,6 @@ def service_properties_deserialize(generated: GeneratedStorageServiceProperties)
     return {
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # type: ignore [union-attr] # pylint: disable=protected-access, line-too-long
+        'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # type: ignore [union-attr] # pylint: disable=protected-access
         'protocol': ShareProtocolSettings._from_generated(generated.protocol),  # pylint: disable=protected-access
     }

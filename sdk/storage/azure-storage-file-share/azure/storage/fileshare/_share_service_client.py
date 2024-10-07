@@ -32,9 +32,9 @@ from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, par
 from ._shared.response_handlers import process_storage_error
 
 if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+    from typing import Literal
 else:
-    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
+    from typing_extensions import Literal
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -125,7 +125,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access, line-too-long
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location mode hostname.
