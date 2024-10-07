@@ -22,6 +22,9 @@ if "RAI_SVC_URL" in os.environ:
     api_url = api_url.rstrip("/")
     print(f"Found RAI_SVC_URL in environment variable, using {api_url} for the service endpoint.")
 
+# TODO: remove this
+api_url = "https://int.api.azureml-test.ms"
+
 
 class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
     """Client for the Responsible AI Service
@@ -165,15 +168,15 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             category=ErrorCategory.UNKNOWN,
             blame=ErrorBlame.USER_ERROR,
         )
-    
+
     async def customize_first_turn(
-            self, 
-            *, 
-            template_key: str, 
-            personality: str,
-            application_scenario: str,
-            other_template_kwargs: Any = {},
-        ) -> Any:
+        self,
+        *,
+        template_key: str,
+        personality: str,
+        application_scenario: str,
+        other_template_kwargs: Any = {},
+    ) -> Any:
         token = self.token_manager.get_token()
         headers = {
             "Authorization": f"Bearer {token}",
@@ -182,28 +185,27 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         }
         # TODO: change URL
         json_payload = {
-            "url": "", # https://int.api.azureml-test.ms 
+            "url": self.simulation_submit_endpoint,
             "headers": {
-                "Content-Type": "application/json", 
-            }, 
-            "json": '{"messages": [{"role": "system", "content": "{{ch_template_placeholder}}"}], "temperature": 0.0, "max_tokens": 1200, "n": 1, "frequency_penalty": 0, "presence_penalty": 0, "stop": ["<|im_end|>", "<|endoftext|>"]}', 
-            "params": {'api-version': '2023-07-01-preview'}, 
-            "templatekey": str(template_key), 
+                "Content-Type": "application/json",
+            },
+            "json": '{"messages": [{"role": "system", "content": "{{ch_template_placeholder}}"}], "temperature": 0.0, "max_tokens": 7400, "n": 1, "frequency_penalty": 0, "presence_penalty": 0, "stop": ["<|im_end|>", "<|endoftext|>"]}',
+            "params": {"api-version": "2023-07-01-preview"},
+            "templatekey": str(template_key),
             "templateParameters": {
                 "personality": str(personality),
                 "application_scenario": str(application_scenario),
-                **other_template_kwargs
+                **other_template_kwargs,
             },
-            "simulationType": "CustomPersona"
+            "simulationType": "CustomPersona",
         }
+        print("Submitting request with payload: ", json_payload)
         session = self._create_async_client()
         async with session:
             response = await session.post(
-                url="", # https://int.api.azureml-test.ms 
-                headers=headers, 
-                json=json_payload
+                url=self.simulation_submit_endpoint, headers=headers, json=json_payload
             )  # pylint: disable=unexpected-keyword-arg
-        
+
         if response.status_code != 202:
             raise HttpResponseError(
                 message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
@@ -223,13 +225,21 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         # # initial 15 seconds wait before attempting to fetch result
         await asyncio.sleep(15)
         import time
+
         time.sleep(15)
 
         async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
             response = await exp_retry_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
                 result_url, headers=headers
             )
+            print("Retrying....", result_url)
         response.raise_for_status()
-        
-        response_data = response.json()
-        return response_data['choices'][0]['message']['content']
+        print("Response staus code: ", response.status_code)
+        try:
+            response_data = response.json()
+            return response_data["choices"][0]["message"]["content"], response_data
+        except Exception as e:
+            import pdb
+
+            pdb.set_trace()
+            return None
