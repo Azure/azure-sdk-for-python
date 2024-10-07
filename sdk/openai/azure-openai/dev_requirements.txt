@@ -3,3 +3,4 @@
 aiohttp
 openai
 pillow
+pydantic

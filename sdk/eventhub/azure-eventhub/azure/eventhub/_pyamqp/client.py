@@ -239,7 +239,7 @@ class AMQPClient(
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
-                    self._connection.listen(wait=self._socket_timeout, batch=self._link.current_link_credit)
+                    self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
                     start_time = current_time
                 time.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
@@ -466,6 +466,9 @@ class AMQPClient(
                 mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
                 self._mgmt_links[node] = mgmt_link
                 mgmt_link.open()
+
+        while not self.client_ready():
+            time.sleep(0.05)
 
         while not mgmt_link.ready():
             self._connection.listen(wait=False)
@@ -863,7 +866,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         :rtype: bool
         """
         try:
-            if self._link.current_link_credit <= 0:
+            if self._link.total_link_credit <= 0:
                 self._link.flow(link_credit=self._link_credit)
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:

@@ -84,9 +84,7 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
         data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
         jobdata = models.RadiologyInsightsJob(job_data=data)
 
-        radiology_insights_client = RadiologyInsightsClient(
-            healthinsights_endpoint, get_credential()
-        )
+        radiology_insights_client = RadiologyInsightsClient(healthinsights_endpoint, get_credential())
 
         poller = radiology_insights_client.begin_infer_radiology_insights(
             id="SyncJobID",

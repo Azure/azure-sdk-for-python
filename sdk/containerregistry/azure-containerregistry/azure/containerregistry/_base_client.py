@@ -71,7 +71,7 @@ class TransportWrapper(HttpTransport):
     def __init__(self, transport):
         self._transport = transport
 
-    def send(self, request, **kwargs):
+    def send(self, request, **kwargs: Any):
         return self._transport.send(request, **kwargs)
 
     def open(self):

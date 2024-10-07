@@ -18,8 +18,6 @@
 # SDK
 ###########
 
-/.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kristapratico @Azure/azure-sdk-eng
-
 # Catch all
 /sdk/ @lmazuel
 
@@ -49,6 +47,12 @@
 
 # PRLabel: %AI
 /sdk/ai/                                                             @luigiw @needuv @achauhan-scc @kingernupur @paulshealy1 @singankit
+
+# ServiceOwners: @luigiw @needuv @singankit
+# ServiceLabel: %Evaluation
+
+# PRLabel: %Evaluation
+/sdk/evaluation/                                                     @Azure/azure-sdk-write-evaluation
 
 # ServiceLabel: %AgriFood
 # PRLabel: %AgriFood
@@ -265,7 +269,7 @@
 # ServiceOwners: @azureml-github @Azure/azure-ml-sdk
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @paulshealy1 @achauhan-scc @kingernupur 
+/sdk/ml/                                                             @paulshealy1 @achauhan-scc @kingernupur
 
 # PRLabel: %ML-Local Endpoints
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @JustinFirsching
@@ -296,9 +300,9 @@
 /sdk/ml/pipeline.tests.yml                                           @wangchao1230 @eniac871 @kingernupur @achauhan-scc
 
 # PRLabel: %ML-Workspace
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/                            @seanyao1 @debuggerXi
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/                          @seanyao1 @debuggerXi
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py           @seanyao1 @debuggerXi
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/                            @seanyao1 @debuggerXi @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/                          @seanyao1 @debuggerXi @kingernupur @achauhan-scc
+/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py           @seanyao1 @debuggerXi @kingernupur @achauhan-scc
 
 # PRLabel: %ML-ImportJob
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/import_job.py                     @xiongrenyi
@@ -322,6 +326,10 @@
 
 # PRLabel: %OpenAI
 /sdk/openai/                                                         @kristapratico @glecaros
+
+# ServiceLabel: %Operator Nexus - Network Cloud
+# PRLabel: %Operator Nexus - Network Cloud
+/sdk/networkcloud/                                                   @Azure/azure-sdk-write-networkcloud
 
 # ServiceLabel: %Purview
 # PRLabel: %Purview
@@ -834,12 +842,19 @@
 /eng/                                                                @scbedd @weshaggard @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
 /.github/workflows/                                                  @Azure/azure-sdk-eng
+/.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kristapratico @Azure/azure-sdk-eng
+
+/.config/1espt/                                                      @benbp @weshaggard
 
 /tools/                                                              @scbedd @mccoyp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
+/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312 @kristapratico
 /eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
+
+# Add approvers for typespec-python emitter version updates
+/eng/emitter-package.json                                            @mccoyp @catalinaperalta @kristapratico @iscai-msft
+/eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @kristapratico @iscai-msft
 
 /pylintrc                                                            @l0lawrence

@@ -13,7 +13,10 @@ param enableMultipleRegions bool = false
 param location string = resourceGroup().location
 
 @description('The api version to be used by Bicep to create resources')
-param apiVersion string = '2020-04-01'
+param apiVersion string = '2023-04-15'
+
+@description('The principal to assign the role to. This is application object id.')
+param testApplicationOid string
 
 var accountName = toLower(baseName)
 var resourceId = cosmosAccount.id
@@ -40,8 +43,11 @@ var multiRegionConfiguration = [
   }
 ]
 var locationsConfiguration = (enableMultipleRegions ? multiRegionConfiguration : singleRegionConfiguration)
+var roleDefinitionId = guid(baseName, 'roleDefinitionId')
+var roleAssignmentId = guid(baseName, 'roleAssignmentId') 
+var roleDefinitionName = 'ExpandedRbacActions'
 
-resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
+resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2023-04-15' = {
   name: toLower(accountName)
   location: location
   kind: 'GlobalDocumentDB'
@@ -61,6 +67,37 @@ resource cosmosAccount 'Microsoft.DocumentDB/databaseAccounts@2020-04-01' = {
         name: 'EnableNoSQLVectorSearch'
     }]
     locations: locationsConfiguration
+  }
+}
+
+resource accountName_roleDefinitionId 'Microsoft.DocumentDB/databaseAccounts/sqlRoleDefinitions@2023-04-15' = {
+  parent: cosmosAccount 
+  name: roleDefinitionId
+  properties: {
+    roleName: roleDefinitionName
+    type: 'CustomRole'
+    assignableScopes: [
+      cosmosAccount.id 
+    ]
+    permissions: [
+      {
+        dataActions: [
+          'Microsoft.DocumentDB/databaseAccounts/readMetadata'
+          'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/*'
+          'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers/items/*'
+        ]
+      }
+    ]
+  }
+}
+
+resource accountName_roleAssignmentId 'Microsoft.DocumentDB/databaseAccounts/sqlRoleAssignments@2023-04-15' = {
+  parent: cosmosAccount 
+  name: guid(resourceGroup().id, roleAssignmentId, testApplicationOid) 
+  properties: {
+    roleDefinitionId: accountName_roleDefinitionId.id
+    principalId: testApplicationOid 
+    scope: cosmosAccount.id
   }
 }
 
