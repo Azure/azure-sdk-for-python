@@ -53,7 +53,7 @@ class TestAzureAIAgentsOperationsAsync(AzureAIClientTestBaseAsync):
     async def test_agents_get_agent(self, azureai_endpoint):
         client = self.create_async_client(endpoint=azureai_endpoint)
         response = await client.agents.get_agent(
-            agent_id="str",
+            assistant_id="str",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestAzureAIAgentsOperationsAsync(AzureAIClientTestBaseAsync):
     async def test_agents_update_agent(self, azureai_endpoint):
         client = self.create_async_client(endpoint=azureai_endpoint)
         response = await client.agents.update_agent(
-            agent_id="str",
+            assistant_id="str",
             body={
                 "description": "str",
                 "instructions": "str",
@@ -90,7 +90,7 @@ class TestAzureAIAgentsOperationsAsync(AzureAIClientTestBaseAsync):
     async def test_agents_delete_agent(self, azureai_endpoint):
         client = self.create_async_client(endpoint=azureai_endpoint)
         response = await client.agents.delete_agent(
-            agent_id="str",
+            assistant_id="str",
         )
 
         # please add some check logic here by yourself
@@ -223,11 +223,11 @@ class TestAzureAIAgentsOperationsAsync(AzureAIClientTestBaseAsync):
         response = await client.agents.create_run(
             thread_id="str",
             body={
-                "agent_id": "str",
+                "assistant_id": "str",
                 "additional_instructions": "str",
                 "additional_messages": [
                     {
-                        "agent_id": "str",
+                        "assistant_id": "str",
                         "attachments": [{"file_id": "str", "tools": [{"type": "code_interpreter"}]}],
                         "completed_at": "2020-02-20 00:00:00",
                         "content": ["message_content"],
@@ -256,7 +256,7 @@ class TestAzureAIAgentsOperationsAsync(AzureAIClientTestBaseAsync):
                 "top_p": 0.0,
                 "truncation_strategy": {"type": "str", "last_messages": 0},
             },
-            agent_id="str",
+            assistant_id="str",
         )
 
         # please add some check logic here by yourself
@@ -330,7 +330,7 @@ class TestAzureAIAgentsOperationsAsync(AzureAIClientTestBaseAsync):
         client = self.create_async_client(endpoint=azureai_endpoint)
         response = await client.agents.create_thread_and_run(
             body={
-                "agent_id": "str",
+                "assistant_id": "str",
                 "instructions": "str",
                 "max_completion_tokens": 0,
                 "max_prompt_tokens": 0,
@@ -363,7 +363,7 @@ class TestAzureAIAgentsOperationsAsync(AzureAIClientTestBaseAsync):
                 "top_p": 0.0,
                 "truncation_strategy": {"type": "str", "last_messages": 0},
             },
-            agent_id="str",
+            assistant_id="str",
         )
 
         # please add some check logic here by yourself

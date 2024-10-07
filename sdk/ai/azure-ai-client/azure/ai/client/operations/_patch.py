@@ -434,7 +434,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         self,
         thread_id: str,
         *,
-        agent_id: str,
+        assistant_id: str,
         content_type: str = "application/json",
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -457,8 +457,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword agent_id: The ID of the agent that should run the thread. Required.
-        :paramtype agent_id: str
+        :keyword assistant_id: The ID of the agent that should run the thread. Required.
+        :paramtype assistant_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -559,7 +559,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        agent_id: str = _Unset,
+        assistant_id: str = _Unset,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
@@ -583,8 +583,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword agent_id: The ID of the agent that should run the thread. Required.
-        :paramtype agent_id: str
+        :keyword assistant_id: The ID of the agent that should run the thread. Required.
+        :paramtype assistant_id: str
         :keyword model: The overridden model name that the agent should use to run the thread. Default
          value is None.
         :paramtype model: str
@@ -662,10 +662,10 @@ class AgentsOperations(AgentsOperationsGenerated):
             content_type = kwargs.get("content_type", "application/json")
             response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
 
-        elif agent_id is not _Unset:  # Handle overload with keyword arguments.
+        elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
             response = super().create_run(
                 thread_id,
-                agent_id=agent_id,
+                assistant_id=assistant_id,
                 model=model,
                 instructions=instructions,
                 additional_instructions=additional_instructions,
@@ -701,7 +701,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     def create_and_process_run(
         self,
         thread_id: str,
-        agent_id: str,
+        assistant_id: str,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
         additional_instructions: Optional[str] = None,
@@ -724,8 +724,8 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         :param thread_id: Required.
         :type thread_id: str
-        :keyword agent_id: The ID of the agent that should run the thread. Required.
-        :paramtype agent_id: str
+        :keyword assistant_id: The ID of the agent that should run the thread. Required.
+        :paramtype assistant_id: str
         :keyword model: The overridden model name that the agent should use to run the thread.
          Default value is None.
         :paramtype model: str
@@ -807,7 +807,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Create and initiate the run with additional parameters
         run = self.create_run(
             thread_id=thread_id,
-            agent_id=agent_id,
+            assistant_id=assistant_id,
             model=model,
             instructions=instructions,
             additional_instructions=additional_instructions,

@@ -41,7 +41,7 @@ logging.info("Created thread, thread ID", thread.id)
 message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
 logging.info("Created message, message ID", message.id)
 
-run = ai_client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+run = ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 logging.info("Created run, run ID", run.id)
 
 # poll the run as long as run status is queued or in progress

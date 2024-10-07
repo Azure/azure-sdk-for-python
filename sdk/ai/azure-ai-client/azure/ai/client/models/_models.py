@@ -2674,8 +2674,8 @@ class RunStep(_model_base.Model):  # pylint: disable=too-many-instance-attribute
     :ivar type: The type of run step, which can be either message_creation or tool_calls. Required.
      Known values are: "message_creation" and "tool_calls".
     :vartype type: str or ~azure.ai.client.models.RunStepType
-    :ivar agent_id: The ID of the agent associated with the run step. Required.
-    :vartype agent_id: str
+    :ivar assistant_id: The ID of the agent associated with the run step. Required.
+    :vartype assistant_id: str
     :ivar thread_id: The ID of the thread that was run. Required.
     :vartype thread_id: str
     :ivar run_id: The ID of the run that this run step is a part of. Required.
@@ -2718,7 +2718,7 @@ class RunStep(_model_base.Model):  # pylint: disable=too-many-instance-attribute
     type: Union[str, "_models.RunStepType"] = rest_field()
     """The type of run step, which can be either message_creation or tool_calls. Required. Known
      values are: \"message_creation\" and \"tool_calls\"."""
-    agent_id: str = rest_field()
+    assistant_id: str = rest_field()
     """The ID of the agent associated with the run step. Required."""
     thread_id: str = rest_field()
     """The ID of the thread that was run. Required."""
@@ -2755,7 +2755,7 @@ class RunStep(_model_base.Model):  # pylint: disable=too-many-instance-attribute
         *,
         id: str,  # pylint: disable=redefined-builtin
         type: Union[str, "_models.RunStepType"],
-        agent_id: str,
+        assistant_id: str,
         thread_id: str,
         run_id: str,
         status: Union[str, "_models.RunStepStatus"],
@@ -4122,8 +4122,8 @@ class ThreadMessage(_model_base.Model):  # pylint: disable=too-many-instance-att
     :vartype role: str or ~azure.ai.client.models.MessageRole
     :ivar content: The list of content items associated with the agent thread message. Required.
     :vartype content: list[~azure.ai.client.models.MessageContent]
-    :ivar agent_id: If applicable, the ID of the agent that authored this message. Required.
-    :vartype agent_id: str
+    :ivar assistant_id: If applicable, the ID of the agent that authored this message. Required.
+    :vartype assistant_id: str
     :ivar run_id: If applicable, the ID of the run associated with the authoring of this message.
      Required.
     :vartype run_id: str
@@ -4159,7 +4159,7 @@ class ThreadMessage(_model_base.Model):  # pylint: disable=too-many-instance-att
      \"assistant\"."""
     content: List["_models.MessageContent"] = rest_field()
     """The list of content items associated with the agent thread message. Required."""
-    agent_id: str = rest_field()
+    assistant_id: str = rest_field()
     """If applicable, the ID of the agent that authored this message. Required."""
     run_id: str = rest_field()
     """If applicable, the ID of the run associated with the authoring of this message. Required."""
@@ -4183,7 +4183,7 @@ class ThreadMessage(_model_base.Model):  # pylint: disable=too-many-instance-att
         incomplete_at: datetime.datetime,
         role: Union[str, "_models.MessageRole"],
         content: List["_models.MessageContent"],
-        agent_id: str,
+        assistant_id: str,
         run_id: str,
         attachments: List["_models.MessageAttachment"],
         metadata: Dict[str, str],
@@ -4283,9 +4283,9 @@ class ThreadRun(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     :vartype object: str
     :ivar thread_id: The ID of the thread associated with this run. Required.
     :vartype thread_id: str
-    :ivar agent_id: The ID of the agent associated with the thread this run was performed against.
-     Required.
-    :vartype agent_id: str
+    :ivar assistant_id: The ID of the agent associated with the thread this run was performed
+     against. Required.
+    :vartype assistant_id: str
     :ivar status: The status of the agent thread run. Required. Known values are: "queued",
      "in_progress", "requires_action", "cancelling", "cancelled", "failed", "completed", and
      "expired".
@@ -4363,7 +4363,7 @@ class ThreadRun(_model_base.Model):  # pylint: disable=too-many-instance-attribu
     """The object type, which is always 'thread.run'. Required. Default value is \"thread.run\"."""
     thread_id: str = rest_field()
     """The ID of the thread associated with this run. Required."""
-    agent_id: str = rest_field()
+    assistant_id: str = rest_field()
     """The ID of the agent associated with the thread this run was performed against. Required."""
     status: Union[str, "_models.RunStatus"] = rest_field()
     """The status of the agent thread run. Required. Known values are: \"queued\", \"in_progress\",
@@ -4431,7 +4431,7 @@ class ThreadRun(_model_base.Model):  # pylint: disable=too-many-instance-attribu
         *,
         id: str,  # pylint: disable=redefined-builtin
         thread_id: str,
-        agent_id: str,
+        assistant_id: str,
         status: Union[str, "_models.RunStatus"],
         last_error: "_models.RunError",
         model: str,
