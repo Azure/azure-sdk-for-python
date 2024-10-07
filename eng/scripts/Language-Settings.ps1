@@ -37,6 +37,12 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   $engChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("eng")}
   $othersChanged = $diffObj.ChangedFiles | Where-Object { isOther($_) }
 
+  if (-not $diffObj.ChangedFiles) {
+    Write-Host "No files positively changed. Returning azure-template as fallback."
+    $additionalPackage = $AllPkgProps | Where-Object { $_.Name -eq "azure-template" } | Select-Object -First 1 }
+    $additionalValidationPackages += $additionalPackage
+  }
+
   if ($toolChanged) {
     $additionalPackages = @(
       "azure-storage-blob",
