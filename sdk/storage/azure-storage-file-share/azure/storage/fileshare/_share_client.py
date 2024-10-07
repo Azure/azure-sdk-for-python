@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from ._models import ShareProperties, AccessPolicy
 
 
-class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-methods
+class ShareClient(StorageAccountHostsMixin):
     """A client to interact with a specific share, although that share may not yet exist.
 
     For operations relating to a specific directory or file in this share, the clients for
@@ -139,7 +139,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)
 
     @classmethod
     def from_share_url(
