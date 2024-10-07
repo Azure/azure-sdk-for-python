@@ -92,6 +92,7 @@ def is_retry(response, mode):
         return True
     return False
 
+
 def is_checksum_retry(response):
     # retry if invalid content md5
     if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
@@ -415,7 +416,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """
         A function which sets the next host location on the request, if applicable.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the next host location.
+        :param Dict[str, Any] settings: The configurable values pertaining to the next host location.
         :param PipelineRequest request: A pipeline request object.
         """
         if settings['hosts'] and all(settings['hosts'].values()):
@@ -475,7 +476,7 @@ class StorageRetryPolicy(HTTPPolicy):
     ) -> bool:
         """Increment the retry counters.
 
-        :param dict[str, Any] settings: The configurable values pertaining to the increment operation.
+        :param Dict[str, Any] settings: The configurable values pertaining to the increment operation.
         :param PipelineRequest request: A pipeline request object.
         :param Optional[PipelineResponse] response: A pipeline response object.
         :param Optional[AzureError] error: An error encountered during the request, or
