@@ -20,6 +20,7 @@ from conftest import (
 )
 
 
+@pytest.mark.live_test_only
 class TestClient(AzureRecordedTestCase):
     """Azure AD with token provider is missing here because it is tested per feature"""
 

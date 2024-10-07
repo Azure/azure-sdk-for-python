@@ -34,6 +34,7 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
             return AccessTokenInfo(
                 result["access_token"],
                 request_time + int(result["expires_in"]),
+                token_type=result.get("token_type", "Bearer"),
                 refresh_on=refresh_on,
             )
         return None
@@ -51,5 +52,6 @@ class ClientCredentialBase(MsalCredential, GetTokenMixin):
         return AccessTokenInfo(
             result["access_token"],
             request_time + int(result["expires_in"]),
+            token_type=result.get("token_type", "Bearer"),
             refresh_on=refresh_on,
         )

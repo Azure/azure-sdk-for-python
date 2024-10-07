@@ -33,11 +33,11 @@ def main():
     response = client.mongo_clusters.begin_update(
         resource_group_name="TestResourceGroup",
         mongo_cluster_name="myMongoCluster",
-        properties={"properties": {"nodeGroupSpecs": [{"diskSizeGB": 256, "kind": "Shard"}]}},
+        properties={"properties": {"storage": {"sizeGb": 256}}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-06-01-preview/MongoClusters_PatchDiskSize.json
+# x-ms-original-file: 2024-07-01/MongoClusters_PatchDiskSize.json
 if __name__ == "__main__":
     main()
