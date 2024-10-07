@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12,13 +12,13 @@ from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
+
+if TYPE_CHECKING:
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -33,7 +33,7 @@ class BatchRequest(_serialization.Model):
         "batch_items": {"key": "batchItems", "type": "[BatchRequestItem]"},
     }
 
-    def __init__(self, *, batch_items: Optional[List["_models.BatchRequestItem"]] = None, **kwargs):
+    def __init__(self, *, batch_items: Optional[List["_models.BatchRequestItem"]] = None, **kwargs: Any) -> None:
         """
         :keyword batch_items: The list of queries to process.
         :paramtype batch_items: list[~azure.maps.route.models.BatchRequestItem]
@@ -54,7 +54,7 @@ class BatchRequestItem(_serialization.Model):
         "query": {"key": "query", "type": "str"},
     }
 
-    def __init__(self, *, query: Optional[str] = None, **kwargs):
+    def __init__(self, *, query: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword query: This parameter contains a query string used to perform an unstructured
          geocoding operation. The query string will be passed verbatim to the search API for processing.
@@ -65,7 +65,8 @@ class BatchRequestItem(_serialization.Model):
 
 
 class BatchResult(_serialization.Model):
-    """This object is returned from a successful Batch service call. Extend with 'batchItems' property.
+    """This object is returned from a successful Batch service call. Extend with 'batchItems'
+    property.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -81,7 +82,7 @@ class BatchResult(_serialization.Model):
         "batch_summary": {"key": "summary", "type": "BatchResultSummary"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.batch_summary = None
@@ -104,7 +105,7 @@ class BatchResultItem(_serialization.Model):
         "status_code": {"key": "statusCode", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.status_code = None
@@ -131,7 +132,7 @@ class BatchResultSummary(_serialization.Model):
         "total_requests": {"key": "totalRequests", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.successful_requests = None
@@ -159,7 +160,7 @@ class EffectiveSetting(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.key = None
@@ -187,7 +188,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -227,7 +228,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -238,7 +239,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.maps.route.models.ErrorDetail
@@ -248,7 +250,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.maps.route.models.ErrorDetail
@@ -260,7 +262,7 @@ class ErrorResponse(_serialization.Model):
 class GeoJsonFeatureData(_serialization.Model):
     """GeoJsonFeatureData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
      GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
@@ -295,8 +297,8 @@ class GeoJsonFeatureData(_serialization.Model):
         properties: Optional[JSON] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         feature_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
          GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
@@ -320,12 +322,13 @@ class GeoJsonFeatureData(_serialization.Model):
 
 
 class GeoJsonObject(_serialization.Model):
-    """A valid ``GeoJSON`` object. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
+    """A valid ``GeoJSON`` object. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonGeometry
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
      - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
@@ -351,16 +354,17 @@ class GeoJsonObject(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
-    """A valid ``GeoJSON Feature`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.2>`_ for details.
+    """A valid ``GeoJSON Feature`` object type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.2>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
      GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
@@ -403,8 +407,8 @@ class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
         properties: Optional[JSON] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         feature_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
          GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
@@ -425,13 +429,13 @@ class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
         self.properties = properties
         self.id = id
         self.feature_type = feature_type
-        self.type = "Feature"  # type: str
+        self.type: str = "Feature"
 
 
 class GeoJsonFeatureCollectionData(_serialization.Model):
     """GeoJsonFeatureCollectionData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
     :vartype features: list[~azure.maps.route.models.GeoJsonFeature]
@@ -445,7 +449,7 @@ class GeoJsonFeatureCollectionData(_serialization.Model):
         "features": {"key": "features", "type": "[GeoJsonFeature]"},
     }
 
-    def __init__(self, *, features: List["_models.GeoJsonFeature"], **kwargs):
+    def __init__(self, *, features: List["_models.GeoJsonFeature"], **kwargs: Any) -> None:
         """
         :keyword features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
         :paramtype features: list[~azure.maps.route.models.GeoJsonFeature]
@@ -455,9 +459,10 @@ class GeoJsonFeatureCollectionData(_serialization.Model):
 
 
 class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
-    """A valid ``GeoJSON FeatureCollection`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details.
+    """A valid ``GeoJSON FeatureCollection`` object type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
     :vartype features: list[~azure.maps.route.models.GeoJsonFeature]
@@ -479,24 +484,27 @@ class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, features: List["_models.GeoJsonFeature"], **kwargs):
+    def __init__(self, *, features: List["_models.GeoJsonFeature"], **kwargs: Any) -> None:
         """
         :keyword features: Contains a list of valid ``GeoJSON Feature`` objects. Required.
         :paramtype features: list[~azure.maps.route.models.GeoJsonFeature]
         """
         super().__init__(features=features, **kwargs)
         self.features = features
-        self.type = "FeatureCollection"  # type: str
+        self.type: str = "FeatureCollection"
 
 
 class GeoJsonGeometry(GeoJsonObject):
-    """A valid ``GeoJSON`` geometry object. The type must be one of the seven valid GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon and GeometryCollection. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
+    """A valid ``GeoJSON`` geometry object. The type must be one of the seven valid GeoJSON geometry
+    types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon and
+    GeometryCollection. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     GeoJsonGeometryCollection, GeoJsonLineString, GeoJsonMultiLineString, GeoJsonMultiPoint,
     GeoJsonMultiPolygon, GeoJsonPoint, GeoJsonPolygon
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
      - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
@@ -526,16 +534,16 @@ class GeoJsonGeometry(GeoJsonObject):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = "GeoJsonGeometry"  # type: str
+        self.type: str = "GeoJsonGeometry"
 
 
 class GeoJsonGeometryCollectionData(_serialization.Model):
     """GeoJsonGeometryCollectionData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
      coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
@@ -550,7 +558,7 @@ class GeoJsonGeometryCollectionData(_serialization.Model):
         "geometries": {"key": "geometries", "type": "[GeoJsonGeometry]"},
     }
 
-    def __init__(self, *, geometries: List["_models.GeoJsonGeometry"], **kwargs):
+    def __init__(self, *, geometries: List["_models.GeoJsonGeometry"], **kwargs: Any) -> None:
         """
         :keyword geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
          coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
@@ -561,9 +569,10 @@ class GeoJsonGeometryCollectionData(_serialization.Model):
 
 
 class GeoJsonGeometryCollection(GeoJsonGeometry, GeoJsonGeometryCollectionData):
-    """A valid ``GeoJSON GeometryCollection`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.8>`_ for details.
+    """A valid ``GeoJSON GeometryCollection`` object type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.8>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
      coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
@@ -586,7 +595,7 @@ class GeoJsonGeometryCollection(GeoJsonGeometry, GeoJsonGeometryCollectionData):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, geometries: List["_models.GeoJsonGeometry"], **kwargs):
+    def __init__(self, *, geometries: List["_models.GeoJsonGeometry"], **kwargs: Any) -> None:
         """
         :keyword geometries: Contains a list of valid ``GeoJSON`` geometry objects. **Note** that
          coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
@@ -594,13 +603,13 @@ class GeoJsonGeometryCollection(GeoJsonGeometry, GeoJsonGeometryCollectionData):
         """
         super().__init__(geometries=geometries, **kwargs)
         self.geometries = geometries
-        self.type = "GeometryCollection"  # type: str
+        self.type: str = "GeometryCollection"
 
 
 class GeoJsonLineStringData(_serialization.Model):
     """GeoJsonLineStringData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
     :vartype coordinates: list[list[float]]
@@ -614,7 +623,7 @@ class GeoJsonLineStringData(_serialization.Model):
         "coordinates": {"key": "coordinates", "type": "[[float]]"},
     }
 
-    def __init__(self, *, coordinates: List[List[float]], **kwargs):
+    def __init__(self, *, coordinates: List[List[float]], **kwargs: Any) -> None:
         """
         :keyword coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
         :paramtype coordinates: list[list[float]]
@@ -624,9 +633,10 @@ class GeoJsonLineStringData(_serialization.Model):
 
 
 class GeoJsonLineString(GeoJsonGeometry, GeoJsonLineStringData):
-    """A valid ``GeoJSON LineString`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.4>`_ for details.
+    """A valid ``GeoJSON LineString`` geometry type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.4>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
     :vartype coordinates: list[list[float]]
@@ -648,20 +658,20 @@ class GeoJsonLineString(GeoJsonGeometry, GeoJsonLineStringData):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, coordinates: List[List[float]], **kwargs):
+    def __init__(self, *, coordinates: List[List[float]], **kwargs: Any) -> None:
         """
         :keyword coordinates: Coordinates for the ``GeoJson LineString`` geometry. Required.
         :paramtype coordinates: list[list[float]]
         """
         super().__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
-        self.type = "LineString"  # type: str
+        self.type: str = "LineString"
 
 
 class GeoJsonMultiLineStringData(_serialization.Model):
     """GeoJsonMultiLineStringData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
     :vartype coordinates: list[list[list[float]]]
@@ -675,7 +685,7 @@ class GeoJsonMultiLineStringData(_serialization.Model):
         "coordinates": {"key": "coordinates", "type": "[[[float]]]"},
     }
 
-    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs):
+    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs: Any) -> None:
         """
         :keyword coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
         :paramtype coordinates: list[list[list[float]]]
@@ -685,9 +695,10 @@ class GeoJsonMultiLineStringData(_serialization.Model):
 
 
 class GeoJsonMultiLineString(GeoJsonGeometry, GeoJsonMultiLineStringData):
-    """A valid ``GeoJSON MultiLineString`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.5>`_ for details.
+    """A valid ``GeoJSON MultiLineString`` geometry type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.5>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
     :vartype coordinates: list[list[list[float]]]
@@ -709,20 +720,20 @@ class GeoJsonMultiLineString(GeoJsonGeometry, GeoJsonMultiLineStringData):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs):
+    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs: Any) -> None:
         """
         :keyword coordinates: Coordinates for the ``GeoJson MultiLineString`` geometry. Required.
         :paramtype coordinates: list[list[list[float]]]
         """
         super().__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
-        self.type = "MultiLineString"  # type: str
+        self.type: str = "MultiLineString"
 
 
 class GeoJsonMultiPointData(_serialization.Model):
     """Data contained by a ``GeoJson MultiPoint``.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
     :vartype coordinates: list[list[float]]
@@ -736,7 +747,7 @@ class GeoJsonMultiPointData(_serialization.Model):
         "coordinates": {"key": "coordinates", "type": "[[float]]"},
     }
 
-    def __init__(self, *, coordinates: List[List[float]], **kwargs):
+    def __init__(self, *, coordinates: List[List[float]], **kwargs: Any) -> None:
         """
         :keyword coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
         :paramtype coordinates: list[list[float]]
@@ -746,9 +757,10 @@ class GeoJsonMultiPointData(_serialization.Model):
 
 
 class GeoJsonMultiPoint(GeoJsonGeometry, GeoJsonMultiPointData):
-    """A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+    """A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
     :vartype coordinates: list[list[float]]
@@ -770,20 +782,20 @@ class GeoJsonMultiPoint(GeoJsonGeometry, GeoJsonMultiPointData):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, coordinates: List[List[float]], **kwargs):
+    def __init__(self, *, coordinates: List[List[float]], **kwargs: Any) -> None:
         """
         :keyword coordinates: Coordinates for the ``GeoJson MultiPoint`` geometry. Required.
         :paramtype coordinates: list[list[float]]
         """
         super().__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
-        self.type = "MultiPoint"  # type: str
+        self.type: str = "MultiPoint"
 
 
 class GeoJsonMultiPolygonData(_serialization.Model):
     """GeoJsonMultiPolygonData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
      coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
@@ -798,7 +810,7 @@ class GeoJsonMultiPolygonData(_serialization.Model):
         "coordinates": {"key": "coordinates", "type": "[[[[float]]]]"},
     }
 
-    def __init__(self, *, coordinates: List[List[List[List[float]]]], **kwargs):
+    def __init__(self, *, coordinates: List[List[List[List[float]]]], **kwargs: Any) -> None:
         """
         :keyword coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
          coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
@@ -809,9 +821,10 @@ class GeoJsonMultiPolygonData(_serialization.Model):
 
 
 class GeoJsonMultiPolygon(GeoJsonGeometry, GeoJsonMultiPolygonData):
-    """A valid ``GeoJSON MultiPolygon`` object type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.7>`_ for details.
+    """A valid ``GeoJSON MultiPolygon`` object type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.7>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
      coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
@@ -834,7 +847,7 @@ class GeoJsonMultiPolygon(GeoJsonGeometry, GeoJsonMultiPolygonData):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, coordinates: List[List[List[List[float]]]], **kwargs):
+    def __init__(self, *, coordinates: List[List[List[List[float]]]], **kwargs: Any) -> None:
         """
         :keyword coordinates: Contains a list of valid ``GeoJSON Polygon`` objects. **Note** that
          coordinates in GeoJSON are in x, y order (longitude, latitude). Required.
@@ -842,17 +855,17 @@ class GeoJsonMultiPolygon(GeoJsonGeometry, GeoJsonMultiPolygonData):
         """
         super().__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
-        self.type = "MultiPolygon"  # type: str
+        self.type: str = "MultiPolygon"
 
 
 class GeoJsonPointData(_serialization.Model):
     """Data contained by a ``GeoJson Point``.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: A ``Position`` is an array of numbers with two or more elements. The first
-     two elements are *longitude* and *latitude*\ , precisely in that order. *Altitude/Elevation* is
-     an optional third element. Please refer to `RFC 7946
+     two elements are *longitude* and *latitude*\\ , precisely in that order. *Altitude/Elevation*
+     is an optional third element. Please refer to `RFC 7946
      <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
     :vartype coordinates: list[float]
     """
@@ -865,10 +878,10 @@ class GeoJsonPointData(_serialization.Model):
         "coordinates": {"key": "coordinates", "type": "[float]"},
     }
 
-    def __init__(self, *, coordinates: List[float], **kwargs):
+    def __init__(self, *, coordinates: List[float], **kwargs: Any) -> None:
         """
         :keyword coordinates: A ``Position`` is an array of numbers with two or more elements. The
-         first two elements are *longitude* and *latitude*\ , precisely in that order.
+         first two elements are *longitude* and *latitude*\\ , precisely in that order.
          *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
          <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
         :paramtype coordinates: list[float]
@@ -878,13 +891,14 @@ class GeoJsonPointData(_serialization.Model):
 
 
 class GeoJsonPoint(GeoJsonGeometry, GeoJsonPointData):
-    """A valid ``GeoJSON Point`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.2>`_ for details.
+    """A valid ``GeoJSON Point`` geometry type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.2>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: A ``Position`` is an array of numbers with two or more elements. The first
-     two elements are *longitude* and *latitude*\ , precisely in that order. *Altitude/Elevation* is
-     an optional third element. Please refer to `RFC 7946
+     two elements are *longitude* and *latitude*\\ , precisely in that order. *Altitude/Elevation*
+     is an optional third element. Please refer to `RFC 7946
      <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
     :vartype coordinates: list[float]
     :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
@@ -905,23 +919,23 @@ class GeoJsonPoint(GeoJsonGeometry, GeoJsonPointData):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, coordinates: List[float], **kwargs):
+    def __init__(self, *, coordinates: List[float], **kwargs: Any) -> None:
         """
         :keyword coordinates: A ``Position`` is an array of numbers with two or more elements. The
-         first two elements are *longitude* and *latitude*\ , precisely in that order.
+         first two elements are *longitude* and *latitude*\\ , precisely in that order.
          *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
          <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
         :paramtype coordinates: list[float]
         """
         super().__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
-        self.type = "Point"  # type: str
+        self.type: str = "Point"
 
 
 class GeoJsonPolygonData(_serialization.Model):
     """GeoJsonPolygonData.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
     :vartype coordinates: list[list[list[float]]]
@@ -935,7 +949,7 @@ class GeoJsonPolygonData(_serialization.Model):
         "coordinates": {"key": "coordinates", "type": "[[[float]]]"},
     }
 
-    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs):
+    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs: Any) -> None:
         """
         :keyword coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
         :paramtype coordinates: list[list[list[float]]]
@@ -945,9 +959,10 @@ class GeoJsonPolygonData(_serialization.Model):
 
 
 class GeoJsonPolygon(GeoJsonGeometry, GeoJsonPolygonData):
-    """A valid ``GeoJSON Polygon`` geometry type. Please refer to `RFC 7946 <https://tools.ietf.org/html/rfc7946#section-3.1.6>`_ for details.
+    """A valid ``GeoJSON Polygon`` geometry type. Please refer to `RFC 7946
+    <https://tools.ietf.org/html/rfc7946#section-3.1.6>`_ for details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
     :vartype coordinates: list[list[list[float]]]
@@ -969,14 +984,14 @@ class GeoJsonPolygon(GeoJsonGeometry, GeoJsonPolygonData):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs):
+    def __init__(self, *, coordinates: List[List[List[float]]], **kwargs: Any) -> None:
         """
         :keyword coordinates: Coordinates for the ``GeoJson Polygon`` geometry type. Required.
         :paramtype coordinates: list[list[list[float]]]
         """
         super().__init__(coordinates=coordinates, **kwargs)
         self.coordinates = coordinates
-        self.type = "Polygon"  # type: str
+        self.type: str = "Polygon"
 
 
 class LatLongPair(_serialization.Model):
@@ -993,7 +1008,7 @@ class LatLongPair(_serialization.Model):
         "longitude": {"key": "longitude", "type": "float"},
     }
 
-    def __init__(self, *, latitude: Optional[float] = None, longitude: Optional[float] = None, **kwargs):
+    def __init__(self, *, latitude: Optional[float] = None, longitude: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword latitude: Latitude property.
         :paramtype latitude: float
@@ -1035,7 +1050,7 @@ class Route(_serialization.Model):
         "guidance": {"key": "guidance", "type": "RouteGuidance"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.summary = None
@@ -1058,12 +1073,12 @@ class RouteDirectionParameters(_serialization.Model):
      * If both *minDeviationDistance* and *minDeviationTime* are set to zero, then these origin and
      destination points are
        expected to be at (or very near) the beginning and end of the reference route, respectively.
-     * Intermediate locations (\ *waypoints*\ ) are not supported when using
+     * Intermediate locations (\\ *waypoints*\\ ) are not supported when using
      :code:`<_supportingPoints_>`.
-     * The reference route may contain traffic incidents of type _ROAD\ *CLOSURE*\ , which are
+     * The reference route may contain traffic incidents of type _ROAD\\ *CLOSURE*\\ , which are
        ignored for the calculation of the reference route's travel time and traffic delay.
        Please refer to `Supporting Points
-     <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_
+     <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_  # pylint: disable=line-too-long
      for details.
     :vartype supporting_points: ~azure.maps.route.models.GeoJsonGeometryCollection
     :ivar avoid_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
@@ -1099,8 +1114,8 @@ class RouteDirectionParameters(_serialization.Model):
         avoid_vignette: Optional[List[str]] = None,
         allow_vignette: Optional[List[str]] = None,
         avoid_areas: Optional["_models.GeoJsonMultiPolygon"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword supporting_points: A GeoJSON Geometry collection representing sequence of coordinates
          used as input for route reconstruction and for calculating zero or more alternative routes to
@@ -1113,12 +1128,12 @@ class RouteDirectionParameters(_serialization.Model):
          * If both *minDeviationDistance* and *minDeviationTime* are set to zero, then these origin and
          destination points are
            expected to be at (or very near) the beginning and end of the reference route, respectively.
-         * Intermediate locations (\ *waypoints*\ ) are not supported when using
+         * Intermediate locations (\\ *waypoints*\\ ) are not supported when using
          :code:`<_supportingPoints_>`.
-         * The reference route may contain traffic incidents of type _ROAD\ *CLOSURE*\ , which are
+         * The reference route may contain traffic incidents of type _ROAD\\ *CLOSURE*\\ , which are
            ignored for the calculation of the reference route's travel time and traffic delay.
            Please refer to `Supporting Points
-         <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_
+         <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_  # pylint: disable=line-too-long
          for details.
         :paramtype supporting_points: ~azure.maps.route.models.GeoJsonGeometryCollection
         :keyword avoid_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
@@ -1187,7 +1202,7 @@ class RouteDirections(_serialization.Model):
         "report": {"key": "report", "type": "RouteReport"},
     }
 
-    def __init__(self, *, report: Optional["_models.RouteReport"] = None, **kwargs):
+    def __init__(self, *, report: Optional["_models.RouteReport"] = None, **kwargs: Any) -> None:
         """
         :keyword report: Reports the effective settings used in the current call.
         :paramtype report: ~azure.maps.route.models.RouteReport
@@ -1221,14 +1236,15 @@ class RouteDirectionsBatchItem(BatchResultItem):
         "response": {"key": "response", "type": "RouteDirectionsBatchItemResponse"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.response = None
 
 
 class RouteDirectionsBatchItemResponse(RouteDirections, ErrorResponse):
-    """The result of the query. RouteDirections if the query completed successfully, ErrorResponse otherwise.
+    """The result of the query. RouteDirections if the query completed successfully, ErrorResponse
+    otherwise.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1272,8 +1288,12 @@ class RouteDirectionsBatchItemResponse(RouteDirections, ErrorResponse):
     }
 
     def __init__(
-        self, *, error: Optional["_models.ErrorDetail"] = None, report: Optional["_models.RouteReport"] = None, **kwargs
-    ):
+        self,
+        *,
+        error: Optional["_models.ErrorDetail"] = None,
+        report: Optional["_models.RouteReport"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.maps.route.models.ErrorDetail
@@ -1309,14 +1329,15 @@ class RouteDirectionsBatchResult(BatchResult):
         "batch_items": {"key": "batchItems", "type": "[RouteDirectionsBatchItem]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.batch_items = None
 
 
 class RouteGuidance(_serialization.Model):
-    """Contains guidance related elements. This field is present only when guidance was requested and is available.
+    """Contains guidance related elements. This field is present only when guidance was requested and
+    is available.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1337,7 +1358,7 @@ class RouteGuidance(_serialization.Model):
         "instruction_groups": {"key": "instructionGroups", "type": "[RouteInstructionGroup]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.instructions = None
@@ -1345,7 +1366,8 @@ class RouteGuidance(_serialization.Model):
 
 
 class RouteInstruction(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """A set of attributes describing a maneuver, e.g. 'Turn right', 'Keep left', 'Take the ferry', 'Take the motorway', 'Arrive'.
+    """A set of attributes describing a maneuver, e.g. 'Turn right', 'Keep left', 'Take the ferry',
+    'Take the motorway', 'Arrive'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1490,8 +1512,8 @@ class RouteInstruction(_serialization.Model):  # pylint: disable=too-many-instan
         *,
         point: Optional["_models.LatLongPair"] = None,
         instruction_type: Optional[Union[str, "_models.GuidanceInstructionType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword point: A location represented as a latitude and longitude.
         :paramtype point: ~azure.maps.route.models.LatLongPair
@@ -1523,7 +1545,10 @@ class RouteInstruction(_serialization.Model):  # pylint: disable=too-many-instan
 
 
 class RouteInstructionGroup(_serialization.Model):
-    """Groups a sequence of instruction elements which are related to each other. The sequence range is constrained with firstInstructionIndex and lastInstructionIndex. When human-readable text messages are requested for guidance (instructionType=text or tagged), then the instructionGroup has a summary message returned when available.
+    """Groups a sequence of instruction elements which are related to each other. The sequence range
+    is constrained with firstInstructionIndex and lastInstructionIndex. When human-readable text
+    messages are requested for guidance (instructionType=text or tagged), then the instructionGroup
+    has a summary message returned when available.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1554,7 +1579,7 @@ class RouteInstructionGroup(_serialization.Model):
         "group_message": {"key": "groupMessage", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.first_instruction_index = None
@@ -1564,7 +1589,8 @@ class RouteInstructionGroup(_serialization.Model):
 
 
 class RouteLeg(_serialization.Model):
-    """A description of a part of a route, comprised of a list of points. Each additional waypoint provided in the request will result in an additional leg in the returned route.
+    """A description of a part of a route, comprised of a list of points. Each additional waypoint
+    provided in the request will result in an additional leg in the returned route.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1584,7 +1610,7 @@ class RouteLeg(_serialization.Model):
         "points": {"key": "points", "type": "[LatLongPair]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.summary = None
@@ -1667,7 +1693,7 @@ class RouteLegSummary(_serialization.Model):
         "battery_consumption_in_kw_h": {"key": "batteryConsumptionInkWh", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.length_in_meters = None
@@ -1703,7 +1729,7 @@ class RouteMatrix(_serialization.Model):
         "response": {"key": "response", "type": "RouteMatrixResultResponse"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.status_code = None
@@ -1731,8 +1757,8 @@ class RouteMatrixQuery(_serialization.Model):
         *,
         origins: Optional["_models.GeoJsonMultiPoint"] = None,
         destinations: Optional["_models.GeoJsonMultiPoint"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword origins: A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
          <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
@@ -1747,7 +1773,9 @@ class RouteMatrixQuery(_serialization.Model):
 
 
 class RouteMatrixResult(_serialization.Model):
-    """This object is returned from a successful Route Matrix call. For ex, if 2 origins and 3 destinations are provided, there are going to 2 arrays with 3 elements in each. Each element's content depends on the options provided in the query.
+    """This object is returned from a successful Route Matrix call. For ex, if 2 origins and 3
+    destinations are provided, there are going to 2 arrays with 3 elements in each. Each element's
+    content depends on the options provided in the query.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1771,7 +1799,7 @@ class RouteMatrixResult(_serialization.Model):
         "summary": {"key": "summary", "type": "RouteMatrixSummary"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.format_version = None
@@ -1796,7 +1824,7 @@ class RouteMatrixResultResponse(_serialization.Model):
         "summary": {"key": "routeSummary", "type": "RouteLegSummary"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.summary = None
@@ -1823,7 +1851,7 @@ class RouteMatrixSummary(_serialization.Model):
         "total_routes": {"key": "totalRoutes", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.successful_routes = None
@@ -1851,7 +1879,7 @@ class RouteOptimizedWaypoint(_serialization.Model):
         "optimized_index": {"key": "optimizedIndex", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provided_index = None
@@ -1878,7 +1906,7 @@ class RouteRange(_serialization.Model):
         "boundary": {"key": "boundary", "type": "[LatLongPair]"},
     }
 
-    def __init__(self, *, center: Optional["_models.LatLongPair"] = None, **kwargs):
+    def __init__(self, *, center: Optional["_models.LatLongPair"] = None, **kwargs: Any) -> None:
         """
         :keyword center: Center point of the reachable range.
         :paramtype center: ~azure.maps.route.models.LatLongPair
@@ -1916,8 +1944,8 @@ class RouteRangeResult(_serialization.Model):
         *,
         reachable_range: Optional["_models.RouteRange"] = None,
         report: Optional["_models.RouteReport"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword reachable_range: Reachable Range.
         :paramtype reachable_range: ~azure.maps.route.models.RouteRange
@@ -1947,14 +1975,15 @@ class RouteReport(_serialization.Model):
         "effective_settings": {"key": "effectiveSettings", "type": "[EffectiveSetting]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.effective_settings = None
 
 
 class RouteSection(_serialization.Model):
-    """Route sections contain additional information about parts of a route. Each section contains at least the elements ``startPointIndex``\ , ``endPointIndex``\ , and ``sectionType``.
+    """Route sections contain additional information about parts of a route. Each section contains at
+    least the elements ``startPointIndex``\\ , ``endPointIndex``\\ , and ``sectionType``.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2014,7 +2043,7 @@ class RouteSection(_serialization.Model):
         "tec": {"key": "tec", "type": "RouteSectionTec"},
     }
 
-    def __init__(self, *, tec: Optional["_models.RouteSectionTec"] = None, **kwargs):
+    def __init__(self, *, tec: Optional["_models.RouteSectionTec"] = None, **kwargs: Any) -> None:
         """
         :keyword tec: Details of the traffic event, using definitions in the `TPEG2-TEC
          <https://www.iso.org/standard/63116.html>`_ standard. Can contain effectCode and causes
@@ -2034,7 +2063,9 @@ class RouteSection(_serialization.Model):
 
 
 class RouteSectionTec(_serialization.Model):
-    """Details of the traffic event, using definitions in the `TPEG2-TEC <https://www.iso.org/standard/63116.html>`_ standard. Can contain effectCode and causes elements.
+    """Details of the traffic event, using definitions in the `TPEG2-TEC
+    <https://www.iso.org/standard/63116.html>`_ standard. Can contain effectCode and causes
+    elements.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2055,7 +2086,7 @@ class RouteSectionTec(_serialization.Model):
         "causes": {"key": "causes", "type": "[RouteSectionTecCause]"},
     }
 
-    def __init__(self, *, causes: Optional[List["_models.RouteSectionTecCause"]] = None, **kwargs):
+    def __init__(self, *, causes: Optional[List["_models.RouteSectionTecCause"]] = None, **kwargs: Any) -> None:
         """
         :keyword causes: Causes array.
         :paramtype causes: list[~azure.maps.route.models.RouteSectionTecCause]
@@ -2066,7 +2097,8 @@ class RouteSectionTec(_serialization.Model):
 
 
 class RouteSectionTecCause(_serialization.Model):
-    """The cause of the traffic event. Can contain mainCauseCode and subCauseCode elements. Can be used to define iconography and descriptions.
+    """The cause of the traffic event. Can contain mainCauseCode and subCauseCode elements. Can be
+    used to define iconography and descriptions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2090,7 +2122,7 @@ class RouteSectionTecCause(_serialization.Model):
         "sub_cause_code": {"key": "subCauseCode", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.main_cause_code = None
@@ -2136,7 +2168,7 @@ class RouteSummary(_serialization.Model):
         "arrival_time": {"key": "arrivalTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.length_in_meters = None
