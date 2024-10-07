@@ -84,6 +84,7 @@ def _add_request_chat_attributes(span: AbstractSpan, *args: Any, **kwargs: Any) 
         span.add_attribute("server.port", port)
 
 
+# When content tracing is not enabled, function calls, function parameter names and values are not traced.
 def remove_function_call_names_and_arguments(tool_calls: list) -> list:
     tool_calls_copy = copy.deepcopy(tool_calls)
     for tool_call in tool_calls_copy:
@@ -99,14 +100,24 @@ def remove_function_call_names_and_arguments(tool_calls: list) -> list:
 
 def get_finish_reasons(result):
     if hasattr(result, "choices") and result.choices:
-        return [
-            (
-                getattr(choice, "finish_reason", None).value
-                if getattr(choice, "finish_reason", None) is not None
-                else "none"
-            )
-            for choice in result.choices
-        ]
+        finish_reasons = []
+        for choice in result.choices:
+            finish_reason = getattr(choice, "finish_reason", None)
+
+            if finish_reason is None:
+                # If finish_reason is None, default to "none"
+                finish_reasons.append("none")
+            elif hasattr(finish_reason, "value"):
+                # If finish_reason has a 'value' attribute (i.e., it's an enum), use it
+                finish_reasons.append(finish_reason.value)
+            elif isinstance(finish_reason, str):
+                # If finish_reason is a string, use it directly
+                finish_reasons.append(finish_reason)
+            else:
+                # For any other type, you might want to handle it or default to "none"
+                finish_reasons.append("none")
+
+        return finish_reasons
     return None
 
 
@@ -143,15 +154,11 @@ def _add_response_chat_message_event(span: AbstractSpan, result: _models.ChatCom
                 response["message"]["tool_calls"] = [
                     tool.as_dict() for tool in tool_calls_function_names_and_arguments_removed
                 ]
-                attributes = {
-                    "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                    "gen_ai.event.content": json.dumps(response),
-                }
-            else:
-                attributes = {
-                    "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
-                    "gen_ai.event.content": json.dumps(response),
-                }
+
+            attributes = {
+                "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                "gen_ai.event.content": json.dumps(response),
+            }
         span.span_instance.add_event(name="gen_ai.choice", attributes=attributes)
 
 
@@ -332,7 +339,8 @@ def _trace_sync_function(
                 # Set the span status to error
                 if isinstance(span.span_instance, Span):
                     span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
-                module = exc.__module__ if exc.__module__ != "builtins" else ""
+                module = getattr(exc, "__module__", "")
+                module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 _set_attributes(span, ("error.type", error_type))
                 span.finish()
@@ -401,7 +409,8 @@ def _trace_async_function(
                 # Set the span status to error
                 if isinstance(span.span_instance, Span):
                     span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
-                module = exc.__module__ if exc.__module__ != "builtins" else ""
+                module = getattr(exc, "__module__", "")
+                module = module if module != "builtins" else ""
                 error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                 _set_attributes(span, ("error.type", error_type))
                 span.finish()
@@ -409,6 +418,9 @@ def _trace_async_function(
 
             span.finish()
             return result
+
+        # Handle the default case (if the function name does not match)
+        return None  # Ensure all paths return
 
     return inner
 

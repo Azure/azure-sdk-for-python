@@ -29,7 +29,7 @@ USAGE:
 import os
 from opentelemetry import trace
 # opentelemetry-sdk is required for the opentelemetry.sdk imports.
-# You can install it with command "pip install opentelemetry.sdk".
+# You can install it with command "pip install opentelemetry-sdk".
 #from opentelemetry.sdk.trace import TracerProvider
 #from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
 from azure.ai.inference import ChatCompletionsClient

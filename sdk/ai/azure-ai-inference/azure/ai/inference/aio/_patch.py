@@ -630,7 +630,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
 
         return _deserialize(_models._patch.ChatCompletions, response.json())  # pylint: disable=protected-access
 
-    @distributed_trace_async
+    # pylint:disable=client-method-missing-tracing-decorator-async
     async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
