@@ -3412,16 +3412,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             # if it is the bigger one remove the smaller ranges
                             # if it is the smaller ranges remove the bigger range
                             # if it is neither compound
-                            child_lsns_larger = True
+                            children_more_updated = True
                             for session_token in session_tokens:
                                 tokens = session_token.split(":")
                                 vector_session_token = VectorSessionToken.create(tokens[1])
                                 if vector_session_token_cmp.is_greater(vector_session_token):
-                                    child_lsns_larger = False
+                                    children_more_updated = False
                             feed_ranges_to_remove = [overlapping_ranges[i] for i in merged_indices]
                             for feed_range_to_remove in feed_ranges_to_remove:
                                 overlapping_ranges.remove(feed_range_to_remove)
-                            if child_lsns_larger:
+                            if children_more_updated:
                                 overlapping_ranges.append((merged_range, ','.join(map(str, session_tokens))))
                                 overlapping_ranges.remove(overlapping_ranges[0])
                             not_found = False
@@ -3437,7 +3437,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         if len(remaining_session_tokens) == 1:
             return remaining_session_tokens[0]
-        # merging any session tokens with same pkrangeid
+        # merging any session tokens with same physical partition key range id
         remaining_session_tokens = merge_session_tokens_with_same_pkrangeid(remaining_session_tokens)
 
         # compound the remaining session tokens

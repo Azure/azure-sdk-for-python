@@ -29,18 +29,29 @@ def setup():
 
 def create_split_ranges():
     # add one with several ranges being equal to one
-    test_params = [([(("AA", "DD"), "0:1#51#3=52"), (("AA", "BB"),"1:1#55#3=52"), (("BB", "DD"),"2:1#54#3=52")],
+    test_params = [ # split with two children
+                   ([(("AA", "DD"), "0:1#51#3=52"), (("AA", "BB"),"1:1#55#3=52"), (("BB", "DD"),"2:1#54#3=52")],
                     ("AA", "DD"), "1:1#55#3=52,2:1#54#3=52"),
+                    # several ranges being equal to one range
                    ([(("AA", "DD"), "0:1#51#3=52"), (("AA", "BB"),"1:1#55#3=52")],
                     ("AA", "DD"), "0:1#51#3=52,1:1#55#3=52"),
+                    # split with one child
+                   ([(("AA", "DD"), "0:1#42#3=52"), (("AA", "BB"), "1:1#51#3=52"),
+                    (("BB", "CC"),"1:1#53#3=52"), (("CC", "DD"),"1:1#55#3=52")],
+                    ("AA", "DD"), "1:1#55#3=52"),
+                    # merge with one child
                    ([(("AA", "DD"), "0:1#55#3=52"), (("AA", "BB"),"1:1#51#3=52")],
                     ("AA", "DD"), "0:1#55#3=52"),
+                    # merge with two children
                    ([(("AA", "DD"), "0:1#55#3=52"), (("AA", "BB"),"1:1#51#3=52"), (("BB", "DD"),"2:1#54#3=52")],
                     ("AA", "DD"), "0:1#55#3=52"),
+                    # compound session token
                    ([(("AA", "DD"), "2:1#54#3=52,1:1#55#3=52"), (("AA", "BB"),"0:1#51#3=52")],
                     ("AA", "BB"), "2:1#54#3=52,1:1#55#3=52,0:1#51#3=52"),
+                    # several compound session token with one range
                    ([(("AA", "DD"), "2:1#57#3=52,1:1#57#3=52"), (("AA", "DD"),"2:1#56#3=52,1:1#58#3=52")],
                     ("AA", "DD"), "2:1#57#3=52,1:1#58#3=52"),
+                    # Overlapping ranges
                    ([(("AA", "CC"), "0:1#54#3=52"), (("BB", "FF"),"2:1#51#3=52")],
                     ("AA", "EE"), "0:1#54#3=52,2:1#51#3=52")]
     actual_test_params = []
