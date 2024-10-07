@@ -26,7 +26,7 @@ import time
 import asyncio
 from typing import Optional
 
-from azure.core.exceptions import AzureError, ClientAuthenticationError
+from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 from azure.core.pipeline.transport._base import HttpRequest
 
@@ -123,7 +123,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             return result
         except exceptions.CosmosHttpResponseError as e:
             retry_policy = None
-            if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
+            if e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
+                    [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
                 retry_policy = endpointDiscovery_retry_policy
             elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
                 retry_policy = resourceThrottle_retry_policy
@@ -160,7 +161,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
-            elif e.status_code in (StatusCodes.REQUEST_TIMEOUT, e.status_code == StatusCodes.SERVICE_UNAVAILABLE):
+            elif e.status_code in [StatusCodes.REQUEST_TIMEOUT, StatusCodes.SERVICE_UNAVAILABLE]:
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
@@ -245,6 +246,15 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                 timeout_error.response = response
                 timeout_error.history = retry_settings['history']
                 raise
+            except ServiceRequestError as err:
+                # the request ran into a socket timeout or failed to establish a new connection
+                # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
+                if retry_settings['connect'] > 0:
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
+                        await self.sleep(retry_settings, request.context.transport)
+                        continue
+                raise err
             except AzureError as err:
                 retry_error = err
                 if self._is_method_retryable(retry_settings, request.http_request):
