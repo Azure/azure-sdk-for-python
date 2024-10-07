@@ -328,8 +328,7 @@
               },
               "keySource": "Microsoft.Storage"
             },
-            "accessTier": "Hot",
-            "ImmutableStorageWithVersioning": true
+            "accessTier": "Hot"
           }
         },
         {
