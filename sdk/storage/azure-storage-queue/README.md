@@ -117,14 +117,14 @@ The `credential` parameter may be provided in a number of different forms, depen
 
    Use the returned token credential to authenticate the client:
     ```python
-        from azure.identity import DefaultAzureCredential
-        from azure.storage.queue import QueueServiceClient
-        token_credential = DefaultAzureCredential()
+    from azure.identity import DefaultAzureCredential
+    from azure.storage.queue import QueueServiceClient
+    token_credential = DefaultAzureCredential()
 
-        queue_service_client = QueueServiceClient(
-            account_url="https://<my_account_name>.queue.core.windows.net",
-            credential=token_credential
-        )
+    queue_service_client = QueueServiceClient(
+        account_url="https://<my_account_name>.queue.core.windows.net",
+        credential=token_credential
+    )
     ```
 
 #### Creating the client from a connection string

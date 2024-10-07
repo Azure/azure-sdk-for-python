@@ -17,9 +17,16 @@ from ._utils import wrap_exceptions, resolve_tenant
 
 
 class PopTokenRequestOptions(TokenRequestOptions):
-    """Options to use for pop token requests."""
+    """Options to use for Proof-of-Possession (PoP) token requests."""
 
     pop: Union[bool, Mapping[str, str]]
+    """PoP token request options.
+
+    - If not specified or False, a non-PoP token request is made.
+    - If True, an mTLS PoP token request is made.
+    - If a dict, a Signed HTTP Request (SHR) PoP token request is made. The dict
+      must contain the "resource_request_method", "resource_request_url", and "nonce" keys.
+    """
 
 
 class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):

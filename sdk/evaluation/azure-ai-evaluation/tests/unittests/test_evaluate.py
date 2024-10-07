@@ -1,9 +1,9 @@
 import json
+import math
 import os
 import pathlib
 from unittest.mock import patch
 
-import numpy as np
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
@@ -330,11 +330,11 @@ class TestEvaluate:
             evaluate(
                 data=evaluate_test_data_jsonl_file,
                 evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
-                evaluator_config={"g": {"query": "${foo.query}"}},
+                evaluator_config={"g": {"column_mapping": {"query": "${foo.query}"}}},
             )
 
         assert (
-            "Unexpected references detected in 'evaluator_config'. Ensure only ${target.} and ${data.} are used."
+            "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
             in exc_info.value.args[0]
         )
 
@@ -400,9 +400,9 @@ class TestEvaluate:
         expected.rename(columns={"query": "inputs.query", "response": "inputs.response"}, inplace=True)
 
         expected["outputs.yeti.result"] = expected["inputs.response"].str.len()
-        expected.at[0, "outputs.yeti.result"] = np.nan
-        expected.at[2, "outputs.yeti.result"] = np.nan
-        expected.at[3, "outputs.yeti.result"] = np.nan
+        expected.at[0, "outputs.yeti.result"] = math.nan
+        expected.at[2, "outputs.yeti.result"] = math.nan
+        expected.at[3, "outputs.yeti.result"] = math.nan
         assert_frame_equal(expected, result_df)
 
     @patch("azure.ai.evaluation._evaluate._evaluate._evaluate")
