@@ -29,9 +29,9 @@ class TestModelBatchDeploymentSchema:
         assert mbd_entity
         assert mbd_entity.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         assert mbd_entity.compute == "cpu-cluster"
-        assert mbd_entity.model_deployment_settings.output_action == BatchDeploymentOutputAction.APPEND_ROW
-        assert mbd_entity.model_deployment_settings.output_file_name == "append_row.txt"
-        assert mbd_entity.model_deployment_settings.error_threshold == 10
-        assert mbd_entity.model_deployment_settings.mini_batch_size == 5
-        assert mbd_entity.model_deployment_settings.max_concurrency_per_instance == 5
+        assert mbd_entity.settings.output_action == BatchDeploymentOutputAction.APPEND_ROW
+        assert mbd_entity.settings.output_file_name == "append_row.txt"
+        assert mbd_entity.settings.error_threshold == 10
+        assert mbd_entity.settings.mini_batch_size == 5
+        assert mbd_entity.settings.max_concurrency_per_instance == 5
         assert mbd_entity.resources.instance_count == 2
