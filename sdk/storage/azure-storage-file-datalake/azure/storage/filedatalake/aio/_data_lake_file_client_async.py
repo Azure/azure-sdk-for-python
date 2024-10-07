@@ -305,7 +305,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
-        return await self._get_path_properties(cls=deserialize_file_properties, **kwargs)  # pylint: disable=protected-access
+        return await self._get_path_properties(cls=deserialize_file_properties, **kwargs)
 
     @distributed_trace_async
     async def set_file_expiry(self, expiry_options,  # type: str
@@ -333,7 +333,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         except AttributeError:
             expires_on = str(expires_on)
         await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on,
-                                                                       **kwargs)  # pylint: disable=protected-access
+                                                                       **kwargs)
 
     @distributed_trace_async
     async def upload_data(

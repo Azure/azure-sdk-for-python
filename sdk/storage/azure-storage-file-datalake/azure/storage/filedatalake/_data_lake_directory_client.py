@@ -328,7 +328,7 @@ class DataLakeDirectoryClient(PathClient):
             headers = kwargs.pop('headers', {})
             headers['x-ms-upn'] = str(upn)
             kwargs['headers'] = headers
-        return self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
+        return self._get_path_properties(cls=deserialize_dir_properties, **kwargs)
 
     @distributed_trace
     def exists(self, **kwargs):

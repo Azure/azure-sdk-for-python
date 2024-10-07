@@ -7,7 +7,7 @@
 
 import uuid
 
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Union, Optional, Any,
     TypeVar, TYPE_CHECKING
 )
@@ -55,9 +55,9 @@ class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version
         self.etag = None
 
         if hasattr(client, '_blob_client'):
-            _client = client._blob_client  # type: ignore # pylint: disable=protected-access
+            _client = client._blob_client  # type: ignore
         elif hasattr(client, '_container_client'):
-            _client = client._container_client  # type: ignore # pylint: disable=protected-access
+            _client = client._container_client  # type: ignore
         else:
             raise TypeError("Lease must use any of FileSystemClient DataLakeDirectoryClient, or DataLakeFileClient.")
 

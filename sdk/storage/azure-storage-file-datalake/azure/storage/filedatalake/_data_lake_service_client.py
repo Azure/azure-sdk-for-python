@@ -101,7 +101,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_account_url = blob_account_url
         self._blob_service_client = BlobServiceClient(blob_account_url, credential, **kwargs)
-        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  #pylint: disable=protected-access
+        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
@@ -112,7 +112,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         self._hosts[LocationMode.SECONDARY] = ""
 
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  #pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)
 
     def __enter__(self):
         self._blob_service_client.__enter__()
@@ -214,7 +214,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         """
         delegation_key = self._blob_service_client.get_user_delegation_key(key_start_time=key_start_time,
                                                                            key_expiry_time=key_expiry_time,
-                                                                           **kwargs)  # pylint: disable=protected-access
+                                                                           **kwargs)
         return UserDelegationKey._from_generated(delegation_key)  # pylint: disable=protected-access
 
     @distributed_trace
@@ -263,7 +263,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         """
         item_paged = self._blob_service_client.list_containers(name_starts_with=name_starts_with,
                                                                include_metadata=include_metadata,
-                                                               **kwargs)  # pylint: disable=protected-access
+                                                               **kwargs)
         item_paged._page_iterator_class = FileSystemPropertiesPaged  # pylint: disable=protected-access
         return item_paged
 
@@ -371,7 +371,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         new_name = kwargs.pop('new_name', None)
         file_system = self.get_file_system_client(new_name or name)
         self._blob_service_client.undelete_container(
-            name, deleted_version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
+            name, deleted_version, new_name=new_name, **kwargs)
         return file_system
 
     @distributed_trace
@@ -608,7 +608,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
-        return self._blob_service_client.set_service_properties(**kwargs)  # pylint: disable=protected-access
+        return self._blob_service_client.set_service_properties(**kwargs)
 
     @distributed_trace
     def get_service_properties(self, **kwargs):
@@ -629,5 +629,5 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             analytics logging, hour/minute metrics, cors rules, etc.
         :rtype: dict[str, Any]
         """
-        props = self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
+        props = self._blob_service_client.get_service_properties(**kwargs)
         return get_datalake_service_properties(props)
