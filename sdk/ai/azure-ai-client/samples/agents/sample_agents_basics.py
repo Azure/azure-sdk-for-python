@@ -33,16 +33,16 @@ ai_client = AzureAIClient(
 agent = ai_client.agents.create_agent(
     model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
 )
-logging.info("Created agent, agent ID", agent.id)
+print("Created agent, agent ID", agent.id)
 
 thread = ai_client.agents.create_thread()
-logging.info("Created thread, thread ID", thread.id)
+print("Created thread, thread ID", thread.id)
 
 message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-logging.info("Created message, message ID", message.id)
+print("Created message, message ID", message.id)
 
 run = ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-logging.info("Created run, run ID", run.id)
+print("Created run, run ID", run.id)
 
 # poll the run as long as run status is queued or in progress
 while run.status in ["queued", "in_progress", "requires_action"]:
@@ -50,12 +50,12 @@ while run.status in ["queued", "in_progress", "requires_action"]:
     time.sleep(1)
     run = ai_client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
-    logging.info("Run status:", run.status)
+    print("Run status:", run.status)
 
-logging.info("Run completed with status:", run.status)
+print("Run completed with status:", run.status)
 
 ai_client.agents.delete_agent(agent.id)
-logging.info("Deleted agent")
+print("Deleted agent")
 
 messages = ai_client.agents.list_messages(thread_id=thread.id)
-logging.info("messages:", messages)
+print("messages:", messages)

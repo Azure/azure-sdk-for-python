@@ -44,13 +44,7 @@ print(response.choices[0].message.content)
 # You can get an authenticated azure.ai.inference embeddings client directly, if you have a serverless endpoint in your project:
 client = ai_client.inference.get_embeddings_client()
 
-response = client.embed(
-    input=[
-        "first phrase",
-        "second phrase",
-        "third phrase"
-    ]
-)
+response = client.embed(input=["first phrase", "second phrase", "third phrase"])
 
 for item in response.data:
     length = len(item.embedding)
