@@ -6,6 +6,10 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
+from typing import (
+    Any, Callable, Dict, List, Optional
+)
+
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 
@@ -23,24 +27,34 @@ def _wrap_item(item):
 class SharePropertiesPaged(AsyncPageIterator):
     """An iterable of Share properties.
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A file name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.fileshare.ShareProperties)
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only shares whose names
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[str] prefix: Filters the results to return only shares whose names
         begin with the specified prefix.
-    :param int results_per_page: The maximum number of share names to retrieve per
+    :param Optional[int] results_per_page: The maximum number of share names to retrieve per
         call.
-    :param str continuation_token: An opaque continuation token.
+    :param Optional[str] continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+
+    service_endpoint: Optional[str] = None
+    """The service URL."""
+    prefix: Optional[str] = None
+    """A filename prefix being used to filter the list."""
+    marker: Optional[str] = None
+    """The continuation token of the current page of results."""
+    results_per_page: Optional[int] = None
+    """The maximum number of results to retrieve per API call."""
+    location_mode: Optional[str] = None
+    """The location mode being used to list results. The available
+        options include "primary" and "secondary"."""
+    current_page: List[ShareProperties]
+    """The current page of listed results."""
+
+    def __init__(
+        self, command: Callable,
+        prefix: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None
+    ) -> None:
         super(SharePropertiesPaged, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -78,20 +92,26 @@ class SharePropertiesPaged(AsyncPageIterator):
 class HandlesPaged(AsyncPageIterator):
     """An iterable of Handles.
 
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str marker: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list(~azure.storage.fileshare.Handle)
-
-    :param callable command: Function to retrieve the next page of items.
-    :param int results_per_page: The maximum number of share names to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[int] results_per_page: The maximum number of share names to retrieve per call.
+    :param Optional[str] continuation_token: An opaque continuation token to retrieve the next page of results.
     """
-    def __init__(self, command, results_per_page=None, continuation_token=None):
+
+    marker: Optional[str] = None
+    """The continuation token of the current page of results."""
+    results_per_page: Optional[int] = None
+    """The maximum number of results retrieved per API call."""
+    location_mode: Optional[str] = None
+    """The location mode being used to list results.
+        The available options include "primary" and "secondary"."""
+    current_page: List[Handle]
+    """The current page of listed results."""
+
+    def __init__(
+        self, command: Callable,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None
+    ) -> None:
         super(HandlesPaged, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -126,24 +146,34 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
     will have the keys 'name' (str) and 'is_directory' (bool).
     Items that are files (is_directory=False) will have an additional 'content_length' key.
 
-    :ivar str service_endpoint: The service URL.
-    :ivar str prefix: A file name prefix being used to filter the list.
-    :ivar str marker: The continuation token of the current page of results.
-    :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str continuation_token: The continuation token to retrieve the next page of results.
-    :ivar str location_mode: The location mode being used to list results. The available
-        options include "primary" and "secondary".
-    :ivar current_page: The current page of listed results.
-    :vartype current_page: list[dict[str, Any]]
-
-    :param callable command: Function to retrieve the next page of items.
-    :param str prefix: Filters the results to return only directories whose names
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[str] prefix: Filters the results to return only directories whose names
         begin with the specified prefix.
-    :param int results_per_page: The maximum number of share names to retrieve per
-        call.
-    :param str continuation_token: An opaque continuation token.
+    :param Optional[int] results_per_page: The maximum number of share names to retrieve per call.
+    :param Optional[str] continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+
+    service_endpoint: Optional[str] = None
+    """The service URL."""
+    prefix: Optional[str] = None
+    """A file name prefix being used to filter the list."""
+    marker: Optional[str] = None
+    """The continuation token of the current page of results."""
+    results_per_page: Optional[int] = None
+    """The maximum number of results retrieved per API call."""
+    continuation_token: Optional[str] = None
+    """The continuation token to retrieve the next page of results."""
+    location_mode: Optional[str] = None
+    """The location mode being used to list results. The available options include "primary" and "secondary"."""
+    current_page: List[Dict[str, Any]]
+    """The current page of listed results."""
+
+    def __init__(
+        self, command: Callable,
+        prefix: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        continuation_token: Optional[str] = None
+    ) -> None:
         super(DirectoryPropertiesPaged, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,

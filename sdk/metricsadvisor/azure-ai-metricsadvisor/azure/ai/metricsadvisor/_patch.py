@@ -119,11 +119,12 @@ def get_authentication_policy(credential):
 
 class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keyword
     """Represents an client that calls restful API of Azure Metrics Advisor service.
+
     :param str endpoint: Supported Cognitive Services endpoints (protocol and hostname,
-        for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
+     for example: https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :param credential: An instance of ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential.
-        which requires both subscription key and API key. Or an object which can provide an access
-        token for the vault, such as a credential from :mod:`azure.identity`
+     which requires both subscription key and API key. Or an object which can provide an access
+     token for the vault, such as a credential from :mod:`azure.identity`
     :type credential: ~azure.ai.metricsadvisor.MetricsAdvisorKeyCredential or ~azure.core.credentials.TokenCredential
     """
 

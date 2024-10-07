@@ -1,6 +1,6 @@
 # Release History
 
-## 1.7.1 (Unreleased)
+## 1.7.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,11 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.7.1 (2024-08-22)
+
+### Bugs Fixed
+- Fixed a bug in serializing/deserializing tags filter in `ConfigurationSnapshot`.
 
 ## 1.7.0 (2024-08-15)
 

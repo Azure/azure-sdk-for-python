@@ -7,7 +7,17 @@ from __future__ import annotations
 from enum import Enum
 from urllib.parse import urlparse
 
-from typing import Any, Sequence, Optional, Union, Callable, Dict, Type, Generic, TypeVar
+from typing import (
+    Any,
+    Sequence,
+    Optional,
+    Union,
+    Callable,
+    Dict,
+    Type,
+    Generic,
+    TypeVar,
+)
 from types import TracebackType
 from typing_extensions import Protocol, ContextManager, runtime_checkable
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, AsyncHttpResponse
@@ -56,9 +66,7 @@ class AbstractSpan(Protocol, Generic[SpanType]):
     :type name: str
     """
 
-    def __init__(  # pylint: disable=super-init-not-called
-        self, span: Optional[SpanType] = None, name: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, span: Optional[SpanType] = None, name: Optional[str] = None, **kwargs: Any) -> None:
         pass
 
     def span(self, name: str = "child_span", **kwargs: Any) -> AbstractSpan[SpanType]:
@@ -263,7 +271,9 @@ class HttpSpanMixin:
     _ERROR_TYPE = "error.type"
 
     def set_http_attributes(
-        self: AbstractSpan, request: HttpRequestType, response: Optional[HttpResponseType] = None
+        self: AbstractSpan,
+        request: HttpRequestType,
+        response: Optional[HttpResponseType] = None,
     ) -> None:
         """
         Add correct attributes for a http client span.

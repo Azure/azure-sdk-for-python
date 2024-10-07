@@ -32,12 +32,13 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
@@ -45,7 +46,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._web_apps_operations import (
     build_add_premier_add_on_request,
     build_add_premier_add_on_slot_request,
@@ -507,7 +507,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -523,7 +522,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -596,7 +594,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -612,7 +609,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -681,7 +677,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -696,7 +691,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Site", pipeline_response)
+        deserialized = self._deserialize("Site", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -705,7 +700,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     async def _create_or_update_initial(
         self, resource_group_name: str, name: str, site_envelope: Union[_models.Site, IO[bytes]], **kwargs: Any
-    ) -> _models.Site:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -719,7 +714,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Site] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -740,10 +735,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -751,15 +746,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Site", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("Site", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -871,10 +866,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Site", pipeline_response)
+            deserialized = self._deserialize("Site", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -949,7 +945,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1089,7 +1084,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1104,11 +1098,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Site", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("Site", pipeline_response)
+        deserialized = self._deserialize("Site", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1156,7 +1146,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1171,7 +1160,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CustomHostnameAnalysisResult", pipeline_response)
+        deserialized = self._deserialize("CustomHostnameAnalysisResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1291,7 +1280,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1420,7 +1408,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1435,7 +1422,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BackupItem", pipeline_response)
+        deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1481,7 +1468,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -1497,7 +1483,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -1568,7 +1553,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1583,7 +1567,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BackupItem", pipeline_response)
+        deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1634,7 +1618,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1787,7 +1770,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1802,21 +1784,21 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BackupItem", pipeline_response)
+        deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _restore_initial(  # pylint: disable=inconsistent-return-statements
+    async def _restore_initial(
         self,
         resource_group_name: str,
         name: str,
         backup_id: str,
         request: Union[_models.RestoreRequest, IO[bytes]],
         **kwargs: Any
-    ) -> None:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1830,7 +1812,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1852,10 +1834,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -1863,12 +1845,20 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_restore(
@@ -1968,7 +1958,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._restore_initial(  # type: ignore
+            raw_result = await self._restore_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 backup_id=backup_id,
@@ -1980,6 +1970,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -2044,7 +2035,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -2060,7 +2050,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -2128,7 +2117,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2143,7 +2131,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response)
+        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2267,7 +2255,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2282,7 +2269,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response)
+        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2327,7 +2314,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2342,7 +2328,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response)
+        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2466,7 +2452,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2481,7 +2466,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response)
+        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2530,7 +2515,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -2546,7 +2530,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -2689,7 +2672,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2704,7 +2686,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2749,7 +2731,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2764,7 +2745,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2884,7 +2865,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2899,7 +2879,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteAuthSettings", pipeline_response)
+        deserialized = self._deserialize("SiteAuthSettings", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2942,7 +2922,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2957,7 +2936,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteAuthSettings", pipeline_response)
+        deserialized = self._deserialize("SiteAuthSettings", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3002,7 +2981,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3017,7 +2995,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response)
+        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3137,7 +3115,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3152,7 +3129,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response)
+        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3197,7 +3174,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3212,7 +3188,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response)
+        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3334,7 +3310,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3349,7 +3324,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response)
+        deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3394,7 +3369,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3409,7 +3383,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response)
+        deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3525,7 +3499,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3540,7 +3513,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BackupRequest", pipeline_response)
+        deserialized = self._deserialize("BackupRequest", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3585,7 +3558,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3641,7 +3613,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3656,7 +3627,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BackupRequest", pipeline_response)
+        deserialized = self._deserialize("BackupRequest", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3705,7 +3676,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -3721,7 +3691,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3792,7 +3761,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3807,7 +3775,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ApiKVReference", pipeline_response)
+        deserialized = self._deserialize("ApiKVReference", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3856,7 +3824,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -3872,7 +3839,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3943,7 +3909,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3958,7 +3923,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ApiKVReference", pipeline_response)
+        deserialized = self._deserialize("ApiKVReference", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4081,7 +4046,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4096,7 +4060,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response)
+        deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4141,7 +4105,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4156,7 +4119,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response)
+        deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4201,7 +4164,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4216,7 +4178,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteLogsConfig", pipeline_response)
+        deserialized = self._deserialize("SiteLogsConfig", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4339,7 +4301,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4354,7 +4315,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteLogsConfig", pipeline_response)
+        deserialized = self._deserialize("SiteLogsConfig", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4470,7 +4431,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4485,7 +4445,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4528,7 +4488,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4543,7 +4502,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4552,7 +4511,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     async def _list_publishing_credentials_initial(
         self, resource_group_name: str, name: str, **kwargs: Any
-    ) -> _models.User:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4565,7 +4524,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
-        cls: ClsType[_models.User] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_list_publishing_credentials_request(
             resource_group_name=resource_group_name,
@@ -4575,10 +4534,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4586,11 +4545,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("User", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4631,10 +4594,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("User", pipeline_response)
+            deserialized = self._deserialize("User", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -4765,7 +4729,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4780,7 +4743,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PushSettings", pipeline_response)
+        deserialized = self._deserialize("PushSettings", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4823,7 +4786,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4838,7 +4800,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PushSettings", pipeline_response)
+        deserialized = self._deserialize("PushSettings", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4883,7 +4845,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4898,7 +4859,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SlotConfigNamesResource", pipeline_response)
+        deserialized = self._deserialize("SlotConfigNamesResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5027,7 +4988,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5042,7 +5002,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SlotConfigNamesResource", pipeline_response)
+        deserialized = self._deserialize("SlotConfigNamesResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5087,7 +5047,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5102,7 +5061,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteConfigResource", pipeline_response)
+        deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5222,7 +5181,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5237,7 +5195,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteConfigResource", pipeline_response)
+        deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5357,7 +5315,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5372,7 +5329,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteConfigResource", pipeline_response)
+        deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5424,7 +5381,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5440,7 +5396,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5511,7 +5466,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5526,7 +5480,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteConfigResource", pipeline_response)
+        deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5574,7 +5528,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5630,9 +5583,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5641,12 +5594,16 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
+            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5691,9 +5648,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5702,12 +5659,16 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
+            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5756,7 +5717,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5772,7 +5732,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5846,7 +5805,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5861,7 +5819,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ContinuousWebJob", pipeline_response)
+        deserialized = self._deserialize("ContinuousWebJob", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5909,7 +5867,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5971,7 +5928,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6033,7 +5989,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6092,7 +6047,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -6108,7 +6062,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6177,7 +6130,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6192,7 +6144,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Deployment", pipeline_response)
+        deserialized = self._deserialize("Deployment", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6322,7 +6274,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6337,7 +6288,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Deployment", pipeline_response)
+        deserialized = self._deserialize("Deployment", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6385,7 +6336,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6445,7 +6395,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6460,7 +6409,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Deployment", pipeline_response)
+        deserialized = self._deserialize("Deployment", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6584,7 +6533,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6599,7 +6547,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RestoreRequest", pipeline_response)
+        deserialized = self._deserialize("RestoreRequest", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6647,7 +6595,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -6663,7 +6610,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6734,7 +6680,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6749,7 +6694,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Identifier", pipeline_response)
+        deserialized = self._deserialize("Identifier", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6881,7 +6826,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -6896,7 +6840,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Identifier", pipeline_response)
+        deserialized = self._deserialize("Identifier", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6944,7 +6888,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7087,7 +7030,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7102,7 +7044,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Identifier", pipeline_response)
+        deserialized = self._deserialize("Identifier", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7145,7 +7087,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7160,7 +7101,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+        deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7169,7 +7110,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     async def _create_ms_deploy_operation_initial(
         self, resource_group_name: str, name: str, ms_deploy: Union[_models.MSDeploy, IO[bytes]], **kwargs: Any
-    ) -> _models.MSDeployStatus:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7186,7 +7127,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -7207,10 +7148,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7218,11 +7159,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7328,10 +7273,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+            deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -7392,7 +7338,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7407,7 +7352,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployLog", pipeline_response)
+        deserialized = self._deserialize("MSDeployLog", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7450,7 +7395,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7465,7 +7409,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("object", pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7508,7 +7452,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7523,7 +7466,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("object", pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7575,7 +7518,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -7591,7 +7533,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -7657,7 +7598,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7672,7 +7612,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("str", pipeline_response)
+        deserialized = self._deserialize("str", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7723,7 +7663,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -7738,7 +7677,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("FunctionEnvelope", pipeline_response)
+        deserialized = self._deserialize("FunctionEnvelope", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7752,7 +7691,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         function_name: str,
         function_envelope: Union[_models.FunctionEnvelope, IO[bytes]],
         **kwargs: Any
-    ) -> _models.FunctionEnvelope:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7766,7 +7705,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.FunctionEnvelope] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -7788,10 +7727,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7799,11 +7738,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("FunctionEnvelope", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7923,10 +7866,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("FunctionEnvelope", pipeline_response)
+            deserialized = self._deserialize("FunctionEnvelope", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -7992,7 +7936,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8143,7 +8086,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8158,11 +8100,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("KeyInfo", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("KeyInfo", pipeline_response)
+        deserialized = self._deserialize("KeyInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8216,7 +8154,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8275,7 +8212,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8290,7 +8226,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8338,7 +8274,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8353,7 +8288,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("FunctionSecrets", pipeline_response)
+        deserialized = self._deserialize("FunctionSecrets", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8396,7 +8331,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8411,7 +8345,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HostKeys", pipeline_response)
+        deserialized = self._deserialize("HostKeys", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8456,7 +8390,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8512,7 +8445,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8663,7 +8595,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8678,11 +8609,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("KeyInfo", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("KeyInfo", pipeline_response)
+        deserialized = self._deserialize("KeyInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8736,7 +8663,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8796,7 +8722,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -8812,7 +8737,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -8883,7 +8807,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -8898,7 +8821,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HostNameBinding", pipeline_response)
+        deserialized = self._deserialize("HostNameBinding", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9030,7 +8953,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9045,7 +8967,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HostNameBinding", pipeline_response)
+        deserialized = self._deserialize("HostNameBinding", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9093,7 +9015,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9155,7 +9076,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9170,7 +9090,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HybridConnection", pipeline_response)
+        deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9310,7 +9230,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9325,7 +9244,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HybridConnection", pipeline_response)
+        deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9379,7 +9298,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9530,7 +9448,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9545,7 +9462,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HybridConnection", pipeline_response)
+        deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9590,7 +9507,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9605,7 +9521,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HybridConnection", pipeline_response)
+        deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9650,7 +9566,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9665,7 +9580,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response)
+        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9713,7 +9628,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9728,7 +9642,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response)
+        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9859,7 +9773,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -9874,7 +9787,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response)
+        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9925,7 +9838,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10067,7 +9979,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10082,7 +9993,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response)
+        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10132,7 +10043,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -10148,7 +10058,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -10219,7 +10128,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10234,7 +10142,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("WebSiteInstanceStatus", pipeline_response)
+        deserialized = self._deserialize("WebSiteInstanceStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10282,7 +10190,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10297,7 +10204,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+        deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10311,7 +10218,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         instance_id: str,
         ms_deploy: Union[_models.MSDeploy, IO[bytes]],
         **kwargs: Any
-    ) -> _models.MSDeployStatus:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -10328,7 +10235,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -10350,10 +10257,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -10361,11 +10268,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10485,10 +10396,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+            deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -10554,7 +10466,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10569,7 +10480,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployLog", pipeline_response)
+        deserialized = self._deserialize("MSDeployLog", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10626,7 +10537,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -10642,7 +10552,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -10720,7 +10629,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10735,7 +10643,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ProcessInfo", pipeline_response)
+        deserialized = self._deserialize("ProcessInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10792,7 +10700,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -10858,9 +10765,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10869,11 +10776,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10934,7 +10845,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -10950,7 +10860,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -11031,7 +10940,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -11046,7 +10954,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ProcessModuleInfo", pipeline_response)
+        deserialized = self._deserialize("ProcessModuleInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11105,7 +11013,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -11121,7 +11028,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -11187,7 +11093,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -11202,7 +11107,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteCloneability", pipeline_response)
+        deserialized = self._deserialize("SiteCloneability", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11250,7 +11155,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -11266,7 +11170,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -11334,7 +11237,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -11349,7 +11251,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("FunctionSecrets", pipeline_response)
+        deserialized = self._deserialize("FunctionSecrets", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11363,7 +11265,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         migration_options: Union[_models.StorageMigrationOptions, IO[bytes]],
         **kwargs: Any
-    ) -> _models.StorageMigrationResponse:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -11377,7 +11279,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.StorageMigrationResponse] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -11399,10 +11301,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -11410,11 +11312,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StorageMigrationResponse", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11538,10 +11444,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("StorageMigrationResponse", pipeline_response)
+            deserialized = self._deserialize("StorageMigrationResponse", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -11569,7 +11476,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         migration_request_envelope: Union[_models.MigrateMySqlRequest, IO[bytes]],
         **kwargs: Any
-    ) -> _models.Operation:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -11583,7 +11490,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Operation] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -11604,10 +11511,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -11615,11 +11522,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Operation", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11730,10 +11641,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Operation", pipeline_response)
+            deserialized = self._deserialize("Operation", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -11795,7 +11707,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -11810,7 +11721,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MigrateMySqlStatus", pipeline_response)
+        deserialized = self._deserialize("MigrateMySqlStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11855,7 +11766,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -11870,7 +11780,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response)
+        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12010,7 +11920,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12025,7 +11934,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response)
+        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12073,7 +11982,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12224,7 +12132,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12239,7 +12146,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response)
+        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12290,7 +12197,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12305,7 +12211,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NetworkFeatures", pipeline_response)
+        deserialized = self._deserialize("NetworkFeatures", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12353,7 +12259,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12368,11 +12273,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12432,7 +12333,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12447,7 +12347,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("str", pipeline_response)
+        deserialized = self._deserialize("str", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12462,7 +12362,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.NetworkTrace]:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -12475,7 +12375,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
-        cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_start_web_site_network_trace_operation_request(
             resource_group_name=resource_group_name,
@@ -12488,10 +12388,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -12499,15 +12399,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12565,10 +12465,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+            deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -12628,7 +12529,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12687,7 +12587,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12702,7 +12601,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12750,7 +12649,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12765,11 +12663,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12817,7 +12711,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12832,7 +12725,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -12877,7 +12770,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -12942,7 +12834,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -12958,7 +12849,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -13026,7 +12916,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -13041,7 +12930,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SitePhpErrorLogFlag", pipeline_response)
+        deserialized = self._deserialize("SitePhpErrorLogFlag", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13084,7 +12973,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -13099,7 +12987,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PremierAddOn", pipeline_response)
+        deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13147,7 +13035,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -13162,7 +13049,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PremierAddOn", pipeline_response)
+        deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13292,7 +13179,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -13307,7 +13193,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PremierAddOn", pipeline_response)
+        deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13355,7 +13241,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -13496,7 +13381,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -13511,7 +13395,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PremierAddOn", pipeline_response)
+        deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13556,7 +13440,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -13571,7 +13454,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PrivateAccess", pipeline_response)
+        deserialized = self._deserialize("PrivateAccess", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13693,7 +13576,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -13708,7 +13590,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PrivateAccess", pipeline_response)
+        deserialized = self._deserialize("PrivateAccess", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13758,7 +13640,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -13774,7 +13655,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -13845,7 +13725,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -13860,7 +13739,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response)
+        deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13874,7 +13753,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         private_endpoint_connection_name: str,
         private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, IO[bytes]],
         **kwargs: Any
-    ) -> _models.RemotePrivateEndpointConnectionARMResource:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -13888,7 +13767,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RemotePrivateEndpointConnectionARMResource] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -13910,10 +13789,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -13921,15 +13800,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14054,10 +13933,13 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response)
+            deserialized = self._deserialize(
+                "RemotePrivateEndpointConnectionARMResource", pipeline_response.http_response
+            )
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -14081,7 +13963,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     async def _delete_private_endpoint_connection_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, private_endpoint_connection_name: str, **kwargs: Any
-    ) -> JSON:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -14094,7 +13976,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_private_endpoint_connection_request(
             resource_group_name=resource_group_name,
@@ -14105,10 +13987,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -14116,18 +13998,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("object", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("object", pipeline_response)
-
-        if response.status_code == 204:
-            deserialized = self._deserialize("object", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14171,10 +14050,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("object", pipeline_response)
+            deserialized = self._deserialize("object", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -14232,7 +14112,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -14247,7 +14126,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PrivateLinkResourcesWrapper", pipeline_response)
+        deserialized = self._deserialize("PrivateLinkResourcesWrapper", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14300,7 +14179,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -14316,7 +14194,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -14390,7 +14267,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -14405,7 +14281,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ProcessInfo", pipeline_response)
+        deserialized = self._deserialize("ProcessInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14458,7 +14334,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -14520,9 +14395,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14531,11 +14406,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14592,7 +14471,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -14608,7 +14486,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -14685,7 +14562,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -14700,7 +14576,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ProcessModuleInfo", pipeline_response)
+        deserialized = self._deserialize("ProcessModuleInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14755,7 +14631,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -14771,7 +14646,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -14843,7 +14717,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -14859,7 +14732,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -14930,7 +14802,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -14945,7 +14816,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PublicCertificate", pipeline_response)
+        deserialized = self._deserialize("PublicCertificate", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -15077,7 +14948,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -15092,7 +14962,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PublicCertificate", pipeline_response)
+        deserialized = self._deserialize("PublicCertificate", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -15140,7 +15010,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -15276,9 +15145,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -15287,11 +15156,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -15338,7 +15211,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -15408,7 +15280,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -15426,9 +15297,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    async def _restore_from_backup_blob_initial(  # pylint: disable=inconsistent-return-statements
+    async def _restore_from_backup_blob_initial(
         self, resource_group_name: str, name: str, request: Union[_models.RestoreRequest, IO[bytes]], **kwargs: Any
-    ) -> None:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -15442,7 +15313,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -15463,10 +15334,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -15474,12 +15345,20 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_restore_from_backup_blob(
@@ -15566,7 +15445,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._restore_from_backup_blob_initial(  # type: ignore
+            raw_result = await self._restore_from_backup_blob_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 request=request,
@@ -15577,6 +15456,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -15598,13 +15478,13 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _restore_from_deleted_app_initial(  # pylint: disable=inconsistent-return-statements
+    async def _restore_from_deleted_app_initial(
         self,
         resource_group_name: str,
         name: str,
         restore_request: Union[_models.DeletedAppRestoreRequest, IO[bytes]],
         **kwargs: Any
-    ) -> None:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -15618,7 +15498,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -15639,10 +15519,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -15650,12 +15530,20 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_restore_from_deleted_app(
@@ -15746,7 +15634,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._restore_from_deleted_app_initial(  # type: ignore
+            raw_result = await self._restore_from_deleted_app_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 restore_request=restore_request,
@@ -15757,6 +15645,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -15778,13 +15667,13 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _restore_snapshot_initial(  # pylint: disable=inconsistent-return-statements
+    async def _restore_snapshot_initial(
         self,
         resource_group_name: str,
         name: str,
         restore_request: Union[_models.SnapshotRestoreRequest, IO[bytes]],
         **kwargs: Any
-    ) -> None:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -15798,7 +15687,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -15819,10 +15708,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -15830,12 +15719,20 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_restore_snapshot(
@@ -15929,7 +15826,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._restore_snapshot_initial(  # type: ignore
+            raw_result = await self._restore_snapshot_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 restore_request=restore_request,
@@ -15940,6 +15837,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -16006,7 +15904,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -16022,7 +15919,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -16096,7 +15992,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -16111,7 +16006,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteExtensionInfo", pipeline_response)
+        deserialized = self._deserialize("SiteExtensionInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -16120,7 +16015,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     async def _install_site_extension_initial(
         self, resource_group_name: str, name: str, site_extension_id: str, **kwargs: Any
-    ) -> _models.SiteExtensionInfo:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -16137,7 +16032,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
-        cls: ClsType[_models.SiteExtensionInfo] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_install_site_extension_request(
             resource_group_name=resource_group_name,
@@ -16148,10 +16043,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -16159,15 +16054,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("SiteExtensionInfo", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("SiteExtensionInfo", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -16213,10 +16108,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("SiteExtensionInfo", pipeline_response)
+            deserialized = self._deserialize("SiteExtensionInfo", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -16282,7 +16178,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -16339,7 +16234,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -16355,7 +16249,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -16428,7 +16321,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -16443,7 +16335,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Site", pipeline_response)
+        deserialized = self._deserialize("Site", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -16457,7 +16349,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         slot: str,
         site_envelope: Union[_models.Site, IO[bytes]],
         **kwargs: Any
-    ) -> _models.Site:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -16471,7 +16363,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Site] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -16493,10 +16385,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -16504,15 +16396,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Site", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("Site", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -16641,10 +16533,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("Site", pipeline_response)
+            deserialized = self._deserialize("Site", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -16724,7 +16617,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -16877,7 +16769,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -16892,11 +16783,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("Site", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("Site", pipeline_response)
+        deserialized = self._deserialize("Site", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -16948,7 +16835,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -16963,7 +16849,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CustomHostnameAnalysisResult", pipeline_response)
+        deserialized = self._deserialize("CustomHostnameAnalysisResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -17096,7 +16982,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -17242,7 +17127,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -17257,7 +17141,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BackupItem", pipeline_response)
+        deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -17309,7 +17193,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -17325,7 +17208,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -17400,7 +17282,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -17415,7 +17296,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BackupItem", pipeline_response)
+        deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -17470,7 +17351,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -17636,7 +17516,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -17651,14 +17530,14 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BackupItem", pipeline_response)
+        deserialized = self._deserialize("BackupItem", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    async def _restore_slot_initial(  # pylint: disable=inconsistent-return-statements
+    async def _restore_slot_initial(
         self,
         resource_group_name: str,
         name: str,
@@ -17666,7 +17545,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         slot: str,
         request: Union[_models.RestoreRequest, IO[bytes]],
         **kwargs: Any
-    ) -> None:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -17680,7 +17559,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -17703,10 +17582,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -17714,12 +17593,20 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_restore_slot(
@@ -17831,7 +17718,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._restore_slot_initial(  # type: ignore
+            raw_result = await self._restore_slot_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 backup_id=backup_id,
@@ -17844,6 +17731,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -17911,7 +17799,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -17927,7 +17814,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -17998,7 +17884,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -18013,7 +17898,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response)
+        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -18147,7 +18032,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -18162,7 +18046,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response)
+        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -18210,7 +18094,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -18225,7 +18108,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response)
+        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -18359,7 +18242,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -18374,7 +18256,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response)
+        deserialized = self._deserialize("CsmPublishingCredentialsPoliciesEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -18427,7 +18309,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -18443,7 +18324,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -18599,7 +18479,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -18614,7 +18493,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -18663,7 +18542,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -18678,7 +18556,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -18811,7 +18689,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -18826,7 +18703,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteAuthSettings", pipeline_response)
+        deserialized = self._deserialize("SiteAuthSettings", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -18875,7 +18752,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -18890,7 +18766,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteAuthSettings", pipeline_response)
+        deserialized = self._deserialize("SiteAuthSettings", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -18939,7 +18815,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -18954,7 +18829,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response)
+        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -19087,7 +18962,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -19102,7 +18976,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response)
+        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -19151,7 +19025,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -19166,7 +19039,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response)
+        deserialized = self._deserialize("SiteAuthSettingsV2", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -19301,7 +19174,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -19316,7 +19188,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response)
+        deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -19365,7 +19237,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -19380,7 +19251,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response)
+        deserialized = self._deserialize("AzureStoragePropertyDictionaryResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -19513,7 +19384,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -19528,7 +19398,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BackupRequest", pipeline_response)
+        deserialized = self._deserialize("BackupRequest", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -19577,7 +19447,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -19637,7 +19506,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -19652,7 +19520,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("BackupRequest", pipeline_response)
+        deserialized = self._deserialize("BackupRequest", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -19704,7 +19572,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -19720,7 +19587,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -19794,7 +19660,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -19809,7 +19674,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ApiKVReference", pipeline_response)
+        deserialized = self._deserialize("ApiKVReference", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -19861,7 +19726,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -19877,7 +19741,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -19951,7 +19814,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -19966,7 +19828,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ApiKVReference", pipeline_response)
+        deserialized = self._deserialize("ApiKVReference", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -20102,7 +19964,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -20117,7 +19978,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response)
+        deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -20166,7 +20027,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -20181,7 +20041,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response)
+        deserialized = self._deserialize("ConnectionStringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -20230,7 +20090,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -20245,7 +20104,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteLogsConfig", pipeline_response)
+        deserialized = self._deserialize("SiteLogsConfig", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -20381,7 +20240,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -20396,7 +20254,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteLogsConfig", pipeline_response)
+        deserialized = self._deserialize("SiteLogsConfig", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -20529,7 +20387,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -20544,7 +20401,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -20593,7 +20450,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -20608,7 +20464,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -20617,7 +20473,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     async def _list_publishing_credentials_slot_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, slot: str, **kwargs: Any
-    ) -> _models.User:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -20630,7 +20486,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
-        cls: ClsType[_models.User] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_list_publishing_credentials_slot_request(
             resource_group_name=resource_group_name,
@@ -20641,10 +20497,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -20652,11 +20508,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("User", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -20701,10 +20561,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("User", pipeline_response)
+            deserialized = self._deserialize("User", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -20852,7 +20713,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -20867,7 +20727,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PushSettings", pipeline_response)
+        deserialized = self._deserialize("PushSettings", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -20916,7 +20776,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -20931,7 +20790,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PushSettings", pipeline_response)
+        deserialized = self._deserialize("PushSettings", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -20982,7 +20841,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -20997,7 +20855,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteConfigResource", pipeline_response)
+        deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -21130,7 +20988,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -21145,7 +21002,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteConfigResource", pipeline_response)
+        deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -21278,7 +21135,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -21293,7 +21149,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteConfigResource", pipeline_response)
+        deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -21349,7 +21205,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -21365,7 +21220,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -21440,7 +21294,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -21455,7 +21308,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteConfigResource", pipeline_response)
+        deserialized = self._deserialize("SiteConfigResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -21507,7 +21360,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -21567,9 +21419,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -21578,12 +21430,16 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
+            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -21632,9 +21488,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -21643,12 +21499,16 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
+            deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -21701,7 +21561,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -21717,7 +21576,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -21795,7 +21653,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -21810,7 +21667,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ContinuousWebJob", pipeline_response)
+        deserialized = self._deserialize("ContinuousWebJob", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -21862,7 +21719,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -21928,7 +21784,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -21994,7 +21849,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -22057,7 +21911,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -22073,7 +21926,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -22148,7 +22000,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -22163,7 +22014,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Deployment", pipeline_response)
+        deserialized = self._deserialize("Deployment", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -22306,7 +22157,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -22321,7 +22171,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Deployment", pipeline_response)
+        deserialized = self._deserialize("Deployment", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -22373,7 +22223,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -22437,7 +22286,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -22452,7 +22300,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Deployment", pipeline_response)
+        deserialized = self._deserialize("Deployment", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -22593,7 +22441,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -22608,7 +22455,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RestoreRequest", pipeline_response)
+        deserialized = self._deserialize("RestoreRequest", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -22660,7 +22507,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -22676,7 +22522,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -22751,7 +22596,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -22766,7 +22610,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Identifier", pipeline_response)
+        deserialized = self._deserialize("Identifier", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -22911,7 +22755,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -22926,7 +22769,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Identifier", pipeline_response)
+        deserialized = self._deserialize("Identifier", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -22978,7 +22821,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -23134,7 +22976,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -23149,7 +22990,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Identifier", pipeline_response)
+        deserialized = self._deserialize("Identifier", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -23198,7 +23039,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -23213,7 +23053,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+        deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -23227,7 +23067,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         slot: str,
         ms_deploy: Union[_models.MSDeploy, IO[bytes]],
         **kwargs: Any
-    ) -> _models.MSDeployStatus:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -23244,7 +23084,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -23266,10 +23106,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -23277,11 +23117,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -23404,10 +23248,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+            deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -23474,7 +23319,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -23489,7 +23333,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployLog", pipeline_response)
+        deserialized = self._deserialize("MSDeployLog", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -23544,7 +23388,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -23560,7 +23403,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -23632,7 +23474,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -23647,7 +23488,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("str", pipeline_response)
+        deserialized = self._deserialize("str", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -23701,7 +23542,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -23716,7 +23556,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("FunctionEnvelope", pipeline_response)
+        deserialized = self._deserialize("FunctionEnvelope", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -23731,7 +23571,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         slot: str,
         function_envelope: Union[_models.FunctionEnvelope, IO[bytes]],
         **kwargs: Any
-    ) -> _models.FunctionEnvelope:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -23745,7 +23585,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.FunctionEnvelope] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -23768,10 +23608,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -23779,11 +23619,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("FunctionEnvelope", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -23913,10 +23757,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("FunctionEnvelope", pipeline_response)
+            deserialized = self._deserialize("FunctionEnvelope", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -23985,7 +23830,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -24146,7 +23990,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -24161,11 +24004,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("KeyInfo", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("KeyInfo", pipeline_response)
+        deserialized = self._deserialize("KeyInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -24222,7 +24061,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -24284,7 +24122,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -24299,7 +24136,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("StringDictionary", pipeline_response)
+        deserialized = self._deserialize("StringDictionary", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -24350,7 +24187,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -24365,7 +24201,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("FunctionSecrets", pipeline_response)
+        deserialized = self._deserialize("FunctionSecrets", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -24413,7 +24249,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -24428,7 +24263,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HostKeys", pipeline_response)
+        deserialized = self._deserialize("HostKeys", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -24476,7 +24311,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -24535,7 +24369,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -24696,7 +24529,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -24711,11 +24543,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("KeyInfo", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("KeyInfo", pipeline_response)
+        deserialized = self._deserialize("KeyInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -24772,7 +24600,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -24836,7 +24663,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -24852,7 +24678,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -24927,7 +24752,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -24942,7 +24766,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HostNameBinding", pipeline_response)
+        deserialized = self._deserialize("HostNameBinding", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -25087,7 +24911,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -25102,7 +24925,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HostNameBinding", pipeline_response)
+        deserialized = self._deserialize("HostNameBinding", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -25154,7 +24977,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -25219,7 +25041,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -25234,7 +25055,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HybridConnection", pipeline_response)
+        deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -25384,7 +25205,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -25399,7 +25219,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HybridConnection", pipeline_response)
+        deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -25456,7 +25276,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -25617,7 +25436,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -25632,7 +25450,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HybridConnection", pipeline_response)
+        deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -25680,7 +25498,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -25695,7 +25512,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HybridConnection", pipeline_response)
+        deserialized = self._deserialize("HybridConnection", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -25744,7 +25561,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -25759,7 +25575,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response)
+        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -25811,7 +25627,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -25826,7 +25641,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response)
+        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -25970,7 +25785,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -25985,7 +25799,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response)
+        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -26040,7 +25854,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -26195,7 +26008,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -26210,7 +26022,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response)
+        deserialized = self._deserialize("RelayServiceConnectionEntity", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -26264,7 +26076,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -26280,7 +26091,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -26355,7 +26165,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -26370,7 +26179,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("WebSiteInstanceStatus", pipeline_response)
+        deserialized = self._deserialize("WebSiteInstanceStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -26422,7 +26231,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -26437,7 +26245,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+        deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -26452,7 +26260,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         instance_id: str,
         ms_deploy: Union[_models.MSDeploy, IO[bytes]],
         **kwargs: Any
-    ) -> _models.MSDeployStatus:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -26469,7 +26277,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MSDeployStatus] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -26492,10 +26300,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -26503,11 +26311,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -26640,10 +26452,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("MSDeployStatus", pipeline_response)
+            deserialized = self._deserialize("MSDeployStatus", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -26713,7 +26526,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -26728,7 +26540,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MSDeployLog", pipeline_response)
+        deserialized = self._deserialize("MSDeployLog", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -26789,7 +26601,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -26805,7 +26616,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -26887,7 +26697,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -26902,7 +26711,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ProcessInfo", pipeline_response)
+        deserialized = self._deserialize("ProcessInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -26963,7 +26772,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -27033,9 +26841,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -27044,11 +26852,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -27113,7 +26925,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -27129,7 +26940,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -27221,7 +27031,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -27236,7 +27045,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ProcessModuleInfo", pipeline_response)
+        deserialized = self._deserialize("ProcessModuleInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -27299,7 +27108,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -27315,7 +27123,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -27387,7 +27194,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -27402,7 +27208,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteCloneability", pipeline_response)
+        deserialized = self._deserialize("SiteCloneability", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -27454,7 +27260,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -27470,7 +27275,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -27541,7 +27345,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -27556,7 +27359,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("FunctionSecrets", pipeline_response)
+        deserialized = self._deserialize("FunctionSecrets", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -27606,7 +27409,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -27621,7 +27423,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MigrateMySqlStatus", pipeline_response)
+        deserialized = self._deserialize("MigrateMySqlStatus", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -27670,7 +27472,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -27685,7 +27486,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response)
+        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -27838,7 +27639,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -27853,7 +27653,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response)
+        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -27905,7 +27705,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28069,7 +27868,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28084,7 +27882,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response)
+        deserialized = self._deserialize("SwiftVirtualNetwork", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -28139,7 +27937,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28154,7 +27951,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("NetworkFeatures", pipeline_response)
+        deserialized = self._deserialize("NetworkFeatures", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -28206,7 +28003,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28221,11 +28017,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -28289,7 +28081,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28304,7 +28095,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("str", pipeline_response)
+        deserialized = self._deserialize("str", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -28320,7 +28111,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.NetworkTrace]:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -28333,7 +28124,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
-        cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_start_web_site_network_trace_operation_slot_request(
             resource_group_name=resource_group_name,
@@ -28347,10 +28138,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -28358,15 +28149,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -28428,10 +28219,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+            deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -28494,7 +28286,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28557,7 +28348,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28572,7 +28362,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -28624,7 +28414,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28639,11 +28428,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -28695,7 +28480,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28710,7 +28494,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -28759,7 +28543,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28828,7 +28611,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -28844,7 +28626,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -28916,7 +28697,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28931,7 +28711,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SitePhpErrorLogFlag", pipeline_response)
+        deserialized = self._deserialize("SitePhpErrorLogFlag", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -28980,7 +28760,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -28995,7 +28774,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PremierAddOn", pipeline_response)
+        deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -29047,7 +28826,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -29062,7 +28840,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PremierAddOn", pipeline_response)
+        deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -29205,7 +28983,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -29220,7 +28997,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PremierAddOn", pipeline_response)
+        deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -29272,7 +29049,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -29426,7 +29202,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -29441,7 +29216,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PremierAddOn", pipeline_response)
+        deserialized = self._deserialize("PremierAddOn", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -29491,7 +29266,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -29506,7 +29280,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PrivateAccess", pipeline_response)
+        deserialized = self._deserialize("PrivateAccess", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -29642,7 +29416,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -29657,7 +29430,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PrivateAccess", pipeline_response)
+        deserialized = self._deserialize("PrivateAccess", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -29710,7 +29483,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -29726,7 +29498,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -29800,7 +29571,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -29815,7 +29585,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response)
+        deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -29830,7 +29600,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         slot: str,
         private_endpoint_wrapper: Union[_models.RemotePrivateEndpointConnectionARMResource, IO[bytes]],
         **kwargs: Any
-    ) -> _models.RemotePrivateEndpointConnectionARMResource:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -29844,7 +29614,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RemotePrivateEndpointConnectionARMResource] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -29867,10 +29637,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -29878,15 +29648,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -30021,10 +29791,13 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("RemotePrivateEndpointConnectionARMResource", pipeline_response)
+            deserialized = self._deserialize(
+                "RemotePrivateEndpointConnectionARMResource", pipeline_response.http_response
+            )
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -30048,7 +29821,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     async def _delete_private_endpoint_connection_slot_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, name: str, private_endpoint_connection_name: str, slot: str, **kwargs: Any
-    ) -> JSON:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -30061,7 +29834,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_private_endpoint_connection_slot_request(
             resource_group_name=resource_group_name,
@@ -30073,10 +29846,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -30084,18 +29857,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("object", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("object", pipeline_response)
-
-        if response.status_code == 204:
-            deserialized = self._deserialize("object", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -30142,10 +29912,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("object", pipeline_response)
+            deserialized = self._deserialize("object", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -30206,7 +29977,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -30221,7 +29991,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PrivateLinkResourcesWrapper", pipeline_response)
+        deserialized = self._deserialize("PrivateLinkResourcesWrapper", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -30278,7 +30048,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -30294,7 +30063,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -30372,7 +30140,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -30387,7 +30154,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ProcessInfo", pipeline_response)
+        deserialized = self._deserialize("ProcessInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -30444,7 +30211,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -30510,9 +30276,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -30521,11 +30287,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)  # type: ignore
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -30586,7 +30356,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -30602,7 +30371,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -30683,7 +30451,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -30698,7 +30465,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ProcessModuleInfo", pipeline_response)
+        deserialized = self._deserialize("ProcessModuleInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -30757,7 +30524,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -30773,7 +30539,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -30849,7 +30614,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -30865,7 +30629,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -30940,7 +30703,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -30955,7 +30717,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PublicCertificate", pipeline_response)
+        deserialized = self._deserialize("PublicCertificate", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -31100,7 +30862,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -31115,7 +30876,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PublicCertificate", pipeline_response)
+        deserialized = self._deserialize("PublicCertificate", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -31167,7 +30928,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -31316,9 +31076,9 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -31327,11 +31087,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -31382,7 +31146,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -31457,7 +31220,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -31475,14 +31237,14 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    async def _restore_from_backup_blob_slot_initial(  # pylint: disable=inconsistent-return-statements
+    async def _restore_from_backup_blob_slot_initial(
         self,
         resource_group_name: str,
         name: str,
         slot: str,
         request: Union[_models.RestoreRequest, IO[bytes]],
         **kwargs: Any
-    ) -> None:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -31496,7 +31258,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -31518,10 +31280,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -31529,12 +31291,20 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_restore_from_backup_blob_slot(
@@ -31637,7 +31407,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._restore_from_backup_blob_slot_initial(  # type: ignore
+            raw_result = await self._restore_from_backup_blob_slot_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 slot=slot,
@@ -31649,6 +31419,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -31670,14 +31441,14 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _restore_from_deleted_app_slot_initial(  # pylint: disable=inconsistent-return-statements
+    async def _restore_from_deleted_app_slot_initial(
         self,
         resource_group_name: str,
         name: str,
         slot: str,
         restore_request: Union[_models.DeletedAppRestoreRequest, IO[bytes]],
         **kwargs: Any
-    ) -> None:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -31691,7 +31462,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -31713,10 +31484,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -31724,12 +31495,20 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_restore_from_deleted_app_slot(
@@ -31832,7 +31611,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._restore_from_deleted_app_slot_initial(  # type: ignore
+            raw_result = await self._restore_from_deleted_app_slot_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 slot=slot,
@@ -31844,6 +31623,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -31865,14 +31645,14 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _restore_snapshot_slot_initial(  # pylint: disable=inconsistent-return-statements
+    async def _restore_snapshot_slot_initial(
         self,
         resource_group_name: str,
         name: str,
         slot: str,
         restore_request: Union[_models.SnapshotRestoreRequest, IO[bytes]],
         **kwargs: Any
-    ) -> None:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -31886,7 +31666,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -31908,10 +31688,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -31919,12 +31699,20 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_restore_snapshot_slot(
@@ -32030,7 +31818,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._restore_snapshot_slot_initial(  # type: ignore
+            raw_result = await self._restore_snapshot_slot_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 slot=slot,
@@ -32042,6 +31830,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -32112,7 +31901,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -32128,7 +31916,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -32206,7 +31993,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -32221,7 +32007,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("SiteExtensionInfo", pipeline_response)
+        deserialized = self._deserialize("SiteExtensionInfo", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -32230,7 +32016,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
     async def _install_site_extension_slot_initial(
         self, resource_group_name: str, name: str, site_extension_id: str, slot: str, **kwargs: Any
-    ) -> _models.SiteExtensionInfo:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -32247,7 +32033,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
-        cls: ClsType[_models.SiteExtensionInfo] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_install_site_extension_slot_request(
             resource_group_name=resource_group_name,
@@ -32259,10 +32045,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -32270,15 +32056,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("SiteExtensionInfo", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("SiteExtensionInfo", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -32328,10 +32114,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("SiteExtensionInfo", pipeline_response)
+            deserialized = self._deserialize("SiteExtensionInfo", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -32401,7 +32188,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -32550,7 +32336,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -32566,7 +32351,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -32596,14 +32380,14 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    async def _swap_slot_initial(  # pylint: disable=inconsistent-return-statements
+    async def _swap_slot_initial(
         self,
         resource_group_name: str,
         name: str,
         slot: str,
         slot_swap_entity: Union[_models.CsmSlotEntity, IO[bytes]],
         **kwargs: Any
-    ) -> None:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -32617,7 +32401,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -32639,10 +32423,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -32650,12 +32434,20 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_swap_slot(
@@ -32758,7 +32550,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._swap_slot_initial(  # type: ignore
+            raw_result = await self._swap_slot_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 slot=slot,
@@ -32770,6 +32562,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -32835,7 +32628,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -32851,7 +32643,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -32925,7 +32716,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -32941,7 +32731,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -33013,7 +32802,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -33028,14 +32816,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
+        deserialized = self._deserialize("SiteSourceControl", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -33049,7 +32830,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         slot: str,
         site_source_control: Union[_models.SiteSourceControl, IO[bytes]],
         **kwargs: Any
-    ) -> _models.SiteSourceControl:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -33063,7 +32844,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SiteSourceControl] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -33085,10 +32866,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -33096,18 +32877,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -33235,10 +33013,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
+            deserialized = self._deserialize("SiteSourceControl", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -33308,7 +33087,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -33454,7 +33232,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -33469,14 +33246,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
+        deserialized = self._deserialize("SiteSourceControl", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -33525,7 +33295,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -33552,7 +33321,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.NetworkTrace]:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -33565,7 +33334,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
-        cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_start_network_trace_slot_request(
             resource_group_name=resource_group_name,
@@ -33579,10 +33348,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -33590,15 +33359,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -33660,10 +33429,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+            deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -33727,7 +33497,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -33786,7 +33555,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -33846,7 +33614,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -33905,7 +33672,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -33969,7 +33735,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -33985,7 +33750,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -34063,7 +33827,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -34078,7 +33841,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("TriggeredWebJob", pipeline_response)
+        deserialized = self._deserialize("TriggeredWebJob", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -34130,7 +33893,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -34200,7 +33962,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -34216,7 +33977,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -34297,7 +34057,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -34312,7 +34071,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("TriggeredJobHistory", pipeline_response)
+        deserialized = self._deserialize("TriggeredJobHistory", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -34367,7 +34126,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -34437,7 +34195,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -34453,7 +34210,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -34525,7 +34281,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -34540,7 +34295,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[VnetInfoResource]", pipeline_response)
+        deserialized = self._deserialize("[VnetInfoResource]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -34592,7 +34347,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -34607,7 +34361,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetInfoResource", pipeline_response)
+        deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -34758,7 +34512,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -34773,7 +34526,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetInfoResource", pipeline_response)
+        deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -34828,7 +34581,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -34990,7 +34742,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -35005,7 +34756,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetInfoResource", pipeline_response)
+        deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -35064,7 +34815,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -35079,7 +34829,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetGateway", pipeline_response)
+        deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -35235,7 +34985,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -35250,7 +34999,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetGateway", pipeline_response)
+        deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -35406,7 +35155,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -35421,7 +35169,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetGateway", pipeline_response)
+        deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -35473,7 +35221,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -35489,7 +35236,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -35564,7 +35310,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -35579,7 +35324,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("WebJob", pipeline_response)
+        deserialized = self._deserialize("WebJob", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -35704,7 +35449,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -35720,7 +35464,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -35750,13 +35493,13 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         return AsyncItemPaged(get_next, extract_data)
 
-    async def _swap_slot_with_production_initial(  # pylint: disable=inconsistent-return-statements
+    async def _swap_slot_with_production_initial(
         self,
         resource_group_name: str,
         name: str,
         slot_swap_entity: Union[_models.CsmSlotEntity, IO[bytes]],
         **kwargs: Any
-    ) -> None:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -35770,7 +35513,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -35791,10 +35534,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -35802,12 +35545,20 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def begin_swap_slot_with_production(
@@ -35898,7 +35649,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._swap_slot_with_production_initial(  # type: ignore
+            raw_result = await self._swap_slot_with_production_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 slot_swap_entity=slot_swap_entity,
@@ -35909,6 +35660,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -35969,7 +35721,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -35985,7 +35736,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -36056,7 +35806,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -36072,7 +35821,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -36138,7 +35886,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -36153,14 +35900,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
+        deserialized = self._deserialize("SiteSourceControl", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -36173,7 +35913,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         name: str,
         site_source_control: Union[_models.SiteSourceControl, IO[bytes]],
         **kwargs: Any
-    ) -> _models.SiteSourceControl:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -36187,7 +35927,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.SiteSourceControl] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -36208,10 +35948,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -36219,18 +35959,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -36345,10 +36082,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
+            deserialized = self._deserialize("SiteSourceControl", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -36414,7 +36152,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -36547,7 +36284,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -36562,14 +36298,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("SiteSourceControl", pipeline_response)
+        deserialized = self._deserialize("SiteSourceControl", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -36614,7 +36343,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -36640,7 +36368,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         max_frame_length: Optional[int] = None,
         sas_url: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.NetworkTrace]:
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -36653,7 +36381,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2021-03-01"))
-        cls: ClsType[List[_models.NetworkTrace]] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_start_network_trace_request(
             resource_group_name=resource_group_name,
@@ -36666,10 +36394,10 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -36677,15 +36405,15 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -36743,10 +36471,11 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("[NetworkTrace]", pipeline_response)
+            deserialized = self._deserialize("[NetworkTrace]", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -36806,7 +36535,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -36862,7 +36590,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -36918,7 +36645,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -36974,7 +36700,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -37034,7 +36759,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -37050,7 +36774,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -37124,7 +36847,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -37139,7 +36861,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("TriggeredWebJob", pipeline_response)
+        deserialized = self._deserialize("TriggeredWebJob", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -37187,7 +36909,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -37253,7 +36974,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -37269,7 +36989,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -37346,7 +37065,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -37361,7 +37079,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("TriggeredJobHistory", pipeline_response)
+        deserialized = self._deserialize("TriggeredJobHistory", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -37412,7 +37130,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -37478,7 +37195,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -37494,7 +37210,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -37562,7 +37277,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -37577,7 +37291,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[VnetInfoResource]", pipeline_response)
+        deserialized = self._deserialize("[VnetInfoResource]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -37625,7 +37339,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -37640,7 +37353,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetInfoResource", pipeline_response)
+        deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -37778,7 +37491,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -37793,7 +37505,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetInfoResource", pipeline_response)
+        deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -37844,7 +37556,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -37993,7 +37704,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -38008,7 +37718,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetInfoResource", pipeline_response)
+        deserialized = self._deserialize("VnetInfoResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -38063,7 +37773,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -38078,7 +37787,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetGateway", pipeline_response)
+        deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -38221,7 +37930,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -38236,7 +37944,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetGateway", pipeline_response)
+        deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -38379,7 +38087,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -38394,7 +38101,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VnetGateway", pipeline_response)
+        deserialized = self._deserialize("VnetGateway", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -38440,7 +38147,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -38456,7 +38162,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -38527,7 +38232,6 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -38542,7 +38246,7 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("WebJob", pipeline_response)
+        deserialized = self._deserialize("WebJob", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

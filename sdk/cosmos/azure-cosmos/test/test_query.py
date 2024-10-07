@@ -4,15 +4,14 @@
 import os
 import unittest
 import uuid
-from datetime import datetime, timedelta, timezone
-from time import sleep
+
 import pytest
 
 import azure.cosmos._retry_utility as retry_utility
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos import http_constants, DatabaseProxy
+from azure.cosmos import http_constants, DatabaseProxy, _endpoint_discovery_retry_policy
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
@@ -27,20 +26,14 @@ class TestQuery(unittest.TestCase):
     client: cosmos_client.CosmosClient = None
     config = test_config.TestConfig
     host = config.host
-    masterKey = config.masterKey
     connectionPolicy = config.connectionPolicy
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
+    is_emulator = config.is_emulator
+    credential = config.credential
 
     @classmethod
     def setUpClass(cls):
-        if (cls.masterKey == '[YOUR_KEY_HERE]' or
-                cls.host == '[YOUR_ENDPOINT_HERE]'):
-            raise Exception(
-                "You must specify your Azure Cosmos account values for "
-                "'masterKey' and 'host' at the top of this class to run the "
-                "tests.")
-
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         if cls.host == "https://localhost:8081/":
             os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
@@ -60,293 +53,6 @@ class TestQuery(unittest.TestCase):
         iter_list = list(query_iterable)
         self.assertEqual(iter_list[0]['id'], doc_id)
         self.created_db.delete_container(created_collection.id)
-
-    def test_query_change_feed_with_pk(self):
-        created_collection = self.created_db.create_container("change_feed_test_" + str(uuid.uuid4()),
-                                                              PartitionKey(path="/pk"))
-        # The test targets partition #3
-        partition_key = "pk"
-
-        # Read change feed without passing any options
-        query_iterable = created_collection.query_items_change_feed()
-        iter_list = list(query_iterable)
-        self.assertEqual(len(iter_list), 0)
-
-        # Read change feed from current should return an empty list
-        query_iterable = created_collection.query_items_change_feed(partition_key=partition_key)
-        iter_list = list(query_iterable)
-        self.assertEqual(len(iter_list), 0)
-        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
-        self.assertNotEqual(created_collection.client_connection.last_response_headers['etag'], '')
-
-        # Read change feed from beginning should return an empty list
-        query_iterable = created_collection.query_items_change_feed(
-            is_start_from_beginning=True,
-            partition_key=partition_key
-        )
-        iter_list = list(query_iterable)
-        self.assertEqual(len(iter_list), 0)
-        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
-        continuation1 = created_collection.client_connection.last_response_headers['etag']
-        self.assertNotEqual(continuation1, '')
-
-        # Create a document. Read change feed should return be able to read that document
-        document_definition = {'pk': 'pk', 'id': 'doc1'}
-        created_collection.create_item(body=document_definition)
-        query_iterable = created_collection.query_items_change_feed(
-            is_start_from_beginning=True,
-            partition_key=partition_key
-        )
-        iter_list = list(query_iterable)
-        self.assertEqual(len(iter_list), 1)
-        self.assertEqual(iter_list[0]['id'], 'doc1')
-        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
-        continuation2 = created_collection.client_connection.last_response_headers['etag']
-        self.assertNotEqual(continuation2, '')
-        self.assertNotEqual(continuation2, continuation1)
-
-        # Create two new documents. Verify that change feed contains the 2 new documents
-        # with page size 1 and page size 100
-        document_definition = {'pk': 'pk', 'id': 'doc2'}
-        created_collection.create_item(body=document_definition)
-        document_definition = {'pk': 'pk', 'id': 'doc3'}
-        created_collection.create_item(body=document_definition)
-
-        for pageSize in [1, 100]:
-            # verify iterator
-            query_iterable = created_collection.query_items_change_feed(
-                continuation=continuation2,
-                max_item_count=pageSize,
-                partition_key=partition_key
-            )
-            it = query_iterable.__iter__()
-            expected_ids = 'doc2.doc3.'
-            actual_ids = ''
-            for item in it:
-                actual_ids += item['id'] + '.'
-            self.assertEqual(actual_ids, expected_ids)
-
-            # verify by_page
-            # the options is not copied, therefore it need to be restored
-            query_iterable = created_collection.query_items_change_feed(
-                continuation=continuation2,
-                max_item_count=pageSize,
-                partition_key=partition_key
-            )
-            count = 0
-            expected_count = 2
-            all_fetched_res = []
-            for page in query_iterable.by_page():
-                fetched_res = list(page)
-                self.assertEqual(len(fetched_res), min(pageSize, expected_count - count))
-                count += len(fetched_res)
-                all_fetched_res.extend(fetched_res)
-
-            actual_ids = ''
-            for item in all_fetched_res:
-                actual_ids += item['id'] + '.'
-            self.assertEqual(actual_ids, expected_ids)
-
-        # verify reading change feed from the beginning
-        query_iterable = created_collection.query_items_change_feed(
-            is_start_from_beginning=True,
-            partition_key=partition_key
-        )
-        expected_ids = ['doc1', 'doc2', 'doc3']
-        it = query_iterable.__iter__()
-        for i in range(0, len(expected_ids)):
-            doc = next(it)
-            self.assertEqual(doc['id'], expected_ids[i])
-        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
-        continuation3 = created_collection.client_connection.last_response_headers['etag']
-
-        # verify reading empty change feed
-        query_iterable = created_collection.query_items_change_feed(
-            continuation=continuation3,
-            is_start_from_beginning=True,
-            partition_key=partition_key
-        )
-        iter_list = list(query_iterable)
-        self.assertEqual(len(iter_list), 0)
-        self.created_db.delete_container(created_collection.id)
-
-    # TODO: partition key range id 0 is relative to the way collection is created
-    @pytest.mark.skip
-    def test_query_change_feed_with_pk_range_id(self):
-        created_collection = self.created_db.create_container("change_feed_test_" + str(uuid.uuid4()),
-                                                              PartitionKey(path="/pk"))
-        # The test targets partition #3
-        partition_key_range_id = 0
-        partitionParam = {"partition_key_range_id": partition_key_range_id}
-
-        # Read change feed without passing any options
-        query_iterable = created_collection.query_items_change_feed()
-        iter_list = list(query_iterable)
-        self.assertEqual(len(iter_list), 0)
-
-        # Read change feed from current should return an empty list
-        query_iterable = created_collection.query_items_change_feed(**partitionParam)
-        iter_list = list(query_iterable)
-        self.assertEqual(len(iter_list), 0)
-        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
-        self.assertNotEqual(created_collection.client_connection.last_response_headers['etag'], '')
-
-        # Read change feed from beginning should return an empty list
-        query_iterable = created_collection.query_items_change_feed(
-            is_start_from_beginning=True,
-            **partitionParam
-        )
-        iter_list = list(query_iterable)
-        self.assertEqual(len(iter_list), 0)
-        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
-        continuation1 = created_collection.client_connection.last_response_headers['etag']
-        self.assertNotEqual(continuation1, '')
-
-        # Create a document. Read change feed should return be able to read that document
-        document_definition = {'pk': 'pk', 'id': 'doc1'}
-        created_collection.create_item(body=document_definition)
-        query_iterable = created_collection.query_items_change_feed(
-            is_start_from_beginning=True,
-            **partitionParam
-        )
-        iter_list = list(query_iterable)
-        self.assertEqual(len(iter_list), 1)
-        self.assertEqual(iter_list[0]['id'], 'doc1')
-        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
-        continuation2 = created_collection.client_connection.last_response_headers['etag']
-        self.assertNotEqual(continuation2, '')
-        self.assertNotEqual(continuation2, continuation1)
-
-        # Create two new documents. Verify that change feed contains the 2 new documents
-        # with page size 1 and page size 100
-        document_definition = {'pk': 'pk', 'id': 'doc2'}
-        created_collection.create_item(body=document_definition)
-        document_definition = {'pk': 'pk', 'id': 'doc3'}
-        created_collection.create_item(body=document_definition)
-
-        for pageSize in [1, 100]:
-            # verify iterator
-            query_iterable = created_collection.query_items_change_feed(
-                continuation=continuation2,
-                max_item_count=pageSize,
-                **partitionParam
-            )
-            it = query_iterable.__iter__()
-            expected_ids = 'doc2.doc3.'
-            actual_ids = ''
-            for item in it:
-                actual_ids += item['id'] + '.'
-            self.assertEqual(actual_ids, expected_ids)
-
-            # verify by_page
-            # the options is not copied, therefore it need to be restored
-            query_iterable = created_collection.query_items_change_feed(
-                continuation=continuation2,
-                max_item_count=pageSize,
-                **partitionParam
-            )
-            count = 0
-            expected_count = 2
-            all_fetched_res = []
-            for page in query_iterable.by_page():
-                fetched_res = list(page)
-                self.assertEqual(len(fetched_res), min(pageSize, expected_count - count))
-                count += len(fetched_res)
-                all_fetched_res.extend(fetched_res)
-
-            actual_ids = ''
-            for item in all_fetched_res:
-                actual_ids += item['id'] + '.'
-            self.assertEqual(actual_ids, expected_ids)
-
-        # verify reading change feed from the beginning
-        query_iterable = created_collection.query_items_change_feed(
-            is_start_from_beginning=True,
-            **partitionParam
-        )
-        expected_ids = ['doc1', 'doc2', 'doc3']
-        it = query_iterable.__iter__()
-        for i in range(0, len(expected_ids)):
-            doc = next(it)
-            self.assertEqual(doc['id'], expected_ids[i])
-        self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
-        continuation3 = created_collection.client_connection.last_response_headers['etag']
-
-        # verify reading empty change feed
-        query_iterable = created_collection.query_items_change_feed(
-            continuation=continuation3,
-            is_start_from_beginning=True,
-            **partitionParam
-        )
-        iter_list = list(query_iterable)
-        self.assertEqual(len(iter_list), 0)
-        self.created_db.delete_container(created_collection.id)
-
-    def test_query_change_feed_with_start_time(self):
-        created_collection = self.created_db.create_container_if_not_exists("query_change_feed_start_time_test",
-                                                                            PartitionKey(path="/pk"))
-        batchSize = 50
-
-        def round_time():
-            utc_now = datetime.now(timezone.utc)
-            return utc_now - timedelta(microseconds=utc_now.microsecond)
-        def create_random_items(container, batch_size):
-            for _ in range(batch_size):
-                # Generate a Random partition key
-                partition_key = 'pk' + str(uuid.uuid4())
-
-                # Generate a random item
-                item = {
-                    'id': 'item' + str(uuid.uuid4()),
-                    'partitionKey': partition_key,
-                    'content': 'This is some random content',
-                }
-
-                try:
-                    # Create the item in the container
-                    container.upsert_item(item)
-                except exceptions.CosmosHttpResponseError as e:
-                    self.fail(e)
-
-        # Create first batch of random items
-        create_random_items(created_collection, batchSize)
-
-        # wait for 1 second and record the time, then wait another second
-        sleep(1)
-        start_time = round_time()
-        not_utc_time = datetime.now()
-        sleep(1)
-
-        # now create another batch of items
-        create_random_items(created_collection, batchSize)
-
-        # now query change feed based on start time
-        change_feed_iter = list(created_collection.query_items_change_feed(start_time=start_time))
-        totalCount = len(change_feed_iter)
-
-        # now check if the number of items that were changed match the batch size
-        self.assertEqual(totalCount, batchSize)
-
-        # negative test: pass in a valid time in the future
-        future_time = start_time + timedelta(hours=1)
-        change_feed_iter = list(created_collection.query_items_change_feed(start_time=future_time))
-        totalCount = len(change_feed_iter)
-        # A future time should return 0
-        self.assertEqual(totalCount, 0)
-
-        # test a date that is not utc, will be converted to utc by sdk
-        change_feed_iter = list(created_collection.query_items_change_feed(start_time=not_utc_time))
-        totalCount = len(change_feed_iter)
-        # Should equal batch size
-        self.assertEqual(totalCount, batchSize)
-
-        # test an invalid value, Attribute error will be raised for passing non datetime object
-        invalid_time = "Invalid value"
-        try:
-            change_feed_iter = list(created_collection.query_items_change_feed(start_time=invalid_time))
-            self.fail("Cannot format date on a non datetime object.")
-        except AttributeError as e:
-            self.assertTrue("'str' object has no attribute 'astimezone'" == e.args[0])
 
     def test_populate_query_metrics(self):
         created_collection = self.created_db.create_container("query_metrics_test",
@@ -867,6 +573,90 @@ class TestQuery(unittest.TestCase):
             created_collection.query_items(query='Select * from c Where c.cp_str_len = 3', partition_key="test"))
         self.assertEqual(len(queried_items), 0)
         self.created_db.delete_container(created_collection.id)
+
+    def test_query_request_params_none_retry_policy(self):
+        created_collection = self.created_db.create_container(
+            "query_request_params_none_retry_policy_" + str(uuid.uuid4()), PartitionKey(path="/pk"))
+        items = [
+            {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5},
+            {'id': str(uuid.uuid4()), 'pk': 'test', 'val': 5}]
+
+        for item in items:
+            created_collection.create_item(body=item)
+
+        self.OriginalExecuteFunction = retry_utility.ExecuteFunction
+        # Test session retry will properly push the exception when retries run out
+        retry_utility.ExecuteFunction = self._MockExecuteFunctionSessionRetry
+        try:
+            query = "SELECT * FROM c"
+            items = created_collection.query_items(
+                query=query,
+                enable_cross_partition_query=True
+            )
+            fetch_results = list(items)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, 404)
+            self.assertEqual(e.sub_status, 1002)
+
+        # Test endpoint discovery retry
+        retry_utility.ExecuteFunction = self._MockExecuteFunctionEndPointRetry
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = 3
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = 10
+        try:
+            query = "SELECT * FROM c"
+            items = created_collection.query_items(
+                query=query,
+                enable_cross_partition_query=True
+            )
+            fetch_results = list(items)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, http_constants.StatusCodes.FORBIDDEN)
+            self.assertEqual(e.sub_status, http_constants.SubStatusCodes.WRITE_FORBIDDEN)
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = 120
+        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = 1000
+
+        # Finally lets test timeout failover retry
+        retry_utility.ExecuteFunction = self._MockExecuteFunctionTimeoutFailoverRetry
+        try:
+            query = "SELECT * FROM c"
+            items = created_collection.query_items(
+                query=query,
+                enable_cross_partition_query=True
+            )
+            fetch_results = list(items)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, http_constants.StatusCodes.REQUEST_TIMEOUT)
+            retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+        retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+        self.created_db.delete_container(created_collection.id)
+
+
+    def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):
+        if args:
+            if args[1].operation_type == 'SqlQuery':
+                ex_to_raise = exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.NOT_FOUND,
+                                                                 message="Read Session is Not Available")
+                ex_to_raise.sub_status = http_constants.SubStatusCodes.READ_SESSION_NOTAVAILABLE
+                raise ex_to_raise
+        return self.OriginalExecuteFunction(function, *args, **kwargs)
+
+    def _MockExecuteFunctionEndPointRetry(self, function, *args, **kwargs):
+        if args:
+            if args[1].operation_type == 'SqlQuery':
+                ex_to_raise = exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.FORBIDDEN,
+                                                                 message="End Point Discovery")
+                ex_to_raise.sub_status = http_constants.SubStatusCodes.WRITE_FORBIDDEN
+                raise ex_to_raise
+        return self.OriginalExecuteFunction(function, *args, **kwargs)
+
+    def _MockExecuteFunctionTimeoutFailoverRetry(self, function, *args, **kwargs):
+        if args:
+            if args[1].operation_type == 'SqlQuery':
+                ex_to_raise = exceptions.CosmosHttpResponseError(status_code=http_constants.StatusCodes.REQUEST_TIMEOUT,
+                                                                 message="Timeout Failover")
+                raise ex_to_raise
+        return self.OriginalExecuteFunction(function, *args, **kwargs)
 
     def _MockNextFunction(self):
         if self.count < len(self.payloads):

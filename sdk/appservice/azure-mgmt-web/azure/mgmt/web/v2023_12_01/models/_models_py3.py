@@ -11340,15 +11340,15 @@ class FunctionsAlwaysReadyConfig(_serialization.Model):
     :vartype name: str
     :ivar instance_count: Sets the number of 'Always Ready' instances for a given function group or
      a specific function. For additional information see https://aka.ms/flexconsumption/alwaysready.
-    :vartype instance_count: float
+    :vartype instance_count: int
     """
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
-        "instance_count": {"key": "instanceCount", "type": "float"},
+        "instance_count": {"key": "instanceCount", "type": "int"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, instance_count: Optional[float] = None, **kwargs: Any) -> None:
+    def __init__(self, *, name: Optional[str] = None, instance_count: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword name: Either a function group or a function name is required. For additional
          information see https://aka.ms/flexconsumption/alwaysready.
@@ -11356,7 +11356,7 @@ class FunctionsAlwaysReadyConfig(_serialization.Model):
         :keyword instance_count: Sets the number of 'Always Ready' instances for a given function group
          or a specific function. For additional information see
          https://aka.ms/flexconsumption/alwaysready.
-        :paramtype instance_count: float
+        :paramtype instance_count: int
         """
         super().__init__(**kwargs)
         self.name = name
@@ -11547,18 +11547,18 @@ class FunctionsScaleAndConcurrency(_serialization.Model):
     :ivar always_ready: 'Always Ready' configuration for the function app.
     :vartype always_ready: list[~azure.mgmt.web.v2023_12_01.models.FunctionsAlwaysReadyConfig]
     :ivar maximum_instance_count: The maximum number of instances for the function app.
-    :vartype maximum_instance_count: float
+    :vartype maximum_instance_count: int
     :ivar instance_memory_mb: Set the amount of memory allocated to each instance of the function
      app in MB. CPU and network bandwidth are allocated proportionally.
-    :vartype instance_memory_mb: float
+    :vartype instance_memory_mb: int
     :ivar triggers: Scale and concurrency settings for the function app triggers.
     :vartype triggers: ~azure.mgmt.web.v2023_12_01.models.FunctionsScaleAndConcurrencyTriggers
     """
 
     _attribute_map = {
         "always_ready": {"key": "alwaysReady", "type": "[FunctionsAlwaysReadyConfig]"},
-        "maximum_instance_count": {"key": "maximumInstanceCount", "type": "float"},
-        "instance_memory_mb": {"key": "instanceMemoryMB", "type": "float"},
+        "maximum_instance_count": {"key": "maximumInstanceCount", "type": "int"},
+        "instance_memory_mb": {"key": "instanceMemoryMB", "type": "int"},
         "triggers": {"key": "triggers", "type": "FunctionsScaleAndConcurrencyTriggers"},
     }
 
@@ -11566,8 +11566,8 @@ class FunctionsScaleAndConcurrency(_serialization.Model):
         self,
         *,
         always_ready: Optional[List["_models.FunctionsAlwaysReadyConfig"]] = None,
-        maximum_instance_count: Optional[float] = None,
-        instance_memory_mb: Optional[float] = None,
+        maximum_instance_count: Optional[int] = None,
+        instance_memory_mb: Optional[int] = None,
         triggers: Optional["_models.FunctionsScaleAndConcurrencyTriggers"] = None,
         **kwargs: Any
     ) -> None:
@@ -11575,10 +11575,10 @@ class FunctionsScaleAndConcurrency(_serialization.Model):
         :keyword always_ready: 'Always Ready' configuration for the function app.
         :paramtype always_ready: list[~azure.mgmt.web.v2023_12_01.models.FunctionsAlwaysReadyConfig]
         :keyword maximum_instance_count: The maximum number of instances for the function app.
-        :paramtype maximum_instance_count: float
+        :paramtype maximum_instance_count: int
         :keyword instance_memory_mb: Set the amount of memory allocated to each instance of the
          function app in MB. CPU and network bandwidth are allocated proportionally.
-        :paramtype instance_memory_mb: float
+        :paramtype instance_memory_mb: int
         :keyword triggers: Scale and concurrency settings for the function app triggers.
         :paramtype triggers: ~azure.mgmt.web.v2023_12_01.models.FunctionsScaleAndConcurrencyTriggers
         """
@@ -11616,18 +11616,18 @@ class FunctionsScaleAndConcurrencyTriggersHttp(_serialization.Model):
 
     :ivar per_instance_concurrency: The maximum number of concurrent HTTP trigger invocations per
      instance.
-    :vartype per_instance_concurrency: float
+    :vartype per_instance_concurrency: int
     """
 
     _attribute_map = {
-        "per_instance_concurrency": {"key": "perInstanceConcurrency", "type": "float"},
+        "per_instance_concurrency": {"key": "perInstanceConcurrency", "type": "int"},
     }
 
-    def __init__(self, *, per_instance_concurrency: Optional[float] = None, **kwargs: Any) -> None:
+    def __init__(self, *, per_instance_concurrency: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword per_instance_concurrency: The maximum number of concurrent HTTP trigger invocations
          per instance.
-        :paramtype per_instance_concurrency: float
+        :paramtype per_instance_concurrency: int
         """
         super().__init__(**kwargs)
         self.per_instance_concurrency = per_instance_concurrency
@@ -30096,7 +30096,7 @@ class WorkflowParameter(_serialization.Model):
     """The workflow parameters.
 
     :ivar type: The type. Known values are: "NotSpecified", "String", "SecureString", "Int",
-     "Float", "Bool", "Array", "Object", and "SecureObject".
+     "Float", "Bool", "Array", "Object", "SecureObject", and "Int".
     :vartype type: str or ~azure.mgmt.web.v2023_12_01.models.ParameterType
     :ivar value: The value.
     :vartype value: JSON
@@ -30124,7 +30124,7 @@ class WorkflowParameter(_serialization.Model):
     ) -> None:
         """
         :keyword type: The type. Known values are: "NotSpecified", "String", "SecureString", "Int",
-         "Float", "Bool", "Array", "Object", and "SecureObject".
+         "Float", "Bool", "Array", "Object", "SecureObject", and "Int".
         :paramtype type: str or ~azure.mgmt.web.v2023_12_01.models.ParameterType
         :keyword value: The value.
         :paramtype value: JSON
@@ -30146,7 +30146,7 @@ class WorkflowOutputParameter(WorkflowParameter):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar type: The type. Known values are: "NotSpecified", "String", "SecureString", "Int",
-     "Float", "Bool", "Array", "Object", and "SecureObject".
+     "Float", "Bool", "Array", "Object", "SecureObject", and "Int".
     :vartype type: str or ~azure.mgmt.web.v2023_12_01.models.ParameterType
     :ivar value: The value.
     :vartype value: JSON
@@ -30181,7 +30181,7 @@ class WorkflowOutputParameter(WorkflowParameter):
     ) -> None:
         """
         :keyword type: The type. Known values are: "NotSpecified", "String", "SecureString", "Int",
-         "Float", "Bool", "Array", "Object", and "SecureObject".
+         "Float", "Bool", "Array", "Object", "SecureObject", and "Int".
         :paramtype type: str or ~azure.mgmt.web.v2023_12_01.models.ParameterType
         :keyword value: The value.
         :paramtype value: JSON

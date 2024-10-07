@@ -40,7 +40,7 @@ try:
                 assert FEATURE_MANAGEMENT_KEY in client
                 assert has_feature_flag(client, "Alpha")
 
-                appconfig_client = client._client
+                appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
 
                 setting = await appconfig_client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
@@ -107,7 +107,7 @@ try:
                 assert FEATURE_MANAGEMENT_KEY in client
                 assert has_feature_flag(client, "Alpha")
 
-                appconfig_client = client._client
+                appconfig_client = self.create_aad_sdk_client(appconfiguration_endpoint_string)
 
                 setting = await appconfig_client.get_configuration_setting(key="refresh_message")
                 setting.value = "updated value"
