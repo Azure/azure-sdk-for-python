@@ -1,14 +1,10 @@
 # Release History
 
-## 1.2.0b2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.2.0 (2024-10-08)
 
 ### Other Changes
+
+- Stable release for the Proof-of-Possession (PoP) token support to `InteractiveBrowserBrokerCredential`.
 
 ## 1.2.0b1 (2024-09-20)
 
