@@ -39,6 +39,17 @@
                 "description": "Specifies the resource group name of the Azure Machine Learning workspace."
             }
         },
+        "associatedResourcePNA": {
+            "type": "string",
+            "defaultValue": "Enabled",
+            "allowedValues": [
+                "Enabled",
+                "Disabled"
+            ],
+            "metadata": {
+                "description": "Determines the PublicNetworkAccess mode of new workspace-associated resources provisioned alongside with workspace."
+            }
+        },
         "storageAccountOption": {
             "type": "string",
             "defaultValue": "new",
@@ -71,6 +82,10 @@
             "metadata": {
                 "description": "Determines whether or not to put the storage account behind VNet"
             }
+        },
+        "storageAccountSubscriptionId": {
+            "type": "string",
+            "defaultValue": "[subscription().subscriptionId]"
         },
         "storageAccountResourceGroupName": {
             "type": "string",
@@ -624,7 +639,7 @@
     },
     "variables": {
         "tenantId": "[subscription().tenantId]",
-        "storageAccount": "[resourceId(parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
+        "storageAccount": "[resourceId(parameters('storageAccountSubscriptionId'), parameters('storageAccountResourceGroupName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
         "keyVault": "[resourceId(parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]",
         "containerRegistry": "[resourceId(parameters('containerRegistryResourceGroupName'), 'Microsoft.ContainerRegistry/registries', parameters('containerRegistryName'))]",
         "applicationInsights": "[resourceId(parameters('applicationInsightsResourceGroupName'), 'Microsoft.Insights/components', parameters('applicationInsightsName'))]",
@@ -639,6 +654,10 @@
                     "id": "[variables('subnet')]"
                 }
             ]
+        },
+        "networkAclsForManagedNetworkDependencies": {
+            "defaultAction": "deny",
+            "bypass": "AzureServices"
         },
         "privateEndpointSettings": {
             "name": "[concat(parameters('workspaceName'), '-PrivateEndpoint')]",
@@ -706,7 +725,7 @@
         {
             "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'))]",
             "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2019-04-01",
+            "apiVersion": "2023-04-01",
             "name": "[parameters('storageAccountName')]",
             "tags": "[parameters('tagValues')]",
             "dependsOn": [
@@ -731,7 +750,8 @@
                 },
                 "supportsHttpsTrafficOnly": true,
                 "allowBlobPublicAccess": false,
-                "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]",
+                "networkAcls": "[if(equals(parameters('associatedResourcePNA'), 'Disabled'), variables('networkAclsForManagedNetworkDependencies'), if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null')))]",
+                "publicNetworkAccess": "[parameters('associatedResourcePNA')]",
                 "isHnsEnabled": "[equals(parameters('kind'), 'featurestore')]",
                 "minimumTlsVersion": "[if(equals(parameters('kind'), 'featurestore'), 'TLS1_2', 'TLS1_0')]"
             }
@@ -778,7 +798,7 @@
         {
             "condition": "[and(variables('enablePE'), equals(parameters('keyVaultOption'), 'new'))]",
             "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2019-09-01",
+            "apiVersion": "2023-07-01",
             "tags": "[parameters('tagValues')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
@@ -793,7 +813,8 @@
                 },
                 "accessPolicies": [],
                 "enableRbacAuthorization": true,
-                "networkAcls": "[if(equals(parameters('keyVaultBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
+                "networkAcls": "[if(equals(parameters('associatedResourcePNA'), 'Disabled'), variables('networkAclsForManagedNetworkDependencies'), if(equals(parameters('keyVaultBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null')))]",
+                "publicNetworkAccess": "[parameters('associatedResourcePNA')]"
             }
         },
         {

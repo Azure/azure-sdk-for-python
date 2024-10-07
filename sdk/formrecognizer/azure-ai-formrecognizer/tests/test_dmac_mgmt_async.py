@@ -17,13 +17,12 @@ from azure.ai.formrecognizer import (
     OperationDetails
 )
 from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_async_client
 from asynctestcase import AsyncFormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from conftest import skip_flaky_test
 
 
-DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
+get_dma_client = functools.partial(get_async_client, DocumentModelAdministrationClient)
 
 
 class TestManagementAsync(AsyncFormRecognizerTest):
@@ -32,52 +31,46 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @skip_flaky_test
     @FormRecognizerPreparer()
     async def test_active_directory_auth_async(self):
-        token = self.generate_oauth_token()
-        endpoint = self.get_oauth_endpoint()
-        client = DocumentModelAdministrationClient(endpoint, token)
+        client = get_dma_client()
         async with client:
             info = await client.get_resource_details()
         assert info
 
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
-        client = DocumentModelAdministrationClient(formrecognizer_test_endpoint, AzureKeyCredential("xxxx"))
+    async def test_dmac_auth_bad_key(self, **kwargs):
+        client = get_dma_client(api_key="xxxx")
         with pytest.raises(ClientAuthenticationError):
             async with client:
                 result = await client.get_resource_details()
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     async def test_get_model_empty_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.get_document_model("")
         assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     async def test_get_model_none_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.get_document_model(None)
         assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     async def test_delete_model_none_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.delete_document_model(None)
         assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     async def test_delete_model_empty_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         with pytest.raises(ValueError) as e:
             async with client:
                 result = await client.delete_document_model("")
@@ -85,9 +78,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_account_info(self, client):
+    async def test_account_info(self):
+        client = get_dma_client()
         async with client:
             info = await client.get_resource_details()
 
@@ -99,9 +92,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_get_model_prebuilt(self, client):
+    async def test_get_model_prebuilt(self):
+        client = get_dma_client()
         async with client:
             model = await client.get_document_model("prebuilt-invoice")
             assert model.model_id == "prebuilt-invoice"
@@ -116,9 +109,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_mgmt_model(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    async def test_mgmt_model(self, formrecognizer_storage_container_sas_url, **kwargs):
+        client = get_dma_client()
         set_bodiless_matcher()
         
         async with client:
@@ -150,9 +143,9 @@ class TestManagementAsync(AsyncFormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
-    async def test_get_list_operations(self, client):
+    async def test_get_list_operations(self):
+        client = get_dma_client()
         async with client:
             operations = client.list_operations()
             successful_op = None
@@ -224,9 +217,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                 assert error.details
 
     @FormRecognizerPreparer()
-    @DocumentModelAdministrationClientPreparer()
     async def test_get_operation_bad_model_id(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_dma_client()
         with pytest.raises(ValueError) as e:
             await client.get_operation("")
         assert "'operation_id' cannot be None or empty." in str(e.value)
@@ -237,13 +229,13 @@ class TestManagementAsync(AsyncFormRecognizerTest):
     @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
-    async def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    async def test_get_document_analysis_client(self, **kwargs):
         # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
         set_custom_default_matcher(
             compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
         )  
         transport = AioHttpTransport()
-        dtc = DocumentModelAdministrationClient(endpoint=formrecognizer_test_endpoint, credential=AzureKeyCredential(formrecognizer_test_api_key), transport=transport)
+        dtc = get_dma_client(transport=transport)
 
         async with dtc:
             await dtc.get_resource_details()
