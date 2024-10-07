@@ -55,7 +55,7 @@ def sample_assistant_run():
         key = os.environ["AZUREAI_ENDPOINT_KEY"]
         api_version = os.environ.get("AZUREAI_API_VERSION", "2024-07-01-preview")
     except KeyError as e:
-        logging.error("Missing environment variable: %s", e)
+        logging.error(f"Missing environment variable: {e}")
         exit()
 
     # Initialize assistant client
@@ -74,22 +74,22 @@ def sample_assistant_run():
     assistant = assistant_client.create_assistant(
         model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
     )
-    logging.info("Created assistant, ID: %s", assistant.id)
+    logging.info(f"Created assistant, ID: {assistant.id}")
 
     # Create thread for communication
     thread = assistant_client.create_thread()
-    logging.info("Created thread, ID: %s", thread.id)
+    logging.info(f"Created thread, ID: {thread.id}")
 
     # Create message to thread
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York?")
-    logging.info("Created message, ID: %s", message.id)
+    logging.info(f"Created message, ID: {message.id}")
 
     # Create and process assistant run in thread with tools
     run = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
-    logging.info("Run finished with status: %s", run.status)
+    logging.info(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
-        logging.error("Run failed: %s", run.last_error)
+        logging.error(f"Run failed: {run.last_error}")
 
     # Delete the assistant when done
     assistant_client.delete_assistant(assistant.id)
@@ -97,7 +97,7 @@ def sample_assistant_run():
 
     # Fetch and log all messages
     messages = assistant_client.list_messages(thread_id=thread.id)
-    logging.info("Messages: %s", messages)
+    logging.info(f"Messages: {messages}")
 
 
 if __name__ == "__main__":

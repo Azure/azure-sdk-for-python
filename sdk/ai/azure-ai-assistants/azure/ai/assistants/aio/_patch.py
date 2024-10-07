@@ -6,8 +6,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from argparse import FileType
+import os
 import sys, io, logging, time
 from typing import Any, Dict, List, overload, IO, Union, Optional, TYPE_CHECKING
+
+from azure.ai.assistants.models._enums import FilePurpose
 from .. import models as _models
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -831,7 +835,105 @@ class AssistantsClient(AssistantsClientGenerated):
         else:
             return await response
         
-__all__: List[str] = ["AssistantsClient", ""]  # Add all objects you want publicly available to users at this package level
+    @overload
+    async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
+        """Uploads a file for use by other operations.
+
+        :param body: Required.
+        :type body: JSON
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.OpenAIFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def upload_file(
+        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, **kwargs: Any
+    ) -> _models.OpenAIFile:
+        """Uploads a file for use by other operations.
+
+        :keyword file: Required.
+        :paramtype file: ~azure.ai.assistants._vendor.FileType
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :paramtype purpose: str or ~azure.ai.assistants.models.FilePurpose
+        :keyword filename: Default value is None.
+        :paramtype filename: str
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.OpenAIFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def upload_file(
+        self, file_path: str, *, purpose: str, **kwargs: Any
+    ) -> _models.OpenAIFile:
+        """Uploads a file for use by other operations.
+
+        :param file_path: Required.
+        :type file_path: str
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :paramtype purpose: str
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.assistants.models.OpenAIFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """        
+
+    @distributed_trace_async
+    async def upload_file(
+        self,
+        body: Union[JSON, None] = None,
+        *,
+        file: Union[FileType, None] = None,
+        file_path: Optional[str] = None,
+        purpose: Optional[Union[str, _models.FilePurpose]] = None,
+        filename: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.OpenAIFile:
+        """
+        Uploads a file for use by other operations, delegating to the generated operations.
+
+        :param body: JSON. Required if `file` and `purpose` are not provided.
+        :param file: File content. Required if `body` and `purpose` are not provided.
+        :param file_path: Path to the file. Required if `body` and `purpose` are not provided.
+        :param purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+            "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        :param filename: The name of the file.
+        :param kwargs: Additional parameters.
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :raises FileNotFoundError: If the file_path is invalid.
+        :raises IOError: If there are issues with reading the file.
+        :raises: HttpResponseError for HTTP errors.
+        """
+        if body is not None:
+            return await super().upload_file(body=body, **kwargs)
+        
+        if isinstance(purpose, FilePurpose):
+            purpose = purpose.value
+
+        if file is not None and purpose is not None:
+            return await super().upload_file(file=file, purpose=purpose, filename=filename, **kwargs)
+
+        if file_path is not None and purpose is not None:
+            if not os.path.isfile(file_path):
+                raise FileNotFoundError(f"The file path provided does not exist: {file_path}")
+
+            try:
+                with open(file_path, 'rb') as f:
+                    content = f.read()
+
+                # Determine filename and create correct FileType
+                base_filename = filename or os.path.basename(file_path)
+                file_content: FileType = (base_filename, content)
+
+                return await super().upload_file(file=file_content, purpose=purpose, **kwargs)
+            except IOError as e:
+                raise IOError(f"Unable to read file: {file_path}. Reason: {str(e)}")
+
+        raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
+     
+__all__: List[str] = ["AssistantsClient"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():

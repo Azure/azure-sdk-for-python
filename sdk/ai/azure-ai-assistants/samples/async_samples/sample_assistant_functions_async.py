@@ -60,7 +60,7 @@ async def sample_assistant_functions():
         key = os.environ["AZUREAI_ENDPOINT_KEY"]
         api_version = os.environ.get("AZUREAI_API_VERSION", "2024-07-01-preview")
     except KeyError as e:
-        logging.error("Missing environment variable: %s", e)
+        logging.error(f"Missing environment variable: {e}")
         exit()
 
     # Initialize assistant client
@@ -74,23 +74,23 @@ async def sample_assistant_functions():
         assistant = await assistant_client.create_assistant(
             model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
         )
-        logging.info("Created assistant, ID: %s", assistant.id)
+        logging.info(f"Created assistant, ID: {assistant.id}")
 
         # Create thread for communication
         thread = await assistant_client.create_thread()
-        logging.info("Created thread, ID: %s", thread.id)
+        logging.info(f"Created thread, ID: {thread.id}")
 
         # Create and send message
         message = await assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
-        logging.info("Created message, ID: %s", message.id)
+        logging.info(f"Created message, ID: {message.id}")
 
         # Create and run assistant task
         run = await assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
-        logging.info("Created run, ID: %s", run.id)
+        logging.info(f"Created run, ID: {run.id}")
 
         # Polling loop for run status
         while run.status in ["queued", "in_progress", "requires_action"]:
-            time.sleep(1)
+            time.sleep(4)
             run = await assistant_client.get_run(thread_id=thread.id, run_id=run.id)
 
             if run.status == "requires_action" and run.required_action.submit_tool_outputs:
@@ -109,15 +109,15 @@ async def sample_assistant_functions():
                         }
                     tool_outputs.append(tool_output)
 
-                logging.info("Tool outputs: %s", tool_outputs)
+                logging.info(f"Tool outputs: {tool_outputs}")
                 if tool_outputs:
                     await assistant_client.submit_tool_outputs_to_run(
                         thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
                     )
 
-            logging.info("Current run status: %s", run.status)
+            logging.info(f"Current run status: {run.status}")
 
-        logging.info("Run completed with status: %s", run.status)
+        logging.info(f"Run completed with status: {run.status}")
 
         # Delete the assistant when done
         await assistant_client.delete_assistant(assistant.id)
@@ -125,7 +125,7 @@ async def sample_assistant_functions():
 
         # Fetch and log all messages
         messages = await assistant_client.list_messages(thread_id=thread.id)
-        logging.info("Messages: %s", messages)
+        logging.info(f"Messages: {messages}")
 
 
 if __name__ == "__main__":

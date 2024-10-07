@@ -56,7 +56,7 @@ def sample_assistant_run():
         key = os.environ["AZUREAI_ENDPOINT_KEY"]
         api_version = os.environ.get("AZUREAI_API_VERSION", "2024-07-01-preview")
     except KeyError as e:
-        logging.error("Missing environment variable: %s", e)
+        logging.error(f"Missing environment variable: {e}")
         exit()
 
     # Initialize assistant client
@@ -76,26 +76,26 @@ def sample_assistant_run():
     assistant = assistant_client.create_assistant(
         model="gpt-4o-mini", name="my-assistant", instructions="Hello, you are helpful assistant and can search information from uploaded files", toolset=toolset
     )
-    logging.info("Created assistant, ID: %s", assistant.id)
+    logging.info(f"Created assistant, ID: {assistant.id}")
 
     # Create thread for communication
     thread = assistant_client.create_thread()
-    logging.info("Created thread, ID: %s", thread.id)
+    logging.info(f"Created thread, ID: {thread.id}")
 
     # Create message to thread
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?")
-    logging.info("Created message, ID: %s", message.id)
+    logging.info(f"Created message, ID: {message.id}")
 
     # Create and process assistant run in thread with tools
     # Note: If vector store has been created just before this, there can be need to poll the status of vector store to be ready for information retrieval
     #       This can be done by calling `assistant_client.get_vector_store(vector_store_id)` and checking the status of vector store
     #       We may want to add conveniency around this
     run = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id)
-    logging.info("Run finished with status: %s", run.status)
+    logging.info(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
         # Check if you got "Rate limit is exceeded.", then you want to get more quota
-        logging.error("Run failed: %s", run.last_error)
+        logging.error(f"Run failed: {run.last_error}")
 
     # Delete the file when done
     assistant_client.delete_vector_store(openai_vectorstore.id)
@@ -107,7 +107,7 @@ def sample_assistant_run():
 
     # Fetch and log all messages
     messages = assistant_client.list_messages(thread_id=thread.id)
-    logging.info("Messages: %s", messages)
+    logging.info(f"Messages: {messages}")
 
 
 if __name__ == "__main__":

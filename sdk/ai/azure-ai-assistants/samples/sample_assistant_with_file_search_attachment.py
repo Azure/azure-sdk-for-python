@@ -82,27 +82,27 @@ def sample_assistant_basic_operation():
         tools=[file_search_tool],
         tool_resources=ToolResources(file_search=FileSearchToolResource(vector_store_ids=[vector_store.id]))
     )
-    logging.info("Created assistant, assistant ID", assistant.id)
+    logging.info(f"Created assistant, assistant ID: {assistant.id}")
 
     thread = assistant_client.create_thread()
-    logging.info("Created thread, thread ID", thread.id)    
+    logging.info(f"Created thread, thread ID: {thread.id}")    
 
     # create a message with the attachment
     attachment = MessageAttachment(file_id=file.id, tools=[file_search_tool])
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment])
-    logging.info("Created message, message ID", message.id)
+    logging.info(f"Created message, message ID: {message.id}")
 
     run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
-    logging.info("Created run, run ID", run.id)
+    logging.info(f"Created run, run ID: {run.id}")
 
     # poll the run as long as run status is queued or in progress
     while run.status not in ["completed", "failed"]:
         # wait for 4 second
         time.sleep(4)
         run = assistant_client.get_run(thread_id=thread.id, run_id=run.id)
-        logging.info("Run status:", run.status)
+        logging.info(f"Run status: {run.status}")
 
-    logging.info("Run completed with status:", run.status)
+    logging.info(f"Run completed with status: {run.status}")
         
     assistant_client.delete_file(file.id)
     logging.info("Deleted file")
@@ -114,7 +114,7 @@ def sample_assistant_basic_operation():
     logging.info("Deleted assistant")
     
     messages = assistant_client.list_messages(thread_id=thread.id)    
-    logging.info("messages:", messages)
+    logging.info(f"Messages: {messages}")
 
 
 if __name__ == "__main__":
