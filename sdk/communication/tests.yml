@@ -25,11 +25,12 @@ extends:
       ServiceDirectory: communication
       TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
       Packages: ${{ parameters.Services }}
+      MatrixReplace:
+        - TestSamples=.*/true
       CloudConfig:
-        Public:
+        Communication:
           SubscriptionConfigurations:
             - $(sub-config-communication-services-cloud-test-resources-common)
             - $(sub-config-communication-services-cloud-test-resources-python)
-          MatrixReplace:
-            - TestSamples=.*/true
-      Clouds: Public
+      Clouds: communication
+      SupportedClouds: communication

@@ -9,11 +9,12 @@ extends:
       MatrixReplace:
         - TestSamples=.*/true
       CloudConfig:
-        Public:
+        Communication:
           SubscriptionConfigurations:
             - $(sub-config-communication-services-cloud-test-resources-common)
             - $(sub-config-communication-services-cloud-test-resources-python)
-      Clouds: Public
+      Clouds: communication
+      SupportedClouds: communication
       TestResourceDirectories:
         - communication/test-resources/
       EnvVars:
