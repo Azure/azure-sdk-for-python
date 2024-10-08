@@ -232,11 +232,12 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         refresh_on = getattr(self._token, "refresh_on", None)
         return not self._token or (refresh_on and refresh_on <= now) or self._token.expires_on - now < 300
 
-    async def _request_kv_token(self, scope: str, challenge: HttpChallenge, **kwargs: Any) -> None:
+    async def _request_kv_token(self, scope: str, challenge: HttpChallenge) -> None:
         """Implementation of BearerTokenCredentialPolicy's _request_token method, but specific to Key Vault.
 
         :param str scope: The scope for which to request a token.
         :param challenge: The challenge for the request being made.
+        :type challenge: HttpChallenge
         """
         # Exclude tenant for AD FS authentication
         exclude_tenant = challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs")
