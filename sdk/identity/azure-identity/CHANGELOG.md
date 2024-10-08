@@ -1,6 +1,6 @@
 # Release History
 
-## 1.18.1 (Unreleased)
+## 1.19.1 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,17 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.19.0 (2024-10-08)
+
+### Bugs Fixed
+
 - Fixed the request sent in `AzurePipelinesCredential` so it doesn't result in a redirect response when an invalid system access token is provided. ([#37510](https://github.com/Azure/azure-sdk-for-python/pull/37510))
 
 ### Other Changes
+
+- Deprecated `AzureAuthorityHosts.AZURE_GERMANY`
 
 ## 1.18.0 (2024-09-19)
 

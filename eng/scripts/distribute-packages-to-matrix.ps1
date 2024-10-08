@@ -151,7 +151,7 @@ function Update-Matrix {
 
     # we need to ensure the presence of TargetingString in the matrix object
     if ($matrixUpdate) {
-        if ($directBatches) {
+        if ($directBatches -or $indirectBatches) {
             if (-not $Matrix.matrix.PSObject.Properties["TargetingString"]) {
                 $Matrix.matrix | Add-Member -Force -MemberType NoteProperty -Name TargetingString -Value @()
             }
@@ -217,7 +217,11 @@ $indirectIncludedPackages = $packageProperties | Where-Object { $_.IncludedForVa
 
 # I will assign all the direct included packages first. our goal is to get full coverage of the direct included packages
 # then, for the indirect packages, we will add them as sparse TargetingString bundles to the matrix
-$directBatches = Split-ArrayIntoBatches -InputArray $directIncludedPackages -BatchSize $BATCHSIZE
+$directBatches = @()
+if ($directIncludedPackages) {
+    $directBatches = Split-ArrayIntoBatches -InputArray $directIncludedPackages -BatchSize $BATCHSIZE
+}
+
 $indirectBatches = @()
 if ($indirectIncludedPackages) {
     $indirectBatches = Split-ArrayIntoBatches -InputArray $indirectIncludedPackages -BatchSize $BATCHSIZE

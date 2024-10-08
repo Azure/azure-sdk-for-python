@@ -6,9 +6,9 @@ import functools
 import inspect
 import logging
 import sys
-from typing import Callable, Type, TypeVar, Union
+from typing import Callable, Type, TypeVar, Union, overload
 
-from typing_extensions import ParamSpec
+from typing_extensions import ParamSpec, TypeGuard
 
 DOCSTRING_TEMPLATE = ".. note::    {0} {1}\n\n"
 DOCSTRING_DEFAULT_INDENTATION = 8
@@ -22,20 +22,31 @@ EXPERIMENTAL_LINK_MESSAGE = (
 _warning_cache = set()
 module_logger = logging.getLogger(__name__)
 
-TExperimental = TypeVar("TExperimental", bound=Union[Type, Callable])
 P = ParamSpec("P")
 T = TypeVar("T")
 
 
-def experimental(wrapped: TExperimental) -> TExperimental:
+@overload
+def experimental(wrapped: Type[T]) -> Type[T]: ...
+
+
+@overload
+def experimental(wrapped: Callable[P, T]) -> Callable[P, T]: ...
+
+
+def experimental(wrapped: Union[Type[T], Callable[P, T]]) -> Union[Type[T], Callable[P, T]]:
     """Add experimental tag to a class or a method.
 
     :param wrapped: Either a Class or Function to mark as experimental
-    :type wrapped: TExperimental
+    :type wrapped: Union[Type[T], Callable[P, T]]
     :return: The wrapped class or method
-    :rtype: TExperimental
+    :rtype: Union[Type[T], Callable[P, T]]
     """
-    if inspect.isclass(wrapped):
+
+    def is_class(t: Union[Type[T], Callable[P, T]]) -> TypeGuard[Type[T]]:
+        return isinstance(t, type)
+
+    if is_class(wrapped):
         return _add_class_docstring(wrapped)
     if inspect.isfunction(wrapped):
         return _add_method_docstring(wrapped)
@@ -74,11 +85,11 @@ def _add_class_docstring(cls: Type[T]) -> Type[T]:
         cls.__doc__ = _add_note_to_docstring(cls.__doc__, doc_string)
     else:
         cls.__doc__ = doc_string + ">"
-    cls.__init__ = _add_class_warning(cls.__init__)
+    cls.__init__ = _add_class_warning(cls.__init__)  # type: ignore[method-assign]
     return cls
 
 
-def _add_method_docstring(func: Callable[P, T] = None) -> Callable[P, T]:
+def _add_method_docstring(func: Callable[P, T]) -> Callable[P, T]:
     """Add experimental tag to the method doc string.
 
     :param func: The function to update

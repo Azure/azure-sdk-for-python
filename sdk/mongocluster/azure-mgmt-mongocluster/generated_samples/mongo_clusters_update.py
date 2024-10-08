@@ -35,19 +35,20 @@ def main():
         mongo_cluster_name="myMongoCluster",
         properties={
             "properties": {
-                "administratorLogin": "mongoAdmin",
-                "administratorLoginPassword": "password",
-                "nodeGroupSpecs": [
-                    {"diskSizeGB": 256, "enableHa": True, "kind": "Shard", "nodeCount": 1, "sku": "M50"}
-                ],
+                "administrator": {"userName": "mongoAdmin"},
+                "compute": {"tier": "M50"},
+                "highAvailability": {"targetMode": "SameZone"},
+                "previewFeatures": [],
                 "publicNetworkAccess": "Enabled",
                 "serverVersion": "5.0",
+                "sharding": {"shardCount": 4},
+                "storage": {"sizeGb": 256},
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-06-01-preview/MongoClusters_Update.json
+# x-ms-original-file: 2024-07-01/MongoClusters_Update.json
 if __name__ == "__main__":
     main()

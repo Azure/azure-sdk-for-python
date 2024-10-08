@@ -200,7 +200,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         self.location_unavailability_info_by_endpoint = new_location_unavailability_info
 
-    def is_endpoint_unavailable(self, endpoint, expected_available_operations):
+    def is_endpoint_unavailable(self, endpoint: str, expected_available_operation: str):
         unavailability_info = (
             self.location_unavailability_info_by_endpoint[endpoint]
             if endpoint in self.location_unavailability_info_by_endpoint
@@ -208,9 +208,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         )
 
         if (
-            expected_available_operations == EndpointOperationType.NoneType
+            expected_available_operation == EndpointOperationType.NoneType
             or not unavailability_info
-            or expected_available_operations not in unavailability_info["operationType"]
+            or expected_available_operation not in unavailability_info["operationType"]
         ):
             return False
 
