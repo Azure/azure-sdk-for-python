@@ -81,7 +81,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         self._blob_client = BlobClient(account_url=self._blob_account_url, container_name=self.file_system_name,
                                        blob_name=self.path_name,
                                        credential=credential,
-                                       _hosts=self._blob_client._hosts,  # pylint: disable=protected-access
+                                       _hosts=self._blob_client._hosts,
                                        **kwargs)
         self._api_version = get_api_version(kwargs)
         self._client = self._build_generated_client(self.url)
@@ -96,7 +96,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             path=self.path_name,
             pipeline=self._pipeline
         )
-        client._config.version = self._api_version  # pylint: disable=protected-access
+        client._config.version = self._api_version
         return client
 
     async def __aexit__(self, *args):

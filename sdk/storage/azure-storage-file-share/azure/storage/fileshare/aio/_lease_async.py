@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import uuid
 
@@ -50,7 +50,7 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         self.last_modified = None
         self.etag = None
         if hasattr(client, 'file_name'):
-            self._client = client._client.file  # type: ignore # pylint: disable=protected-access
+            self._client = client._client.file  # type: ignore
             self._snapshot = None
         elif hasattr(client, 'share_name'):
             self._client = client._client.share

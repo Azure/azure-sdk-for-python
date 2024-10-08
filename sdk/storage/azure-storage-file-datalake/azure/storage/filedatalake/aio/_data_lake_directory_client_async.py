@@ -311,7 +311,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
             headers = kwargs.pop('headers', {})
             headers['x-ms-upn'] = str(upn)
             kwargs['headers'] = headers
-        return await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)  # pylint: disable=protected-access
+        return await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)
 
     @distributed_trace_async
     async def rename_directory(self, new_name,  # type: str

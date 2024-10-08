@@ -29,6 +29,7 @@ from .. import _constants as constants
 from .. import exceptions
 from .._location_cache import LocationCache
 
+
 # pylint: disable=protected-access
 
 class _GlobalEndpointManager(object):
@@ -83,6 +84,8 @@ class _GlobalEndpointManager(object):
         await self.refresh_endpoint_list(database_account)
 
     async def refresh_endpoint_list(self, database_account, **kwargs):
+        if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
+            self.refresh_needed = True
         if self.refresh_needed:
             async with self.refresh_lock:
                 # if refresh is not needed or refresh is already taking place, return
@@ -94,18 +97,16 @@ class _GlobalEndpointManager(object):
                     raise e
 
     async def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
-        self.refresh_needed = False
         if database_account:
             self.location_cache.perform_on_database_account_read(database_account)
+            self.refresh_needed = False
+            self.last_refresh_time = self.location_cache.current_time_millis()
         else:
-            if (
-                self.location_cache.should_refresh_endpoints()
-                and
-                self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms
-            ):
+            if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
+                self.refresh_needed = False
+                self.last_refresh_time = self.location_cache.current_time_millis()
                 database_account = await self._GetDatabaseAccount(**kwargs)
                 self.location_cache.perform_on_database_account_read(database_account)
-                self.last_refresh_time = self.location_cache.current_time_millis()
 
     async def _GetDatabaseAccount(self, **kwargs):
         """Gets the database account.
