@@ -5,8 +5,9 @@ import inspect
 import json
 import logging
 import os
+from concurrent.futures import Future
 from pathlib import Path
-from typing import Callable, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union, cast
 
 import pandas as pd
 from promptflow.contracts.types import AttrDict
@@ -22,25 +23,31 @@ LOGGER = logging.getLogger(__name__)
 
 class CodeRun:
     def __init__(
-        self, run, input_data, evaluator_name=None, aggregated_metrics=None, **kwargs  # pylint: disable=unused-argument
-    ):
+        self,
+        *,
+        run: Future,
+        input_data,
+        evaluator_name: Optional[str] = None,
+        aggregator: Callable[["CodeRun"], Future],
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> None:
         self.run = run
         self.evaluator_name = evaluator_name if evaluator_name is not None else ""
         self.input_data = input_data
-        self.aggregated_metrics = aggregated_metrics
+        self.aggregated_metrics = aggregator(self)
 
-    def get_result_df(self, exclude_inputs=False):
+    def get_result_df(self, exclude_inputs: bool = False) -> pd.DataFrame:
         batch_run_timeout = get_int_env_var(PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT)
-        result_df = self.run.result(timeout=batch_run_timeout)
+        result_df = cast(pd.DataFrame, self.run.result(timeout=batch_run_timeout))
         if exclude_inputs:
             result_df = result_df.drop(columns=[col for col in result_df.columns if col.startswith("inputs.")])
         return result_df
 
-    def get_aggregated_metrics(self):
+    def get_aggregated_metrics(self) -> Dict[str, Any]:
         try:
             batch_run_timeout = get_int_env_var(PF_BATCH_TIMEOUT_SEC, PF_BATCH_TIMEOUT_SEC_DEFAULT)
-            aggregated_metrics = (
-                self.aggregated_metrics.result(timeout=batch_run_timeout)
+            aggregated_metrics: Optional[Any] = (
+                cast(Dict, self.aggregated_metrics.result(timeout=batch_run_timeout))
                 if self.aggregated_metrics is not None
                 else None
             )
@@ -104,10 +111,10 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
             verify_integrity=True,
         )
 
-    def _calculate_aggregations(self, evaluator, run):
+    @staticmethod
+    def _calculate_aggregations(evaluator: Callable, run: CodeRun) -> Any:
         try:
             if _has_aggregator(evaluator):
-                aggregate_input = None
                 evaluator_output = run.get_result_df(exclude_inputs=True)
                 if len(evaluator_output.columns) == 1 and evaluator_output.columns[0] == "output":
                     aggregate_input = evaluator_output["output"].tolist()
@@ -152,21 +159,26 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
             column_mapping=column_mapping,
             evaluator_name=evaluator_name,
         )
-        run = CodeRun(run=eval_future, input_data=data, evaluator_name=evaluator_name, aggregated_metrics=None)
-        aggregation_future = self._thread_pool.submit(self._calculate_aggregations, evaluator=flow, run=run)
-        run.aggregated_metrics = aggregation_future
-        return run
+
+        return CodeRun(
+            run=eval_future,
+            input_data=data,
+            evaluator_name=evaluator_name,
+            aggregator=lambda code_run: self._thread_pool.submit(
+                self._calculate_aggregations, evaluator=flow, run=code_run
+            ),
+        )
 
     def get_details(self, run: CodeRun, all_results: bool = False) -> pd.DataFrame:
         result_df = run.get_result_df(exclude_inputs=not all_results)
         return result_df
 
-    def get_metrics(self, run: CodeRun) -> Optional[None]:
+    def get_metrics(self, run: CodeRun) -> Dict[str, Any]:
         try:
             aggregated_metrics = run.get_aggregated_metrics()
             print("Aggregated metrics")
             print(aggregated_metrics)
         except Exception as ex:  # pylint: disable=broad-exception-caught
             LOGGER.debug("Error calculating metrics for evaluator %s, failed with error %s", run.evaluator_name, ex)
-            return None
+            return {}
         return aggregated_metrics

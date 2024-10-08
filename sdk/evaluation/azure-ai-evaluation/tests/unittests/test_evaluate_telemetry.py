@@ -58,7 +58,6 @@ def dummy_evaluate_function(
     df = pd.read_json(data, lines=True)
     nan_count = kwargs.get("number_of_nans", 1)
     for evaluation_name, evaluator in evaluators.items():
-
         df[f"outputs.{evaluation_name}.score"] = [random.choice(range(100)) for _ in range(df.shape[0])]
         _add_nans(df, nan_count, f"outputs.{evaluation_name}.score")
 
@@ -142,7 +141,7 @@ class TestEvaluateTelemetry:
         mock_trace_destination_to_cloud,
         mock_validate_trace_destination,
     ):
-        hate_unfairness = HateUnfairnessEvaluator(azure_cred, azure_ai_project=None)
+        hate_unfairness = HateUnfairnessEvaluator(azure_cred, azure_ai_project=mock_project_scope)
 
         data = _get_file("evaluate_test_data.jsonl")
         evaluators = {
