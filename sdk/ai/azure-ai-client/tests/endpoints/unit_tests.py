@@ -5,7 +5,7 @@
 import sys
 import logging
 import datetime
-from azure.ai.client import SASTokenCredential
+from azure.ai.client.models import SASTokenCredential
 from azure.core.credentials import TokenCredential, AccessToken
 from azure.core.exceptions import HttpResponseError
 
@@ -47,7 +47,7 @@ class TestUnit:
         import datetime
         import time
 
-        # Create a simple JWT with 10 seconds expieration time
+        # Create a simple JWT with 10 seconds expiration time
         token_duration_sec = 5
         secret_key = "my_secret_key"
         token_duration_sec = 5

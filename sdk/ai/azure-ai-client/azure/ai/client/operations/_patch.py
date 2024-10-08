@@ -202,8 +202,7 @@ class EndpointsOperations(EndpointsOperationsGenerated):
             if connection.properties.auth_type == AuthenticationType.AAD:
                 return EndpointProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
-                from .._patch import SASTokenCredential
-
+                from ..models._patch import SASTokenCredential
                 token_credential = SASTokenCredential(
                     sas_token=connection.properties.credentials.sas,
                     credential=self._config.credential,
