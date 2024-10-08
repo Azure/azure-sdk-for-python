@@ -4,18 +4,18 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import IO, ClassVar, List, Optional, Dict, Literal
-from dataclasses import InitVar, field
+from typing import IO, Any, ClassVar, List, Optional, Dict, Literal
+from dataclasses import field
 
 from ._resource import (
+    _SKIP,
     _serialize_resource,
     Resource,
+    ResourceId,
     LocatedResource,
-    ResourceGroup,
     dataclass_model,
     generate_symbol,
     _UNSET,
-    ResourceID
 )
 
 @dataclass_model
@@ -53,12 +53,12 @@ class ExtendedLocation:
 
 @dataclass_model
 class KubeEnvironmentProfile:
-    id: ResourceID = field(metadata={'rest': 'id'})
+    id: ResourceId = field(metadata={'rest': 'id'})
 
 
 @dataclass_model
 class HostingEnvironmentProfile:
-    id: ResourceID = field(metadata={'rest': 'id'})
+    id: ResourceId = field(metadata={'rest': 'id'})
 
 
 @dataclass_model
@@ -79,16 +79,16 @@ class AppServicePlanProperties:
     worker_tier_name: Optional[str] = field(default=_UNSET, metadata={'rest': 'workerTierName'})
     zone_redundant: Optional[bool] = field(default=_UNSET, metadata={'rest': 'zoneRedundant'})
 
+
 @dataclass_model
 class ManagedServiceIdentity:
     type: Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned'] = field(metadata={'rest': 'type'})
-    user_assigned_identities: Optional[Dict[str, ResourceID]] = field(default=_UNSET, metadata={'rest': 'userAssignedIdentities'})
+    user_assigned_identities: Optional[Dict[str, ResourceId]] = field(default=_UNSET, metadata={'rest': 'userAssignedIdentities'})
+
 
 @dataclass_model
 class CloningInfo:
-    # /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName} for production slots and
-    # /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slotName} for other slots.
-    source_webapp_id: ResourceID  = field(metadata={'rest': 'sourceWebAppId'})
+    source_webapp_id: ResourceId  = field(metadata={'rest': 'sourceWebAppId'})
     app_settings_overrides: Optional[Dict[str, str]] = field(default=_UNSET, metadata={'rest': 'appSettingsOverrides'})
     clone_custom_hostnames: Optional[bool] = field(default=_UNSET, metadata={'rest': 'cloneCustomHostNames'})
     clone_source_control: Optional[bool] = field(default=_UNSET, metadata={'rest': 'cloneSourceControl'})
@@ -97,13 +97,13 @@ class CloningInfo:
     hosting_environment: Optional[str] = field(default=_UNSET, metadata={'rest': 'hostingEnvironment'})
     overwrite: Optional[bool] = field(default=_UNSET, metadata={'rest': 'overwrite'})
     source_webapp_location: Optional[str] = field(default=_UNSET, metadata={'rest': 'sourceWebAppLocation'})
-    traffic_manager_profile_id: Optional[ResourceID] = field(default=_UNSET, metadata={'rest': 'trafficManagerProfileId'})
+    traffic_manager_profile_id: Optional[ResourceId] = field(default=_UNSET, metadata={'rest': 'trafficManagerProfileId'})
     traffic_manager_profile_name: Optional[str] = field(default=_UNSET, metadata={'rest': 'trafficManagerProfileName'})
 
 
 @dataclass_model
 class HostingEnvironmentProfile:
-    id: ResourceID = field(metadata={'rest': 'id'})
+    id: ResourceId = field(metadata={'rest': 'id'})
 
 
 @dataclass_model
@@ -118,137 +118,20 @@ class HostNameSslState:
 
 @dataclass_model
 class NameValuePair:
-    name: str
-    value: str
+    name: str = field(metadata={'rest': 'name'})
+    value: str = field(metadata={'rest': 'value'})
 
 
 @dataclass_model
-class SiteConfig:
-    acrUseManagedIdentityCreds: Optional[bool]
-    acrUserManagedIdentityID: Optional[str]
-    alwaysOn: Optional[bool]
-    # apiDefinition: Optional[ApiDefinitionInfo]
-    # apiManagementConfig: Optional[ApiManagementConfig]
-    # appCommandLine: Optional[str]
-    # appSettings: Optional[List[NameValuePair]]
-    # autoHealEnabled: Optional[bool]
-    # autoHealRules: Optional[AutoHealRules]
-    # autoSwapSlotName: Optional[str]
-    # azureStorageAccounts: Optional[Dict[str, str]]
-    # connectionStrings: Optional[List[ConnStringInfo]]
-    # cors: Optional[CorsSettings]
-    # defaultDocuments: Optional[List[str]]
-    # detailedErrorLoggingEnabled: Optional[bool]
-    # documentRoot: Optional[str]
-    # elasticWebAppScaleLimit: Optional[int]
-    # experiments: Optional[Experiments]
-    # ftpsState: Optional[Literal['AllAllowed', 'Disabled', 'FtpsOnly']]
-
-"""
-SiteConfig
-
-functionAppScaleLimit	Maximum number of workers that a site can scale out to.
-This setting only applies to the Consumption and Elastic Premium Plans	int
-functionsRuntimeScaleMonitoringEnabled	Gets or sets a value indicating whether functions runtime scale monitoring is enabled. When enabled,
-the ScaleController will not monitor event sources directly, but will instead call to the
-runtime to get scale status.	bool
-handlerMappings	Handler mappings.	HandlerMapping[]
-healthCheckPath	Health check path	string
-http20Enabled	Http20Enabled: configures a web site to allow clients to connect over http2.0	bool
-httpLoggingEnabled	true if HTTP logging is enabled; otherwise, false.	bool
-ipSecurityRestrictions	IP security restrictions for main.	IpSecurityRestriction[]
-ipSecurityRestrictionsDefaultAction	Default action for main access restriction if no rules are matched.	'Allow'
-'Deny'
-javaContainer	Java container.	string
-javaContainerVersion	Java container version.	string
-javaVersion	Java version.	string
-keyVaultReferenceIdentity	Identity to use for Key Vault Reference authentication.	string
-limits	Site limits.	SiteLimits
-linuxFxVersion	Linux App Framework and version	string
-loadBalancing	Site load balancing.	'LeastRequests'
-'LeastResponseTime'
-'PerSiteRoundRobin'
-'RequestHash'
-'WeightedRoundRobin'
-'WeightedTotalTraffic'
-localMySqlEnabled	true to enable local MySQL; otherwise, false.	bool
-logsDirectorySizeLimit	HTTP logs directory size limit.	int
-managedPipelineMode	Managed pipeline mode.	'Classic'
-'Integrated'
-managedServiceIdentityId	Managed Service Identity Id	int
-metadata	Application metadata. This property cannot be retrieved, since it may contain secrets.	NameValuePair[]
-minimumElasticInstanceCount	Number of minimum instance count for a site
-This setting only applies to the Elastic Plans	int
-minTlsVersion	MinTlsVersion: configures the minimum version of TLS required for SSL requests	'1.0'
-'1.1'
-'1.2'
-netFrameworkVersion	.NET Framework version.	string
-nodeVersion	Version of Node.js.	string
-numberOfWorkers	Number of workers.	int
-phpVersion	Version of PHP.	string
-powerShellVersion	Version of PowerShell.	string
-preWarmedInstanceCount	Number of preWarmed instances.
-This setting only applies to the Consumption and Elastic Plans	int
-publicNetworkAccess	Property to allow or block all public traffic.	string
-publishingUsername	Publishing user name.	string
-push	Push endpoint settings.	PushSettings
-pythonVersion	Version of Python.	string
-remoteDebuggingEnabled	true if remote debugging is enabled; otherwise, false.	bool
-remoteDebuggingVersion	Remote debugging version.	string
-requestTracingEnabled	true if request tracing is enabled; otherwise, false.	bool
-requestTracingExpirationTime	Request tracing expiration time.	string
-scmIpSecurityRestrictions	IP security restrictions for scm.	IpSecurityRestriction[]
-scmIpSecurityRestrictionsDefaultAction	Default action for scm access restriction if no rules are matched.	'Allow'
-'Deny'
-scmIpSecurityRestrictionsUseMain	IP security restrictions for scm to use main.	bool
-scmMinTlsVersion	ScmMinTlsVersion: configures the minimum version of TLS required for SSL requests for SCM site	'1.0'
-'1.1'
-'1.2'
-scmType	SCM type.	'BitbucketGit'
-'BitbucketHg'
-'CodePlexGit'
-'CodePlexHg'
-'Dropbox'
-'ExternalGit'
-'ExternalHg'
-'GitHub'
-'LocalGit'
-'None'
-'OneDrive'
-'Tfs'
-'VSO'
-'VSTSRM'
-tracingOptions	Tracing options.	string
-use32BitWorkerProcess	true to use 32-bit worker process; otherwise, false.	bool
-virtualApplications	Virtual applications.	VirtualApplication[]
-vnetName	Virtual Network name.	string
-vnetPrivatePortsCount	The number of private ports assigned to this app. These will be assigned dynamically on runtime.	int
-vnetRouteAllEnabled	Virtual Network Route All enabled. This causes all outbound traffic to have Virtual Network Security Groups and User Defined Routes applied.	bool
-websiteTimeZone	Sets the time zone a site uses for generating timestamps. Compatible with Linux and Windows App Service. Setting the WEBSITE_TIME_ZONE app setting takes precedence over this config. For Linux, expects tz database values https://www.iana.org/time-zones (for a quick reference see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones). For Windows, expects one of the time zones listed under HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones	string
-webSocketsEnabled	true if WebSocket is enabled; otherwise, false.	bool
-windowsFxVersion	Xenon App Framework and version	string
-xManagedServiceIdentityId	Explicit Managed Service Identity Id	int
-
-ApiDefinitionInfo
-Name	Description	Value
-url	The URL of the API definition.	string
-
-ApiManagementConfig
-Name	Description	Value
-id	APIM-Api Identifier.	string
-
-NameValuePair
-Name	Description	Value
-name	Pair name.	string
-value	Pair value.	string
-
-AutoHealRules
-Name	Description	Value
-actions	Actions to be executed when a rule is triggered.	AutoHealActions
-triggers	Conditions that describe when to execute the auto-heal actions.	AutoHealTriggers
+class ApiDefinitionInfo:
+    url: str = field(metadata={'rest': 'url'})
 
 
-"""
+@dataclass_model
+class ApiManagementConfig:
+    id: ResourceId = field(metadata={'rest': 'id'})
+
+
 @dataclass_model
 class AutoHealCustomAction:
     exe: Optional[str] = field(default=_UNSET, metadata={'rest': 'exe'})
@@ -302,6 +185,11 @@ class AutoHealTriggers:
     slow_requests_with_path: Optional[SlowRequestsBasedTrigger] = field(default=_UNSET, metadata={'rest': 'slowRequestsWithPath'})
     status_codes: Optional[StatusCodesBasedTrigger] = field(default=_UNSET, metadata={'rest': 'statusCodes'})
     status_codes_range: Optional[StatusCodesRangeBasedTrigger] = field(default=_UNSET, metadata={'rest': 'statusCodesRange'})
+
+
+class AutoHealRules:
+    actions: Optional[AutoHealActions] = field(metadata={'rest': 'actions'})
+    triggers: Optional[AutoHealTriggers] = field(metadata={'rest': 'triggers'})
 
 
 @dataclass_model
@@ -392,6 +280,80 @@ class VirtualApplication:
 
 
 @dataclass_model
+class SiteConfig:
+    acr_use_managed_identity_creds: Optional[bool] = field(default=_UNSET, metadata={'rest': 'acrUseManagedIdentityCreds'})
+    acr_user_managed_identity_id: Optional[str] = field(default=_UNSET, metadata={'rest': 'acrUserManagedIdentityID'})
+    always_on: Optional[bool] = field(default=_UNSET, metadata={'rest': 'alwaysOn'})
+    api_definition: Optional[ApiDefinitionInfo] = field(default=_UNSET, metadata={'rest': 'apiDefinition'})
+    api_management_config: Optional[ApiManagementConfig] = field(default=_UNSET, metadata={'rest': 'apiManagementConfig'})
+    app_command_line: Optional[str] = field(default=_UNSET, metadata={'rest': 'appCommandLine'})
+    app_settings: Optional[List[NameValuePair]] = field(default=_UNSET, metadata={'rest': 'appSettings'})
+    auto_heal_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'autoHealEnabled'})
+    auto_heal_rules: Optional[AutoHealRules] = field(default=_UNSET, metadata={'rest': 'autoHealRules'})
+    auto_swap_slot_name: Optional[str] = field(default=_UNSET, metadata={'rest': 'autoSwapSlotName'})
+    azure_storage_accounts: Optional[Dict[str, str]] = field(default=_UNSET, metadata={'rest': 'azureStorageAccounts'})
+    connection_strings: Optional[List[ConnStringInfo]] = field(default=_UNSET, metadata={'rest': 'connectionStrings'})
+    cors: Optional[CorsSettings] = field(default=_UNSET, metadata={'rest': 'cors'})
+    default_documents: Optional[List[str]] = field(default=_UNSET, metadata={'rest': 'defaultDocuments'})
+    detailed_error_logging_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'detailedErrorLoggingEnabled'})
+    document_root: Optional[str] = field(default=_UNSET, metadata={'rest': 'documentRoot'})
+    elastic_web_app_scale_limit: Optional[int] = field(default=_UNSET, metadata={'rest': 'elasticWebAppScaleLimit'})
+    experiments: Optional[Experiments] = field(default=_UNSET, metadata={'rest': 'experiments'})
+    ftps_state: Optional[Literal['AllAllowed', 'Disabled', 'FtpsOnly']] = field(default=_UNSET, metadata={'rest': 'ftpsState'})
+    function_app_scale_limit: Optional[int] = field(default=_UNSET, metadata={'rest': 'functionAppScaleLimit'})
+    functions_runtime_scale_monitoring_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'functionsRuntimeScaleMonitoringEnabled'})
+    handler_mappings: Optional[List[HandlerMapping]] = field(default=_UNSET, metadata={'rest': 'handlerMappings'})
+    health_check_path: Optional[str] = field(default=_UNSET, metadata={'rest': 'healthCheckPath'})
+    http20_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'http20Enabled'})
+    http_logging_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'httpLoggingEnabled'})
+    ip_security_restrictions: Optional[List[IpSecurityRestriction]] = field(default=_UNSET, metadata={'rest': 'ipSecurityRestrictions'})
+    ip_security_restrictions_default_action: Optional[Literal['Allow', 'Deny']] = field(default=_UNSET, metadata={'rest': 'ipSecurityRestrictionsDefaultAction'})
+    java_container: Optional[str] = field(default=_UNSET, metadata={'rest': 'javaContainer'})
+    java_container_version: Optional[str] = field(default=_UNSET, metadata={'rest': 'javaContainerVersion'})
+    java_version: Optional[str] = field(default=_UNSET, metadata={'rest': 'javaVersion'})
+    keyvault_reference_identity: Optional[str] = field(default=_UNSET, metadata={'rest': 'keyVaultReferenceIdentity'})
+    limits: Optional[SiteLimits] = field(default=_UNSET, metadata={'rest': 'limits'})
+    linux_fx_version: Optional[str] = field(default=_UNSET, metadata={'rest': 'linuxFxVersion'})
+    load_balancing: Optional[Literal['LeastRequests', 'LeastResponseTime', 'PerSiteRoundRobin', 'RequestHash', 'WeightedRoundRobin', 'WeightedTotalTraffic']] = field(default=_UNSET, metadata={'rest': 'loadBalancing'})
+    local_mysql_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'localMySqlEnabled'})
+    logs_directory_size_limit: Optional[int] = field(default=_UNSET, metadata={'rest': 'logsDirectorySizeLimit'})
+    managed_pipeline_mode: Optional[Literal['Classic', 'Integrated']] = field(default=_UNSET, metadata={'rest': 'managedPipelineMode'})
+    managed_service_identity_id: Optional[int] = field(default=_UNSET, metadata={'rest': 'managedServiceIdentityId'})
+    metadata: Optional[List[NameValuePair]] = field(default=_UNSET, metadata={'rest': 'metadata'})
+    minimum_elastic_instance_count: Optional[int] = field(default=_UNSET, metadata={'rest': 'minimumElasticInstanceCount'})
+    min_tls_version: Optional[Literal['1.0', '1.1', '1.2']] = field(default=_UNSET, metadata={'rest': 'minTlsVersion'})
+    net_framework_version: Optional[str] = field(default=_UNSET, metadata={'rest': 'netFrameworkVersion'})
+    node_version: Optional[str] = field(default=_UNSET, metadata={'rest': 'nodeVersion'})
+    number_of_workers: Optional[int] = field(default=_UNSET, metadata={'rest': 'numberOfWorkers'})
+    php_version: Optional[str] = field(default=_UNSET, metadata={'rest': 'phpVersion'})
+    powershell_version: Optional[str] = field(default=_UNSET, metadata={'rest': 'powerShellVersion'})
+    pre_warmed_instance_count: Optional[int] = field(default=_UNSET, metadata={'rest': 'preWarmedInstanceCount'})
+    public_network_access: Optional[str] = field(default=_UNSET, metadata={'rest': 'publicNetworkAccess'})
+    publishing_username: Optional[str] = field(default=_UNSET, metadata={'rest': 'publishingUsername'})
+    push: Optional[PushSettings] = field(default=_UNSET, metadata={'rest': 'push'})
+    python_version: Optional[str] = field(default=_UNSET, metadata={'rest': 'pythonVersion'})
+    remote_debugging_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'remoteDebuggingEnabled'})
+    remote_debugging_version: Optional[str] = field(default=_UNSET, metadata={'rest': 'remoteDebuggingVersion'})
+    request_tracing_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'requestTracingEnabled'})
+    request_tracing_expiration_time: Optional[str] = field(default=_UNSET, metadata={'rest': 'requestTracingExpirationTime'})
+    scm_ip_security_restrictions: Optional[List[IpSecurityRestriction]] = field(default=_UNSET, metadata={'rest': 'scmIpSecurityRestrictions'})
+    scm_ip_security_restrictions_default_action: Optional[Literal['Allow', 'Deny']] = field(default=_UNSET, metadata={'rest': 'scmIpSecurityRestrictionsDefaultAction'})
+    scm_ip_security_restrictions_use_main: Optional[bool] = field(default=_UNSET, metadata={'rest': 'scmIpSecurityRestrictionsUseMain'})
+    scm_min_tls_version: Optional[Literal['1.0', '1.1', '1.2']] = field(default=_UNSET, metadata={'rest': 'scmMinTlsVersion'})
+    scm_type: Optional[Literal['BitbucketGit', 'BitbucketHg', 'CodePlexGit', 'CodePlexHg', 'Dropbox', 'ExternalGit', 'ExternalHg', 'GitHub', 'LocalGit', 'None', 'OneDrive', 'Tfs', 'VSO', 'VSTSRM']] = field(default=_UNSET, metadata={'rest': 'scmType'})
+    tracing_options: Optional[str] = field(default=_UNSET, metadata={'rest': 'tracingOptions'})
+    use_32bit_worker_process: Optional[bool] = field(default=_UNSET, metadata={'rest': 'use32BitWorkerProcess'})
+    virtual_applications: Optional[List[VirtualApplication]] = field(default=_UNSET, metadata={'rest': 'virtualApplications'})
+    vnet_name: Optional[str] = field(default=_UNSET, metadata={'rest': 'vnetName'})
+    vnet_private_ports_count: Optional[int] = field(default=_UNSET, metadata={'rest': 'vnetPrivatePortsCount'})
+    vnet_route_all_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'vnetRouteAllEnabled'})
+    website_timezone: Optional[str] = field(default=_UNSET, metadata={'rest': 'websiteTimeZone'})
+    web_sockets_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'webSocketsEnabled'})
+    windows_fx_version: Optional[str] = field(default=_UNSET, metadata={'rest': 'windowsFxVersion'})
+    x_managed_service_identity_id: Optional[int] = field(default=_UNSET, metadata={'rest': 'xManagedServiceIdentityId'})
+
+
+@dataclass_model
 class SiteProperties:
     client_affinity_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'clientAffinityEnabled'})
     client_cert_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'clientCertEnabled'})
@@ -408,18 +370,95 @@ class SiteProperties:
     hyper_v: Optional[bool] = field(default=_UNSET, metadata={'rest': 'hyperV'})
     is_xenon: Optional[bool] = field(default=_UNSET, metadata={'rest': 'isXenon'})
     keyvault_reference_identity: Optional[str] = field(default=_UNSET, metadata={'rest': 'keyVaultReferenceIdentity'})
-    managed_environment_id: Optional[ResourceID] = field(default=_UNSET, metadata={'rest': 'managedEnvironmentId'})
+    managed_environment_id: Optional[ResourceId] = field(default=_UNSET, metadata={'rest': 'managedEnvironmentId'})
     public_network_access: Optional[Literal["Enabled", "Disabled", ""]] = field(default=_UNSET, metadata={'rest': 'publicNetworkAccess'})
     redundancy_mode: Optional[Literal['ActiveActive', 'Failover', 'GeoRedundant', 'Manual', 'None']] = field(default=_UNSET, metadata={'rest': 'redundancyMode'})
     reserved: Optional[bool] = field(default=_UNSET, metadata={'rest': 'reserved'})
     scm_site_also_stopped: Optional[bool] = field(default=_UNSET, metadata={'rest': 'scmSiteAlsoStopped'})
-    server_farm_id: Optional[ResourceID] = field(default=_UNSET, metadata={'rest': 'serverFarmId'})
+    server_farm_id: Optional[ResourceId] = field(default=_UNSET, metadata={'rest': 'serverFarmId'})
     site_config: Optional[SiteConfig] = field(default=_UNSET, metadata={'rest': 'siteConfig'})
     storage_account_required: Optional[bool] = field(default=_UNSET, metadata={'rest': 'storageAccountRequired'})
-    virtual_network_subnet_id: Optional[ResourceID] = field(default=_UNSET, metadata={'rest': 'virtualNetworkSubnetId'})
+    virtual_network_subnet_id: Optional[ResourceId] = field(default=_UNSET, metadata={'rest': 'virtualNetworkSubnetId'})
     vnet_content_share_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'vnetContentShareEnabled'})
     vnet_image_pull_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'vnetImagePullEnabled'})
     vnet_route_all_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'vnetRouteAllEnabled'})
+
+@dataclass_model
+class AzureBlobStorageApplicationLogsConfig:
+    level: Optional[Literal['Error', 'Information', 'Off', 'Verbose', 'Warning']] = field(default=_UNSET, metadata={'rest': 'level'})
+    retention_in_days: Optional[int] = field(default=_UNSET, metadata={'rest': 'retentionInDays'})
+    sas_url: str = field(metadata={'rest': 'sasUrl'})
+
+
+@dataclass_model
+class AzureTableStorageApplicationLogsConfig:
+    level: Optional[Literal['Error', 'Information', 'Off', 'Verbose', 'Warning']] = field(default=_UNSET, metadata={'rest': 'level'})
+    sas_url: str = field(metadata={'rest': 'sasUrl'})
+
+
+@dataclass_model
+class FileSystemApplicationLogsConfig:
+    level: Optional[Literal['Error', 'Information', 'Off', 'Verbose', 'Warning']] = field(default=_UNSET, metadata={'rest': 'level'})
+
+
+@dataclass_model
+class ApplicationLogsConfig:
+    azure_blob_storage: Optional[AzureBlobStorageApplicationLogsConfig] = field(default=_UNSET, metadata={'rest': 'azureBlobStorage'})
+    azure_table_storage: Optional[AzureTableStorageApplicationLogsConfig] = field(default=_UNSET, metadata={'rest': 'azureTableStorage'})
+    file_system: Optional[FileSystemApplicationLogsConfig] = field(default=_UNSET, metadata={'rest': 'fileSystem'})
+
+
+@dataclass_model
+class EnabledConfig:
+    enabled: bool = field(metadata={'rest': 'enabled'})
+
+
+@dataclass_model
+class AzureBlobStorageHttpLogsConfig:
+    enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'enabled'})
+    retention_in_days: Optional[int] = field(default=_UNSET, metadata={'rest': 'retentionInDays'})
+    sas_url: Optional[str] = field(default=_UNSET, metadata={'rest': 'sasUrl'})
+
+
+@dataclass_model
+class FileSystemHttpLogsConfig:
+    enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'enabled'})
+    retention_in_days: Optional[int] = field(default=_UNSET, metadata={'rest': 'retentionInDays'})
+    retention_in_mb: Optional[int] = field(default=_UNSET, metadata={'rest': 'retentionInMb'})
+
+
+@dataclass_model
+class HttpLogsConfig:
+    azure_blob_storage: Optional[AzureBlobStorageHttpLogsConfig] = field(default=_UNSET, metadata={'rest': 'azureBlobStorage'})
+    file_system: Optional[FileSystemHttpLogsConfig] = field(default=_UNSET, metadata={'rest': 'fileSystem'})
+
+
+@dataclass_model
+class SiteLogsConfigProperties:
+    application_logs: Optional[ApplicationLogsConfig] = field(default=_UNSET, metadata={'rest': 'applicationLogs'})
+    detailed_error_messages: Optional[EnabledConfig] = field(default=_UNSET, metadata={'rest': 'detailedErrorMessages'})
+    failed_requests_tracing: Optional[EnabledConfig] = field(default=_UNSET, metadata={'rest': 'failedRequestsTracing'})
+    http_logs: Optional[HttpLogsConfig] = field(default=_UNSET, metadata={'rest': 'httpLogs'})
+
+
+@dataclass_model
+class AppServiceConfig(Resource):
+    _resource: ClassVar[Literal['Microsoft.Web/sites/config']] = 'Microsoft.Web/sites/config'
+    _version: ClassVar[str] = '2022-09-01'
+    _symbolicname: str = field(default_factory=lambda: generate_symbol("siteconfig"), init=False, repr=False)
+    kind: str = field(metadata={'rest': 'kind'})
+
+
+@dataclass_model
+class AppServiceAppSettingsConfig(AppServiceConfig):
+    name: str = field(init=False, default="appsettings", metadata={'rest': 'name'})
+    properties: Dict[str, Any] = field(default_factory=dict, metadata={'rest': 'properties'})
+
+
+@dataclass_model
+class AppServiceLogsConfig(AppServiceConfig):
+    name: str = field(init=False, default="logs", metadata={'rest': 'name'})
+    properties: Dict[str, Any] = field(default_factory=dict, metadata={'rest': 'properties'})
 
 
 @dataclass_model
@@ -428,7 +467,16 @@ class AppServiceSite(LocatedResource):
     extended_location : Optional[ExtendedLocation] = field(default=_UNSET, metadata={'rest': 'extendedLocation'})
     identity: Optional[ManagedServiceIdentity] = field(default=_UNSET, metadata={'rest': 'identity'})
     properties: Optional[SiteProperties] = field(default=_UNSET, metadata={'rest': 'properties'})
+    configs: Optional[List[AppServiceConfig]] = field(default_factory=list, metadata={'rest': _SKIP})
+    _resource: ClassVar[Literal['Microsoft.Web/sites']] = 'Microsoft.Web/sites'
+    _version: ClassVar[str] = '2022-09-01'
+    _symbolicname: str = field(default_factory=lambda: generate_symbol("site"), init=False, repr=False)
 
+    def write(self, bicep: IO[str]) -> None:
+        _serialize_resource(bicep, self)
+        for config in self.configs:
+            config._parent = self
+            config.write(bicep)
 
 @dataclass_model
 class AppServicePlan(LocatedResource):
@@ -436,28 +484,13 @@ class AppServicePlan(LocatedResource):
     kind: str = field(metadata={'rest': 'kind'})
     extended_location : Optional[ExtendedLocation] = field(default=_UNSET, metadata={'rest': 'extendedLocation'})
     properties: Optional[AppServicePlanProperties] = field(default=_UNSET, metadata={'rest': 'properties'})
-    sites: InitVar[Optional[List[AppServiceSite]]] = None
-    _sites: List[AppServiceSite] = field(init=False, default_factory=list)
+    sites: Optional[List[AppServiceSite]] = field(default_factory=list, metadata={'rest': _SKIP})
     _resource: ClassVar[Literal['Microsoft.Web/serverfarms']] = 'Microsoft.Web/serverfarms'
     _version: ClassVar[str] = '2022-09-01'
     _symbolicname: str = field(default_factory=lambda: generate_symbol("serverfarm"), init=False, repr=False)
 
-    def __post_init__(
-            self,
-            parent: Optional[Resource],
-            scope: Optional[ResourceGroup],
-            name: Optional[str],
-            sites: Optional[List[AppServiceSite]]
-    ):
-        if sites:
-            for s in sites:
-                s._parent = self
-                self._sites.append(s)
-        super().__post_init__(parent, scope, name)
-
-
     def write(self, bicep: IO[str]) -> None:
         _serialize_resource(bicep, self)
-        self._services.write(bicep)
-        for container in self._containers:
-            container.write(bicep)
+        for site in self.sites:
+            site._parent = self
+            site.write(bicep)

@@ -10,7 +10,7 @@ import shutil
 import copy
 import os
 import subprocess
-from typing import Literal, Optional, List
+from typing import Literal, Optional, List, Union
 
 from ._resource import ResourceGroup, SubscriptionResourceId, PrincipalId, ResourceId
 from .roles import RoleAssignment, RoleAssignmentProperties
@@ -50,6 +50,9 @@ from .eventgrid import (
     ServiceBusTopicEventSubscriptionDestinationProperties,
     RetryPolicy
 )
+from .appservice import (
+    AppServicePlan
+)
 
 
 def azd_env_name(name: str, host: str, label: Optional[str]) -> str:
@@ -61,7 +64,6 @@ def run_project(deployment: 'CloudMachineDeployment', label: Optional[str], args
     project_name = azd_env_name(deployment.name, deployment.host, label)
     output = subprocess.run(['azd', 'provision', '-e', project_name])
     print(output)
-    args.append("run")
     try:
         output = subprocess.run(args)
     except KeyboardInterrupt:
@@ -125,8 +127,8 @@ def _get_empty_directory(root_path: str, name: str) -> str:
 class CloudMachineDeployment:
     name: str
     location: Optional[str]
-    groups: List[ResourceGroup]
-    host: str
+    core: ResourceGroup
+    host: Union[Literal['local'], AppServicePlan]
     identity: ManagedIdentity
 
     def __init__(
@@ -144,18 +146,17 @@ class CloudMachineDeployment:
         self._params = copy.deepcopy(DEFAULT_PARAMS)
         #if self.location:
         #    self._params["parameters"]["location"]["value"] = f"${{AZURE_LOCATION={self.location}}}"
-        rg = ResourceGroup(
+        self.core = ResourceGroup(
             friendly_name=self.name,
             tags={"abc": "def"},
         )
         self.identity = ManagedIdentity()
-        rg.add(self.identity)
+        self.core.add(self.identity)
         self._storage = self._define_storage()
-        rg.add(self._storage)
+        self.core.add(self._storage)
         self._messaging = self._define_messaging()
-        rg.add(self._messaging)
-        rg.add(self._define_events())
-        self.groups = [rg]
+        self.core.add(self._messaging)
+        self.core.add(self._define_events())
 
     def _define_messaging(self) -> ServiceBusNamespace:
         return ServiceBusNamespace(
@@ -321,7 +322,8 @@ class CloudMachineDeployment:
                             max_delivery_attempts=30,
                             event_time_to_live_in_minutes=1440
                         )
-                    )
+                    ),
+                    _dependson=[self._messaging.roles[1]]
                 )
             ]
         )
@@ -342,9 +344,10 @@ class CloudMachineDeployment:
             main.write("param location string\n\n")
             main.write("var tags = { 'azd-env-name': environmentName }\n")
             main.write("var cloudmachineId = uniqueString(subscription().subscriptionId, environmentName, location)\n\n")
+            self.core.write(main)
 
-            for rg in self.groups:
-                rg.write(main)
+            # if self.host != 'local':
+            #     self.host.write(main)
         params_json = os.path.join(infra_dir, "main.parameters.json")
         with open(params_json, 'w') as params:
             json.dump(self._params, params, indent=4)

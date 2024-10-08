@@ -82,6 +82,7 @@ class UniqueName(BicepResolver):
     def resolve(self) -> str:
         return f"take('{self._prefix}${{uniqueString({self._basestr})}}', {self._length})"
 
+
 class ResourceName(BicepResolver):
     def resolve(self):
         return f"'{resource_prefix}${{cloudmachineId}}'"
@@ -103,6 +104,14 @@ class SubscriptionResourceId(BicepResolver):
 
     def resolve(self) -> str:
         return f"subscriptionResourceId('{self._resource}', '{self._name}')"
+
+
+class SubscriptionScopeProperty(BicepResolver):
+    def __init__(self, property_name: str = 'id'):
+        self._property_name = property_name
+
+    def resolve(self) -> str:
+        return f"subscription().{self._property_name}"
 
 
 class _SKIP:
@@ -179,6 +188,11 @@ def _serialize_resource(bicep: IO[str], model_val: 'Resource') -> None:
             bicep.write(f"{indent}]\n")
         else:
             bicep.write(f"{indent}{rest_name}: {resolve_value(value)}\n")
+    if model_val._dependson:
+        bicep.write(f"{indent}dependsOn: [\n")
+        for dependency in model_val._dependson:
+            bicep.write(f"{indent}{indent}{dependency._symbolicname}\n")
+        bicep.write(f"{indent}]\n")
     bicep.write("}\n\n")
 
 
@@ -248,6 +262,7 @@ class Resource:
     name: str = field(metadata={'rest': 'name'})
     _parent: Optional['Resource'] = field(init=False, default=None)
     _scope: Optional['Resource'] = field(init=False, default=None)
+    _dependson: Optional[List['Resource']] = field(default_factory=list)
     _outputs: List[str] = field(default_factory=list, init=False)
 
     def write(self, bicep: IO[str]) -> None:
@@ -255,6 +270,10 @@ class Resource:
 
     @classmethod
     def existing(self, scope: Optional['ResourceGroup'] = None) -> Self:
+        raise NotImplementedError()
+    
+    @classmethod
+    def from_json(self, resource: Dict[str, Any]) -> Self:
         raise NotImplementedError()
 
     def write(self, bicep: IO[str]) -> None:
@@ -278,16 +297,15 @@ class LocatedResource(Resource):
 @dataclass_model
 class ResourceGroup(LocatedResource):
     name: str = field(init=False, default_factory=ResourceName, metadata={'rest': 'name'})
-    _resources: List['LocatedResource'] = field(default_factory=list, init=False, repr=False)
+    resources: Dict[str, 'LocatedResource'] = field(default_factory=dict, init=False, repr=False, metadata={'rest': _SKIP})
     _resource: ClassVar[Literal['Microsoft.Resources/resourceGroups']] = 'Microsoft.Resources/resourceGroups'
     _version: ClassVar[str] = '2021-04-01'
     _parent: ClassVar[None] = None
     _scope: ClassVar[None] = None
     _symbolicname: str = field(default_factory=lambda: generate_symbol("resourceGroup"), init=False, repr=False)
-
     
     def add(self, resource: 'Resource') -> None:
-        self._resources.append(resource)
+        self.resources[resource._resource] = resource
 
     def write(self, bicep: IO[str]) -> None:
         _serialize_resource(bicep, self)
@@ -300,7 +318,7 @@ class ResourceGroup(LocatedResource):
             cm_bicep.write("param principalId string\n")
             cm_bicep.write("param cloudmachineId string\n")
             cm_bicep.write("param tags object\n\n")
-            for resource in self._resources:
+            for resource in self.resources.values():
                 resource.write(cm_bicep)
                 for output in resource._outputs:
                     outputs[f"{generate_envvar(output)}"] = f"cloudmachine.outputs.{output}"

@@ -11,12 +11,16 @@ from flask import Flask, redirect, render_template, request, send_from_directory
 from flask_wtf.csrf import CSRFProtect
 
 from azure.cloudmachine.ext.flask import CloudMachine
+from azure.cloudmachine.resources import CloudMachineDeployment
 
 from models import Restaurant, Review
 
 app = Flask(__name__, static_folder='static')
 csrf = CSRFProtect(app)
-cm = CloudMachine(app, name="restaurantreviewapp")
+
+deployment = CloudMachineDeployment(name="restaurantreviewapp")
+
+cm = CloudMachine(app, deployment=deployment)
 
 
 @app.route('/', methods=['GET'])
