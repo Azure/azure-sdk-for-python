@@ -32,7 +32,7 @@ from azure.ai.assistants.models._enums import FilePurpose
 from azure.ai.assistants.models._models import FileSearchToolDefinition, FileSearchToolResource, MessageAttachment, ToolResources
 from azure.core.credentials import AzureKeyCredential
 
-import os, time
+import os
 
 
 def setup_console_trace_exporter():
@@ -62,16 +62,10 @@ def sample_assistant_basic_operation():
     logging.info("Created assistant client")
     
     # upload a file and wait for it to be processed
-    file = assistant_client.upload_file(file_path="product_info_1.md", purpose=FilePurpose.ASSISTANTS)
-    while assistant_client.get_file(file.id).status != "processed":
-        time.sleep(4)  
-        
+    file = assistant_client.upload_file(file_path="product_info_1.md", purpose=FilePurpose.ASSISTANTS)    
     # create a vector store with the file and wait for it to be processed
     # if you do not specify a vector store, create_message will create a vector store with a default expiration policy of seven days after they were last active 
-    vector_store = assistant_client.create_vector_store(file_ids=[file.id], name="sample_vector_store")
-    while vector_store.status != "completed":
-        time.sleep(4)
-        vector_store = assistant_client.get_vector_store(vector_store.id)
+    vector_store = assistant_client.create_vector_store_and_poll(file_ids=[file.id], name="sample_vector_store", sleep_interval=4)
         
     file_search_tool = FileSearchToolDefinition()
     
@@ -92,15 +86,9 @@ def sample_assistant_basic_operation():
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment])
     logging.info(f"Created message, message ID: {message.id}")
 
-    run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
+    run = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, sleep_interval=4)
     logging.info(f"Created run, run ID: {run.id}")
 
-    # poll the run as long as run status is queued or in progress
-    while run.status not in ["completed", "failed"]:
-        # wait for 4 second
-        time.sleep(4)
-        run = assistant_client.get_run(thread_id=thread.id, run_id=run.id)
-        logging.info(f"Run status: {run.status}")
 
     logging.info(f"Run completed with status: {run.status}")
         

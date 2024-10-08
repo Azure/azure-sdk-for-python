@@ -30,7 +30,7 @@ from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from azure.ai.assistants import AssistantsClient
 from azure.core.credentials import AzureKeyCredential
 
-import os, time, json
+import os
 
 
 def setup_console_trace_exporter():
@@ -70,18 +70,8 @@ def sample_assistant_basic_operation():
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     logging.info(f"Created message, message ID: {message.id}")
 
-    run = assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
+    run = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, sleep_interval=4)
     logging.info(f"Created run, run ID: {run.id}")
-
-    # poll the run as long as run status is queued or in progress
-    while run.status in ["queued", "in_progress", "requires_action"]:
-        # wait for a second
-        time.sleep(4)
-        run = assistant_client.get_run(thread_id=thread.id, run_id=run.id)
-
-        logging.info(f"Run status: {run.status}")
-
-    logging.info(f"Run completed with status: {run.status}")
 
     assistant_client.delete_assistant(assistant.id)
     logging.info("Deleted assistant")
