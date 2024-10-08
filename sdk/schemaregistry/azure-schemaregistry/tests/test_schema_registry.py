@@ -442,13 +442,15 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         avro_group_name = "avro_group"
         avro_schema_version = "1"
         avro_content_type = "application/json; serialization=Avro"
-        transport = MockTransport(response=MockResponse(
-            schema_id=avro_schema_id,
-            schema_name=avro_schema_name,
-            schema_group_name=avro_group_name,
-            schema_version=avro_schema_version,
-            content_type=avro_content_type,
-        ))
+        transport = MockTransport(
+            response=MockResponse(
+                schema_id=avro_schema_id,
+                schema_name=avro_schema_name,
+                schema_group_name=avro_group_name,
+                schema_version=avro_schema_version,
+                content_type=avro_content_type,
+            )
+        )
         mock_fqn = f"schemaregistry_fqn"
         credential = self.get_credential(SchemaRegistryClient)
         mock_client = SchemaRegistryClient(

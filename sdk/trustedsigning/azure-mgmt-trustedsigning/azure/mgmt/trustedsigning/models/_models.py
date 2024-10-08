@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -14,7 +13,6 @@ from .. import _model_base
 from .._model_base import rest_field
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -47,11 +45,41 @@ class AccountSku(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class AccountSkuPatch(_model_base.Model):
+    """SKU of the trusted signing account.
+
+    :ivar name: Name of the SKU. Known values are: "Basic" and "Premium".
+    :vartype name: str or ~azure.mgmt.trustedsigning.models.SkuName
+    """
+
+    name: Optional[Union[str, "_models.SkuName"]] = rest_field()
+    """Name of the SKU. Known values are: \"Basic\" and \"Premium\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[Union[str, "_models.SkuName"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class Certificate(_model_base.Model):
     """Properties of the certificate.
 
     :ivar serial_number: Serial number of the certificate.
     :vartype serial_number: str
+    :ivar enhanced_key_usage: Enhanced key usage of the certificate.
+    :vartype enhanced_key_usage: str
     :ivar subject_name: Subject name of the certificate.
     :vartype subject_name: str
     :ivar thumbprint: Thumbprint of the certificate.
@@ -68,6 +96,8 @@ class Certificate(_model_base.Model):
 
     serial_number: Optional[str] = rest_field(name="serialNumber")
     """Serial number of the certificate."""
+    enhanced_key_usage: Optional[str] = rest_field(name="enhancedKeyUsage")
+    """Enhanced key usage of the certificate."""
     subject_name: Optional[str] = rest_field(name="subjectName")
     """Subject name of the certificate."""
     thumbprint: Optional[str] = rest_field()
@@ -88,6 +118,7 @@ class Certificate(_model_base.Model):
         self,
         *,
         serial_number: Optional[str] = None,
+        enhanced_key_usage: Optional[str] = None,
         subject_name: Optional[str] = None,
         thumbprint: Optional[str] = None,
         created_date: Optional[str] = None,
@@ -216,7 +247,7 @@ class CertificateProfile(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class CertificateProfileProperties(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+class CertificateProfileProperties(_model_base.Model):
     """Properties of the certificate profile.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -225,38 +256,21 @@ class CertificateProfileProperties(_model_base.Model):  # pylint: disable=too-ma
     :ivar profile_type: Profile type of the certificate. Required. Known values are: "PublicTrust",
      "PrivateTrust", "PrivateTrustCIPolicy", "VBSEnclave", and "PublicTrustTest".
     :vartype profile_type: str or ~azure.mgmt.trustedsigning.models.ProfileType
-    :ivar common_name: Used as CN in the certificate subject name.
-    :vartype common_name: str
-    :ivar organization: Used as O in the certificate subject name.
-    :vartype organization: str
-    :ivar organization_unit: Used as OU in the private trust certificate subject name.
-    :vartype organization_unit: str
-    :ivar street_address: Used as STREET in the certificate subject name.
-    :vartype street_address: str
     :ivar include_street_address: Whether to include STREET in the certificate subject name.
     :vartype include_street_address: bool
-    :ivar city: Used as L in the certificate subject name.
-    :vartype city: str
     :ivar include_city: Whether to include L in the certificate subject name. Applicable only for
      private trust, private trust ci profile types.
     :vartype include_city: bool
-    :ivar state: Used as S in the certificate subject name.
-    :vartype state: str
     :ivar include_state: Whether to include S in the certificate subject name. Applicable only for
      private trust, private trust ci profile types.
     :vartype include_state: bool
-    :ivar country: Used as C in the certificate subject name.
-    :vartype country: str
     :ivar include_country: Whether to include C in the certificate subject name. Applicable only
      for private trust, private trust ci profile types.
     :vartype include_country: bool
-    :ivar postal_code: Used as PC in the certificate subject name.
-    :vartype postal_code: str
     :ivar include_postal_code: Whether to include PC in the certificate subject name.
     :vartype include_postal_code: bool
-    :ivar enhanced_key_usage: Enhanced key usage of the certificate.
-    :vartype enhanced_key_usage: str
     :ivar identity_validation_id: Identity validation id used for the certificate subject name.
+     Required.
     :vartype identity_validation_id: str
     :ivar provisioning_state: Status of the current operation on certificate profile. Known values
      are: "Succeeded", "Failed", "Canceled", "Updating", "Deleting", and "Accepted".
@@ -271,39 +285,21 @@ class CertificateProfileProperties(_model_base.Model):  # pylint: disable=too-ma
     profile_type: Union[str, "_models.ProfileType"] = rest_field(name="profileType")
     """Profile type of the certificate. Required. Known values are: \"PublicTrust\", \"PrivateTrust\",
      \"PrivateTrustCIPolicy\", \"VBSEnclave\", and \"PublicTrustTest\"."""
-    common_name: Optional[str] = rest_field(name="commonName", visibility=["read"])
-    """Used as CN in the certificate subject name."""
-    organization: Optional[str] = rest_field(visibility=["read"])
-    """Used as O in the certificate subject name."""
-    organization_unit: Optional[str] = rest_field(name="organizationUnit", visibility=["read"])
-    """Used as OU in the private trust certificate subject name."""
-    street_address: Optional[str] = rest_field(name="streetAddress", visibility=["read"])
-    """Used as STREET in the certificate subject name."""
     include_street_address: Optional[bool] = rest_field(name="includeStreetAddress")
     """Whether to include STREET in the certificate subject name."""
-    city: Optional[str] = rest_field(visibility=["read"])
-    """Used as L in the certificate subject name."""
     include_city: Optional[bool] = rest_field(name="includeCity")
     """Whether to include L in the certificate subject name. Applicable only for private trust,
      private trust ci profile types."""
-    state: Optional[str] = rest_field(visibility=["read"])
-    """Used as S in the certificate subject name."""
     include_state: Optional[bool] = rest_field(name="includeState")
     """Whether to include S in the certificate subject name. Applicable only for private trust,
      private trust ci profile types."""
-    country: Optional[str] = rest_field(visibility=["read"])
-    """Used as C in the certificate subject name."""
     include_country: Optional[bool] = rest_field(name="includeCountry")
     """Whether to include C in the certificate subject name. Applicable only for private trust,
      private trust ci profile types."""
-    postal_code: Optional[str] = rest_field(name="postalCode", visibility=["read"])
-    """Used as PC in the certificate subject name."""
     include_postal_code: Optional[bool] = rest_field(name="includePostalCode")
     """Whether to include PC in the certificate subject name."""
-    enhanced_key_usage: Optional[str] = rest_field(name="enhancedKeyUsage", visibility=["read"])
-    """Enhanced key usage of the certificate."""
-    identity_validation_id: Optional[str] = rest_field(name="identityValidationId")
-    """Identity validation id used for the certificate subject name."""
+    identity_validation_id: str = rest_field(name="identityValidationId")
+    """Identity validation id used for the certificate subject name. Required."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -322,12 +318,12 @@ class CertificateProfileProperties(_model_base.Model):  # pylint: disable=too-ma
         self,
         *,
         profile_type: Union[str, "_models.ProfileType"],
+        identity_validation_id: str,
         include_street_address: Optional[bool] = None,
         include_city: Optional[bool] = None,
         include_state: Optional[bool] = None,
         include_country: Optional[bool] = None,
         include_postal_code: Optional[bool] = None,
-        identity_validation_id: Optional[str] = None,
     ): ...
 
     @overload
@@ -570,17 +566,17 @@ class CodeSigningAccountPatchProperties(_model_base.Model):
     """Properties of the trusted signing account.
 
     :ivar sku: SKU of the trusted signing account.
-    :vartype sku: ~azure.mgmt.trustedsigning.models.AccountSku
+    :vartype sku: ~azure.mgmt.trustedsigning.models.AccountSkuPatch
     """
 
-    sku: Optional["_models.AccountSku"] = rest_field()
+    sku: Optional["_models.AccountSkuPatch"] = rest_field()
     """SKU of the trusted signing account."""
 
     @overload
     def __init__(
         self,
         *,
-        sku: Optional["_models.AccountSku"] = None,
+        sku: Optional["_models.AccountSkuPatch"] = None,
     ): ...
 
     @overload

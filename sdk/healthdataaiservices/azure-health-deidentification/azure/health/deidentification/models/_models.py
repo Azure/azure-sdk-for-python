@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,11 +9,12 @@
 import datetime
 from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
+from azure.core.exceptions import ODataV4Format
+
 from .. import _model_base
 from .._model_base import rest_field
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -70,7 +70,6 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of a job. Required.
     :vartype name: str
@@ -89,7 +88,7 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
      "Succeeded", "PartialFailed", "Failed", and "Canceled".
     :vartype status: str or ~azure.health.deidentification.models.JobStatus
     :ivar error: Error when job fails in it's entirety.
-    :vartype error: ~azure.health.deidentification.models.Error
+    :vartype error: ~azure.core.ODataV4Format
     :ivar last_updated_at: Date and time when the job was completed.
 
      If the job is canceled, this is the time when the job was canceled.
@@ -120,7 +119,7 @@ class DeidentificationJob(_model_base.Model):  # pylint: disable=too-many-instan
     status: Union[str, "_models.JobStatus"] = rest_field(visibility=["read"])
     """Current status of a job. Required. Known values are: \"NotStarted\", \"Running\",
      \"Succeeded\", \"PartialFailed\", \"Failed\", and \"Canceled\"."""
-    error: Optional["_models.Error"] = rest_field(visibility=["read"])
+    error: Optional[ODataV4Format] = rest_field(visibility=["read"])
     """Error when job fails in it's entirety."""
     last_updated_at: datetime.datetime = rest_field(name="lastUpdatedAt", visibility=["read"], format="rfc3339")
     """Date and time when the job was completed.
@@ -206,7 +205,7 @@ class DocumentDetails(_model_base.Model):
      "Succeeded", "Failed", and "Canceled".
     :vartype status: str or ~azure.health.deidentification.models.OperationState
     :ivar error: Error when document fails.
-    :vartype error: ~azure.health.deidentification.models.Error
+    :vartype error: ~azure.core.ODataV4Format
     """
 
     id: str = rest_field(visibility=["read"])
@@ -218,7 +217,7 @@ class DocumentDetails(_model_base.Model):
     status: Union[str, "_models.OperationState"] = rest_field()
     """Status of the document. Required. Known values are: \"NotStarted\", \"Running\", \"Succeeded\",
      \"Failed\", and \"Canceled\"."""
-    error: Optional["_models.Error"] = rest_field()
+    error: Optional[ODataV4Format] = rest_field()
     """Error when document fails."""
 
     @overload
@@ -228,7 +227,7 @@ class DocumentDetails(_model_base.Model):
         input: "_models.DocumentLocation",
         status: Union[str, "_models.OperationState"],
         output: Optional["_models.DocumentLocation"] = None,
-        error: Optional["_models.Error"] = None,
+        error: Optional[ODataV4Format] = None,
     ): ...
 
     @overload
@@ -264,92 +263,6 @@ class DocumentLocation(_model_base.Model):
         self,
         *,
         path: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class Error(_model_base.Model):
-    """The error object.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar code: One of a server-defined set of error codes. Required.
-    :vartype code: str
-    :ivar message: A human-readable representation of the error. Required.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    :ivar details: An array of details about specific errors that led to this reported error.
-    :vartype details: list[~azure.health.deidentification.models.Error]
-    :ivar innererror: An object containing more specific information than the current object about
-     the error.
-    :vartype innererror: ~azure.health.deidentification.models.InnerError
-    """
-
-    code: str = rest_field()
-    """One of a server-defined set of error codes. Required."""
-    message: str = rest_field()
-    """A human-readable representation of the error. Required."""
-    target: Optional[str] = rest_field()
-    """The target of the error."""
-    details: Optional[List["_models.Error"]] = rest_field()
-    """An array of details about specific errors that led to this reported error."""
-    innererror: Optional["_models.InnerError"] = rest_field()
-    """An object containing more specific information than the current object about the error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        target: Optional[str] = None,
-        details: Optional[List["_models.Error"]] = None,
-        innererror: Optional["_models.InnerError"] = None,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class InnerError(_model_base.Model):
-    """An object containing more specific information about the error. As per Microsoft One API
-    guidelines -
-    https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
-
-    :ivar code: One of a server-defined set of error codes.
-    :vartype code: str
-    :ivar innererror: Inner error.
-    :vartype innererror: ~azure.health.deidentification.models.InnerError
-    """
-
-    code: Optional[str] = rest_field()
-    """One of a server-defined set of error codes."""
-    innererror: Optional["_models.InnerError"] = rest_field()
-    """Inner error."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        innererror: Optional["_models.InnerError"] = None,
     ): ...
 
     @overload
@@ -511,7 +424,6 @@ class PhiTaggerResult(_model_base.Model):
 class SourceStorageLocation(_model_base.Model):
     """Storage location.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar location: URL to storage location. Required.
     :vartype location: str
@@ -598,7 +510,6 @@ class StringIndex(_model_base.Model):
 class TargetStorageLocation(_model_base.Model):
     """Storage location.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar location: URL to storage location. Required.
     :vartype location: str

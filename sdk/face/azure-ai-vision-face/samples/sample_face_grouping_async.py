@@ -37,12 +37,8 @@ from shared.helpers import beautify_json, get_logger
 class GroupFaces:
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT
-        )
-        self.key = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY
-        )
+        self.endpoint = os.getenv(CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT)
+        self.key = os.getenv(CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY)
         self.logger = get_logger("sample_face_grouping_async")
 
     async def group(self):
@@ -50,9 +46,7 @@ class GroupFaces:
         from azure.ai.vision.face.aio import FaceClient
         from azure.ai.vision.face.models import FaceDetectionModel, FaceRecognitionModel
 
-        async with FaceClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
-        ) as face_client:
+        async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.IMAGE_NINE_FACES)
             detect_result = await face_client.detect(
                 helpers.read_file_content(sample_file_path),
@@ -62,9 +56,7 @@ class GroupFaces:
             )
 
             face_ids = [str(face.face_id) for face in detect_result]
-            self.logger.info(
-                f"Detect {len(face_ids)} faces from the file '{sample_file_path}': {face_ids}"
-            )
+            self.logger.info(f"Detect {len(face_ids)} faces from the file '{sample_file_path}': {face_ids}")
 
             group_result = await face_client.group(face_ids=face_ids)
             self.logger.info(f"Group result: {beautify_json(group_result.as_dict())}")

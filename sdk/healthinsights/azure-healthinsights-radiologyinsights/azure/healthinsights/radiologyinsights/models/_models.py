@@ -1,5 +1,5 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines, line-too-long
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,14 +10,13 @@
 import datetime
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ODataV4Format
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
 from ._enums import RadiologyInsightsInferenceType
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -115,7 +114,7 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
 
 class Element(_model_base.Model):
     """The base definition for all elements contained inside a resource.
-    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`__.
+    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -635,7 +634,7 @@ class DomainResource(Resource):
 
 class Extension(Element):  # pylint: disable=too-many-instance-attributes
     """Base for all elements
-    Based on `FHIR Element <https://www.hl7.org/fhir/datatypes.html#Element>`_.
+    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
 
 
     :ivar url: Source of the definition for the extension code - a logical name or a URL. Required.
@@ -812,7 +811,7 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
     :vartype was_acknowledged: bool
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
     """Inference type. Required. Followup Communication inference type"""
     communicated_at: Optional[List[datetime.datetime]] = rest_field(name="communicatedAt", format="rfc3339")
     """Communication date and time."""
@@ -879,7 +878,7 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
      ~azure.healthinsights.radiologyinsights.models.ProcedureRecommendation
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
     """Inference type. Required. Recommendation inference type"""
     effective_at: Optional[str] = rest_field(name="effectiveAt")
     """Date and time are displayed when the procedure is recommended to be done at a specific point in
@@ -1067,17 +1066,17 @@ class HealthInsightsErrorResponse(_model_base.Model):
 
 
     :ivar error: The error object. Required.
-    :vartype error: ~azure.core.HttpResponseError
+    :vartype error: ~azure.core.ODataV4Format
     """
 
-    error: HttpResponseError = rest_field()
+    error: ODataV4Format = rest_field()
     """The error object. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        error: HttpResponseError,
+        error: ODataV4Format,
     ): ...
 
     @overload
@@ -1257,7 +1256,7 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
      ~azure.healthinsights.radiologyinsights.models.LateralityDiscrepancyType
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
     """Inference type. Required. Laterality discrepancy inference type"""
     laterality_indication: Optional["_models.CodeableConcept"] = rest_field(name="lateralityIndication")
     """Laterality indication : SNOMED CT code for laterality qualifier value."""
@@ -2341,7 +2340,7 @@ class RadiologyInsightsJob(_model_base.Model):
     :ivar updated_at: The date and time when the processing job was last updated.
     :vartype updated_at: ~datetime.datetime
     :ivar error: Error object that describes the error when status is "Failed".
-    :vartype error: ~azure.core.HttpResponseError
+    :vartype error: ~azure.core.ODataV4Format
     """
 
     job_data: Optional["_models.RadiologyInsightsData"] = rest_field(name="jobData", visibility=["read", "create"])
@@ -2359,7 +2358,7 @@ class RadiologyInsightsJob(_model_base.Model):
     """The date and time when the processing job is set to expire."""
     updated_at: Optional[datetime.datetime] = rest_field(name="updatedAt", visibility=["read"], format="rfc3339")
     """The date and time when the processing job was last updated."""
-    error: Optional[HttpResponseError] = rest_field(visibility=["read"])
+    error: Optional[ODataV4Format] = rest_field(visibility=["read"])
     """Error object that describes the error when status is \"Failed\"."""
 
     @overload

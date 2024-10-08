@@ -7,6 +7,7 @@ import json
 
 from unittest import mock
 
+
 def mock_response(status_code=200, headers=None, json_payload=None):
     response = mock.Mock(status_code=status_code, headers=headers or {})
     if json_payload is not None:

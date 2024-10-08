@@ -20,11 +20,10 @@ from ._serialization import Deserializer, Serializer
 from .operations import Operations, ScheduledActionsOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class ComputeScheduleMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+class ComputeScheduleMgmtClient:
     """Microsoft.ComputeSchedule Resource Provider management API.
 
     :ivar operations: Operations operations

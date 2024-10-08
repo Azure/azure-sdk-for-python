@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -18,7 +19,7 @@ from ._configuration import TextTranslationClientConfiguration
 from ._operations import TextTranslationClientOperationsMixin
 
 
-class TextTranslationClient(TextTranslationClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class TextTranslationClient(TextTranslationClientOperationsMixin):
     """Text translation is a cloud-based REST API feature of the Translator service that uses neural
     machine translation technology to enable quick and accurate source-to-target text translation
     in real time across all supported languages.
@@ -109,7 +110,7 @@ class TextTranslationClient(TextTranslationClientOperationsMixin):  # pylint: di
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "TextTranslationClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

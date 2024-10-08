@@ -14,9 +14,7 @@ from ._models import AutoUserSpecification
 from ._models import AutomaticOsUpgradePolicy
 from ._models import AzureBlobFileSystemConfiguration
 from ._models import AzureFileShareConfiguration
-from ._models import BatchAccountListSupportedImagesResult
 from ._models import BatchApplication
-from ._models import BatchApplicationListResult
 from ._models import BatchApplicationPackageReference
 from ._models import BatchAutoPoolSpecification
 from ._models import BatchError
@@ -27,11 +25,9 @@ from ._models import BatchJobConstraints
 from ._models import BatchJobCreateContent
 from ._models import BatchJobDisableContent
 from ._models import BatchJobExecutionInfo
-from ._models import BatchJobListResult
 from ._models import BatchJobManagerTask
 from ._models import BatchJobNetworkConfiguration
 from ._models import BatchJobPreparationAndReleaseTaskStatus
-from ._models import BatchJobPreparationAndReleaseTaskStatusListResult
 from ._models import BatchJobPreparationTask
 from ._models import BatchJobPreparationTaskExecutionInfo
 from ._models import BatchJobReleaseTask
@@ -40,7 +36,6 @@ from ._models import BatchJobSchedule
 from ._models import BatchJobScheduleConfiguration
 from ._models import BatchJobScheduleCreateContent
 from ._models import BatchJobScheduleExecutionInfo
-from ._models import BatchJobScheduleListResult
 from ._models import BatchJobScheduleStatistics
 from ._models import BatchJobScheduleUpdateContent
 from ._models import BatchJobSchedulingError
@@ -51,22 +46,21 @@ from ._models import BatchJobUpdateContent
 from ._models import BatchNode
 from ._models import BatchNodeAgentInfo
 from ._models import BatchNodeCounts
+from ._models import BatchNodeDeallocateContent
 from ._models import BatchNodeDisableSchedulingContent
 from ._models import BatchNodeEndpointConfiguration
 from ._models import BatchNodeError
 from ._models import BatchNodeFile
-from ._models import BatchNodeFileListResult
 from ._models import BatchNodeIdentityReference
 from ._models import BatchNodeInfo
-from ._models import BatchNodeListResult
 from ._models import BatchNodePlacementConfiguration
 from ._models import BatchNodeRebootContent
+from ._models import BatchNodeReimageContent
 from ._models import BatchNodeRemoteLoginSettings
 from ._models import BatchNodeRemoveContent
 from ._models import BatchNodeUserCreateContent
 from ._models import BatchNodeUserUpdateContent
 from ._models import BatchNodeVMExtension
-from ._models import BatchNodeVMExtensionListResult
 from ._models import BatchPool
 from ._models import BatchPoolCreateContent
 from ._models import BatchPoolEnableAutoScaleContent
@@ -74,10 +68,7 @@ from ._models import BatchPoolEndpointConfiguration
 from ._models import BatchPoolEvaluateAutoScaleContent
 from ._models import BatchPoolIdentity
 from ._models import BatchPoolInfo
-from ._models import BatchPoolListResult
-from ._models import BatchPoolListUsageMetricsResult
 from ._models import BatchPoolNodeCounts
-from ._models import BatchPoolNodeCountsListResult
 from ._models import BatchPoolReplaceContent
 from ._models import BatchPoolResizeContent
 from ._models import BatchPoolResourceStatistics
@@ -105,13 +96,12 @@ from ._models import BatchTaskFailureInfo
 from ._models import BatchTaskGroup
 from ._models import BatchTaskIdRange
 from ._models import BatchTaskInfo
-from ._models import BatchTaskListResult
-from ._models import BatchTaskListSubtasksResult
 from ._models import BatchTaskSchedulingPolicy
 from ._models import BatchTaskSlotCounts
 from ._models import BatchTaskStatistics
 from ._models import CifsMountConfiguration
 from ._models import ContainerConfiguration
+from ._models import ContainerHostBatchBindMountEntry
 from ._models import ContainerRegistryReference
 from ._models import DataDisk
 from ._models import DiffDiskSettings
@@ -155,6 +145,7 @@ from ._models import UploadBatchServiceLogsResult
 from ._models import UserAccount
 from ._models import UserAssignedIdentity
 from ._models import UserIdentity
+from ._models import VMDiskSecurityProfile
 from ._models import VMExtension
 from ._models import VMExtensionInstanceView
 from ._models import VirtualMachineConfiguration
@@ -171,11 +162,13 @@ from ._enums import BatchJobReleaseTaskState
 from ._enums import BatchJobScheduleState
 from ._enums import BatchJobState
 from ._enums import BatchNodeCommunicationMode
+from ._enums import BatchNodeDeallocateOption
 from ._enums import BatchNodeDeallocationOption
 from ._enums import BatchNodeDisableSchedulingOption
 from ._enums import BatchNodeFillType
 from ._enums import BatchNodePlacementPolicyType
 from ._enums import BatchNodeRebootOption
+from ._enums import BatchNodeReimageOption
 from ._enums import BatchNodeState
 from ._enums import BatchPoolIdentityType
 from ._enums import BatchPoolLifetimeOption
@@ -186,6 +179,7 @@ from ._enums import BatchTaskAddStatus
 from ._enums import BatchTaskExecutionResult
 from ._enums import BatchTaskState
 from ._enums import CachingType
+from ._enums import ContainerHostDataPath
 from ._enums import ContainerType
 from ._enums import ContainerWorkingDirectory
 from ._enums import DependencyAction
@@ -205,6 +199,7 @@ from ._enums import OnAllBatchTasksComplete
 from ._enums import OnBatchTaskFailure
 from ._enums import OutputFileUploadCondition
 from ._enums import SchedulingState
+from ._enums import SecurityEncryptionTypes
 from ._enums import SecurityTypes
 from ._enums import StatusLevelTypes
 from ._enums import StorageAccountType
@@ -222,9 +217,7 @@ __all__ = [
     "AutomaticOsUpgradePolicy",
     "AzureBlobFileSystemConfiguration",
     "AzureFileShareConfiguration",
-    "BatchAccountListSupportedImagesResult",
     "BatchApplication",
-    "BatchApplicationListResult",
     "BatchApplicationPackageReference",
     "BatchAutoPoolSpecification",
     "BatchError",
@@ -235,11 +228,9 @@ __all__ = [
     "BatchJobCreateContent",
     "BatchJobDisableContent",
     "BatchJobExecutionInfo",
-    "BatchJobListResult",
     "BatchJobManagerTask",
     "BatchJobNetworkConfiguration",
     "BatchJobPreparationAndReleaseTaskStatus",
-    "BatchJobPreparationAndReleaseTaskStatusListResult",
     "BatchJobPreparationTask",
     "BatchJobPreparationTaskExecutionInfo",
     "BatchJobReleaseTask",
@@ -248,7 +239,6 @@ __all__ = [
     "BatchJobScheduleConfiguration",
     "BatchJobScheduleCreateContent",
     "BatchJobScheduleExecutionInfo",
-    "BatchJobScheduleListResult",
     "BatchJobScheduleStatistics",
     "BatchJobScheduleUpdateContent",
     "BatchJobSchedulingError",
@@ -259,22 +249,21 @@ __all__ = [
     "BatchNode",
     "BatchNodeAgentInfo",
     "BatchNodeCounts",
+    "BatchNodeDeallocateContent",
     "BatchNodeDisableSchedulingContent",
     "BatchNodeEndpointConfiguration",
     "BatchNodeError",
     "BatchNodeFile",
-    "BatchNodeFileListResult",
     "BatchNodeIdentityReference",
     "BatchNodeInfo",
-    "BatchNodeListResult",
     "BatchNodePlacementConfiguration",
     "BatchNodeRebootContent",
+    "BatchNodeReimageContent",
     "BatchNodeRemoteLoginSettings",
     "BatchNodeRemoveContent",
     "BatchNodeUserCreateContent",
     "BatchNodeUserUpdateContent",
     "BatchNodeVMExtension",
-    "BatchNodeVMExtensionListResult",
     "BatchPool",
     "BatchPoolCreateContent",
     "BatchPoolEnableAutoScaleContent",
@@ -282,10 +271,7 @@ __all__ = [
     "BatchPoolEvaluateAutoScaleContent",
     "BatchPoolIdentity",
     "BatchPoolInfo",
-    "BatchPoolListResult",
-    "BatchPoolListUsageMetricsResult",
     "BatchPoolNodeCounts",
-    "BatchPoolNodeCountsListResult",
     "BatchPoolReplaceContent",
     "BatchPoolResizeContent",
     "BatchPoolResourceStatistics",
@@ -313,13 +299,12 @@ __all__ = [
     "BatchTaskGroup",
     "BatchTaskIdRange",
     "BatchTaskInfo",
-    "BatchTaskListResult",
-    "BatchTaskListSubtasksResult",
     "BatchTaskSchedulingPolicy",
     "BatchTaskSlotCounts",
     "BatchTaskStatistics",
     "CifsMountConfiguration",
     "ContainerConfiguration",
+    "ContainerHostBatchBindMountEntry",
     "ContainerRegistryReference",
     "DataDisk",
     "DiffDiskSettings",
@@ -363,6 +348,7 @@ __all__ = [
     "UserAccount",
     "UserAssignedIdentity",
     "UserIdentity",
+    "VMDiskSecurityProfile",
     "VMExtension",
     "VMExtensionInstanceView",
     "VirtualMachineConfiguration",
@@ -378,11 +364,13 @@ __all__ = [
     "BatchJobScheduleState",
     "BatchJobState",
     "BatchNodeCommunicationMode",
+    "BatchNodeDeallocateOption",
     "BatchNodeDeallocationOption",
     "BatchNodeDisableSchedulingOption",
     "BatchNodeFillType",
     "BatchNodePlacementPolicyType",
     "BatchNodeRebootOption",
+    "BatchNodeReimageOption",
     "BatchNodeState",
     "BatchPoolIdentityType",
     "BatchPoolLifetimeOption",
@@ -393,6 +381,7 @@ __all__ = [
     "BatchTaskExecutionResult",
     "BatchTaskState",
     "CachingType",
+    "ContainerHostDataPath",
     "ContainerType",
     "ContainerWorkingDirectory",
     "DependencyAction",
@@ -412,6 +401,7 @@ __all__ = [
     "OnBatchTaskFailure",
     "OutputFileUploadCondition",
     "SchedulingState",
+    "SecurityEncryptionTypes",
     "SecurityTypes",
     "StatusLevelTypes",
     "StorageAccountType",

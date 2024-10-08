@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -636,7 +637,7 @@ class Model(_MyMutableMapping):
         return mapped_cls._deserialize(data, exist_discriminators)
 
     def as_dict(self, *, exclude_readonly: bool = False) -> typing.Dict[str, typing.Any]:
-        """Return a dict that can be JSONify using json.dump.
+        """Return a dict that can be turned into json using json.dump.
 
         :keyword bool exclude_readonly: Whether to remove the readonly properties.
         :returns: A dict JSON compatible object
@@ -733,7 +734,7 @@ def _sorted_annotations(types: typing.List[typing.Any]) -> typing.List[typing.An
     )
 
 
-def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911, R0915, R0912
+def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-return-statements, too-many-branches
     annotation: typing.Any,
     module: typing.Optional[str],
     rf: typing.Optional["_RestField"] = None,

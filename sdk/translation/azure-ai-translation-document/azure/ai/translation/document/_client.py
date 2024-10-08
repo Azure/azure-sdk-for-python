@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING, Union
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -19,13 +20,10 @@ from ._operations import DocumentTranslationClientOperationsMixin, SingleDocumen
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class DocumentTranslationClient(
-    DocumentTranslationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class DocumentTranslationClient(DocumentTranslationClientOperationsMixin):
     """DocumentTranslationClient.
 
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
@@ -97,7 +95,7 @@ class DocumentTranslationClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "DocumentTranslationClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
@@ -105,9 +103,7 @@ class DocumentTranslationClient(
         self._client.__exit__(*exc_details)
 
 
-class SingleDocumentTranslationClient(
-    SingleDocumentTranslationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class SingleDocumentTranslationClient(SingleDocumentTranslationClientOperationsMixin):
     """SingleDocumentTranslationClient.
 
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
@@ -177,7 +173,7 @@ class SingleDocumentTranslationClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "SingleDocumentTranslationClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

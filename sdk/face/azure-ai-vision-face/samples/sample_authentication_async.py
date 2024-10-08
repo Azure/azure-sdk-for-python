@@ -45,12 +45,8 @@ from shared.helpers import beautify_json, get_logger
 class FaceAuthentication:
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT
-        )
-        self.key = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY
-        )
+        self.endpoint = os.getenv(CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT)
+        self.key = os.getenv(CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY)
         self.logger = get_logger("sample_authentication_async")
 
     async def authentication_by_api_key(self):
@@ -59,9 +55,7 @@ class FaceAuthentication:
         from azure.ai.vision.face.models import FaceDetectionModel, FaceRecognitionModel
 
         self.logger.info("Instantiate a FaceClient using an api key")
-        async with FaceClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
-        ) as face_client:
+        async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             sample_file_path = helpers.get_image_path(TestImages.DEFAULT_IMAGE_FILE)
             result = await face_client.detect(
                 helpers.read_file_content(sample_file_path),

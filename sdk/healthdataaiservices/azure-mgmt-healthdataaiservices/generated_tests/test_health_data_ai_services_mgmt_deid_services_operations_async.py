@@ -21,7 +21,7 @@ class TestHealthDataAIServicesMgmtDeidServicesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_deid_services_get(self, resource_group):
         response = await self.client.deid_services.get(
             resource_group_name=resource_group.name,
             deid_service_name="str",
@@ -32,7 +32,7 @@ class TestHealthDataAIServicesMgmtDeidServicesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_deid_services_list_by_resource_group(self, resource_group):
         response = self.client.deid_services.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
@@ -42,7 +42,7 @@ class TestHealthDataAIServicesMgmtDeidServicesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_deid_services_list_by_subscription(self, resource_group):
         response = self.client.deid_services.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestHealthDataAIServicesMgmtDeidServicesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_deid_services_begin_create(self, resource_group):
         response = await (
             await self.client.deid_services.begin_create(
                 resource_group_name=resource_group.name,
@@ -114,7 +114,7 @@ class TestHealthDataAIServicesMgmtDeidServicesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_deid_services_begin_update(self, resource_group):
         response = await (
             await self.client.deid_services.begin_update(
                 resource_group_name=resource_group.name,
@@ -135,7 +135,7 @@ class TestHealthDataAIServicesMgmtDeidServicesOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_deid_services_begin_delete(self, resource_group):
         response = await (
             await self.client.deid_services.begin_delete(
                 resource_group_name=resource_group.name,

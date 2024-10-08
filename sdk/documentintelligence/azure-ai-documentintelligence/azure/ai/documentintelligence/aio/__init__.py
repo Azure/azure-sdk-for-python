@@ -6,18 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._patch import DocumentIntelligenceClient
-from ._patch import DocumentIntelligenceAdministrationClient
+from ._client import DocumentIntelligenceClient
+from ._client import DocumentIntelligenceAdministrationClient
 
-
-from ._patch import AsyncAnalyzeDocumentLROPoller
+try:
+    from ._patch import __all__ as _patch_all
+    from ._patch import *  # pylint: disable=unused-wildcard-import
+except ImportError:
+    _patch_all = []
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AsyncAnalyzeDocumentLROPoller",
     "DocumentIntelligenceClient",
     "DocumentIntelligenceAdministrationClient",
 ]
-
+__all__.extend([p for p in _patch_all if p not in __all__])
 
 _patch_sdk()

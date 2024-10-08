@@ -10,6 +10,7 @@ from typing import Callable, Any
 from devtools_testutils import is_live, is_live_and_not_recording, trim_kwargs_from_test_function
 from azure.communication.messages._shared.utils import parse_connection_str
 
+
 class MessagesPreparersAsync(object):
 
     @staticmethod
@@ -21,13 +22,15 @@ class MessagesPreparersAsync(object):
                 self.resource_name = endpoint.split(".")[0]
 
             else:
-                self.connection_string = "endpoint=https://sanitized.unitedstates.communication.azure.com/;accesskey=fake==="
+                self.connection_string = (
+                    "endpoint=https://sanitized.unitedstates.communication.azure.com/;accesskey=fake==="
+                )
                 self.resource_name = "sanitized"
 
             return await func(self, *args, **kwargs)
 
         return wrapper
-    
+
     @staticmethod
     def messages_test_decorator_for_token_async(func: Callable[[], object], **kwargs: Any):
         async def wrapper(self, *args, **kwargs):

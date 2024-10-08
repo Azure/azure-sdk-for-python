@@ -32,9 +32,7 @@ def _assert_liveness_with_verify_image_not_empty(
     verify_image: models.LivenessWithVerifyImage,
 ):
     _assert_face_rectangle_not_empty(verify_image.face_rectangle)
-    assert isinstance(
-        verify_image.quality_for_recognition, models.QualityForRecognition
-    )
+    assert isinstance(verify_image.quality_for_recognition, models.QualityForRecognition)
 
 
 def _assert_liveness_with_verify_outputs_not_empty(
@@ -45,9 +43,7 @@ def _assert_liveness_with_verify_outputs_not_empty(
     assert output.is_identical is not None
 
 
-def _assert_liveness_response_body_not_empty(
-    body: models.LivenessResponseBody, is_liveness_with_verify: bool = True
-):
+def _assert_liveness_response_body_not_empty(body: models.LivenessResponseBody, is_liveness_with_verify: bool = True):
     assert body.liveness_decision in models.FaceLivenessDecision
     _assert_liveness_outputs_target_not_empty(body.target)
     assert body.model_version_used in models.LivenessModel
@@ -67,9 +63,7 @@ def _assert_session_audit_entry_request_info_not_empty(
 def _assert_session_audit_entry_response_info_not_empty(
     response: models.AuditLivenessResponseInfo, is_liveness_with_verify: bool = True
 ):
-    _assert_liveness_response_body_not_empty(
-        response.body, is_liveness_with_verify=is_liveness_with_verify
-    )
+    _assert_liveness_response_body_not_empty(response.body, is_liveness_with_verify=is_liveness_with_verify)
     assert response.status_code > 0
     assert response.latency_in_milliseconds > 0
 

@@ -39,6 +39,7 @@ def _parse_operation_id(operation_location_header):
     regex = "[^:]+://[^/]+/documentintelligence/.+/([^?/]+)"
     return re.match(regex, operation_location_header).group(1)
 
+
 def _finished(status) -> bool:
     if hasattr(status, "value"):
         status = status.value
