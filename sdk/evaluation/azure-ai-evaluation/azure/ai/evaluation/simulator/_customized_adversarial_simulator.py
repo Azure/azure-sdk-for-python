@@ -390,12 +390,14 @@ class CustomAdversarialSimulator:
             api_call_retry_limit=api_call_retry_limit, api_call_retry_sleep_sec=api_call_retry_sleep_sec
         )
         extra_kwargs = {key: value for key, value in parameter.items() if isinstance(value, str)}
+        self.logger.info(f"Customizing this: template_key={template.template_name}, extra_kwargs={extra_kwargs}, ")
         start_time = time.time()
         first_turn, first_turn_full_response = await self.rai_client.customize_first_turn(
             template_key=template.template_name,
             personality=personality,
             application_scenario=application_scenario,
             other_template_kwargs=extra_kwargs,
+            logger=self.logger,
         )
         end_time = time.time()
         time_taken = end_time - start_time

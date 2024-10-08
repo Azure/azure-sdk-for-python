@@ -176,6 +176,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
         personality: str,
         application_scenario: str,
         other_template_kwargs: Any = {},
+        logger: Any = None,
     ) -> Any:
         token = self.token_manager.get_token()
         headers = {
@@ -199,7 +200,6 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             },
             "simulationType": "CustomPersona",
         }
-        print("Submitting request with payload: ", json_payload)
         session = self._create_async_client()
         async with session:
             response = await session.post(
@@ -232,9 +232,8 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             response = await exp_retry_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
                 result_url, headers=headers
             )
-            print("Retrying....", result_url)
+            logger.info(f"Retrying.... {result_url}")
         response.raise_for_status()
-        print("Response staus code: ", response.status_code)
         try:
             response_data = response.json()
             return response_data["choices"][0]["message"]["content"], response_data
