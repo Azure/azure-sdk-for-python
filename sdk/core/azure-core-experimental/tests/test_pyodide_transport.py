@@ -144,10 +144,7 @@ class TestPyodideTransportClass:
         assert not kwargs["files"]
 
     @pytest.mark.asyncio
-<<<<<<< HEAD
-=======
     @pytest.mark.skipif(sys.version_info >= (3, 13), reason="cgi is removed in Python 3.13")
->>>>>>> e1302bd7e9 (update)
     async def test_unsuccessful_send(self, mock_pyfetch, mock_pyodide_module, pipeline):
         """Test that the pipeline is failing correctly."""
         mock_pyfetch.reset_mock()
@@ -159,10 +156,7 @@ class TestPyodideTransportClass:
         # 3 retries plus the original request.
         assert mock_pyfetch.call_count == retry_total + 1
 
-<<<<<<< HEAD
-=======
     @pytest.mark.skipif(sys.version_info >= (3, 13), reason="cgi is removed in Python 3.13")
->>>>>>> e1302bd7e9 (update)
     def test_valid_import(self, transport):
         """Test that we can import Pyodide classes from `azure.core.pipeline.transport`
         Adding the transport fixture will mock the Pyodide modules in `sys.modules`.
