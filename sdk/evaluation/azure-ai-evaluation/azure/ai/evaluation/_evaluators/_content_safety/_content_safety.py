@@ -2,19 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from concurrent.futures import as_completed
+from typing import Callable, Dict, List, Union
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
-try:
-    from ._hate_unfairness import HateUnfairnessEvaluator
-    from ._self_harm import SelfHarmEvaluator
-    from ._sexual import SexualEvaluator
-    from ._violence import ViolenceEvaluator
-except ImportError:
-    from _hate_unfairness import HateUnfairnessEvaluator
-    from _self_harm import SelfHarmEvaluator
-    from _sexual import SexualEvaluator
-    from _violence import ViolenceEvaluator
+from ._hate_unfairness import HateUnfairnessEvaluator
+from ._self_harm import SelfHarmEvaluator
+from ._sexual import SexualEvaluator
+from ._violence import ViolenceEvaluator
 
 
 class ContentSafetyEvaluator:
@@ -68,7 +63,7 @@ class ContentSafetyEvaluator:
 
     def __init__(self, credential, azure_ai_project: dict, parallel: bool = True):
         self._parallel = parallel
-        self._evaluators = [
+        self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),
             SexualEvaluator(credential, azure_ai_project),
             SelfHarmEvaluator(credential, azure_ai_project),
@@ -86,9 +81,9 @@ class ContentSafetyEvaluator:
         :keyword parallel: Whether to evaluate in parallel.
         :paramtype parallel: bool
         :return: The scores for content-safety.
-        :rtype: dict
+        :rtype: Dict[str, Union[str, float]]
         """
-        results = {}
+        results: Dict[str, Union[str, float]] = {}
         if self._parallel:
             with ThreadPoolExecutor() as executor:
                 futures = {
