@@ -5,19 +5,8 @@ trigger: none
 extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      PreSteps:
-        - task: AzureCLI@2
-          displayName: Set OIDC variables
-          inputs:
-            azureSubscription: azure-sdk-tests-public
-            scriptType: pscore
-            scriptLocation: inlineScript
-            addSpnToEnvironment: true
-            inlineScript: |
-              Write-Host "##vso[task.setvariable variable=ARM_CLIENT_ID;issecret=true]$($env:servicePrincipalId)"
-              Write-Host "##vso[task.setvariable variable=ARM_TENANT_ID;issecret=true]$($env:tenantId)"
-              Write-Host "##vso[task.setvariable variable=ARM_OIDC_TOKEN;issecret=true]$($env:idToken)"
       ServiceDirectory: identity
+      PersistOidcToken: true
       EnvVars:
         AZURE_CLIENT_ID: $(IDENTITY_SP_CLIENT_ID)
         AZURE_CLIENT_SECRET: $(IDENTITY_SP_CLIENT_SECRET)
@@ -25,7 +14,6 @@ extends:
         PEM_CONTENT: $(python-identity-certificate)
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
-        ARM_OIDC_TOKEN: $(ARM_OIDC_TOKEN)
       CloudConfig:
         Public:
           SubscriptionConfigurations:

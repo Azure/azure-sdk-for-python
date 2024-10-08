@@ -11,21 +11,22 @@ param (
     [Parameter()]
     [string] $Location = '',
 
-    [Parameter()]
+    [Parameter(Mandatory = $true)]
     [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
     [string] $TestApplicationId,
 
-    [Parameter()]
-    [string] $TestApplicationSecret,
-
-    [Parameter()]
+    [Parameter(Mandatory = $true)]
     [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
     [string] $SubscriptionId,
+
+    [Parameter(Mandatory = $true)]
+    [ValidateNotNullOrEmpty()]
+    [string] $Environment,
 
     [Parameter()]
     [hashtable] $AdditionalParameters = @{},
 
-    [Parameter(ParameterSetName = 'Provisioner', Mandatory = $true)]
+    [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
     [string] $TenantId
 )
@@ -50,6 +51,7 @@ Start-Sleep -s 45
 
 $az_version = az version
 Write-Host "Azure CLI version: $az_version"
+az cloud set --name $Environment
 az login --service-principal -u $TestApplicationId --tenant $TenantId --allow-no-subscriptions --federated-token $env:ARM_OIDC_TOKEN
 az account set --subscription $SubscriptionId
 $versions = az aks get-versions -l westus -o json | ConvertFrom-Json
