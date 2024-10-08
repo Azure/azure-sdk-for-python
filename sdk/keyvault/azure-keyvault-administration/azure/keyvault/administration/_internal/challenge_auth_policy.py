@@ -16,10 +16,17 @@ protocol again.
 
 from copy import deepcopy
 import time
-from typing import Any, Optional
+from typing import Any, cast, Optional, Union
 from urllib.parse import urlparse
 
-from azure.core.credentials import AccessToken, TokenCredential
+from azure.core.credentials import (
+    AccessToken,
+    AccessTokenInfo,
+    TokenCredential,
+    TokenProvider,
+    TokenRequestOptions,
+    SupportsTokenInfo,
+)
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
@@ -76,14 +83,15 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
 
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenProvider
+    :param str scopes: Lets you specify the type of access needed.
     """
 
-    def __init__(self, credential: TokenCredential, *scopes: str, **kwargs: Any) -> None:
+    def __init__(self, credential: TokenProvider, *scopes: str, **kwargs: Any) -> None:
         # Pass `enable_cae` so `enable_cae=True` is always passed through self.authorize_request
         super(ChallengeAuthPolicy, self).__init__(credential, *scopes, enable_cae=True, **kwargs)
-        self._credential: TokenCredential = credential
-        self._token: Optional[AccessToken] = None
+        self._credential: TokenProvider = credential
+        self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
         self._request_copy: Optional[HttpRequest] = None
 
@@ -166,14 +174,10 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
             if self._need_new_token:
                 # azure-identity credentials require an AADv2 scope but the challenge may specify an AADv1 resource
                 scope = challenge.get_scope() or challenge.get_resource() + "/.default"
-                # Exclude tenant for AD FS authentication
-                if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
-                    self._token = self._credential.get_token(scope, enable_cae=True)
-                else:
-                    self._token = self._credential.get_token(scope, tenant_id=challenge.tenant_id, enable_cae=True)
+                self._request_kv_token(scope, challenge)
 
-            # ignore mypy's warning -- although self._token is Optional, get_token raises when it fails to get a token
-            request.http_request.headers["Authorization"] = f"Bearer {self._token.token}"  # type: ignore
+            bearer_token = cast(Union["AccessToken", "AccessTokenInfo"], self._token).token
+            request.http_request.headers["Authorization"] = f"Bearer {bearer_token}"
             return
 
         # else: discover authentication information by eliciting a challenge from Key Vault. Remove any request data,
@@ -238,4 +242,28 @@ class ChallengeAuthPolicy(BearerTokenCredentialPolicy):
 
     @property
     def _need_new_token(self) -> bool:
-        return not self._token or self._token.expires_on - time.time() < 300
+        now = time.time()
+        refresh_on = getattr(self._token, "refresh_on", None)
+        return not self._token or (refresh_on and refresh_on <= now) or self._token.expires_on - now < 300
+
+    def _request_kv_token(self, scope: str, challenge: HttpChallenge, **kwargs: Any) -> None:
+        """Implementation of BearerTokenCredentialPolicy's _request_token method, but specific to Key Vault.
+
+        :param str scope: The scope for which to request a token.
+        :param challenge: The challenge for the request being made.
+        """
+        # Exclude tenant for AD FS authentication
+        exclude_tenant = challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs")
+        # The SupportsTokenInfo protocol needs TokenRequestOptions for token requests instead of kwargs
+        if hasattr(self._credential, "get_token_info"):
+            options: TokenRequestOptions = {"enable_cae": True}
+            if challenge.tenant_id and not exclude_tenant:
+                options["tenant_id"] = challenge.tenant_id
+            self._token = cast(SupportsTokenInfo, self._credential).get_token_info(scope, options=options)
+        else:
+            if exclude_tenant:
+                self._token = self._credential.get_token(scope, enable_cae=True)
+            else:
+                self._token = cast(TokenCredential, self._credential).get_token(
+                    scope, tenant_id=challenge.tenant_id, enable_cae=True
+                )

@@ -7,16 +7,15 @@ Tests for the HTTP challenge authentication implementation. These tests aren't p
 the challenge cache is global to the process.
 """
 import asyncio
-import base64
+from itertools import product
 import os
 import time
 from unittest.mock import Mock, patch
 from uuid import uuid4
 
 import pytest
-from azure.core.credentials import AccessToken
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
+from azure.core.credentials import AccessToken, AccessTokenInfo
+from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
@@ -38,6 +37,7 @@ from test_challenge_auth import (
     KV_CHALLENGE_RESPONSE,
     KV_CHALLENGE_TENANT,
     RESOURCE,
+    TOKEN_TYPES,
 )
 
 only_default_version = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
@@ -95,7 +95,8 @@ async def test_enforces_tls():
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_scope():
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+async def test_scope(token_type):
     """The policy's token requests should always be for an AADv2 scope"""
 
     expected_content = b"a duck"
@@ -124,9 +125,12 @@ async def test_scope():
         async def get_token(*scopes, **_):
             assert len(scopes) == 1
             assert scopes[0] == expected_scope
-            return AccessToken(expected_token, 0)
+            return token_type(expected_token, 0)
 
-        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        if token_type == AccessToken:
+            credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        else:
+            credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
         pipeline = AsyncPipeline(
             policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send)
         )
@@ -134,7 +138,10 @@ async def test_scope():
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
 
-        assert credential.get_token.call_count == 1
+        if hasattr(credential, "get_token"):
+            assert credential.get_token.call_count == 1
+        else:
+            assert credential.get_token_info.call_count == 1
 
     endpoint = "https://authority.net/tenant"
 
@@ -157,7 +164,8 @@ async def test_scope():
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_tenant():
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+async def test_tenant(token_type):
     """The policy's token requests should pass the parsed tenant ID from the challenge"""
 
     expected_content = b"a duck"
@@ -183,11 +191,15 @@ async def test_tenant():
                 return Mock(status_code=200)
             raise ValueError("unexpected request")
 
-        async def get_token(*_, **kwargs):
-            assert kwargs.get("tenant_id") == expected_tenant
-            return AccessToken(expected_token, 0)
+        async def get_token(*_, options=None, **kwargs):
+            options_bag = options if options else kwargs
+            assert options_bag.get("tenant_id") == expected_tenant
+            return token_type(expected_token, 0)
 
-        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        if token_type == AccessToken:
+            credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        else:
+            credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
         pipeline = AsyncPipeline(
             policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send)
         )
@@ -195,7 +207,10 @@ async def test_tenant():
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
 
-        assert credential.get_token.call_count == 1
+        if hasattr(credential, "get_token"):
+            assert credential.get_token.call_count == 1
+        else:
+            assert credential.get_token_info.call_count == 1
 
     tenant = "tenant-id"
     endpoint = f"https://authority.net/{tenant}"
@@ -211,7 +226,8 @@ async def test_tenant():
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_adfs():
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+async def test_adfs(token_type):
     """The policy should handle AD FS challenges as a special case and omit the tenant ID from token requests"""
 
     expected_content = b"a duck"
@@ -240,15 +256,21 @@ async def test_adfs():
         async def get_token(*_, **kwargs):
             # we shouldn't provide a tenant ID during AD FS authentication
             assert "tenant_id" not in kwargs
-            return AccessToken(expected_token, 0)
+            return token_type(expected_token, 0)
 
-        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        if token_type == AccessToken:
+            credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        else:
+            credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
         policy = AsyncChallengeAuthPolicy(credential=credential)
         pipeline = AsyncPipeline(policies=[policy], transport=Mock(send=send))
         request = HttpRequest("POST", get_random_url())
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
-        assert credential.get_token.call_count == 1
+        if hasattr(credential, "get_token"):
+            assert credential.get_token.call_count == 1
+        else:
+            assert credential.get_token_info.call_count == 1
 
         # Regression test: https://github.com/Azure/azure-sdk-for-python/issues/33621
         policy._token = None
@@ -269,7 +291,8 @@ async def test_adfs():
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_policy_updates_cache():
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+async def test_policy_updates_cache(token_type):
     """
     It's possible for the challenge returned for a request to change, e.g. when a vault is moved to a new tenant.
     When the policy receives a 401, it should update the cached challenge for the requested URL, if one exists.
@@ -308,29 +331,39 @@ async def test_policy_updates_cache():
         ),
     )
 
-    token = AccessToken(first_token, time.time() + 3600)
+    token = token_type(first_token, time.time() + 3600)
 
     async def get_token(*_, **__):
         return token
 
-    credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    if token_type == AccessToken:
+        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    else:
+        credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
     pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=transport)
 
     # policy should complete and cache the first challenge and access token
     for _ in range(2):
         await pipeline.run(HttpRequest("GET", url))
-        assert credential.get_token.call_count == 1
+        if hasattr(credential, "get_token"):
+            assert credential.get_token.call_count == 1
+        else:
+            assert credential.get_token_info.call_count == 1
 
     # The next request will receive a new challenge. The policy should handle it and update caches.
-    token = AccessToken(second_token, time.time() + 3600)
+    token = token_type(second_token, time.time() + 3600)
     for _ in range(2):
         await pipeline.run(HttpRequest("GET", url))
-        assert credential.get_token.call_count == 2
+        if hasattr(credential, "get_token"):
+            assert credential.get_token.call_count == 2
+        else:
+            assert credential.get_token_info.call_count == 2
 
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_token_expiration():
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+async def test_token_expiration(token_type):
     """policy should not use a cached token which has expired"""
 
     url = get_random_url()
@@ -340,12 +373,15 @@ async def test_token_expiration():
     second_token = "**"
     resource = "https://vault.azure.net"
 
-    token = AccessToken(first_token, expires_on)
+    token = token_type(first_token, expires_on)
 
     async def get_token(*_, **__):
         return token
 
-    credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    if token_type == AccessToken:
+        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    else:
+        credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
     transport = async_validating_transport(
         requests=[
             Request(),
@@ -364,17 +400,24 @@ async def test_token_expiration():
 
     for _ in range(2):
         await pipeline.run(HttpRequest("GET", url))
-        assert credential.get_token.call_count == 1
+        if hasattr(credential, "get_token"):
+            assert credential.get_token.call_count == 1
+        else:
+            assert credential.get_token_info.call_count == 1
 
-    token = AccessToken(second_token, time.time() + 3600)
+    token = token_type(second_token, time.time() + 3600)
     with patch("time.time", lambda: expires_on):
         await pipeline.run(HttpRequest("GET", url))
-    assert credential.get_token.call_count == 2
+    if hasattr(credential, "get_token"):
+        assert credential.get_token.call_count == 2
+    else:
+        assert credential.get_token_info.call_count == 2
 
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_preserves_options_and_headers():
+@pytest.mark.parametrize("token_type", TOKEN_TYPES)
+async def test_preserves_options_and_headers(token_type):
     """After a challenge, the policy should send the original request with its options and headers preserved"""
 
     url = get_random_url()
@@ -382,9 +425,12 @@ async def test_preserves_options_and_headers():
     resource = "https://vault.azure.net"
 
     async def get_token(*_, **__):
-        return AccessToken(token, 0)
+        return token_type(token, 0)
 
-    credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    if token_type == AccessToken:
+        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    else:
+        credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
 
     transport = async_validating_transport(
         requests=[Request()] * 2 + [Request(required_headers={"Authorization": "Bearer " + token})],
@@ -426,8 +472,8 @@ async def test_preserves_options_and_headers():
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-@pytest.mark.parametrize("verify_challenge_resource", [True, False])
-async def test_verify_challenge_resource_matches(verify_challenge_resource):
+@pytest.mark.parametrize("verify_challenge_resource,token_type", product([True, False], TOKEN_TYPES))
+async def test_verify_challenge_resource_matches(verify_challenge_resource, token_type):
     """The auth policy should raise if the challenge resource doesn't match the request URL unless check is disabled"""
 
     url = get_random_url()
@@ -436,9 +482,12 @@ async def test_verify_challenge_resource_matches(verify_challenge_resource):
     resource = "https://myvault.azure.net"  # Doesn't match a "".vault.azure.net" resource because of the "my" prefix
 
     async def get_token(*_, **__):
-        return AccessToken(token, 0)
+        return token_type(token, 0)
 
-    credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    if token_type == AccessToken:
+        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    else:
+        credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
 
     transport = async_validating_transport(
         requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
@@ -479,8 +528,8 @@ async def test_verify_challenge_resource_matches(verify_challenge_resource):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("verify_challenge_resource", [True, False])
-async def test_verify_challenge_resource_valid(verify_challenge_resource):
+@pytest.mark.parametrize("verify_challenge_resource,token_type", product([True, False], TOKEN_TYPES))
+async def test_verify_challenge_resource_valid(verify_challenge_resource, token_type):
     """The auth policy should raise if the challenge resource isn't a valid URL unless check is disabled"""
 
     url = get_random_url()
@@ -488,9 +537,12 @@ async def test_verify_challenge_resource_valid(verify_challenge_resource):
     resource = "bad-resource"
 
     async def get_token(*_, **__):
-        return AccessToken(token, 0)
+        return token_type(token, 0)
 
-    credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    if token_type == AccessToken:
+        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+    else:
+        credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
 
     transport = async_validating_transport(
         requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
@@ -515,7 +567,8 @@ async def test_verify_challenge_resource_valid(verify_challenge_resource):
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_cae():
+@pytest.mark.parametrize("token_type", [AccessToken, AccessTokenInfo])
+async def test_cae(token_type):
     """The policy should handle claims in a challenge response after having successfully authenticated prior."""
 
     expected_content = b"a duck"
@@ -568,26 +621,30 @@ async def test_cae():
                 return KV_CHALLENGE_RESPONSE
             raise ValueError("unexpected request")
 
-        async def get_token(*scopes, **kwargs):
-            assert kwargs.get("enable_cae") == True
-            assert kwargs.get("tenant_id") == KV_CHALLENGE_TENANT
+        async def get_token(*scopes, options=None, **kwargs):
+            options_bag = options if options else kwargs
+            assert options_bag.get("enable_cae") == True
+            assert options_bag.get("tenant_id") == KV_CHALLENGE_TENANT
             assert scopes[0] == RESOURCE + "/.default"
             # Response to KV challenge
             if Requests.count == 1:
-                assert kwargs.get("claims") == None
+                assert options_bag.get("claims") == None
                 return AccessToken(first_token, time.time() + 3600)
             # Response to CAE challenge
             elif Requests.count == 3:
-                assert kwargs.get("claims") == expected_claim
+                assert options_bag.get("claims") == expected_claim
                 return AccessToken(expected_token, time.time() + 3600)
             # Response to second KV challenge
             elif Requests.count == 5:
-                assert kwargs.get("claims") == None
+                assert options_bag.get("claims") == None
                 return AccessToken(first_token, time.time() + 3600)
             elif Requests.count == 6:
                 raise ValueError("unexpected token request")
 
-        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        if token_type == AccessToken:
+            credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        else:
+            credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
         pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
         request = HttpRequest("POST", get_random_url())
         request.set_bytes_body(expected_content)
@@ -595,15 +652,19 @@ async def test_cae():
         await pipeline.run(request)  # Send the request again to trigger a CAE challenge
         await pipeline.run(request)  # Send the request once to trigger another regular auth challenge
 
-        # get_token is called for the CAE challenge and first two KV challenges, but not the final KV challenge
-        assert credential.get_token.call_count == 3
+        # token requests made for the CAE challenge and first two KV challenges, but not the final KV challenge
+        if hasattr(credential, "get_token"):
+            assert credential.get_token.call_count == 3
+        else:
+            assert credential.get_token_info.call_count == 3
 
     await test_with_challenge(CAE_CHALLENGE_RESPONSE, CAE_DECODED_CLAIM)
 
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_cae_consecutive_challenges():
+@pytest.mark.parametrize("token_type", [AccessToken, AccessTokenInfo])
+async def test_cae_consecutive_challenges(token_type):
     """The policy should correctly handle consecutive challenges in cases where the flow is valid or invalid."""
 
     expected_content = b"a duck"
@@ -638,34 +699,42 @@ async def test_cae_consecutive_challenges():
                 return claims_challenge
             raise ValueError("unexpected request")
 
-        async def get_token(*scopes, **kwargs):
-            assert kwargs.get("enable_cae") == True
-            assert kwargs.get("tenant_id") == KV_CHALLENGE_TENANT
+        async def get_token(*scopes, options=None, **kwargs):
+            options_bag = options if options else kwargs
+            assert options_bag.get("enable_cae") == True
+            assert options_bag.get("tenant_id") == KV_CHALLENGE_TENANT
             assert scopes[0] == RESOURCE + "/.default"
             # Response to KV challenge
             if Requests.count == 1:
-                assert kwargs.get("claims") == None
+                assert options_bag.get("claims") == None
                 return AccessToken(first_token, time.time() + 3600)
             # Response to first CAE challenge
             elif Requests.count == 2:
-                assert kwargs.get("claims") == expected_claim
+                assert options_bag.get("claims") == expected_claim
                 return AccessToken(expected_token, time.time() + 3600)
 
-        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        if token_type == AccessToken:
+            credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        else:
+            credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
         pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
         request = HttpRequest("POST", get_random_url())
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
 
-        # get_token is called for the KV challenge and first CAE challenge, but not the second CAE challenge
-        assert credential.get_token.call_count == 2
+        # token requests made for the KV challenge and first CAE challenge, but not the second CAE challenge
+        if hasattr(credential, "get_token"):
+            assert credential.get_token.call_count == 2
+        else:
+            assert credential.get_token_info.call_count == 2
 
     await test_with_challenge(CAE_CHALLENGE_RESPONSE, CAE_DECODED_CLAIM)
 
 
 @pytest.mark.asyncio
 @empty_challenge_cache
-async def test_cae_token_expiry():
+@pytest.mark.parametrize("token_type", [AccessToken, AccessTokenInfo])
+async def test_cae_token_expiry(token_type):
     """The policy should avoid sending claims more than once when a token expires."""
 
     expected_content = b"a duck"
@@ -706,31 +775,38 @@ async def test_cae_token_expiry():
                 return Mock(status_code=200)
             raise ValueError("unexpected request")
 
-        async def get_token(*scopes, **kwargs):
-            assert kwargs.get("enable_cae") == True
-            assert kwargs.get("tenant_id") == KV_CHALLENGE_TENANT
+        async def get_token(*scopes, options=None, **kwargs):
+            options_bag = options if options else kwargs
+            assert options_bag.get("enable_cae") == True
+            assert options_bag.get("tenant_id") == KV_CHALLENGE_TENANT
             assert scopes[0] == RESOURCE + "/.default"
             # Response to KV challenge
             if Requests.count == 1:
-                assert kwargs.get("claims") == None
+                assert options_bag.get("claims") == None
                 return AccessToken(first_token, time.time() + 3600)
             # Response to first CAE challenge
             elif Requests.count == 2:
-                assert kwargs.get("claims") == expected_claim
+                assert options_bag.get("claims") == expected_claim
                 return AccessToken(second_token, 0)  # Return a token that expires immediately to trigger a refresh
             # Token refresh before making the final request
             elif Requests.count == 3:
-                assert kwargs.get("claims") == None
+                assert options_bag.get("claims") == None
                 return AccessToken(third_token, time.time() + 3600)
 
-        credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        if token_type == AccessToken:
+            credential = Mock(spec_set=["get_token"], get_token=Mock(wraps=get_token))
+        else:
+            credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
         pipeline = AsyncPipeline(policies=[AsyncChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
         request = HttpRequest("POST", get_random_url())
         request.set_bytes_body(expected_content)
         await pipeline.run(request)
         await pipeline.run(request)  # Send the request again to trigger a token refresh upon expiry
 
-        # get_token is called for the KV and CAE challenges, as well as for the token refresh
-        assert credential.get_token.call_count == 3
+        # token requests made for the KV and CAE challenges, as well as for the token refresh
+        if hasattr(credential, "get_token"):
+            assert credential.get_token.call_count == 3
+        else:
+            assert credential.get_token_info.call_count == 3
 
     await test_with_challenge(CAE_CHALLENGE_RESPONSE, CAE_DECODED_CLAIM)
