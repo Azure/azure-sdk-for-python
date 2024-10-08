@@ -141,8 +141,8 @@ class TestStorageFile(StorageRecordedTestCase):
             properties = file_client.get_file_properties()
         assert properties.copy.status == 'success'
 
-    def assertFileEqual(self, file_client, expected_data):
-        actual_data = file_client.download_file().readall()
+    def assertFileEqual(self, file_client, expected_data, **kwargs):
+        actual_data = file_client.download_file(**kwargs).readall()
         assert actual_data == expected_data
 
     class NonSeekableFile(object):
@@ -3846,5 +3846,28 @@ class TestStorageFile(StorageRecordedTestCase):
 
         new_file.delete_file()
         file_client.delete_file()
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_download_file_decompress(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key,
+            max_range_size=4 * 1024)
+        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        decompressed_data = b"hello from gzip"
+        content_settings = ContentSettings(content_encoding='gzip')
+
+        # Act / Assert
+        file_client.upload_file(data=compressed_data, content_settings=content_settings)
+        self.assertFileEqual(file_client, decompressed_data, decompress=True)
+        self.assertFileEqual(file_client, compressed_data, decompress=False)
 
 # ------------------------------------------------------------------------------
