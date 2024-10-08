@@ -152,7 +152,7 @@ class ManagedIdentityAPITokenManager(APITokenManager):
             get_token_method = self.credential.get_token(self.token_scope.value)
             if inspect.isawaitable(get_token_method):
                 # If it's awaitable, await it
-                token_response = await get_token_method
+                token_response: AccessToken = await get_token_method
             else:
                 # Otherwise, call it synchronously
                 token_response = get_token_method
