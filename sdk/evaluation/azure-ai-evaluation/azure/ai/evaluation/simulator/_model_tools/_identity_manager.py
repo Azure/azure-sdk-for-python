@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=C0303
 
 import asyncio
 import inspect
@@ -123,7 +122,7 @@ class ManagedIdentityAPITokenManager(APITokenManager):
             self.logger.info("Refreshed Azure endpoint token.")
 
         return self.token
-    
+
     async def get_token_async(self) -> str:
         """Get the API token synchronously. If the token is not available or has expired, refresh it.
 
