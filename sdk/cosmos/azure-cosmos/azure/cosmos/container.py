@@ -848,7 +848,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
         **kwargs: Any
-    ) -> CosmosDict:
+    ) -> CosmosDict[str, Any]:
         """Create an item in the container.
 
         To update or replace an existing item, use the
@@ -876,7 +876,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             when also not specified there from client-level kwargs.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
-        :rtype: CosmosDict
+        :rtype: CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
