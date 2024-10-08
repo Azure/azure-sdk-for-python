@@ -61,6 +61,7 @@ class AzureResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The azure resource type."""
 
     KEY_VAULT = "KeyVault"
+    APP_CONFIG = "AppConfig"
 
 
 class ClientType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -177,6 +178,7 @@ class TargetServiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONFLUENT_BOOTSTRAP_SERVER = "ConfluentBootstrapServer"
     CONFLUENT_SCHEMA_REGISTRY = "ConfluentSchemaRegistry"
     SELF_HOSTED_SERVER = "SelfHostedServer"
+    FABRIC_PLATFORM = "FabricPlatform"
 
 
 class ValidationResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
