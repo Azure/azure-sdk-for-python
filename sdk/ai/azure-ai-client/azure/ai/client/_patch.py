@@ -16,6 +16,7 @@ from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperat
 from ._client import AzureAIClient as ClientGenerated
 from .operations._patch import InferenceOperations
 
+
 class AzureAIClient(ClientGenerated):
 
     def __init__(

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -203,6 +204,7 @@ class EndpointsOperations(EndpointsOperationsGenerated):
                 return EndpointProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from ..models._patch import SASTokenCredential
+
                 token_credential = SASTokenCredential(
                     sas_token=connection.properties.credentials.sas,
                     credential=self._config.credential,

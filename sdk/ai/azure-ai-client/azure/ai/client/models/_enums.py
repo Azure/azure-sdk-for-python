@@ -207,6 +207,16 @@ class FileState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     terminal state."""
 
 
+class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Frequency of the schedule - day, week, month, hour, minute."""
+
+    MONTH = "Month"
+    WEEK = "Week"
+    DAY = "Day"
+    HOUR = "Hour"
+    MINUTE = "Minute"
+
+
 class IncompleteRunDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason why the run is incomplete. This will point to which specific token limit was reached
     over the course of the run.
@@ -479,3 +489,15 @@ class VectorStoreStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """in_progress status indicates that this vector store is still processing files."""
     COMPLETED = "completed"
     """completed status indicates that this vector store is ready for use."""
+
+
+class WeekDays(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """WeekDay of the schedule - Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday."""
+
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"

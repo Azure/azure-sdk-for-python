@@ -70,3 +70,78 @@ class TestAzureAIEvaluationsOperationsAsync(AzureAIClientTestBaseAsync):
 
         # please add some check logic here by yourself
         # ...
+
+    @AzureAIPreparer()
+    @recorded_by_proxy_async
+    async def test_evaluations_create_schedule(self, azureai_endpoint):
+        client = self.create_async_client(endpoint=azureai_endpoint)
+        response = await client.evaluations.create_schedule(
+            body={
+                "data": "input_data",
+                "evaluators": {"str": {"id": "str", "dataMapping": {"str": "str"}, "initParams": {"str": {}}}},
+                "samplingStrategy": {"rate": 0.0},
+                "cronExpression": "str",
+                "description": "str",
+                "displayName": "str",
+                "id": "str",
+                "properties": {"str": "str"},
+                "recurrence": {
+                    "frequency": "str",
+                    "interval": 0,
+                    "schedule": {"hours": [0], "minutes": [0], "monthDays": [0], "weekDays": ["str"]},
+                },
+                "status": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                },
+                "tags": {"str": "str"},
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @AzureAIPreparer()
+    @recorded_by_proxy_async
+    async def test_evaluations_get_schedule(self, azureai_endpoint):
+        client = self.create_async_client(endpoint=azureai_endpoint)
+        response = await client.evaluations.get_schedule(
+            id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @AzureAIPreparer()
+    @recorded_by_proxy_async
+    async def test_evaluations_list_schedules(self, azureai_endpoint):
+        client = self.create_async_client(endpoint=azureai_endpoint)
+        response = client.evaluations.list_schedules()
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @AzureAIPreparer()
+    @recorded_by_proxy_async
+    async def test_evaluations_list_schedule_evaluations(self, azureai_endpoint):
+        client = self.create_async_client(endpoint=azureai_endpoint)
+        response = client.evaluations.list_schedule_evaluations(
+            id="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @AzureAIPreparer()
+    @recorded_by_proxy_async
+    async def test_evaluations_delete_schedule(self, azureai_endpoint):
+        client = self.create_async_client(endpoint=azureai_endpoint)
+        response = await client.evaluations.delete_schedule(
+            id="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

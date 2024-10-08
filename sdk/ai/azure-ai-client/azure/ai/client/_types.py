@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,7 +9,6 @@
 from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from . import models as _models
     from .. import models as _models
 AgentsApiResponseFormatOption = Union[

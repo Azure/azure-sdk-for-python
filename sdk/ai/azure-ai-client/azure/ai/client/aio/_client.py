@@ -19,11 +19,10 @@ from ._configuration import AzureAIClientConfiguration
 from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureAIClient:  # pylint: disable=client-accepts-api-version-keyword
+class AzureAIClient:
     """AzureAIClient.
 
     :ivar agents: AgentsOperations operations
