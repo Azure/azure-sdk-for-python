@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import asyncio
+import inspect
 import logging
 import os
 import time
@@ -10,7 +11,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Optional, Union
 
-from azure.core.credentials import TokenCredential
+from azure.core.credentials import TokenCredential, AccessToken
 from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 
 AZURE_TOKEN_REFRESH_INTERVAL = 600  # seconds
@@ -87,6 +88,14 @@ class APITokenManager(ABC):
         :rtype: str
         """
 
+    @abstractmethod
+    async def get_token_async(self) -> str:
+        """Async method to get the API token. Subclasses should implement this method.
+
+        :return: API token
+        :rtype: str
+        """
+
 
 class ManagedIdentityAPITokenManager(APITokenManager):
     """API Token Manager for Azure Managed Identity
@@ -123,6 +132,31 @@ class ManagedIdentityAPITokenManager(APITokenManager):
         ):
             self.last_refresh_time = time.time()
             self.token = self.credential.get_token(self.token_scope.value).token
+            self.logger.info("Refreshed Azure endpoint token.")
+
+        return self.token
+
+    async def get_token_async(self) -> str:
+        """Get the API token synchronously. If the token is not available or has expired, refresh it.
+
+        :return: API token
+        :rtype: str
+        """
+        if (
+            self.token is None
+            or self.last_refresh_time is None
+            or time.time() - self.last_refresh_time > AZURE_TOKEN_REFRESH_INTERVAL
+        ):
+            self.last_refresh_time = time.time()
+            get_token_method = self.credential.get_token(self.token_scope.value)
+            if inspect.isawaitable(get_token_method):
+                # If it's awaitable, await it
+                token_response: AccessToken = await get_token_method
+            else:
+                # Otherwise, call it synchronously
+                token_response = get_token_method
+
+            self.token = token_response.token
             self.logger.info("Refreshed Azure endpoint token.")
 
         return self.token
