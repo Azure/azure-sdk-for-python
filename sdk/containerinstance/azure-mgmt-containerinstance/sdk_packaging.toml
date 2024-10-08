@@ -2,6 +2,6 @@
 package_name = "azure-mgmt-containerinstance"
 package_pprint_name = "Container Instance"
 package_doc_id = "containerinstance"
-is_stable = true
+is_stable = false
 sample_link = ""
 title = "ContainerInstanceManagementClient"
