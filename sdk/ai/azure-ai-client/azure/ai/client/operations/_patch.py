@@ -6,10 +6,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import sys, io, logging, os, time
+import sys, io, logging, os, time, importlib, functools, copy, json
+from enum import Enum
 from io import IOBase
-from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING
+from typing import Callable, List, Iterable, Iterator, Union, IO, Any, Dict, Optional, overload, Tuple, TYPE_CHECKING
 from opentelemetry.trace import StatusCode, Span
+from urllib.parse import urlparse
 
 # pylint: disable = no-name-in-module
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore

@@ -155,6 +155,7 @@ class AzureAIClient(ClientGenerated):
         self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
         self.inference = InferenceOperations(self)
+        self.tracing = TracingOperations(self)
 
     @classmethod
     def from_connection_string(cls, connection: str, credential: "TokenCredential", **kwargs) -> "AzureAIClient":
