@@ -17,12 +17,14 @@ extends:
         - TestSamples=.*/true
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
-      Clouds: 'Public,Canary'
-      SupportedClouds: 'Public,Canary,UsGov'
+      #Clouds: 'Public,Canary'
+      #SupportedClouds: 'Public,Canary,UsGov'
+      Clouds: 'Public'
+      SupportedClouds: 'Public,UsGov'
       CloudConfig:
         Public:
-        Canary:
-          ServiceConnection: azure-sdk-tests-public
-          Location: 'eastus2euap'
+        #Canary:
+        #  ServiceConnection: azure-sdk-tests-public
+        #  Location: 'eastus2euap'
         UsGov:
           Location: 'usgovarizona'
