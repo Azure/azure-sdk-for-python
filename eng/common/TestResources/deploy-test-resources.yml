@@ -44,7 +44,7 @@ steps:
 
   - ${{ if parameters.PersistOidcToken }}:
     - task: AzureCLI@2
-      displayName: Set OIDC token
+      displayName: Set OIDC token value ${{ parameters.PersistOidcToken }}
       env:
         ARM_OIDC_TOKEN: $(ARM_OIDC_TOKEN)
       inputs:
