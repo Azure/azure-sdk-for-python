@@ -64,7 +64,7 @@ import time
 class SASLTransportMixin:
     def _negotiate(self):
             self._negotiating = True
-            self.write(SASL_HEADER_FRAME)
+            self.write(SASL_HEADER_FRAME) # todo this could be a sep func
             self.start_loop()
             _, returned_header = self.receive_frame()
             if returned_header[1] != SASL_HEADER_FRAME:

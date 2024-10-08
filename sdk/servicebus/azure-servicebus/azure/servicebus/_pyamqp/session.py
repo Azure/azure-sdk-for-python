@@ -10,6 +10,7 @@ import logging
 import time
 from typing import Union, Optional
 import threading
+from queue import Queue
 
 from .constants import ConnectionState, SessionState, SessionTransferState, Role
 from .sender import SenderLink
@@ -68,7 +69,10 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self._connection = connection
         self._output_handles = {}
         self._input_handles = {}
+        self._link_threads = {}
         self._lock = threading.Lock()
+        self._session_receiver_queue = Queue()
+        self._session_sender_queue = Queue()
 
     def __enter__(self):
         self.begin()
@@ -227,10 +231,11 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 )
             else:
                 new_link = SenderLink.from_incoming_frame(self, outgoing_handle, frame)
+            
             new_link._incoming_attach(frame)  # pylint: disable=protected-access
             self.links[frame[0]] = new_link
             self._output_handles[outgoing_handle] = new_link
-            self._input_handles[frame[1]] = new_link
+            f[frame[1]] = new_link
         except ValueError as e:
             # Reject Link
             _LOGGER.debug(
@@ -272,6 +277,8 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             self._input_handles[frame[4]]._incoming_flow(  # pylint: disable=protected-access
                 frame
             )
+            # Place frame onto receiver queue
+            self._session_receiver_queue.put(frame)
         else:
             for link in self._output_handles.values():
                 if (
@@ -372,7 +379,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 self.outgoing_window -= 1
                 # TODO: We should probably handle an error at the connection and update state accordingly
                 delivery.transfer_state = SessionTransferState.OKAY
-        print("OUTGOING TRANSFER CALLED")
 
     def _incoming_transfer(self, frame):
         # TODO: should this be only if more=False?
@@ -380,9 +386,13 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
         try:
+            # Add the frame to the link's incoming queue, and then would need a loop on the receiver + sender thread that could pop off this queue and read the frame or write the frame
+            # this way the transport I/O thread can be decoupled from the frame processing
+            # write tests as you go up in level, start at the transport level and go from there 
             self._input_handles[frame[0]]._incoming_transfer(  # pylint: disable=protected-access
                 frame
             )
+            self._session_receiver_queue.put(frame)
         except KeyError:
             _LOGGER.error(
                 "Received Transfer frame on unattached link. Ending session.",

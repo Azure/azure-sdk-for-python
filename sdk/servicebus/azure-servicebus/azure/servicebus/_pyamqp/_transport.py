@@ -428,19 +428,20 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     raise
             # read from the socket if there is anything in the incoming queue
             # max size of 10 frames for now
-            # print("Incoming queue size: ", self._incoming_queue.qsize())
             
             try:
-                # _LOGGER.info("trying to read from socket")
+                # negotiation
+                # AMQP<4 bytes>
+                # SASLINIT
+                # AMQP<4 bytes>
+                # SASLCOMPLETE
 
                 read_frame_buffer = BytesIO()
                 frame_header = memoryview(bytearray(8))
                 time_start = time.time()
                 read_frame_buffer.write(self._read(8, buffer=frame_header, initial=True))
                 time_end = time.time()
-                # _LOGGER.info(f"Time taken to read from socket: {time_end - time_start}")
                 time_start = time.time()
-                # print("Trying to parse frame header")
                 channel = struct.unpack(">H", frame_header[6:])[0]
                 size = frame_header[0:4]
                 if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
@@ -483,24 +484,29 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                 _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
                 raise
             #time.sleep(0.5)
+            # if not self._incoming_queue.empty() and not self._negotiating:
 
-            print(f"INCOMING QUEUE SIZE: {self._incoming_queue.qsize()}")
-            print(f"OUTGOING QUEUE SIZE: {self._outgoing_queue.qsize()}")
-            if not self._incoming_queue.empty() and not self._negotiating:
+                # TODO: call process incoming frame here after decoding the frame
+
+                # new_frame = self._transport.receive_frame(**kwargs)
+                # self._process_incoming_frame(*new_frame)
+
                 print("CALL CALLBACK")
-                if self._recieve_callback:
-                    self._recieve_callback()
+                # if self._recieve_callback: # todo: WRITE CORRECTLY
+                    # receive Frmae
+                    # callback = process_the_frame
+                    # TODO: pass me the frame bytes, then you can get rid of connection._read_frame()
+                    # self._recieve_callback()
 
 
 
-                
+                    
+                                    
 
     def close(self):
         with self.socket_lock:
             # lets stop the background loop
             while not self._outgoing_queue.empty():
-                print(f"thread: {threading.current_thread().name} waiting for outgoing queue to be empty")
-                print(f"OUTGOING QUEUE SIZE: {self._outgoing_queue.qsize()}")
                 _LOGGER.info("waiting for outgoing queue to be empty")
                 time.sleep(0.02)
             self._run_io_loop = False
@@ -525,10 +531,10 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             self.connected = False
 
     def read(self, verify_frame_type=0):
+        # take in a frame
         frame_header, channel, payload = self._incoming_queue.get()
-        print(f"Got frame from queue: {frame_header}")
         size = frame_header[0:4]
-        if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
+        if size == AMQP_FRAME:  # (TODO: LIES): Empty frame or AMQP header negotiation TODO
             return frame_header, channel, None
 
         frame_type = frame_header[5]
@@ -546,25 +552,20 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         
 
     def write(self, s):
-        print(f"WRITE CALLED {threading.current_thread().name}")
         self._outgoing_queue.put(s)
 
     def receive_frame(self, **kwargs):
-        # print(f'RECEIVE FRAME CALLED {threading.current_thread().name}')
-        with self._lock:
-            try:
-                time_start = time.time()
-                header, channel, payload = self.read(**kwargs)
-                print(f"finished read() with thread: {threading.current_thread().name}")
-                time_end = time.time()
-                if not payload:
-                    decoded = decode_empty_frame(header)
-                else:
-                    decoded = decode_frame(payload)
-                print(f"Time taken to decode frame: {time_end - time_start}")
-                return channel, decoded
-            except (socket.timeout, TimeoutError):
-                return None, None
+        try:
+            time_start = time.time()
+            header, channel, payload = self.read(**kwargs)
+            time_end = time.time()
+            if not payload:
+                decoded = decode_empty_frame(header)
+            else:
+                decoded = decode_frame(payload)
+            return channel, decoded
+        except (socket.timeout, TimeoutError):
+            return None, None
 
     def send_frame(self, channel, frame, **kwargs):
         header, performative = encode_frame(frame, **kwargs)
@@ -657,6 +658,7 @@ class SSLTransport(_AbstractTransport):
         }
 
         context = ssl.SSLContext(ssl_version)
+        context.keylog_filename = "/home/llawrence/repos/azure-sdk-for-python/sdk/servicebus/azure-servicebus/keylog.txt"
 
         if ca_certs is not None:
             try:

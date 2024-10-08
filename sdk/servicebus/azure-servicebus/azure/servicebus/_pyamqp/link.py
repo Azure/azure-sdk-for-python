@@ -4,10 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from threading import Lock
 from typing import Any, Optional, TYPE_CHECKING
 import uuid
 import logging
-import threading
 
 from .error import AMQPError, ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
 from .endpoints import Source, Target
@@ -99,6 +99,10 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._on_attach = kwargs.get("on_attach")
         self._error: Optional[AMQPLinkError] = None
         self.total_link_credit = self.link_credit
+        self._sent_drain = False
+        self._drain_state = False
+        self._received_drain_response = False
+        self._drain_lock = Lock()
 
     def __enter__(self) -> "Link":
         self.attach()
@@ -208,7 +212,12 @@ class Link:  # pylint: disable=too-many-instance-attributes
             "echo": kwargs.get("echo"),
             "properties": kwargs.get("properties"),
         }
-        self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
+        with self._drain_lock:
+            self._received_drain_response = False
+            # If the link is in drain mode, don't add more credit
+            if not self._drain_state:
+                self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
+                self._drain_state = kwargs.get("drain", False)
 
     def _incoming_flow(self, frame):
         pass
@@ -217,10 +226,11 @@ class Link:  # pylint: disable=too-many-instance-attributes
         pass
 
     def _outgoing_detach(self, close: bool = False, error: Optional[AMQPError] = None) -> None:
+        # pylint: disable=protected-access
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
             _LOGGER.debug("-> %r", detach_frame, extra=self.network_trace_params)
-        self._session._outgoing_detach(detach_frame) # pylint: disable=protected-access
+        self._session._outgoing_detach(detach_frame)
         if close:
             self._is_closed = True
 

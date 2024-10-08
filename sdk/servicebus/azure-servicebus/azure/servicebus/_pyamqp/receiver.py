@@ -5,21 +5,48 @@
 # --------------------------------------------------------------------------
 
 import uuid
+import time
 import logging
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING, Callable
+import threading
 
 from ._decode import decode_payload
 from .link import Link
-from .constants import LinkState, Role
+from .constants import LinkState, Role, LinkDeliverySettleReason
 from .performatives import TransferFrame, DispositionFrame
 from .outcomes import Received, Accepted, Rejected, Released, Modified
-from .error import AMQPException, ErrorCondition
+from .error import ErrorCondition, AMQPException
+
+if TYPE_CHECKING:
+    from .message import _MessageDelivery
 
 
 _LOGGER = logging.getLogger(__name__)
 
+class PendingDisposition(object):
+    def __init__(self, **kwargs):
+        self.sent = kwargs.get("sent")
+        self.frame = kwargs.get("frame")
+        self.on_delivery_settled = kwargs.get("on_delivery_settled")
+        self.start = time.time()
+        self.transfer_state = kwargs.get("transfer_state")
+        self.timeout = kwargs.get("timeout")
+        self.settled = kwargs.get("settled", False)
+        self._network_trace_params = kwargs.get('network_trace_params')
 
-class ReceiverLink(Link):
+    def on_settled(self, reason, state):
+        if self.on_delivery_settled and not self.settled:
+            try:
+                self.on_delivery_settled(reason, state)
+            except Exception as e:  # pylint:disable=broad-except
+                _LOGGER.warning(
+                    "Disposition 'on_delivery_settled' callback failed: %r",
+                    e,
+                    extra=self._network_trace_params
+                )
+        self.settled = True
+
+class ReceiverLink(Link): # pylint:disable=too-many-instance-attributes
     def __init__(self, session, handle, source_address, **kwargs):
         name = kwargs.pop("name", None) or str(uuid.uuid4())
         role = Role.Receiver
@@ -30,6 +57,13 @@ class ReceiverLink(Link):
         self._received_payload = bytearray()
         self._first_frame = None
         self._received_delivery_tags = set()
+        self._pending_receipts = []
+        self._still_receiving = False
+        self._receiver_loop = threading.Thread(target=self._loop, name=f"receiver-loop-{name}")
+
+    def _loop(self):
+        pass
+            
 
     @classmethod
     def from_incoming_frame(cls, session, handle, frame):
@@ -48,17 +82,33 @@ class ReceiverLink(Link):
         super(ReceiverLink, self)._incoming_attach(frame)
         if frame[9] is None:  # initial_delivery_count
             _LOGGER.info("Cannot get initial-delivery-count. Detaching link", extra=self.network_trace_params)
+            self._remove_pending_receipts(frame)
             self._set_state(LinkState.DETACHED)  # TODO: Send detach now?
         self.delivery_count = frame[9]
         self.current_link_credit = self.link_credit
         self._outgoing_flow()
+        self._update_pending_receipts()
+
+    def _incoming_flow(self, frame):
+        drain = frame[8]  # drain
+        # If we have sent an outgoing flow frame with drain, wait for the response
+        with self._drain_lock:
+            if self._drain_state and drain:
+                self._drain_state = False
+                self._received_drain_response = True
+                self.current_link_credit = frame[6]  # link_credit
+        self._update_pending_receipts()
+
 
     def _incoming_transfer(self, frame):
         if self.network_trace:
             _LOGGER.debug("<- %r", TransferFrame(payload=b"***", *frame[:-1]), extra=self.network_trace_params)
-
+        with self._drain_lock:
+            self._still_receiving = True
         # If more is false --> this is the last frame of the message
         if not frame[5]:
+            with self._drain_lock:
+                self._still_receiving = False
             self.current_link_credit -= 1
             self.total_link_credit -=1
             self.delivery_count += 1
@@ -70,6 +120,7 @@ class ReceiverLink(Link):
         if self._received_payload or frame[5]:  # more
             self._received_payload.extend(frame[11])
         if not frame[5]:
+            print(f"add delivery tag {threading.current_thread().name}")
             self._received_delivery_tags.add(self._first_frame[2])
             if self._received_payload:
                 message = decode_payload(memoryview(self._received_payload))
@@ -77,7 +128,6 @@ class ReceiverLink(Link):
             else:
                 message = decode_payload(frame[11])
             delivery_state = self._process_incoming_message(self._first_frame, message)
-
             if not frame[4] and delivery_state:  # settled
                 self._outgoing_disposition(
                     first=self._first_frame[1],
@@ -88,28 +138,20 @@ class ReceiverLink(Link):
                     batchable=None
                 )
 
-    def _wait_for_response(self, wait: Union[bool, float]) -> None:
-        # if wait is True:
-        #     self._session._connection.listen(wait=False) # pylint: disable=protected-access
-        #     if self.state == LinkState.ERROR:
-        #         if self._error:
-        #             raise self._error
-        # elif wait:
-        #     self._session._connection.listen(wait=wait) # pylint: disable=protected-access
-        #     if self.state == LinkState.ERROR:
-                if self._error:
-                    raise self._error
-
     def _outgoing_disposition(
         self,
         first: int,
         last: Optional[int],
-        delivery_tag: bytes,
+        delivery_tag: Optional[bytes],
         settled: Optional[bool],
         state: Optional[Union[Received, Accepted, Rejected, Released, Modified]],
         batchable: Optional[bool],
+        *,
+        on_disposition: Optional[Callable] = None,
+        timeout: Optional[float] = None
     ):
         if delivery_tag not in self._received_delivery_tags:
+            print(f"here {threading.current_thread().name}")
             raise AMQPException(condition=ErrorCondition.IllegalState, description = "Delivery tag not found.")
 
         disposition_frame = DispositionFrame(
@@ -117,33 +159,79 @@ class ReceiverLink(Link):
         )
         if self.network_trace:
             _LOGGER.debug("-> %r", DispositionFrame(*disposition_frame), extra=self.network_trace_params)
+
+        # Track dispositions for settling messages
+        if on_disposition:
+            delivery = PendingDisposition(
+                on_delivery_settled=on_disposition,
+                frame=disposition_frame,
+                settled=settled,
+                transfer_state=state,
+                start=time.time(),
+                sent=True,
+                timeout=timeout,
+            )
+            self._pending_receipts.append(delivery)
+
         self._session._outgoing_disposition(disposition_frame) # pylint: disable=protected-access
+        print("sent disposition")
         self._received_delivery_tags.remove(delivery_tag)
+
+
+    def _incoming_disposition(self, frame):
+        range_end = (frame[2] or frame[1]) + 1  # first or last
+        settled_ids = list(range(frame[1], range_end))
+        unsettled = []
+        for delivery in self._pending_receipts:
+            if delivery.sent and delivery.frame[1] in settled_ids:
+                delivery.on_settled(LinkDeliverySettleReason.DISPOSITION_RECEIVED, frame[4])  # state
+                continue
+            unsettled.append(delivery)
+        self._pending_receipts = unsettled
+        self._update_pending_receipts()
+
+
+    def _update_pending_receipts(self):
+        for delivery in self._pending_receipts:
+            if delivery.timeout and (time.time() - delivery.start) >= delivery.timeout:
+                delivery.on_settled(LinkDeliverySettleReason.TIMEOUT, None)
+                continue
+
+    def _remove_pending_receipts(self, frame):
+        for delivery in self._pending_receipts:
+            delivery.on_settled(LinkDeliverySettleReason.NOT_DELIVERED, frame[2])
+        self._pending_receipts = []
 
     def attach(self):
         super().attach()
         self._received_payload = bytearray()
 
+    def _incoming_detach(self, frame):
+        super(ReceiverLink, self)._incoming_detach(frame)
+        self._remove_pending_receipts(frame)
+
     def send_disposition(
         self,
         *,
-        wait: Union[bool, float] = False,
+        wait: Union[bool, float] = False, # pylint: disable=unused-argument
         first_delivery_id: int,
         last_delivery_id: Optional[int] = None,
-        delivery_tag: bytes,
+        delivery_tag: Optional[bytes] = None,
         settled: Optional[bool] = None,
         delivery_state: Optional[Union[Received, Accepted, Rejected, Released, Modified]] = None,
-        batchable: Optional[bool] = None
+        batchable: Optional[bool] = None,
+        on_disposition: Optional[Callable] = None,
+        timeout: Optional[float] = None
     ):
-        if self._is_closed:
-            raise ValueError("Link already closed.")
+        self._check_if_closed()
+        print("SENDING DISPOSITION")
         self._outgoing_disposition(
             first_delivery_id,
             last_delivery_id,
             delivery_tag,
             settled,
             delivery_state,
-            batchable
+            batchable,
+            on_disposition=on_disposition,
+            timeout=timeout
         )
-        if not settled:
-            self._wait_for_response(wait)

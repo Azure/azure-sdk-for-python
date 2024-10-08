@@ -238,8 +238,6 @@ class CBSAuthenticator:  # pylint:disable=too-many-instance-attributes, disable=
 
     def open(self) -> None:
         with self.auth_lock:
-            _LOGGER.debug(f"{threading.current_thread().name} - open cbs")
-
             self.state = CbsState.OPENING
             self._mgmt_link.open()
 

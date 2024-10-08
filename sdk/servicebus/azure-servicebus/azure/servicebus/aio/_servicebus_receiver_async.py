@@ -22,7 +22,6 @@ from typing import (
     cast
 )
 
-from ..exceptions import MessageLockLostError
 from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
 from .._common.message import ServiceBusReceivedMessage
@@ -54,9 +53,7 @@ from .._common import mgmt_handlers
 from .._common.utils import utc_from_timestamp
 from .._common.tracing import (
     receive_trace_context_manager,
-    settle_trace_context_manager,
     get_receive_links,
-    get_span_link_from_message,
     SPAN_NAME_RECEIVE_DEFERRED,
     SPAN_NAME_PEEK,
 )
@@ -434,40 +431,10 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
 
             # Dynamically issue link credit if max_message_count >= 1 when the prefetch_count is the default value 0
             if max_message_count and self._prefetch_count == 0 and max_message_count >= 1:
-                link_credit_needed = max_message_count - len(batch)
-                await self._amqp_transport.reset_link_credit_async(amqp_receive_client, link_credit_needed)
+                await self._amqp_transport.reset_link_credit_async(amqp_receive_client, max_message_count)
 
-            first_message_received = expired = False
-            receiving = True
-            while receiving and not expired and len(batch) < max_message_count:
-                while receiving and received_messages_queue.qsize() < max_message_count:
-                    if (
-                        abs_timeout
-                        and self._amqp_transport.get_current_time(amqp_receive_client)
-                        > abs_timeout
-                    ):
-                        expired = True
-                        break
-                    before = received_messages_queue.qsize()
-                    receiving = await amqp_receive_client.do_work_async()
-                    received = received_messages_queue.qsize() - before
-                    if (
-                        not first_message_received
-                        and received_messages_queue.qsize() > 0
-                        and received > 0
-                    ):
-                        # first message(s) received, continue receiving for some time
-                        first_message_received = True
-                        abs_timeout = (
-                            self._amqp_transport.get_current_time(amqp_receive_client)
-                            + self._further_pull_receive_timeout
-                        )
-                while (
-                    not received_messages_queue.empty() and len(batch) < max_message_count
-                ):
-                    batch.append(received_messages_queue.get())
-                    received_messages_queue.task_done()
-            return [self._build_received_message(message) for message in batch]
+            return await self._amqp_transport.receive_loop_async(
+                self, amqp_receive_client, max_message_count, batch, abs_timeout, timeout_seconds)
         finally:
             self._receive_context.clear()
 
@@ -486,28 +453,8 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             )
         self._check_message_alive(message, settle_operation)
 
-        # The following condition check is a hot fix for settling a message received for non-session queue after
-        # lock expiration.
-        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
-        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
-        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
-        if not self._session and message._lock_expired:
-            raise MessageLockLostError(
-                message="The lock on the message lock has expired.",
-                error=message.auto_renew_error,
-            )
-        link = get_span_link_from_message(message)
-        trace_links = [link] if link else []
-        with settle_trace_context_manager(self, settle_operation, links=trace_links):
-            await self._do_retryable_operation(
-                self._settle_message,
-                timeout=None,
-                message=message,
-                settle_operation=settle_operation,
-                dead_letter_reason=dead_letter_reason,
-                dead_letter_error_description=dead_letter_error_description,
-            )
-            message._settled = True
+        await self._amqp_transport._settle_message_with_retry_async(
+            self, message, settle_operation, dead_letter_reason, dead_letter_error_description)
 
     async def _settle_message(  # type: ignore
         self,
@@ -524,6 +471,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
                         self._handler,
                         message,
                         settle_operation,
+                        _LOGGER,
                         dead_letter_reason=dead_letter_reason,
                         dead_letter_error_description=dead_letter_error_description,
                     )

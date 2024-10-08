@@ -246,6 +246,22 @@ class MessagingEntityAlreadyExistsError(ServiceBusError):
             message, retryable=False, shutdown_handler=False, **kwargs
         )
 
+class MessageSettlementError(ServiceBusError):
+    """Message Settlement has encountered an error, the message may or may not 
+    have been settled.
+    """
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        message = kwargs.pop(
+            "message", "Message settlement has encountered an error, the message may or may not \
+            have been settled."
+        )
+        super(MessageSettlementError, self).__init__(
+            message, retryable=False, shutdown_handler=False, **kwargs
+        )
 
 class ServiceBusQuotaExceededError(ServiceBusError):
     """

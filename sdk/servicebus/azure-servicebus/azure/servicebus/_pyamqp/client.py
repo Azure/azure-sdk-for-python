@@ -234,16 +234,16 @@ class AMQPClient(
 
     # def _keep_alive(self):
     #     start_time = time.time()
-        # try:
-        #     while self._connection and not self._shutdown:
-        #         current_time = time.time()
-        #         elapsed_time = current_time - start_time
-        #         if elapsed_time >= self._keep_alive_interval:
-        #             self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
-        #             start_time = current_time
-        #         time.sleep(1)
-        # except Exception as e:  # pylint: disable=broad-except
-        #     _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
+    #     try:
+    #         while self._connection and not self._shutdown:
+    #             current_time = time.time()
+    #             elapsed_time = current_time - start_time
+    #             if elapsed_time >= self._keep_alive_interval:
+    #                 self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
+    #                 start_time = current_time
+    #             time.sleep(1)
+    #     except Exception as e:  # pylint: disable=broad-except
+    #         _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
 
     def _client_ready(self):
         """Determine whether the client is ready to start sending and/or
@@ -257,7 +257,7 @@ class AMQPClient(
 
     def _client_run(self, **kwargs):
         """Perform a single Connection iteration."""
-        # self._connection.listen(wait=self._socket_timeout, **kwargs)
+        self._connection.listen(wait=self._socket_timeout, **kwargs)
 
     def _close_link(self):
         if self._link and not self._link._is_closed:  # pylint: disable=protected-access
@@ -392,7 +392,6 @@ class AMQPClient(
         """
         if self._cbs_authenticator and not self._cbs_authenticator.handle_token():
             # self._connection.listen(wait=self._socket_timeout)
-            # time.sleep(1)
             return False
         return True
 
@@ -472,8 +471,8 @@ class AMQPClient(
             time.sleep(0.05)
 
         while not mgmt_link.ready():
-            time.sleep(1)
-        #     self._connection.listen(wait=False)
+            time.sleep(0.05)
+            # self._connection.listen(wait=False)
         operation_type = operation_type or b"empty"
         status, description, response = mgmt_link.execute(
             message, operation=operation, operation_type=operation_type, timeout=timeout
@@ -645,12 +644,10 @@ class SendClient(AMQPClient):
         message_delivery.error = error
 
     def _on_send_complete(self, message_delivery, reason, state):
-        print("On send complete")
         message_delivery.reason = reason
         if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
             if state and SEND_DISPOSITION_ACCEPT in state:
                 message_delivery.state = MessageDeliveryState.Ok
-                print("Okay")
             else:
                 try:
                     error_info = state[SEND_DISPOSITION_REJECT]
@@ -684,18 +681,40 @@ class SendClient(AMQPClient):
         # while not self.client_ready():
         #     time.sleep(0.05)
 
+        # use an event to wait for the message to be sent
+
+        # wouldn't need to access the message_delivery state 
+        
+        # idea #1
+        # sent_message = threading.Event()
         self._transfer_message(message_delivery, timeout)
-        running = True
+        # sent_message.wait()
+
+        # idea #2
+        # build this into message_delivery.state() instead.
+        # class message_delivery:
+        #    resolved threading.Event
+        #    def wait() -> MessageDeliveryState
+
+        # running = True
+        # TODO: message_delivery.state is a race condition?
         while message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            # running = self.do_work()
-            print(f"sleep called {message_delivery.state}")
             time.sleep(1)
-            print("sleep done")
-        if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            raise MessageException(
-                condition=ErrorCondition.ClientError,
-                description="Send failed - connection not running."
-            )
+        
+
+        # while message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+        #     time.sleep(1)
+        # if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+        #     raise MessageException(
+        #         condition=ErrorCondition.ClientError,
+        #         description="Send failed - connection not running."
+        #     )
+
+
+        # Can we raise the exception back from the service here instead of the state check?
+        # Put error logic into the message delivery class
+        # (and move this)
+        # message_delivery.state()
 
         if message_delivery.state in (
             MessageDeliveryState.Error,
@@ -873,7 +892,8 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         :rtype: bool
         """
         try:
-            if self._link.total_link_credit <= 0:
+            flow = kwargs.pop("flow", True)
+            if self._link.total_link_credit <= 0 and flow:
                 self._link.flow(link_credit=self._link_credit)
             # self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
@@ -950,6 +970,21 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                 break
         return batch
 
+    @staticmethod
+    def _process_receive_error(message_delivery, condition, description=None, info=None):
+        try:
+            amqp_condition = ErrorCondition(condition)
+        except ValueError:
+            error = AMQPException(condition, description=description, info=info)
+        #     error = MessageException(condition, description=description, info=info)
+        else:
+            error = AMQPException(amqp_condition, description=description, info=info)
+            # error = MessageSendFailed(
+            #     amqp_condition, description=description, info=info
+            # )
+        message_delivery.state = MessageDeliveryState.Error
+        message_delivery.error = error
+
     def close(self):
         self._received_messages = queue.Queue()
         super(ReceiveClient, self).close()
@@ -1019,7 +1054,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._timeout = timeout if timeout else self._timeout
         try:
             while not self._timeout_reached:
-                self._link.flow(link_credit=self._link_credit)
                 if self._timeout > 0:
                     if time.time() - self._last_activity_timestamp >= self._timeout:
                         self._timeout_reached = True
@@ -1033,6 +1067,50 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         finally:
             if self._shutdown:
                 self.close()
+
+    def _on_disposition_received(self, message_delivery, reason, state):
+        if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
+            state_error = list(state.values())[0]
+            message_delivery.reason = reason
+            if state and (len(state_error) == 0 or state_error[0] is None):
+                message_delivery.state = MessageDeliveryState.Ok
+            else:
+                try:
+                    error_info = state[SEND_DISPOSITION_REJECT]
+                    self._process_receive_error(
+                        message_delivery,
+                        condition=error_info[0][0],
+                        description=error_info[0][1],
+                        info=error_info[0][2]
+                    )
+                except TypeError:
+                    self._process_receive_error(
+                        message_delivery,
+                        condition=ErrorCondition.UnknownError
+                    )
+        elif reason == LinkDeliverySettleReason.TIMEOUT:
+            message_delivery.state = MessageDeliveryState.Timeout
+            message_delivery.error = TimeoutError("The service did not respond in time,"
+                " message may or may not have been settled")
+        else:
+            # We receive a Detach frame while waiting for disposition.
+            message_delivery.reason = reason
+            try:
+                self._process_receive_error(
+                message_delivery,
+                condition=state[0],
+                description=state[1],
+                info=state[2]
+            )
+            except: # pylint: disable=bare-except
+                # Other unknown errors, no state available
+                self._process_receive_error(
+                    message_delivery,
+                    condition=ErrorCondition.UnknownError
+            )
+
+
+
 
     @overload
     def settle_messages(
@@ -1099,6 +1177,9 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self, delivery_id: Union[int, Tuple[int, int]], delivery_tag: bytes, outcome: str, **kwargs
     ):
         batchable = kwargs.pop("batchable", None)
+        timeout = kwargs.pop("timeout", 60)
+        expire_time = (time.time() + timeout) if timeout else None
+
         if outcome.lower() == "accepted":
             state: Outcomes = Accepted()
         elif outcome.lower() == "released":
@@ -1116,12 +1197,49 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         except TypeError:
             first = delivery_id
             last = None
+
+
+        message_delivery = _MessageDelivery(
+            None,
+            MessageDeliveryState.WaitingToBeSent,
+            expire_time
+        )
+        on_disposition_received = partial(self._on_disposition_received, message_delivery)
+
+        print("SENDING DISPOSITION")
         self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
             delivery_tag=delivery_tag,
-            settled=True,
+            settled=False,
             delivery_state=state,
             batchable=batchable,
             wait=True,
+            on_disposition=on_disposition_received,
+            timeout=timeout
         )
+
+        running = True
+        # this would do the same with an event as above 
+        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            # running = self.do_work(flow=False)
+            time.sleep(1)
+
+        if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            raise MessageException(
+                condition=ErrorCondition.ClientError,
+                description="Settlement failed - connection not running."
+            )
+
+        if message_delivery.state in (
+            MessageDeliveryState.Error,
+            MessageDeliveryState.Cancelled,
+            MessageDeliveryState.Timeout
+        ):
+            try:
+                raise message_delivery.error  # pylint: disable=raising-bad-type
+            except TypeError:
+                # This is a default handler
+                raise MessageException(
+                    condition=ErrorCondition.UnknownError,
+                    description="Settlement failed.") from None

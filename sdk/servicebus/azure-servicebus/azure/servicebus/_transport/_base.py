@@ -272,7 +272,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def reset_link_credit(
-        handler, link_credit
+        handler, link_credit, *, drain=False
     ):
         """
         Resets the link credit on the link.
@@ -286,6 +286,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         handler,
         message,
         settle_operation,
+        logger,
         dead_letter_reason=None,
         dead_letter_error_description=None,
     ) -> None:
@@ -296,6 +297,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         :param callable settle_operation: The operation to settle message.
         :param str or None dead_letter_reason: Optional. Dead letter reason.
         :param str or None dead_letter_error_description: Optional. Dead letter error description.
+        :param Logger logger: Logger.
         """
 
     @staticmethod
@@ -363,4 +365,61 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         :keyword bytes node: Mgmt target.
         :keyword int timeout: Timeout.
         :keyword Callable callback: Callback to process request response.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def receive_loop(
+        receiver,
+        amqp_receive_client,
+        max_message_count,
+        batch,
+        abs_timeout,
+        timeout,
+        **kwargs
+    ):
+        """
+        Receive Messages.
+        :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver.
+        :param ~uamqp.ReceiveClient or ~pyamqp.ReceiveClient amqp_receive_client: The receive client.
+        :param int max_message_count: The maximum message count.
+        :param bool batch: Is batch.
+        :param float abs_timeout: The absolute timeout.
+        :param float timeout: The timeout.
+        """
+
+
+    @staticmethod
+    @abstractmethod
+    def _settle_message_with_retry(
+        receiver,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+    ):
+        """
+        Settle message with retry.
+        :param ServiceBusReceiver receiver: The receiver.
+        :param ServiceBusReceivedMessage message: Message to settle.
+        :param str settle_operation: The operation to settle message.
+        :param str or None dead_letter_reason: Optional. Dead letter reason.
+        :param str or None dead_letter_error_description: Optional. Dead letter error description.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def check_live(receiver):
+        """
+        Check if Receiver is alive.
+        :param ServiceBusReceiver receiver: The receiver.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def check_if_exception_is_retriable(receiver, error):
+        """
+        Check if exception is retriable.
+        :param ServiceBusReceiver receiver: The receiver.
+        :param Exception error: The error.
         """
