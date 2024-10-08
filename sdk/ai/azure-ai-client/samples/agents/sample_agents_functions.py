@@ -52,7 +52,7 @@ run = ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 print(f"Created run, ID: {run.id}")
 
 while run.status in ["queued", "in_progress", "requires_action"]:
-    time.sleep(4)
+    time.sleep(1)
     run = ai_client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
     if run.status == "requires_action" and run.required_action.submit_tool_outputs:
