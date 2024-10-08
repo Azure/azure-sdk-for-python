@@ -11,7 +11,7 @@ param (
     [Parameter()]
     [string] $Location = '',
 
-    [Parameter()]
+    [Parameter(Mandatory = $true)]
     [ValidatePattern('^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$')]
     [string] $TestApplicationId,
 
@@ -26,7 +26,7 @@ param (
     [Parameter()]
     [hashtable] $AdditionalParameters = @{},
 
-    [Parameter(ParameterSetName = 'Provisioner', Mandatory = $true)]
+    [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
     [string] $TenantId
 )
