@@ -5,7 +5,7 @@ from typing import Any, Dict, Iterable, Mapping, Optional, List
 from azure.core.utils import CaseInsensitiveDict
 
 
-class CosmosDict(Dict):
+class CosmosDict(Dict[str, Any]):
     def __init__(self, original_dict: Optional[Mapping[str, Any]], /, *, response_headers: CaseInsensitiveDict) -> None:
         if original_dict is None:
             original_dict = {}
@@ -21,7 +21,7 @@ class CosmosDict(Dict):
         return self._response_headers.copy()
 
 
-class CosmosList(List):
+class CosmosList(List[Dict[str, Any]]):
     def __init__(self, original_list: Optional[Iterable[Dict[str, Any]]], /, *,
                  response_headers: CaseInsensitiveDict) -> None:
         if original_list is None:
