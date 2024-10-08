@@ -363,16 +363,16 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         metadata = kwargs.pop('metadata', None)
         quota = kwargs.pop('quota', None)
         timeout = kwargs.pop('timeout', None)
-        share_provisioned_iops = kwargs.pop('provisioned_iops', None)
-        share_provisioned_bandwidth_mibps = kwargs.pop('provisioned_bandwidth_mibps', None)
+        provisioned_iops = kwargs.pop('provisioned_iops', None)
+        provisioned_bandwidth_mibps = kwargs.pop('provisioned_bandwidth_mibps', None)
         share = self.get_share_client(share_name)
         kwargs.setdefault('merge_span', True)
         await share.create_share(
             metadata=metadata,
             quota=quota,
             timeout=timeout,
-            share_provisioned_iops=share_provisioned_iops,
-            share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
+            provisioned_iops=provisioned_iops,
+            provisioned_bandwidth_mibps=provisioned_bandwidth_mibps,
             **kwargs
         )
         return share
