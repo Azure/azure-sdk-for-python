@@ -18,6 +18,5 @@ extends:
         Public:
         Canary:
           ServiceConnection: azure-sdk-tests-public
-          Location: 'eastus2euap'
         UsGov:
           Location: 'usgovarizona'
