@@ -1,5 +1,5 @@
 import os
-
+from typing import Optional
 
 def str_to_bool(input_string: str) -> bool:
     """
@@ -15,7 +15,7 @@ def str_to_bool(input_string: str) -> bool:
         return False
 
 
-def discover_repo_root(input_repo: str = None):
+def discover_repo_root(input_repo: Optional[str] = None):
     """
     Resolves the root of the repository given a current working directory. This function should be used if a target repo argument is not provided.
     If the value of input_repo has value, that will supplant the path ascension logic.
@@ -38,7 +38,7 @@ def discover_repo_root(input_repo: str = None):
     )
 
 
-def get_artifact_directory(input_directory: str = None) -> str:
+def get_artifact_directory(input_directory: Optional[str] = None) -> str:
     """
     Resolves the root of an artifact directory that the \"sdk_build\" action will output to!
     """
@@ -49,7 +49,7 @@ def get_artifact_directory(input_directory: str = None) -> str:
     return os.getenv("SDK_ARTIFACT_DIRECTORY", os.path.join(discover_repo_root(), ".artifacts"))
 
 
-def get_log_directory(input_directory: str = None) -> str:
+def get_log_directory(input_directory: Optional[str] = None) -> str:
     """
     Resolves the location of the log directory.
     """

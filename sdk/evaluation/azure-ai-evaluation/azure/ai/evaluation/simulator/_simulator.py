@@ -15,11 +15,10 @@ from promptflow.core import AsyncPrompty
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._common.utils import construct_prompty_model_config
 
+from .._exceptions import ErrorBlame, ErrorCategory, EvaluationException
 from .._user_agent import USER_AGENT
 from ._conversation.constants import ConversationRole
 from ._helpers import ConversationHistory, Turn, experimental
-
-# from ._tracing import monitor_task_simulator
 from ._utils import JsonLineChatProtocol
 
 
@@ -85,7 +84,7 @@ class Simulator:
         *,
         target: Callable,
         max_conversation_turns: int = 5,
-        tasks: List[Dict] = [],
+        tasks: List[str] = [],
         text: str = "",
         num_queries: int = 5,
         query_response_generating_prompty: Optional[str] = None,
@@ -312,7 +311,7 @@ class Simulator:
     def _load_user_simulation_flow(
         self,
         *,
-        user_simulator_prompty: Union[str, os.PathLike],
+        user_simulator_prompty: Optional[Union[str, os.PathLike]],
         prompty_model_config: Dict[str, Any],
         user_simulator_prompty_kwargs: Dict[str, Any],
     ) -> "AsyncPrompty":  # type: ignore
@@ -320,7 +319,7 @@ class Simulator:
         Loads the flow for simulating user interactions.
 
         :keyword user_simulator_prompty: Path to the user simulator prompty file.
-        :paramtype user_simulator_prompty: Union[str, os.PathLike]
+        :paramtype user_simulator_prompty: Optional[Union[str, os.PathLike]]
         :keyword prompty_model_config: The configuration for the prompty model.
         :paramtype prompty_model_config: Dict[str, Any]
         :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
@@ -342,7 +341,13 @@ class Simulator:
                     )
                     return AsyncPrompty.load(source=prompty_path, model=prompty_model_config)  # type: ignore
             except FileNotFoundError as e:
-                raise FileNotFoundError(f"Flow path for {resource_name} does not exist in package {package}.") from e
+                 msg = f"Flow path for {resource_name} does not exist in package {package}."
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    error_category=ErrorCategory.FILE_OR_FOLDER_NOT_FOUND,
+                    blame=ErrorBlame.USER_ERROR,
+                ) from e
         prompty_model_config = construct_prompty_model_config(
             model_config=prompty_model_config,  # type: ignore
             default_api_version="2024-06-01",
@@ -437,7 +442,7 @@ class Simulator:
     def _load_query_generation_flow(
         self,
         *,
-        query_response_generating_prompty: Union[str, os.PathLike],
+        query_response_generating_prompty: Optional[Union[str, os.PathLike]],
         prompty_model_config: Dict[str, Any],
         query_response_generating_prompty_kwargs: Dict[str, Any],
     ) -> "AsyncPrompty":
@@ -445,7 +450,7 @@ class Simulator:
         Loads the flow for generating query responses.
 
         :keyword query_response_generating_prompty: Path to the query response generating prompty file.
-        :paramtype query_response_generating_prompty: Union[str, os.PathLike]
+        :paramtype query_response_generating_prompty: Optional[Union[str, os.PathLike]]
         :keyword prompty_model_config: The configuration for the prompty model.
         :paramtype prompty_model_config: Dict[str, Any]
         :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the flow.
@@ -467,7 +472,13 @@ class Simulator:
                     )
                     return AsyncPrompty.load(source=prompty_path, model=prompty_model_config)  # type: ignore
             except FileNotFoundError as e:
-                raise FileNotFoundError(f"Flow path for {resource_name} does not exist in package {package}.") from e
+                msg = f"Flow path for {resource_name} does not exist in package {package}."
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    error_category=ErrorCategory.FILE_OR_FOLDER_NOT_FOUND,
+                    blame=ErrorBlame.USER_ERROR,
+                ) from e
         prompty_model_config = construct_prompty_model_config(
             model_config=prompty_model_config,  # type: ignore
             default_api_version="2024-06-01",
@@ -563,7 +574,7 @@ class Simulator:
         target: Callable,
         api_call_delay_sec: float,
         progress_bar: tqdm,
-    ) -> List[Dict[str, str]]:
+    ) -> List[Dict[str, Optional[str]]]:
         """
         Completes a conversation with the target model based on the conversation starter.
 
@@ -584,7 +595,7 @@ class Simulator:
         :keyword progress_bar: Progress bar for tracking simulation progress.
         :paramtype progress_bar: tqdm
         :return: A list representing the conversation history with each turn's content.
-        :rtype: List[Dict[str, str]]
+        :rtype: List[Dict[str, Optional[str]]]
         """
         conversation_history = ConversationHistory()
         # user_turn = Turn(role=ConversationRole.USER, content=conversation_starter)

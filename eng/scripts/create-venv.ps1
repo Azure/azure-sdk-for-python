@@ -1,4 +1,4 @@
-<#! 
+<#!
 .SYNOPSIS
 Creates a virtual environment for a CI machine.
 
@@ -22,10 +22,12 @@ param(
 
 $venvPath = Join-Path $RepoRoot $VenvName
 if (!(Test-Path $venvPath)) {
-    Write-Host "Creating virtual environment '$VenvName'."
+    $invokingPython = (Get-Command "python").Source
+    Write-Host "Creating virtual environment '$VenvName' using python located at '$invokingPython'."
     python -m pip install virtualenv==20.25.1
     python -m virtualenv "$venvPath"
-    Write-Host "Virtual environment '$VenvName' created."
+    $pythonVersion = python --version
+    Write-Host "Virtual environment '$VenvName' created at directory path '$venvPath' utilizing python version $pythonVersion."
     Write-Host "##vso[task.setvariable variable=$($VenvName)_LOCATION]$venvPath"
     Write-Host "##vso[task.setvariable variable=$($VenvName)_ACTIVATION_SCRIPT]if(`$IsWindows){. $venvPath/Scripts/Activate.ps1;}else {. $venvPath/bin/activate.ps1}"
 }
