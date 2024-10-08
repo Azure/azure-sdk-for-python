@@ -172,7 +172,6 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         }
         # add all additional headers
         headers.update(self.additional_headers)  # type: ignore[arg-type]
-
         params = {}
         if self.api_version:
             params["api-version"] = self.api_version
@@ -214,6 +213,12 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         time.sleep(15)
 
         async with get_async_http_client().with_policies(retry_policy=retry_policy) as exp_retry_client:
+            token = await self.token_manager.get_token_async()
+            proxy_headers = {
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json",
+                "User-Agent": USER_AGENT,
+            }
             response = await exp_retry_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
                 self.result_url, headers=proxy_headers
             )

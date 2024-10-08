@@ -19,3 +19,4 @@ steps:
     displayName: "Use Python ${{ parameters.versionSpec }}"
     inputs:
       versionSpec: ${{ parameters.versionSpec }}
+      allowUnstable: true
