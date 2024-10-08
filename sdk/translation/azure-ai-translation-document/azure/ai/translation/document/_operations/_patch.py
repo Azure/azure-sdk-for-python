@@ -192,9 +192,9 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
         :raises: BadResponse if response invalid.
         """
 
-        while not self.finished():
+        if not self.finished():
             self.update_status()
-        while not self.finished():
+        if not self.finished():
             self._delay()
             self.update_status()
 

@@ -173,9 +173,9 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         :raises: BadStatus if response status invalid.
         :raises: BadResponse if response invalid.
         """
-        while not self.finished():
+        if not self.finished():
             await self.update_status()
-        while not self.finished():
+        if not self.finished():
             await self._delay()
             await self.update_status()
 

@@ -484,6 +484,21 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             ),
         )
 
+    # pylint: disable=arguments-renamed
+    @distributed_trace
+    def cancel_translation(self, translation_id: str, **kwargs: Any) -> None:  # type: ignore[override]
+        """Cancel a currently processing or queued translation operation.
+        A translation will not be canceled if it is already completed, failed, or canceling.
+        All documents that have completed translation will not be canceled and will be charged.
+        If possible, all pending documents will be canceled.
+        :param str translation_id: The translation operation ID.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        super().cancel_translation(translation_id, **kwargs)
+
     @distributed_trace
     def list_translation_statuses(
         self,
