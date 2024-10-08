@@ -59,12 +59,10 @@ def test_nonpresent_pyproject_update():
         reloaded_build_config = get_build_config(new_path)
         assert reloaded_build_config == update_result
 
+
 @pytest.mark.parametrize(
     "check_name, environment_value, expected_result",
-    [
-        ("mindependency", "true", True),
-        ("mindependency", "false", False)
-    ]
+    [("mindependency", "true", True), ("mindependency", "false", False)],
 )
 def test_environment_override(check_name, environment_value, expected_result):
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -82,6 +80,7 @@ def test_pyproject_update_check_override():
 
         build_config = get_build_config(temp_dir)
 
+        assert build_config is not None
         build_config["pyright"] = True
 
         update_result = update_build_config(temp_dir, build_config)

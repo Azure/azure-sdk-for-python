@@ -96,4 +96,3 @@ def test_replace_dev_reqs_remote(tmp_directory_create):
     replace_dev_reqs(requirements_file, core_location, None)
     requirements_after = get_requirements_from_file(requirements_file)
     assert requirements_before == requirements_after
-

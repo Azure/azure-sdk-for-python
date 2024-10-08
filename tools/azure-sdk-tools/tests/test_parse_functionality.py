@@ -6,7 +6,10 @@ from unittest.mock import patch
 import pytest
 
 package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-test_folder = os.path.join(os.path.dirname(__file__), )
+test_folder = os.path.join(
+    os.path.dirname(__file__),
+)
+
 
 def test_parse_require():
     test_scenarios = [
@@ -19,7 +22,7 @@ def test_parse_require():
         ("azure-core<2.0.0,>=1.2.2", "azure-core", "<2.0.0,>=1.2.2"),
         ("azure-core[aio]<2.0.0,>=1.26.0", "azure-core", "<2.0.0,>=1.26.0"),
         ("azure-core[aio,cool_extra]<2.0.0,>=1.26.0", "azure-core", "<2.0.0,>=1.26.0"),
-        ("azure-core[]", "azure-core", None)
+        ("azure-core[]", "azure-core", None),
     ]
 
     for scenario in test_scenarios:
@@ -119,6 +122,7 @@ setup(
     assert result.classifiers[5] == "Programming Language :: Python :: 3.8"
     assert result.keywords[0] == "azure sdk"
     assert len(result.keywords) == 2
+
 
 @patch("ci_tools.parsing.parse_functions.read_setup_py_content")
 def test_parse_recognizes_extensions(test_patch):

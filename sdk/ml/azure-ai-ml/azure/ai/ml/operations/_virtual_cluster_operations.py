@@ -47,7 +47,7 @@ class VirtualClusterOperations:
         _service_client_kwargs: Dict,
         **kwargs: Dict,
     ):
-        ops_logger.update_filter()
+        ops_logger.update_info(kwargs)
         self._resource_group_name = operation_scope.resource_group_name
         self._subscription_id = operation_scope.subscription_id
         self._credentials = credentials

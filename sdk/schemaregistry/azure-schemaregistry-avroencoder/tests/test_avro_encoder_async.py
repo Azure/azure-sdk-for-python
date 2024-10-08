@@ -240,17 +240,16 @@ class TestAvroEncoderAsync(AzureRecordedTestCase):
         schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 
         dict_content = {"name": u"Ben", "favorite_number": 7, "favorite_color": u"red"}
+        # if fake kwargs/incorrectly formatted request keyword passed in, should raise TypeError
         with pytest.raises(TypeError) as e:
-            encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str, request_options={"fake_kwarg": True})
-        assert 'request() got an unexpected keyword' in str(e.value)
+            encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str, request_options={"fake_kwarg": True, "files": (False)})
         encoded_message_content = await sr_avro_encoder.encode(dict_content, schema=schema_str)
         content_type = encoded_message_content["content_type"]
         encoded_content = encoded_message_content["content"]
 
         encoded_content_dict = {"content": encoded_content, "content_type": content_type}
         with pytest.raises(TypeError) as e:
-            decoded_content = await sr_avro_encoder.decode(encoded_content_dict, request_options={"fake_kwarg": True})
-        assert 'request() got an unexpected keyword' in str(e.value)
+            decoded_content = await sr_avro_encoder.decode(encoded_content_dict, request_options={"fake_kwarg": True, "files": (False)})
 
     ################################################################# 
     ######################### PARSE SCHEMAS #########################

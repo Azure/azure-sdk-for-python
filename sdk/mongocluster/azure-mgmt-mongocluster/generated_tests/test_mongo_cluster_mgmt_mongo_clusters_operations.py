@@ -40,16 +40,14 @@ class TestMongoClusterMgmtMongoClustersOperations(AzureMgmtRecordedTestCase):
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "administratorLogin": "str",
-                    "administratorLoginPassword": "str",
+                    "administrator": {"password": "str", "userName": "str"},
+                    "backup": {"earliestRestoreTime": "str"},
                     "clusterStatus": "str",
+                    "compute": {"tier": "str"},
                     "connectionString": "str",
                     "createMode": "str",
-                    "earliestRestoreTime": "str",
+                    "highAvailability": {"targetMode": "str"},
                     "infrastructureVersion": "str",
-                    "nodeGroupSpecs": [
-                        {"diskSizeGB": 0, "enableHa": bool, "kind": "str", "nodeCount": 0, "sku": "str"}
-                    ],
                     "previewFeatures": ["str"],
                     "privateEndpointConnections": [
                         {
@@ -82,6 +80,8 @@ class TestMongoClusterMgmtMongoClustersOperations(AzureMgmtRecordedTestCase):
                     "replicaParameters": {"sourceLocation": "str", "sourceResourceId": "str"},
                     "restoreParameters": {"pointInTimeUTC": "2020-02-20 00:00:00", "sourceResourceId": "str"},
                     "serverVersion": "str",
+                    "sharding": {"shardCount": 0},
+                    "storage": {"sizeGb": 0},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -107,14 +107,15 @@ class TestMongoClusterMgmtMongoClustersOperations(AzureMgmtRecordedTestCase):
             mongo_cluster_name="str",
             properties={
                 "properties": {
-                    "administratorLogin": "str",
-                    "administratorLoginPassword": "str",
-                    "nodeGroupSpecs": [
-                        {"diskSizeGB": 0, "enableHa": bool, "kind": "str", "nodeCount": 0, "sku": "str"}
-                    ],
+                    "administrator": {"password": "str", "userName": "str"},
+                    "backup": {"earliestRestoreTime": "str"},
+                    "compute": {"tier": "str"},
+                    "highAvailability": {"targetMode": "str"},
                     "previewFeatures": ["str"],
                     "publicNetworkAccess": "str",
                     "serverVersion": "str",
+                    "sharding": {"shardCount": 0},
+                    "storage": {"sizeGb": 0},
                 },
                 "tags": {"str": "str"},
             },

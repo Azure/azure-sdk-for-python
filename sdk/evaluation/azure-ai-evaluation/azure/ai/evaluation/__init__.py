@@ -4,10 +4,8 @@
 
 from ._evaluate._evaluate import evaluate
 from ._evaluators._bleu import BleuScoreEvaluator
-from ._evaluators._chat import ChatEvaluator
 from ._evaluators._coherence import CoherenceEvaluator
 from ._evaluators._content_safety import (
-    ContentSafetyChatEvaluator,
     ContentSafetyEvaluator,
     HateUnfairnessEvaluator,
     SelfHarmEvaluator,
@@ -22,6 +20,7 @@ from ._evaluators._meteor import MeteorScoreEvaluator
 from ._evaluators._protected_material import ProtectedMaterialEvaluator
 from ._evaluators._qa import QAEvaluator
 from ._evaluators._relevance import RelevanceEvaluator
+from ._evaluators._retrieval import RetrievalEvaluator
 from ._evaluators._rouge import RougeScoreEvaluator, RougeType
 from ._evaluators._similarity import SimilarityEvaluator
 from ._evaluators._xpia import IndirectAttackEvaluator
@@ -41,17 +40,16 @@ __all__ = [
     "RelevanceEvaluator",
     "SimilarityEvaluator",
     "QAEvaluator",
-    "ChatEvaluator",
     "ViolenceEvaluator",
     "SexualEvaluator",
     "SelfHarmEvaluator",
     "HateUnfairnessEvaluator",
     "ContentSafetyEvaluator",
-    "ContentSafetyChatEvaluator",
     "IndirectAttackEvaluator",
     "BleuScoreEvaluator",
     "GleuScoreEvaluator",
     "MeteorScoreEvaluator",
+    "RetrievalEvaluator",
     "RougeScoreEvaluator",
     "RougeType",
     "ProtectedMaterialEvaluator",

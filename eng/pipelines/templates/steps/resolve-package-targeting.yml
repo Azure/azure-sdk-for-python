@@ -33,6 +33,12 @@ steps:
           }
 
           $setting = $packageProperties -join ","
+
+          # in case we don't expect any packages, we should set the variable to null, which will match NO packages and cause whatever the check
+          # is to skip with exit 0 (which is what we want!)
+          if (-not $setting) {
+            $setting = "null"
+          }
         }
       }
 

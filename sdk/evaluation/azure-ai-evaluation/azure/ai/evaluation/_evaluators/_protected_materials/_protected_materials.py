@@ -54,11 +54,11 @@ class ProtectedMaterialsEvaluator:
     Initialize a protected materials evaluator to detect whether protected material
     is present in your AI system's response. Outputs True or False with AI-generated reasoning.
 
+    :param credential: The credential for connecting to Azure AI project. Required
+    :type credential: ~azure.core.credentials.TokenCredential
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
-    :param credential: The credential for connecting to Azure AI project.
-    :type credential: ~azure.core.credentials.TokenCredential
     :return: Whether or not protected material was found in the response, with AI-generated reasoning.
     :rtype: Dict[str, str]
 
@@ -84,7 +84,7 @@ class ProtectedMaterialsEvaluator:
         }
     """
 
-    def __init__(self, azure_ai_project: dict, credential=None):
+    def __init__(self, credential, azure_ai_project: dict):
         self._async_evaluator = _AsyncProtectedMaterialsEvaluator(azure_ai_project, credential)
 
     def __call__(self, *, query: str, response: str, **kwargs):

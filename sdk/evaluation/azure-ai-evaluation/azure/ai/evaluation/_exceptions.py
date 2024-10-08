@@ -54,7 +54,6 @@ class ErrorTarget(Enum):
     EVAL_RUN = "EvalRun"
     CODE_CLIENT = "CodeClient"
     RAI_CLIENT = "RAIClient"
-    CHAT_EVALUATOR = "ChatEvaluator"
     COHERENCE_EVALUATOR = "CoherenceEvaluator"
     CONTENT_SAFETY_CHAT_EVALUATOR = "ContentSafetyEvaluator"
     ECI_EVALUATOR = "ECIEvaluator"

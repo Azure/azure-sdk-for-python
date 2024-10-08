@@ -36,18 +36,18 @@ def main():
         resource={
             "location": "westus2",
             "properties": {
-                "administratorLogin": "mongoAdmin",
-                "administratorLoginPassword": "password",
-                "nodeGroupSpecs": [
-                    {"diskSizeGB": 128, "enableHa": True, "kind": "Shard", "nodeCount": 1, "sku": "M30"}
-                ],
+                "administrator": {"password": "password", "userName": "mongoAdmin"},
+                "compute": {"tier": "M30"},
+                "highAvailability": {"targetMode": "SameZone"},
                 "serverVersion": "5.0",
+                "sharding": {"shardCount": 1},
+                "storage": {"sizeGb": 128},
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-06-01-preview/MongoClusters_Create.json
+# x-ms-original-file: 2024-07-01/MongoClusters_Create.json
 if __name__ == "__main__":
     main()

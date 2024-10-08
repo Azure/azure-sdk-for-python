@@ -22,6 +22,7 @@ USAGE:
 """
 
 import os
+import sys
 
 SOURCE_FILE = './SampleSource.txt'
 DEST_FILE = './SampleDestination.txt'
@@ -33,6 +34,11 @@ class FileSamples(object):
     account_name = os.getenv("AZURE_STORAGE_ACCOUNT_NAME")
 
     def simple_file_operations(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: simple_file_operations")
+            sys.exit(1)
+
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "filesamples1")
@@ -74,6 +80,11 @@ class FileSamples(object):
             share.delete_share()
 
     def copy_file_from_url(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: copy_file_from_url")
+            sys.exit(1)
+
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "filesamples2")
@@ -106,6 +117,11 @@ class FileSamples(object):
             share.delete_share()
 
     def acquire_file_lease(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: acquire_file_lease")
+            sys.exit(1)
+
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare import ShareClient
         share = ShareClient.from_connection_string(self.connection_string, "filesamples3")

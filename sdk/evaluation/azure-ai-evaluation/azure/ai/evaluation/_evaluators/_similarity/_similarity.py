@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import math
 import os
 import re
 
-import numpy as np
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
 
@@ -57,7 +57,7 @@ class _AsyncSimilarityEvaluator:
             query=query, response=response, ground_truth=ground_truth, timeout=self.LLM_CALL_TIMEOUT, **kwargs
         )
 
-        score = np.nan
+        score = math.nan
         if llm_output:
             match = re.search(r"\d", llm_output)
             if match:
