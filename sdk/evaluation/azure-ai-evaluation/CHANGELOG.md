@@ -84,7 +84,7 @@ model_config = {
 }
 sim = Simulator(model_config=model_config)
 ```
-If `api_key` is not included in the `model_config`, the prompty runtime in `promtpflow-core` will pick up `DefaultAzureCredential`.
+If `api_key` is not included in the `model_config`, the prompty runtime in `promptflow-core` will pick up `DefaultAzureCredential`.
 
 ### Bugs Fixed
 
