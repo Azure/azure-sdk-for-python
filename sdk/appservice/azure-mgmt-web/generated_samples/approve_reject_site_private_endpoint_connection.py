@@ -32,7 +32,7 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.static_sites.begin_approve_or_reject_private_endpoint_connection(
+    response = client.web_apps.begin_approve_or_reject_private_endpoint_connection(
         resource_group_name="rg",
         name="testSite",
         private_endpoint_connection_name="connection",
@@ -52,3 +52,4 @@ def main():
 # x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2023-12-01/examples/ApproveRejectSitePrivateEndpointConnection.json
 if __name__ == "__main__":
     main()
+n()

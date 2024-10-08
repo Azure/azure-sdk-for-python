@@ -26,15 +26,35 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
             host_group_name="str",
             parameters={
                 "location": "str",
+                "additionalCapabilities": {"ultraSSDEnabled": bool},
                 "hosts": [{"id": "str"}],
                 "id": "str",
+                "instanceView": {
+                    "hosts": [
+                        {
+                            "assetId": "str",
+                            "availableCapacity": {"allocatableVMs": [{"count": 0.0, "vmSize": "str"}]},
+                            "name": "str",
+                            "statuses": [
+                                {
+                                    "code": "str",
+                                    "displayStatus": "str",
+                                    "level": "str",
+                                    "message": "str",
+                                    "time": "2020-02-20 00:00:00",
+                                }
+                            ],
+                        }
+                    ]
+                },
                 "name": "str",
                 "platformFaultDomainCount": 0,
+                "supportAutomaticPlacement": bool,
                 "tags": {"str": "str"},
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2019-03-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -47,12 +67,32 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             host_group_name="str",
             parameters={
+                "additionalCapabilities": {"ultraSSDEnabled": bool},
                 "hosts": [{"id": "str"}],
+                "instanceView": {
+                    "hosts": [
+                        {
+                            "assetId": "str",
+                            "availableCapacity": {"allocatableVMs": [{"count": 0.0, "vmSize": "str"}]},
+                            "name": "str",
+                            "statuses": [
+                                {
+                                    "code": "str",
+                                    "displayStatus": "str",
+                                    "level": "str",
+                                    "message": "str",
+                                    "time": "2020-02-20 00:00:00",
+                                }
+                            ],
+                        }
+                    ]
+                },
                 "platformFaultDomainCount": 0,
+                "supportAutomaticPlacement": bool,
                 "tags": {"str": "str"},
                 "zones": ["str"],
             },
-            api_version="2019-03-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +104,7 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
         response = self.client.dedicated_host_groups.delete(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2019-03-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -76,7 +116,7 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
         response = self.client.dedicated_host_groups.get(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2019-03-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +127,7 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
     def test_list_by_resource_group(self, resource_group):
         response = self.client.dedicated_host_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2019-03-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -97,7 +137,7 @@ class TestComputeManagementDedicatedHostGroupsOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_list_by_subscription(self, resource_group):
         response = self.client.dedicated_host_groups.list_by_subscription(
-            api_version="2019-03-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

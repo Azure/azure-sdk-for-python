@@ -7,7 +7,7 @@ from azure.healthinsights.radiologyinsights import models
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from devtools_testutils import (
-    AzureRecordedTestCase, 
+    AzureRecordedTestCase,
     EnvironmentVariableLoader,
     get_credential,
 )

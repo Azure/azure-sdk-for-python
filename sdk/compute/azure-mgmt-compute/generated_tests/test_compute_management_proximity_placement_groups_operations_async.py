@@ -27,16 +27,58 @@ class TestComputeManagementProximityPlacementGroupsOperationsAsync(AzureMgmtReco
             proximity_placement_group_name="str",
             parameters={
                 "location": "str",
-                "availabilitySets": [{"id": "str"}],
+                "availabilitySets": [
+                    {
+                        "colocationStatus": {
+                            "code": "str",
+                            "displayStatus": "str",
+                            "level": "str",
+                            "message": "str",
+                            "time": "2020-02-20 00:00:00",
+                        },
+                        "id": "str",
+                    }
+                ],
+                "colocationStatus": {
+                    "code": "str",
+                    "displayStatus": "str",
+                    "level": "str",
+                    "message": "str",
+                    "time": "2020-02-20 00:00:00",
+                },
                 "id": "str",
+                "intent": {"vmSizes": ["str"]},
                 "name": "str",
                 "proximityPlacementGroupType": "str",
                 "tags": {"str": "str"},
                 "type": "str",
-                "virtualMachineScaleSets": [{"id": "str"}],
-                "virtualMachines": [{"id": "str"}],
+                "virtualMachineScaleSets": [
+                    {
+                        "colocationStatus": {
+                            "code": "str",
+                            "displayStatus": "str",
+                            "level": "str",
+                            "message": "str",
+                            "time": "2020-02-20 00:00:00",
+                        },
+                        "id": "str",
+                    }
+                ],
+                "virtualMachines": [
+                    {
+                        "colocationStatus": {
+                            "code": "str",
+                            "displayStatus": "str",
+                            "level": "str",
+                            "message": "str",
+                            "time": "2020-02-20 00:00:00",
+                        },
+                        "id": "str",
+                    }
+                ],
+                "zones": ["str"],
             },
-            api_version="2018-04-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +91,7 @@ class TestComputeManagementProximityPlacementGroupsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2018-04-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +103,7 @@ class TestComputeManagementProximityPlacementGroupsOperationsAsync(AzureMgmtReco
         response = await self.client.proximity_placement_groups.delete(
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
-            api_version="2018-04-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +115,7 @@ class TestComputeManagementProximityPlacementGroupsOperationsAsync(AzureMgmtReco
         response = await self.client.proximity_placement_groups.get(
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
-            api_version="2018-04-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +125,7 @@ class TestComputeManagementProximityPlacementGroupsOperationsAsync(AzureMgmtReco
     @recorded_by_proxy_async
     async def test_list_by_subscription(self, resource_group):
         response = self.client.proximity_placement_groups.list_by_subscription(
-            api_version="2018-04-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -94,7 +136,7 @@ class TestComputeManagementProximityPlacementGroupsOperationsAsync(AzureMgmtReco
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.proximity_placement_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2018-04-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

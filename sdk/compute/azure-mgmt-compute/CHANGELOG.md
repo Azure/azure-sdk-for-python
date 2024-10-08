@@ -1,5 +1,21 @@
 # Release History
 
+## 33.0.0 (2024-08-20)
+
+### Features Added
+
+  - Model AvailabilitySet has a new parameter scheduled_events_policy
+  - Model AvailabilitySetUpdate has a new parameter scheduled_events_policy
+  - Model VirtualMachineScaleSet has a new parameter sku_profile
+  - Model VirtualMachineScaleSet has a new parameter zonal_platform_fault_domain_align_mode
+  - Model VirtualMachineScaleSetUpdate has a new parameter sku_profile
+  - Model VirtualMachineScaleSetUpdate has a new parameter zonal_platform_fault_domain_align_mode
+  - Model VirtualMachineScaleSetUpdate has a new parameter zones
+
+### Breaking Changes
+
+  - Model PurchasePlan no longer has parameter promotion_code
+
 ## 32.0.0 (2024-07-22)
 
 ### Features Added

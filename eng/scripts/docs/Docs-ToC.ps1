@@ -28,48 +28,63 @@ function Get-NamespacesFromWhlFile {
   param(
       [Parameter(Mandatory=$true)] [string]$Library,
       [Parameter(Mandatory=$true)] [string]$Version,
-      [Parameter(Mandatory=$false)] [string]$ExtraIndexUrl = ""
+      [Parameter(Mandatory=$false)] [string]$ExtraIndexUrl = "",
+      [Parameter(Mandatory=$false)] [string]$PythonWhlFile = $null
   )
 
   $destination = (Join-Path ([System.IO.Path]::GetTempPath()) "$Library$Version")
+  New-Item $destination -ItemType Directory | Out-Null
   $namespaces = @()
 
   try {
 
+    if ($PythonWhlFile) {
+      if (Test-Path $PythonWhlFile -PathType Leaf) {
+        Write-Host "Copying $PythonWhlFile to $destination"
+        Copy-Item $PythonWhlFile -Destination $destination
+      } else {
+        LogWarning "$PythonWhlFile, does not exist."
+      }
+    } else {
+      $success = Get-WhlFile $Library $Version $destination $ExtraIndexUrl
+      if (-not $success) {
+        LogWarning "Could not download Whl file for $Library $Version"
+      }
+    }
     # Pulling the whl file generates output, make sure it's sent to null so
     # it's not returned as part of this function.
-    $success = Get-WhlFile $Library $Version $destination $ExtraIndexUrl
-    if ($success) {
+    # Each library gets its own temporary directory. There should only be one whl
+    # file in the destination directory
+    $whlFile = Get-ChildItem -Path $destination -File -Filter "*.whl" | Select-Object -First 1
+    # If we can't download the file or the passed in file doesn't exist then the whlFile
+    # won't exist, there's nothing to process and an empty namesapces list will be returned
+    if ($whlFile) {
+      $unpackDir = Join-Path -Path $destination -ChildPath "$Library-$Version"
+      Expand-Archive -Path $whlFile -DestinationPath $unpackDir
 
-        # Each library gets its own temporary directory. There should only be one whl
-        # file in the destination directory
-        $whlFile = Get-ChildItem -Path $destination -File -Filter "*.whl" | Select-Object -First 1
-        $unpackDir = Join-Path -Path $destination -ChildPath "$Library-$Version"
-        Expand-Archive -Path $whlFile -DestinationPath $unpackDir
-
-        # Look for any directory that contains __init__.py with the following exceptions:
-        # 1. *.dist-info directories shouldn't be included in the results.
-        # 2. If any subdirectory starts with "_" it's internal and needs to be skipped
-        # 3. If there's a root level directory named "azure" with an __init__.py file then
-        # needs to be skipped. This doesn't happen with libraries released from the
-        # azure-sdk-for-python repository but there are older libraries that are in the
-        # docs directories which are/were released outside of the repository where this
-        # is true.
-        $rootLevelAzureDir = Join-Path -Path $unpackDir -ChildPath "azure"
-        $namespaceDirs = Get-ChildItem -Path $unpackDir -Recurse -Filter "__init__.py" |
-            Where-Object{$_.DirectoryName -notlike "*.dist-info"} |
-            Where-Object{$_.DirectoryName -notlike "*$([IO.Path]::DirectorySeparatorChar)_*" } |
-            Where-Object{$_.DirectoryName -ine $rootLevelAzureDir}
-        foreach($namespaceDir in $namespaceDirs) {
-            # Strip off the root directy, everything left will be subDir1/subDir2/../subDirN.
-            # The directory separators will be replaced with periods to compute the
-            # namespace
-            $partialDir = $namespaceDir.DirectoryName.Replace($unpackDir + $([IO.Path]::DirectorySeparatorChar), "")
-            $namespaces += $partialDir.Replace([IO.Path]::DirectorySeparatorChar, ".")
-            # Since only the primary namespace is being pulled, break out of the loop after
-            # the first one.
-            break
-        }
+      # Look for any directory that contains __init__.py with the following exceptions:
+      # 1. *.dist-info directories shouldn't be included in the results.
+      # 2. If any subdirectory starts with "_" it's internal and needs to be skipped
+      # 3. If there's a root level directory named "azure" with an __init__.py file then
+      # needs to be skipped. This doesn't happen with libraries released from the
+      # azure-sdk-for-python repository but there are older libraries that are in the
+      # docs directories which are/were released outside of the repository where this
+      # is true.
+      $rootLevelAzureDir = Join-Path -Path $unpackDir -ChildPath "azure"
+      $namespaceDirs = Get-ChildItem -Path $unpackDir -Recurse -Filter "__init__.py" |
+          Where-Object{$_.DirectoryName -notlike "*.dist-info"} |
+          Where-Object{$_.DirectoryName -notlike "*$([IO.Path]::DirectorySeparatorChar)_*" } |
+          Where-Object{$_.DirectoryName -ine $rootLevelAzureDir}
+      foreach($namespaceDir in $namespaceDirs) {
+          # Strip off the root directy, everything left will be subDir1/subDir2/../subDirN.
+          # The directory separators will be replaced with periods to compute the
+          # namespace
+          $partialDir = $namespaceDir.DirectoryName.Replace($unpackDir + $([IO.Path]::DirectorySeparatorChar), "")
+          $namespaces += $partialDir.Replace([IO.Path]::DirectorySeparatorChar, ".")
+          # Since only the primary namespace is being pulled, break out of the loop after
+          # the first one.
+          break
+      }
     }
   }
   finally {

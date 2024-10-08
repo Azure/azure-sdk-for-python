@@ -65,15 +65,15 @@ For more information please see [Container Registry Concepts](https://docs.micro
 The following sections provide several code snippets covering some of the most common ACR Service tasks, including:
 
 - Registry operations:
-  - [List repositories](#list-repositories)
-  - [List tags with anonymous access](#list-tags-with-anonymous-access)
-  - [Set artifact properties](#set-artifact-properties)
-  - [Delete images](#delete-images)
+  - [List repositories](#list-repositories "List repositories")
+  - [List tags with anonymous access](#list-tags-with-anonymous-access "List tags with anonymous access")
+  - [Set artifact properties](#set-artifact-properties "Set artifact properties")
+  - [Delete images](#delete-images "Delete images")
 - Blob and manifest operations:
-  - [Upload images](#upload-images)
-  - [Download images](#download-images)
-  - [Delete manifest](#delete-manifest)
-  - [Delete blob](#delete-blob)
+  - [Upload images](#upload-images "Upload images")
+  - [Download images](#download-images "Download images")
+  - [Delete manifests](#delete-manifests "Delete manifests")
+  - [Delete blobs](#delete-blobs "Delete blobs")
 
 Please note that each sample assumes there is a `CONTAINERREGISTRY_ENDPOINT` environment variable set to a string containing the `https://` prefix and the name of the login server, for example "https://myregistry.azurecr.io". Anonymous access samples are getting endpoint value from environment variable`CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT`.
 
@@ -238,7 +238,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
 
 <!-- END SNIPPET -->
 
-### Delete manifest
+### Delete manifests
 
 <!-- SNIPPET:sample_set_get_image.delete_manifest -->
 
@@ -251,7 +251,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
 
 <!-- END SNIPPET -->
 
-### Delete blob
+### Delete blobs
 
 <!-- SNIPPET:sample_set_get_image.delete_blob -->
 

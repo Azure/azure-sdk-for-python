@@ -1,4 +1,3 @@
-
 import os
 
 from unittest.mock import patch
@@ -12,7 +11,7 @@ integration_folder = os.path.join(os.path.dirname(__file__), "integration")
 tags_folder = os.path.join(integration_folder, "scenarios", "sample_interpreter_tags")
 
 
-def create_basic_temp_dir(tmp_directory_create) -> TemporaryDirectory:
+def create_basic_temp_dir(tmp_directory_create) -> str:
     tmp_dir = tmp_directory_create(
         [
             os.path.join("azure-common", "azure_common-1.1.29-py3-none-any.whl"),
@@ -37,13 +36,13 @@ def test_find_discovers_standard_whls(test_patch, tmp_directory_create):
     test_patch.return_value = ["py3-none-any"]
 
     # basic positive cases
-    found_core = find_whl(tmp_dir.name, "azure-core", "1.26.5")
-    found_legacy = find_whl(tmp_dir.name, "azure-servicemanagement-legacy", "0.20.7")
+    found_core = find_whl(tmp_dir, "azure-core", "1.26.5")
+    found_legacy = find_whl(tmp_dir, "azure-servicemanagement-legacy", "0.20.7")
     assert found_core is not None
     assert found_legacy is not None
 
     # basic negative cases
-    not_found_core = find_whl(tmp_dir.name, "azure-core", "1.26.4")
+    not_found_core = find_whl(tmp_dir, "azure-core", "1.26.4")
     assert not_found_core is None
 
 
@@ -52,7 +51,7 @@ def test_find_whl_fails_on_incompatible_interpreter(test_patch, tmp_directory_cr
     tmp_dir = create_basic_temp_dir(tmp_directory_create)
     test_patch.return_value = []
 
-    found = find_whl(tmp_dir.name, "azure-core", "1.26.5")
+    found = find_whl(tmp_dir, "azure-core", "1.26.5")
     assert found is None
 
 
@@ -92,11 +91,11 @@ def test_find_whl_discovers_specific_wheels(test_patch, tmp_directory_create):
             "azure_storage_extensions-1.0.0b1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
             "azure_storage_extensions-1.0.0b1-cp39-cp39-win_amd64.whl",
             "azure_storage_extensions-1.0.0b1-cp39-cp39-win32.whl",
-            "azure-storage-extensions-1.0.0b1.tar.gz"
+            "azure-storage-extensions-1.0.0b1.tar.gz",
         ]
     )
 
-    with open(os.path.join(tags_folder, 'from_WSL_310.txt'), 'r', encoding='utf-8') as f:
+    with open(os.path.join(tags_folder, "from_WSL_310.txt"), "r", encoding="utf-8") as f:
         compatible_tags = [line.strip() for line in f.readlines()]
 
     test_patch.return_value = compatible_tags
@@ -140,11 +139,11 @@ def test_find_sdist_discovers_specific_sdist(test_patch, tmp_directory_create):
             "azure_storage_extensions-1.0.0b1-cp39-cp39-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
             "azure_storage_extensions-1.0.0b1-cp39-cp39-win_amd64.whl",
             "azure_storage_extensions-1.0.0b1-cp39-cp39-win32.whl",
-            "azure-storage-extensions-1.0.0b1.tar.gz"
+            "azure-storage-extensions-1.0.0b1.tar.gz",
         ]
     )
 
-    with open(os.path.join(tags_folder, 'from_WSL_310.txt'), 'r', encoding='utf-8') as f:
+    with open(os.path.join(tags_folder, "from_WSL_310.txt"), "r", encoding="utf-8") as f:
         compatible_tags = [line.strip() for line in f.readlines()]
 
     test_patch.return_value = compatible_tags

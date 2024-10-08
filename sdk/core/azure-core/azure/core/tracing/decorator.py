@@ -68,6 +68,14 @@ def distributed_trace(
 
     Span will use the func name or "name_of_span".
 
+    Note:
+
+    This decorator SHOULD NOT be used by application developers. It's
+    intended to be called by Azure client libraries only.
+
+    Application developers should use OpenTelemetry or other tracing libraries to
+    instrument their applications.
+
     :param callable __func: A function to decorate
     :keyword name_of_span: The span name to replace func name if necessary
     :paramtype name_of_span: str

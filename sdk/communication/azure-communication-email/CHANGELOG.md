@@ -1,14 +1,11 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.0.1b1 (2024-08-28)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Consumers can now provide a value for the `contentId` property when sending emails with attachments.
+  This allows consumers to reference attachments in the email body using the `cid` scheme. The `contentId` property can be set on the `EmailAttachment` object.
 
 ## 1.0.0 (2023-03-31)
 
@@ -26,7 +23,7 @@ The public release of the Azure Communication Services SDK for Email has the fol
 
 ### Breaking Changes
 - Made the SDK Model-less. Objects are now constructed using a dictionary instead of a model.
-- Reworked the SDK to follow the LRO (long running operation) approach. The 'begin_send' method returns a poller that can be used to check for the status of sending the email and retrieve the result. The return object has been adjusted to fit this approach. 
+- Reworked the SDK to follow the LRO (long running operation) approach. The 'begin_send' method returns a poller that can be used to check for the status of sending the email and retrieve the result. The return object has been adjusted to fit this approach.
 - The `get_send_status` method has been removed.
 - The `sender` property has been changed to `senderAddress`.
 - The `email` property under the recipient object has been changed to `address`.

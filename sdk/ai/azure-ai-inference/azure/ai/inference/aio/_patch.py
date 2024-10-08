@@ -46,11 +46,6 @@ if sys.version_info >= (3, 9):
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
-if sys.version_info >= (3, 11):
-    from typing import Self
-else:
-    from typing_extensions import Self
-
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 _LOGGER = logging.getLogger(__name__)
@@ -159,9 +154,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     :paramtype top_p: float
     :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
     :paramtype max_tokens: int
-    :keyword response_format: An object specifying the format that the model must output. Used to
-        enable JSON mode. Known values are: "text" and "json_object". Default value is None.
-    :paramtype response_format: str or ~azure.ai.inference.models.ChatCompletionsResponseFormat
+    :keyword response_format: The format that the model must output. Use this to enable JSON mode
+        instead of the default text mode.
+        Note that to enable JSON mode, some AI models may also require you to instruct the model to
+        produce JSON via a system or user message. Default value is None.
+    :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
     :keyword stop: A collection of textual sequences that will end completions generation. Default
         value is None.
     :paramtype stop: list[str]
@@ -170,10 +167,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
     :keyword tool_choice: If specified, the model will configure which of the provided tools it can
         use for the chat completions response. Is either a Union[str,
-        "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
+        "_models.ChatCompletionsToolChoicePreset"] type or a ChatCompletionsNamedToolChoice type.
         Default value is None.
-    :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
-        ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
+    :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolChoicePreset or
+        ~azure.ai.inference.models.ChatCompletionsNamedToolChoice
     :keyword seed: If specified, the system will make a best effort to sample deterministically
         such that repeated requests with the
         same seed and parameters should return the same result. Determinism is not guaranteed.
@@ -203,16 +200,16 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
 
         self._model_info: Optional[_models.ModelInfo] = None
@@ -245,11 +242,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
@@ -268,11 +265,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
@@ -291,11 +288,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
@@ -358,9 +355,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: An object specifying the format that the model must output. Used to
-         enable JSON mode. Known values are: "text" and "json_object". Default value is None.
-        :paramtype response_format: str or ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword response_format: The format that the model must output. Use this to enable JSON mode
+         instead of the default text mode.
+         Note that to enable JSON mode, some AI models may also require you to instruct the model to
+         produce JSON via a system or user message. Default value is None.
+        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
@@ -369,10 +368,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
         :keyword tool_choice: If specified, the model will configure which of the provided tools it can
          use for the chat completions response. Is either a Union[str,
-         "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
+         "_models.ChatCompletionsToolChoicePreset"] type or a ChatCompletionsNamedToolChoice type.
          Default value is None.
-        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
-         ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
+        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolChoicePreset or
+         ~azure.ai.inference.models.ChatCompletionsNamedToolChoice
         :keyword seed: If specified, the system will make a best effort to sample deterministically
          such that repeated requests with the
          same seed and parameters should return the same result. Determinism is not guaranteed.
@@ -450,11 +449,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_tokens: Optional[int] = None,
-        response_format: Optional[Union[str, _models.ChatCompletionsResponseFormat]] = None,
+        response_format: Optional[_models.ChatCompletionsResponseFormat] = None,
         stop: Optional[List[str]] = None,
         tools: Optional[List[_models.ChatCompletionsToolDefinition]] = None,
         tool_choice: Optional[
-            Union[str, _models.ChatCompletionsToolSelectionPreset, _models.ChatCompletionsNamedToolSelection]
+            Union[str, _models.ChatCompletionsToolChoicePreset, _models.ChatCompletionsNamedToolChoice]
         ] = None,
         seed: Optional[int] = None,
         model: Optional[str] = None,
@@ -518,9 +517,11 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype top_p: float
         :keyword max_tokens: The maximum number of tokens to generate. Default value is None.
         :paramtype max_tokens: int
-        :keyword response_format: An object specifying the format that the model must output. Used to
-         enable JSON mode. Known values are: "text" and "json_object". Default value is None.
-        :paramtype response_format: str or ~azure.ai.inference.models.ChatCompletionsResponseFormat
+        :keyword response_format: The format that the model must output. Use this to enable JSON mode
+         instead of the default text mode.
+         Note that to enable JSON mode, some AI models may also require you to instruct the model to
+         produce JSON via a system or user message. Default value is None.
+        :paramtype response_format: ~azure.ai.inference.models.ChatCompletionsResponseFormat
         :keyword stop: A collection of textual sequences that will end completions generation. Default
          value is None.
         :paramtype stop: list[str]
@@ -529,10 +530,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :paramtype tools: list[~azure.ai.inference.models.ChatCompletionsToolDefinition]
         :keyword tool_choice: If specified, the model will configure which of the provided tools it can
          use for the chat completions response. Is either a Union[str,
-         "_models.ChatCompletionsToolSelectionPreset"] type or a ChatCompletionsNamedToolSelection type.
+         "_models.ChatCompletionsToolChoicePreset"] type or a ChatCompletionsNamedToolChoice type.
          Default value is None.
-        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolSelectionPreset or
-         ~azure.ai.inference.models.ChatCompletionsNamedToolSelection
+        :paramtype tool_choice: str or ~azure.ai.inference.models.ChatCompletionsToolChoicePreset or
+         ~azure.ai.inference.models.ChatCompletionsNamedToolChoice
         :keyword seed: If specified, the system will make a best effort to sample deterministically
          such that repeated requests with the
          same seed and parameters should return the same result. Determinism is not guaranteed.
@@ -560,7 +561,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _extra_parameters: Union[_models._enums.UnknownParams, None] = None
+        _extra_parameters: Union[_models._enums.ExtraParameters, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -584,10 +585,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             elif self._model_extras is not None and bool(self._model_extras):
                 body.update(self._model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         elif isinstance(body, dict) and "stream" in body and isinstance(body["stream"], bool):
             stream = body["stream"]
@@ -599,7 +600,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_chat_completions_complete_request(
-            extra_parameters=_extra_parameters,
+            extra_params=_extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -627,12 +628,15 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         if _stream:
             return _models.AsyncStreamingChatCompletions(response)
 
-        return _deserialize(_models.ChatCompletions, response.json())  # pylint: disable=protected-access
+        return _deserialize(_models._patch.ChatCompletions, response.json())  # pylint: disable=protected-access
 
     @distributed_trace_async
     async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
+        The method makes a REST API call to the ``/info`` route on the given endpoint.
+        This method will only work when using Serverless API or Managed Compute endpoint.
+        It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
@@ -645,12 +649,6 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
-
-    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
-    # and you see the equivalent auto-generated method in _client.py return "Self"
-    async def __aenter__(self) -> Self:
-        await self._client.__aenter__()
-        return self
 
 
 class EmbeddingsClient(EmbeddingsClientGenerated):
@@ -696,7 +694,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
 
         self._model_info: Optional[_models.ModelInfo] = None
@@ -852,7 +850,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _extra_parameters: Union[_models._enums.UnknownParams, None] = None
+        _extra_parameters: Union[_models._enums.ExtraParameters, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -868,10 +866,10 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             elif self._model_extras is not None and bool(self._model_extras):
                 body.update(self._model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -881,7 +879,7 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_embeddings_embed_request(
-            extra_parameters=_extra_parameters,
+            extra_params=_extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -909,7 +907,9 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.EmbeddingsResult, response.json())
+            deserialized = _deserialize(
+                _models._patch.EmbeddingsResult, response.json()  # pylint: disable=protected-access
+            )
 
         return deserialized  # type: ignore
 
@@ -917,6 +917,9 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
+        The method makes a REST API call to the ``/info`` route on the given endpoint.
+        This method will only work when using Serverless API or Managed Compute endpoint.
+        It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
@@ -929,12 +932,6 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
-
-    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
-    # and you see the equivalent auto-generated method in _client.py return "Self"
-    async def __aenter__(self) -> Self:
-        await self._client.__aenter__()
-        return self
 
 
 class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
@@ -980,7 +977,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         input_type: Optional[Union[str, _models.EmbeddingInputType]] = None,
         model: Optional[str] = None,
         model_extras: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
 
         self._model_info: Optional[_models.ModelInfo] = None
@@ -1136,7 +1133,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
-        _extra_parameters: Union[_models._enums.UnknownParams, None] = None
+        _extra_parameters: Union[_models._enums.ExtraParameters, None] = None
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
 
@@ -1152,10 +1149,10 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             }
             if model_extras is not None and bool(model_extras):
                 body.update(model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             elif self._model_extras is not None and bool(self._model_extras):
                 body.update(self._model_extras)
-                _extra_parameters = _models._enums.UnknownParams.PASS_THROUGH  # pylint: disable=protected-access
+                _extra_parameters = _models._enums.ExtraParameters.PASS_THROUGH  # pylint: disable=protected-access
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1165,7 +1162,7 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_image_embeddings_embed_request(
-            extra_parameters=_extra_parameters,
+            extra_params=_extra_parameters,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1193,7 +1190,9 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.EmbeddingsResult, response.json())
+            deserialized = _deserialize(
+                _models._patch.EmbeddingsResult, response.json()  # pylint: disable=protected-access
+            )
 
         return deserialized  # type: ignore
 
@@ -1201,6 +1200,9 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
+        The method makes a REST API call to the ``/info`` route on the given endpoint.
+        This method will only work when using Serverless API or Managed Compute endpoint.
+        It will not work for GitHub Models endpoint or Azure OpenAI endpoint.
 
         :return: ModelInfo. The ModelInfo is compatible with MutableMapping
         :rtype: ~azure.ai.inference.models.ModelInfo
@@ -1213,12 +1215,6 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
     def __str__(self) -> str:
         # pylint: disable=client-method-name-no-double-underscore
         return super().__str__() + f"\n{self._model_info}" if self._model_info else super().__str__()
-
-    # Remove this once https://github.com/Azure/autorest.python/issues/2619 is fixed,
-    # and you see the equivalent auto-generated method in _client.py return "Self"
-    async def __aenter__(self) -> Self:
-        await self._client.__aenter__()
-        return self
 
 
 __all__: List[str] = [

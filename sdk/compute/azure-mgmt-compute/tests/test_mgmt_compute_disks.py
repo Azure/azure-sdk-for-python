@@ -22,6 +22,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 AZURE_LOCATION = 'eastus'
 
+@pytest.mark.live_test_only
 class TestMgmtComputeMultiVersion(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
@@ -110,7 +111,8 @@ class TestMgmtComputeMultiVersion(AzureMgmtRecordedTestCase):
         # Delete disk
         result = self.mgmt_client.disks.begin_delete(resource_group.name, DISK_NAME)
         result = result.result()
-
+        
+@pytest.mark.live_test_only
 class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):

@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+import json
 import azure.ai.inference as sdk
 
 from model_inference_test_base import (
@@ -26,6 +27,52 @@ class TestModelClient(ModelClientTestBase):
     #
     # **********************************************************************************
 
+    # Test custom code in ChatCompletions class to print its content in a nice multi-line JSON format
+    def test_print_method_of_chat_completions_class(self, **kwargs):
+        response = sdk.models.ChatCompletions(
+            {
+                "choices": [
+                    {
+                        "message": {
+                            "content": "some content",
+                            "role": "assistant",
+                        }
+                    }
+                ]
+            }
+        )
+        print(response)  # This will invoke the customized __str__ method
+        assert json.dumps(response.as_dict(), indent=2) == response.__str__()
+
+    # Test custom code in EmbeddingsResult class to print its content in a nice multi-line JSON format
+    def test_print_method_of_embeddings_result_class(self, **kwargs):
+        response = sdk.models.ChatCompletions(
+            {
+                "id": "f060ce24-0bbf-4aef-8341-62659b6e19be",
+                "data": [
+                    {
+                        "index": 0,
+                        "embedding": [
+                            0.0013399124,
+                            -0.01576233,
+                        ],
+                    },
+                    {
+                        "index": 1,
+                        "embedding": [
+                            0.036590576,
+                            -0.0059547424,
+                        ],
+                    },
+                ],
+                "model": "model-name",
+                "usage": {"prompt_tokens": 6, "completion_tokens": 0, "total_tokens": 6},
+            }
+        )
+        print(response)  # This will invoke the customized __str__ method
+        assert json.dumps(response.as_dict(), indent=2) == response.__str__()
+
+    # Test custom code in ImageUrl class to load an image file
     def test_image_url_load(self, **kwargs):
         local_folder = os.path.dirname(os.path.abspath(__file__))
         image_file = os.path.join(local_folder, "test_image1.png")
@@ -101,8 +148,7 @@ class TestModelClient(ModelClientTestBase):
         for _ in range(2):
             try:
                 response = client.embed(
-                    input=["first phrase", "second phrase", "third phrase"],
-                    raw_request_hook=self.request_callback
+                    input=["first phrase", "second phrase", "third phrase"], raw_request_hook=self.request_callback
                 )
             except ServiceRequestError as _:
                 # The test should throw this exception!
@@ -199,9 +245,19 @@ class TestModelClient(ModelClientTestBase):
     @recorded_by_proxy
     def test_embeddings(self, **kwargs):
         client = self._create_embeddings_client(**kwargs)
-        response = client.embed(input=["first phrase", "second phrase", "third phrase"])
-        self._print_embeddings_result(response)
-        self._validate_embeddings_result(response)
+        input = ["first phrase", "second phrase", "third phrase"]
+
+        # Request embeddings with default service format (list of floats)
+        response1 = client.embed(input=input)
+        self._print_embeddings_result(response1)
+        self._validate_embeddings_result(response1)
+        assert json.dumps(response1.as_dict(), indent=2) == response1.__str__()
+
+        # Request embeddings as base64 encoded strings
+        response2 = client.embed(input=input, encoding_format=sdk.models.EmbeddingEncodingFormat.BASE64)
+        self._print_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
+        self._validate_embeddings_result(response2, sdk.models.EmbeddingEncodingFormat.BASE64)
+
         client.close()
 
     # **********************************************************************************
@@ -229,16 +285,18 @@ class TestModelClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
-                                    )
+                                    ),
+                                    id="some-id",
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
-                                    )
+                                    ),
+                                    id="some-other-id",
                                 ),
                             ]
                         ),
@@ -267,12 +325,12 @@ class TestModelClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
                     temperature=8.976,
-                    tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+                    tool_choice=sdk.models.ChatCompletionsToolChoicePreset.AUTO,
                     tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
                     top_p=9.876,
                     raw_request_hook=self.request_callback,
@@ -304,11 +362,11 @@ class TestModelClient(ModelClientTestBase):
             max_tokens=321,
             model="some-model-id",
             presence_penalty=4.567,
-            response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+            response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
             seed=654,
             stop=["stop1", "stop2"],
             temperature=8.976,
-            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+            tool_choice=sdk.models.ChatCompletionsToolChoicePreset.AUTO,
             tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
             top_p=9.876,
         )
@@ -321,16 +379,18 @@ class TestModelClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
-                                    )
+                                    ),
+                                    id="some-id",
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
-                                    )
+                                    ),
+                                    id="some-other-id",
                                 ),
                             ]
                         ),
@@ -377,11 +437,13 @@ class TestModelClient(ModelClientTestBase):
             max_tokens=768,
             model="some-other-model-id",
             presence_penalty=1.234,
-            response_format=sdk.models.ChatCompletionsResponseFormat.TEXT,
+            response_format=sdk.models.ChatCompletionsResponseFormatText(),
             seed=987,
             stop=["stop3", "stop5"],
             temperature=5.432,
-            tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.REQUIRED,
+            tool_choice=sdk.models.ChatCompletionsNamedToolChoice(
+                function=sdk.models.ChatCompletionsNamedToolChoiceFunction(name="my-function-name")
+            ),
             tools=[ModelClientTestBase.TOOL2],
             top_p=3.456,
         )
@@ -394,16 +456,18 @@ class TestModelClient(ModelClientTestBase):
                         sdk.models.UserMessage(content="user prompt 1"),
                         sdk.models.AssistantMessage(
                             tool_calls=[
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-first-function-name",
                                         arguments={"first_argument": "value1", "second_argument": "value2"},
-                                    )
+                                    ),
+                                    id="some-id",
                                 ),
-                                sdk.models.ChatCompletionsFunctionToolCall(
+                                sdk.models.ChatCompletionsToolCall(
                                     function=sdk.models.FunctionCall(
                                         name="my-second-function-name", arguments={"first_argument": "value1"}
-                                    )
+                                    ),
+                                    id="some-other-id",
                                 ),
                             ]
                         ),
@@ -432,12 +496,12 @@ class TestModelClient(ModelClientTestBase):
                     max_tokens=321,
                     model="some-model-id",
                     presence_penalty=4.567,
-                    response_format=sdk.models.ChatCompletionsResponseFormat.JSON_OBJECT,
+                    response_format=sdk.models.ChatCompletionsResponseFormatJSON(),
                     seed=654,
                     stop=["stop1", "stop2"],
                     stream=True,
                     temperature=8.976,
-                    tool_choice=sdk.models.ChatCompletionsToolSelectionPreset.AUTO,
+                    tool_choice=sdk.models.ChatCompletionsToolChoicePreset.AUTO,
                     tools=[ModelClientTestBase.TOOL1, ModelClientTestBase.TOOL2],
                     top_p=9.876,
                     raw_request_hook=self.request_callback,
@@ -502,6 +566,7 @@ class TestModelClient(ModelClientTestBase):
         response = client.complete(messages=messages)
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["5280", "5,280"])
+        assert json.dumps(response.as_dict(), indent=2) == response.__str__()
         messages.append(sdk.models.AssistantMessage(content=response.choices[0].message.content))
         messages.append(sdk.models.UserMessage(content="and how many yards?"))
         response = client.complete(messages=messages)
@@ -578,7 +643,7 @@ class TestModelClient(ModelClientTestBase):
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completions_with_tool(self, **kwargs):
-        forecast_tool = sdk.models.ChatCompletionsFunctionToolDefinition(
+        forecast_tool = sdk.models.ChatCompletionsToolDefinition(
             function=sdk.models.FunctionDefinition(
                 name="get_max_temperature",
                 description="A function that returns the forecasted maximum temperature IN a given city, a given few days from now, in Fahrenheit. It returns `unknown` if the forecast is not known.",
@@ -624,7 +689,7 @@ class TestModelClient(ModelClientTestBase):
         client.close()
 
     # We use AOAI endpoint here because at the moment there is no MaaS model that supports
-    # input input.
+    # input image.
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy
     def test_chat_completions_with_input_image_file(self, **kwargs):
@@ -656,12 +721,11 @@ class TestModelClient(ModelClientTestBase):
         client.close()
 
     # We use AOAI endpoint here because at the moment there is no MaaS model that supports
-    # input input.
+    # input image.
     @ServicePreparerAOAIChatCompletions()
     @recorded_by_proxy
     def test_chat_completions_with_input_image_url(self, **kwargs):
-        # TODO: Update this to point to Main branch
-        url = "https://aka.ms/azsdk/azure-ai-inference/python/tests/test_image1.png"
+        url = "https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/ai/azure-ai-inference/tests/test_image1.png"
         client = self._create_aoai_chat_client(**kwargs)
         response = client.complete(
             messages=[
@@ -678,6 +742,20 @@ class TestModelClient(ModelClientTestBase):
         )
         self._print_chat_completions_result(response)
         self._validate_chat_completions_result(response, ["juggling", "balls", "blue", "red", "green", "yellow"], True)
+        client.close()
+
+    # We use AOAI endpoint here because at the moment MaaS does not support Entra ID auth.
+    @ServicePreparerAOAIChatCompletions()
+    @recorded_by_proxy
+    def test_chat_completions_with_entra_id_auth(self, **kwargs):
+        client = self._create_aoai_chat_client(key_auth=False, **kwargs)
+        messages = [
+            sdk.models.SystemMessage(content="You are a helpful assistant answering questions regarding length units."),
+            sdk.models.UserMessage(content="How many feet are in a mile?"),
+        ]
+        response = client.complete(messages=messages)
+        self._print_chat_completions_result(response)
+        self._validate_chat_completions_result(response, ["5280", "5,280"], True)
         client.close()
 
     # **********************************************************************************

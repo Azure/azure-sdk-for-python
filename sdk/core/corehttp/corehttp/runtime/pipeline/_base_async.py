@@ -45,9 +45,7 @@ def is_async_http_policy(policy: object) -> TypeGuard[AsyncHTTPPolicy]:
     return False
 
 
-class _SansIOAsyncHTTPPolicyRunner(
-    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):  # pylint: disable=unsubscriptable-object
+class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Async implementation of the SansIO policy.
 
     Modifies the request and sends to the next policy in the chain.
@@ -76,9 +74,7 @@ class _SansIOAsyncHTTPPolicyRunner(
         return response
 
 
-class _AsyncTransportRunner(
-    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
-):  # pylint: disable=unsubscriptable-object
+class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]):
     """Async Transport runner.
 
     Uses specified HTTP transport type to send request and returns response.

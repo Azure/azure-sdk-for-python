@@ -7,13 +7,12 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Any, List, Union
-
 from azure.core.credentials import AzureKeyCredential, TokenCredential
-
 from ._client import (
     DocumentIntelligenceClient as DIClientGenerated,
     DocumentIntelligenceAdministrationClient as DIAClientGenerated,
 )
+from ._operations._patch import AnalyzeDocumentLROPoller
 
 
 class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
@@ -87,6 +86,7 @@ class DocumentIntelligenceAdministrationClient(
 __all__: List[str] = [
     "DocumentIntelligenceClient",
     "DocumentIntelligenceAdministrationClient",
+    "AnalyzeDocumentLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
 
 

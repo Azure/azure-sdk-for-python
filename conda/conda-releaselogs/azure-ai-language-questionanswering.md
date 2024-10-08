@@ -1,5 +1,11 @@
 # Azure Cognitive Language Services Question Answering client library for Python (conda)
 
+## 2024.09.01
+
+### Packages included
+
+- azure-ai-language-questionanswering-1.1.0
+
 ## 2024.06.01
 
 ### Packages included

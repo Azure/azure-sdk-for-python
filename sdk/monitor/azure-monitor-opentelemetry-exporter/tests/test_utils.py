@@ -40,7 +40,9 @@ class TestUtils(unittest.TestCase):
     def test_nanoseconds_to_duration(self):
         ns_to_duration = _utils.ns_to_duration
         self.assertEqual(ns_to_duration(0), "0.00:00:00.000")
+        self.assertEqual(ns_to_duration(500000), "0.00:00:00.001") # Rounding
         self.assertEqual(ns_to_duration(1000000), "0.00:00:00.001")
+        self.assertEqual(ns_to_duration(1500000), "0.00:00:00.002") # Rounding
         self.assertEqual(ns_to_duration(1000000000), "0.00:00:01.000")
         self.assertEqual(ns_to_duration(60 * 1000000000), "0.00:01:00.000")
         self.assertEqual(ns_to_duration(3600 * 1000000000), "0.01:00:00.000")

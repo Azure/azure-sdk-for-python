@@ -75,21 +75,27 @@ def main():
                         },
                     },
                     "clusterVersion": "1.0.6",
-                    "identityProfile": {
-                        "msiClientId": "de91f1d8-767f-460a-ac11-3cf103f74b34",
-                        "msiObjectId": "40491351-c240-4042-91e0-f644a1d2b441",
-                        "msiResourceId": "/subscriptions/subid/resourceGroups/hiloResourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-msi",
+                    "managedIdentityProfile": {
+                        "identityList": [
+                            {
+                                "clientId": "de91f1d8-767f-460a-ac11-3cf103f74b34",
+                                "objectId": "40491351-c240-4042-91e0-f644a1d2b441",
+                                "resourceId": "/subscriptions/subid/resourceGroups/hiloResourcegroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-msi",
+                                "type": "cluster",
+                            }
+                        ]
                     },
                     "ossVersion": "0.410.0",
-                    "sshProfile": {"count": 2},
+                    "sshProfile": {"count": 2, "vmSize": "Standard_E8as_v5"},
                     "trinoProfile": {},
                 },
                 "clusterType": "Trino",
                 "computeProfile": {
+                    "availabilityZones": ["1", "2", "3"],
                     "nodes": [
                         {"count": 2, "type": "Head", "vmSize": "Standard_E8as_v5"},
                         {"count": 3, "type": "Worker", "vmSize": "Standard_E8as_v5"},
-                    ]
+                    ],
                 },
             },
         },
@@ -97,6 +103,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2023-11-01-preview/examples/CreateAutoscaleCluster.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/HDInsightOnAks/preview/2024-05-01-preview/examples/CreateAutoscaleCluster.json
 if __name__ == "__main__":
     main()

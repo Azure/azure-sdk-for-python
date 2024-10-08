@@ -1151,7 +1151,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_by_servicebus_client_session_fail(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
@@ -2651,7 +2651,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_send_large_message_receive(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
@@ -3386,7 +3386,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             receiver1 = sb_client.get_queue_receiver(servicebus_queue.name)
             receiver2 = sb_client.get_queue_receiver(servicebus_queue.name)
-            
+
             with sender, receiver1, receiver2:
                 sender.send_messages([ServiceBusMessage('test') for _ in range(5)])
                 received_msgs = []
@@ -3394,14 +3394,17 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 # of different os platforms, this is why a while loop is used here to receive the specific
                 # amount of message we want to receive
                 while len(received_msgs) < 5:
-                    # start receives on the first receiver and complete them on the other one. 
+                    # start receives on the first receiver and complete them on the other one.
                     # the messages should settle over the management of the second receiver.
                     for msg in receiver1.receive_messages(max_message_count=10, max_wait_time=5):
                         receiver2.complete_message(msg)
                         received_msgs.append(msg)
-                
+
                 assert len(received_msgs) == 5
-                
+
+                if uamqp_transport:
+                    # wait to make sure message completed, since uamqp is taking longer in the CI
+                    time.sleep(10)
                 messages_in_queue = receiver1.peek_messages()
-    
+
                 assert len(messages_in_queue) == 0

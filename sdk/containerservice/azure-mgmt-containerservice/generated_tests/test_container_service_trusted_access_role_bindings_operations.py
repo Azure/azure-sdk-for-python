@@ -24,7 +24,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperations(AzureMgmtRecordedT
         response = self.client.trusted_access_role_bindings.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2022-04-02-preview",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerServiceTrustedAccessRoleBindingsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             resource_name="str",
             trusted_access_role_binding_name="str",
-            api_version="2022-04-02-preview",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -45,8 +45,8 @@ class TestContainerServiceTrustedAccessRoleBindingsOperations(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
-        response = self.client.trusted_access_role_bindings.create_or_update(
+    def test_begin_create_or_update(self, resource_group):
+        response = self.client.trusted_access_role_bindings.begin_create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
             trusted_access_role_binding_name="str",
@@ -66,21 +66,21 @@ class TestContainerServiceTrustedAccessRoleBindingsOperations(AzureMgmtRecordedT
                 },
                 "type": "str",
             },
-            api_version="2022-04-02-preview",
-        )
+            api_version="2024-07-01",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
-        response = self.client.trusted_access_role_bindings.delete(
+    def test_begin_delete(self, resource_group):
+        response = self.client.trusted_access_role_bindings.begin_delete(
             resource_group_name=resource_group.name,
             resource_name="str",
             trusted_access_role_binding_name="str",
-            api_version="2022-04-02-preview",
-        )
+            api_version="2024-07-01",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

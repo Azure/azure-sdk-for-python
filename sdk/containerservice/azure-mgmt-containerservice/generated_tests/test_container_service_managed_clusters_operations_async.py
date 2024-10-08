@@ -21,9 +21,20 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_list_kubernetes_versions(self, resource_group):
+        response = await self.client.managed_clusters.list_kubernetes_versions(
+            location="str",
+            api_version="2024-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_list(self, resource_group):
         response = self.client.managed_clusters.list(
-            api_version="2018-03-31",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +45,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.managed_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2018-03-31",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +57,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.managed_clusters.get_upgrade_profile(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2018-03-31",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -59,7 +70,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             resource_name="str",
             role_name="str",
-            api_version="2018-03-31",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +82,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.managed_clusters.list_cluster_admin_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2018-03-31",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +94,19 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.managed_clusters.list_cluster_user_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2018-03-31",
+            api_version="2024-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_list_cluster_monitoring_user_credentials(self, resource_group):
+        response = await self.client.managed_clusters.list_cluster_monitoring_user_credentials(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -95,7 +118,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.managed_clusters.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2018-03-31",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -111,46 +134,336 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                 parameters={
                     "location": "str",
                     "aadProfile": {
+                        "adminGroupObjectIDs": ["str"],
                         "clientAppID": "str",
+                        "enableAzureRBAC": bool,
+                        "managed": bool,
                         "serverAppID": "str",
                         "serverAppSecret": "str",
                         "tenantID": "str",
                     },
-                    "addonProfiles": {"str": {"enabled": bool, "config": {"str": "str"}}},
+                    "addonProfiles": {
+                        "str": {
+                            "enabled": bool,
+                            "config": {"str": "str"},
+                            "identity": {"clientId": "str", "objectId": "str", "resourceId": "str"},
+                        }
+                    },
                     "agentPoolProfiles": [
                         {
                             "name": "str",
-                            "vmSize": "str",
-                            "count": 1,
+                            "availabilityZones": ["str"],
+                            "capacityReservationGroupID": "str",
+                            "count": 0,
+                            "creationData": {"sourceResourceId": "str"},
+                            "currentOrchestratorVersion": "str",
+                            "enableAutoScaling": bool,
+                            "enableEncryptionAtHost": bool,
+                            "enableFIPS": bool,
+                            "enableNodePublicIP": bool,
+                            "enableUltraSSD": bool,
+                            "gpuInstanceProfile": "str",
+                            "hostGroupID": "str",
+                            "kubeletConfig": {
+                                "allowedUnsafeSysctls": ["str"],
+                                "containerLogMaxFiles": 0,
+                                "containerLogMaxSizeMB": 0,
+                                "cpuCfsQuota": bool,
+                                "cpuCfsQuotaPeriod": "str",
+                                "cpuManagerPolicy": "str",
+                                "failSwapOn": bool,
+                                "imageGcHighThreshold": 0,
+                                "imageGcLowThreshold": 0,
+                                "podMaxPids": 0,
+                                "topologyManagerPolicy": "str",
+                            },
+                            "kubeletDiskType": "str",
+                            "linuxOSConfig": {
+                                "swapFileSizeMB": 0,
+                                "sysctls": {
+                                    "fsAioMaxNr": 0,
+                                    "fsFileMax": 0,
+                                    "fsInotifyMaxUserWatches": 0,
+                                    "fsNrOpen": 0,
+                                    "kernelThreadsMax": 0,
+                                    "netCoreNetdevMaxBacklog": 0,
+                                    "netCoreOptmemMax": 0,
+                                    "netCoreRmemDefault": 0,
+                                    "netCoreRmemMax": 0,
+                                    "netCoreSomaxconn": 0,
+                                    "netCoreWmemDefault": 0,
+                                    "netCoreWmemMax": 0,
+                                    "netIpv4IpLocalPortRange": "str",
+                                    "netIpv4NeighDefaultGcThresh1": 0,
+                                    "netIpv4NeighDefaultGcThresh2": 0,
+                                    "netIpv4NeighDefaultGcThresh3": 0,
+                                    "netIpv4TcpFinTimeout": 0,
+                                    "netIpv4TcpKeepaliveProbes": 0,
+                                    "netIpv4TcpKeepaliveTime": 0,
+                                    "netIpv4TcpMaxSynBacklog": 0,
+                                    "netIpv4TcpMaxTwBuckets": 0,
+                                    "netIpv4TcpTwReuse": bool,
+                                    "netIpv4TcpkeepaliveIntvl": 0,
+                                    "netNetfilterNfConntrackBuckets": 0,
+                                    "netNetfilterNfConntrackMax": 0,
+                                    "vmMaxMapCount": 0,
+                                    "vmSwappiness": 0,
+                                    "vmVfsCachePressure": 0,
+                                },
+                                "transparentHugePageDefrag": "str",
+                                "transparentHugePageEnabled": "str",
+                            },
+                            "maxCount": 0,
                             "maxPods": 0,
+                            "minCount": 0,
+                            "mode": "str",
+                            "networkProfile": {
+                                "allowedHostPorts": [{"portEnd": 0, "portStart": 0, "protocol": "str"}],
+                                "applicationSecurityGroups": ["str"],
+                                "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
+                            },
+                            "nodeImageVersion": "str",
+                            "nodeLabels": {"str": "str"},
+                            "nodePublicIPPrefixID": "str",
+                            "nodeTaints": ["str"],
+                            "orchestratorVersion": "str",
                             "osDiskSizeGB": 0,
+                            "osDiskType": "str",
+                            "osSKU": "str",
                             "osType": "Linux",
-                            "storageProfile": "str",
+                            "podSubnetID": "str",
+                            "powerState": {"code": "str"},
+                            "provisioningState": "str",
+                            "proximityPlacementGroupID": "str",
+                            "scaleDownMode": "str",
+                            "scaleSetEvictionPolicy": "Delete",
+                            "scaleSetPriority": "Regular",
+                            "securityProfile": {"enableSecureBoot": bool, "enableVTPM": bool},
+                            "spotMaxPrice": -1,
+                            "tags": {"str": "str"},
+                            "type": "str",
+                            "upgradeSettings": {
+                                "drainTimeoutInMinutes": 0,
+                                "maxSurge": "str",
+                                "nodeSoakDurationInMinutes": 0,
+                            },
+                            "vmSize": "str",
                             "vnetSubnetID": "str",
+                            "windowsProfile": {"disableOutboundNat": bool},
+                            "workloadRuntime": "str",
                         }
                     ],
+                    "apiServerAccessProfile": {
+                        "authorizedIPRanges": ["str"],
+                        "disableRunCommand": bool,
+                        "enablePrivateCluster": bool,
+                        "enablePrivateClusterPublicFQDN": bool,
+                        "privateDNSZone": "str",
+                    },
+                    "autoScalerProfile": {
+                        "balance-similar-node-groups": "str",
+                        "daemonset-eviction-for-empty-nodes": bool,
+                        "daemonset-eviction-for-occupied-nodes": bool,
+                        "expander": "str",
+                        "ignore-daemonsets-utilization": bool,
+                        "max-empty-bulk-delete": "str",
+                        "max-graceful-termination-sec": "str",
+                        "max-node-provision-time": "str",
+                        "max-total-unready-percentage": "str",
+                        "new-pod-scale-up-delay": "str",
+                        "ok-total-unready-count": "str",
+                        "scale-down-delay-after-add": "str",
+                        "scale-down-delay-after-delete": "str",
+                        "scale-down-delay-after-failure": "str",
+                        "scale-down-unneeded-time": "str",
+                        "scale-down-unready-time": "str",
+                        "scale-down-utilization-threshold": "str",
+                        "scan-interval": "str",
+                        "skip-nodes-with-local-storage": "str",
+                        "skip-nodes-with-system-pods": "str",
+                    },
+                    "autoUpgradeProfile": {"nodeOSUpgradeChannel": "str", "upgradeChannel": "str"},
+                    "azureMonitorProfile": {
+                        "metrics": {
+                            "enabled": bool,
+                            "kubeStateMetrics": {"metricAnnotationsAllowList": "str", "metricLabelsAllowlist": "str"},
+                        }
+                    },
+                    "azurePortalFQDN": "str",
+                    "currentKubernetesVersion": "str",
+                    "disableLocalAccounts": bool,
+                    "diskEncryptionSetID": "str",
                     "dnsPrefix": "str",
+                    "enablePodSecurityPolicy": bool,
                     "enableRBAC": bool,
+                    "extendedLocation": {"name": "str", "type": "str"},
                     "fqdn": "str",
+                    "fqdnSubdomain": "str",
+                    "httpProxyConfig": {
+                        "httpProxy": "str",
+                        "httpsProxy": "str",
+                        "noProxy": ["str"],
+                        "trustedCa": "str",
+                    },
                     "id": "str",
+                    "identity": {
+                        "delegatedResources": {
+                            "str": {
+                                "location": "str",
+                                "referralResource": "str",
+                                "resourceId": "str",
+                                "tenantId": "str",
+                            }
+                        },
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
+                    "identityProfile": {"str": {"clientId": "str", "objectId": "str", "resourceId": "str"}},
+                    "ingressProfile": {
+                        "webAppRouting": {
+                            "dnsZoneResourceIds": ["str"],
+                            "enabled": bool,
+                            "identity": {"clientId": "str", "objectId": "str", "resourceId": "str"},
+                        }
+                    },
                     "kubernetesVersion": "str",
                     "linuxProfile": {"adminUsername": "str", "ssh": {"publicKeys": [{"keyData": "str"}]}},
+                    "maxAgentPools": 0,
+                    "metricsProfile": {"costAnalysis": {"enabled": bool}},
                     "name": "str",
                     "networkProfile": {
                         "dnsServiceIP": "10.0.0.10",
-                        "dockerBridgeCidr": "172.17.0.1/16",
+                        "ipFamilies": ["str"],
+                        "loadBalancerProfile": {
+                            "allocatedOutboundPorts": 0,
+                            "backendPoolType": "NodeIPConfiguration",
+                            "effectiveOutboundIPs": [{"id": "str"}],
+                            "enableMultipleStandardLoadBalancers": bool,
+                            "idleTimeoutInMinutes": 30,
+                            "managedOutboundIPs": {"count": 1, "countIPv6": 0},
+                            "outboundIPPrefixes": {"publicIPPrefixes": [{"id": "str"}]},
+                            "outboundIPs": {"publicIPs": [{"id": "str"}]},
+                        },
+                        "loadBalancerSku": "str",
+                        "natGatewayProfile": {
+                            "effectiveOutboundIPs": [{"id": "str"}],
+                            "idleTimeoutInMinutes": 4,
+                            "managedOutboundIPProfile": {"count": 1},
+                        },
+                        "networkDataplane": "str",
+                        "networkMode": "str",
                         "networkPlugin": "kubenet",
+                        "networkPluginMode": "str",
                         "networkPolicy": "str",
+                        "outboundType": "loadBalancer",
                         "podCidr": "10.244.0.0/16",
+                        "podCidrs": ["str"],
                         "serviceCidr": "10.0.0.0/16",
+                        "serviceCidrs": ["str"],
                     },
                     "nodeResourceGroup": "str",
+                    "oidcIssuerProfile": {"enabled": bool, "issuerURL": "str"},
+                    "podIdentityProfile": {
+                        "allowNetworkPluginKubenet": bool,
+                        "enabled": bool,
+                        "userAssignedIdentities": [
+                            {
+                                "identity": {"clientId": "str", "objectId": "str", "resourceId": "str"},
+                                "name": "str",
+                                "namespace": "str",
+                                "bindingSelector": "str",
+                                "provisioningInfo": {
+                                    "error": {
+                                        "error": {"code": "str", "details": [...], "message": "str", "target": "str"}
+                                    }
+                                },
+                                "provisioningState": "str",
+                            }
+                        ],
+                        "userAssignedIdentityExceptions": [
+                            {"name": "str", "namespace": "str", "podLabels": {"str": "str"}}
+                        ],
+                    },
+                    "powerState": {"code": "str"},
+                    "privateFQDN": "str",
+                    "privateLinkResources": [
+                        {
+                            "groupId": "str",
+                            "id": "str",
+                            "name": "str",
+                            "privateLinkServiceID": "str",
+                            "requiredMembers": ["str"],
+                            "type": "str",
+                        }
+                    ],
                     "provisioningState": "str",
+                    "publicNetworkAccess": "str",
+                    "resourceUID": "str",
+                    "securityProfile": {
+                        "azureKeyVaultKms": {
+                            "enabled": bool,
+                            "keyId": "str",
+                            "keyVaultNetworkAccess": "Public",
+                            "keyVaultResourceId": "str",
+                        },
+                        "defender": {"logAnalyticsWorkspaceResourceId": "str", "securityMonitoring": {"enabled": bool}},
+                        "imageCleaner": {"enabled": bool, "intervalHours": 0},
+                        "workloadIdentity": {"enabled": bool},
+                    },
+                    "serviceMeshProfile": {
+                        "mode": "str",
+                        "istio": {
+                            "certificateAuthority": {
+                                "plugin": {
+                                    "certChainObjectName": "str",
+                                    "certObjectName": "str",
+                                    "keyObjectName": "str",
+                                    "keyVaultId": "str",
+                                    "rootCertObjectName": "str",
+                                }
+                            },
+                            "components": {
+                                "egressGateways": [{"enabled": bool}],
+                                "ingressGateways": [{"enabled": bool, "mode": "str"}],
+                            },
+                            "revisions": ["str"],
+                        },
+                    },
                     "servicePrincipalProfile": {"clientId": "str", "secret": "str"},
+                    "sku": {"name": "str", "tier": "str"},
+                    "storageProfile": {
+                        "blobCSIDriver": {"enabled": bool},
+                        "diskCSIDriver": {"enabled": bool},
+                        "fileCSIDriver": {"enabled": bool},
+                        "snapshotController": {"enabled": bool},
+                    },
+                    "supportPlan": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "tags": {"str": "str"},
                     "type": "str",
+                    "upgradeSettings": {"overrideSettings": {"forceUpgrade": bool, "until": "2020-02-20 00:00:00"}},
+                    "windowsProfile": {
+                        "adminUsername": "str",
+                        "adminPassword": "str",
+                        "enableCSIProxy": bool,
+                        "gmsaProfile": {"dnsServer": "str", "enabled": bool, "rootDomainName": "str"},
+                        "licenseType": "str",
+                    },
+                    "workloadAutoScalerProfile": {
+                        "keda": {"enabled": bool},
+                        "verticalPodAutoscaler": {"enabled": False},
+                    },
                 },
-                api_version="2018-03-31",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -165,7 +478,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 parameters={"tags": {"str": "str"}},
-                api_version="2018-03-31",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -179,7 +492,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.managed_clusters.begin_delete(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2018-03-31",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -194,7 +507,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 resource_name="str",
                 parameters={"clientId": "str", "secret": "str"},
-                api_version="2018-03-31",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -208,10 +521,176 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
             await self.client.managed_clusters.begin_reset_aad_profile(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                parameters={"clientAppID": "str", "serverAppID": "str", "serverAppSecret": "str", "tenantID": "str"},
-                api_version="2018-03-31",
+                parameters={
+                    "adminGroupObjectIDs": ["str"],
+                    "clientAppID": "str",
+                    "enableAzureRBAC": bool,
+                    "managed": bool,
+                    "serverAppID": "str",
+                    "serverAppSecret": "str",
+                    "tenantID": "str",
+                },
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_begin_rotate_cluster_certificates(self, resource_group):
+        response = await (
+            await self.client.managed_clusters.begin_rotate_cluster_certificates(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_begin_abort_latest_operation(self, resource_group):
+        response = await (
+            await self.client.managed_clusters.begin_abort_latest_operation(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_begin_rotate_service_account_signing_keys(self, resource_group):
+        response = await (
+            await self.client.managed_clusters.begin_rotate_service_account_signing_keys(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_begin_stop(self, resource_group):
+        response = await (
+            await self.client.managed_clusters.begin_stop(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_begin_start(self, resource_group):
+        response = await (
+            await self.client.managed_clusters.begin_start(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_begin_run_command(self, resource_group):
+        response = await (
+            await self.client.managed_clusters.begin_run_command(
+                resource_group_name=resource_group.name,
+                resource_name="str",
+                request_payload={"command": "str", "clusterToken": "str", "context": "str"},
+                api_version="2024-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_get_command_result(self, resource_group):
+        response = await self.client.managed_clusters.get_command_result(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            command_id="str",
+            api_version="2024-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_list_outbound_network_dependencies_endpoints(self, resource_group):
+        response = self.client.managed_clusters.list_outbound_network_dependencies_endpoints(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2024-07-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_list_mesh_revision_profiles(self, resource_group):
+        response = self.client.managed_clusters.list_mesh_revision_profiles(
+            location="str",
+            api_version="2024-07-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_get_mesh_revision_profile(self, resource_group):
+        response = await self.client.managed_clusters.get_mesh_revision_profile(
+            location="str",
+            mode="str",
+            api_version="2024-07-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_list_mesh_upgrade_profiles(self, resource_group):
+        response = self.client.managed_clusters.list_mesh_upgrade_profiles(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            api_version="2024-07-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_get_mesh_upgrade_profile(self, resource_group):
+        response = await self.client.managed_clusters.get_mesh_upgrade_profile(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            mode="str",
+            api_version="2024-07-01",
+        )
 
         # please add some check logic here by yourself
         # ...

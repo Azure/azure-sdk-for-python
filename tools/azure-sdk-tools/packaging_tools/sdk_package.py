@@ -28,19 +28,16 @@ def main(generate_input, generate_output):
         prefolder = package["path"][0]
         # Changelog
         last_version = ["first release"]
-        if "azure-mgmt-" in package_name:
-            try:
-                md_output = change_log_generate(
-                    package_name,
-                    last_version,
-                    package["tagIsStable"],
-                    prefolder=prefolder,
-                    is_multiapi=package["isMultiapi"],
-                )
-            except:
-                md_output = "change log generation failed!!!"
-        else:
-            md_output = "data-plan skip changelog generation temporarily"
+        try:
+            md_output = change_log_generate(
+                package_name,
+                last_version,
+                package["tagIsStable"],
+                prefolder=prefolder,
+                is_multiapi=package["isMultiapi"],
+            )
+        except:
+            md_output = "change log generation failed!!!"
         package["changelog"] = {
             "content": md_output,
             "hasBreakingChange": "Breaking Changes" in md_output,

@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-
 import json
 import os
 import platform
@@ -10,6 +9,7 @@ import unittest
 from unittest import mock
 
 # pylint: disable=import-error
+from opentelemetry.trace import get_tracer_provider, set_tracer_provider
 from opentelemetry.sdk import trace, resources
 from opentelemetry.sdk.trace.export import SpanExportResult
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
@@ -55,7 +55,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"] = "true"
-        cls._exporter = AzureMonitorTraceExporter()
+        cls._exporter = AzureMonitorTraceExporter(
+            tracer_provider=trace.TracerProvider(),
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -63,8 +65,26 @@ class TestAzureTraceExporter(unittest.TestCase):
 
     def test_constructor(self):
         """Test the constructor."""
+        tp = trace.TracerProvider()
         exporter = AzureMonitorTraceExporter(
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertIsNone(exporter._tracer_provider)
+        self.assertEqual(
+            exporter._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+
+    def test_constructor_tracer_provider(self):
+        """Test the constructor."""
+        tp = trace.TracerProvider()
+        exporter = AzureMonitorTraceExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+            tracer_provider=tp,
+        )
+        self.assertEqual(
+            exporter._tracer_provider,
+            tp,
         )
         self.assertEqual(
             exporter._instrumentation_key,
@@ -129,6 +149,72 @@ class TestAzureTraceExporter(unittest.TestCase):
             result = exporter.export([test_span])
             self.assertEqual(result, SpanExportResult.SUCCESS)
             self.assertEqual(storage_mock.call_count, 1)
+
+    def test_export_with_tracer_provider(self):
+        mock_resource = mock.Mock()
+        tp = trace.TracerProvider(
+            resource=mock_resource,
+        )
+        exporter = AzureMonitorTraceExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+            tracer_provider=tp,
+        )
+        test_span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557338,
+                is_remote=False,
+            ),
+        )
+        test_span.start()
+        test_span.end()
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._transmit"
+        ) as transmit:  # noqa: E501
+            transmit.return_value = ExportResult.SUCCESS
+            storage_mock = mock.Mock()
+            exporter._transmit_from_storage = storage_mock
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._get_otel_resource_envelope"
+            ) as resource_patch:  # noqa: E501
+                result = exporter.export([test_span])
+                resource_patch.assert_called_once_with(mock_resource)
+                self.assertEqual(result, SpanExportResult.SUCCESS)
+                self.assertEqual(storage_mock.call_count, 1)
+
+    def test_export_with_tracer_provider_global(self):
+        mock_resource = mock.Mock()
+        tp = trace.TracerProvider(
+            resource=mock_resource,
+        )
+        set_tracer_provider(tp)
+        exporter = AzureMonitorTraceExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        test_span = trace._Span(
+            name="test",
+            context=SpanContext(
+                trace_id=36873507687745823477771305566750195431,
+                span_id=12030755672171557338,
+                is_remote=False,
+            ),
+        )
+        test_span.start()
+        test_span.end()
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._transmit"
+        ) as transmit:  # noqa: E501
+            transmit.return_value = ExportResult.SUCCESS
+            storage_mock = mock.Mock()
+            exporter._transmit_from_storage = storage_mock
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._get_otel_resource_envelope"
+            ) as resource_patch:  # noqa: E501
+                result = exporter.export([test_span])
+                resource_patch.assert_called_once_with(mock_resource)
+                self.assertEqual(result, SpanExportResult.SUCCESS)
+                self.assertEqual(storage_mock.call_count, 1)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export.trace._exporter._logger")
     def test_export_exception(self, logger_mock):
@@ -1326,7 +1412,6 @@ class TestAzureTraceExporter(unittest.TestCase):
         del os.environ["APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"]
         mock_tracer_provider = mock.Mock()
         mock_get_tracer_provider.return_value = mock_tracer_provider
-        exporter = self._exporter
         test_resource = resources.Resource(
             attributes={
                 "string_test_key": "string_value",
@@ -1347,6 +1432,9 @@ class TestAzureTraceExporter(unittest.TestCase):
         )
         test_span.start()
         test_span.end()
+        exporter = AzureMonitorTraceExporter(
+            _disable_offline_storage=True,
+        )
         with mock.patch(
             "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._transmit"
         ) as transmit:  # noqa: E501

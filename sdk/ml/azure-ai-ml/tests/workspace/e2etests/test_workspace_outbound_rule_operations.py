@@ -82,6 +82,27 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert rules_dict["pytorch"].category == OutboundRuleCategory.USER_DEFINED
         assert rules_dict["pytorch"].destination == "*.pytorch.org"
 
+        # test service tag rule creation that uses address prefixes properties
+        assert "custom-address-prefixes-rule" in rules_dict.keys()
+        custom_address_prefixes_rule = rules_dict["custom-address-prefixes-rule"]
+        assert isinstance(custom_address_prefixes_rule, ServiceTagDestination)
+        assert custom_address_prefixes_rule.category == OutboundRuleCategory.USER_DEFINED
+        assert custom_address_prefixes_rule.port_ranges == "10,20-30"
+        assert custom_address_prefixes_rule.protocol == "TCP"
+        assert custom_address_prefixes_rule.service_tag == "AzureMonitor"
+        assert "10.0.0.0/24" in custom_address_prefixes_rule.address_prefixes
+
+        # test private endpoint rule creation that uses fqdns properties
+        assert "app-gw-pe-rule" in rules_dict.keys()
+        app_gw_pe_rule = rules_dict["app-gw-pe-rule"]
+        assert isinstance(app_gw_pe_rule, PrivateEndpointDestination)
+        assert app_gw_pe_rule.category == OutboundRuleCategory.USER_DEFINED
+        assert "applicationGateways/mvnettestappgw" in app_gw_pe_rule.service_resource_id
+        assert app_gw_pe_rule.spark_enabled == False
+        assert app_gw_pe_rule.subresource_target == "appGwPrivateFrontendIpIPv4"
+        assert "contoso.com" in app_gw_pe_rule.fqdns
+        assert "contoso2.com" in app_gw_pe_rule.fqdns
+
         # test adding outbound rules with workspace update from yaml
         params_override = [
             {"name": wps_name},
