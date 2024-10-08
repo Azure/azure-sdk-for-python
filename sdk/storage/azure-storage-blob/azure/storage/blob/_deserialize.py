@@ -142,7 +142,7 @@ def service_properties_deserialize(generated: "StorageServiceProperties") -> Dic
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         'cors': cors_list,
-        'target_version': generated.default_service_version,  # pylint: disable=protected-access
+        'target_version': generated.default_service_version,
         'delete_retention_policy': RetentionPolicy._from_generated(generated.delete_retention_policy),  # pylint: disable=protected-access
         'static_website': StaticWebsite._from_generated(generated.static_website),  # pylint: disable=protected-access
     }
@@ -181,7 +181,7 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     blob.version_id = generated.version_id
     blob.is_current_version = generated.is_current_version
     blob.tag_count = generated.properties.tag_count
-    blob.tags = parse_tags(generated.blob_tags)  # pylint: disable=protected-access
+    blob.tags = parse_tags(generated.blob_tags)
     blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)
     blob.last_accessed_on = generated.properties.last_accessed_on
     blob.immutability_policy = ImmutabilityPolicy._from_generated(generated)  # pylint: disable=protected-access

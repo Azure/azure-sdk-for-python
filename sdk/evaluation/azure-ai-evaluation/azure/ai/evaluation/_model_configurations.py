@@ -7,10 +7,10 @@ from typing import Dict, Literal, TypedDict
 from typing_extensions import NotRequired
 
 
-class AzureOpenAIModelConfiguration(TypedDict, total=False):
+class AzureOpenAIModelConfiguration(TypedDict):
     """Model Configuration for Azure OpenAI Model"""
 
-    type: Literal["azure_openai"]
+    type: NotRequired[Literal["azure_openai"]]
     """The type of the model configuration. Should be 'azure_openai' for AzureOpenAIModelConfiguration"""
     azure_deployment: str
     """Name of Azure OpenAI deployment to make request to"""
@@ -22,10 +22,10 @@ class AzureOpenAIModelConfiguration(TypedDict, total=False):
     """(Optional) API version to use in request to Azure OpenAI deployment"""
 
 
-class OpenAIModelConfiguration(TypedDict, total=False):
+class OpenAIModelConfiguration(TypedDict):
     """Model Configuration for OpenAI Model"""
 
-    type: Literal["openai"]
+    type: NotRequired[Literal["openai"]]
     """The type of the model configuration. Should be 'openai' for OpenAIModelConfiguration"""
     api_key: str
     "API key needed to make request to model"

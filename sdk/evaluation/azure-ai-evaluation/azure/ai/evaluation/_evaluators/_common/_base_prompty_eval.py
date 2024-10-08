@@ -9,16 +9,16 @@ from typing import Dict
 from promptflow.core import AsyncPrompty
 from typing_extensions import override
 
-from ..._common.utils import construct_prompty_model_config
+from ..._common.utils import construct_prompty_model_config, validate_model_config
+from . import EvaluatorBase
 
 try:
     from ..._user_agent import USER_AGENT
 except ImportError:
-    USER_AGENT = None
-from . import EvaluatorBase
+    USER_AGENT = "None"
 
 
-class PromptyEvaluatorBase(EvaluatorBase):
+class PromptyEvaluatorBase(EvaluatorBase[float]):
     """Base class for all evaluators that make use of context as an input. It's also assumed that such evaluators
     make use of a prompty file, and return their results as a dictionary, with a single key-value pair
     linking the result name to a float value (unless multi-turn evaluation occurs, in which case the
@@ -39,13 +39,13 @@ class PromptyEvaluatorBase(EvaluatorBase):
     LLM_CALL_TIMEOUT = 600
     DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
-    def __init__(self, *, result_key: str, prompty_file: str, model_config: Dict, eval_last_turn: bool = False):
+    def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False):
         self._result_key = result_key
         self._prompty_file = prompty_file
         super().__init__(eval_last_turn=eval_last_turn)
 
         prompty_model_config = construct_prompty_model_config(
-            model_config,
+            validate_model_config(model_config),
             self.DEFAULT_OPEN_API_VERSION,
             USER_AGENT,
         )
@@ -56,7 +56,7 @@ class PromptyEvaluatorBase(EvaluatorBase):
     # defining a default here.
 
     @override
-    async def _do_eval(self, eval_input: Dict) -> Dict:
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, float]:
         """Do a relevance evaluation.
 
         :param eval_input: The input to the evaluator. Expected to contain
