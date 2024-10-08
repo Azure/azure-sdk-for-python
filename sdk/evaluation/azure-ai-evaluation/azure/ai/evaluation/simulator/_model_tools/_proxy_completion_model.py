@@ -6,13 +6,14 @@ import copy
 import json
 import time
 import uuid
-from typing import Dict, List
+from typing import Any, Dict, List, Optional, cast
 
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._user_agent import USER_AGENT
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryMode
 
+from .._model_tools._template_handler import TemplateParameters
 from .models import OpenAIChatCompletionsModel
 
 
@@ -33,7 +34,15 @@ class SimulationRequestDTO:
     :type template_parameters: Dict
     """
 
-    def __init__(self, url, headers, payload, params, templatekey, template_parameters):
+    def __init__(
+        self,
+        url: str,
+        headers: Dict[str, str],
+        payload: Dict[str, Any],
+        params: Dict[str, str],
+        templatekey: str,
+        template_parameters: Optional[TemplateParameters],
+    ):
         self.url = url
         self.headers = headers
         self.json = json.dumps(payload)
@@ -47,9 +56,12 @@ class SimulationRequestDTO:
         :return: The DTO as a dictionary.
         :rtype: Dict
         """
-        if self.templateParameters is not None:
-            self.templateParameters = {str(k): str(v) for k, v in self.templateParameters.items()}
-        return self.__dict__
+        toReturn = self.__dict__.copy()
+
+        if toReturn["templateParameters"] is not None:
+            toReturn["templateParameters"] = {str(k): str(v) for k, v in toReturn["templateParameters"].items()}
+
+        return toReturn
 
     def to_json(self):
         """Convert the DTO to a JSON string.
@@ -73,12 +85,12 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
     :keyword kwargs: Additional keyword arguments to pass to the parent class.
     """
 
-    def __init__(self, name: str, template_key: str, template_parameters, *args, **kwargs) -> None:
+    def __init__(self, name: str, template_key: str, template_parameters: TemplateParameters, **kwargs) -> None:
         self.tkey = template_key
         self.tparam = template_parameters
-        self.result_url = None
+        self.result_url: Optional[str] = None
 
-        super().__init__(name=name, *args, **kwargs)
+        super().__init__(name=name, **kwargs)
 
     def format_request_data(self, messages: List[Dict], **request_params) -> Dict:  # type: ignore[override]
         """Format the request data to query the model with.
@@ -184,8 +196,8 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                 message=f"Received unexpected HTTP status: {response.status_code} {response.text()}", response=response
             )
 
-        response = response.json()
-        self.result_url = response["location"]
+        response_data = response.json()
+        self.result_url = cast(str, response_data["location"])
 
         retry_policy = AsyncRetryPolicy(  # set up retry configuration
             retry_on_status_codes=[202],  # on which statuses to retry

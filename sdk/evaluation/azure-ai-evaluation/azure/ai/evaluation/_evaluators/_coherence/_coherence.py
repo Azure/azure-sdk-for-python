@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import os
 from typing import Optional
+
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
@@ -50,7 +51,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         query: Optional[str] = None,
         response: Optional[str] = None,
         conversation: Optional[dict] = None,
-        **kwargs
+        **kwargs,
     ):
         """Evaluate coherence. Accepts either a query and response for a single evaluation,
         or a conversation for a potentially multi-turn evaluation. If the conversation has more than one pair of
@@ -65,6 +66,6 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[Dict]
         :return: The relevance score.
-        :rtype: dict
+        :rtype: Dict[str, float]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

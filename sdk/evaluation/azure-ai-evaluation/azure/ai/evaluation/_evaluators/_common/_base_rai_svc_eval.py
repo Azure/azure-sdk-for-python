@@ -1,18 +1,20 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Dict, Optional, Union
 
-from typing import Dict, Optional
 from typing_extensions import override
 
-from azure.core.credentials import TokenCredential
-from azure.ai.evaluation._common.constants import EvaluationMetrics
+from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._common.utils import validate_azure_ai_project
 from azure.ai.evaluation._exceptions import EvaluationException
+from azure.core.credentials import TokenCredential
+
 from . import EvaluatorBase
 
 
-class RaiServiceEvaluatorBase(EvaluatorBase):
+class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
     """Base class for all evaluators that require the use of the Azure AI RAI service for evaluation.
     This includes content safety evaluators, protected material evaluators, and others. These evaluators
     are all assumed to be of the "query and response or conversation" input variety.
@@ -30,14 +32,14 @@ class RaiServiceEvaluatorBase(EvaluatorBase):
     @override
     def __init__(
         self,
-        eval_metric: EvaluationMetrics,
+        eval_metric: Union[EvaluationMetrics, _InternalEvaluationMetrics],
         azure_ai_project: dict,
         credential: TokenCredential,
         eval_last_turn: bool = False,
     ):
         super().__init__(eval_last_turn=eval_last_turn)
         self._eval_metric = eval_metric
-        self._azure_ai_project = azure_ai_project
+        self._azure_ai_project = validate_azure_ai_project(azure_ai_project)
         self._credential = credential
 
     @override
@@ -47,7 +49,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase):
         query: Optional[str] = None,
         response: Optional[str] = None,
         conversation: Optional[dict] = None,
-        **kwargs
+        **kwargs,
     ):
         """Evaluate either a query and response or a conversation. Must supply either a query AND response,
         or a conversation, but not both.
@@ -61,12 +63,12 @@ class RaiServiceEvaluatorBase(EvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[Dict]
         :return: The evaluation result.
-        :rtype: Dict
+        :rtype: Dict[str, Union[str, float]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
 
     @override
-    async def _do_eval(self, eval_input: Dict):
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:
         """Perform the evaluation using the Azure AI RAI service.
         The exact evaluation performed is determined by the evaluation metric supplied
         by the child class initializer.
