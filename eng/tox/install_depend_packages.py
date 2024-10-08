@@ -60,6 +60,7 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-identity": {"msal": "1.23.0"},
     "azure-core-tracing-opentelemetry": {"azure-core": "1.28.0"},
     "azure-storage-file-datalake": {"azure-storage-blob": "12.22.0"},
+    "azure-cosmos": {"azure-core": "1.30.0"}
 }
 
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
