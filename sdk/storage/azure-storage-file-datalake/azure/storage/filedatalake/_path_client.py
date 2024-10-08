@@ -133,7 +133,7 @@ class PathClient(StorageAccountHostsMixin):
             path=self.path_name,
             pipeline=self._pipeline
         )
-        client._config.version = self._api_version
+        client._config.version = self._api_version  # pylint: disable=protected-access
         return client
 
     def __exit__(self, *args):
