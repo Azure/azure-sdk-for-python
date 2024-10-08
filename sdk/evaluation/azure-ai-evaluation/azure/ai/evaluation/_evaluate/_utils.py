@@ -6,13 +6,22 @@ import logging
 import os
 import re
 import tempfile
-from collections import namedtuple
 from pathlib import Path
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple, TypedDict, Union
 
 import pandas as pd
+from promptflow.client import PFClient
+from promptflow.entities import Run
 
-from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, Prefixes
+from azure.ai.evaluation._constants import (
+    DEFAULT_EVALUATION_RESULTS_FILE_NAME,
+    DefaultOpenEncoding,
+    EvaluationRunProperties,
+    Prefixes,
+)
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._model_configurations import AzureAIProject
 
 LOGGER = logging.getLogger(__name__)
 
@@ -21,33 +30,51 @@ AZURE_WORKSPACE_REGEX_FORMAT = (
     "(/providers/Microsoft.MachineLearningServices)?/workspaces/([^/]+)$"
 )
 
-AzureMLWorkspaceTriad = namedtuple("AzureMLWorkspace", ["subscription_id", "resource_group_name", "workspace_name"])
+
+class AzureMLWorkspace(NamedTuple):
+    subscription_id: str
+    resource_group_name: str
+    workspace_name: str
 
 
-def is_none(value):
+class EvaluateResult(TypedDict):
+    metrics: Dict[str, float]
+    studio_url: Optional[str]
+    rows: List[Dict]
+
+
+def is_none(value) -> bool:
     return value is None or str(value).lower() == "none"
 
 
-def extract_workspace_triad_from_trace_provider(trace_provider: str):  # pylint: disable=name-too-long
+def extract_workspace_triad_from_trace_provider(  # pylint: disable=name-too-long
+    trace_provider: str,
+) -> AzureMLWorkspace:
     match = re.match(AZURE_WORKSPACE_REGEX_FORMAT, trace_provider)
     if not match or len(match.groups()) != 5:
-        raise ValueError(
-            "Malformed trace provider string, expected azureml://subscriptions/<subscription_id>/"
+        raise EvaluationException(
+            message="Malformed trace provider string, expected azureml://subscriptions/<subscription_id>/"
             "resourceGroups/<resource_group>/providers/Microsoft.MachineLearningServices/"
-            f"workspaces/<workspace_name>, got {trace_provider}"
+            f"workspaces/<workspace_name>, got {trace_provider}",
+            internal_message="Malformed trace provider string, expected azureml://subscriptions/<subscription_id>/"
+            "resourceGroups/<resource_group>/providers/Microsoft.MachineLearningServices/"
+            "workspaces/<workspace_name>,",
+            target=ErrorTarget.UNKNOWN,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.UNKNOWN,
         )
     subscription_id = match.group(1)
     resource_group_name = match.group(3)
     workspace_name = match.group(5)
-    return AzureMLWorkspaceTriad(subscription_id, resource_group_name, workspace_name)
+    return AzureMLWorkspace(subscription_id, resource_group_name, workspace_name)
 
 
 def load_jsonl(path):
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, "r", encoding=DefaultOpenEncoding.READ) as f:
         return [json.loads(line) for line in f.readlines()]
 
 
-def _azure_pf_client_and_triad(trace_destination):
+def _azure_pf_client_and_triad(trace_destination) -> Tuple[PFClient, AzureMLWorkspace]:
     from promptflow.azure._cli._utils import _get_azure_pf_client
 
     ws_triad = extract_workspace_triad_from_trace_provider(trace_destination)
@@ -61,12 +88,12 @@ def _azure_pf_client_and_triad(trace_destination):
 
 
 def _log_metrics_and_instance_results(
-    metrics,
-    instance_results,
-    trace_destination,
-    run,
-    evaluation_name,
-) -> str:
+    metrics: Dict[str, Any],
+    instance_results: pd.DataFrame,
+    trace_destination: Optional[str],
+    run: Run,
+    evaluation_name: Optional[str],
+) -> Optional[str]:
     if trace_destination is None:
         LOGGER.error("Unable to log traces as trace destination was not defined.")
         return None
@@ -86,13 +113,12 @@ def _log_metrics_and_instance_results(
         ml_client=azure_pf_client.ml_client,
         promptflow_run=run,
     ) as ev_run:
-
         artifact_name = EvalRun.EVALUATION_ARTIFACT if run else EvalRun.EVALUATION_ARTIFACT_DUMMY_RUN
 
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp_path = os.path.join(tmpdir, artifact_name)
 
-            with open(tmp_path, "w", encoding="utf-8") as f:
+            with open(tmp_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                 f.write(instance_results.to_json(orient="records", lines=True))
 
             ev_run.log_artifact(tmpdir, artifact_name)
@@ -104,7 +130,8 @@ def _log_metrics_and_instance_results(
             if run is None:
                 ev_run.write_properties_to_run_history(
                     properties={
-                        "_azureml.evaluation_run": "azure-ai-generative-parent",
+                        EvaluationRunProperties.RUN_TYPE: "eval_run",
+                        EvaluationRunProperties.EVALUATION_RUN: "azure-ai-generative-parent",
                         "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
                         "isEvaluatorRun": "true",
                     }
@@ -130,7 +157,7 @@ def _get_ai_studio_url(trace_destination: str, evaluation_id: str) -> str:
     return studio_url
 
 
-def _trace_destination_from_project_scope(project_scope: dict) -> str:
+def _trace_destination_from_project_scope(project_scope: AzureAIProject) -> str:
     subscription_id = project_scope["subscription_id"]
     resource_group_name = project_scope["resource_group_name"]
     workspace_name = project_scope["project_name"]
@@ -143,16 +170,18 @@ def _trace_destination_from_project_scope(project_scope: dict) -> str:
     return trace_destination
 
 
-def _write_output(path, data_dict):
+def _write_output(path: Union[str, os.PathLike], data_dict: Any) -> None:
     p = Path(path)
-    if os.path.isdir(path):
+    if p.is_dir():
         p = p / DEFAULT_EVALUATION_RESULTS_FILE_NAME
 
-    with open(p, "w") as f:
+    with open(p, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         json.dump(data_dict, f)
 
 
-def _apply_column_mapping(source_df: pd.DataFrame, mapping_config: dict, inplace: bool = False) -> pd.DataFrame:
+def _apply_column_mapping(
+    source_df: pd.DataFrame, mapping_config: Optional[Dict[str, str]], inplace: bool = False
+) -> pd.DataFrame:
     """
     Apply column mapping to source_df based on mapping_config.
 
@@ -160,10 +189,11 @@ def _apply_column_mapping(source_df: pd.DataFrame, mapping_config: dict, inplace
     :param source_df: the data frame to be changed.
     :type source_df: pd.DataFrame
     :param mapping_config: The configuration, containing column mapping.
-    :type mapping_config: dict.
+    :type mapping_config: Dict[str, str].
     :param inplace: If true, the source_df will be changed inplace.
     :type inplace: bool
     :return: The modified data frame.
+    :rtype: pd.DataFrame
     """
     result_df = source_df
 
@@ -200,31 +230,34 @@ def _apply_column_mapping(source_df: pd.DataFrame, mapping_config: dict, inplace
     return result_df
 
 
-def _has_aggregator(evaluator):
+def _has_aggregator(evaluator: object) -> bool:
     return hasattr(evaluator, "__aggregate__")
 
 
-def get_int_env_var(env_var_name, default_value=None):
+def get_int_env_var(env_var_name: str, default_value: int) -> int:
     """
-    The function `get_int_env_var` retrieves an integer environment variable value, with an optional
+    The function `get_int_env_var` retrieves an integer environment variable value, with a
     default value if the variable is not set or cannot be converted to an integer.
 
     :param env_var_name: The name of the environment variable you want to retrieve the value of
+    :type env_var_name: str
     :param default_value: The default value is the value that will be returned if the environment
-    variable is not found or if it cannot be converted to an integer
+        variable is not found or if it cannot be converted to an integer
+    :type default_value: int
     :return: an integer value.
+    :rtype: int
     """
     try:
-        return int(os.environ.get(env_var_name, default_value))
-    except Exception:
+        return int(os.environ[env_var_name])
+    except (ValueError, KeyError):
         return default_value
 
 
-def set_event_loop_policy():
+def set_event_loop_policy() -> None:
     import asyncio
     import platform
 
     if platform.system().lower() == "windows":
         # Reference: https://stackoverflow.com/questions/45600579/asyncio-event-loop-is-closed-when-getting-loop
         # On Windows seems to be a problem with EventLoopPolicy, use this snippet to work around it
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())  # type: ignore[attr-defined]

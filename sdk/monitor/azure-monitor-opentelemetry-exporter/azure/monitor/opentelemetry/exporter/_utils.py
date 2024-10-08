@@ -23,6 +23,7 @@ from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
     _APPLICATION_INSIGHTS_RESOURCE_SCOPE,
+    _PYTHON_ENABLE_OPENTELEMETRY,
     _INSTRUMENTATIONS_BIT_MAP,
     _FUNCTIONS_WORKER_RUNTIME,
     _WEBSITE_SITE_NAME,
@@ -49,20 +50,24 @@ except ImportError:
 def _is_on_app_service():
     return environ.get(_WEBSITE_SITE_NAME) is not None
 
+# Functions
+
 def _is_on_functions():
     return environ.get(_FUNCTIONS_WORKER_RUNTIME) is not None
-
-def _is_attach_enabled():
-    if _is_on_app_service():
-        return isdir("/agents/python/")
-    return False
-
 
 # AKS
 
 def _is_on_aks():
     return _AKS_ARM_NAMESPACE_ID in environ
 
+# Attach
+
+def _is_attach_enabled():
+    if _is_on_app_service():
+        return isdir("/agents/python/")
+    if _is_on_functions():
+        return environ.get(_PYTHON_ENABLE_OPENTELEMETRY) == "true"
+    return False
 
 def _get_sdk_version_prefix():
     sdk_version_prefix = ''

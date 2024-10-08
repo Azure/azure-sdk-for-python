@@ -1,5 +1,15 @@
 # Release History
 
+## 15.0.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 15.0.0b1 (2024-09-01)
 
 - Version (15.0.0b1) is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Batch. For more information about this, and preview releases of other Azure SDK libraries, please visit https://azure.github.io/azure-sdk/releases/latest/python.html.

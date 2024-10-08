@@ -1,10 +1,10 @@
 import http
+import math
 import os
 import pathlib
 from typing import Any, Iterator, MutableMapping, Optional
 from unittest.mock import MagicMock, patch
 
-import numpy as np
 import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -251,8 +251,8 @@ class TestContentSafetyEvaluator:
         batch_response = [{"not-a-metric": "not-a-value"}]
         metric_name = EvaluationMetrics.HATE_FAIRNESS
         result = parse_response(batch_response=batch_response, metric_name=metric_name)
-        assert np.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS])
-        assert np.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS + "_score"])
+        assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS])
+        assert math.isnan(result[EvaluationMetrics.HATE_UNFAIRNESS + "_score"])
         assert result[EvaluationMetrics.HATE_UNFAIRNESS + "_reason"] == ""
 
         metric_name = EvaluationMetrics.VIOLENCE
@@ -287,8 +287,8 @@ class TestContentSafetyEvaluator:
         response_value.pop("label")
         batch_response[0] = {metric_name: str(response_value)}
         result = parse_response(batch_response=batch_response, metric_name=metric_name)
-        assert np.isnan(result[metric_name])
-        assert np.isnan(result[metric_name + "_score"])
+        assert math.isnan(result[metric_name])
+        assert math.isnan(result[metric_name + "_score"])
         assert result[metric_name + "_reason"] == ""
 
         batch_response[0] = {metric_name: 5}
@@ -299,8 +299,8 @@ class TestContentSafetyEvaluator:
 
         batch_response[0] = {metric_name: 8}
         result = parse_response(batch_response=batch_response, metric_name=metric_name)
-        assert np.isnan(result[metric_name])
-        assert np.isnan(result[metric_name + "_score"])
+        assert math.isnan(result[metric_name])
+        assert math.isnan(result[metric_name + "_score"])
 
         batch_response[0] = {metric_name: "value is 7"}
         result = parse_response(batch_response=batch_response, metric_name=metric_name)
@@ -310,13 +310,13 @@ class TestContentSafetyEvaluator:
 
         batch_response[0] = {metric_name: "not a number"}
         result = parse_response(batch_response=batch_response, metric_name=metric_name)
-        assert np.isnan(result[metric_name])
-        assert np.isnan(result[metric_name + "_score"])
+        assert math.isnan(result[metric_name])
+        assert math.isnan(result[metric_name + "_score"])
 
         batch_response[0] = {metric_name: ["still not a number"]}
         result = parse_response(batch_response=batch_response, metric_name=metric_name)
-        assert np.isnan(result[metric_name])
-        assert np.isnan(result[metric_name + "_score"])
+        assert math.isnan(result[metric_name])
+        assert math.isnan(result[metric_name + "_score"])
 
     @pytest.mark.asyncio
     @patch(

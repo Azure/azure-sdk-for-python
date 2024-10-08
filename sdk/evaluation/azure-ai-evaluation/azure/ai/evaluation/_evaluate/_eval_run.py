@@ -8,16 +8,19 @@ import logging
 import os
 import posixpath
 import time
+import types
 import uuid
-from typing import Any, Dict, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Type
 from urllib.parse import urlparse
 
-from azure.core.pipeline.policies import RetryPolicy
-from azure.core.rest import HttpResponse
-
 from promptflow._sdk.entities import Run
+from typing_extensions import Self
+
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_http_client
 from azure.ai.evaluation._version import VERSION
+from azure.core.pipeline.policies import RetryPolicy
+from azure.core.rest import HttpResponse
 
 LOGGER = logging.getLogger(__name__)
 
@@ -25,6 +28,7 @@ LOGGER = logging.getLogger(__name__)
 # Handle optional import. The azure libraries are only present if
 # promptflow-azure is installed.
 try:
+    from azure.ai.ml import MLClient
     from azure.ai.ml.entities._credentials import AccountKeyConfiguration  # pylint: disable=ungrouped-imports
     from azure.ai.ml.entities._datastore.datastore import Datastore
     from azure.storage.blob import BlobServiceClient
@@ -119,8 +123,8 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         self._run_name = run_name
         self._promptflow_run = promptflow_run
         self._status = RunStatus.NOT_STARTED
-        self._url_base = None
-        self.info = None
+        self._url_base: Optional[str] = None
+        self._info: Optional[RunInfo] = None
 
     @property
     def status(self) -> RunStatus:
@@ -131,6 +135,20 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :rtype: promptflow._sdk._constants.RunStatus
         """
         return self._status
+
+    @property
+    def info(self) -> RunInfo:
+        if self._info is None:
+            msg = "Run info is missing"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVAL_RUN,
+                category=ErrorCategory.UNKNOWN,
+                blame=ErrorBlame.UNKNOWN,
+            )
+
+        return self._info
 
     def _get_scope(self) -> str:
         """
@@ -159,12 +177,14 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             )
             self._url_base = None
             self._status = RunStatus.BROKEN
-            self.info = RunInfo.generate(self._run_name)
+            self._info = RunInfo.generate(self._run_name)
         else:
             self._url_base = urlparse(self._tracking_uri).netloc
             if self._promptflow_run is not None:
-                self.info = RunInfo(
-                    self._promptflow_run.name, self._promptflow_run._experiment_name, self._promptflow_run.name
+                self._info = RunInfo(
+                    self._promptflow_run.name,
+                    self._promptflow_run._experiment_name,  # pylint: disable=protected-access
+                    self._promptflow_run.name,
                 )
             else:
                 url = f"https://{self._url_base}/mlflow/v2.0" f"{self._get_scope()}/api/2.0/mlflow/runs/create"
@@ -178,15 +198,17 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                     body["run_name"] = self._run_name
                 response = self.request_with_retry(url=url, method="POST", json_dict=body)
                 if response.status_code != 200:
-                    self.info = RunInfo.generate(self._run_name)
+                    self._info = RunInfo.generate(self._run_name)
                     LOGGER.warning(
-                        f"The run failed to start: {response.status_code}: {response.text()}."
-                        "The results will be saved locally, but will not be logged to Azure."
+                        "The run failed to start: %s: %s."
+                        "The results will be saved locally, but will not be logged to Azure.",
+                        response.status_code,
+                        response.text(),
                     )
                     self._status = RunStatus.BROKEN
                 else:
                     parsed_response = response.json()
-                    self.info = RunInfo(
+                    self._info = RunInfo(
                         run_id=parsed_response["run"]["info"]["run_id"],
                         experiment_id=parsed_response["run"]["info"]["experiment_id"],
                         run_name=parsed_response["run"]["info"]["run_name"],
@@ -199,7 +221,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
 
         :param reason: Reason for run termination. Possible values are "FINISHED" "FAILED", and "KILLED"
         :type reason: str
-        :raises ValueError: Raised if the run is not in ("FINISHED", "FAILED", "KILLED")
+        :raises EvaluationException: Raised if the run is not in ("FINISHED", "FAILED", "KILLED")
         """
         if not self._check_state_and_log(
             "stop run", {RunStatus.BROKEN, RunStatus.NOT_STARTED, RunStatus.TERMINATED}, False
@@ -210,8 +232,12 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             self._status = RunStatus.TERMINATED
             return
         if reason not in ("FINISHED", "FAILED", "KILLED"):
-            raise ValueError(
-                f"Incorrect terminal status {reason}. " 'Valid statuses are "FINISHED", "FAILED" and "KILLED".'
+            raise EvaluationException(
+                message=f"Incorrect terminal status {reason}. Valid statuses are 'FINISHED', 'FAILED' and 'KILLED'.",
+                internal_message="Incorrect terminal status. Valid statuses are 'FINISHED', 'FAILED' and 'KILLED'",
+                target=ErrorTarget.EVAL_RUN,
+                category=ErrorCategory.FAILED_EXECUTION,
+                blame=ErrorBlame.UNKNOWN,
             )
         url = f"https://{self._url_base}/mlflow/v2.0" f"{self._get_scope()}/api/2.0/mlflow/runs/update"
         body = {
@@ -225,7 +251,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             LOGGER.warning("Unable to terminate the run.")
         self._status = RunStatus.TERMINATED
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         """The Context Manager enter call.
 
         :return: The instance of the class.
@@ -234,8 +260,21 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         self._start_run()
         return self
 
-    def __exit__(self, exc_type, exc_value, exc_tb):
-        """The context manager exit call."""
+    def __exit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc_value: Optional[BaseException],
+        exc_tb: Optional[types.TracebackType],
+    ) -> None:
+        """The context manager exit call.
+
+        :param exc_type: The exception type
+        :type exc_type: Optional[Type[BaseException]]
+        :param exc_value: The exception value
+        :type exc_value: Optional[BaseException]
+        :param exc_tb: The exception traceback
+        :type exc_tb: Optional[types.TracebackType]
+        """
         self._end_run("FINISHED")
 
     def get_run_history_uri(self) -> str:
@@ -275,7 +314,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         # is an optional dependency.
         from promptflow.azure._utils._token_cache import ArmTokenCache  # pylint: disable=import-error,no-name-in-module
 
-        return ArmTokenCache().get_token(self._ml_client._credential)
+        return ArmTokenCache().get_token(self._ml_client._credential)  # pylint: disable=protected-access
 
     def request_with_retry(
         self, url: str, method: str, json_dict: Dict[str, Any], headers: Optional[Dict[str, str]] = None
@@ -321,9 +360,10 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :type response: HttpResponse
         """
         LOGGER.warning(
-            f"Unable to {failed_op}, "
-            f"the request failed with status code {response.status_code}, "
-            f"{response.text()=}."
+            "Unable to %s, the request failed with status code %s, response.text()=%s.",
+            failed_op,
+            response.status_code,
+            response.text(),
         )
 
     def _check_state_and_log(self, action: str, bad_states: Set[RunStatus], should_raise: bool) -> bool:
@@ -337,14 +377,21 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :type bad_states: Set[RunStatus]
         :param should_raise: Should we raise an error if the bad state has been encountered
         :type should_raise: bool
-        :raises: RuntimeError if should_raise is True and invalid state was encountered.
+        :raises: ~azure.ai.evaluations._exceptions.EvaluationException if should_raise is True
+             and invalid state was encountered.
         :return: Whether or not run is in the correct state.
         :rtype: bool
         """
         if self._status in bad_states:
             msg = f"Unable to {action} due to Run status={self._status}."
             if should_raise:
-                raise RuntimeError(msg)
+                raise EvaluationException(
+                    message=msg,
+                    internal_message=msg,
+                    target=ErrorTarget.EVAL_RUN,
+                    category=ErrorCategory.FAILED_EXECUTION,
+                    blame=ErrorBlame.UNKNOWN,
+                )
             LOGGER.warning(msg)
             return False
         return True
@@ -377,7 +424,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             return
         # First we will list the files and the appropriate remote paths for them.
         root_upload_path = posixpath.join("promptflow", "PromptFlowArtifacts", self.info.run_name)
-        remote_paths = {"paths": []}
+        remote_paths: Dict[str, List[Dict[str, str]]] = {"paths": []}
         local_paths = []
         # Go over the artifact folder and upload all artifacts.
         for root, _, filenames in os.walk(artifact_folder):
@@ -435,7 +482,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             return credential.account_key
         if hasattr(credential, "sas_token"):
             return credential.sas_token
-        return self._ml_client.datastores._credential
+        return self._ml_client.datastores._credential  # pylint: disable=protected-access
 
     def log_metric(self, key: str, value: float) -> None:
         """

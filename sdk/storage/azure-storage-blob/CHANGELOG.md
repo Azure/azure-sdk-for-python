@@ -3,6 +3,13 @@
 ## 12.24.0b1 (Unreleased)
 
 ### Features Added
+- Added support for passing metadata to `upload_blob_from_url` via the new `metadata` keyword.
+
+
+## 12.23.1 (2024-09-25)
+
+### Features Added
+- Added support for decryption of Blobs encrypted using client-side encryption version 2.1.
 
 ## 12.23.0 (2024-09-17)
 

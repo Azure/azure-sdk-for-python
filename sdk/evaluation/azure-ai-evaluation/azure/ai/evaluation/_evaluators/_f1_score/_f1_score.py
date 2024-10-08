@@ -7,17 +7,36 @@ from typing import List
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+
 
 class _AsyncF1ScoreEvaluator:
     def __init__(self):
         pass
 
     async def __call__(self, *, response: str, ground_truth: str, **kwargs):
+        """
+        Evaluate F1 score.
+
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword ground_truth: The ground truth to be evaluated.
+        :paramtype ground_truth: str
+        :return: The F1 score.
+        :rtype: Dict[str, float]
+        """
         # Validate inputs
         if not (response and response.strip() and response != "None") or not (
             ground_truth and ground_truth.strip() and ground_truth != "None"
         ):
-            raise ValueError("Both 'response' and 'ground_truth' must be non-empty strings.")
+            msg = "Both 'response' and 'ground_truth' must be non-empty strings."
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                error_category=ErrorCategory.MISSING_FIELD,
+                error_blame=ErrorBlame.USER_ERROR,
+                error_target=ErrorTarget.F1_EVALUATOR,
+            )
 
         # Run f1 score computation.
         f1_result = self._compute_f1_score(response=response, ground_truth=ground_truth)
@@ -25,7 +44,7 @@ class _AsyncF1ScoreEvaluator:
         return {"f1_score": f1_result}
 
     @classmethod
-    def _compute_f1_score(cls, response: str, ground_truth: str) -> str:
+    def _compute_f1_score(cls, response: str, ground_truth: str) -> float:
         import re
         import string
 
@@ -67,11 +86,9 @@ class _AsyncF1ScoreEvaluator:
 
             return white_space_fix(remove_articles(remove_punctuation(lower(text))))
 
-        prediction_tokens = normalize_text(response)
-        reference_tokens = normalize_text(ground_truth)
         tokenizer = QASplitTokenizer()
-        prediction_tokens = tokenizer(prediction_tokens)
-        reference_tokens = tokenizer(reference_tokens)
+        prediction_tokens = tokenizer(normalize_text(response))
+        reference_tokens = tokenizer(normalize_text(ground_truth))
 
         common_tokens = Counter(prediction_tokens) & Counter(reference_tokens)
         num_common_tokens = sum(common_tokens.values())
@@ -122,7 +139,7 @@ class F1ScoreEvaluator:
         :keyword ground_truth: The ground truth to be evaluated.
         :paramtype ground_truth: str
         :return: The F1 score.
-        :rtype: dict
+        :rtype: Dict[str, float]
         """
 
         return async_run_allowing_running_loop(

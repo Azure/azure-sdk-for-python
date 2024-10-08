@@ -5,9 +5,11 @@ import os
 from typing import List
 from tempfile import TemporaryDirectory
 
+
 @pytest.fixture()
 def tmp_directory_create():
     with TemporaryDirectory() as tmp_dir:
+
         def create_temp_directory(fake_creation_paths: List[str]) -> TemporaryDirectory:
             for file in fake_creation_paths:
                 target_path = os.path.join(tmp_dir, file)

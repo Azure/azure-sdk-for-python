@@ -44,7 +44,11 @@ from ._utils import get_domain
 
 HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
 AllHttpResponseType = TypeVar(
-    "AllHttpResponseType", HttpResponse, LegacyHttpResponse, AsyncHttpResponse, LegacyAsyncHttpResponse
+    "AllHttpResponseType",
+    HttpResponse,
+    LegacyHttpResponse,
+    AsyncHttpResponse,
+    LegacyAsyncHttpResponse,
 )
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 ClsRedirectPolicy = TypeVar("ClsRedirectPolicy", bound="RedirectPolicyBase")
@@ -131,7 +135,10 @@ class RedirectPolicyBase:
         return False
 
     def increment(
-        self, settings: Dict[str, Any], response: PipelineResponse[Any, AllHttpResponseType], redirect_location: str
+        self,
+        settings: Dict[str, Any],
+        response: PipelineResponse[Any, AllHttpResponseType],
+        redirect_location: str,
     ) -> bool:
         """Increment the redirect attempts for this request.
 

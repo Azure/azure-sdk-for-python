@@ -1,14 +1,14 @@
 # Release History
 
-## 1.31.1 (Unreleased)
+## 1.32.0 (2024-10-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added a default implementation to handle token challenges in `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy`.
 
 ### Other Changes
+
+- Log "x-vss-e2eid" and "x-msedge-ref" headers in `HttpLoggingPolicy`.
 
 ## 1.31.0 (2024-09-12)
 

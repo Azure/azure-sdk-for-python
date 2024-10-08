@@ -7,6 +7,9 @@ from azure.search.documents.indexes.models import (
     SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection,
     SearchResourceEncryptionKey,
+    SearchIndexerSkillset,
+    ShaperSkill,
+    SearchIndexer,
 )
 
 
@@ -31,3 +34,12 @@ def test_encryption_key_serialization():
     )
     packed_data_source = data_source_connection._to_generated()
     assert isinstance(packed_data_source.encryption_key, SearchResourceEncryptionKeyGen)
+
+    search_indexer = SearchIndexer(
+        name="indexer-name",
+        data_source_name="datasource-name",
+        target_index_name="target-index-name",
+        encryption_key=encryption_key,
+    )
+    packed_search_indexer = search_indexer._to_generated()
+    assert isinstance(packed_search_indexer.encryption_key, SearchResourceEncryptionKeyGen)

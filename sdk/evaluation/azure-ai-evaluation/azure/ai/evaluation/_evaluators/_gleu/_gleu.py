@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from nltk.translate.gleu_score import sentence_gleu
-
 from promptflow._utils.async_utils import async_run_allowing_running_loop
+
 from azure.ai.evaluation._common.utils import nltk_tokenize
 
 

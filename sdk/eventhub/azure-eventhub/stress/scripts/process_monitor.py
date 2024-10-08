@@ -47,14 +47,13 @@ class ProcessMonitor:
 
     def _monitor_work(self):
         while self.running:
-            log_content = "process status: {}," \
-                "process cpu usage percent: {}," \
-                "process memory usage percent: {:.3f}".format(
-                    self._process_instance.status(),
-                    self._process_instance.cpu_percent(),
-                    self._process_instance.memory_percent()
-                )
-            self._logger.info(log_content)
+            log_content = "process status: %s, process cpu usage percent: %s, process memory usage percent: %.3f"
+            self._logger.info(
+                log_content,
+                self._process_instance.status(),
+                self._process_instance.cpu_percent(),
+                self._process_instance.memory_percent()
+            )
             time.sleep(self._log_interval)
 
     @property
@@ -69,10 +68,10 @@ class ProcessMonitor:
         self.running = True
         self._monitor_thread = threading.Thread(target=self._monitor_work, daemon=True)
         self._monitor_thread.start()
-        self._logger.info("Start monitoring process id:{}".format(self._pid))
+        self._logger.info("Start monitoring process id: %d", self._pid)
 
     def stop(self):
         self.running = False
         self._monitor_thread.join()
-        self._logger.info("Stop monitoring process id:{}".format(self._pid))
+        self._logger.ino("Stop monitoring process id: %d", self._pid)
         self._monitor_thread = None

@@ -1,9 +1,11 @@
 import asyncio
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import pytest
 from devtools_testutils import is_live
+
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
@@ -17,9 +19,8 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
         assert callable(simulator)
 
     def test_incorrect_scenario_raises_error(self, azure_cred, project_scope):
@@ -30,14 +31,13 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(x):
             return x
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
-        with pytest.raises(ValueError):
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
+        with pytest.raises(EvaluationException):
             asyncio.run(
                 simulator(
                     max_conversation_turns=1,
@@ -55,11 +55,13 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
             response_from_acs, temperature = query, 0.0
@@ -78,7 +80,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -106,11 +108,13 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -123,7 +127,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -148,11 +152,13 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -165,7 +171,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -189,11 +195,13 @@ class TestAdvSimulator:
             "subscription_id": project_scope["subscription_id"],
             "resource_group_name": project_scope["resource_group_name"],
             "project_name": project_scope["project_name"],
-            "credential": azure_cred,
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -206,7 +214,7 @@ class TestAdvSimulator:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
 
         outputs = asyncio.run(
             simulator(
@@ -234,7 +242,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -276,7 +287,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -318,7 +332,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -362,7 +379,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -401,7 +421,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -478,7 +501,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 
@@ -552,7 +578,10 @@ class TestAdvSimulator:
         }
 
         async def callback(
-            messages: List[Dict], stream: bool = False, session_state: Any = None, context: Dict[str, Any] = None
+            messages: List[Dict],
+            stream: bool = False,
+            session_state: Any = None,
+            context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages["messages"][0]["content"]
 

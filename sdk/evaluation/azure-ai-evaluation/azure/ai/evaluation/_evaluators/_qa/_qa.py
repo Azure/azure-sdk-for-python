@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from concurrent.futures import as_completed
-from typing import Union
+from typing import Callable, Dict, List
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
@@ -11,7 +11,6 @@ from .._coherence import CoherenceEvaluator
 from .._f1_score import F1ScoreEvaluator
 from .._fluency import FluencyEvaluator
 from .._groundedness import GroundednessEvaluator
-from ..._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from .._relevance import RelevanceEvaluator
 from .._similarity import SimilarityEvaluator
 
@@ -52,12 +51,10 @@ class QAEvaluator:
         }
     """
 
-    def __init__(
-        self, model_config: dict, parallel: bool = True
-    ):
+    def __init__(self, model_config: dict, parallel: bool = True):
         self._parallel = parallel
 
-        self._evaluators = [
+        self._evaluators: List[Callable[..., Dict[str, float]]] = [
             GroundednessEvaluator(model_config),
             RelevanceEvaluator(model_config),
             CoherenceEvaluator(model_config),
@@ -81,19 +78,14 @@ class QAEvaluator:
         :keyword parallel: Whether to evaluate in parallel. Defaults to True.
         :paramtype parallel: bool
         :return: The scores for QA scenario.
-        :rtype: dict
+        :rtype: Dict[str, float]
         """
-        results = {}
+        results: Dict[str, float] = {}
         if self._parallel:
             with ThreadPoolExecutor() as executor:
                 futures = {
                     executor.submit(
-                        evaluator,
-                        query=query,
-                        response=response,
-                        context=context,
-                        ground_truth=ground_truth,
-                        **kwargs
+                        evaluator, query=query, response=response, context=context, ground_truth=ground_truth, **kwargs
                     ): evaluator
                     for evaluator in self._evaluators
                 }
@@ -103,9 +95,7 @@ class QAEvaluator:
                     results.update(future.result())
         else:
             for evaluator in self._evaluators:
-                result = evaluator(
-                    query=query, response=response, context=context, ground_truth=ground_truth, **kwargs
-                )
+                result = evaluator(query=query, response=response, context=context, ground_truth=ground_truth, **kwargs)
                 results.update(result)
 
         return results
