@@ -19,7 +19,7 @@ else:
 
 if TYPE_CHECKING:
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class BatchRequest(_serialization.Model):
@@ -267,7 +267,7 @@ class GeoJsonFeatureData(_serialization.Model):
     :ivar geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
      GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
      and GeometryCollection. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+     <https://tools.ietf.org/html/rfc7946#section-3.1>`__ for details. Required.
     :vartype geometry: ~azure.maps.route.models.GeoJsonGeometry
     :ivar properties: Properties can contain any additional metadata about the ``Feature``. Value
      can be any JSON object or a JSON null value.
@@ -303,7 +303,7 @@ class GeoJsonFeatureData(_serialization.Model):
         :keyword geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
          GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
          and GeometryCollection. Please refer to `RFC 7946
-         <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+         <https://tools.ietf.org/html/rfc7946#section-3.1>`__ for details. Required.
         :paramtype geometry: ~azure.maps.route.models.GeoJsonGeometry
         :keyword properties: Properties can contain any additional metadata about the ``Feature``.
          Value can be any JSON object or a JSON null value.
@@ -323,7 +323,7 @@ class GeoJsonFeatureData(_serialization.Model):
 
 class GeoJsonObject(_serialization.Model):
     """A valid ``GeoJSON`` object. Please refer to `RFC 7946
-    <https://tools.ietf.org/html/rfc7946#section-3>`_ for details.
+    <https://tools.ietf.org/html/rfc7946#section-3>`__ for details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     GeoJsonFeature, GeoJsonFeatureCollection, GeoJsonGeometry
@@ -362,14 +362,14 @@ class GeoJsonObject(_serialization.Model):
 
 class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
     """A valid ``GeoJSON Feature`` object type. Please refer to `RFC 7946
-    <https://tools.ietf.org/html/rfc7946#section-3.2>`_ for details.
+    <https://tools.ietf.org/html/rfc7946#section-3.2>`__ for details.
 
     All required parameters must be populated in order to send to server.
 
     :ivar geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
      GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
      and GeometryCollection. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+     <https://tools.ietf.org/html/rfc7946#section-3.1>`__ for details. Required.
     :vartype geometry: ~azure.maps.route.models.GeoJsonGeometry
     :ivar properties: Properties can contain any additional metadata about the ``Feature``. Value
      can be any JSON object or a JSON null value.
@@ -413,7 +413,7 @@ class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
         :keyword geometry: A valid ``GeoJSON`` geometry object. The type must be one of the seven valid
          GeoJSON geometry types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon
          and GeometryCollection. Please refer to `RFC 7946
-         <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details. Required.
+         <https://tools.ietf.org/html/rfc7946#section-3.1>`__ for details. Required.
         :paramtype geometry: ~azure.maps.route.models.GeoJsonGeometry
         :keyword properties: Properties can contain any additional metadata about the ``Feature``.
          Value can be any JSON object or a JSON null value.
@@ -429,7 +429,7 @@ class GeoJsonFeature(GeoJsonObject, GeoJsonFeatureData):
         self.properties = properties
         self.id = id
         self.feature_type = feature_type
-        self.type: str = "Feature"
+        self.type: str = "Feature" #type: ignore
 
 
 class GeoJsonFeatureCollectionData(_serialization.Model):
@@ -460,7 +460,7 @@ class GeoJsonFeatureCollectionData(_serialization.Model):
 
 class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
     """A valid ``GeoJSON FeatureCollection`` object type. Please refer to `RFC 7946
-    <https://tools.ietf.org/html/rfc7946#section-3.3>`_ for details.
+    <https://tools.ietf.org/html/rfc7946#section-3.3>`__ for details.
 
     All required parameters must be populated in order to send to server.
 
@@ -491,14 +491,14 @@ class GeoJsonFeatureCollection(GeoJsonObject, GeoJsonFeatureCollectionData):
         """
         super().__init__(features=features, **kwargs)
         self.features = features
-        self.type: str = "FeatureCollection"
+        self.type: str = "FeatureCollection" #type: ignore
 
 
 class GeoJsonGeometry(GeoJsonObject):
     """A valid ``GeoJSON`` geometry object. The type must be one of the seven valid GeoJSON geometry
     types - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon and
     GeometryCollection. Please refer to `RFC 7946
-    <https://tools.ietf.org/html/rfc7946#section-3.1>`_ for details.
+    <https://tools.ietf.org/html/rfc7946#section-3.1>`__ for details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     GeoJsonGeometryCollection, GeoJsonLineString, GeoJsonMultiLineString, GeoJsonMultiPoint,
@@ -537,7 +537,7 @@ class GeoJsonGeometry(GeoJsonObject):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type: str = "GeoJsonGeometry"
+        self.type: str = "GeoJsonGeometry" #type: ignore
 
 
 class GeoJsonGeometryCollectionData(_serialization.Model):
@@ -570,7 +570,7 @@ class GeoJsonGeometryCollectionData(_serialization.Model):
 
 class GeoJsonGeometryCollection(GeoJsonGeometry, GeoJsonGeometryCollectionData):
     """A valid ``GeoJSON GeometryCollection`` object type. Please refer to `RFC 7946
-    <https://tools.ietf.org/html/rfc7946#section-3.1.8>`_ for details.
+    <https://tools.ietf.org/html/rfc7946#section-3.1.8>`__ for details.
 
     All required parameters must be populated in order to send to server.
 
@@ -634,7 +634,7 @@ class GeoJsonLineStringData(_serialization.Model):
 
 class GeoJsonLineString(GeoJsonGeometry, GeoJsonLineStringData):
     """A valid ``GeoJSON LineString`` geometry type. Please refer to `RFC 7946
-    <https://tools.ietf.org/html/rfc7946#section-3.1.4>`_ for details.
+    <https://tools.ietf.org/html/rfc7946#section-3.1.4>`__ for details.
 
     All required parameters must be populated in order to send to server.
 
@@ -696,7 +696,7 @@ class GeoJsonMultiLineStringData(_serialization.Model):
 
 class GeoJsonMultiLineString(GeoJsonGeometry, GeoJsonMultiLineStringData):
     """A valid ``GeoJSON MultiLineString`` geometry type. Please refer to `RFC 7946
-    <https://tools.ietf.org/html/rfc7946#section-3.1.5>`_ for details.
+    <https://tools.ietf.org/html/rfc7946#section-3.1.5>`__ for details.
 
     All required parameters must be populated in order to send to server.
 
@@ -758,7 +758,7 @@ class GeoJsonMultiPointData(_serialization.Model):
 
 class GeoJsonMultiPoint(GeoJsonGeometry, GeoJsonMultiPointData):
     """A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
-    <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+    <https://tools.ietf.org/html/rfc7946#section-3.1.3>`__ for details.
 
     All required parameters must be populated in order to send to server.
 
@@ -822,7 +822,7 @@ class GeoJsonMultiPolygonData(_serialization.Model):
 
 class GeoJsonMultiPolygon(GeoJsonGeometry, GeoJsonMultiPolygonData):
     """A valid ``GeoJSON MultiPolygon`` object type. Please refer to `RFC 7946
-    <https://tools.ietf.org/html/rfc7946#section-3.1.7>`_ for details.
+    <https://tools.ietf.org/html/rfc7946#section-3.1.7>`__ for details.
 
     All required parameters must be populated in order to send to server.
 
@@ -866,7 +866,7 @@ class GeoJsonPointData(_serialization.Model):
     :ivar coordinates: A ``Position`` is an array of numbers with two or more elements. The first
      two elements are *longitude* and *latitude*\\ , precisely in that order. *Altitude/Elevation*
      is an optional third element. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`__ for details. Required.
     :vartype coordinates: list[float]
     """
 
@@ -883,7 +883,7 @@ class GeoJsonPointData(_serialization.Model):
         :keyword coordinates: A ``Position`` is an array of numbers with two or more elements. The
          first two elements are *longitude* and *latitude*\\ , precisely in that order.
          *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
-         <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+         <https://tools.ietf.org/html/rfc7946#section-3.1.1>`__ for details. Required.
         :paramtype coordinates: list[float]
         """
         super().__init__(**kwargs)
@@ -892,14 +892,14 @@ class GeoJsonPointData(_serialization.Model):
 
 class GeoJsonPoint(GeoJsonGeometry, GeoJsonPointData):
     """A valid ``GeoJSON Point`` geometry type. Please refer to `RFC 7946
-    <https://tools.ietf.org/html/rfc7946#section-3.1.2>`_ for details.
+    <https://tools.ietf.org/html/rfc7946#section-3.1.2>`__ for details.
 
     All required parameters must be populated in order to send to server.
 
     :ivar coordinates: A ``Position`` is an array of numbers with two or more elements. The first
      two elements are *longitude* and *latitude*\\ , precisely in that order. *Altitude/Elevation*
      is an optional third element. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+     <https://tools.ietf.org/html/rfc7946#section-3.1.1>`__ for details. Required.
     :vartype coordinates: list[float]
     :ivar type: Specifies the ``GeoJSON`` type. Must be one of the nine valid GeoJSON object types
      - Point, MultiPoint, LineString, MultiLineString, Polygon, MultiPolygon, GeometryCollection,
@@ -924,7 +924,7 @@ class GeoJsonPoint(GeoJsonGeometry, GeoJsonPointData):
         :keyword coordinates: A ``Position`` is an array of numbers with two or more elements. The
          first two elements are *longitude* and *latitude*\\ , precisely in that order.
          *Altitude/Elevation* is an optional third element. Please refer to `RFC 7946
-         <https://tools.ietf.org/html/rfc7946#section-3.1.1>`_ for details. Required.
+         <https://tools.ietf.org/html/rfc7946#section-3.1.1>`__ for details. Required.
         :paramtype coordinates: list[float]
         """
         super().__init__(coordinates=coordinates, **kwargs)
@@ -960,7 +960,7 @@ class GeoJsonPolygonData(_serialization.Model):
 
 class GeoJsonPolygon(GeoJsonGeometry, GeoJsonPolygonData):
     """A valid ``GeoJSON Polygon`` geometry type. Please refer to `RFC 7946
-    <https://tools.ietf.org/html/rfc7946#section-3.1.6>`_ for details.
+    <https://tools.ietf.org/html/rfc7946#section-3.1.6>`__ for details.
 
     All required parameters must be populated in order to send to server.
 
@@ -1069,17 +1069,17 @@ class RouteDirectionParameters(_serialization.Model):
 
      * The provided sequence of supporting points is used as input for route reconstruction.
      * The alternative routes are calculated between the origin and destination points specified in
-     the base path parameter locations.
+       the base path parameter locations.
      * If both *minDeviationDistance* and *minDeviationTime* are set to zero, then these origin and
-     destination points are
+       destination points are
        expected to be at (or very near) the beginning and end of the reference route, respectively.
      * Intermediate locations (\\ *waypoints*\\ ) are not supported when using
-     :code:`<_supportingPoints_>`.
+       :code:`<_supportingPoints_>`.
      * The reference route may contain traffic incidents of type _ROAD\\ *CLOSURE*\\ , which are
        ignored for the calculation of the reference route's travel time and traffic delay.
        Please refer to `Supporting Points
-     <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_  # pylint: disable=line-too-long
-     for details.
+       <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_  # pylint: disable=line-too-long
+       for details.
     :vartype supporting_points: ~azure.maps.route.models.GeoJsonGeometryCollection
     :ivar avoid_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
      countries in which all toll roads with vignettes are to be avoided, e.g. "AUS,CHE". Toll roads
@@ -1124,17 +1124,17 @@ class RouteDirectionParameters(_serialization.Model):
 
          * The provided sequence of supporting points is used as input for route reconstruction.
          * The alternative routes are calculated between the origin and destination points specified in
-         the base path parameter locations.
+           the base path parameter locations.
          * If both *minDeviationDistance* and *minDeviationTime* are set to zero, then these origin and
-         destination points are
+           destination points are
            expected to be at (or very near) the beginning and end of the reference route, respectively.
          * Intermediate locations (\\ *waypoints*\\ ) are not supported when using
-         :code:`<_supportingPoints_>`.
+           :code:`<_supportingPoints_>`.
          * The reference route may contain traffic incidents of type _ROAD\\ *CLOSURE*\\ , which are
            ignored for the calculation of the reference route's travel time and traffic delay.
            Please refer to `Supporting Points
-         <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_  # pylint: disable=line-too-long
-         for details.
+           <https://docs.microsoft.com/azure/azure-maps/how-to-use-best-practices-for-routing#calculate-and-bias-alternative-routes-using-supporting-points>`_  # pylint: disable=line-too-long
+           for details.
         :paramtype supporting_points: ~azure.maps.route.models.GeoJsonGeometryCollection
         :keyword avoid_vignette: This is a list of 3-character, ISO 3166-1, alpha-3 country codes of
          countries in which all toll roads with vignettes are to be avoided, e.g. "AUS,CHE". Toll roads
@@ -1740,10 +1740,10 @@ class RouteMatrixQuery(_serialization.Model):
     """An object with a matrix of coordinates.
 
     :ivar origins: A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+     <https://tools.ietf.org/html/rfc7946#section-3.1.3>`__ for details.
     :vartype origins: ~azure.maps.route.models.GeoJsonMultiPoint
     :ivar destinations: A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
-     <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+     <https://tools.ietf.org/html/rfc7946#section-3.1.3>`__ for details.
     :vartype destinations: ~azure.maps.route.models.GeoJsonMultiPoint
     """
 
@@ -1761,10 +1761,10 @@ class RouteMatrixQuery(_serialization.Model):
     ) -> None:
         """
         :keyword origins: A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
-         <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+         <https://tools.ietf.org/html/rfc7946#section-3.1.3>`__ for details.
         :paramtype origins: ~azure.maps.route.models.GeoJsonMultiPoint
         :keyword destinations: A valid ``GeoJSON MultiPoint`` geometry type. Please refer to `RFC 7946
-         <https://tools.ietf.org/html/rfc7946#section-3.1.3>`_ for details.
+         <https://tools.ietf.org/html/rfc7946#section-3.1.3>`__ for details.
         :paramtype destinations: ~azure.maps.route.models.GeoJsonMultiPoint
         """
         super().__init__(**kwargs)

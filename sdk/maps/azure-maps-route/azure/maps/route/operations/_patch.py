@@ -1,3 +1,4 @@
+#pylint: disable=W0212, W0221, W0237, C4758
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -21,7 +22,8 @@ from ..models import (
     RouteMatrixQuery,
     RouteMatrixResult,
     BatchRequest,
-    BatchRequestItem
+    BatchRequestItem,
+    RouteDirectionParameters
 )
 from ._operations import RouteOperations as RouteOperationsGenerated
 
@@ -39,15 +41,15 @@ def patch_sdk():
 class RouteOperations(RouteOperationsGenerated):
     # cSpell:disable
     @distributed_trace
-    def get_route_directions(
+    def get_route_directions( #type: ignore
         self,
         route_points: Union[List[LatLongPair], List[Tuple]],
         **kwargs: Any
     ) -> RouteDirections:
-        """
-        Returns a route between an origin and a destination, passing through waypoints if they are
-        specified. The route will take into account factors such as current traffic and the typical
-        road speeds on the requested day of the week and time of day.
+        """Returns a route between an origin and a destination, passing through
+        waypoints if they are specified. The route will take into account
+        factors such as current traffic and the typical road speeds on the
+        requested day of the week and time of day.
 
         Information returned includes the distance, estimated travel time, and a representation of the
         route geometry. Additional routing information such as optimized waypoint order or turn by turn
@@ -261,24 +263,28 @@ class RouteOperations(RouteOperationsGenerated):
         """
         query_items = ""
         route_directions_body = {}
+
         if route_points:
-            if isinstance(route_points[0], tuple):
-                query_items = ":".join([(str(route_point[0]) + "," + str(route_point[1])) for route_point in route_points])
-            else:
-                query_items = ":".join([(str(route_point.latitude) + "," + str(route_point.longitude)) for route_point in route_points])
+            coordinates = []
+            for route_point in route_points:
+                if isinstance(route_point, LatLongPair):
+                    coordinates.append(f"{route_point.latitude},{route_point.longitude}")
+                elif isinstance(route_point, tuple):
+                    coordinates.append(f"{route_point[0]},{route_point[1]}")
+            query_items = ":".join(coordinates)
         
         supporting_points = kwargs.pop('supporting_points', None)
         avoid_vignette = kwargs.pop('avoid_vignette', None)
         allow_vignette = kwargs.pop('allow_vignette', None)
         avoid_areas = kwargs.pop('avoid_areas', None)
-        if supporting_points or avoid_vignette or allow_vignette or avoid_areas is not None:
-            route_directions_body['supporting_points'] = supporting_points
-            route_directions_body['avoid_vignette'] = avoid_vignette
-            route_directions_body['allow_vignette'] = allow_vignette
-            route_directions_body['avoid_areas'] = avoid_areas
 
-        if route_directions_body:
-            # import pdb; pdb.set_trace()
+        if supporting_points or avoid_vignette or allow_vignette or avoid_areas:
+            route_directions_body = RouteDirectionParameters(
+                supporting_points=supporting_points,
+                avoid_vignette=avoid_vignette,
+                allow_vignette=allow_vignette,
+                avoid_areas=avoid_areas
+            )
             return super().get_route_directions_with_additional_parameters(
                 format=ResponseFormat.JSON,
                 route_direction_parameters=route_directions_body,
@@ -293,7 +299,7 @@ class RouteOperations(RouteOperationsGenerated):
 
     # cSpell:disable
     @distributed_trace
-    def get_route_range(
+    def get_route_range( #type: ignore
         self,
         coordinates: Union[LatLongPair, Tuple],
         **kwargs: Any
@@ -309,26 +315,26 @@ class RouteOperations(RouteOperationsGenerated):
         :param coordinates: The Coordinate from which the range calculation should start, coordinates as (lat, lon)
         :type coordinates: LatLongPair or Tuple
         :keyword fuel_budget_in_liters: Fuel budget in liters that determines maximal range which can
-         be travelled using the specified Combustion Consumption Model.:code:`<br>` When
+         be travelled using the specified Combustion Consumption Model. When
          fuelBudgetInLiters is used, it is mandatory to specify a detailed  Combustion Consumption
-         Model.:code:`<br>` Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
+         Model. Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
          or distanceBudgetInMeters) must be used. Default value is None.
         :paramtype fuel_budget_in_liters: float
         :keyword energy_budget_in_kw_h: Electric energy budget in kilowatt hours (kWh) that determines
          maximal range which can be travelled using the specified Electric Consumption
-         Model.:code:`<br>` When energyBudgetInkWh is used, it is mandatory to specify a detailed
-         Electric Consumption Model.:code:`<br>` Exactly one budget (fuelBudgetInLiters,
+         Model. When energyBudgetInkWh is used, it is mandatory to specify a detailed
+         Electric Consumption Model. Exactly one budget (fuelBudgetInLiters,
          energyBudgetInkWh, timeBudgetInSec, or distanceBudgetInMeters) must be used. Default value is
          None.
         :paramtype energy_budget_in_kw_h: float
         :keyword time_budget_in_sec: Time budget in seconds that determines maximal range which can be
          travelled using driving time. The Consumption Model will only affect the range when routeType
-         is eco.:code:`<br>` Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
+         is eco. Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
          or distanceBudgetInMeters) must be used. Default value is None.
         :paramtype time_budget_in_sec: float
         :keyword distance_budget_in_meters: Distance budget in meters that determines maximal range
          which can be travelled using driving distance.  The Consumption Model will only affect the
-         range when routeType is eco.:code:`<br>` Exactly one budget (fuelBudgetInLiters,
+         range when routeType is eco. Exactly one budget (fuelBudgetInLiters,
          energyBudgetInkWh, timeBudgetInSec, or distanceBudgetInMeters) must be used. Default value is
          None.
         :paramtype distance_budget_in_meters: float
@@ -453,11 +459,12 @@ class RouteOperations(RouteOperationsGenerated):
         :rtype: ~azure.maps.route.models.RouteRangeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if isinstance(coordinates, tuple):
+        query = []
+        if isinstance(coordinates, Tuple):
             query = [coordinates[0], coordinates[1]]
-        else:
+        elif isinstance(coordinates, LatLongPair) and coordinates.latitude and coordinates.longitude:
             query = [coordinates.latitude, coordinates.longitude]
-
+        
         return super().get_route_range(
             format=ResponseFormat.JSON,
             query=query,
@@ -467,37 +474,38 @@ class RouteOperations(RouteOperationsGenerated):
     @distributed_trace
     def get_route_directions_batch_sync(
         self,
-        queries: BatchRequest,
+        queries: List[str],
         **kwargs: Any
     ) -> RouteDirectionsBatchResult:
 
-        """Sends batches of route directions requests.
-        The method return the result directly.
+        """Sends batches of route directions requests. The method return the
+        result directly.
 
         :param queries: The list of route directions queries/requests to
-         process. The list can contain  a max of 700 queries for async and 100 queries for sync version
-         and must contain at least 1 query. Required.
+            process. The list can contain a max of 700 queries for
+            async and 100 queries for sync version and must contain at
+            least 1 query. Required.
         :type queries: List[str]
         :return: RouteDirectionsBatchResult
-        :rtype: RouteDirectionsBatchResult
-        :raises ~azure.core.exceptions.HttpResponseError:
+        :rtype: RouteDirectionsBatchResult :raises
+            ~azure.core.exceptions.HttpResponseError:
         """
         return super().request_route_directions_batch_sync(
             format=ResponseFormat.JSON,
             route_directions_batch_queries=BatchRequest(
-                batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries]
+                batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries] if queries else []
             ),
             **kwargs
         )
 
     @distributed_trace
-    def begin_get_route_directions_batch(
+    def begin_get_route_directions_batch( #type: ignore
         self,
         **kwargs: Any
     ) -> LROPoller[RouteDirectionsBatchResult]:
 
-        """Sends batches of route direction queries.
-        The method returns a poller for retrieving the result later.
+        """Sends batches of route direction queries. The method returns a
+        poller for retrieving the result later.
 
         :keyword queries: The list of route directions queries/requests to
          process. The list can contain a max of 700 queries for async and 100 queries for sync version
@@ -530,18 +538,11 @@ class RouteOperations(RouteOperationsGenerated):
         batch_poller = super().begin_request_route_directions_batch(
             format=ResponseFormat.JSON,
             route_directions_batch_queries=BatchRequest(
-                batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries]
+                batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries] if queries else []
             ),
             **kwargs
         )
 
-        polling_method = batch_poller.polling_method()
-        if hasattr(polling_method, "_operation"):
-            operation=polling_method._operation
-            batch_poller.batch_id = operation._location_url.split('/')[-1].split('?')[0]
-        else:
-            batch_poller.batch_id = None
-        
         return batch_poller
 
     @distributed_trace
@@ -551,9 +552,9 @@ class RouteOperations(RouteOperationsGenerated):
         **kwargs: Any
     ) -> RouteMatrixResult:
 
-        """
-        Calculates a matrix of route summaries for a set of routes defined by origin and destination locations.
-        The method return the result directly.
+        """Calculates a matrix of route summaries for a set of routes defined
+        by origin and destination locations. The method return the result
+        directly.
 
         The maximum size of a matrix for this method is 100
          (the number of origins multiplied by the number of destinations)
@@ -667,9 +668,9 @@ class RouteOperations(RouteOperationsGenerated):
         **kwargs: Any
     ) -> LROPoller[RouteMatrixResult]:
 
-        """
-        Calculates a matrix of route summaries for a set of routes defined by origin and destination locations.
-        The method returns a poller for retrieving the result later.
+        """Calculates a matrix of route summaries for a set of routes defined
+        by origin and destination locations. The method returns a poller for
+        retrieving the result later.
 
         The maximum size of a matrix for this method is 700
          (the number of origins multiplied by the number of destinations)
@@ -680,6 +681,7 @@ class RouteOperations(RouteOperationsGenerated):
          **100** for sync respectively. For example, it can be 35 origins and 20 destinations or 25
          origins and 25 destinations for async API. Required.
         :paramtype query: ~azure.maps.route.models.RouteMatrixQuery
+        
         :keyword matrix_id: Matrix id received after the Matrix Route request was accepted successfully.
          Required.
         :paramtype matrix_id: str

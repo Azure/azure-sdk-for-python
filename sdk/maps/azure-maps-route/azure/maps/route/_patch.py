@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-# pylint: disable=unused-import
+
 from typing import Union, Any, List
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
@@ -40,7 +40,6 @@ def _authentication_policy(credential):
             "or a token credential from azure.identity".format(type(credential))
         )
     return authentication_policy
-
 
 # pylint: disable=C4748
 class MapsRouteClient(MapsRouteClientGenerated):

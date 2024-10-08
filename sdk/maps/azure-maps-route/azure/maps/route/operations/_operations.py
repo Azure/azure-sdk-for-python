@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, R0914, R0915, R0912
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1032,8 +1032,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1054,36 +1053,32 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
 
-        #.
-           Client sends a Route Matrix POST request to Azure Maps
+        #. Client sends a Route Matrix POST request to Azure Maps
 
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` -  Route Matrix request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Route Matrix request. This could
-        either be a 400 Bad Request or any other Error status code.
+              either be a 400 Bad Request or any other Error status code.
 
 
 
-        #.
-           If the Matrix Route request was accepted successfully, the Location header in the response
-        contains the URL to download the results of the request. This status URI looks like the
-        following:
+        #. If the Matrix Route request was accepted successfully, the Location header in the response
+           contains the URL to download the results of the request. This status URI looks like the
+           following:
 
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -1105,7 +1100,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -1113,10 +1108,10 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param route_matrix_query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
@@ -1137,7 +1132,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -1170,16 +1165,14 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
@@ -1210,9 +1203,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -1291,8 +1283,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1313,36 +1304,32 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
 
-        #.
-           Client sends a Route Matrix POST request to Azure Maps
+        #. Client sends a Route Matrix POST request to Azure Maps
 
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` -  Route Matrix request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Route Matrix request. This could
-        either be a 400 Bad Request or any other Error status code.
+              either be a 400 Bad Request or any other Error status code.
 
 
 
-        #.
-           If the Matrix Route request was accepted successfully, the Location header in the response
-        contains the URL to download the results of the request. This status URI looks like the
-        following:
+        #. If the Matrix Route request was accepted successfully, the Location header in the response
+           contains the URL to download the results of the request. This status URI looks like the
+           following:
 
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -1364,7 +1351,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -1372,10 +1359,10 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param route_matrix_query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
@@ -1396,7 +1383,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -1429,16 +1416,14 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
@@ -1469,9 +1454,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -1549,8 +1533,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1571,36 +1554,32 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
 
-        #.
-           Client sends a Route Matrix POST request to Azure Maps
+        #. Client sends a Route Matrix POST request to Azure Maps
 
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` -  Route Matrix request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Route Matrix request. This could
-        either be a 400 Bad Request or any other Error status code.
+              either be a 400 Bad Request or any other Error status code.
 
 
 
-        #.
-           If the Matrix Route request was accepted successfully, the Location header in the response
-        contains the URL to download the results of the request. This status URI looks like the
-        following:
+        #. If the Matrix Route request was accepted successfully, the Location header in the response
+           contains the URL to download the results of the request. This status URI looks like the
+           following:
 
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -1622,7 +1601,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -1630,10 +1609,10 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param route_matrix_query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
@@ -1655,7 +1634,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -1688,16 +1667,14 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
@@ -1728,9 +1705,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -1873,7 +1849,7 @@ class RouteOperations:
         .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -1895,7 +1871,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -1903,10 +1879,10 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param matrix_id: Matrix id received after the Matrix Route request was accepted successfully.
          Required.
@@ -2010,8 +1986,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2032,36 +2007,32 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
 
-        #.
-           Client sends a Route Matrix POST request to Azure Maps
+        #. Client sends a Route Matrix POST request to Azure Maps
 
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` -  Route Matrix request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Route Matrix request. This could
-        either be a 400 Bad Request or any other Error status code.
+              either be a 400 Bad Request or any other Error status code.
 
 
 
-        #.
-           If the Matrix Route request was accepted successfully, the Location header in the response
-        contains the URL to download the results of the request. This status URI looks like the
-        following:
+        #. If the Matrix Route request was accepted successfully, the Location header in the response
+           contains the URL to download the results of the request. This status URI looks like the
+           following:
 
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -2083,7 +2054,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -2091,10 +2062,10 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param route_matrix_query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
@@ -2115,7 +2086,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -2148,16 +2119,14 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
@@ -2188,9 +2157,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -2269,8 +2237,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2291,36 +2258,32 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
 
-        #.
-           Client sends a Route Matrix POST request to Azure Maps
+        #. Client sends a Route Matrix POST request to Azure Maps
 
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` -  Route Matrix request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Route Matrix request. This could
-        either be a 400 Bad Request or any other Error status code.
+              either be a 400 Bad Request or any other Error status code.
 
 
 
-        #.
-           If the Matrix Route request was accepted successfully, the Location header in the response
-        contains the URL to download the results of the request. This status URI looks like the
-        following:
+        #. If the Matrix Route request was accepted successfully, the Location header in the response
+           contains the URL to download the results of the request. This status URI looks like the
+           following:
 
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -2342,7 +2305,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -2350,10 +2313,10 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param route_matrix_query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
@@ -2374,7 +2337,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -2407,16 +2370,14 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
@@ -2447,9 +2408,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -2527,8 +2487,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2549,36 +2508,32 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
 
-        #.
-           Client sends a Route Matrix POST request to Azure Maps
+        #. Client sends a Route Matrix POST request to Azure Maps
 
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` -  Route Matrix request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Route Matrix request. This could
-        either be a 400 Bad Request or any other Error status code.
+              either be a 400 Bad Request or any other Error status code.
 
 
 
-        #.
-           If the Matrix Route request was accepted successfully, the Location header in the response
-        contains the URL to download the results of the request. This status URI looks like the
-        following:
+        #. If the Matrix Route request was accepted successfully, the Location header in the response
+           contains the URL to download the results of the request. This status URI looks like the
+           following:
 
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -2600,7 +2555,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -2608,10 +2563,10 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param route_matrix_query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
@@ -2633,7 +2588,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -2666,16 +2621,14 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
@@ -2706,9 +2659,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -2968,7 +2920,7 @@ class RouteOperations:
          parameter was not specified by the caller. "effectiveSettings" Default value is None.
         :paramtype report: str or ~azure.maps.route.models.Report
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -2990,33 +2942,27 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms.
 
 
-         *
-           It is mandatory if any of the *Efficiency parameters are set.
+         * It is mandatory if any of the *Efficiency parameters are set.
 
-         *
-           It must be strictly positive when used in the context of the Consumption Model. Weight
+         * It must be strictly positive when used in the context of the Consumption Model. Weight
          restrictions are considered.
 
-         *
-           If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
+         * If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
          non-zero, then weight restrictions are considered.
 
-         *
-           In all other cases, this parameter is ignored.
+         * In all other cases, this parameter is ignored.
 
          Sensible Values : for **Combustion Model** : 1600, for **Electric Model** : 1900. Default
          value is 0.
@@ -3051,9 +2997,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -3080,12 +3025,10 @@ class RouteOperations:
          as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -3181,12 +3124,10 @@ class RouteOperations:
          consumption curve. Consumption rates for speeds not in the list are found as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -3399,14 +3340,14 @@ class RouteOperations:
 
 
          * The origin point of the calculateRoute request must be on (or very near) the input reference
-         route. If  this is not the case, an error is returned. However, the origin point does not need
-         to be at the beginning of  the input reference route (it can be thought of as the current
-         vehicle position on the reference route).
+           route. If  this is not the case, an error is returned. However, the origin point does not need
+           to be at the beginning of  the input reference route (it can be thought of as the current
+           vehicle position on the reference route).
          * The reference route, returned as the first route in the calculateRoute response, will start
-         at the origin  point specified in the calculateRoute request. The initial part of the input
-         reference route up until the  origin point will be excluded from the response.
+           at the origin  point specified in the calculateRoute request. The initial part of the input
+           reference route up until the  origin point will be excluded from the response.
          * The values of minDeviationDistance and minDeviationTime determine how far alternative routes
-         will be  guaranteed to follow the reference route from the origin point onwards.
+           will be  guaranteed to follow the reference route from the origin point onwards.
          * The route must use departAt.
          * The vehicleHeading is ignored. Required.
         :type route_direction_parameters: ~azure.maps.route.models.RouteDirectionParameters
@@ -3495,7 +3436,7 @@ class RouteOperations:
          parameter was not specified by the caller. "effectiveSettings" Default value is None.
         :paramtype report: str or ~azure.maps.route.models.Report
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -3528,33 +3469,27 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms.
 
 
-         *
-           It is mandatory if any of the *Efficiency parameters are set.
+         * It is mandatory if any of the *Efficiency parameters are set.
 
-         *
-           It must be strictly positive when used in the context of the Consumption Model. Weight
-         restrictions are considered.
+         * It must be strictly positive when used in the context of the Consumption Model. Weight
+           restrictions are considered.
 
-         *
-           If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
-         non-zero, then weight restrictions are considered.
+         * If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
+           non-zero, then weight restrictions are considered.
 
-         *
-           In all other cases, this parameter is ignored.
+         * In all other cases, this parameter is ignored.
 
          Sensible Values : for **Combustion Model** : 1600, for **Electric Model** : 1900. Default
          value is 0.
@@ -3589,9 +3524,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -3618,12 +3552,10 @@ class RouteOperations:
          as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -3719,12 +3651,10 @@ class RouteOperations:
          consumption curve. Consumption rates for speeds not in the list are found as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -3858,14 +3788,14 @@ class RouteOperations:
 
 
          * The origin point of the calculateRoute request must be on (or very near) the input reference
-         route. If  this is not the case, an error is returned. However, the origin point does not need
-         to be at the beginning of  the input reference route (it can be thought of as the current
-         vehicle position on the reference route).
+           route. If  this is not the case, an error is returned. However, the origin point does not need
+           to be at the beginning of  the input reference route (it can be thought of as the current
+           vehicle position on the reference route).
          * The reference route, returned as the first route in the calculateRoute response, will start
-         at the origin  point specified in the calculateRoute request. The initial part of the input
-         reference route up until the  origin point will be excluded from the response.
+           at the origin  point specified in the calculateRoute request. The initial part of the input
+           reference route up until the  origin point will be excluded from the response.
          * The values of minDeviationDistance and minDeviationTime determine how far alternative routes
-         will be  guaranteed to follow the reference route from the origin point onwards.
+           will be  guaranteed to follow the reference route from the origin point onwards.
          * The route must use departAt.
          * The vehicleHeading is ignored. Required.
         :type route_direction_parameters: IO[bytes]
@@ -3954,7 +3884,7 @@ class RouteOperations:
          parameter was not specified by the caller. "effectiveSettings" Default value is None.
         :paramtype report: str or ~azure.maps.route.models.Report
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -3987,33 +3917,27 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms.
 
 
-         *
-           It is mandatory if any of the *Efficiency parameters are set.
+         * It is mandatory if any of the *Efficiency parameters are set.
 
-         *
-           It must be strictly positive when used in the context of the Consumption Model. Weight
-         restrictions are considered.
+         * It must be strictly positive when used in the context of the Consumption Model. Weight
+           restrictions are considered.
 
-         *
-           If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
-         non-zero, then weight restrictions are considered.
+         * If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
+           non-zero, then weight restrictions are considered.
 
-         *
-           In all other cases, this parameter is ignored.
+         * In all other cases, this parameter is ignored.
 
          Sensible Values : for **Combustion Model** : 1600, for **Electric Model** : 1900. Default
          value is 0.
@@ -4048,9 +3972,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -4077,11 +4000,9 @@ class RouteOperations:
          as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
          the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
@@ -4178,12 +4099,10 @@ class RouteOperations:
          consumption curve. Consumption rates for speeds not in the list are found as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -4316,17 +4235,19 @@ class RouteOperations:
 
 
          * The origin point of the calculateRoute request must be on (or very near) the input reference
-         route. If  this is not the case, an error is returned. However, the origin point does not need
-         to be at the beginning of  the input reference route (it can be thought of as the current
-         vehicle position on the reference route).
+           route. If  this is not the case, an error is returned. However, the origin point does not need
+           to be at the beginning of  the input reference route (it can be thought of as the current
+           vehicle position on the reference route).
+
          * The reference route, returned as the first route in the calculateRoute response, will start
-         at the origin  point specified in the calculateRoute request. The initial part of the input
-         reference route up until the  origin point will be excluded from the response.
+           at the origin  point specified in the calculateRoute request. The initial part of the input
+           reference route up until the  origin point will be excluded from the response.
          * The values of minDeviationDistance and minDeviationTime determine how far alternative routes
-         will be  guaranteed to follow the reference route from the origin point onwards.
+           will be  guaranteed to follow the reference route from the origin point onwards.
          * The route must use departAt.
          * The vehicleHeading is ignored. Is either a RouteDirectionParameters type or a IO[bytes]
-         type. Required.
+           type. Required.
+
         :type route_direction_parameters: ~azure.maps.route.models.RouteDirectionParameters or
          IO[bytes]
         :param format: Desired format of the response. Value can be either *json* or *xml*. Known
@@ -4414,7 +4335,7 @@ class RouteOperations:
          parameter was not specified by the caller. "effectiveSettings" Default value is None.
         :paramtype report: str or ~azure.maps.route.models.Report
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -4447,33 +4368,24 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
-
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
+        
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms.
 
 
-         *
-           It is mandatory if any of the *Efficiency parameters are set.
-
-         *
-           It must be strictly positive when used in the context of the Consumption Model. Weight
-         restrictions are considered.
-
-         *
-           If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
-         non-zero, then weight restrictions are considered.
-
-         *
-           In all other cases, this parameter is ignored.
+         * It is mandatory if any of the Efficiency parameters are set.
+         * It must be strictly positive when used in the context of the Consumption Model. Weight
+           restrictions are considered.
+         * If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
+           non-zero, then weight restrictions are considered.
+         * In all other cases, this parameter is ignored.
 
          Sensible Values : for **Combustion Model** : 1600, for **Electric Model** : 1900. Default
          value is 0.
@@ -4508,9 +4420,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -4537,12 +4448,9 @@ class RouteOperations:
          as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
-
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -4638,12 +4546,9 @@ class RouteOperations:
          consumption curve. Consumption rates for speeds not in the list are found as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
-
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -4847,26 +4752,26 @@ class RouteOperations:
         :keyword query: The Coordinate from which the range calculation should start. Required.
         :paramtype query: list[float]
         :keyword fuel_budget_in_liters: Fuel budget in liters that determines maximal range which can
-         be travelled using the specified Combustion Consumption Model.:code:`<br>` When
+         be travelled using the specified Combustion Consumption Model. When
          fuelBudgetInLiters is used, it is mandatory to specify a detailed  Combustion Consumption
-         Model.:code:`<br>` Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
+         Model. Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
          or distanceBudgetInMeters) must be used. Default value is None.
         :paramtype fuel_budget_in_liters: float
         :keyword energy_budget_in_kw_h: Electric energy budget in kilowatt hours (kWh) that determines
          maximal range which can be travelled using the specified Electric Consumption
-         Model.:code:`<br>` When energyBudgetInkWh is used, it is mandatory to specify a detailed
-         Electric Consumption Model.:code:`<br>` Exactly one budget (fuelBudgetInLiters,
+         Model. When energyBudgetInkWh is used, it is mandatory to specify a detailed
+         Electric Consumption Model. Exactly one budget (fuelBudgetInLiters,
          energyBudgetInkWh, timeBudgetInSec, or distanceBudgetInMeters) must be used. Default value is
          None.
         :paramtype energy_budget_in_kw_h: float
         :keyword time_budget_in_sec: Time budget in seconds that determines maximal range which can be
          travelled using driving time. The Consumption Model will only affect the range when routeType
-         is eco.:code:`<br>` Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
+         is eco. Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
          or distanceBudgetInMeters) must be used. Default value is None.
         :paramtype time_budget_in_sec: float
         :keyword distance_budget_in_meters: Distance budget in meters that determines maximal range
          which can be travelled using driving distance.  The Consumption Model will only affect the
-         range when routeType is eco.:code:`<br>` Exactly one budget (fuelBudgetInLiters,
+         range when routeType is eco. Exactly one budget (fuelBudgetInLiters,
          energyBudgetInkWh, timeBudgetInSec, or distanceBudgetInMeters) must be used. Default value is
          None.
         :paramtype distance_budget_in_meters: float
@@ -4883,9 +4788,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword avoid: Specifies something that the route calculation should try to avoid when
          determining the route. Can be specified multiple times in one request, for example,
@@ -4925,33 +4829,27 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms.
 
 
-         *
-           It is mandatory if any of the *Efficiency parameters are set.
+         * It is mandatory if any of the *Efficiency parameters are set.
 
-         *
-           It must be strictly positive when used in the context of the Consumption Model. Weight
-         restrictions are considered.
+         * It must be strictly positive when used in the context of the Consumption Model. Weight
+           restrictions are considered.
 
-         *
-           If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
-         non-zero, then weight restrictions are considered.
+         * If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
+           non-zero, then weight restrictions are considered.
 
-         *
-           In all other cases, this parameter is ignored.
+         * In all other cases, this parameter is ignored.
 
          Sensible Values : for **Combustion Model** : 1600, for **Electric Model** : 1900. Default
          value is 0.
@@ -4981,12 +4879,10 @@ class RouteOperations:
          as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -5082,11 +4978,9 @@ class RouteOperations:
          consumption curve. Consumption rates for speeds not in the list are found as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
          the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
@@ -5318,25 +5212,23 @@ class RouteOperations:
 
 
         #. Client sends a Route Directions Batch ``POST`` request to Azure Maps
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Batch request. This could either be a
-        ``400 Bad Request`` or any other ``Error`` status code.
+              ``400 Bad Request`` or any other ``Error`` status code.
 
 
-        #.
-           If the batch request was accepted successfully, the ``Location`` header in the response
-        contains the URL to download the results of the batch request.
-            This status URI looks like following:
+        #. If the batch request was accepted successfully, the ``Location`` header in the response
+           contains the URL to download the results of the batch request.
+           This status URI looks like following:
 
-        ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
-        Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
-        <#security>`_\\ ) to the *status URI* before running it. :code:`<br>`
+           ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
+           Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
+           <#security>`_\\ ) to the *status URI* before running it. 
 
 
         #. Client issues a ``GET`` request on the *download URL* obtained in Step 3 to download the
@@ -5388,16 +5280,15 @@ class RouteOperations:
 
 
         #. Client sends a ``GET`` request using the *download URL*.
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request was accepted but is still being processed. Please
-        try again in some time.
+              try again in some time.
 
               HTTP ``200 OK`` - Batch request successfully processed. The response body contains all
-        the batch results.
+              the batch results.
 
 
         Batch Response Model
@@ -5414,14 +5305,12 @@ class RouteOperations:
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -5489,13 +5378,13 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain a max of 700 queries for async and 100 queries for sync version
@@ -5553,25 +5442,23 @@ class RouteOperations:
 
 
         #. Client sends a Route Directions Batch ``POST`` request to Azure Maps
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Batch request. This could either be a
-        ``400 Bad Request`` or any other ``Error`` status code.
+              ``400 Bad Request`` or any other ``Error`` status code.
 
 
-        #.
-           If the batch request was accepted successfully, the ``Location`` header in the response
-        contains the URL to download the results of the batch request.
-            This status URI looks like following:
+        #. If the batch request was accepted successfully, the ``Location`` header in the response
+           contains the URL to download the results of the batch request.
+           This status URI looks like following:
 
-        ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
-        Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
-        <#security>`_\\ ) to the *status URI* before running it. :code:`<br>`
+           ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
+           Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
+           <#security>`_\\ ) to the *status URI* before running it. 
 
 
         #. Client issues a ``GET`` request on the *download URL* obtained in Step 3 to download the
@@ -5623,16 +5510,15 @@ class RouteOperations:
 
 
         #. Client sends a ``GET`` request using the *download URL*.
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request was accepted but is still being processed. Please
-        try again in some time.
+              try again in some time.
 
               HTTP ``200 OK`` - Batch request successfully processed. The response body contains all
-        the batch results.
+              the batch results.
 
 
         Batch Response Model
@@ -5649,14 +5535,12 @@ class RouteOperations:
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -5724,13 +5608,13 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain a max of 700 queries for async and 100 queries for sync version
@@ -5786,29 +5670,27 @@ class RouteOperations:
 
 
         #. Client sends a Route Directions Batch ``POST`` request to Azure Maps
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Batch request. This could either be a
-        ``400 Bad Request`` or any other ``Error`` status code.
+              ``400 Bad Request`` or any other ``Error`` status code.
 
 
-        #.
-           If the batch request was accepted successfully, the ``Location`` header in the response
-        contains the URL to download the results of the batch request.
-            This status URI looks like following:
+        #. If the batch request was accepted successfully, the ``Location`` header in the response
+           contains the URL to download the results of the batch request.
+           This status URI looks like following:
 
-        ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
-        Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
-        <#security>`_\\ ) to the *status URI* before running it. :code:`<br>`
+           ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
+           Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
+           <#security>`_\\ ) to the *status URI* before running it. 
 
 
         #. Client issues a ``GET`` request on the *download URL* obtained in Step 3 to download the
-        batch results.
+           batch results.
 
         POST Body for Batch Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -5856,16 +5738,15 @@ class RouteOperations:
 
 
         #. Client sends a ``GET`` request using the *download URL*.
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request was accepted but is still being processed. Please
-        try again in some time.
+              try again in some time.
 
               HTTP ``200 OK`` - Batch request successfully processed. The response body contains all
-        the batch results.
+              the batch results.
 
 
         Batch Response Model
@@ -5882,14 +5763,12 @@ class RouteOperations:
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -5957,13 +5836,13 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain a max of 700 queries for async and 100 queries for sync version
@@ -6092,16 +5971,15 @@ class RouteOperations:
 
 
         #. Client sends a ``GET`` request using the *download URL*.
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request was accepted but is still being processed. Please
-        try again in some time.
+              try again in some time.
 
               HTTP ``200 OK`` - Batch request successfully processed. The response body contains all
-        the batch results.
+              the batch results.
 
 
         Batch Response Model
@@ -6118,14 +5996,12 @@ class RouteOperations:
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -6193,13 +6069,13 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param batch_id: Batch id for querying the operation. Required.
         :type batch_id: str
@@ -6277,7 +6153,7 @@ class RouteOperations:
         .. code-block::
 
            POST
-        https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
+           https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Batch Response Model
         ^^^^^^^^^^^^^^^^^^^^
@@ -6293,14 +6169,12 @@ class RouteOperations:
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -6368,13 +6242,13 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain  a max of 700 queries for async and 100 queries for sync version
@@ -6422,7 +6296,7 @@ class RouteOperations:
         .. code-block::
 
            POST
-        https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
+           https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Batch Response Model
         ^^^^^^^^^^^^^^^^^^^^
@@ -6438,14 +6312,12 @@ class RouteOperations:
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -6513,13 +6385,13 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain  a max of 700 queries for async and 100 queries for sync version
@@ -6565,7 +6437,7 @@ class RouteOperations:
         .. code-block::
 
            POST
-        https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
+           https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Batch Response Model
         ^^^^^^^^^^^^^^^^^^^^
@@ -6581,14 +6453,12 @@ class RouteOperations:
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -6656,13 +6526,13 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain  a max of 700 queries for async and 100 queries for sync version

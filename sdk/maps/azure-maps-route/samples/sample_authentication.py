@@ -48,7 +48,7 @@ def authentication_maps_service_client_with_aad_credential():
     from azure.maps.route import MapsRouteClient
 
     credential = DefaultAzureCredential()
-    maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID", "your maps client id")
+    maps_client_id = os.getenv("AZURE_MAPS_CLIENT_ID")
 
     maps_route_client = MapsRouteClient(client_id=maps_client_id, credential=credential)
     # [END create_maps_route_service_client_with_aad]

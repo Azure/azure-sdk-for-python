@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
@@ -19,6 +18,10 @@ from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import MapsRouteClientConfiguration
 from .operations import RouteOperations
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class MapsRouteClient(RouteOperations):
@@ -44,7 +47,7 @@ class MapsRouteClient(RouteOperations):
 
     def __init__(
         self,
-        credential: AzureKeyCredential,
+        credential: "AsyncTokenCredential",
         client_id: Optional[str] = None,
         *,
         endpoint: str = "https://atlas.microsoft.com",

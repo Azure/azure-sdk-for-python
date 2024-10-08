@@ -1,3 +1,4 @@
+# pylint: disable=W0212, W0221, W0237, C4758
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -11,12 +12,12 @@ from typing import List, Union, Any, Tuple
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
-
 from ...models import (
     ResponseFormat,
     LatLongPair,
     RouteDirections,
     RouteRangeResult,
+    RouteDirectionParameters,
     RouteDirectionsBatchResult,
     RouteMatrixQuery,
     RouteMatrixResult,
@@ -37,7 +38,7 @@ def patch_sdk():
     """
 class RouteOperations(RouteOperationsGenerated):
     @distributed_trace_async
-    async def get_route_directions(
+    async def get_route_directions( # type: ignore
         self,
         route_points: Union[List[LatLongPair], List[Tuple]],
         **kwargs: Any
@@ -257,29 +258,32 @@ class RouteOperations(RouteOperationsGenerated):
         :rtype: ~azure.maps.route.models.RouteDirections
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        query_items=""
-        route_directions_body={}
+        query_items = ""
+
         if route_points:
-            if isinstance(route_points[0], tuple):
-                query_items = ":".join([(str(route_point[0]) + "," + str(route_point[1])) for route_point in route_points])
-            else:
-                query_items = ":".join([(str(route_point.latitude) + "," + str(route_point.longitude)) for route_point in route_points])
+            coordinates = []
+            for route_point in route_points:
+                if isinstance(route_point, LatLongPair):
+                    coordinates.append(f"{route_point.latitude},{route_point.longitude}")
+                elif isinstance(route_point, tuple):
+                    coordinates.append(f"{route_point[0]},{route_point[1]}")
+            query_items = ":".join(coordinates)
 
         supporting_points = kwargs.pop('supporting_points', None)
         avoid_vignette = kwargs.pop('avoid_vignette', None)
         allow_vignette = kwargs.pop('allow_vignette', None)
         avoid_areas = kwargs.pop('avoid_areas', None)
-        if supporting_points or avoid_vignette or allow_vignette or avoid_areas is not None:
-            route_directions_body['supporting_points'] = supporting_points
-            route_directions_body['avoid_vignette'] = avoid_vignette
-            route_directions_body['allow_vignette'] = allow_vignette
-            route_directions_body['avoid_areas'] = avoid_areas
 
-        if route_directions_body:
-            # import pdb; pdb.set_trace()
+        if supporting_points or avoid_areas or allow_vignette or avoid_vignette:
+            route_directions_body = RouteDirectionParameters(
+                supporting_points=supporting_points,
+                avoid_vignette=avoid_vignette,
+                allow_vignette=allow_vignette,
+                avoid_areas=avoid_areas
+            )
             return await super().get_route_directions_with_additional_parameters(
-                format=ResponseFormat.JSON,
                 route_direction_parameters=route_directions_body,
+                format=ResponseFormat.JSON,
                 route_points=query_items,
                 **kwargs
             )
@@ -291,9 +295,9 @@ class RouteOperations(RouteOperationsGenerated):
 
     # cSpell:disable
     @distributed_trace_async
-    async def get_route_range(
+    async def get_route_range( #type: ignore
         self,
-        coordinates: Union[LatLongPair, Tuple],
+        coordinates: Union[LatLongPair, Tuple[float, float]],
         **kwargs: Any
     ) -> RouteRangeResult:
 
@@ -307,26 +311,26 @@ class RouteOperations(RouteOperationsGenerated):
         :param coordinates: The Coordinate from which the range calculation should start, coordinates as (lat, lon)
         :type coordinates: LatLongPair or Tuple
         :keyword fuel_budget_in_liters: Fuel budget in liters that determines maximal range which can
-         be travelled using the specified Combustion Consumption Model.:code:`<br>` When
+         be travelled using the specified Combustion Consumption Model. When
          fuelBudgetInLiters is used, it is mandatory to specify a detailed  Combustion Consumption
-         Model.:code:`<br>` Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
+         Model. Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
          or distanceBudgetInMeters) must be used. Default value is None.
         :paramtype fuel_budget_in_liters: float
         :keyword energy_budget_in_kw_h: Electric energy budget in kilowatt hours (kWh) that determines
          maximal range which can be travelled using the specified Electric Consumption
-         Model.:code:`<br>` When energyBudgetInkWh is used, it is mandatory to specify a detailed
-         Electric Consumption Model.:code:`<br>` Exactly one budget (fuelBudgetInLiters,
+         Model. When energyBudgetInkWh is used, it is mandatory to specify a detailed
+         Electric Consumption Model. Exactly one budget (fuelBudgetInLiters,
          energyBudgetInkWh, timeBudgetInSec, or distanceBudgetInMeters) must be used. Default value is
          None.
         :paramtype energy_budget_in_kw_h: float
         :keyword time_budget_in_sec: Time budget in seconds that determines maximal range which can be
          travelled using driving time. The Consumption Model will only affect the range when routeType
-         is eco.:code:`<br>` Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
+         is eco. Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
          or distanceBudgetInMeters) must be used. Default value is None.
         :paramtype time_budget_in_sec: float
         :keyword distance_budget_in_meters: Distance budget in meters that determines maximal range
          which can be travelled using driving distance.  The Consumption Model will only affect the
-         range when routeType is eco.:code:`<br>` Exactly one budget (fuelBudgetInLiters,
+         range when routeType is eco. Exactly one budget (fuelBudgetInLiters,
          energyBudgetInkWh, timeBudgetInSec, or distanceBudgetInMeters) must be used. Default value is
          None.
         :paramtype distance_budget_in_meters: float
@@ -451,9 +455,10 @@ class RouteOperations(RouteOperationsGenerated):
         :rtype: ~azure.maps.route.models.RouteRangeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if isinstance(coordinates, tuple):
+        query = []
+        if isinstance(coordinates, Tuple):
             query = [coordinates[0], coordinates[1]]
-        else:
+        elif isinstance(coordinates, LatLongPair) and coordinates.latitude and coordinates.longitude:
             query = [coordinates.latitude, coordinates.longitude]
 
         return await super().get_route_range(
@@ -484,13 +489,13 @@ class RouteOperations(RouteOperationsGenerated):
         return await super().request_route_directions_batch_sync(
             format=ResponseFormat.JSON,
             route_directions_batch_queries=BatchRequest(
-                batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries]
+                batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries] if queries else []
             ),
             **kwargs
         )
 
     @distributed_trace_async
-    async def begin_get_route_directions_batch(
+    async def begin_get_route_directions_batch( #type: ignore
         self,
         **kwargs: Any
     ) -> AsyncLROPoller[RouteDirectionsBatchResult]:
@@ -529,18 +534,18 @@ class RouteOperations(RouteOperationsGenerated):
         batch_poller = await super().begin_request_route_directions_batch(
             format=ResponseFormat.JSON,
             route_directions_batch_queries=BatchRequest(
-                batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries]
+                batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries] if queries else []
             ),
             **kwargs
         )
 
         polling_method = batch_poller.polling_method()
         if hasattr(polling_method, "_operation"):
-            operation=polling_method._operation
+            operation = polling_method._operation
             batch_poller.batch_id = operation._location_url.split('/')[-1].split('?')[0]
         else:
             batch_poller.batch_id = None
-        
+
         return batch_poller
 
     @distributed_trace_async

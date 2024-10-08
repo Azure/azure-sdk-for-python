@@ -309,7 +309,7 @@ class RouteInstructionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     when instructionsType=tagged: street, roadNumber, signpostText, exitNumber,
     roundaboutExitNumber.
     
-    Example of tagged 'Turn left' message:​
+    Example of tagged 'Turn left' message:
     
     .. code-block::
     

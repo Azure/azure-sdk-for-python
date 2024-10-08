@@ -7,10 +7,11 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-# pylint: disable=unused-import
+
 from typing import Union, Any, List
 
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._client import MapsRouteClient as MapsRouteClientGenerated
 
@@ -24,6 +25,7 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
 # To check the credential is either AzureKeyCredential or TokenCredential
 def _authentication_policy(credential):
     authentication_policy = None
@@ -40,12 +42,11 @@ def _authentication_policy(credential):
         )
     return authentication_policy
 
-
 # pylint: disable=C4748
 class MapsRouteClient(MapsRouteClientGenerated):
     def __init__(
         self,
-        credential: Union[AzureKeyCredential, TokenCredential],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         **kwargs: Any
     ) -> None:
 

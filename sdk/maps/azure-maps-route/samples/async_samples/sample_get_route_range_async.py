@@ -35,9 +35,10 @@ async def get_route_range():
             time_budget_in_sec=6000
         )
 
-    print("Get Route Range with coordinates and time budget:")
-    print(result.reachable_range.center)
-    print(result.reachable_range.boundary[0])
+    if result.reachable_range is not None and result.reachable_range.boundary is not None:
+        print("Get Route Range with coordinates and time budget:")
+        print(result.reachable_range.center)
+        print(result.reachable_range.boundary[0])
     # [END get_route_range_async]
 
 if __name__ == '__main__':

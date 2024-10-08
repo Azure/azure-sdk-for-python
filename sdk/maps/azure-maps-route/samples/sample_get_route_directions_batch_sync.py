@@ -24,7 +24,6 @@ def get_route_directions_batch_sync():
     # [START get_route_directions_batch_sync]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.route import MapsRouteClient
-    from azure.maps.route.models import BatchRequest, BatchRequestItem
 
     maps_route_client = MapsRouteClient(credential=AzureKeyCredential(subscription_key))
 
@@ -34,9 +33,11 @@ def get_route_directions_batch_sync():
         ]
     )
 
-    print("Get route directions batch sync")
-    print(result.batch_summary.total_requests)
-    print(result.batch_items[0].response.routes[0].sections[0])
+    if result.batch_summary is not None and result.batch_items is not None:
+        print("Get route directions batch sync")
+        print(result.batch_summary.total_requests)
+        print(result.batch_items[0].response.routes[0].summary.departure_time)
+        print(result.batch_items[0].response.routes[0].summary.arrival_time)
     # [END get_route_directions_batch_sync]
 
 if __name__ == '__main__':
