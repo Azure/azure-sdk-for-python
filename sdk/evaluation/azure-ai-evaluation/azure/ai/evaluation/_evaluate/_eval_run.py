@@ -10,10 +10,11 @@ import posixpath
 import time
 import types
 import uuid
-from typing import Any, Dict, Optional, Set, Type
+from typing import Any, Dict, List, Optional, Set, Type
 from urllib.parse import urlparse
 
 from promptflow._sdk.entities import Run
+from typing_extensions import Self
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_http_client
@@ -27,6 +28,7 @@ LOGGER = logging.getLogger(__name__)
 # Handle optional import. The azure libraries are only present if
 # promptflow-azure is installed.
 try:
+    from azure.ai.ml import MLClient
     from azure.ai.ml.entities._credentials import AccountKeyConfiguration  # pylint: disable=ungrouped-imports
     from azure.ai.ml.entities._datastore.datastore import Datastore
     from azure.storage.blob import BlobServiceClient
@@ -121,8 +123,8 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         self._run_name = run_name
         self._promptflow_run = promptflow_run
         self._status = RunStatus.NOT_STARTED
-        self._url_base = None
-        self.info = None
+        self._url_base: Optional[str] = None
+        self._info: Optional[RunInfo] = None
 
     @property
     def status(self) -> RunStatus:
@@ -133,6 +135,20 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         :rtype: promptflow._sdk._constants.RunStatus
         """
         return self._status
+
+    @property
+    def info(self) -> RunInfo:
+        if self._info is None:
+            msg = "Run info is missing"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.EVAL_RUN,
+                category=ErrorCategory.UNKNOWN,
+                blame=ErrorBlame.UNKNOWN,
+            )
+
+        return self._info
 
     def _get_scope(self) -> str:
         """
@@ -161,11 +177,11 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             )
             self._url_base = None
             self._status = RunStatus.BROKEN
-            self.info = RunInfo.generate(self._run_name)
+            self._info = RunInfo.generate(self._run_name)
         else:
             self._url_base = urlparse(self._tracking_uri).netloc
             if self._promptflow_run is not None:
-                self.info = RunInfo(
+                self._info = RunInfo(
                     self._promptflow_run.name,
                     self._promptflow_run._experiment_name,  # pylint: disable=protected-access
                     self._promptflow_run.name,
@@ -182,7 +198,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                     body["run_name"] = self._run_name
                 response = self.request_with_retry(url=url, method="POST", json_dict=body)
                 if response.status_code != 200:
-                    self.info = RunInfo.generate(self._run_name)
+                    self._info = RunInfo.generate(self._run_name)
                     LOGGER.warning(
                         "The run failed to start: %s: %s."
                         "The results will be saved locally, but will not be logged to Azure.",
@@ -192,7 +208,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
                     self._status = RunStatus.BROKEN
                 else:
                     parsed_response = response.json()
-                    self.info = RunInfo(
+                    self._info = RunInfo(
                         run_id=parsed_response["run"]["info"]["run_id"],
                         experiment_id=parsed_response["run"]["info"]["experiment_id"],
                         run_name=parsed_response["run"]["info"]["run_name"],
@@ -235,7 +251,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             LOGGER.warning("Unable to terminate the run.")
         self._status = RunStatus.TERMINATED
 
-    def __enter__(self):
+    def __enter__(self) -> Self:
         """The Context Manager enter call.
 
         :return: The instance of the class.
@@ -249,7 +265,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
         exc_type: Optional[Type[BaseException]],
         exc_value: Optional[BaseException],
         exc_tb: Optional[types.TracebackType],
-    ) -> Optional[bool]:
+    ) -> None:
         """The context manager exit call.
 
         :param exc_type: The exception type
@@ -408,7 +424,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
             return
         # First we will list the files and the appropriate remote paths for them.
         root_upload_path = posixpath.join("promptflow", "PromptFlowArtifacts", self.info.run_name)
-        remote_paths = {"paths": []}
+        remote_paths: Dict[str, List[Dict[str, str]]] = {"paths": []}
         local_paths = []
         # Go over the artifact folder and upload all artifacts.
         for root, _, filenames in os.walk(artifact_folder):
