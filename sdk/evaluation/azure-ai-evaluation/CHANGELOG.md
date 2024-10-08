@@ -66,7 +66,7 @@ evaluate(
 )
 ```
 
-- Simulator now requires configuration to call the prompty within the `azure_ai_project`. This enables the usage of simulator with Entra ID based auth.
+- Simulator now requires a model configuration to call the prompty instead of an Azure AI project scope. This enables the usage of simulator with Entra ID based auth.
 Before:
 ```python
 azure_ai_project = {
