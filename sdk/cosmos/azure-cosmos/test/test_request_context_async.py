@@ -1,23 +1,24 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-import time
+
 import unittest
 import uuid
 
 import pytest
+import pytest_asyncio
 
-import azure.cosmos.cosmos_client as cosmos_client
 import test_config
+from azure.cosmos.aio import CosmosClient
 
-@pytest.fixture(scope="class")
-def setup():
+@pytest_asyncio.fixture()
+async def setup():
     if (TestRequestContext.masterKey == '[YOUR_KEY_HERE]' or
             TestRequestContext.host == '[YOUR_ENDPOINT_HERE]'):
         raise Exception(
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(TestRequestContext.host, test_config.TestConfig.masterKey),
+    test_client = CosmosClient(TestRequestContext.host, test_config.TestConfig.masterKey),
     created_db = test_client[0].get_database_client(TestRequestContext.TEST_DATABASE_ID)
     return {
         "created_db": created_db,
@@ -41,8 +42,9 @@ def createItem(id = None, pk='A', name='sample'):
     }
     return item
 
+
 @pytest.mark.cosmosEmulator
-@pytest.mark.unittest
+@pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
 class TestRequestContext:
     """Tests to verify request context gets populated correctly
@@ -53,44 +55,44 @@ class TestRequestContext:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
-    def test_crud_request_context(self, setup):
+    async def test_crud_request_context(self, setup):
         item = createItem()
-        setup["created_collection"].create_item(item)
+        await setup["created_collection"].create_item(item)
         validate_request_context(setup["created_collection"])
 
-        setup["created_collection"].read_item(item['id'], item['pk'])
+        await setup["created_collection"].read_item(item['id'], item['pk'])
         validate_request_context(setup["created_collection"])
 
         new_item = createItem(item['id'], name='sample_replaced')
-        setup["created_collection"].replace_item(item['id'], new_item)
+        await setup["created_collection"].replace_item(item['id'], new_item)
         validate_request_context(setup["created_collection"])
         operations = [
             {"op": "add", "path": "/favorite_color", "value": "red"},
             {"op": "replace", "path": "/name", "value": 14},
         ]
-        setup["created_collection"].patch_item(item['id'], item['pk'], operations)
+        await setup["created_collection"].patch_item(item['id'], item['pk'], operations)
         validate_request_context(setup["created_collection"])
 
-        items = list(setup["created_collection"].read_all_items())
+        items = [item async for item in setup["created_collection"].read_all_items()]
         assert len(items) == 1
         validate_request_context(setup["created_collection"])
 
-        setup["created_collection"].upsert_item(createItem())
+        await setup["created_collection"].upsert_item(createItem())
         validate_request_context(setup["created_collection"])
 
         for i in range(100):
-            setup["created_collection"].create_item(createItem())
-        items = list(setup["created_collection"].query_items_change_feed(is_start_from_beginning=True))
+            await setup["created_collection"].create_item(createItem())
+        items = [item async for item in setup["created_collection"].query_items_change_feed(is_start_from_beginning=True)]
         assert len(items) == 102
         validate_request_context(setup["created_collection"])
 
-        items = list(setup["created_collection"].query_items("SELECT * FROM c WHERE c.id = @id",
-                                                           parameters=[dict(name="@id", value=item['id'])],
-                                                           partition_key=item['pk']))
+        items = [item async for item in setup["created_collection"].query_items("SELECT * FROM c WHERE c.id = @id",
+                                                                        parameters=[dict(name="@id", value=item['id'])],
+                                                                        partition_key=item['pk'])]
         assert len(items) == 1
         validate_request_context(setup["created_collection"])
 
-        setup["created_collection"].delete_item(item['id'], item['pk'])
+        await setup["created_collection"].delete_item(item['id'], item['pk'])
         validate_request_context(setup["created_collection"])
 
 if __name__ == '__main__':

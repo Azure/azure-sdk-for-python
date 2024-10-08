@@ -24,6 +24,7 @@
 """Document client class for the Azure Cosmos database service.
 """
 import os
+from optparse import Option
 from urllib.parse import urlparse
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
@@ -515,6 +516,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_or_container_link: str,
         document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Creates a document in a collection.
@@ -550,7 +552,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if base.IsItemContainerLink(database_or_container_link):
             options = await self._AddPartitionKey(database_or_container_link, document, options)
 
-        return await self.Create(document, path, "docs", collection_id, None, options, **kwargs)
+        return await self.Create(document, path, "docs", collection_id, None, options,
+                                 request_context, **kwargs)
 
     async def CreatePermission(
         self,
@@ -704,6 +707,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Creates an Azure Cosmos resource and returns it.
@@ -715,6 +719,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
+        :param dict request_context:
         :return:
             The created Azure Cosmos resource.
         :rtype:
@@ -735,6 +740,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
+        if request_context is not None:
+            self._add_request_context(request_context)
         if response_hook:
             response_hook(last_response_headers, result)
         return result
@@ -796,6 +803,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_or_container_link: str,
         document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Upserts a document in a collection.
@@ -830,7 +838,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_id, document, path = self._GetContainerIdWithPathForItem(
             database_or_container_link, document, options
         )
-        return await self.Upsert(document, path, "docs", collection_id, None, options, **kwargs)
+        return await self.Upsert(document, path, "docs", collection_id, None, options,
+                                 request_context, **kwargs)
 
     async def Upsert(
         self,
@@ -840,6 +849,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Upserts an Azure Cosmos resource and returns it.
@@ -851,6 +861,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
+        :param dict request_context:
         :return:
             The upserted Azure Cosmos resource.
         :rtype:
@@ -872,6 +883,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.last_response_headers = last_response_headers
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
+        if request_context is not None:
+            self._add_request_context(request_context)
         if response_hook:
             response_hook(last_response_headers, result)
         return result
@@ -959,6 +972,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         document_link: str,
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Reads a document.
@@ -967,6 +981,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the document.
         :param dict options:
             The request options for the request.
+        :param dict request_context:
 
         :return:
             The read Document.
@@ -979,7 +994,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
-        return await self.Read(path, "docs", document_id, None, options, **kwargs)
+        return await self.Read(path, "docs", document_id, None, options, request_context, **kwargs)
 
     async def ReadUser(
         self,
@@ -1142,6 +1157,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Reads an Azure Cosmos resource and returns it.
@@ -1169,6 +1185,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params = _request_object.RequestObject(typ, documents._OperationType.Read)
         result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
+        if request_context is not None:
+             self._add_request_context(request_context)
         if response_hook:
             response_hook(last_response_headers, result)
         return result
@@ -1358,6 +1376,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         document_link: str,
         new_document: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Replaces a document and returns it.
@@ -1367,6 +1386,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict new_document:
         :param dict options:
             The request options for the request.
+        :param request_context:
         :return:
             The new Document.
         :rtype:
@@ -1391,13 +1411,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link = base.GetItemContainerLink(document_link)
         options = await self._AddPartitionKey(collection_link, new_document, options)
 
-        return await self.Replace(new_document, path, "docs", document_id, None, options, **kwargs)
+        return await self.Replace(new_document, path, "docs", document_id, None, options,
+                                  request_context, **kwargs)
 
     async def PatchItem(
         self,
         document_link: str,
         operations: List[Dict[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Patches a document and returns it.
@@ -1405,6 +1427,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param str document_link: The link to the document.
         :param list operations: The operations for the patch request.
         :param dict options: The request options for the request.
+        :param dict request_context: The request context for the operation
         :return:
             The new Document.
         :rtype:
@@ -1432,6 +1455,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
+        if request_context is not None:
+            self._add_request_context(request_context)
         if response_hook:
             response_hook(last_response_headers, result)
         return result
@@ -1500,6 +1525,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
         """Replaces an Azure Cosmos resource and returns it.
@@ -1511,6 +1537,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
+        :param dict request_context:
         :return:
             The new Azure Cosmos resource.
         :rtype:
@@ -1530,6 +1557,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
+        if request_context is not None:
+            self._add_request_context(request_context)
         if response_hook:
             response_hook(last_response_headers, result)
         return result
@@ -1695,6 +1724,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self,
         document_link: str,
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> None:
         """Deletes a document.
@@ -1703,6 +1733,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the document.
         :param dict options:
             The request options for the request.
+        :param dict request_context:
         :return:
             The deleted Document.
         :rtype:
@@ -1714,7 +1745,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
-        await self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
+        await self.DeleteResource(path, "docs", document_id, None, options,
+                                  request_context, **kwargs)
 
     async def DeleteUserDefinedFunction(
         self,
@@ -1822,6 +1854,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         id: Optional[str],
         initial_headers: Optional[Mapping[str, Any]],
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> None:
         """Deletes an Azure Cosmos resource and returns it.
@@ -1832,6 +1865,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
+        :param dict request_context:
         :return:
             The deleted Azure Cosmos resource.
         :rtype:
@@ -1851,6 +1885,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
+        if request_context is not None:
+            self._add_request_context(request_context)
         if response_hook:
             response_hook(last_response_headers, None)
 
@@ -1886,6 +1922,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
         options: Optional[Mapping[str, Any]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> List[Dict[str, Any]]:
         """Executes the given operations in transactional batch.
@@ -1941,6 +1978,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 ),
                 operation_responses=final_responses
             )
+        if request_context is not None:
+            self._add_request_context(request_context)
         if response_hook:
             response_hook(last_response_headers, final_responses)
         return final_responses
@@ -2138,6 +2177,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         feed_options: Optional[Mapping[str, Any]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Reads all documents in a collection.
@@ -2145,6 +2185,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param str collection_link: The link to the document collection.
         :param dict feed_options: The additional options for the operation.
         :param response_hook: A callable invoked with the response metadata.
+        :param request_context: The request context for the operation.
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return: Query Iterable of Documents.
         :rtype: query_iterable.QueryIterable
@@ -2153,7 +2194,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if feed_options is None:
             feed_options = {}
 
-        return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook, **kwargs)
+        return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook,
+                               request_context=request_context, **kwargs)
 
     def QueryItems(
         self,
@@ -2162,6 +2204,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         options: Optional[Mapping[str, Any]] = None,
         partition_key: Optional[PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Queries documents in a collection.
@@ -2172,6 +2215,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict options: The request options for the request.
         :param str partition_key: Partition key for the query(default value None)
         :param response_hook: A callable invoked with the response metadata.
+        :param request_context: The request context for the operation.
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return:
             Query Iterable of Documents.
@@ -2208,6 +2252,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     query,
                     options,
                     response_hook=response_hook,
+                    request_context=request_context,
                     **kwargs
                 ),
                 self.last_response_headers,
@@ -2227,6 +2272,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         options: Optional[Mapping[str, Any]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Queries documents change feed in a collection.
@@ -2234,6 +2280,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param str collection_link: The link to the document collection.
         :param dict options: The request options for the request.
         :param response_hook: A callable invoked with the response metadata.
+        :param request_context: The request_context of the operation
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return:
             Query Iterable of Documents.
@@ -2247,7 +2294,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_range_id = options["partitionKeyRangeId"]
 
         return self._QueryChangeFeed(
-            collection_link, "Documents", options, partition_key_range_id, response_hook=response_hook, **kwargs
+            collection_link, "Documents", options, partition_key_range_id, response_hook=response_hook,
+            request_context=request_context, **kwargs
         )
 
     def _QueryChangeFeed(
@@ -2257,6 +2305,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options: Optional[Mapping[str, Any]] = None,
             partition_key_range_id: Optional[str] = None,
             response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
+            request_context: Optional[Dict[str, Any]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Queries change feed of a resource in a collection.
@@ -2266,6 +2315,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict options: The request options for the request.
         :param str partition_key_range_id: Specifies partition key range id.
         :param response_hook: A callable invoked with the response metadata
+        :param request_context: The request context of the operation.
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return:
             Query Iterable of Documents.
@@ -2304,6 +2354,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     options,
                     partition_key_range_id,
                     response_hook=response_hook,
+                    request_context=request_context,
                     **kwargs
                 ),
                 self.last_response_headers,
@@ -2768,6 +2819,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key_range_id: Optional[str] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         is_query_plan: bool = False,
+        request_context: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> List[Dict[str, Any]]:
         """Query for more than one Azure Cosmos resources.
@@ -2818,6 +2870,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 await change_feed_state.populate_request_headers_async(self._routing_map_provider, headers)
 
             result, self.last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
+            if request_context is not None:
+                self._add_request_context(request_context)
             if response_hook:
                 response_hook(self.last_response_headers, result)
             return __GetBodiesFromQueryResult(result)
@@ -2902,6 +2956,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     results["Documents"].extend(partial_result["Documents"])
                 else:
                     results = partial_result
+                if request_context is not None:
+                    self._add_request_context(request_context)
                 if response_hook:
                     response_hook(self.last_response_headers, partial_result)
             # if the prefix partition query has results lets return it
@@ -2913,6 +2969,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
             index_metrics_raw = self.last_response_headers[INDEX_METRICS_HEADER]
             self.last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
+        if request_context is not None:
+            self._add_request_context(request_context)
         if response_hook:
             response_hook(self.last_response_headers, result)
 
@@ -3222,3 +3280,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition = container.get("partitionKey")
             self.__container_properties_cache[collection_link] = _set_properties_cache(container)
         return partition_key_definition
+
+    def _add_request_context(self, request_context):
+        if http_constants.HttpHeaders.SessionToken in self.last_response_headers:
+            request_context['session_token'] = self.last_response_headers[http_constants.HttpHeaders.SessionToken]
+        self.last_response_headers["request_context"] = request_context

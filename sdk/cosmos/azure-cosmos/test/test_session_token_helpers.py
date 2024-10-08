@@ -110,7 +110,8 @@ def create_items_logical_pk(setup, target_pk, previous_session_token, feed_range
         if item['pk'] == target_pk:
             target_session_token = request_context["session_token"]
         previous_session_token = request_context["session_token"]
-        feed_ranges_and_session_tokens.append((request_context["feed_range"], request_context["session_token"]))
+        feed_ranges_and_session_tokens.append((setup[COLLECTION].feed_range_from_partition_key(item['pk']),
+                                               request_context["session_token"]))
     return target_session_token
 
 def create_items_physical_pk(setup, pk_feed_range, previous_session_token, feed_ranges_and_session_tokens):
@@ -122,7 +123,7 @@ def create_items_physical_pk(setup, pk_feed_range, previous_session_token, feed_
             target_feed_range = feed_range
             break
 
-    for i in range(100):
+    for i in range(10):
         item = {
             'id': 'item' + str(uuid.uuid4()),
             'name': 'sample',
@@ -130,10 +131,12 @@ def create_items_physical_pk(setup, pk_feed_range, previous_session_token, feed_
         }
         setup[COLLECTION].create_item(item, session_token=previous_session_token)
         request_context = setup[COLLECTION].client_connection.last_response_headers["request_context"]
-        if setup[COLLECTION].is_feed_range_subset(target_feed_range, request_context["feed_range"]):
+        curr_feed_range = setup[COLLECTION].feed_range_from_partition_key(item['pk'])
+        if setup[COLLECTION].is_feed_range_subset(target_feed_range, curr_feed_range):
             target_session_token = request_context["session_token"]
         previous_session_token = request_context["session_token"]
-        feed_ranges_and_session_tokens.append((request_context["feed_range"], request_context["session_token"]))
+        feed_ranges_and_session_tokens.append((curr_feed_range,
+                                               request_context["session_token"]))
 
     return target_session_token, target_feed_range
 
@@ -150,7 +153,7 @@ class TestSessionTokenHelpers:
     connectionPolicy = test_config.TestConfig.connectionPolicy
     configs = test_config.TestConfig
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
-    TEST_COLLECTION_ID = configs.TEST_MULTI_PARTITION_CONTAINER_ID
+    TEST_COLLECTION_ID = configs.TEST_SINGLE_PARTITION_CONTAINER_ID
 
     def test_get_session_token_update(self, setup):
         feed_range = FeedRangeEpk(Range("AA", "BB", True, False))

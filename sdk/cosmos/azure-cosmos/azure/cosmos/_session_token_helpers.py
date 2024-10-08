@@ -38,7 +38,7 @@ def merge_session_tokens_with_same_range(session_token1, session_token2):
 def is_compound_session_token(session_token):
     return "," in session_token
 
-def create_vector_session_token_and_pkrangeid(session_token):
+def create_vector_session_token_and_pkrangeid(session_token): # cspell:disable-line
     tokens = session_token.split(":")
     return tokens[0], VectorSessionToken.create(tokens[1])
 

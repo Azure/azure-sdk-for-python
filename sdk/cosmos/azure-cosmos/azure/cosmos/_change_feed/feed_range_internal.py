@@ -30,7 +30,6 @@ from typing import Union, List, Dict, Any, Optional, Sequence, Type
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.partition_key import _Undefined, _Empty, PartitionKey, NonePartitionKeyValue
 
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
 
 class FeedRangeInternal(ABC):
 
@@ -131,10 +130,3 @@ class FeedRangeInternalEpk(FeedRangeInternal):
             self._base64_encoded_string = self._to_base64_encoded_string()
 
         return self._base64_encoded_string
-
-    @staticmethod
-    def get_epk_range_for_partition_key(container_properties, partition_key_value: PartitionKeyType) -> Range:
-        partition_key_definition = container_properties["partitionKey"]
-        partition_key = PartitionKey(path=partition_key_definition["paths"], kind=partition_key_definition["kind"])
-
-        return partition_key._get_epk_range_for_partition_key(partition_key_value)

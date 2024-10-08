@@ -43,6 +43,7 @@ from .._base import (
 )
 from .._feed_range import FeedRange, FeedRangeEpk
 from .._routing.routing_range import Range
+from .._session_token_helpers import get_updated_session_token
 from ..offer import ThroughputProperties
 from ..partition_key import (
     NonePartitionKeyValue,
@@ -259,7 +260,8 @@ class ContainerProxy:
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.CreateItem(
-            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
+            database_or_container_link=self.container_link, document=body, options=request_options,
+            request_context={}, **kwargs
         )
         return result or {}
 
@@ -325,7 +327,8 @@ class ContainerProxy:
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
-        return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
+        return await self.client_connection.ReadItem(document_link=doc_link, options=request_options,
+                                                     request_context={}, **kwargs)
 
     @distributed_trace
     def read_all_items(
@@ -373,7 +376,8 @@ class ContainerProxy:
             feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.ReadItems(
-            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
+            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook,
+            request_context={}, **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
@@ -492,6 +496,7 @@ class ContainerProxy:
             options=feed_options,
             partition_key=partition_key,
             response_hook=response_hook,
+            request_context= {},
             **kwargs
         )
         if response_hook:
@@ -690,9 +695,11 @@ class ContainerProxy:
             change_feed_state_context["partitionKeyFeedRange"] = \
                 self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
+        request_context = {}
         if kwargs.get("feed_range") is not None:
             feed_range: FeedRangeEpk = kwargs.pop('feed_range')
             change_feed_state_context["feedRange"] = feed_range._feed_range_internal
+            request_context["feedRange"] = feed_range
 
         feed_options["containerProperties"] = self._get_properties()
         feed_options["changeFeedStateContext"] = change_feed_state_context
@@ -705,7 +712,8 @@ class ContainerProxy:
             feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryItemsChangeFeed(
-            self.container_link, options=feed_options, response_hook=response_hook, **kwargs
+            self.container_link, options=feed_options, response_hook=response_hook,
+            request_context=request_context, **kwargs
         )
 
         if response_hook:
@@ -779,6 +787,7 @@ class ContainerProxy:
             database_or_container_link=self.container_link,
             document=body,
             options=request_options,
+            request_context={},
             **kwargs
         )
         return result or {}
@@ -851,7 +860,8 @@ class ContainerProxy:
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.ReplaceItem(
-            document_link=item_link, new_document=body, options=request_options, **kwargs
+            document_link=item_link, new_document=body, options=request_options,
+            request_context={}, **kwargs
         )
         return result or {}
 
@@ -927,7 +937,8 @@ class ContainerProxy:
 
         item_link = self._get_document_link(item)
         result = await self.client_connection.PatchItem(
-            document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
+            document_link=item_link, operations=patch_operations, options=request_options,
+            request_context={}, **kwargs)
         return result or {}
 
     @distributed_trace_async
@@ -990,7 +1001,8 @@ class ContainerProxy:
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         document_link = self._get_document_link(item)
-        await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
+        await self.client_connection.DeleteItem(document_link=document_link, options=request_options,
+                                                request_context={}, **kwargs)
 
     @distributed_trace_async
     async def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
@@ -1291,7 +1303,8 @@ class ContainerProxy:
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.Batch(
-            collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
+            collection_link=self.container_link, batch_operations=batch_operations, options=request_options,
+            request_context={}, **kwargs)
 
     async def read_feed_ranges(
             self,
@@ -1319,3 +1332,40 @@ class ContainerProxy:
 
         return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange))
                 for partitionKeyRange in partition_key_ranges]
+
+    async def get_updated_session_token(self,
+                                  feed_ranges_to_session_tokens: List[Tuple[str, FeedRange]],
+                                  target_feed_range: FeedRange
+                                  ) -> "Session Token":
+        """Gets the the most up to date session token from the list of session token and feed range tuples
+        for a specific target feed range. The feed range can be obtained from a response from any crud operation.
+        This should only be used if maintaining own session token or else the sdk will keep track of
+        session token.
+        :param feed_ranges_to_session_tokens: List of partition key and session token tuples.
+        :type feed_ranges_to_session_tokens: List[Tuple(str, FeedRange)]
+        :param target_feed_range: feed range to get most up to date session token.
+        :type target_feed_range: FeedRange
+        :returns: a session token
+        :rtype: str
+        """
+        return get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range)
+
+    async def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> FeedRange:
+        """Gets the feed range for a given partition key.
+        :param partition_key: partition key to get feed range.
+        :type partition_key: PartitionKey
+        :returns: a feed range
+        :rtype: FeedRange
+        """
+        return FeedRangeEpk(await self._get_epk_range_for_partition_key(partition_key))
+
+    async def is_feed_range_subset(self, parent_feed_range: FeedRange, child_feed_range: FeedRange) -> bool:
+        """Checks if child feed range is a subset of parent feed range.
+        :param parent_feed_range: left feed range
+        :type parent_feed_range: FeedRange
+        :param child_feed_range: right feed range
+        :type child_feed_range: FeedRange
+        :returns: a boolean indicating if child feed range is a subset of parent feed range
+        :rtype: bool
+        """
+        return child_feed_range._feed_range_internal.get_normalized_range().is_subset(parent_feed_range._feed_range_internal.get_normalized_range())
