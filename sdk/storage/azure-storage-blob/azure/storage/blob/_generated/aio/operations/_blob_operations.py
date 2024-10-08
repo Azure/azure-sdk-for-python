@@ -210,6 +210,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
+        # If _decompress is set to False, set _decompress on the response object to False
+        if not _decompress:
+            response._decompress = _decompress
+
         if response.status_code not in [200, 206]:
             try:
                 await response.read()  # Load the body in memory and close the socket

@@ -3968,6 +3968,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
