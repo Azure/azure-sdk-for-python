@@ -28,10 +28,7 @@ class Simulator:
     Simulator for generating synthetic conversations.
     """
 
-    def __init__(
-        self,
-        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
-    ):
+    def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         """
         Initializes the task simulator with the model configuration.
 
@@ -42,10 +39,10 @@ class Simulator:
         self._validate_model_config(model_config)
         self.model_config = model_config
         if "api_version" not in self.model_config:
-            self.model_config["api_version"] = "2024-06-01"
+            self.model_config["api_version"] = "2024-06-01"  # type: ignore
 
     @staticmethod
-    def _validate_model_config(model_config: Dict[str, Any]):
+    def _validate_model_config(model_config: Any):
         """
         Validates the model_config to ensure all required keys are present and have non-None values.
         If 'type' is not specified, it will attempt to infer the type based on the keys present.
@@ -186,7 +183,7 @@ class Simulator:
         user_simulator_prompty: Optional[str],
         user_simulator_prompty_kwargs: Dict[str, Any],
         api_call_delay_sec: float,
-        prompty_model_config: Dict[str, Any],
+        prompty_model_config: Any,
     ) -> List[JsonLineChatProtocol]:
         """
         Simulates conversations using predefined conversation turns.
@@ -204,7 +201,7 @@ class Simulator:
         :keyword api_call_delay_sec: Delay in seconds between API calls.
         :paramtype api_call_delay_sec: float
         :keyword prompty_model_config: The configuration for the prompty model.
-        :paramtype prompty_model_config: Dict[str, Any]
+        :paramtype prompty_model_config: Any
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]
         """
@@ -341,7 +338,7 @@ class Simulator:
                     )
                     return AsyncPrompty.load(source=prompty_path, model=prompty_model_config)  # type: ignore
             except FileNotFoundError as e:
-                 msg = f"Flow path for {resource_name} does not exist in package {package}."
+                msg = f"Flow path for {resource_name} does not exist in package {package}."
                 raise EvaluationException(
                     message=msg,
                     internal_message=msg,
@@ -405,7 +402,7 @@ class Simulator:
         num_queries: int,
         query_response_generating_prompty: Optional[str],
         query_response_generating_prompty_kwargs: Dict[str, Any],
-        prompty_model_config: Dict[str, Any],
+        prompty_model_config: Any,
         **kwargs,
     ) -> List[Dict[str, str]]:
         """
@@ -420,7 +417,7 @@ class Simulator:
         :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the query response generating prompty.
         :paramtype query_response_generating_prompty_kwargs: Dict[str, Any]
         :keyword prompty_model_config: The configuration for the prompty model.
-        :paramtype prompty_model_config: Dict[str, Any]
+        :paramtype prompty_model_config: Any
         :return: A list of query-response dictionaries.
         :rtype: List[Dict[str, str]]
         :raises RuntimeError: If an error occurs during query generation.
