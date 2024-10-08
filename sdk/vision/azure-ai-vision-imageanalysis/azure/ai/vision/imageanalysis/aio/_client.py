@@ -20,11 +20,10 @@ from ._configuration import ImageAnalysisClientConfiguration
 from ._operations import ImageAnalysisClientOperationsMixin
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ImageAnalysisClient(ImageAnalysisClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class ImageAnalysisClient(ImageAnalysisClientOperationsMixin):
     """ImageAnalysisClient.
 
     :param endpoint: Azure AI Computer Vision endpoint (protocol and hostname, for example:

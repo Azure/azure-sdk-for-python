@@ -19,13 +19,10 @@ from ._configuration import DeidentificationClientConfiguration
 from ._operations import DeidentificationClientOperationsMixin
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DeidentificationClient(
-    DeidentificationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class DeidentificationClient(DeidentificationClientOperationsMixin):
     """DeidentificationClient.
 
     :param endpoint: Url of your De-identification Service. Required.

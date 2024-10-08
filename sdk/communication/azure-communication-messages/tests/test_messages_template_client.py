@@ -6,14 +6,12 @@
 
 from devtools_testutils import recorded_by_proxy
 from _decorators import MessagesPreparers
-from azure.communication.messages.models import (
-    MessageTemplateItem,
-    MessageTemplate
-    )
+from azure.communication.messages.models import MessageTemplateItem, MessageTemplate
 from _shared.utils import get_http_logging_policy
 from _messages_test_case import MessagesRecordedTestCase
 from azure.communication.messages._shared.utils import parse_connection_str
-    
+
+
 class TestMessageTemplateClientToGetTemplates(MessagesRecordedTestCase):
 
     @MessagesPreparers.messages_test_decorator
@@ -30,6 +28,6 @@ class TestMessageTemplateClientToGetTemplates(MessagesRecordedTestCase):
         except:
             raised = True
             raise
-        
+
         assert raised is False
         assert message_template_item_list is not None

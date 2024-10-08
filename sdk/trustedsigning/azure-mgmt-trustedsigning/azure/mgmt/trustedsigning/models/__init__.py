@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._models import AccountSku
+from ._models import AccountSkuPatch
 from ._models import Certificate
 from ._models import CertificateProfile
 from ._models import CertificateProfileProperties
@@ -44,6 +45,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AccountSku",
+    "AccountSkuPatch",
     "Certificate",
     "CertificateProfile",
     "CertificateProfileProperties",

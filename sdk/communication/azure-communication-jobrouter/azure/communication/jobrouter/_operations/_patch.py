@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -1753,10 +1754,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         """
 
     def upsert_job(  # pylint: disable=docstring-missing-param
-            self,
-            job_id: str,
-            *args: Union[_models.RouterJob, JSON, IO[bytes]],
-            **kwargs: Any
+        self, job_id: str, *args: Union[_models.RouterJob, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.RouterJob:
         """Update a job.
 

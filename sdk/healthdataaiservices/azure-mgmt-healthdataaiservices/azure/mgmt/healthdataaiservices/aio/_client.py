@@ -20,11 +20,10 @@ from ._configuration import HealthDataAIServicesMgmtClientConfiguration
 from .operations import DeidServicesOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinksOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class HealthDataAIServicesMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
+class HealthDataAIServicesMgmtClient:
     """HealthDataAIServicesMgmtClient.
 
     :ivar operations: Operations operations

@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15,7 +14,6 @@ from .._model_base import rest_field
 from .._vendor import FileType
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -25,20 +23,39 @@ class BatchRequest(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar source: Source of the input documents. Required.
-    :vartype source: ~azure.ai.translation.document.models._models.SourceInput
+    :vartype source: ~azure.ai.translation.document.models.SourceInput
     :ivar targets: Location of the destination for the output. Required.
-    :vartype targets: list[~azure.ai.translation.document.models._models.TargetInput]
+    :vartype targets: list[~azure.ai.translation.document.models.TargetInput]
     :ivar storage_type: Storage type of the input documents source string. Known values are:
      "Folder" and "File".
     :vartype storage_type: str or ~azure.ai.translation.document.models.StorageInputType
     """
 
-    source: "_models._models.SourceInput" = rest_field()
+    source: "_models.SourceInput" = rest_field()
     """Source of the input documents. Required."""
-    targets: List["_models._models.TargetInput"] = rest_field()
+    targets: List["_models.TargetInput"] = rest_field()
     """Location of the destination for the output. Required."""
-    storage_type: Optional[Union[str, "_models._enums.StorageInputType"]] = rest_field(name="storageType")
+    storage_type: Optional[Union[str, "_models.StorageInputType"]] = rest_field(name="storageType")
     """Storage type of the input documents source string. Known values are: \"Folder\" and \"File\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: "_models.SourceInput",
+        targets: List["_models.TargetInput"],
+        storage_type: Optional[Union[str, "_models.StorageInputType"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class DocumentFilter(_model_base.Model):
@@ -65,28 +82,28 @@ class DocumentFilter(_model_base.Model):
      translation.
      This is most often use for file extensions."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None,
+    ): ...
 
-class DocumentsStatus(_model_base.Model):
-    """Documents Status Response.
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The detail status of individual documents. Required.
-    :vartype value: list[~azure.ai.translation.document.models._models.DocumentStatus]
-    :ivar next_link: Url for the next page.  Null if no more pages available.
-    :vartype next_link: str
-    """
-
-    value: List["_models._models.DocumentStatus"] = rest_field()
-    """The detail status of individual documents. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """Url for the next page.  Null if no more pages available."""
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class DocumentStatus(_model_base.Model):
     """Document Status Response.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar path: Location of the document or folder.
     :vartype path: str
@@ -105,7 +122,7 @@ class DocumentStatus(_model_base.Model):
     :vartype to: str
     :ivar error: This contains an outer error with error code, message, details, target and an
      inner error with more descriptive details.
-    :vartype error: ~azure.ai.translation.document.models._models.TranslationError
+    :vartype error: ~azure.ai.translation.document.models.TranslationError
     :ivar progress: Progress of the translation if available. Required.
     :vartype progress: float
     :ivar id: Document Id. Required.
@@ -122,13 +139,13 @@ class DocumentStatus(_model_base.Model):
     """Operation created date time. Required."""
     last_action_date_time_utc: datetime.datetime = rest_field(name="lastActionDateTimeUtc", format="rfc3339")
     """Date time in which the operation's status has been updated. Required."""
-    status: Union[str, "_models._enums.Status"] = rest_field()
+    status: Union[str, "_models.Status"] = rest_field()
     """List of possible statuses for job or document. Required. Known values are: \"NotStarted\",
      \"Running\", \"Succeeded\", \"Failed\", \"Cancelled\", \"Cancelling\", and
      \"ValidationFailed\"."""
     to: str = rest_field()
     """To language. Required."""
-    error: Optional["_models._models.TranslationError"] = rest_field()
+    error: Optional["_models.TranslationError"] = rest_field()
     """This contains an outer error with error code, message, details, target and an
      inner error with more descriptive details."""
     progress: float = rest_field()
@@ -138,6 +155,32 @@ class DocumentStatus(_model_base.Model):
     character_charged: Optional[int] = rest_field(name="characterCharged")
     """Character charged by the API."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        source_path: str,
+        created_date_time_utc: datetime.datetime,
+        last_action_date_time_utc: datetime.datetime,
+        status: Union[str, "_models.Status"],
+        to: str,
+        progress: float,
+        id: str,  # pylint: disable=redefined-builtin
+        path: Optional[str] = None,
+        error: Optional["_models.TranslationError"] = None,
+        character_charged: Optional[int] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
 
 class DocumentTranslateContent(_model_base.Model):
     """Document Translate Request Content.
@@ -145,9 +188,9 @@ class DocumentTranslateContent(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar document: Document to be translated in the form. Required.
-    :vartype document: bytes
+    :vartype document: ~azure.ai.translation.document._vendor.FileType
     :ivar glossary: Glossary-translation memory will be used during translation in the form.
-    :vartype glossary: list[bytes]
+    :vartype glossary: list[~azure.ai.translation.document._vendor.FileType]
     """
 
     document: FileType = rest_field(is_multipart_file_input=True)
@@ -177,7 +220,6 @@ class DocumentTranslateContent(_model_base.Model):
 class FileFormat(_model_base.Model):
     """File Format.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar format: Name of the format. Required.
     :vartype format: str
@@ -205,6 +247,28 @@ class FileFormat(_model_base.Model):
     """Supported Version."""
     type: Optional[str] = rest_field()
     """Supported Type for this format."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        format: str,
+        file_extensions: List[str],
+        content_types: List[str],
+        default_version: Optional[str] = None,
+        versions: Optional[List[str]] = None,
+        type: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class Glossary(_model_base.Model):
@@ -238,8 +302,28 @@ class Glossary(_model_base.Model):
     """Format. Required."""
     version: Optional[str] = rest_field()
     """Optional Version.  If not specified, default is used."""
-    storage_source: Optional[Union[str, "_models._enums.StorageSource"]] = rest_field(name="storageSource")
+    storage_source: Optional[Union[str, "_models.StorageSource"]] = rest_field(name="storageSource")
     """Storage Source. \"AzureBlob\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        glossary_url: str,
+        format: str,
+        version: Optional[str] = None,
+        storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class InnerTranslationError(_model_base.Model):
@@ -252,7 +336,6 @@ class InnerTranslationError(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar code: Gets code error string. Required.
     :vartype code: str
@@ -268,7 +351,7 @@ class InnerTranslationError(_model_base.Model):
      This
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
-    :vartype inner_error: ~azure.ai.translation.document.models._models.InnerTranslationError
+    :vartype inner_error: ~azure.ai.translation.document.models.InnerTranslationError
     """
 
     code: str = rest_field()
@@ -279,13 +362,32 @@ class InnerTranslationError(_model_base.Model):
     """Gets the source of the error.
      For example it would be \"documents\" or
      \"document id\" in case of invalid document."""
-    inner_error: Optional["_models._models.InnerTranslationError"] = rest_field(name="innerError")
+    inner_error: Optional["_models.InnerTranslationError"] = rest_field(name="innerError")
     """New Inner Error format which conforms to Cognitive Services API Guidelines
      which is available at
      https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.  # pylint: disable=line-too-long
      This
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        inner_error: Optional["_models.InnerTranslationError"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class SourceInput(_model_base.Model):
@@ -297,7 +399,7 @@ class SourceInput(_model_base.Model):
      Required.
     :vartype source_url: str
     :ivar filter: Document filter.
-    :vartype filter: ~azure.ai.translation.document.models._models.DocumentFilter
+    :vartype filter: ~azure.ai.translation.document.models.DocumentFilter
     :ivar language: Language code
      If none is specified, we will perform auto detect on the document.
     :vartype language: str
@@ -307,13 +409,33 @@ class SourceInput(_model_base.Model):
 
     source_url: str = rest_field(name="sourceUrl")
     """Location of the folder / container or single file with your documents. Required."""
-    filter: Optional["_models._models.DocumentFilter"] = rest_field()
+    filter: Optional["_models.DocumentFilter"] = rest_field()
     """Document filter."""
     language: Optional[str] = rest_field()
     """Language code
      If none is specified, we will perform auto detect on the document."""
-    storage_source: Optional[Union[str, "_models._enums.StorageSource"]] = rest_field(name="storageSource")
+    storage_source: Optional[Union[str, "_models.StorageSource"]] = rest_field(name="storageSource")
     """Storage Source. \"AzureBlob\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_url: str,
+        filter: Optional["_models.DocumentFilter"] = None,  # pylint: disable=redefined-builtin
+        language: Optional[str] = None,
+        storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class StartTranslationDetails(_model_base.Model):
@@ -322,17 +444,33 @@ class StartTranslationDetails(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar inputs: The input list of documents or folders containing documents. Required.
-    :vartype inputs: list[~azure.ai.translation.document.models._models.BatchRequest]
+    :vartype inputs: list[~azure.ai.translation.document.models.BatchRequest]
     """
 
-    inputs: List["_models._models.BatchRequest"] = rest_field()
+    inputs: List["_models.BatchRequest"] = rest_field()
     """The input list of documents or folders containing documents. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inputs: List["_models.BatchRequest"],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class StatusSummary(_model_base.Model):
     """Status Summary.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar total: Total count. Required.
     :vartype total: int
@@ -365,18 +503,57 @@ class StatusSummary(_model_base.Model):
     total_character_charged: int = rest_field(name="totalCharacterCharged")
     """Total characters charged by the API. Required."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        total: int,
+        failed: int,
+        success: int,
+        in_progress: int,
+        not_yet_started: int,
+        cancelled: int,
+        total_character_charged: int,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
 
 class SupportedFileFormats(_model_base.Model):
     """List of supported file formats.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar value: list of objects. Required.
-    :vartype value: list[~azure.ai.translation.document.models._models.FileFormat]
+    :vartype value: list[~azure.ai.translation.document.models.FileFormat]
     """
 
-    value: List["_models._models.FileFormat"] = rest_field()
+    value: List["_models.FileFormat"] = rest_field()
     """list of objects. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: List["_models.FileFormat"],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class TargetInput(_model_base.Model):
@@ -391,7 +568,7 @@ class TargetInput(_model_base.Model):
     :ivar language: Target Language. Required.
     :vartype language: str
     :ivar glossaries: List of Glossary.
-    :vartype glossaries: list[~azure.ai.translation.document.models._models.Glossary]
+    :vartype glossaries: list[~azure.ai.translation.document.models.Glossary]
     :ivar storage_source: Storage Source. "AzureBlob"
     :vartype storage_source: str or ~azure.ai.translation.document.models.StorageSource
     """
@@ -402,10 +579,31 @@ class TargetInput(_model_base.Model):
     """Category / custom system for translation request."""
     language: str = rest_field()
     """Target Language. Required."""
-    glossaries: Optional[List["_models._models.Glossary"]] = rest_field()
+    glossaries: Optional[List["_models.Glossary"]] = rest_field()
     """List of Glossary."""
-    storage_source: Optional[Union[str, "_models._enums.StorageSource"]] = rest_field(name="storageSource")
+    storage_source: Optional[Union[str, "_models.StorageSource"]] = rest_field(name="storageSource")
     """Storage Source. \"AzureBlob\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_url: str,
+        language: str,
+        category: Optional[str] = None,
+        glossaries: Optional[List["_models.Glossary"]] = None,
+        storage_source: Optional[Union[str, "_models.StorageSource"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class TranslationError(_model_base.Model):
@@ -414,7 +612,6 @@ class TranslationError(_model_base.Model):
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar code: Enums containing high level error codes. Required. Known values are:
      "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
@@ -432,10 +629,10 @@ class TranslationError(_model_base.Model):
      This
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
-    :vartype inner_error: ~azure.ai.translation.document.models._models.InnerTranslationError
+    :vartype inner_error: ~azure.ai.translation.document.models.InnerTranslationError
     """
 
-    code: Union[str, "_models._enums.TranslationErrorCode"] = rest_field()
+    code: Union[str, "_models.TranslationErrorCode"] = rest_field()
     """Enums containing high level error codes. Required. Known values are: \"InvalidRequest\",
      \"InvalidArgument\", \"InternalServerError\", \"ServiceUnavailable\", \"ResourceNotFound\",
      \"Unauthorized\", and \"RequestRateTooHigh\"."""
@@ -445,7 +642,7 @@ class TranslationError(_model_base.Model):
     """Gets the source of the error.
      For example it would be \"documents\" or
      \"document id\" in case of invalid document."""
-    inner_error: Optional["_models._models.InnerTranslationError"] = rest_field(name="innerError")
+    inner_error: Optional["_models.InnerTranslationError"] = rest_field(name="innerError")
     """New Inner Error format which conforms to Cognitive Services API Guidelines
      which is available at
      https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.  # pylint: disable=line-too-long
@@ -453,28 +650,47 @@ class TranslationError(_model_base.Model):
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested)."""
 
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Union[str, "_models.TranslationErrorCode"],
+        message: str,
+        inner_error: Optional["_models.InnerTranslationError"] = None,
+    ): ...
 
-class TranslationsStatus(_model_base.Model):
-    """Translation job Status Response.
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
 
-    All required parameters must be populated in order to send to server.
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
-    :ivar value: The summary status of individual operation. Required.
-    :vartype value: list[~azure.ai.translation.document.models._models.TranslationStatus]
-    :ivar next_link: Url for the next page.  Null if no more pages available.
-    :vartype next_link: str
+
+class TranslationErrorResponse(_model_base.Model):
+    """Contains unified error information used for HTTP responses across any Cognitive
+    Service. Instances
+    can be created either through
+    Microsoft.CloudAI.Containers.HttpStatusExceptionV2 or by returning it directly
+    from
+    a controller.
+
+    :ivar error: This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details.
+    :vartype error: ~azure.ai.translation.document.models.TranslationError
     """
 
-    value: List["_models._models.TranslationStatus"] = rest_field()
-    """The summary status of individual operation. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """Url for the next page.  Null if no more pages available."""
+    error: Optional["_models.TranslationError"] = rest_field()
+    """This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details."""
 
 
 class TranslationStatus(_model_base.Model):
     """Translation job status response.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: Id of the operation. Required.
     :vartype id: str
@@ -489,9 +705,9 @@ class TranslationStatus(_model_base.Model):
     :vartype status: str or ~azure.ai.translation.document.models.Status
     :ivar error: This contains an outer error with error code, message, details, target and an
      inner error with more descriptive details.
-    :vartype error: ~azure.ai.translation.document.models._models.TranslationError
+    :vartype error: ~azure.ai.translation.document.models.TranslationError
     :ivar summary: Status Summary. Required.
-    :vartype summary: ~azure.ai.translation.document.models._models.StatusSummary
+    :vartype summary: ~azure.ai.translation.document.models.StatusSummary
     """
 
     id: str = rest_field()
@@ -500,12 +716,34 @@ class TranslationStatus(_model_base.Model):
     """Operation created date time. Required."""
     last_action_date_time_utc: datetime.datetime = rest_field(name="lastActionDateTimeUtc", format="rfc3339")
     """Date time in which the operation's status has been updated. Required."""
-    status: Union[str, "_models._enums.Status"] = rest_field()
+    status: Union[str, "_models.Status"] = rest_field()
     """List of possible statuses for job or document. Required. Known values are: \"NotStarted\",
      \"Running\", \"Succeeded\", \"Failed\", \"Cancelled\", \"Cancelling\", and
      \"ValidationFailed\"."""
-    error: Optional["_models._models.TranslationError"] = rest_field()
+    error: Optional["_models.TranslationError"] = rest_field()
     """This contains an outer error with error code, message, details, target and an
      inner error with more descriptive details."""
-    summary: "_models._models.StatusSummary" = rest_field()
+    summary: "_models.StatusSummary" = rest_field()
     """Status Summary. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        created_date_time_utc: datetime.datetime,
+        last_action_date_time_utc: datetime.datetime,
+        status: Union[str, "_models.Status"],
+        summary: "_models.StatusSummary",
+        error: Optional["_models.TranslationError"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)

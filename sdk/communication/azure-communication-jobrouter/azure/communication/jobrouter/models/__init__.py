@@ -10,12 +10,16 @@ from ._models import AcceptJobOfferResult
 from ._models import BestWorkerMode
 from ._models import CancelExceptionAction
 from ._models import CancelJobOptions
+from ._models import CancelJobResult
 from ._models import ClassificationPolicy
 from ._models import CloseJobOptions
+from ._models import CloseJobResult
 from ._models import CompleteJobOptions
+from ._models import CompleteJobResult
 from ._models import ConditionalQueueSelectorAttachment
 from ._models import ConditionalWorkerSelectorAttachment
 from ._models import DeclineJobOfferOptions
+from ._models import DeclineJobOfferResult
 from ._models import DirectMapRouterRule
 from ._models import DistributionMode
 from ._models import DistributionPolicy
@@ -37,6 +41,7 @@ from ._models import QueueLengthExceptionTrigger
 from ._models import QueueSelectorAttachment
 from ._models import QueueWeightedAllocation
 from ._models import ReclassifyExceptionAction
+from ._models import ReclassifyJobResult
 from ._models import RoundRobinMode
 from ._models import RouterChannel
 from ._models import RouterJob
@@ -92,12 +97,16 @@ __all__ = [
     "BestWorkerMode",
     "CancelExceptionAction",
     "CancelJobOptions",
+    "CancelJobResult",
     "ClassificationPolicy",
     "CloseJobOptions",
+    "CloseJobResult",
     "CompleteJobOptions",
+    "CompleteJobResult",
     "ConditionalQueueSelectorAttachment",
     "ConditionalWorkerSelectorAttachment",
     "DeclineJobOfferOptions",
+    "DeclineJobOfferResult",
     "DirectMapRouterRule",
     "DistributionMode",
     "DistributionPolicy",
@@ -119,6 +128,7 @@ __all__ = [
     "QueueSelectorAttachment",
     "QueueWeightedAllocation",
     "ReclassifyExceptionAction",
+    "ReclassifyJobResult",
     "RoundRobinMode",
     "RouterChannel",
     "RouterJob",

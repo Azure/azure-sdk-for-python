@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._patch import EventGridPublisherClient
-from ._patch import EventGridConsumerClient
+from ._client import EventGridPublisherClient
+from ._client import EventGridConsumerClient
 
 try:
     from ._patch import __all__ as _patch_all

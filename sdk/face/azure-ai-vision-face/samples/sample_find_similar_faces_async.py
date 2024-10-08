@@ -37,12 +37,8 @@ from shared.helpers import beautify_json, get_logger
 class FindSimilarFaces:
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT
-        )
-        self.key = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY
-        )
+        self.endpoint = os.getenv(CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT)
+        self.key = os.getenv(CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY)
         self.logger = get_logger("sample_findsimilar_faces_async")
 
     async def find_similar_from_face_ids(self):
@@ -50,9 +46,7 @@ class FindSimilarFaces:
         from azure.ai.vision.face.aio import FaceClient
         from azure.ai.vision.face.models import FaceDetectionModel, FaceRecognitionModel
 
-        async with FaceClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
-        ) as face_client:
+        async with FaceClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_client:
             # Detect faces from 'IMAGE_NINE_FACES'
             nine_faces_file_path = helpers.get_image_path(TestImages.IMAGE_NINE_FACES)
             detect_result1 = await face_client.detect(
@@ -63,14 +57,10 @@ class FindSimilarFaces:
             )
 
             face_ids = [str(face.face_id) for face in detect_result1]
-            self.logger.info(
-                f"Detect {len(face_ids)} faces from the file '{nine_faces_file_path}': {face_ids}"
-            )
+            self.logger.info(f"Detect {len(face_ids)} faces from the file '{nine_faces_file_path}': {face_ids}")
 
             # Detect face from 'IMAGE_FINDSIMILAR'
-            find_similar_file_path = helpers.get_image_path(
-                TestImages.IMAGE_FINDSIMILAR
-            )
+            find_similar_file_path = helpers.get_image_path(TestImages.IMAGE_FINDSIMILAR)
             detect_result2 = await face_client.detect(
                 helpers.read_file_content(find_similar_file_path),
                 detection_model=FaceDetectionModel.DETECTION_03,
@@ -80,15 +70,11 @@ class FindSimilarFaces:
 
             assert len(detect_result2) == 1
             face_id = str(detect_result2[0].face_id)
-            self.logger.info(
-                f"Detect 1 face from the file '{find_similar_file_path}': {face_id}"
-            )
+            self.logger.info(f"Detect 1 face from the file '{find_similar_file_path}': {face_id}")
 
             # Call Find Similar
             # The default find similar mode is MATCH_PERSON
-            find_similar_result1 = await face_client.find_similar(
-                face_id=face_id, face_ids=face_ids
-            )
+            find_similar_result1 = await face_client.find_similar(face_id=face_id, face_ids=face_ids)
             self.logger.info("Find Similar with matchPerson mode:")
             for r in find_similar_result1:
                 self.logger.info(f"{beautify_json(r.as_dict())}")

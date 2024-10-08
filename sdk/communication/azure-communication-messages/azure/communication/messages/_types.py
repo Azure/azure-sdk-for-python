@@ -8,4 +8,5 @@
 # --------------------------------------------------------------------------
 
 from typing import Literal
+
 RepeatabilityResult = Literal["accepted", "rejected"]
