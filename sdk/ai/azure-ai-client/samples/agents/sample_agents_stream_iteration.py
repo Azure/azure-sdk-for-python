@@ -24,7 +24,6 @@ connection_string = os.environ["AI_CLIENT_CONNECTION_STRING"]
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
     connection=connection_string,
-    # logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
 )
 
 # Or, you can create the Azure AI Client by giving all required parameters directly

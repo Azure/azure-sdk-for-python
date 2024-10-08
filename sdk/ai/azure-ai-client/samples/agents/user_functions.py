@@ -6,6 +6,7 @@
 import json
 import datetime
 
+# These are the user-defined functions that can be called by the agent.
 
 def fetch_current_datetime() -> str:
     """
@@ -60,7 +61,8 @@ def send_email(recipient: str, subject: str, body: str) -> str:
 
 
 # Statically defined user functions for fast reference
-user_functions = {"fetch_current_datetime": fetch_current_datetime, 
-                  "fetch_weather": fetch_weather, 
-                  "send_email": send_email
+user_functions = {
+    "fetch_current_datetime": fetch_current_datetime, 
+    "fetch_weather": fetch_weather, 
+    "send_email": send_email
 }
