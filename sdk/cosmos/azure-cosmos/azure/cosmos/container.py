@@ -224,7 +224,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :returns: A CosmosDict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
-        :rtype: CosmosDict
+        :rtype: CosmosDict[str, Any]
 
         .. admonition:: Example:
 
@@ -721,7 +721,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             given id does not exist.
         :returns: A CosmosDict representing the item after replace went through. The dict will be empty if `no_response`
             is specified.
-        :rtype: CosmosDict
+        :rtype: CosmosDict[str, Any]
         """
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
@@ -794,7 +794,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             when also not specified there from client-level kwargs.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
-        :rtype: CosmosDict
+        :rtype: CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -876,7 +876,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             when also not specified there from client-level kwargs.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
-        :rtype: CosmosDict
+        :rtype: CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -956,7 +956,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             given id does not exist.
         :returns: A CosmosDict representing the item after the patch operations went through. The dict will be empty
             if `no_response` is specified.
-        :rtype: ~azure.cosmos.CosmosDict
+        :rtype: CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -1015,10 +1015,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A CosmosList representing the item after the batch operations went through.
+        :returns: A CosmosList representing the items after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
-        :rtype: CosmosList
+        :rtype: CosmosList[Dict[str, Any]]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include

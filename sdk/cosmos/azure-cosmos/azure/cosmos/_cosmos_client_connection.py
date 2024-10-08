@@ -1269,7 +1269,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict document: The Azure Cosmos document to create.
         :param dict options: The request options for the request.
         :return: The created Document.
-        :rtype: CosmosDict
+        :rtype: CosmosDict[str, Any]
         """
         # Python's default arguments are evaluated once when the function is defined,
         # not each time the function is called (like it is in say, Ruby). This means
@@ -1305,7 +1305,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict document: The Azure Cosmos document to upsert.
         :param dict options: The request options for the request.
         :return: The upserted Document.
-        :rtype: CosmosDict
+        :rtype: CosmosDict[str, Any]
         """
         # Python's default arguments are evaluated once when the function is defined,
         # not each time the function is called (like it is in say, Ruby). This means
