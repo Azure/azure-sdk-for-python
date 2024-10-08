@@ -32,7 +32,7 @@ ai_client = AzureAIClient(
 )
 """
 
-# Initialize agent toolset with user functions and code interpreter 
+# Initialize agent toolset with user functions and code interpreter
 functions = FunctionTool(user_functions)
 code_interpreter = CodeInterpreterTool()
 
@@ -51,7 +51,11 @@ thread = ai_client.agents.create_thread()
 print(f"Created thread, ID: {thread.id}")
 
 # Create message to thread
-message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York?")
+message = ai_client.agents.create_message(
+    thread_id=thread.id,
+    role="user",
+    content="Hello, send an email with the datetime and weather information in New York?",
+)
 print(f"Created message, ID: {message.id}")
 
 # Create and process agent run in thread with tools

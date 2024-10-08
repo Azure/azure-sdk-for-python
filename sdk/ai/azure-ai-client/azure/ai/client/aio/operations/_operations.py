@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TYPE_CHECKING, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TYPE_CHECKING, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -76,18 +76,22 @@ from ...operations._operations import (
     build_endpoints_list_request,
     build_endpoints_list_secrets_request,
     build_evaluations_create_request,
+    build_evaluations_create_schedule_request,
+    build_evaluations_delete_schedule_request,
     build_evaluations_get_request,
+    build_evaluations_get_schedule_request,
     build_evaluations_list_request,
+    build_evaluations_list_schedule_evaluations_request,
+    build_evaluations_list_schedules_request,
     build_evaluations_update_request,
 )
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from ... import _types
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
@@ -266,7 +270,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -379,7 +383,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.OpenAIPageableListOfAgent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -447,7 +451,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -672,7 +676,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.Agent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -761,7 +765,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.AgentDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -914,7 +918,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -991,7 +995,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1146,7 +1150,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1224,7 +1228,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1403,7 +1407,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1514,7 +1518,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.OpenAIPageableListOfThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1586,7 +1590,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1738,7 +1742,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadMessage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2045,7 +2049,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2167,7 +2171,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.OpenAIPageableListOfThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2238,7 +2242,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2390,7 +2394,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2565,7 +2569,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2648,7 +2652,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2930,7 +2934,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3029,7 +3033,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.RunStep
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3125,7 +3129,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.OpenAIPageableListOfRunStep
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3199,7 +3203,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.FileListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3312,7 +3316,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3390,7 +3394,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.FileDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3455,7 +3459,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3520,7 +3524,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.FileContentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3608,7 +3612,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.OpenAIPageableListOfVectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3770,7 +3774,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3853,7 +3857,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4006,7 +4010,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4085,7 +4089,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.VectorStoreDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4180,7 +4184,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.OpenAIPageableListOfVectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4328,7 +4332,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4410,7 +4414,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.VectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4483,7 +4487,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.VectorStoreFileDeletionStatus
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4627,7 +4631,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4711,7 +4715,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4782,7 +4786,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.VectorStoreFileBatch
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4881,7 +4885,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.client.models.OpenAIPageableListOfVectorStoreFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4968,7 +4972,7 @@ class EndpointsOperations:
         :rtype: ~azure.ai.client.models._models.ConnectionsListResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4979,9 +4983,7 @@ class EndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ConnectionsListResponse] = kwargs.pop(  # pylint: disable=protected-access
-            "cls", None
-        )
+        cls: ClsType[_models._models.ConnectionsListResponse] = kwargs.pop("cls", None)
 
         _request = build_endpoints_list_request(
             api_version=self._config.api_version,
@@ -5083,7 +5085,7 @@ class EndpointsOperations:
         :rtype: ~azure.ai.client.models._models.ConnectionsListSecretsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5095,9 +5097,7 @@ class EndpointsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.ConnectionsListSecretsResponse] = kwargs.pop(  # pylint: disable=protected-access
-            "cls", None
-        )
+        cls: ClsType[_models._models.ConnectionsListSecretsResponse] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if connection_name is _Unset:
@@ -5248,7 +5248,7 @@ class EvaluationsOperations:
         :rtype: ~azure.ai.client.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5332,7 +5332,7 @@ class EvaluationsOperations:
         maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[List[_models.Evaluation]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5492,7 +5492,7 @@ class EvaluationsOperations:
         :rtype: ~azure.ai.client.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5567,7 +5567,7 @@ class EvaluationsOperations:
         :rtype: ~azure.ai.client.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5621,3 +5621,461 @@ class EvaluationsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @overload
+    async def create_schedule(
+        self, body: _models.EvaluationSchedule, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationSchedule:
+        """Creates an evaluation schedule.
+
+        :param body: Properties of Evaluation Schedule. Required.
+        :type body: ~azure.ai.client.models.EvaluationSchedule
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationSchedule. The EvaluationSchedule is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.EvaluationSchedule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_schedule(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationSchedule:
+        """Creates an evaluation schedule.
+
+        :param body: Properties of Evaluation Schedule. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationSchedule. The EvaluationSchedule is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.EvaluationSchedule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_schedule(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationSchedule:
+        """Creates an evaluation schedule.
+
+        :param body: Properties of Evaluation Schedule. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationSchedule. The EvaluationSchedule is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.EvaluationSchedule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_schedule(
+        self, body: Union[_models.EvaluationSchedule, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvaluationSchedule:
+        """Creates an evaluation schedule.
+
+        :param body: Properties of Evaluation Schedule. Is one of the following types:
+         EvaluationSchedule, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.client.models.EvaluationSchedule or JSON or IO[bytes]
+        :return: EvaluationSchedule. The EvaluationSchedule is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.EvaluationSchedule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluationSchedule] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluations_create_schedule_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluationSchedule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_schedule(self, id: str, **kwargs: Any) -> _models.EvaluationSchedule:
+        """Get an evaluation schedule along with runs.
+
+        :param id: Identifier of the evaluation schedule. Required.
+        :type id: str
+        :return: EvaluationSchedule. The EvaluationSchedule is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.EvaluationSchedule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EvaluationSchedule] = kwargs.pop("cls", None)
+
+        _request = build_evaluations_get_schedule_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluationSchedule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_schedules(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> AsyncIterable["_models.EvaluationSchedule"]:
+        """List evaluation schedules.
+
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of EvaluationSchedule
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.client.models.EvaluationSchedule]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[List[_models.EvaluationSchedule]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_evaluations_list_schedules_request(
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                    ),
+                    "workspaceName": self._serialize.url(
+                        "self._config.workspace_name", self._config.workspace_name, "str"
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                    ),
+                    "workspaceName": self._serialize.url(
+                        "self._config.workspace_name", self._config.workspace_name, "str"
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.EvaluationSchedule], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_schedule_evaluations(
+        self, id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> AsyncIterable["_models.Evaluation"]:
+        """List evaluations under a schedule.
+
+        :param id: Identifier of the evaluation schedule. Required.
+        :type id: str
+        :keyword top: The number of result items to return. Default value is None.
+        :paramtype top: int
+        :keyword skip: The number of result items to skip. Default value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of Evaluation
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.client.models.Evaluation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        maxpagesize = kwargs.pop("maxpagesize", None)
+        cls: ClsType[List[_models.Evaluation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_evaluations_list_schedule_evaluations_request(
+                    id=id,
+                    top=top,
+                    skip=skip,
+                    maxpagesize=maxpagesize,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                    ),
+                    "workspaceName": self._serialize.url(
+                        "self._config.workspace_name", self._config.workspace_name, "str"
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    "subscriptionId": self._serialize.url(
+                        "self._config.subscription_id", self._config.subscription_id, "str"
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self._config.resource_group_name", self._config.resource_group_name, "str"
+                    ),
+                    "workspaceName": self._serialize.url(
+                        "self._config.workspace_name", self._config.workspace_name, "str"
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Evaluation], deserialized["value"])
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def delete_schedule(self, id: str, **kwargs: Any) -> None:
+        """Delete an evaluation schedule.
+
+        :param id: Identifier of the evaluation schedule. Required.
+        :type id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_evaluations_delete_schedule_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name", self._config.resource_group_name, "str"
+            ),
+            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
