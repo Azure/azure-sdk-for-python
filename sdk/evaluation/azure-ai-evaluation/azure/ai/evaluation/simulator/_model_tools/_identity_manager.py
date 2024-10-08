@@ -89,6 +89,15 @@ class APITokenManager(ABC):
         """
         pass  # pylint: disable=unnecessary-pass
 
+    @abstractmethod
+    async def get_token_async(self) -> str:
+        """Async method to get the API token. Subclasses should implement this method.
+
+        :return: API token
+        :rtype: str
+        """
+        pass # pylint: disable=unnecessary-pass
+
 
 class ManagedIdentityAPITokenManager(APITokenManager):
     """API Token Manager for Azure Managed Identity
