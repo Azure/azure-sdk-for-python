@@ -71,7 +71,7 @@ async def sample_assistant_basic_operation():
         message = await assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         logging.info(f"Created message, message ID: {message.id}")
 
-        run = await assistant_client.create_run_and_poll(thread_id=thread.id, assistant_id=assistant.id, interval=4)
+        run = await assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, sleep_interval=4)
         logging.info(f"Created run, run ID: {run.id}")
 
         await assistant_client.delete_assistant(assistant.id)

@@ -934,14 +934,14 @@ class AssistantsClient(AssistantsClientGenerated):
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
     
     @overload
-    async def upload_file_and_poll(self, body: JSON, interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
+    async def upload_file_and_poll(self, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param body: Required.
         :type body: JSON
-        :keyword interval: Time to wait before polling for the status of the uploaded file. Default value
+        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
-        :paramtype interval: float
+        :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -949,7 +949,7 @@ class AssistantsClient(AssistantsClientGenerated):
 
     @overload
     async def upload_file_and_poll(
-        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, interval: float = 1, **kwargs: Any
+        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, sleep_interval: float = 1, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -960,9 +960,9 @@ class AssistantsClient(AssistantsClientGenerated):
         :paramtype purpose: str or ~azure.ai.assistants.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
-        :keyword interval: Time to wait before polling for the status of the uploaded file. Default value
+        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
-        :paramtype interval: float
+        :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -970,7 +970,7 @@ class AssistantsClient(AssistantsClientGenerated):
 
     @overload
     async def upload_file_and_poll(
-        self, file_path: str, *, purpose: str, interval: float = 1, **kwargs: Any
+        self, file_path: str, *, purpose: str, sleep_interval: float = 1, **kwargs: Any
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -979,9 +979,9 @@ class AssistantsClient(AssistantsClientGenerated):
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
         :paramtype purpose: str
-        :keyword interval: Time to wait before polling for the status of the uploaded file. Default value
+        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
-        :paramtype interval: float
+        :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -996,7 +996,7 @@ class AssistantsClient(AssistantsClientGenerated):
         file_path: Optional[str] = None,
         purpose: Optional[Union[str, _models.FilePurpose]] = None,
         filename: Optional[str] = None,
-        interval: float = 1,
+        sleep_interval: float = 1,
         **kwargs: Any
     ) -> _models.OpenAIFile:
         """
@@ -1008,9 +1008,9 @@ class AssistantsClient(AssistantsClientGenerated):
         :param purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
             "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
         :param filename: The name of the file.
-        :keyword interval: Time to wait before polling for the status of the uploaded file. Default value
+        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
          is 1.
-        :paramtype interval: float
+        :paramtype sleep_interval: float
         :param kwargs: Additional parameters.
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :raises FileNotFoundError: If the file_path is invalid.
@@ -1027,7 +1027,7 @@ class AssistantsClient(AssistantsClientGenerated):
     
     @overload
     async def create_vector_store_and_poll(
-        self, body: JSON, *, content_type: str = "application/json", interval: float = 1, **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
@@ -1036,9 +1036,9 @@ class AssistantsClient(AssistantsClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype interval: float
+        :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1054,7 +1054,7 @@ class AssistantsClient(AssistantsClientGenerated):
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
-        interval: float = 1, 
+        sleep_interval: float = 1, 
         **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
@@ -1077,9 +1077,9 @@ class AssistantsClient(AssistantsClientGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype interval: float
+        :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1087,7 +1087,7 @@ class AssistantsClient(AssistantsClientGenerated):
 
     @overload
     async def create_vector_store_and_poll(
-        self, body: IO[bytes], *, content_type: str = "application/json", interval: float = 1, **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
@@ -1096,9 +1096,9 @@ class AssistantsClient(AssistantsClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype interval: float
+        :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1113,7 +1113,7 @@ class AssistantsClient(AssistantsClientGenerated):
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
-        interval: float = 1, 
+        sleep_interval: float = 1, 
         **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store.
@@ -1135,9 +1135,9 @@ class AssistantsClient(AssistantsClientGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword interval: Time to wait before polling for the status of the vector store. Default value
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
          is 1.
-        :paramtype interval: float
+        :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1160,7 +1160,7 @@ class AssistantsClient(AssistantsClientGenerated):
 
     @overload
     async def create_run_and_poll(
-        self, thread_id: str, body: JSON, *, content_type: str = "application/json", interval: float = 1, **kwargs: Any
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an assistant thread.
 
@@ -1197,7 +1197,7 @@ class AssistantsClient(AssistantsClientGenerated):
         tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        interval: float = 1,
+        sleep_interval: float = 1,
         **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an assistant thread.
@@ -1276,9 +1276,9 @@ class AssistantsClient(AssistantsClientGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword interval: Time to wait before polling for the status of the run. Default value
+        :keyword sleep_interval: Time to wait before polling for the status of the run. Default value
          is 1.
-        :paramtype interval: float
+        :paramtype sleep_interval: float
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1286,7 +1286,7 @@ class AssistantsClient(AssistantsClientGenerated):
 
     @overload
     async def create_run_and_poll(
-        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", interval: float = 1, **kwargs: Any
+        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an assistant thread.
 
@@ -1297,9 +1297,9 @@ class AssistantsClient(AssistantsClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword interval: Time to wait before polling for the status of the run. Default value
+        :keyword sleep_interval: Time to wait before polling for the status of the run. Default value
          is 1.
-        :paramtype interval: float
+        :paramtype sleep_interval: float
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1326,7 +1326,7 @@ class AssistantsClient(AssistantsClientGenerated):
         tool_choice: Optional["_types.AssistantsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AssistantsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        interval: float = 1,
+        sleep_interval: float = 1,
         **kwargs: Any
     ) -> _models.ThreadRun:
         """Creates a new run for an assistant thread.
@@ -1404,9 +1404,9 @@ class AssistantsClient(AssistantsClientGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword interval: Time to wait before polling for the status of the run. Default value
+        :keyword sleep_interval: Time to wait before polling for the status of the run. Default value
          is 1.
-        :paramtype interval: float
+        :paramtype sleep_interval: float
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.assistants.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:

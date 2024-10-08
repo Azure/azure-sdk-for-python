@@ -62,7 +62,7 @@ def sample_assistant_basic_operation():
     logging.info("Created assistant client")
     
     # upload a file and wait for it to be processed
-    file = assistant_client.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.ASSISTANTS, interval=4)
+    file = assistant_client.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.ASSISTANTS, sleep_interval=4)
         
     code_interpreter = CodeInterpreterToolDefinition()
     
@@ -81,7 +81,7 @@ def sample_assistant_basic_operation():
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment])
     logging.info(f"Created message, message ID: {message.id}")
 
-    run = assistant_client.create_run_and_poll(thread_id=thread.id, assistant_id=assistant.id, interval=4)
+    run = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, sleep_interval=4)
     logging.info(f"Created run, run ID: {run.id}")
 
     logging.info(f"Run completed with status: {run.status}")

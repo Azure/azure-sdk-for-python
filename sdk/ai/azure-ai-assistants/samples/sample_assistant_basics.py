@@ -70,7 +70,7 @@ def sample_assistant_basic_operation():
     message = assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     logging.info(f"Created message, message ID: {message.id}")
 
-    run = assistant_client.create_run_and_poll(thread_id=thread.id, assistant_id=assistant.id, interval=4)
+    run = assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, sleep_interval=4)
     logging.info(f"Created run, run ID: {run.id}")
 
     assistant_client.delete_assistant(assistant.id)

@@ -63,11 +63,11 @@ async def sample_assistant_basic_operation():
         logging.info("Created assistant client")
         
         # upload a file and wait for it to be processed
-        file = await assistant_client.upload_file_and_poll(file_path="../product_info_1.md", purpose=FilePurpose.ASSISTANTS, interval=4)
+        file = await assistant_client.upload_file_and_poll(file_path="../product_info_1.md", purpose=FilePurpose.ASSISTANTS, sleep_interval=4)
 
         # create a vector store with the file and wait for it to be processed
         # if you do not specify a vector store, create_message will create a vector store with a default expiration policy of seven days after they were last active 
-        vector_store = await assistant_client.create_vector_store_and_poll(file_ids=[file.id], name="sample_vector_store", interval=4)
+        vector_store = await assistant_client.create_vector_store_and_poll(file_ids=[file.id], name="sample_vector_store", sleep_interval=4)
             
         file_search_tool = FileSearchToolDefinition()
         
@@ -88,7 +88,7 @@ async def sample_assistant_basic_operation():
         message = await assistant_client.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment])
         logging.info(f"Created message, message ID: {message.id}")
 
-        run = await assistant_client.create_run_and_poll(thread_id=thread.id, assistant_id=assistant.id, interval=4)
+        run = await assistant_client.create_and_process_run(thread_id=thread.id, assistant_id=assistant.id, sleep_interval=4)
         logging.info(f"Created run, run ID: {run.id}")
 
         logging.info(f"Run completed with status: {run.status}")
