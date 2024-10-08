@@ -108,7 +108,7 @@ class ManagedIdentityCredential:
             self._credential = WorkloadIdentityCredential(
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 client_id=workload_client_id,
-                file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                 **kwargs,
             )
         else:
