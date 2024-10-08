@@ -8,8 +8,9 @@
 import asyncio
 import logging
 import random
+import time
 from typing import Any, Callable, Dict, List, Optional
-
+from datetime import datetime
 from tqdm import tqdm
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
@@ -31,6 +32,20 @@ from ._utils import JsonLineList
 
 logger = logging.getLogger(__name__)
 
+def _setup_logger():
+
+    # TODO: remove this before merging
+    log_filename = datetime.now().strftime("%Y_%m_%d__%H_%M.log")
+    logger = logging.getLogger("CustomAdversarialSimulatorLogger")
+    logger.setLevel(logging.DEBUG)  
+    file_handler = logging.FileHandler(log_filename)
+    file_handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+
+    return logger
+
 
 class CustomAdversarialSimulator:
     def __init__(self, *, azure_ai_project: AzureAIProject, credential=None):
@@ -48,6 +63,7 @@ class CustomAdversarialSimulator:
         self.adversarial_template_handler = AdversarialTemplateHandler(
             azure_ai_project=azure_ai_project, rai_client=self.rai_client
         )
+        self.logger = _setup_logger()
 
     def _get_credential(self, *, azure_ai_project, credential):
         if "credential" in azure_ai_project:
@@ -159,6 +175,13 @@ class CustomAdversarialSimulator:
         personality: Optional[str] = None,
         application_scenario: Optional[str] = None,
     ):
+        self.logger.info(f"User inputs: scenario={scenario}, max_conversation_turns={max_conversation_turns}, "
+                     f"max_simulation_results={max_simulation_results}, api_call_retry_limit={api_call_retry_limit}, "
+                     f"api_call_retry_sleep_sec={api_call_retry_sleep_sec}, api_call_delay_sec={api_call_delay_sec}, "
+                     f"concurrent_async_task={concurrent_async_task}, _jailbreak_type={_jailbreak_type}, "
+                     f"language={language}, randomize_order={randomize_order}, randomization_seed={randomization_seed}, "
+                     f"personality={personality}, application_scenario={application_scenario}")
+
         self._ensure_service_dependencies()
         # validate the inputs
         self._validate_inputs(
@@ -367,12 +390,19 @@ class CustomAdversarialSimulator:
             api_call_retry_limit=api_call_retry_limit, api_call_retry_sleep_sec=api_call_retry_sleep_sec
         )
         extra_kwargs = {key: value for key, value in parameter.items() if isinstance(value, str)}
+        start_time = time.time()
         first_turn, first_turn_full_response = await self.rai_client.customize_first_turn(
             template_key=template.template_name,
             personality=personality,
             application_scenario=application_scenario,
             other_template_kwargs=extra_kwargs,
         )
+        end_time = time.time()
+        time_taken = end_time - start_time
+        self.logger.info(f"Generated response for customizing first turn. Time taken: {time_taken:.4f} seconds")
+        self.logger.info(f"Response: {first_turn}")
+
+
 
         async with semaphore:
             try:
@@ -396,7 +426,7 @@ class CustomAdversarialSimulator:
                 # Simulate the remaining conversation turns
                 for current_turn in range(2, max_conversation_turns + 1):
                     current_bot = user_bot if current_turn % 2 == 1 else system_bot
-
+                    start_time = time.time()
                     # Get response from the current bot
                     response, request, _, full_response = await current_bot.generate_response(
                         session=session,
@@ -404,7 +434,10 @@ class CustomAdversarialSimulator:
                         max_history=5,
                         turn_number=current_turn,
                     )
-
+                    end_time = time.time()
+                    time_taken = end_time - start_time
+                    self.logger.info(f"Generated response for turn {current_turn}. Time taken: {time_taken:.4f} seconds")
+                    self.logger.info(f"Response: {response}")
                     # Append the turn to the conversation history
                     conversation_history.append(
                         ConversationTurn(
