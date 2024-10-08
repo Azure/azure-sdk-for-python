@@ -28,15 +28,10 @@ def validate_request_context(collection, with_partition_key=True):
     request_context = collection.client_connection.last_response_headers["request_context"]
     keys_expected = ["session_token"]
     if with_partition_key:
-        keys_expected.append("partitionKey")
         keys_expected.append("feed_range")
     assert request_context is not None
     for key in keys_expected:
         assert request_context[key] is not None
-    if not with_partition_key:
-        # when operation is not scoped with partition key feed range will not be present
-        with pytest.raises(KeyError):
-            request_context["feed_range"]
 
 def createItem(id = 'item' + str(uuid.uuid4()), pk='A', name='sample'):
     item = {
@@ -67,9 +62,18 @@ class TestRequestContext:
         setup["created_collection"].read_item(item['id'], item['pk'])
         validate_request_context(setup["created_collection"])
 
-        new_item = createItem(name='sample_replaced')
+        new_item = createItem(item['id'], name='sample_replaced')
         setup["created_collection"].replace_item(item['id'], new_item)
         validate_request_context(setup["created_collection"])
+        operations = [
+            {"op": "add", "path": "/favorite_color", "value": "red"},
+            {"op": "replace", "path": "/name", "value": 14},
+        ]
+        setup["created_collection"].patch_item(item['id'], item['pk'], operations)
+        validate_request_context(setup["created_collection"], False)
+
+        setup["created_collection"].read_all_items()
+        validate_request_context(setup["created_collection"], False)
 
         setup["created_collection"].upsert_item(createItem())
         validate_request_context(setup["created_collection"])
