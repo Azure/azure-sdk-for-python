@@ -71,18 +71,8 @@ async def sample_assistant_basic_operation():
         message = await assistant_client.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         logging.info(f"Created message, message ID: {message.id}")
 
-        run = await assistant_client.create_run(thread_id=thread.id, assistant_id=assistant.id)
+        run = await assistant_client.create_run_and_poll(thread_id=thread.id, assistant_id=assistant.id, interval=4)
         logging.info(f"Created run, run ID: {run.id}")
-
-        # poll the run as long as run status is queued or in progress
-        while run.status in ["queued", "in_progress", "requires_action"]:
-            # wait for a second
-            time.sleep(4)
-            run = await assistant_client.get_run(thread_id=thread.id, run_id=run.id)
-
-            logging.info(f"Run status: {run.status}")
-
-        logging.info(f"Run completed with status: {run.status}")
 
         await assistant_client.delete_assistant(assistant.id)
         logging.info("Deleted assistant")
