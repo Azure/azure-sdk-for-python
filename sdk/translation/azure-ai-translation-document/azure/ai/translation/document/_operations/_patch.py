@@ -194,7 +194,7 @@ class DocumentTranslationLROPollingMethod(LROBasePolling):
 
         if not self.finished():
             self.update_status()
-        if not self.finished():
+        while not self.finished():
             self._delay()
             self.update_status()
 

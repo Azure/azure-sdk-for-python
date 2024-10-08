@@ -175,7 +175,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         """
         if not self.finished():
             await self.update_status()
-        if not self.finished():
+        while not self.finished():
             await self._delay()
             await self.update_status()
 
