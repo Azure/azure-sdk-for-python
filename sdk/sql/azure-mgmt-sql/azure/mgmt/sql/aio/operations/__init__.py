@@ -116,7 +116,6 @@ from ._usages_operations import UsagesOperations
 from ._long_term_retention_managed_instance_backups_operations import LongTermRetentionManagedInstanceBackupsOperations
 from ._restorable_dropped_managed_databases_operations import RestorableDroppedManagedDatabasesOperations
 from ._server_connection_policies_operations import ServerConnectionPoliciesOperations
-from ._distributed_availability_groups_operations import DistributedAvailabilityGroupsOperations
 from ._server_trust_certificates_operations import ServerTrustCertificatesOperations
 from ._endpoint_certificates_operations import EndpointCertificatesOperations
 from ._managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
@@ -186,6 +185,7 @@ from ._long_term_retention_policies_operations import LongTermRetentionPoliciesO
 from ._managed_instances_operations import ManagedInstancesOperations
 from ._servers_operations import ServersOperations
 from ._replication_links_operations import ReplicationLinksOperations
+from ._distributed_availability_groups_operations import DistributedAvailabilityGroupsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -288,7 +288,6 @@ __all__ = [
     "LongTermRetentionManagedInstanceBackupsOperations",
     "RestorableDroppedManagedDatabasesOperations",
     "ServerConnectionPoliciesOperations",
-    "DistributedAvailabilityGroupsOperations",
     "ServerTrustCertificatesOperations",
     "EndpointCertificatesOperations",
     "ManagedDatabaseSensitivityLabelsOperations",
@@ -342,6 +341,7 @@ __all__ = [
     "ManagedInstancesOperations",
     "ServersOperations",
     "ReplicationLinksOperations",
+    "DistributedAvailabilityGroupsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

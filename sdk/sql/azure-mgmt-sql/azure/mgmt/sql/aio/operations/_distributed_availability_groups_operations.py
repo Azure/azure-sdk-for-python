@@ -34,8 +34,10 @@ from ... import models as _models
 from ...operations._distributed_availability_groups_operations import (
     build_create_or_update_request,
     build_delete_request,
+    build_failover_request,
     build_get_request,
     build_list_by_instance_request,
+    build_set_role_request,
     build_update_request,
 )
 
@@ -86,7 +88,7 @@ class DistributedAvailabilityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
         cls: ClsType[_models.DistributedAvailabilityGroupsListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
@@ -134,7 +136,8 @@ class DistributedAvailabilityGroupsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -172,7 +175,7 @@ class DistributedAvailabilityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
         cls: ClsType[_models.DistributedAvailabilityGroup] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -195,7 +198,8 @@ class DistributedAvailabilityGroupsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("DistributedAvailabilityGroup", pipeline_response.http_response)
 
@@ -223,7 +227,7 @@ class DistributedAvailabilityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -263,7 +267,8 @@ class DistributedAvailabilityGroupsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -363,7 +368,7 @@ class DistributedAvailabilityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DistributedAvailabilityGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -426,7 +431,7 @@ class DistributedAvailabilityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
@@ -454,7 +459,8 @@ class DistributedAvailabilityGroupsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -487,7 +493,7 @@ class DistributedAvailabilityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -544,7 +550,7 @@ class DistributedAvailabilityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -584,7 +590,8 @@ class DistributedAvailabilityGroupsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -684,7 +691,7 @@ class DistributedAvailabilityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DistributedAvailabilityGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -714,6 +721,425 @@ class DistributedAvailabilityGroupsOperations:
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(AsyncPollingMethod, AsyncARMPolling(lro_delay, **kwargs))
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.DistributedAvailabilityGroup].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.DistributedAvailabilityGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _failover_initial(
+        self,
+        resource_group_name: str,
+        managed_instance_name: str,
+        distributed_availability_group_name: str,
+        parameters: Union[_models.DistributedAvailabilityGroupsFailoverRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "DistributedAvailabilityGroupsFailoverRequest")
+
+        _request = build_failover_request(
+            resource_group_name=resource_group_name,
+            managed_instance_name=managed_instance_name,
+            distributed_availability_group_name=distributed_availability_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_failover(
+        self,
+        resource_group_name: str,
+        managed_instance_name: str,
+        distributed_availability_group_name: str,
+        parameters: _models.DistributedAvailabilityGroupsFailoverRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DistributedAvailabilityGroup]:
+        """Performs requested failover type in this distributed availability group.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal. Required.
+        :type resource_group_name: str
+        :param managed_instance_name: The name of the managed instance. Required.
+        :type managed_instance_name: str
+        :param distributed_availability_group_name: The distributed availability group name. Required.
+        :type distributed_availability_group_name: str
+        :param parameters: The distributed availability group failover request parameters. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupsFailoverRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either DistributedAvailabilityGroup or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_failover(
+        self,
+        resource_group_name: str,
+        managed_instance_name: str,
+        distributed_availability_group_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DistributedAvailabilityGroup]:
+        """Performs requested failover type in this distributed availability group.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal. Required.
+        :type resource_group_name: str
+        :param managed_instance_name: The name of the managed instance. Required.
+        :type managed_instance_name: str
+        :param distributed_availability_group_name: The distributed availability group name. Required.
+        :type distributed_availability_group_name: str
+        :param parameters: The distributed availability group failover request parameters. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either DistributedAvailabilityGroup or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_failover(
+        self,
+        resource_group_name: str,
+        managed_instance_name: str,
+        distributed_availability_group_name: str,
+        parameters: Union[_models.DistributedAvailabilityGroupsFailoverRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DistributedAvailabilityGroup]:
+        """Performs requested failover type in this distributed availability group.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal. Required.
+        :type resource_group_name: str
+        :param managed_instance_name: The name of the managed instance. Required.
+        :type managed_instance_name: str
+        :param distributed_availability_group_name: The distributed availability group name. Required.
+        :type distributed_availability_group_name: str
+        :param parameters: The distributed availability group failover request parameters. Is either a
+         DistributedAvailabilityGroupsFailoverRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupsFailoverRequest or
+         IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either DistributedAvailabilityGroup or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DistributedAvailabilityGroup] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._failover_initial(
+                resource_group_name=resource_group_name,
+                managed_instance_name=managed_instance_name,
+                distributed_availability_group_name=distributed_availability_group_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("DistributedAvailabilityGroup", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.DistributedAvailabilityGroup].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.DistributedAvailabilityGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _set_role_initial(
+        self,
+        resource_group_name: str,
+        managed_instance_name: str,
+        distributed_availability_group_name: str,
+        parameters: Union[_models.DistributedAvailabilityGroupSetRole, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "DistributedAvailabilityGroupSetRole")
+
+        _request = build_set_role_request(
+            resource_group_name=resource_group_name,
+            managed_instance_name=managed_instance_name,
+            distributed_availability_group_name=distributed_availability_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_set_role(
+        self,
+        resource_group_name: str,
+        managed_instance_name: str,
+        distributed_availability_group_name: str,
+        parameters: _models.DistributedAvailabilityGroupSetRole,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DistributedAvailabilityGroup]:
+        """Sets the role for managed instance in a distributed availability group.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal. Required.
+        :type resource_group_name: str
+        :param managed_instance_name: The name of the managed instance. Required.
+        :type managed_instance_name: str
+        :param distributed_availability_group_name: The distributed availability group name. Required.
+        :type distributed_availability_group_name: str
+        :param parameters: The distributed availability group set role request parameters. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupSetRole
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either DistributedAvailabilityGroup or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_set_role(
+        self,
+        resource_group_name: str,
+        managed_instance_name: str,
+        distributed_availability_group_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DistributedAvailabilityGroup]:
+        """Sets the role for managed instance in a distributed availability group.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal. Required.
+        :type resource_group_name: str
+        :param managed_instance_name: The name of the managed instance. Required.
+        :type managed_instance_name: str
+        :param distributed_availability_group_name: The distributed availability group name. Required.
+        :type distributed_availability_group_name: str
+        :param parameters: The distributed availability group set role request parameters. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either DistributedAvailabilityGroup or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_set_role(
+        self,
+        resource_group_name: str,
+        managed_instance_name: str,
+        distributed_availability_group_name: str,
+        parameters: Union[_models.DistributedAvailabilityGroupSetRole, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DistributedAvailabilityGroup]:
+        """Sets the role for managed instance in a distributed availability group.
+
+        :param resource_group_name: The name of the resource group that contains the resource. You can
+         obtain this value from the Azure Resource Manager API or the portal. Required.
+        :type resource_group_name: str
+        :param managed_instance_name: The name of the managed instance. Required.
+        :type managed_instance_name: str
+        :param distributed_availability_group_name: The distributed availability group name. Required.
+        :type distributed_availability_group_name: str
+        :param parameters: The distributed availability group set role request parameters. Is either a
+         DistributedAvailabilityGroupSetRole type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.sql.models.DistributedAvailabilityGroupSetRole or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either DistributedAvailabilityGroup or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.sql.models.DistributedAvailabilityGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DistributedAvailabilityGroup] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._set_role_initial(
+                resource_group_name=resource_group_name,
+                managed_instance_name=managed_instance_name,
+                distributed_availability_group_name=distributed_availability_group_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("DistributedAvailabilityGroup", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
