@@ -18,7 +18,7 @@ from ._configuration import AzureAIClientConfiguration as ClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperations
 from ._client import AzureAIClient as ClientGenerated
-from .operations._patch import InferenceOperations
+from .operations._patch import InferenceOperations, TracingOperations
 
 logger = logging.getLogger(__name__)
 
