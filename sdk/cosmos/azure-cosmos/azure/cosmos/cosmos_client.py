@@ -124,7 +124,6 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
             "'connection_retry_policy' has been deprecated and will be removed from the SDK in a future release.",
             DeprecationWarning
         )
-    connection_retry = policy.ConnectionRetryConfiguration
     if not connection_retry:
         connection_retry = ConnectionRetryPolicy(
             retry_total=total_retries,

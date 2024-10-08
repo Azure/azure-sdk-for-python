@@ -12,7 +12,12 @@ from typing import Dict
 
 import pandas as pd
 
-from azure.ai.evaluation._constants import DEFAULT_EVALUATION_RESULTS_FILE_NAME, DefaultOpenEncoding, Prefixes
+from azure.ai.evaluation._constants import (
+    DEFAULT_EVALUATION_RESULTS_FILE_NAME,
+    DefaultOpenEncoding,
+    Prefixes,
+    EvaluationRunProperties,
+)
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
@@ -112,7 +117,8 @@ def _log_metrics_and_instance_results(
             if run is None:
                 ev_run.write_properties_to_run_history(
                     properties={
-                        "_azureml.evaluation_run": "azure-ai-generative-parent",
+                        EvaluationRunProperties.RUN_TYPE: "eval_run",
+                        EvaluationRunProperties.EVALUATION_RUN: "azure-ai-generative-parent",
                         "_azureml.evaluate_artifacts": json.dumps([{"path": artifact_name, "type": "table"}]),
                         "isEvaluatorRun": "true",
                     }

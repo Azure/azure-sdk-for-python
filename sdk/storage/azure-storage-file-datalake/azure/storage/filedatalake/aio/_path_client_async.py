@@ -6,7 +6,7 @@
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
 from datetime import datetime
-from typing import ( # pylint: disable=unused-import
+from typing import (
     Any, Dict, Optional, Union,
     TYPE_CHECKING)
 
@@ -80,7 +80,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         self._blob_client = BlobClient(account_url=self._blob_account_url, container_name=self.file_system_name,
                                        blob_name=self.path_name,
                                        credential=credential,
-                                       _hosts=self._blob_client._hosts,  # pylint: disable=protected-access
+                                       _hosts=self._blob_client._hosts,
                                        **kwargs)
 
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, file_system=self.file_system_name,
@@ -91,8 +91,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                                                                                path=self.path_name,
                                                                                pipeline=self._pipeline)
         api_version = get_api_version(kwargs)
-        self._client._config.version = api_version  # pylint: disable=protected-access
-        self._datalake_client_for_blob_operation._config.version = api_version  # pylint: disable=protected-access
+        self._client._config.version = api_version
+        self._datalake_client_for_blob_operation._config.version = api_version
 
         self._loop = kwargs.get('loop', None)
 

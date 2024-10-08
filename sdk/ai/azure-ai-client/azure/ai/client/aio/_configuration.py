@@ -17,8 +17,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for Client.
+class AzureAIClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for AzureAIClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

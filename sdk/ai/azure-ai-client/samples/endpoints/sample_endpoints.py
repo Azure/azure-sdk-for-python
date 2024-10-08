@@ -1,12 +1,3 @@
-
-# These are needed for SDK logging. You can ignore them.
-import sys
-import logging
-logger = logging.getLogger("azure")
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(stream=sys.stdout))
-# End of logging setup
-
 import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import EndpointType, AuthenticationType
@@ -17,74 +8,48 @@ from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from azure.core.credentials import AzureKeyCredential
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# At the moment, it should be in the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
+# It should be in the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
     connection=os.environ["AI_CLIENT_CONNECTION_STRING"],
-    logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
+    logging_enable=True,  # Optional. Remove this line if you don't want to show how to enable logging
 )
 
 # Or, you can create the Azure AI Client by giving all required parameters directly
-ai_client = AzureAIClient(
-    credential=DefaultAzureCredential(),
-    endpoint=os.environ["AI_CLIENT_ENDPOINT"],
-    subscription_id=os.environ["AI_CLIENT_SUBSCRIPTION_ID"],
-    resource_group_name=os.environ["AI_CLIENT_RESOURCE_GROUP_NAME"],
-    workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
-    logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
-)
+# ai_client = AzureAIClient(
+#     credential=DefaultAzureCredential(),
+#     endpoint=os.environ["AI_CLIENT_ENDPOINT"],
+#     subscription_id=os.environ["AI_CLIENT_SUBSCRIPTION_ID"],
+#     resource_group_name=os.environ["AI_CLIENT_RESOURCE_GROUP_NAME"],
+#     workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
+#     logging_enable=True,  # Optional. Remove this line if you don't want to show how to enable logging
+# )
 
-# You can get an authenticated azure.ai.inference client directly, if you have a serverless endpoint in your project:
-client = ai_client.inference.get_chat_completions_client()
-
-response = client.complete(
-    messages=[
-        UserMessage(content="How many feet are in a mile?")
-    ]
-)
-
-print(response.choices[0].message.content)
-
-# You can get an authenticated AzureOpenAI client directly, if you have an Azure OpenAI endpoint in your project:
-client = ai_client.inference.get_azure_openai_client()
-
-response = client.chat.completions.create(
-    model="gpt-4-0613",
-    messages=[
-        {
-            "role": "user",
-            "content": "How many feet are in a mile?",
-        },
-    ],
-)
-
-print(response.choices[0].message.content)
-
-# You can list all endpoints of a particular "type", with or without their credentials:
+# List all endpoints of a particular "type", with or without their credentials:
 endpoints = ai_client.endpoints.list(
-    endpoint_type=EndpointType.AZURE_OPEN_AI, # Optional. Defaults to all types.
-    populate_secrets=True # Optional. Defaults to "False"
+    endpoint_type=EndpointType.AZURE_OPEN_AI,  # Optional. Defaults to all types.
+    populate_secrets=True,  # Optional. Defaults to "False"
 )
-print("====> Listing all Azure Open AI endpoints:")
+print("====> Listing of all Azure Open AI endpoints:")
 for endpoint in endpoints:
     print(endpoint)
 
-# You can get the default endpoint of a particular "type" (note that since at the moment the service
+# Get the default endpoint of a particular "type" (note that since at the moment the service
 # does not have a notion of a default endpoint, this will return the first endpoint of that type):
 endpoint = ai_client.endpoints.get_default(
-    endpoint_type=EndpointType.AZURE_OPEN_AI, # Required.
-    populate_secrets=True # Optional. Defaults to "False"
+    endpoint_type=EndpointType.AZURE_OPEN_AI, populate_secrets=True  # Required.  # Optional. Defaults to "False"
 )
 print("====> Get default Azure Open AI endpoint:")
 print(endpoint)
 
-# You can get an endpoint by its name:
+# Get an endpoint by its name:
 endpoint = ai_client.endpoints.get(
-    endpoint_name=os.environ["AI_CLIENT_CONNECTION_NAME"], # Required.
-    populate_secrets=True
+    endpoint_name=os.environ["AI_CLIENT_CONNECTION_NAME"], populate_secrets=True  # Required.
 )
-print("====> Print properties of a particular endpoint:")
+print("====> Get endpoint by name:")
 print(endpoint)
+
+exit()
 
 # Here is how you would create the appropriate AOAI or Inference SDK for these endpoint
 if endpoint.endpoint_type == EndpointType.AZURE_OPEN_AI:
@@ -94,13 +59,15 @@ if endpoint.endpoint_type == EndpointType.AZURE_OPEN_AI:
         client = AzureOpenAI(
             api_key=endpoint.key,
             azure_endpoint=endpoint.endpoint_url,
-            api_version="2024-08-01-preview", # TODO: Is this needed?
+            api_version="2024-08-01-preview",  # TODO: Is this needed?
         )
     elif endpoint.authentication_type == AuthenticationType.AAD:
         print("====> Creating AzureOpenAI client using Entra ID authentication")
         client = AzureOpenAI(
             # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
-            azure_ad_token_provider=get_bearer_token_provider(endpoint.token_credential, "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(
+                endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
+            ),
             azure_endpoint=endpoint.endpoint_url,
             api_version="2024-08-01-preview",
         )
@@ -108,7 +75,9 @@ if endpoint.endpoint_type == EndpointType.AZURE_OPEN_AI:
         # TODO - Not yet supported by the service. Expected 9/27.
         print("====> Creating AzureOpenAI client using SAS authentication")
         client = AzureOpenAI(
-            azure_ad_token_provider=get_bearer_token_provider(endpoint.token_credential, "https://cognitiveservices.azure.com/.default"),
+            azure_ad_token_provider=get_bearer_token_provider(
+                endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
+            ),
             azure_endpoint=endpoint.endpoint_url,
             api_version="2024-08-01-preview",
         )
@@ -129,29 +98,16 @@ elif endpoint.endpoint_type == EndpointType.SERVERLESS:
 
     if endpoint.authentication_type == AuthenticationType.API_KEY:
         print("====> Creating ChatCompletionsClient using API key authentication")
-        client = ChatCompletionsClient(
-           endpoint=endpoint.endpoint_url,
-           credential=AzureKeyCredential(endpoint.key)
-        )
+        client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key))
     elif endpoint.authentication_type == AuthenticationType.AAD:
         # MaaS models do not yet support EntraID auth
         print("====> Creating ChatCompletionsClient using Entra ID authentication")
-        client = ChatCompletionsClient(
-           endpoint=endpoint.endpoint_url,
-           credential=endpoint.properties.token_credential
-        )
+        client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=endpoint.properties.token_credential)
     elif endpoint.authentication_type == AuthenticationType.SAS:
         # TODO - Not yet supported by the service. Expected 9/27.
         print("====> Creating ChatCompletionsClient using SAS authentication")
-        client = ChatCompletionsClient(
-           endpoint=endpoint.endpoint_url,
-           credential=endpoint.token_credential
-        )
+        client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=endpoint.token_credential)
 
-    response = client.complete(
-        messages=[
-            UserMessage(content="How many feet are in a mile?")
-        ]
-    )
+    response = client.complete(messages=[UserMessage(content="How many feet are in a mile?")])
 
     print(response.choices[0].message.content)

@@ -15,7 +15,7 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import ClientConfiguration
+from ._configuration import AzureAIClientConfiguration
 from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperations
 
 if TYPE_CHECKING:
@@ -23,13 +23,13 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class Client:  # pylint: disable=client-accepts-api-version-keyword
-    """Client.
+class AzureAIClient:  # pylint: disable=client-accepts-api-version-keyword
+    """AzureAIClient.
 
-    :ivar endpoints: EndpointsOperations operations
-    :vartype endpoints: azure.ai.client.aio.operations.EndpointsOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.client.aio.operations.AgentsOperations
+    :ivar endpoints: EndpointsOperations operations
+    :vartype endpoints: azure.ai.client.aio.operations.EndpointsOperations
     :ivar evaluations: EvaluationsOperations operations
     :vartype evaluations: azure.ai.client.aio.operations.EvaluationsOperations
     :param endpoint: The Azure AI Studio project endpoint, in the form
@@ -62,7 +62,7 @@ class Client:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}/{subscriptionId}/{resourceGroupName}/{workspaceName}"
-        self._config = ClientConfiguration(
+        self._config = AzureAIClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -92,8 +92,8 @@ class Client:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.endpoints = EndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.endpoints = EndpointsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
