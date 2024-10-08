@@ -3,9 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import os, time, logging
+import os
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
+from azure.ai.client.models import FunctionTool, ToolSet, CodeInterpreterTool
+from user_functions import user_functions
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -29,32 +31,40 @@ ai_client = AzureAIClient(
     logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
 )
 """
+
+# Initialize agent toolset with user functions and code interpreter 
+functions = FunctionTool(user_functions)
+code_interpreter = CodeInterpreterTool()
+
+toolset = ToolSet()
+toolset.add(functions)
+toolset.add(code_interpreter)
+
+# Create agent with toolset and process assistant run
 agent = ai_client.agents.create_agent(
-    model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+    model="gpt-4o-mini", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
 )
-print("Created agent, agent ID", agent.id)
+print(f"Created agent, ID: {agent.id}")
 
+# Create thread for communication
 thread = ai_client.agents.create_thread()
-print("Created thread, thread ID", thread.id)
+print(f"Created thread, ID: {thread.id}")
 
-message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-print("Created message, message ID", message.id)
+# Create message to thread
+message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York?")
+print(f"Created message, ID: {message.id}")
 
-run = ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-print("Created run, run ID", run.id)
+# Create and process agent run in thread with tools
+run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
+print(f"Run finished with status: {run.status}")
 
-# poll the run as long as run status is queued or in progress
-while run.status in ["queued", "in_progress", "requires_action"]:
-    # wait for a second
-    time.sleep(1)
-    run = ai_client.agents.get_run(thread_id=thread.id, run_id=run.id)
+if run.status == "failed":
+    print(f"Run failed: {run.last_error}")
 
-    print("Run status:", run.status)
-
-print("Run completed with status:", run.status)
-
+# Delete the assistant when done
 ai_client.agents.delete_agent(agent.id)
 print("Deleted agent")
 
+# Fetch and log all messages
 messages = ai_client.agents.list_messages(thread_id=thread.id)
-print("messages:", messages)
+print(f"Messages: {messages}")
