@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -15,7 +14,6 @@ from .._model_base import rest_field
 from .._vendor import FileType
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -189,9 +187,9 @@ class DocumentTranslateContent(_model_base.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar document: Document to be translated in the form. Required.
-    :vartype document: bytes
+    :vartype document: ~azure.ai.translation.document._vendor.FileType
     :ivar glossary: Glossary-translation memory will be used during translation in the form.
-    :vartype glossary: list[bytes]
+    :vartype glossary: list[~azure.ai.translation.document._vendor.FileType]
     """
 
     document: FileType = rest_field(is_multipart_file_input=True)
@@ -237,7 +235,7 @@ class DocumentTranslationError(_model_base.Model):
     :vartype target: str
     :ivar inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
      which is available at
-     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
+    https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
      This
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
@@ -357,7 +355,7 @@ class InnerTranslationError(_model_base.Model):
     :vartype target: str
     :ivar inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
      which is available at
-     https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
+    https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow.
      This
      contains required properties ErrorCode, message and optional properties target,
      details(key value pair), inner error(this can be nested).
@@ -547,6 +545,41 @@ class SupportedFileFormats(_model_base.Model):
 
     value: List["_models.DocumentTranslationFileFormat"] = rest_field()
     """list of objects. Required."""
+
+
+class TranslationErrorResponse(_model_base.Model):
+    """Contains unified error information used for HTTP responses across any Cognitive
+    Service. Instances
+    can be created either through
+    Microsoft.CloudAI.Containers.HttpStatusExceptionV2 or by returning it directly
+    from
+    a controller.
+
+    :ivar error: This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details.
+    :vartype error: ~azure.ai.translation.document.models.DocumentTranslationError
+    """
+
+    error: Optional["_models.DocumentTranslationError"] = rest_field()
+    """This contains an outer error with error code, message, details, target and an
+     inner error with more descriptive details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: Optional["_models.DocumentTranslationError"] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class TranslationGlossary(_model_base.Model):
