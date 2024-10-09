@@ -1128,10 +1128,29 @@ class AgentsOperations(AgentsOperationsGenerated):
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
 
+class TracingOperations:
+
+    def __init__(self, outer_instance):
+        self.outer_instance = outer_instance
+
+    def create_inference_instrumentor(self, _version: "SemanticConventionsVersion" = None) -> "AIInferenceInstrumentor":
+        try:
+            from azure.ai.inference import AIInferenceInstrumentor, SemanticConventionsVersion
+        except ModuleNotFoundError as _:
+            raise ModuleNotFoundError(
+                "Azure AI Inference SDK is not installed. Please install it using 'pip install azure-ai-inference'"
+            )
+        if _version is None:
+            return AIInferenceInstrumentor()
+        else:
+            return AIInferenceInstrumentor(_version)
+
+
 __all__: List[str] = [
     "AgentsOperations",
     "EndpointsOperations",
     "InferenceOperations",
+    "TracingOperations"
 ]  # Add all objects you want publicly available to users at this package level
 
 
