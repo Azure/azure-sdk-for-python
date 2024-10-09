@@ -244,9 +244,9 @@ class OpenAICompletionsModel(LLMBase):
         if not stop:
             stop = []
         # Else if stop sequence is given as a string (Ex: "["\n", "<im_end>"]"), convert
-        elif type(stop) is str and stop.startswith("[") and stop.endswith("]"):
+        elif isinstance(stop, str) and stop.startswith("[") and stop.endswith("]"):
             stop = ast.literal_eval(stop)
-        elif type(stop) is str:
+        elif isinstance(stop, str):
             stop = [stop]
         self.stop: List = stop  # type: ignore[assignment]
 
