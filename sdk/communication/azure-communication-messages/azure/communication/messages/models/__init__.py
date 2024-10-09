@@ -9,7 +9,6 @@
 from ._models import AudioNotificationContent
 from ._models import DocumentNotificationContent
 from ._models import ImageNotificationContent
-from ._models import MediaNotificationContent
 from ._models import MessageReceipt
 from ._models import MessageTemplate
 from ._models import MessageTemplateBindings
@@ -46,7 +45,6 @@ __all__ = [
     "AudioNotificationContent",
     "DocumentNotificationContent",
     "ImageNotificationContent",
-    "MediaNotificationContent",
     "MessageReceipt",
     "MessageTemplate",
     "MessageTemplateBindings",
