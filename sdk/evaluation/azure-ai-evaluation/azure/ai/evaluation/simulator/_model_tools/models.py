@@ -9,7 +9,7 @@ import time
 import uuid
 from abc import ABC, abstractmethod
 from collections import deque
-from typing import Deque, Dict, List, Optional, Union
+from typing import Deque, Dict, List, Optional, Type, Union
 from urllib.parse import urlparse
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -21,7 +21,9 @@ MIN_ERRORS_TO_FAIL = 3
 MAX_TIME_TAKEN_RECORDS = 20_000
 
 
-def get_model_class_from_url(endpoint_url: str):
+def get_model_class_from_url(
+    endpoint_url: str,
+) -> Union[Type["OpenAIChatCompletionsModel"], Type["OpenAICompletionsModel"]]:
     """Convert an endpoint URL to the appropriate model class."""
     endpoint_path = urlparse(endpoint_url).path  # remove query params
 
