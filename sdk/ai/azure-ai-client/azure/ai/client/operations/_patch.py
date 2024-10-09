@@ -188,7 +188,7 @@ class EndpointsOperations(EndpointsOperationsGenerated):
         else:
             return None
 
-    def get(self, *, endpoint_name: str, populate_secrets: bool = False) -> ConnectionsListSecretsResponse:
+    def get(self, *, endpoint_name: str, populate_secrets: bool = False) -> EndpointProperties:
         if not endpoint_name:
             raise ValueError("Endpoint name cannot be empty")
         if populate_secrets:
