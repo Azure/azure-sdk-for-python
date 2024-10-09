@@ -7,13 +7,12 @@
 
 from abc import ABC
 import json
-from typing import Any, Dict, IO, List, Mapping, Optional, Sequence, TYPE_CHECKING, Tuple, Union
+from typing import Any, Dict, IO, List, Mapping, Optional, TYPE_CHECKING, Tuple, Union
 
 from ._configuration import DocumentTranslationClientConfiguration, SingleDocumentTranslationClientConfiguration
 from ._model_base import Model, SdkJSONEncoder
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core import PipelineClient
 
     from ._serialization import Deserializer, Serializer
@@ -48,8 +47,6 @@ FileType = Union[
     # (filename, file (or bytes), content_type)
     Tuple[Optional[str], FileContent, Optional[str]],
 ]
-
-FilesType = Union[Mapping[str, FileType], Sequence[Tuple[str, FileType]]]
 
 
 def serialize_multipart_data_entry(data_entry: Any) -> Any:
