@@ -13,6 +13,7 @@ import test_config
 from azure.cosmos import DatabaseProxy
 from azure.cosmos._feed_range import FeedRangeEpk
 from azure.cosmos._routing.routing_range import Range
+from azure.cosmos._session_token_helpers import is_compound_session_token, create_vector_session_token_and_pkrange_id
 
 COLLECTION = "created_collection"
 DATABASE = "created_db"
@@ -112,7 +113,7 @@ def create_items_logical_pk(setup, target_pk, previous_session_token, feed_range
         previous_session_token = request_context["session_token"]
         feed_ranges_and_session_tokens.append((setup[COLLECTION].feed_range_from_partition_key(item['pk']),
                                                request_context["session_token"]))
-    return target_session_token
+    return target_session_token, previous_session_token
 
 def create_items_physical_pk(setup, pk_feed_range, previous_session_token, feed_ranges_and_session_tokens):
     target_session_token = ""
@@ -123,7 +124,7 @@ def create_items_physical_pk(setup, pk_feed_range, previous_session_token, feed_
             target_feed_range = feed_range
             break
 
-    for i in range(10):
+    for i in range(100):
         item = {
             'id': 'item' + str(uuid.uuid4()),
             'name': 'sample',
@@ -138,7 +139,7 @@ def create_items_physical_pk(setup, pk_feed_range, previous_session_token, feed_
         feed_ranges_and_session_tokens.append((curr_feed_range,
                                                request_context["session_token"]))
 
-    return target_session_token, target_feed_range
+    return target_session_token, target_feed_range, previous_session_token
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.unittest
@@ -215,40 +216,49 @@ class TestSessionTokenHelpers:
         feed_ranges_and_session_tokens = []
         previous_session_token = ""
         target_pk = 'A1'
-        target_session_token = create_items_logical_pk(setup, target_pk, previous_session_token, feed_ranges_and_session_tokens)
+        target_session_token, previous_session_token = create_items_logical_pk(setup, target_pk, previous_session_token, feed_ranges_and_session_tokens)
         target_feed_range = setup[COLLECTION].feed_range_from_partition_key(target_pk)
         session_token = setup[COLLECTION].get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
-        assert target_session_token == session_token
+        assert session_token == target_session_token
 
         trigger_split(setup)
 
-        target_session_token = create_items_logical_pk(setup, target_pk, previous_session_token, feed_ranges_and_session_tokens)
+        target_session_token, _ = create_items_logical_pk(setup, target_pk, session_token, feed_ranges_and_session_tokens)
         target_feed_range = setup[COLLECTION].feed_range_from_partition_key(target_pk)
         session_token = setup[COLLECTION].get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
-        assert target_session_token == session_token
+        assert session_token == target_session_token
 
 
     def test_updated_session_token_from_physical_pk(self, setup):
         feed_ranges_and_session_tokens = []
         previous_session_token = ""
         pk_feed_range = setup[COLLECTION].feed_range_from_partition_key('A1')
-        target_session_token, target_feed_range = create_items_physical_pk(setup, pk_feed_range,
+        target_session_token, target_feed_range, previous_session_token = create_items_physical_pk(setup, pk_feed_range,
                                                                            previous_session_token,
                                                                            feed_ranges_and_session_tokens)
 
         session_token = setup[COLLECTION].get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
-        assert target_session_token == session_token
+        assert session_token == target_session_token
 
         trigger_split(setup)
 
-        target_session_token, target_feed_range = create_items_physical_pk(setup, pk_feed_range,
-                                                                           previous_session_token,
+        _, target_feed_range, previous_session_token = create_items_physical_pk(setup, pk_feed_range,
+                                                                           session_token,
                                                                            feed_ranges_and_session_tokens)
 
         session_token = setup[COLLECTION].get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
-        assert target_session_token == session_token
+        assert is_compound_session_token(session_token)
+        session_tokens = session_token.split(",")
+        assert len(session_tokens) == 2
+        pk_range_id1, session_token1 = create_vector_session_token_and_pkrange_id(session_tokens[0])
+        pk_range_id2, session_token2 = create_vector_session_token_and_pkrange_id(session_tokens[1])
+        pk_range_ids = [pk_range_id1, pk_range_id2]
+
+        assert 320 == (session_token1.global_lsn + session_token2.global_lsn)
+        assert 1 in pk_range_ids
+        assert 2 in pk_range_ids
 
 
 

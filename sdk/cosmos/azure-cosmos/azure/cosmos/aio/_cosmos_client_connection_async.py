@@ -24,7 +24,6 @@
 """Document client class for the Azure Cosmos database service.
 """
 import os
-from optparse import Option
 from urllib.parse import urlparse
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,

@@ -26,8 +26,8 @@ from azure.cosmos._vector_session_token import VectorSessionToken
 
 
 def merge_session_tokens_with_same_range(session_token1, session_token2):
-    pk_range_id1, vector_session_token1 = create_vector_session_token_and_pkrangeid(session_token1)
-    pk_range_id2, vector_session_token2 = create_vector_session_token_and_pkrangeid(session_token2)
+    pk_range_id1, vector_session_token1 = create_vector_session_token_and_pkrange_id(session_token1)
+    pk_range_id2, vector_session_token2 = create_vector_session_token_and_pkrange_id(session_token2)
     pk_range_id = pk_range_id1
     if pk_range_id1 != pk_range_id2:
         pk_range_id = pk_range_id1 \
@@ -38,7 +38,7 @@ def merge_session_tokens_with_same_range(session_token1, session_token2):
 def is_compound_session_token(session_token):
     return "," in session_token
 
-def create_vector_session_token_and_pkrangeid(session_token): # cspell:disable-line
+def create_vector_session_token_and_pkrange_id(session_token):
     tokens = session_token.split(":")
     return tokens[0], VectorSessionToken.create(tokens[1])
 
@@ -58,8 +58,8 @@ def merge_session_tokens_with_same_pkrangeid(session_tokens):
     while i < len(session_tokens):
         j = i + 1
         while j < len(session_tokens):
-            pk_range_id1, vector_session_token1 = create_vector_session_token_and_pkrangeid(session_tokens[i])
-            pk_range_id2, vector_session_token2 = create_vector_session_token_and_pkrangeid(session_tokens[j])
+            pk_range_id1, vector_session_token1 = create_vector_session_token_and_pkrange_id(session_tokens[i])
+            pk_range_id2, vector_session_token2 = create_vector_session_token_and_pkrange_id(session_tokens[j])
             if pk_range_id1 == pk_range_id2:
                 vector_session_token = vector_session_token1.merge(vector_session_token2)
                 session_tokens.append(pk_range_id1 + ":" + vector_session_token.session_token)
@@ -67,6 +67,7 @@ def merge_session_tokens_with_same_pkrangeid(session_tokens):
                 for token in remove_session_tokens:
                     session_tokens.remove(token)
                 i = -1
+                break
             j += 1
         i += 1
 
@@ -98,6 +99,7 @@ def get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range):
             for feed_range_to_remove in feed_ranges_to_remove:
                 overlapping_ranges.remove(feed_range_to_remove)
             overlapping_ranges.append((cur_feed_range, session_token))
+            i, j = 0, 1
         else:
             j += 1
             if j == len(overlapping_ranges):
@@ -114,8 +116,7 @@ def get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range):
             done_overlapping_ranges.append(overlapping_ranges[0])
             overlapping_ranges.remove(overlapping_ranges[0])
             continue
-        tokens_cmp = session_token_cmp.split(":")
-        vector_session_token_cmp = VectorSessionToken.create(tokens_cmp[1])
+        _, vector_session_token_cmp = create_vector_session_token_and_pkrange_id(session_token_cmp)
         subsets = []
         # finding the subset feed ranges of the current feed range
         for j in range(1, len(overlapping_ranges)):
@@ -132,7 +133,7 @@ def get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range):
             session_tokens = [subsets[j][1]]
             merged_indices = [subsets[j][2]]
             if len(subsets) == 1:
-                _, vector_session_token = create_vector_session_token_and_pkrangeid(session_tokens[0])
+                _, vector_session_token = create_vector_session_token_and_pkrange_id(session_tokens[0])
                 if vector_session_token_cmp.is_greater(vector_session_token):
                     overlapping_ranges.remove(overlapping_ranges[merged_indices[0]])
             else:
@@ -149,7 +150,7 @@ def get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range):
                         # else take the current feed range
                         children_more_updated = True
                         for session_token in session_tokens:
-                            _, vector_session_token = create_vector_session_token_and_pkrangeid(session_token)
+                            _, vector_session_token = create_vector_session_token_and_pkrange_id(session_token)
                             if vector_session_token_cmp.is_greater(vector_session_token):
                                 children_more_updated = False
                         feed_ranges_to_remove = [overlapping_ranges[i] for i in merged_indices]
