@@ -12,7 +12,6 @@ import queue
 from functools import partial
 from typing import Any, Callable, Coroutine, List, Dict, Optional, Tuple, Union, overload, cast
 from typing_extensions import Literal
-import certifi
 
 from ..outcomes import Accepted, Modified, Received, Rejected, Released
 from ._connection_async import Connection
@@ -131,9 +130,9 @@ class AMQPClientAsync(AMQPClientSync):
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
-     authenticate the identity of the connection endpoint.
+     authenticate the identity of the connection endpoint OR an instance of ssl.SSLContext to be used.
      Default is None in which case `certifi.where()` will be used.
-    :paramtype connection_verify: str
+    :paramtype connection_verify: str or ssl.SSLContext or None
     :keyword float socket_timeout: The maximum time in seconds that the underlying socket in the transport should
      wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
      and 1 for transport type AmqpOverWebsocket.
@@ -246,7 +245,7 @@ class AMQPClientAsync(AMQPClientSync):
             self._connection = Connection(
                 "amqps://" + self._hostname if self._use_tls else "amqp://" + self._hostname,
                 sasl_credential=self._auth.sasl,
-                ssl_opts={'ca_certs': self._connection_verify or certifi.where()},
+                ssl_opts=self._connection_verify,
                 container_id=self._name,
                 max_frame_size=self._max_frame_size,
                 channel_max=self._channel_max,
@@ -495,9 +494,9 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
-     authenticate the identity of the connection endpoint.
+     authenticate the identity of the connection endpoint OR an instance of ssl.SSLContext to be used.
      Default is None in which case `certifi.where()` will be used.
-    :paramtype connection_verify: str
+    :paramtype connection_verify: str or ssl.SSLContext or None
     """
 
     async def _client_ready_async(self):
@@ -717,9 +716,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
      If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :paramtype custom_endpoint_address: str
     :keyword connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
-     authenticate the identity of the connection endpoint.
+     authenticate the identity of the connection endpoint OR an instance of ssl.SSLContext to be used.
      Default is None in which case `certifi.where()` will be used.
-    :paramtype connection_verify: str
+    :paramtype connection_verify: str or ssl.SSLContext or None
     """
 
     async def _client_ready_async(self):

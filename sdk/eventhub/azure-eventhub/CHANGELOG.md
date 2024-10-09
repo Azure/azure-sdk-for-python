@@ -1,18 +1,15 @@
 # Release History
 
-## 5.12.3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.12.3 (2024-10-09)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed a bug where creating the SSL context in the async clients was making a blocking call outside of the constructor.([#37246](https://github.com/Azure/azure-sdk-for-python/issues/37246))
 
 ## 5.12.2 (2024-10-02)
 
 ### Bugs Fixed
+
 - Implemented backpressure for  async consumer  to address a memory leak issue. ([#36398](https://github.com/Azure/azure-sdk-for-python/issues/36398))
 
 ## 5.12.1 (2024-06-11)

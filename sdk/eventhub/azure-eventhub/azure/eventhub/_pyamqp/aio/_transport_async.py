@@ -41,10 +41,6 @@ from ssl import SSLError
 from io import BytesIO
 import logging
 
-
-
-import certifi
-
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
@@ -182,7 +178,7 @@ class AsyncTransportMixin:
             return sslopts
         try:
             if "context" in sslopts:
-                return self._build_ssl_context(**sslopts.pop("context"))
+                return sslopts["context"]
             ssl_version = sslopts.get("ssl_version")
             if ssl_version is None:
                 ssl_version = ssl.PROTOCOL_TLS_CLIENT
@@ -223,15 +219,6 @@ class AsyncTransportMixin:
             raise TypeError(
                 "SSL configuration must be a dictionary, or the value True."
             ) from None
-
-    def _build_ssl_context(
-        self, check_hostname=None, **ctx_options
-    ):
-        ctx = ssl.create_default_context(**ctx_options)
-        ctx.verify_mode = ssl.CERT_REQUIRED
-        ctx.load_verify_locations(cafile=certifi.where())
-        ctx.check_hostname = check_hostname
-        return ctx
 
 
 class AsyncTransport(

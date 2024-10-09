@@ -6,10 +6,13 @@
 import pytest
 import asyncio
 import time
+import ssl
+import certifi
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.identity.aio import EnvironmentCredential
 from azure.eventhub import EventData
+from azure.eventhub.exceptions import ConnectError
 from azure.eventhub.aio import (
     EventHubConsumerClient,
     EventHubProducerClient,
@@ -175,3 +178,116 @@ async def test_client_azure_named_key_credential_async(live_eventhub, uamqp_tran
 
     credential.update(live_eventhub["key_name"], live_eventhub["access_key"])
     assert (await consumer_client.get_eventhub_properties()) is not None
+
+# New feature only for Pure Python AMQP, not uamqp.
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_client_with_ssl_context_async(
+    auth_credentials_async,
+    socket_transport
+):
+    fully_qualified_namespace, eventhub_name, credential = auth_credentials_async
+
+    # Check that SSLContext with invalid/nonexistent cert file raises an error
+    context = ssl.SSLContext(cafile='fakecert.pem')
+    context.verify_mode = ssl.CERT_REQUIRED
+
+    producer = EventHubProducerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,
+        credential=credential(),
+        transport_type=socket_transport,
+        ssl_context=context,
+        retry_total=0,
+    )
+    async with producer:
+        with pytest.raises(ConnectError):
+            batch = await producer.create_batch()
+    
+    async def on_event(partition_context, event):
+        on_event.called = True
+        on_event.partition_id = partition_context.partition_id
+        on_event.event = event
+    
+    async def on_error(partition_context, error):
+        on_error.error = error
+        await consumer.close()
+
+    consumer = EventHubConsumerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,
+        credential=credential(),
+        consumer_group="$default",
+        transport_type=socket_transport,
+        ssl_context=context,
+        retry_total=0,
+    )
+    on_error.error = None
+    async with consumer:
+        task = asyncio.ensure_future(
+            consumer.receive(on_event, on_error=on_error, starting_position="-1")
+        )
+        await asyncio.sleep(15)
+    await task
+    assert isinstance(on_error.error, ConnectError)
+
+    # Check that SSLContext with valid cert file doesn't raise an error
+    async def verify_context_async():
+        # asyncio.to_thread only available in Python 3.9+
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        await asyncio.to_thread(context.load_verify_locations(certifi.where()))
+        purpose = ssl.Purpose.SERVER_AUTH
+        await asyncio.to_thread(context.load_default_certs(purpose=purpose))
+        return context
+
+    def verify_context():   # for Python 3.8
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.load_verify_locations(certifi.where())
+        purpose = ssl.Purpose.SERVER_AUTH
+        context.load_default_certs(purpose=purpose)
+        return context
+
+    if hasattr(asyncio, "to_thread"):
+        context = await verify_context_async()
+    else:
+        context = verify_context()
+
+    producer = EventHubProducerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,
+        credential=credential(),
+        transport_type=socket_transport,
+        ssl_context=context,
+    )
+    async with producer:
+        batch = await producer.create_batch()
+        batch.add(EventData(body="A single message"))
+        batch.add(EventData(body="A second message"))
+        await producer.send_batch(batch)
+
+    async def on_event(partition_context, event):
+        on_event.total += 1
+    
+    async def on_error(partition_context, error):
+        on_error.error = error
+        await consumer.close()
+
+    consumer = EventHubConsumerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,
+        credential=credential(),
+        consumer_group="$default",
+        transport_type=socket_transport,
+        ssl_context=context,
+    )
+    on_event.total = 0
+    on_error.error = None
+
+    async with consumer:
+        task = asyncio.ensure_future(
+            consumer.receive(on_event, on_error=on_error, starting_position="-1")
+        )
+        await asyncio.sleep(15)
+    await task
+    assert on_event.total == 2
+    assert on_error.error is None

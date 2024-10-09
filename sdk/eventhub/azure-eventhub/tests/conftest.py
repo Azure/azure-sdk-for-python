@@ -15,7 +15,7 @@ from logging.handlers import RotatingFileHandler
 from azure.core.settings import settings
 
 from azure.mgmt.eventhub import EventHubManagementClient
-from azure.eventhub import EventHubProducerClient
+from azure.eventhub import EventHubProducerClient, TransportType
 from azure.eventhub._pyamqp import ReceiveClient
 from azure.eventhub._pyamqp.authentication import SASTokenAuth
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
@@ -27,6 +27,9 @@ try:
 except (ModuleNotFoundError, ImportError):
     uamqp_transport_params = [False]
     uamqp_transport_ids = ["pyamqp"]
+
+socket_transports = [TransportType.Amqp, TransportType.AmqpOverWebsocket]
+socket_transport_ids = ["amqp", "ws"]
 
 from devtools_testutils import get_region_override, get_credential as get_devtools_credential
 from tracing_common import FakeSpan
@@ -54,6 +57,10 @@ def sleep(request):
 
 @pytest.fixture(scope="session", params=uamqp_transport_params, ids=uamqp_transport_ids)
 def uamqp_transport(request):
+    return request.param
+
+@pytest.fixture(scope="session", params=socket_transports, ids=socket_transport_ids)
+def socket_transport(request):
     return request.param
 
 @pytest.fixture(scope="session")    
