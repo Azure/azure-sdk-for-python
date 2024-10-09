@@ -410,7 +410,7 @@ class OpenAICompletionsModel(LLMBase):
                         request_data=request_data,
                     )
                     await self._add_successful_response(response["time_taken"])
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-exception-caught
                     response = {
                         "request": request_data,
                         "response": {
@@ -542,6 +542,7 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
     def __init__(self, name="OpenAIChatCompletionsModel", **kwargs):
         super().__init__(name=name, **kwargs)
 
+    # pylint: disable-next=arguments-renamed
     def format_request_data(self, messages: List[dict], **request_params):  # type: ignore[override]
         request_data = {"messages": messages, **self.get_model_params()}
         request_data.update(request_params)
