@@ -1,5 +1,5 @@
 # flake8: noqa
-# pylint: disable=W0102,W0613,R0914,E0401,E0611,C0114,R0913,E0702,R0903,C0411
+# pylint: disable=W0613,R0914,E0401,E0611,C0114,R0913,E0702,R0903,C0411
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
@@ -84,15 +84,15 @@ class Simulator:
         *,
         target: Callable,
         max_conversation_turns: int = 5,
-        tasks: List[str] = [],
+        tasks: Optional[List[str]] = None,
         text: str = "",
         num_queries: int = 5,
         query_response_generating_prompty: Optional[str] = None,
         user_simulator_prompty: Optional[str] = None,
         api_call_delay_sec: float = 1,
-        query_response_generating_prompty_kwargs: Dict[str, Any] = {},
-        user_simulator_prompty_kwargs: Dict[str, Any] = {},
-        conversation_turns: List[List[str]] = [],
+        query_response_generating_prompty_kwargs: Optional[Dict[str, Any]] = None,
+        user_simulator_prompty_kwargs: Optional[Dict[str, Any]] = None,
+        conversation_turns: Optional[List[List[str]]] = None,
         **kwargs,
     ) -> List[JsonLineChatProtocol]:
         """
@@ -115,7 +115,7 @@ class Simulator:
         :paramtype max_conversation_turns: int
         :keyword tasks: A list of user tasks, each represented as a list of strings. Text should be relevant for the
              tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
-        :paramtype tasks: List[str]
+        :paramtype tasks: Optional[List[str]]
         :keyword text: The initial input text for generating query responses. Given that the same 'text' is provided
             for a list of tasks, one example use is to break down a user task into sub-tasks that can share the 'text'
             variable for context.
@@ -130,17 +130,22 @@ class Simulator:
         :paramtype api_call_delay_sec: float
         :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the query response
             generating prompty.
-        :paramtype query_response_generating_prompty_kwargs: Dict[str, Any]
+        :paramtype query_response_generating_prompty_kwargs: Optional[Dict[str, Any]]
         :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
+        :paramtype user_simulator_prompty_kwargs: Optional[Dict[str, Any]]
         :keyword conversation_turns: Predefined conversation turns to simulate.
-        :paramtype conversation_turns: List[List[str]]
+        :paramtype conversation_turns: Optional[List[List[str]]]
         :returns: A list of simulated conversations represented as JsonLineChatProtocol objects, which contain
              messages and context. Context includes all the metadata related to the conversation, such as the task,
              expected response, and query. The messages contain the conversation history, including the user and
              assistant messages.
         :rtype: List[JsonLineChatProtocol]
         """
+        tasks = tasks or []
+        query_response_generating_prompty_kwargs = query_response_generating_prompty_kwargs or {}
+        user_simulator_prompty_kwargs = user_simulator_prompty_kwargs or {}
+        conversation_turns = conversation_turns or []
+
         if conversation_turns and (text or tasks):
             raise ValueError("Cannot specify both conversation_turns and text/tasks")
 
