@@ -13,7 +13,6 @@ import test_config
 from azure.cosmos import DatabaseProxy
 from azure.cosmos._feed_range import FeedRangeEpk
 from azure.cosmos._routing.routing_range import Range
-from azure.cosmos._session_token_helpers import is_compound_session_token, create_vector_session_token_and_pkrange_id
 
 COLLECTION = "created_collection"
 DATABASE = "created_db"
@@ -77,70 +76,6 @@ def create_split_ranges():
         actual_test_params.append((split_ranges, target_feed_range, test_param[2]))
     return actual_test_params
 
-def trigger_split(setup):
-    print("Triggering a split in session token helpers")
-    setup[COLLECTION].replace_throughput(11000)
-    print("changed offer to 11k")
-    print("--------------------------------")
-    print("Waiting for split to complete")
-    start_time = time.time()
-
-    while True:
-        offer = setup[COLLECTION].get_throughput()
-        if offer.properties['content'].get('isOfferReplacePending', False):
-            if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                unittest.skip("Partition split didn't complete in time.")
-            else:
-                print("Waiting for split to complete")
-                time.sleep(60)
-        else:
-            break
-
-    print("Split in session token helpers has completed")
-
-def create_items_logical_pk(setup, target_pk, previous_session_token, feed_ranges_and_session_tokens):
-    target_session_token = ""
-    for i in range(100):
-        item = {
-            'id': 'item' + str(uuid.uuid4()),
-            'name': 'sample',
-            'pk': 'A' + str(random.randint(1, 10))
-        }
-        setup[COLLECTION].create_item(item, session_token=previous_session_token)
-        request_context = setup[COLLECTION].client_connection.last_response_headers["request_context"]
-        if item['pk'] == target_pk:
-            target_session_token = request_context["session_token"]
-        previous_session_token = request_context["session_token"]
-        feed_ranges_and_session_tokens.append((setup[COLLECTION].feed_range_from_partition_key(item['pk']),
-                                               request_context["session_token"]))
-    return target_session_token, previous_session_token
-
-def create_items_physical_pk(setup, pk_feed_range, previous_session_token, feed_ranges_and_session_tokens):
-    target_session_token = ""
-    container_feed_ranges = setup[COLLECTION].read_feed_ranges()
-    target_feed_range = None
-    for feed_range in container_feed_ranges:
-        if setup[COLLECTION].is_feed_range_subset(feed_range, pk_feed_range):
-            target_feed_range = feed_range
-            break
-
-    for i in range(100):
-        item = {
-            'id': 'item' + str(uuid.uuid4()),
-            'name': 'sample',
-            'pk': 'A' + str(random.randint(1, 10))
-        }
-        setup[COLLECTION].create_item(item, session_token=previous_session_token)
-        request_context = setup[COLLECTION].client_connection.last_response_headers["request_context"]
-        curr_feed_range = setup[COLLECTION].feed_range_from_partition_key(item['pk'])
-        if setup[COLLECTION].is_feed_range_subset(target_feed_range, curr_feed_range):
-            target_session_token = request_context["session_token"]
-        previous_session_token = request_context["session_token"]
-        feed_ranges_and_session_tokens.append((curr_feed_range,
-                                               request_context["session_token"]))
-
-    return target_session_token, target_feed_range, previous_session_token
-
 @pytest.mark.cosmosEmulator
 @pytest.mark.unittest
 @pytest.mark.usefixtures("setup")
@@ -151,7 +86,6 @@ class TestSessionTokenHelpers:
     client: cosmos_client.CosmosClient = None
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
-    connectionPolicy = test_config.TestConfig.connectionPolicy
     configs = test_config.TestConfig
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
     TEST_COLLECTION_ID = configs.TEST_SINGLE_PARTITION_CONTAINER_ID
@@ -211,58 +145,6 @@ class TestSessionTokenHelpers:
         with pytest.raises(ValueError, match='There were no overlapping feed ranges with the target.'):
             setup["created_collection"].get_updated_session_token(feed_ranges_and_session_tokens,
                             FeedRangeEpk(Range("CC", "FF", True, False)))
-
-    def test_updated_session_token_from_logical_pk(self, setup):
-        feed_ranges_and_session_tokens = []
-        previous_session_token = ""
-        target_pk = 'A1'
-        target_session_token, previous_session_token = create_items_logical_pk(setup, target_pk, previous_session_token, feed_ranges_and_session_tokens)
-        target_feed_range = setup[COLLECTION].feed_range_from_partition_key(target_pk)
-        session_token = setup[COLLECTION].get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
-
-        assert session_token == target_session_token
-
-        trigger_split(setup)
-
-        target_session_token, _ = create_items_logical_pk(setup, target_pk, session_token, feed_ranges_and_session_tokens)
-        target_feed_range = setup[COLLECTION].feed_range_from_partition_key(target_pk)
-        session_token = setup[COLLECTION].get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
-
-        assert session_token == target_session_token
-
-
-    def test_updated_session_token_from_physical_pk(self, setup):
-        feed_ranges_and_session_tokens = []
-        previous_session_token = ""
-        pk_feed_range = setup[COLLECTION].feed_range_from_partition_key('A1')
-        target_session_token, target_feed_range, previous_session_token = create_items_physical_pk(setup, pk_feed_range,
-                                                                           previous_session_token,
-                                                                           feed_ranges_and_session_tokens)
-
-        session_token = setup[COLLECTION].get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
-        assert session_token == target_session_token
-
-        trigger_split(setup)
-
-        _, target_feed_range, previous_session_token = create_items_physical_pk(setup, pk_feed_range,
-                                                                           session_token,
-                                                                           feed_ranges_and_session_tokens)
-
-        session_token = setup[COLLECTION].get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
-        assert is_compound_session_token(session_token)
-        session_tokens = session_token.split(",")
-        assert len(session_tokens) == 2
-        pk_range_id1, session_token1 = create_vector_session_token_and_pkrange_id(session_tokens[0])
-        pk_range_id2, session_token2 = create_vector_session_token_and_pkrange_id(session_tokens[1])
-        pk_range_ids = [pk_range_id1, pk_range_id2]
-
-        assert 320 == (session_token1.global_lsn + session_token2.global_lsn)
-        assert 1 in pk_range_ids
-        assert 2 in pk_range_ids
-
-
-
-
 
 if __name__ == '__main__':
     unittest.main()

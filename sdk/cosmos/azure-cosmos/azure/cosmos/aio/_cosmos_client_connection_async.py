@@ -526,6 +526,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The Azure Cosmos document to create.
         :param dict options:
             The request options for the request.
+        :param dict request_context:
         :return:
             The created Document.
         :rtype:
@@ -813,6 +814,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The Azure Cosmos document to upsert.
         :param dict options:
             The request options for the request.
+        :param dict request_context:
         :return:
             The upserted Document.
         :rtype:
@@ -1167,7 +1169,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
-
+        :param dict request_context:
         :return:
             The upserted Azure Cosmos resource.
         :rtype:
@@ -1185,7 +1187,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
         self.last_response_headers = last_response_headers
         if request_context is not None:
-             self._add_request_context(request_context)
+            self._add_request_context(request_context)
         if response_hook:
             response_hook(last_response_headers, result)
         return result
@@ -1385,7 +1387,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict new_document:
         :param dict options:
             The request options for the request.
-        :param request_context:
+        :param dict request_context:
         :return:
             The new Document.
         :rtype:
@@ -1929,6 +1931,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param str collection_link: The link to the collection
         :param list batch_operations: The batch of operations for the batch request.
         :param dict options: The request options for the request.
+        :param dict request_context: The request context for the operation
 
         :return:
             The result of the batch operation.
@@ -2184,7 +2187,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param str collection_link: The link to the document collection.
         :param dict feed_options: The additional options for the operation.
         :param response_hook: A callable invoked with the response metadata.
-        :param request_context: The request context for the operation.
+        :param dict request_context: The request context for the operation.
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return: Query Iterable of Documents.
         :rtype: query_iterable.QueryIterable
@@ -2214,7 +2217,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict options: The request options for the request.
         :param str partition_key: Partition key for the query(default value None)
         :param response_hook: A callable invoked with the response metadata.
-        :param request_context: The request context for the operation.
+        :param dict request_context: The request context for the operation.
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return:
             Query Iterable of Documents.
@@ -2279,7 +2282,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param str collection_link: The link to the document collection.
         :param dict options: The request options for the request.
         :param response_hook: A callable invoked with the response metadata.
-        :param request_context: The request_context of the operation
+        :param dict request_context: The request_context of the operation
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return:
             Query Iterable of Documents.
@@ -2314,7 +2317,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict options: The request options for the request.
         :param str partition_key_range_id: Specifies partition key range id.
         :param response_hook: A callable invoked with the response metadata
-        :param request_context: The request context of the operation.
+        :param dict request_context: The request context of the operation.
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return:
             Query Iterable of Documents.
@@ -2836,6 +2839,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param function response_hook:
         :param bool is_query_plan:
             Specifies if the call is to fetch query plan
+        :param dict request_context:
         :returns: A list of the queried resources.
         :rtype: list
         :raises SystemError: If the query compatibility mode is undefined.

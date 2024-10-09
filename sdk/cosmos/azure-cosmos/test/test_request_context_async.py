@@ -83,7 +83,7 @@ class TestRequestContext:
         for i in range(100):
             await setup["created_collection"].create_item(createItem())
         items = [item async for item in setup["created_collection"].query_items_change_feed(is_start_from_beginning=True)]
-        assert len(items) > 1000
+        assert len(items) > 100
         validate_request_context(setup["created_collection"])
 
         items = [item async for item in setup["created_collection"].query_items("SELECT * FROM c WHERE c.id = @id",

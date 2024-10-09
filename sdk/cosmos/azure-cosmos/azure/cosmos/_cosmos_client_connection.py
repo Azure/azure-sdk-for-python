@@ -848,7 +848,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(permission_link)
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
-        return self.Read(path, "permissions", permission_id, None, None, options, **kwargs)
+        return self.Read(path, "permissions", permission_id, None, options, **kwargs)
 
     def ReadPermissions(
         self,
@@ -1032,7 +1032,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param str collection_link: The link to the document collection.
         :param dict feed_options: The additional options for the operation.
         :param response_hook: A callable invoked with the response metadata.
-        :param request_context: A dictionary representing the request context.
+        :param dict request_context: A dictionary representing the request context.
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
         :return: Query Iterable of Documents.
         :rtype: query_iterable.QueryIterable
@@ -1124,7 +1124,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param str collection_link: The link to the document collection.
         :param dict options: The request options for the request.
         :param response_hook: A callable invoked with the response metadata.
-        :param request_context: A dictionary representing the request context.
+        :param dict request_context: A dictionary representing the request context.
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
 
         :return:
@@ -1160,7 +1160,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict options: The request options for the request.
         :param str partition_key_range_id: Specifies partition key range id.
         :param response_hook: A callable invoked with the response metadata
-        :param request_context: The request context for the operation
+        :param dict request_context: The request context for the operation
         :type response_hook: Callable[[Dict[str, str], Dict[str, Any]]
 
         :return:
@@ -3008,7 +3008,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 partition_key_range_id,
                 **kwargs)
 
-    def __QueryFeed(  # pylint: disable=too-many-locals, too-many-statements
+    def __QueryFeed(  # pylint: disable=too-many-locals, too-many-statements, disable=too-many-branches
         self,
         path: str,
         resource_type: str,
@@ -3036,6 +3036,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param str partition_key_range_id:
             Specifies partition key range id.
         :param function response_hook:
+        :param dict request_context:
         :param bool is_query_plan:
             Specifies if the call is to fetch query plan
         :returns: A list of the queried resources.

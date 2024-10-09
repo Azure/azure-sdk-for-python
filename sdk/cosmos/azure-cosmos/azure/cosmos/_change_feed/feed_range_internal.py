@@ -25,10 +25,10 @@ database service.
 import base64
 import json
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict, Any, Optional, Sequence, Type
+from typing import Union, List, Dict, Any, Optional
 
 from azure.cosmos._routing.routing_range import Range
-from azure.cosmos.partition_key import _Undefined, _Empty, PartitionKey, NonePartitionKeyValue
+from azure.cosmos.partition_key import _Undefined, _Empty
 
 
 class FeedRangeInternal(ABC):

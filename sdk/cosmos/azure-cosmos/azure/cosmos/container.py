@@ -38,7 +38,6 @@ from ._base import (
     GenerateGuidId,
     _set_properties_cache
 )
-from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._cosmos_client_connection import CosmosClientConnection
 from ._feed_range import FeedRange, FeedRangeEpk
 from ._routing.routing_range import Range
@@ -1440,6 +1439,5 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
         """
-        return child_feed_range._feed_range_internal.get_normalized_range().is_subset(parent_feed_range._feed_range_internal.get_normalized_range())
-
-
+        return child_feed_range._feed_range_internal.get_normalized_range().is_subset(
+            parent_feed_range._feed_range_internal.get_normalized_range())
