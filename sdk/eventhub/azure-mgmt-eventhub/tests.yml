@@ -1,15 +1,11 @@
 trigger: none
 
 extemds:
-    template: ../../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: eventhub
       BuildTargetingString: azure-mgmt-eventhub
       EnvVars:
-        AZURE_CLIENT_ID: $(python-eh-livetest-event-hub-aad-client-id)
-        AZURE_TENANT_ID: $(python-eh-livetest-event-hub-aad-tenant-id)
-        AZURE_CLIENT_SECRET: $(python-eh-livetest-event-hub-aad-secret)
-        AZURE_SUBSCRIPTION_ID: $(python-eh-livetest-event-hub-subscription-id)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'True'
