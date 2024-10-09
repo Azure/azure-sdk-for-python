@@ -52,7 +52,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_document_translation__begin_start_translation_request(  # pylint: disable=name-too-long
+def build_document_translation__begin_translation_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -319,7 +319,7 @@ def build_single_document_translation_document_translate_request(  # pylint: dis
 
 class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC):
 
-    def __begin_start_translation_initial(
+    def __begin_translation_initial(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -343,7 +343,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_translation__begin_start_translation_request(
+        _request = build_document_translation__begin_translation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -381,7 +381,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @overload
-    def _begin_start_translation(
+    def _begin_translation(
         self, body: _models.StartTranslationDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -417,7 +417,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    def _begin_start_translation(
+    def _begin_translation(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -453,7 +453,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    def _begin_start_translation(
+    def _begin_translation(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -489,7 +489,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @distributed_trace
-    def _begin_start_translation(
+    def _begin_translation(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -530,7 +530,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self.__begin_start_translation_initial(
+            raw_result = self.__begin_translation_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             raw_result.http_response.read()  # type: ignore

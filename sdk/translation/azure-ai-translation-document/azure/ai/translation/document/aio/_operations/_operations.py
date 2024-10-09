@@ -35,7 +35,7 @@ from azure.core.utils import case_insensitive_dict
 from ... import _model_base, models as _models
 from ..._model_base import SdkJSONEncoder, _deserialize
 from ..._operations._operations import (
-    build_document_translation__begin_start_translation_request,
+    build_document_translation__begin_translation_request,
     build_document_translation_cancel_translation_request,
     build_document_translation_get_document_status_request,
     build_document_translation_get_supported_formats_request,
@@ -58,7 +58,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC):
 
-    async def __begin_start_translation_initial(
+    async def __begin_translation_initial(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -82,7 +82,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_document_translation__begin_start_translation_request(
+        _request = build_document_translation__begin_translation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -120,7 +120,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_start_translation(
+    async def _begin_translation(
         self, body: _models.StartTranslationDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -156,7 +156,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    async def _begin_start_translation(
+    async def _begin_translation(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -192,7 +192,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @overload
-    async def _begin_start_translation(
+    async def _begin_translation(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -228,7 +228,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         """
 
     @distributed_trace_async
-    async def _begin_start_translation(
+    async def _begin_translation(
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Submit a document translation request to the Document Translation service.
@@ -269,7 +269,7 @@ class DocumentTranslationClientOperationsMixin(DocumentTranslationClientMixinABC
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self.__begin_start_translation_initial(
+            raw_result = await self.__begin_translation_initial(
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
