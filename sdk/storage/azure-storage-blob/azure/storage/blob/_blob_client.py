@@ -1491,7 +1491,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     ) -> Dict[str, Union[str, datetime]]:
         """Creates a snapshot of the blob.
 
-        A snapshot is a read-only version of a blob that's taken at a point in time.
+        A snapshot is a readd-only version of a blob that's taken at a point in time.
         It can be read, copied, or deleted, but not modified. Snapshots provide a way
         to back up a blob as it appears at a moment in time.
 
