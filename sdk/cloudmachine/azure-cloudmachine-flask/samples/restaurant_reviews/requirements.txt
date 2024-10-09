@@ -1,6 +1,5 @@
 pydantic
 Flask
 flask_wtf
-
-../../../azure-cloudmachine
-../../.
+git+https://github.com/Azure/azure-sdk-for-python.git@feature/cloudmachine#egg=azure-cloudmachine&subdirectory=sdk/cloudmachine/azure-cloudmachine
+git+https://github.com/Azure/azure-sdk-for-python.git@feature/cloudmachine#egg=azure-cloudmachine-flask&subdirectory=sdk/cloudmachine/azure-cloudmachine-flask
