@@ -1,14 +1,18 @@
 # Release History
 
-## 1.0.0b30 (Unreleased)
+## 1.0.0b31 (2024-10-08)
 
 ### Features Added
 
-### Breaking Changes
+- Allow tracking of whether in a Azure Functions attach scenario
+    ([#37717](https://github.com/Azure/azure-sdk-for-python/pull/37717))
+
+## 1.0.0b30 (2024-09-20)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fix setting custom `TracerProvider` bug
+    ([#37469](https://github.com/Azure/azure-sdk-for-python/pull/37469))
 
 ## 1.0.0b29 (2024-09-10)
 

@@ -4,26 +4,8 @@ extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       BuildTargetingString: azure-search-documents
-      # TODO: change/remove location back to default westus2 after search RP fixes deletion metadata issue
-      # https://github.com/Azure/azure-sdk-tools/issues/2216
       SupportedClouds: 'Public,UsGov,China'
       TestTimeoutInMinutes: 240
-      UseFederatedAuth: true
-      CloudConfig:
-        Public:
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
-          Location: eastus2
-        UsGov:
-          ServiceConnection: usgov_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureUsGovMsft.json
-        China:
-          ServiceConnection: china_azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzureChinaMsft.json
-          Location: chinanorth3
       ServiceDirectory: search
       EnvVars:
         AZURE_TEST_RUN_LIVE: 'True'

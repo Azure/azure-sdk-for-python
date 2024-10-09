@@ -163,6 +163,11 @@ from ._operations import (
     FirewallPolicyDeploymentsOperations,
     FirewallPolicyDraftsOperations,
     FirewallPolicyRuleCollectionGroupDraftsOperations,
+    NetworkManagerRoutingConfigurationsOperations,
+    RoutingRuleCollectionsOperations,
+    RoutingRulesOperations,
+    SecurityUserRuleCollectionsOperations,
+    SecurityUserRulesOperations,
     NetworkManagementClientOperationsMixin,
 )
 
@@ -328,6 +333,11 @@ __all__ = [
     "FirewallPolicyDeploymentsOperations",
     "FirewallPolicyDraftsOperations",
     "FirewallPolicyRuleCollectionGroupDraftsOperations",
+    "NetworkManagerRoutingConfigurationsOperations",
+    "RoutingRuleCollectionsOperations",
+    "RoutingRulesOperations",
+    "SecurityUserRuleCollectionsOperations",
+    "SecurityUserRulesOperations",
     "NetworkManagementClientOperationsMixin",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

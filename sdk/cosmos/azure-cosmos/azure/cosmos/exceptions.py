@@ -28,7 +28,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError
 )
 from . import http_constants
-
+from .http_constants import StatusCodes, SubStatusCodes
 
 class CosmosHttpResponseError(HttpResponseError):
     """An HTTP request to the Azure Cosmos database service has failed."""
@@ -135,7 +135,6 @@ class CosmosClientTimeoutError(AzureError):
         self.history = None
         super(CosmosClientTimeoutError, self).__init__(message, **kwargs)
 
-
 def _partition_range_is_gone(e):
     if (e.status_code == http_constants.StatusCodes.GONE
             and e.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):
@@ -151,3 +150,7 @@ def _container_recreate_exception(e) -> bool:
     is_throughput_not_found = e.sub_status == http_constants.SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND
 
     return (is_bad_request and is_collection_rid_mismatch) or (is_not_found and is_throughput_not_found)
+
+
+def _is_partition_split_or_merge(e):
+    return e.status_code == StatusCodes.GONE and e.status_code == SubStatusCodes.COMPLETING_SPLIT

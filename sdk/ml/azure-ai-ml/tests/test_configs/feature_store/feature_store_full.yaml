@@ -1,6 +1,6 @@
 name: testfs
 compute_runtime:
-  spark_runtime_version: 3.2.0
+  spark_runtime_version: 3.3.0
 online_store:
   type: redis
   target: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/test_rg/providers/Microsoft.Cache/Redis/test_cache

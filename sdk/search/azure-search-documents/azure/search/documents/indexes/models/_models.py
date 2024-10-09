@@ -33,6 +33,11 @@ from .._generated.models import (
     DataChangeDetectionPolicy,
     DataDeletionDetectionPolicy,
     SearchIndexerDataIdentity,
+    SearchIndexer as _SearchIndexer,
+    IndexingSchedule,
+    IndexingParameters,
+    FieldMapping,
+    SearchIndexerCache,
 )
 
 DELIMITER = "|"
@@ -101,6 +106,7 @@ class SearchIndexerSkillset(_serialization.Model):
             else:
                 generated_skills.append(skill)
         assert len(generated_skills) == len(self.skills)
+        encryption_key = getattr(self, "encryption_key", None)
         return _SearchIndexerSkillset(
             name=getattr(self, "name", None),
             description=getattr(self, "description", None),
@@ -109,7 +115,9 @@ class SearchIndexerSkillset(_serialization.Model):
             knowledge_store=getattr(self, "knowledge_store", None),
             index_projection=getattr(self, "index_projection", None),
             e_tag=getattr(self, "e_tag", None),
-            encryption_key=getattr(self, "encryption_key", None),
+            encryption_key=(
+                encryption_key._to_generated() if encryption_key else None  # pylint:disable=protected-access
+            ),
         )
 
     @classmethod
@@ -127,6 +135,8 @@ class SearchIndexerSkillset(_serialization.Model):
                 custom_skills.append(skill)
         assert len(skillset.skills) == len(custom_skills)
         kwargs = skillset.as_dict()
+        # pylint:disable=protected-access
+        kwargs["encryption_key"] = SearchResourceEncryptionKey._from_generated(skillset.encryption_key)
         kwargs["skills"] = custom_skills
         return cls(**kwargs)
 
@@ -1121,7 +1131,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             data_change_detection_policy=self.data_change_detection_policy,
             data_deletion_detection_policy=self.data_deletion_detection_policy,
             e_tag=self.e_tag,
-            encryption_key=self.encryption_key,
+            encryption_key=(
+                self.encryption_key._to_generated() if self.encryption_key else None  # pylint: disable=protected-access
+            ),
             identity=self.identity,
         )
 
@@ -1141,7 +1153,13 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             data_change_detection_policy=search_indexer_data_source.data_change_detection_policy,
             data_deletion_detection_policy=search_indexer_data_source.data_deletion_detection_policy,
             e_tag=search_indexer_data_source.e_tag,
-            encryption_key=search_indexer_data_source.encryption_key,
+            encryption_key=(
+                SearchResourceEncryptionKey._from_generated(  # pylint: disable=protected-access
+                    search_indexer_data_source.encryption_key
+                )
+                if search_indexer_data_source.encryption_key
+                else None
+            ),
             identity=search_indexer_data_source.identity,
         )
 
@@ -1223,3 +1241,182 @@ def unpack_analyzer(analyzer):
     if isinstance(analyzer, _CustomAnalyzer):
         return CustomAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
     return analyzer
+
+
+class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Represents an indexer.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the indexer. Required.
+    :vartype name: str
+    :ivar description: The description of the indexer.
+    :vartype description: str
+    :ivar data_source_name: The name of the datasource from which this indexer reads data.
+     Required.
+    :vartype data_source_name: str
+    :ivar skillset_name: The name of the skillset executing with this indexer.
+    :vartype skillset_name: str
+    :ivar target_index_name: The name of the index to which this indexer writes data. Required.
+    :vartype target_index_name: str
+    :ivar schedule: The schedule for this indexer.
+    :vartype schedule: ~azure.search.documents.indexes.models.IndexingSchedule
+    :ivar parameters: Parameters for indexer execution.
+    :vartype parameters: ~azure.search.documents.indexes.models.IndexingParameters
+    :ivar field_mappings: Defines mappings between fields in the data source and corresponding
+     target fields in the index.
+    :vartype field_mappings: list[~azure.search.documents.indexes.models.FieldMapping]
+    :ivar output_field_mappings: Output field mappings are applied after enrichment and immediately
+     before indexing.
+    :vartype output_field_mappings: list[~azure.search.documents.indexes.models.FieldMapping]
+    :ivar is_disabled: A value indicating whether the indexer is disabled. Default is false.
+    :vartype is_disabled: bool
+    :ivar e_tag: The ETag of the indexer.
+    :vartype e_tag: str
+    :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
+     This key is used to provide an additional level of encryption-at-rest for your indexer
+     definition (as well as indexer execution status) when you want full assurance that no one, not
+     even Microsoft, can decrypt them. Once you have encrypted your indexer definition, it will
+     always remain encrypted. The search service will ignore attempts to set this property to null.
+     You can change this property as needed if you want to rotate your encryption key; Your indexer
+     definition (and indexer execution status) will be unaffected. Encryption with customer-managed
+     keys is not available for free search services, and is only available for paid services created
+     on or after January 1, 2019.
+    :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+    :ivar cache: Adds caching to an enrichment pipeline to allow for incremental modification steps
+     without having to rebuild the index every time.
+    :vartype cache: ~azure.search.documents.indexes.models.SearchIndexerCache
+    """
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        data_source_name: str,
+        target_index_name: str,
+        description: Optional[str] = None,
+        skillset_name: Optional[str] = None,
+        schedule: Optional[IndexingSchedule] = None,
+        parameters: Optional[IndexingParameters] = None,
+        field_mappings: Optional[List[FieldMapping]] = None,
+        output_field_mappings: Optional[List[FieldMapping]] = None,
+        is_disabled: bool = False,
+        e_tag: Optional[str] = None,
+        encryption_key: Optional[SearchResourceEncryptionKey] = None,
+        cache: Optional[SearchIndexerCache] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the indexer. Required.
+        :paramtype name: str
+        :keyword description: The description of the indexer.
+        :paramtype description: str
+        :keyword data_source_name: The name of the datasource from which this indexer reads data.
+         Required.
+        :paramtype data_source_name: str
+        :keyword skillset_name: The name of the skillset executing with this indexer.
+        :paramtype skillset_name: str
+        :keyword target_index_name: The name of the index to which this indexer writes data. Required.
+        :paramtype target_index_name: str
+        :keyword schedule: The schedule for this indexer.
+        :paramtype schedule: ~azure.search.documents.indexes.models.IndexingSchedule
+        :keyword parameters: Parameters for indexer execution.
+        :paramtype parameters: ~azure.search.documents.indexes.models.IndexingParameters
+        :keyword field_mappings: Defines mappings between fields in the data source and corresponding
+         target fields in the index.
+        :paramtype field_mappings: list[~azure.search.documents.indexes.models.FieldMapping]
+        :keyword output_field_mappings: Output field mappings are applied after enrichment and
+         immediately before indexing.
+        :paramtype output_field_mappings: list[~azure.search.documents.indexes.models.FieldMapping]
+        :keyword is_disabled: A value indicating whether the indexer is disabled. Default is false.
+        :paramtype is_disabled: bool
+        :keyword e_tag: The ETag of the indexer.
+        :paramtype e_tag: str
+        :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
+         This key is used to provide an additional level of encryption-at-rest for your indexer
+         definition (as well as indexer execution status) when you want full assurance that no one, not
+         even Microsoft, can decrypt them. Once you have encrypted your indexer definition, it will
+         always remain encrypted. The search service will ignore attempts to set this property to null.
+         You can change this property as needed if you want to rotate your encryption key; Your indexer
+         definition (and indexer execution status) will be unaffected. Encryption with customer-managed
+         keys is not available for free search services, and is only available for paid services created
+         on or after January 1, 2019.
+        :paramtype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
+        :keyword cache: Adds caching to an enrichment pipeline to allow for incremental modification
+         steps without having to rebuild the index every time.
+        :paramtype cache: ~azure.search.documents.indexes.models.SearchIndexerCache
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.description = description
+        self.data_source_name = data_source_name
+        self.skillset_name = skillset_name
+        self.target_index_name = target_index_name
+        self.schedule = schedule
+        self.parameters = parameters
+        self.field_mappings = field_mappings
+        self.output_field_mappings = output_field_mappings
+        self.is_disabled = is_disabled
+        self.e_tag = e_tag
+        self.encryption_key = encryption_key
+        self.cache = cache
+
+    def _to_generated(self):
+        return _SearchIndexer(
+            name=self.name,
+            description=self.description,
+            data_source_name=self.data_source_name,
+            skillset_name=self.skillset_name,
+            target_index_name=self.target_index_name,
+            schedule=self.schedule,
+            parameters=self.parameters,
+            field_mappings=self.field_mappings,
+            output_field_mappings=self.output_field_mappings,
+            is_disabled=self.is_disabled,
+            e_tag=self.e_tag,
+            encryption_key=(
+                self.encryption_key._to_generated() if self.encryption_key else None  # pylint:disable=protected-access
+            ),
+            cache=self.cache,
+        )
+
+    @classmethod
+    def _from_generated(cls, search_indexer) -> Optional[Self]:
+        if not search_indexer:
+            return None
+        return cls(
+            name=search_indexer.name,
+            description=search_indexer.description,
+            data_source_name=search_indexer.data_source_name,
+            skillset_name=search_indexer.skillset_name,
+            target_index_name=search_indexer.target_index_name,
+            schedule=search_indexer.schedule,
+            parameters=search_indexer.parameters,
+            field_mappings=search_indexer.field_mappings,
+            output_field_mappings=search_indexer.output_field_mappings,
+            is_disabled=search_indexer.is_disabled,
+            e_tag=search_indexer.e_tag,
+            # pylint:disable=protected-access
+            encryption_key=SearchResourceEncryptionKey._from_generated(search_indexer.encryption_key),
+            cache=search_indexer.cache,
+        )
+
+    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+        """Return the JSON that would be sent to server from this model.
+        :param bool keep_readonly: If you want to serialize the readonly attributes
+        :returns: A dict JSON compatible object
+        :rtype: dict
+        """
+        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)  # type: ignore
+
+    @classmethod
+    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
+        """Parse a str using the RestAPI syntax and return a SearchIndexer instance.
+
+        :param str data: A str using RestAPI structure. JSON by default.
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: A SearchIndexer instance
+        :rtype: SearchIndexer
+        :raises: DeserializationError if something went wrong
+        """
+        return cls._from_generated(_SearchIndexer.deserialize(data, content_type=content_type))
