@@ -7,7 +7,7 @@ import logging
 import math
 import os
 import re
-from typing import Union
+from typing import Dict, Union
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
@@ -47,6 +47,8 @@ class _AsyncRetrievalScoreEvaluator:
         queries = []
         responses = []
         contexts = []
+
+        conversation = conversation.get("messages", None)
 
         for each_turn in conversation:
             role = each_turn["role"]
@@ -112,15 +114,17 @@ class RetrievalEvaluator:
     .. code-block:: python
 
         chat_eval = RetrievalScoreEvaluator(model_config)
-        conversation = [
-            {"role": "user", "content": "What is the value of 2 + 2?"},
-            {"role": "assistant", "content": "2 + 2 = 4", "context": {
-                "citations": [
-                        {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
-                        ]
+        conversation = {
+            "messages": [
+                {"role": "user", "content": "What is the value of 2 + 2?"},
+                {"role": "assistant", "content": "2 + 2 = 4", "context": {
+                    "citations": [
+                            {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
+                            ]
+                    }
                 }
-            }
-        ]
+            ]
+        }
         result = chat_eval(conversation=conversation)
 
     **Output format**
@@ -140,11 +144,11 @@ class RetrievalEvaluator:
     def __init__(self, model_config):
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(validate_model_config(model_config))
 
-    def __call__(self, *, conversation, **kwargs):
+    def __call__(self, *, conversation: Dict, **kwargs):
         """Evaluates retrieval score chat scenario.
 
         :keyword conversation: The conversation to be evaluated.
-        :paramtype conversation: List[Dict]
+        :paramtype conversation: Dict
         :return: The scores for Chat scenario.
         :rtype: dict
         """

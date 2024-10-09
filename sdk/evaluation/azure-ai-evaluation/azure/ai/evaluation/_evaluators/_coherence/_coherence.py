@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Optional
+from typing import Dict, Optional
 
 from typing_extensions import override
 
@@ -50,7 +50,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        conversation: Optional[Dict] = None,
         **kwargs,
     ):
         """Evaluate coherence. Accepts either a query and response for a single evaluation,

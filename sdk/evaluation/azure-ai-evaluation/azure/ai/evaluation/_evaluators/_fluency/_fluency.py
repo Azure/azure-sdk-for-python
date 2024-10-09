@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Optional
+from typing import Dict, Optional
 
 from typing_extensions import override
 
@@ -51,7 +51,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        conversation: Optional[Dict] = None,
         **kwargs,
     ):
         """

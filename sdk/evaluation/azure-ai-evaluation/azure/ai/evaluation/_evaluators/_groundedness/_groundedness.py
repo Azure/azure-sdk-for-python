@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Optional
+from typing import Dict, Optional
 
 from typing_extensions import override
 
@@ -51,7 +51,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         *,
         response: Optional[str] = None,
         context: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        conversation: Optional[Dict] = None,
         **kwargs,
     ):
         """Evaluate groundedless. Accepts either a response and context a single evaluation,
