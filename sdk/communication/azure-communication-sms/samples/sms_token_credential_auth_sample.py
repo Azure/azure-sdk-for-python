@@ -26,12 +26,16 @@ from azure.identity import DefaultAzureCredential
 
 sys.path.append("..")
 
-class SmsTokenCredentialAuthSample(object):
 
+class SmsTokenCredentialAuthSample(object):
     connection_string = os.getenv("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING")
     phone_number = os.getenv("SMS_PHONE_NUMBER")
-    
+
     def sms_token_credential_auth(self):
+        if not self.connection_string or not self.phone_number:
+            raise ValueError(
+                '''Environment variables COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING and SMS_PHONE_NUMBER must be 
+                set''')
         # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
         # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
         endpoint, _ = parse_connection_str(self.connection_string)
@@ -43,13 +47,14 @@ class SmsTokenCredentialAuthSample(object):
             to=self.phone_number,
             message="Hello World via SMS")
         sms_response = sms_responses[0]
-        
-        if (sms_response.successful):
+
+        if sms_response.successful:
             print("Message with message id {} was successful sent to {}"
-            .format(sms_response.message_id, sms_response.to))
+                  .format(sms_response.message_id, sms_response.to))
         else:
             print("Message failed to send to {} with the status code {} and error: {}"
-            .format(sms_response.to, sms_response.http_status_code, sms_response.error_message))
+                  .format(sms_response.to, sms_response.http_status_code, sms_response.error_message))
+
 
 if __name__ == '__main__':
     sample = SmsTokenCredentialAuthSample()
