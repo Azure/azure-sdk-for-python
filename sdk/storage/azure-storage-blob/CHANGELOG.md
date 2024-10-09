@@ -5,7 +5,7 @@
 ### Features Added
 - Added support for service version 2025-01-05.
 - Added new enum value `BlobAccessTierNotSupportedForAccountType` to `BlobErrorCode`.
-- Added new enum values `FileShareProvisionedBandwidthDowngradeNotAllowed` and `FILE_SHARE_PROVISIONED_IOPS_DOWNGRADE_NOT_ALLOWED` to `StorageErrorCode`.
+- Added new enum values `FileShareProvisionedBandwidthDowngradeNotAllowed` and `FileShareProvisionedIopsDowngradeNotAllowed` to `StorageErrorCode`.
 - Added support for passing metadata to `upload_blob_from_url` via the new `metadata` keyword.
 - Added support for `set_immutability_policy`, `delete_immutability_policy` and `set_legal_hold` for Blob Snapshots and Versions.
 

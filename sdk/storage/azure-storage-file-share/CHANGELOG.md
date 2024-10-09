@@ -5,7 +5,7 @@
 ### Features Added
 - Added support for service version 2025-01-05.
 - Added new enum value `BlobAccessTierNotSupportedForAccountType` to `BlobErrorCode`.
-- Added new enum values `FileShareProvisionedBandwidthDowngradeNotAllowed` and `FILE_SHARE_PROVISIONED_IOPS_DOWNGRADE_NOT_ALLOWED` to `StorageErrorCode`.
+- Added new enum values `FileShareProvisionedBandwidthDowngradeNotAllowed` and `FileShareProvisionedIopsDowngradeNotAllowed` to `StorageErrorCode`.
 - Added support to specify `Premium` enum value in `access_tier` for `create_share` and `set_share_properties` APIs.
 - Added `file_permission_format` to specify permission format for File's `copy_file` API.
 - Added support for provisioned V2 billing model, including `provisioned_iops` and `provisioned_bandwidth_mibps` for 

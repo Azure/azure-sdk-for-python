@@ -5,7 +5,7 @@
 ### Features Added
 - Added support for service version 2025-01-05.
 - Added new enum value `BlobAccessTierNotSupportedForAccountType` to `BlobErrorCode`.
-- Added new enum values `FileShareProvisionedBandwidthDowngradeNotAllowed` and `FILE_SHARE_PROVISIONED_IOPS_DOWNGRADE_NOT_ALLOWED` to `StorageErrorCode`
+- Added new enum values `FileShareProvisionedBandwidthDowngradeNotAllowed` and `FileShareProvisionedIopsDowngradeNotAllowed` to `StorageErrorCode`.
 
 ## 12.12.0 (2024-09-17)
 
