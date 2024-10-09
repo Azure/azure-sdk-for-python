@@ -4,11 +4,23 @@
 
 ### Features Added
 
+- Added support for the Large Face List and Large Person Group:
+  - Added operation groups `LargeFaceListOperations` and `LargePersonGroupOperations` to `FaceAdministrationClient`.
+  - Added operations `find_similar_from_large_face_list`, `identify_from_large_person_group` and `verify_from_large_person_group` to `FaceClient`.
+  - Added models for supporting Large Face List and Large Person Group.
+- Added support for latest Detect Liveness Session API:
+  - Added operations `get_session_image` and `detect_from_session_image` to `FaceSessionClient`.
+  - Added properties `enable_session_image` and `liveness_single_modal_model` to model `CreateLivenessSessionContent`.
+  - Added model `CreateLivenessWithVerifySessionContent`.
+
 ### Breaking Changes
 
-### Bugs Fixed
+- Changed the parameter of `create_liveness_with_verify_session` from model `CreateLivenessSessionContent` to `CreateLivenessWithVerifySessionContent`.
+- Changed the enum value of `FaceDetectionModel`, `FaceRecognitionModel`, `LivenessModel` and `Versions`.
 
 ### Other Changes
+
+- Change the default service API version to `v1.2-preview.1`.
 
 ## 1.0.0b1 (2024-05-28)
 

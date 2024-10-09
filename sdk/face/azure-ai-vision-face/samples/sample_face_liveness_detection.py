@@ -41,12 +41,8 @@ from shared.helpers import beautify_json, get_logger
 class DetectLiveness:
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT
-        )
-        self.key = os.getenv(
-            CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY
-        )
+        self.endpoint = os.getenv(CONFIGURATION_NAME_FACE_API_ENDPOINT, DEFAULT_FACE_API_ENDPOINT)
+        self.key = os.getenv(CONFIGURATION_NAME_FACE_API_ACCOUNT_KEY, DEFAULT_FACE_API_ACCOUNT_KEY)
         self.logger = get_logger("sample_face_liveness_detection")
 
     def wait_for_liveness_check_request(self):
@@ -63,9 +59,7 @@ class DetectLiveness:
             "Please refer to https://learn.microsoft.com/azure/ai-services/computer-vision/tutorials/liveness"
             " and use the mobile client SDK to perform liveness detection on your mobile application."
         )
-        input(
-            "Press any key to continue when you complete these steps to run sample to get session results ..."
-        )
+        input("Press any key to continue when you complete these steps to run sample to get session results ...")
         pass
 
     def livenessSession(self):
@@ -79,9 +73,7 @@ class DetectLiveness:
             LivenessOperationMode,
         )
 
-        with FaceSessionClient(
-            endpoint=self.endpoint, credential=AzureKeyCredential(self.key)
-        ) as face_session_client:
+        with FaceSessionClient(endpoint=self.endpoint, credential=AzureKeyCredential(self.key)) as face_session_client:
             # 1. Wait for liveness check request
             self.wait_for_liveness_check_request()
 
@@ -110,17 +102,13 @@ class DetectLiveness:
 
             # 8. Query for the liveness detection result as the session is completed.
             self.logger.info("Get the liveness detection result.")
-            liveness_result = face_session_client.get_liveness_session_result(
-                created_session.session_id
-            )
+            liveness_result = face_session_client.get_liveness_session_result(created_session.session_id)
             self.logger.info(f"Result: {beautify_json(liveness_result.as_dict())}")
 
             # Furthermore, you can query all request and response for this sessions, and list all sessions you have by
             # calling `get_liveness_session_audit_entries` and `get_liveness_sessions`.
             self.logger.info("Get the audit entries of this session.")
-            audit_entries = face_session_client.get_liveness_session_audit_entries(
-                created_session.session_id
-            )
+            audit_entries = face_session_client.get_liveness_session_audit_entries(created_session.session_id)
             for idx, entry in enumerate(audit_entries):
                 self.logger.info(f"----- Audit entries: #{idx+1}-----")
                 self.logger.info(f"Entry: {beautify_json(entry.as_dict())}")
