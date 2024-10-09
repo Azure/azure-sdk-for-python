@@ -180,8 +180,8 @@ class ImageNotificationContent(NotificationContent, discriminator="image"):
     :vartype to: list[str]
     :ivar kind: Message notification type is image. Required. Image message type.
     :vartype kind: str or ~azure.communication.messages.models.IMAGE
-    :ivar caption: Optional text content.
-    :vartype caption: str
+    :ivar content: Optional text content.
+    :vartype content: str
     :ivar media_uri: A media url for the file. Required if the type is one of the supported media
      types, e.g. image. Required.
     :vartype media_uri: str
@@ -189,7 +189,7 @@ class ImageNotificationContent(NotificationContent, discriminator="image"):
 
     kind: Literal[CommunicationMessageKind.IMAGE] = rest_discriminator(name="kind")  # type: ignore
     """Message notification type is image. Required. Image message type."""
-    caption: Optional[str] = rest_field()
+    content: Optional[str] = rest_field(name="caption")
     """Optional text content."""
     media_uri: str = rest_field(name="mediaUri")
     """A media url for the file. Required if the type is one of the supported media types, e.g. image.
@@ -202,7 +202,7 @@ class ImageNotificationContent(NotificationContent, discriminator="image"):
         channel_registration_id: str,
         to: List[str],
         media_uri: str,
-        caption: Optional[str] = None,
+        content: Optional[str] = None,
     ): ...
 
     @overload
@@ -217,7 +217,7 @@ class ImageNotificationContent(NotificationContent, discriminator="image"):
 
 
 class MediaNotificationContent(NotificationContent, discriminator="image_v0"):
-    """A request to send an image notification.
+    """@deprecated A request to send an image notification.
 
     All required parameters must be populated in order to send to server.
 
@@ -244,6 +244,26 @@ class MediaNotificationContent(NotificationContent, discriminator="image_v0"):
     media_uri: str = rest_field(name="mediaUri")
     """A media url for the file. Required if the type is one of the supported media types, e.g. image.
      Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        channel_registration_id: str,
+        to: List[str],
+        media_uri: str,
+        content: Optional[str] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, kind=CommunicationMessageKind.IMAGE_V0, **kwargs)
 
 
 class MessageReceipt(_model_base.Model):
@@ -1026,7 +1046,7 @@ class WhatsAppMessageTemplateItem(MessageTemplateItem, discriminator="whatsApp")
     :vartype content: any
     :ivar kind: Message template response type is whatsApp. Required. The WhatsApp communication
      messages channel type.
-    :vartype kind: str or ~azure.communication.messages.models.WHATSAPP
+    :vartype kind: str or ~azure.communication.messages.models.WHATS_APP
     """
 
     content: Optional[Any] = rest_field()
