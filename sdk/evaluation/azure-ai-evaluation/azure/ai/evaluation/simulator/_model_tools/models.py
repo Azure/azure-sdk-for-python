@@ -351,7 +351,7 @@ class OpenAICompletionsModel(LLMBase):
 
         # Await the completion of all tasks, and propagate any exceptions
         await asyncio.gather(*tasks, return_exceptions=False)
-        if len(request_datas):
+        if request_datas:
             msg = "All inference tasks were finished, but the queue is not empty"
             raise EvaluationException(
                 message=msg,
