@@ -7,10 +7,11 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Any
+from typing_extensions import Self
 from azure.core.credentials import TokenCredential
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
-from ._configuration import AzureAIClientConfiguration as ClientConfiguration
+from ._configuration import AzureAIClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperations
 from ._client import AzureAIClient as ClientGenerated
@@ -49,7 +50,7 @@ class AzureAIClient(ClientGenerated):
 
         # For Endpoints operations (enumerating connections, getting SAS tokens)
         _endpoint1 = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
-        self._config1 = ClientConfiguration(
+        self._config1 = AzureAIClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -76,11 +77,11 @@ class AzureAIClient(ClientGenerated):
                 policies.SensitiveHeaderCleanupPolicy(**kwargs1) if self._config1.redirect_policy else None,
                 self._config1.http_logging_policy,
             ]
-        self._client1: PipelineClient = PipelineClient(base_url=_endpoint1, policies=_policies1, **kwargs1)
+        self._client1 = PipelineClient(base_url=_endpoint1, policies=_policies1, **kwargs1)
 
         # For Agents operations
         _endpoint2 = f"{endpoint}/agents/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
-        self._config2 = ClientConfiguration(
+        self._config2 = AzureAIClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -107,11 +108,11 @@ class AzureAIClient(ClientGenerated):
                 policies.SensitiveHeaderCleanupPolicy(**kwargs2) if self._config2.redirect_policy else None,
                 self._config2.http_logging_policy,
             ]
-        self._client2: PipelineClient = PipelineClient(base_url=_endpoint2, policies=_policies2, **kwargs2)
+        self._client2 = PipelineClient(base_url=_endpoint2, policies=_policies2, **kwargs2)
 
         # For Cloud Evaluations operations
         _endpoint3 = f"{endpoint}/raisvc/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
-        self._config3 = ClientConfiguration(
+        self._config3 = AzureAIClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -138,7 +139,7 @@ class AzureAIClient(ClientGenerated):
                 policies.SensitiveHeaderCleanupPolicy(**kwargs3) if self._config3.redirect_policy else None,
                 self._config3.http_logging_policy,
             ]
-        self._client3: PipelineClient = PipelineClient(base_url=_endpoint3, policies=_policies3, **kwargs3)
+        self._client3 = PipelineClient(base_url=_endpoint3, policies=_policies3, **kwargs3)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -148,6 +149,23 @@ class AzureAIClient(ClientGenerated):
         self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
         self.inference = InferenceOperations(self)
+
+    def close(self) -> None:
+        self._client1.close()
+        self._client2.close()
+        self._client3.close()
+
+    def __enter__(self) -> Self:
+        self._client1.__enter__()
+        self._client2.__enter__()
+        self._client3.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self._client1.__exit__(*exc_details)
+        self._client2.__exit__(*exc_details)
+        self._client3.__exit__(*exc_details)
+
 
     @classmethod
     def from_connection_string(cls, connection: str, credential: "TokenCredential", **kwargs) -> "AzureAIClient":

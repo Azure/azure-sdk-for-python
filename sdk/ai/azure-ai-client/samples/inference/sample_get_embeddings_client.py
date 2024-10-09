@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import os
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
