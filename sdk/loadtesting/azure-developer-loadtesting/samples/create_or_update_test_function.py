@@ -32,7 +32,9 @@ load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
 # Build a client through AAD and resource endpoint
-client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestAdministrationClient(
+    credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT
+)
 
 # ID to be assigned to test
 TEST_ID = "my-sdk-test-id"
@@ -42,7 +44,7 @@ result = client.create_or_update_test(
     {
         "description": "",
         "displayName": "My New Load Test",
-        "loadTestConfig": {
+        "loadTestConfiguration": {
             "engineInstances": 1,
             "splitAllCSVs": False,
         },
@@ -52,33 +54,25 @@ result = client.create_or_update_test(
                     "clientmetric": "response_time_ms",
                     "aggregate": "avg",
                     "condition": ">",
-                    "value": 300
+                    "value": 300,
                 },
                 "condition2": {
                     "clientmetric": "error",
                     "aggregate": "percentage",
                     "condition": ">",
-                    "value": 50
+                    "value": 50,
                 },
                 "condition3": {
                     "clientmetric": "latency",
                     "aggregate": "avg",
                     "condition": ">",
                     "value": 200,
-                    "requestName": "GetCustomerDetails"
-                }
+                    "requestName": "GetCustomerDetails",
+                },
             }
         },
-        "secrets": {
-            "secret1": {
-                "value": "https://sdk-testing-keyvault.vault.azure.net/secrets/sdk-secret",
-                "type": "AKV_SECRET_URI"
-            }
-        },
-        "environmentVariables": {
-            "my-varaible": "value"
-        }
-    }
+        "environmentVariables": {"my-variable": "value"},
+    },
 )
 
 print(result)
