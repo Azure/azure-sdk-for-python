@@ -24,7 +24,12 @@ MAX_TIME_TAKEN_RECORDS = 20_000
 def get_model_class_from_url(
     endpoint_url: str,
 ) -> Union[Type["OpenAIChatCompletionsModel"], Type["OpenAICompletionsModel"]]:
-    """Convert an endpoint URL to the appropriate model class."""
+    """Convert an endpoint URL to the appropriate model class.
+
+    :param str endpoint_url: The endpoint url
+    :returns: The corresponding model class
+    :rtype: Union[Type[OpenAIChatCompletionsModel], Type[OpenAICompletionsModel]]
+    """
     endpoint_path = urlparse(endpoint_url).path  # remove query params
 
     if endpoint_path.endswith("chat/completions"):
@@ -82,14 +87,12 @@ class LLMBase(ABC):
         session: AsyncHttpPipeline,
         **request_params,
     ) -> dict:
-        """
-        Query the model a single time with a prompt.
+        """Query the model a single time with a prompt.
 
-        Parameters
-        ----------
-        prompt: Prompt str to query model with.
-        session: AsyncHttpPipeline object to use for the request.
-        **request_params: Additional parameters to pass to the request.
+        :param str prompt: Prompt str to query model with.
+        :param AsyncHttpPipeline session: AsyncHttpPipeline to use for the request.
+        :returns: The completion
+        :rtype: dict
         """
         request_data = self.format_request_data(prompt, **request_params)
         return await self.request_api(
@@ -265,8 +268,12 @@ class OpenAICompletionsModel(LLMBase):
         return {param: getattr(self, param) for param in self.model_param_names if getattr(self, param) is not None}
 
     def format_request_data(self, prompt: Dict[str, str], **request_params) -> Dict[str, str]:  # type: ignore[override]
-        """
-        Format the request data for the OpenAI API.
+        """Format the request data for the OpenAI API.
+
+        :param prompt: Collection of prompts to format
+        :type prompt: Dict[str, str]
+        :returns: The formatted request data
+        :rtype: Dict[str, str]
         """
         request_data = {"prompt": prompt, **self.get_model_params()}
         request_data.update(request_params)
@@ -279,16 +286,16 @@ class OpenAICompletionsModel(LLMBase):
         role: str = "assistant",
         **request_params,
     ) -> dict:
-        """
-        Query the model a single time with a message.
+        """Query the model a single time with a message.
 
-        Parameters
-        ----------
-        messages: List of messages to query the model with.
-        Expected format: [{"role": "user", "content": "Hello!"}, ...]
-        session: AsyncHttpPipeline object to query the model with.
-        role: Role of the user sending the message.
-        request_params: Additional parameters to pass to the model.
+        Additional keyword arguments are forwarded to the model.
+
+        :param List[dict] messages: List of messages to query the model with.
+            Expected format: [{"role": "user", "content": "Hello!"}, ...]
+        :param AsyncHttpPipeline session: AsyncHttpPipeline object to query the model with.
+        :param str role: Role of the user sending the message.
+        :returns: The conversation completion
+        :rtype: dict
         """
         prompt = []
         for message in messages:
@@ -311,17 +318,18 @@ class OpenAICompletionsModel(LLMBase):
         request_error_rate_threshold: float = 0.5,
         **request_params,
     ) -> List[dict]:
-        """
-        Run a batch of prompts through the model and return the results in the order given.
+        """Run a batch of prompts through the model and return the results in the order given.
 
-        Parameters
-        ----------
-        prompts: List of prompts to query the model with.
-        session: AsyncHttpPipeline to use for the request.
-        api_call_max_parallel_count: Number of parallel requests to make to the API.
-        api_call_delay_seconds: Number of seconds to wait between API requests.
-        request_error_rate_threshold: Maximum error rate allowed before raising an error.
-        request_params: Additional parameters to pass to the API.
+        Additional parameters are passed to the API.
+
+        :param prompts: List of prompts to query the model with.
+        :type prompts: Dict[str, str]
+        :param AsyncHttpPipeline session: AsyncHttpPipeline to use for the request.
+        :param int api_call_max_parallel_count: Number of parallel requests to make to the API.
+        :param float api_call_delay_seconds: Number of seconds to wait between API requests.
+        :param float request_error_rate_threshold: Maximum error rate allowed before raising an error.
+        :returns: The list of completions.
+        :rtype: List[dict]
         """
         if api_call_max_parallel_count > 1:
             self.logger.info("Using %d parallel workers to query the API..", api_call_max_parallel_count)
@@ -377,9 +385,17 @@ class OpenAICompletionsModel(LLMBase):
         api_call_delay_seconds: float = 0.1,
         request_error_rate_threshold: float = 0.5,
     ) -> None:
-        """
-        Query the model for all prompts given as a list and append the output to output_collector.
-        No return value, output_collector is modified in place.
+        """Query the model for all prompts given as a list and append the output to output_collector.
+
+        .. note::
+
+            No return value, output_collector is modified in place.
+
+        :param List[dict] request_datas: The data to send
+        :param List output_collector: The output parameter that results are collected into
+        :param AsyncHttpPipeline session: The session to make requests with
+        :param float api_call_delay_seconds: The amount of time to delay between consecutive calls to avoid timeouts.
+        :param float request_error_rate_threshold: Error rate above which this method throws.
         """
         logger_tasks: List = []  # to await for logging to finish
 
@@ -437,13 +453,13 @@ class OpenAICompletionsModel(LLMBase):
         session: AsyncHttpPipeline,
         request_data: dict,
     ) -> dict:
-        """
-        Request the model with a body of data.
+        """Request the model with a body of data.
 
-        Parameters
-        ----------
-        session: HTTPS Session for invoking the endpoint.
-        request_data: Prompt dictionary to query the model with. (Pass {"prompt": prompt} instead of prompt.)
+        :param AsyncHttpPipeline session: Session for invoking the endpoint.
+        :param dict request_data: Prompt dictionary to query the model with.
+            (Pass {"prompt": prompt} instead of prompt.)
+        :returns: The response
+        :rtype: dict
         """
 
         self._log_request(request_data)
@@ -541,13 +557,14 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         """
         Query the model a single time with a message.
 
-        Parameters
-        ----------
-        messages: List of messages to query the model with.
-        Expected format: [{"role": "user", "content": "Hello!"}, ...]
-        session: AsyncHttpPipeline object to query the model with.
-        role: Not used for this model, since it is a chat model.
-        request_params: Additional parameters to pass to the model.
+        Additional parameters are passed to the model.
+
+        :param List[dict] messages: List of messages to query the model with.
+            Expected format: [{"role": "user", "content": "Hello!"}, ...]
+        :param AsyncHttpPipeline session: AsyncHttpPipeline object to query the model with.
+        :param str role: Not used for this model, since it is a chat model.
+        :returns: The conversation completion
+        :rtype: dict
         """
         request_data = self.format_request_data(
             messages=messages,
@@ -564,14 +581,18 @@ class OpenAIChatCompletionsModel(OpenAICompletionsModel):
         session: AsyncHttpPipeline,
         **request_params,
     ) -> dict:
-        """
-        Query a ChatCompletions model with a single prompt.  Note: entire message will be inserted into a "system" call.
+        """Query a ChatCompletions model with a single prompt.
 
-        Parameters
-        ----------
-        prompt: Prompt str to query model with.
-        session: AsyncHttpPipeline object to use for the request.
-        **request_params: Additional parameters to pass to the request.
+        Additional parameters are forwarded to the completion request.
+
+        .. note::
+
+            Entire message will be inserted into a "system" call.
+
+        :param str prompt: Prompt str to query model with.
+        :param AsyncHttpPipeline session: AsyncHttpPipeline object to use for the request.
+        :returns: The completion
+        :rtype: dict
         """
         messages = [{"role": "system", "content": prompt}]
 
