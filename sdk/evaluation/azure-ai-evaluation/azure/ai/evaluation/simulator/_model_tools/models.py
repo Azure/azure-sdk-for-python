@@ -183,7 +183,7 @@ class LLMBase(ABC):
 # ===========================================================
 
 
-class OpenAICompletionsModel(LLMBase):
+class OpenAICompletionsModel(LLMBase):  # pylint: disable=too-many-instance-attributes
     """
     Object for calling a Completions-style API for OpenAI models.
     """
