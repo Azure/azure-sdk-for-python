@@ -199,7 +199,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+            _request, stream=_stream, decompress=_decompress, **kwargs
         )
 
         response = pipeline_response.http_response
