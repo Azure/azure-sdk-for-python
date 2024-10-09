@@ -33,9 +33,24 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     return $startsWith
   }
 
+  $changedServices = @()
+  foreach($file in $diffObj.ChangedFiles) {
+    $pathComponents = $file -split "/"
+    # handle changes only in sdk/<service>/<file>/<extension>
+    if ($pathComponents.Length -eq 3 -and $pathComponents[0] -eq "sdk") {
+      $changedServices += $pathComponents[1]
+    }
+
+    # handle any changes under sdk/<file>.<extension>
+    if ($pathComponents.Length -eq 2 -and $pathComponents[0] -eq "sdk") {
+      changedServices += "template"
+    }
+  }
+
   $toolChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("tool")}
   $engChanged = $diffObj.ChangedFiles | Where-Object { $_.StartsWith("eng")}
   $othersChanged = $diffObj.ChangedFiles | Where-Object { isOther($_) }
+  $changedServices = $changedServices | Get-Unique
 
   if ($toolChanged) {
     $additionalPackages = @(
@@ -73,8 +88,17 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
     $additionalValidationPackages += $additionalPackages
   }
 
+  foreach ($changedService in $changedServices) {
+    Write-Host "Changed service: $changedService"
+    $additionalPackages = $AllPkgProps | Where-Object { $_.ServiceDirectory -eq $changedService }
+
+    $additionalPackages | % { Write-Host $_.Name }
+    $additionalValidationPackages += $additionalPackages
+  }
+
   $uniqueResultSet = @()
-  foreach($pkg in $additionalPackages) {
+  foreach ($pkg in $additionalValidationPackages) {
+    Write-Host "Examining $($pkg.Name)"
     if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
       $pkg.IncludedForValidation = $true
       $uniqueResultSet += $pkg
@@ -82,7 +106,7 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   }
 
   Write-Host "Returning additional packages for validation: $($uniqueResultSet.Count)"
-  foreach($pkg in $uniqueResultSet) {
+  foreach ($pkg in $uniqueResultSet) {
     Write-Host "  - $($pkg.Name)"
   }
 
