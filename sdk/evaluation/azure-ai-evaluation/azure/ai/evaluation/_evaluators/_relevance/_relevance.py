@@ -39,14 +39,14 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     """
 
     # Constants must be defined within eval's directory to be save/loadable
-    PROMPTY_FILE = "relevance.prompty"
-    RESULT_KEY = "gpt_relevance"
+    _PROMPTY_FILE = "relevance.prompty"
+    _RESULT_KEY = "gpt_relevance"
 
     @override
     def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
     @override
     def __call__(

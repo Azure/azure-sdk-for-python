@@ -27,19 +27,19 @@ except ImportError:
 
 class _AsyncRetrievalScoreEvaluator:
     # Constants must be defined within eval's directory to be save/loadable
-    PROMPTY_FILE = "retrieval.prompty"
-    LLM_CALL_TIMEOUT = 600
-    DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
+    _PROMPTY_FILE = "retrieval.prompty"
+    _LLM_CALL_TIMEOUT = 600
+    _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         prompty_model_config = construct_prompty_model_config(
             model_config,
-            self.DEFAULT_OPEN_API_VERSION,
+            self._DEFAULT_OPEN_API_VERSION,
             USER_AGENT,
         )
 
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
     async def __call__(self, *, conversation, **kwargs):
@@ -72,7 +72,7 @@ class _AsyncRetrievalScoreEvaluator:
                 history.append({"user": query, "assistant": answer})
 
                 llm_output = await self._flow(
-                    query=query, history=history, documents=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs
+                    query=query, history=history, documents=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
                 )
                 score = math.nan
                 if llm_output:
