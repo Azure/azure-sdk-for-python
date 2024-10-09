@@ -4,6 +4,7 @@
 
 import os
 from typing import Optional
+
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
@@ -51,7 +52,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         query: Optional[str] = None,
         response: Optional[str] = None,
         conversation: Optional[dict] = None,
-        **kwargs
+        **kwargs,
     ):
         """
         Evaluate fluency. Accepts either a query and response for a single evaluation,
@@ -67,6 +68,6 @@ class FluencyEvaluator(PromptyEvaluatorBase):
             to be dictionaries with keys "content" and "role".
         :paramtype conversation: Optional[Dict]
         :return: The fluency score.
-        :rtype: dict
+        :rtype: Dict[str, float]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

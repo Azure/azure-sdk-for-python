@@ -3,19 +3,20 @@
 # ---------------------------------------------------------
 import asyncio
 import importlib.metadata
+import math
 import re
 import time
-import math
 from ast import literal_eval
-from typing import Dict, List
+from typing import Dict, List, Optional, Union, cast
 from urllib.parse import urlparse
 
 import jwt
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._http_utils import get_async_http_client
+from azure.ai.evaluation._http_utils import AsyncHttpPipeline, get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject
 from azure.core.credentials import TokenCredential
+from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .constants import (
     CommonConstants,
@@ -52,7 +53,13 @@ def get_common_headers(token: str) -> Dict:
     }
 
 
-async def ensure_service_availability(rai_svc_url: str, token: str, capability: str = None) -> None:
+def get_async_http_client_with_timeout() -> AsyncHttpPipeline:
+    return get_async_http_client().with_policies(
+        retry_policy=AsyncRetryPolicy(timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT)
+    )
+
+
+async def ensure_service_availability(rai_svc_url: str, token: str, capability: Optional[str] = None) -> None:
     """Check if the Responsible AI service is available in the region and has the required capability, if relevant.
 
     :param rai_svc_url: The Responsible AI service URL.
@@ -67,9 +74,7 @@ async def ensure_service_availability(rai_svc_url: str, token: str, capability: 
     svc_liveness_url = rai_svc_url + "/checkannotation"
 
     async with get_async_http_client() as client:
-        response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-            svc_liveness_url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-        )
+        response = await client.get(svc_liveness_url, headers=headers)
 
     if response.status_code != 200:
         msg = f"RAI service is not available in this region. Status Code: {response.status_code}"
@@ -153,16 +158,14 @@ async def submit_request(query: str, response: str, metric: str, rai_svc_url: st
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token)
 
-    async with get_async_http_client() as client:
-        response = await client.post(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-            url, json=payload, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-        )
+    async with get_async_http_client_with_timeout() as client:
+        http_response = await client.post(url, json=payload, headers=headers)
 
-    if response.status_code != 202:
-        print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], response.text))
-        response.raise_for_status()
+    if http_response.status_code != 202:
+        print("Fail evaluating '%s' with error message: %s" % (payload["UserTextList"], http_response.text()))
+        http_response.raise_for_status()
 
-    result = response.json()
+    result = http_response.json()
     operation_id = result["location"].split("/")[-1]
     return operation_id
 
@@ -189,10 +192,8 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         token = await fetch_or_reuse_token(credential, token)
         headers = get_common_headers(token)
 
-        async with get_async_http_client() as client:
-            response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-                url, headers=headers, timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT
-            )
+        async with get_async_http_client_with_timeout() as client:
+            response = await client.get(url, headers=headers)
 
         if response.status_code == 200:
             return response.json()
@@ -208,7 +209,7 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
 
 def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     batch_response: List[Dict], metric_name: str
-) -> Dict:
+) -> Dict[str, Union[str, float]]:
     """Parse the annotation response from Responsible AI service for a content harm evaluation.
 
     :param batch_response: The annotation response from Responsible AI service.
@@ -216,7 +217,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     :param metric_name: The evaluation metric to use.
     :type metric_name: str
     :return: The parsed annotation result.
-    :rtype: List[List[Dict]]
+    :rtype: Dict[str, Union[str, float]]
     """
     # non-numeric metrics
     if metric_name in {EvaluationMetrics.PROTECTED_MATERIAL, _InternalEvaluationMetrics.ECI, EvaluationMetrics.XPIA}:
@@ -248,7 +249,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
     return _parse_content_harm_response(batch_response, metric_name)
 
 
-def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -> Dict:
+def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -> Dict[str, Union[str, float]]:
     """Parse the annotation response from Responsible AI service for a content harm evaluation.
 
     :param batch_response: The annotation response from Responsible AI service.
@@ -256,7 +257,7 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
     :param metric_name: The evaluation metric to use.
     :type metric_name: str
     :return: The parsed annotation result.
-    :rtype: List[List[Dict]]
+    :rtype: Dict[str, Union[str, float]]
     """
     # Fix the metric name if it's "hate_fairness"
     # Eventually we will remove this fix once the RAI service is updated
@@ -264,7 +265,7 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
     if key == EvaluationMetrics.HATE_FAIRNESS:
         key = EvaluationMetrics.HATE_UNFAIRNESS
 
-    result = {key: math.nan, key + "_score": math.nan, key + "_reason": ""}
+    result: Dict[str, Union[str, float]] = {key: math.nan, key + "_score": math.nan, key + "_reason": ""}
 
     response = batch_response[0]
     if metric_name not in response:
@@ -336,14 +337,13 @@ async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: st
     """
     headers = get_common_headers(token)
 
-    async with get_async_http_client() as client:
-        response = await client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
+    async with get_async_http_client_with_timeout() as client:
+        response = await client.get(
             f"https://management.azure.com/subscriptions/{azure_ai_project['subscription_id']}/"
             f"resourceGroups/{azure_ai_project['resource_group_name']}/"
             f"providers/Microsoft.MachineLearningServices/workspaces/{azure_ai_project['project_name']}?"
             f"api-version=2023-08-01-preview",
             headers=headers,
-            timeout=CommonConstants.DEFAULT_HTTP_TIMEOUT,
         )
 
     if response.status_code != 200:
@@ -360,7 +360,7 @@ async def _get_service_discovery_url(azure_ai_project: AzureAIProject, token: st
     return f"{base_url.scheme}://{base_url.netloc}"
 
 
-async def get_rai_svc_url(project_scope: dict, token: str) -> str:
+async def get_rai_svc_url(project_scope: AzureAIProject, token: str) -> str:
     """Get the Responsible AI service URL
 
     :param project_scope: The Azure AI project scope details.
@@ -384,7 +384,7 @@ async def get_rai_svc_url(project_scope: dict, token: str) -> str:
     return rai_url
 
 
-async def fetch_or_reuse_token(credential: TokenCredential, token: str = None) -> str:
+async def fetch_or_reuse_token(credential: TokenCredential, token: Optional[str] = None) -> str:
     """Get token. Fetch a new token if the current token is near expiry
 
        :param credential: The Azure authentication credential.
@@ -394,29 +394,26 @@ async def fetch_or_reuse_token(credential: TokenCredential, token: str = None) -
        :type token: str
        :return: The Azure authentication token.
     """
-    acquire_new_token = True
-    try:
-        if token:
-            # Decode the token to get its expiration time
+    if token:
+        # Decode the token to get its expiration time
+        try:
             decoded_token = jwt.decode(token, options={"verify_signature": False})
+        except jwt.PyJWTError:
+            pass
+        else:
             exp_time = decoded_token["exp"]
             current_time = time.time()
 
-            # Check if the token is near expiry
+            # Return current token if not near expiry
             if (exp_time - current_time) >= 300:
-                acquire_new_token = False
-    except Exception:  # pylint: disable=broad-exception-caught
-        pass
+                return token
 
-    if acquire_new_token:
-        token = credential.get_token("https://management.azure.com/.default").token
-
-    return token
+    return credential.get_token("https://management.azure.com/.default").token
 
 
 async def evaluate_with_rai_service(
     query: str, response: str, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
-):
+) -> Dict[str, Union[str, float]]:
     """ "Evaluate the content safety of the response using Responsible AI service
 
        :param query: The query to evaluate.
@@ -431,7 +428,7 @@ async def evaluate_with_rai_service(
        :type credential:
     ~azure.core.credentials.TokenCredential
        :return: The parsed annotation result.
-       :rtype: List[List[Dict]]
+       :rtype: Dict[str, Union[str, float]]
     """
 
     # Get RAI service URL from discovery service and check service availability
@@ -441,7 +438,7 @@ async def evaluate_with_rai_service(
 
     # Submit annotation request and fetch result
     operation_id = await submit_request(query, response, metric_name, rai_svc_url, token)
-    annotation_response = await fetch_result(operation_id, rai_svc_url, credential, token)
+    annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
     result = parse_response(annotation_response, metric_name)
 
     return result
