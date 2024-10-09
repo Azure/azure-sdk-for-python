@@ -272,7 +272,7 @@ class RouteOperations(RouteOperationsGenerated):
                 elif isinstance(route_point, tuple):
                     coordinates.append(f"{route_point[0]},{route_point[1]}")
             query_items = ":".join(coordinates)
-        
+
         supporting_points = kwargs.pop('supporting_points', None)
         avoid_vignette = kwargs.pop('avoid_vignette', None)
         allow_vignette = kwargs.pop('allow_vignette', None)
@@ -464,7 +464,7 @@ class RouteOperations(RouteOperationsGenerated):
             query = [coordinates[0], coordinates[1]]
         elif isinstance(coordinates, LatLongPair) and coordinates.latitude and coordinates.longitude:
             query = [coordinates.latitude, coordinates.longitude]
-        
+
         return super().get_route_range(
             format=ResponseFormat.JSON,
             query=query,

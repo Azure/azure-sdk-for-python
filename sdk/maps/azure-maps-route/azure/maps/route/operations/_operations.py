@@ -5247,10 +5247,10 @@ class RouteOperations:
            {
                "batchItems": [
                    { "query":
-        "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
-        },
+           "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
+           },
                    { "query":
-        "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
+           "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
                    { "query": "?query=48.923159,-122.557362:32.621279,-116.840362" }
                ]
            }
@@ -5477,10 +5477,10 @@ class RouteOperations:
            {
                "batchItems": [
                    { "query":
-        "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
-        },
+           "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
+           },
                    { "query":
-        "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
+           "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
                    { "query": "?query=48.923159,-122.557362:32.621279,-116.840362" }
                ]
            }
@@ -5705,10 +5705,10 @@ class RouteOperations:
            {
                "batchItems": [
                    { "query":
-        "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
-        },
+           "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
+           },
                    { "query":
-        "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
+           "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
                    { "query": "?query=48.923159,-122.557362:32.621279,-116.840362" }
                ]
            }
