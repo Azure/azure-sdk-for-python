@@ -89,7 +89,6 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
   }
 
   foreach ($changedService in $changedServices) {
-    Write-Host "Changed service: $changedService"
     $additionalPackages = $AllPkgProps | Where-Object { $_.ServiceDirectory -eq $changedService }
 
     $additionalPackages | % { Write-Host $_.Name }
@@ -98,7 +97,6 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
 
   $uniqueResultSet = @()
   foreach ($pkg in $additionalValidationPackages) {
-    Write-Host "Examining $($pkg.Name)"
     if ($uniqueResultSet -notcontains $pkg -and $LocatedPackages -notcontains $pkg) {
       $pkg.IncludedForValidation = $true
       $uniqueResultSet += $pkg
