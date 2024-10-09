@@ -7,7 +7,8 @@ import pytest
 import sys
 import unittest
 
-if sys.implementation.name != "pypy":
+# Skip for Python v3.13 until https://github.com/psycopg/psycopg2/pull/1729 is resolved
+if sys.implementation.name != "pypy" and sys.version_info <= (3, 13):
     from opentelemetry.instrumentation.psycopg2 import (
         Psycopg2Instrumentor,
     )
