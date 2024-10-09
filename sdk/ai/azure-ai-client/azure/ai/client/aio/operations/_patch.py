@@ -98,7 +98,7 @@ class InferenceOperations:
 
         return client
 
-    async def get_async_azure_openai_client(self) -> "AzureOpenAI":
+    async def get_azure_openai_client(self) -> "AzureOpenAI":
         endpoint = await self.outer_instance.endpoints.get_default(
             endpoint_type=EndpointType.AZURE_OPEN_AI, populate_secrets=True
         )
