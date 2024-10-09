@@ -468,7 +468,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         callback = kwargs.pop("cls", deserialization_callback)
         return cast(
             DocumentTranslationLROPoller[ItemPaged[DocumentStatus]],
-            super()._begin_start_translation(
+            super()._begin_translation(
                 body=inputs,
                 polling=DocumentTranslationLROPollingMethod(
                     timeout=polling_interval,
