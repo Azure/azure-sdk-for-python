@@ -22,7 +22,6 @@ extends:
       Clouds: 'Public'
       SupportedClouds: 'Public,UsGov'
       CloudConfig:
-        Public:
         #Canary:
         #  ServiceConnection: azure-sdk-tests-public
         #  Location: 'eastus2euap'
