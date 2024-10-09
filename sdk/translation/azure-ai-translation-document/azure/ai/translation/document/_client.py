@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING, Union
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -97,7 +98,7 @@ class DocumentTranslationClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "DocumentTranslationClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
@@ -177,7 +178,7 @@ class SingleDocumentTranslationClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "SingleDocumentTranslationClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

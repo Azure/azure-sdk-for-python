@@ -1,6 +1,7 @@
 ## Release History
 
 ### 4.7.1 (Unreleased)
+This version and all future versions will support Python 3.13.
 
 #### Features Added
 * SDK will now retry all ServiceRequestErrors (failing outgoing requests) before failing. Default number of retries is 3. See [PR 36514](https://github.com/Azure/azure-sdk-for-python/pull/36514).
