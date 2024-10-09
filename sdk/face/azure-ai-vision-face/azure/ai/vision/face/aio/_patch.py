@@ -263,20 +263,10 @@ class FaceSessionClient(FaceSessionClientGenerated):
         **kwargs: Any,
     ) -> _models.CreateLivenessWithVerifySessionResult: ...
 
-    @overload
-    async def create_liveness_with_verify_session(
-        self,
-        body: IO[bytes],
-        *,
-        verify_image: Union[bytes, None],
-        content_type: str = "application/json",
-        **kwargs: Any,
-    ) -> _models.CreateLivenessWithVerifySessionResult: ...
-
     @distributed_trace_async
     async def create_liveness_with_verify_session(
         self,
-        body: Union[_models.CreateLivenessWithVerifySessionContent, JSON, IO[bytes]],
+        body: Union[_models.CreateLivenessWithVerifySessionContent, JSON],
         *,
         verify_image: Union[bytes, None],
         **kwargs: Any,
@@ -298,6 +288,9 @@ class FaceSessionClient(FaceSessionClientGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if verify_image is not None:
+            if not isinstance(body, _models.CreateLivenessWithVerifySessionContent):
+            # Convert body to CreateLivenessWithVerifySessionContent if necessary
+                body = _models.CreateLivenessWithVerifySessionContent(**body)
             request_body = (
                 _models._models.CreateLivenessWithVerifySessionMultipartContent(  # pylint: disable=protected-access
                     parameters=body,
