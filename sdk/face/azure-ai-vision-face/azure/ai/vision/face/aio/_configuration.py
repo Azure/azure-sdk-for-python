@@ -14,11 +14,10 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class FaceAdministrationClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class FaceAdministrationClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for FaceAdministrationClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -132,7 +131,7 @@ class FaceClientConfiguration:  # pylint: disable=too-many-instance-attributes
             self.authentication_policy = self._infer_policy(**kwargs)
 
 
-class FaceSessionClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class FaceSessionClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for FaceSessionClient.
 
     Note that all parameters used to create this instance are saved as instance

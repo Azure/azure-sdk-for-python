@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -37,7 +37,7 @@ from .._vendor import FaceClientMixinABC, FaceSessionClientMixinABC, prepare_mul
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 _Unset: Any = object()
 T = TypeVar("T")
@@ -1337,7 +1337,7 @@ class LargeFaceListOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(
         self, large_face_list_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Create an empty Large Face List with user-specified largeFaceListId, name, an optional userData
@@ -1361,7 +1361,7 @@ class LargeFaceListOperations:
         """
 
     @overload
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(
         self,
         large_face_list_id: str,
         *,
@@ -1403,7 +1403,7 @@ class LargeFaceListOperations:
         """
 
     @overload
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(
         self, large_face_list_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Create an empty Large Face List with user-specified largeFaceListId, name, an optional userData
@@ -1466,7 +1466,7 @@ class LargeFaceListOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1535,7 +1535,7 @@ class LargeFaceListOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1592,7 +1592,7 @@ class LargeFaceListOperations:
         :rtype: ~azure.ai.vision.face.models.LargeFaceList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1645,7 +1645,7 @@ class LargeFaceListOperations:
         return deserialized  # type: ignore
 
     @overload
-    def update(  # pylint: disable=inconsistent-return-statements
+    def update(
         self, large_face_list_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Please refer to
@@ -1666,7 +1666,7 @@ class LargeFaceListOperations:
         """
 
     @overload
-    def update(  # pylint: disable=inconsistent-return-statements
+    def update(
         self,
         large_face_list_id: str,
         *,
@@ -1696,7 +1696,7 @@ class LargeFaceListOperations:
         """
 
     @overload
-    def update(  # pylint: disable=inconsistent-return-statements
+    def update(
         self, large_face_list_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Please refer to
@@ -1744,7 +1744,7 @@ class LargeFaceListOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1824,7 +1824,7 @@ class LargeFaceListOperations:
         :rtype: list[~azure.ai.vision.face.models.LargeFaceList]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1890,7 +1890,7 @@ class LargeFaceListOperations:
         :rtype: ~azure.ai.vision.face.models.FaceTrainingResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1942,7 +1942,7 @@ class LargeFaceListOperations:
         return deserialized  # type: ignore
 
     def _train_initial(self, large_face_list_id: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2213,7 +2213,7 @@ class LargeFaceListOperations:
         :rtype: ~azure.ai.vision.face.models.AddFaceResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2319,7 +2319,7 @@ class LargeFaceListOperations:
         :rtype: ~azure.ai.vision.face.models.AddFaceResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2395,7 +2395,7 @@ class LargeFaceListOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2450,7 +2450,7 @@ class LargeFaceListOperations:
         :rtype: ~azure.ai.vision.face.models.LargeFaceListFace
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2503,7 +2503,7 @@ class LargeFaceListOperations:
         return deserialized  # type: ignore
 
     @overload
-    def update_face(  # pylint: disable=inconsistent-return-statements
+    def update_face(
         self,
         large_face_list_id: str,
         persisted_face_id: str,
@@ -2532,7 +2532,7 @@ class LargeFaceListOperations:
         """
 
     @overload
-    def update_face(  # pylint: disable=inconsistent-return-statements
+    def update_face(
         self,
         large_face_list_id: str,
         persisted_face_id: str,
@@ -2562,7 +2562,7 @@ class LargeFaceListOperations:
         """
 
     @overload
-    def update_face(  # pylint: disable=inconsistent-return-statements
+    def update_face(
         self,
         large_face_list_id: str,
         persisted_face_id: str,
@@ -2618,7 +2618,7 @@ class LargeFaceListOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2694,7 +2694,7 @@ class LargeFaceListOperations:
         :rtype: list[~azure.ai.vision.face.models.LargeFaceListFace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2766,7 +2766,7 @@ class LargePersonGroupOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(
         self, large_person_group_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Create a new Large Person Group with user-specified largePersonGroupId, name, an optional
@@ -2789,7 +2789,7 @@ class LargePersonGroupOperations:
         """
 
     @overload
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(
         self,
         large_person_group_id: str,
         *,
@@ -2830,7 +2830,7 @@ class LargePersonGroupOperations:
         """
 
     @overload
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(
         self, large_person_group_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Create a new Large Person Group with user-specified largePersonGroupId, name, an optional
@@ -2891,7 +2891,7 @@ class LargePersonGroupOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2959,7 +2959,7 @@ class LargePersonGroupOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3015,7 +3015,7 @@ class LargePersonGroupOperations:
         :rtype: ~azure.ai.vision.face.models.LargePersonGroup
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3068,7 +3068,7 @@ class LargePersonGroupOperations:
         return deserialized  # type: ignore
 
     @overload
-    def update(  # pylint: disable=inconsistent-return-statements
+    def update(
         self, large_person_group_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Please refer to
@@ -3088,7 +3088,7 @@ class LargePersonGroupOperations:
         """
 
     @overload
-    def update(  # pylint: disable=inconsistent-return-statements
+    def update(
         self,
         large_person_group_id: str,
         *,
@@ -3117,7 +3117,7 @@ class LargePersonGroupOperations:
         """
 
     @overload
-    def update(  # pylint: disable=inconsistent-return-statements
+    def update(
         self, large_person_group_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Please refer to
@@ -3163,7 +3163,7 @@ class LargePersonGroupOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3243,7 +3243,7 @@ class LargePersonGroupOperations:
         :rtype: list[~azure.ai.vision.face.models.LargePersonGroup]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3311,7 +3311,7 @@ class LargePersonGroupOperations:
         :rtype: ~azure.ai.vision.face.models.FaceTrainingResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3363,7 +3363,7 @@ class LargePersonGroupOperations:
         return deserialized  # type: ignore
 
     def _train_initial(self, large_person_group_id: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3580,7 +3580,7 @@ class LargePersonGroupOperations:
         :rtype: ~azure.ai.vision.face.models.CreatePersonResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3662,7 +3662,7 @@ class LargePersonGroupOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3716,7 +3716,7 @@ class LargePersonGroupOperations:
         :rtype: ~azure.ai.vision.face.models.LargePersonGroupPerson
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3769,7 +3769,7 @@ class LargePersonGroupOperations:
         return deserialized  # type: ignore
 
     @overload
-    def update_person(  # pylint: disable=inconsistent-return-statements
+    def update_person(
         self,
         large_person_group_id: str,
         person_id: str,
@@ -3797,7 +3797,7 @@ class LargePersonGroupOperations:
         """
 
     @overload
-    def update_person(  # pylint: disable=inconsistent-return-statements
+    def update_person(
         self,
         large_person_group_id: str,
         person_id: str,
@@ -3829,7 +3829,7 @@ class LargePersonGroupOperations:
         """
 
     @overload
-    def update_person(  # pylint: disable=inconsistent-return-statements
+    def update_person(
         self,
         large_person_group_id: str,
         person_id: str,
@@ -3886,7 +3886,7 @@ class LargePersonGroupOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3962,7 +3962,7 @@ class LargePersonGroupOperations:
         :rtype: list[~azure.ai.vision.face.models.LargePersonGroupPerson]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4189,7 +4189,7 @@ class LargePersonGroupOperations:
         :rtype: ~azure.ai.vision.face.models.AddFaceResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4298,7 +4298,7 @@ class LargePersonGroupOperations:
         :rtype: ~azure.ai.vision.face.models.AddFaceResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4379,7 +4379,7 @@ class LargePersonGroupOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4439,7 +4439,7 @@ class LargePersonGroupOperations:
         :rtype: ~azure.ai.vision.face.models.LargePersonGroupPersonFace
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4493,7 +4493,7 @@ class LargePersonGroupOperations:
         return deserialized  # type: ignore
 
     @overload
-    def update_face(  # pylint: disable=inconsistent-return-statements
+    def update_face(
         self,
         large_person_group_id: str,
         person_id: str,
@@ -4524,7 +4524,7 @@ class LargePersonGroupOperations:
         """
 
     @overload
-    def update_face(  # pylint: disable=inconsistent-return-statements
+    def update_face(
         self,
         large_person_group_id: str,
         person_id: str,
@@ -4556,7 +4556,7 @@ class LargePersonGroupOperations:
         """
 
     @overload
-    def update_face(  # pylint: disable=inconsistent-return-statements
+    def update_face(
         self,
         large_person_group_id: str,
         person_id: str,
@@ -4616,7 +4616,7 @@ class LargePersonGroupOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4780,7 +4780,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :rtype: list[~azure.ai.vision.face.models.FaceDetectionResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4909,7 +4909,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :rtype: list[~azure.ai.vision.face.models.FaceDetectionResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5091,7 +5091,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :rtype: list[~azure.ai.vision.face.models.FaceFindSimilarResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5245,7 +5245,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :rtype: ~azure.ai.vision.face.models.FaceVerificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5386,7 +5386,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :rtype: ~azure.ai.vision.face.models.FaceGroupingResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5571,7 +5571,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :rtype: list[~azure.ai.vision.face.models.FaceFindSimilarResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5765,7 +5765,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :rtype: list[~azure.ai.vision.face.models.FaceIdentificationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5937,7 +5937,7 @@ class FaceClientOperationsMixin(FaceClientMixinABC):
         :rtype: ~azure.ai.vision.face.models.FaceVerificationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6090,7 +6090,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: ~azure.ai.vision.face.models.CreateLivenessSessionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6166,7 +6166,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6217,7 +6217,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: ~azure.ai.vision.face.models.LivenessSession
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6288,7 +6288,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: list[~azure.ai.vision.face.models.LivenessSessionItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6360,7 +6360,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: list[~azure.ai.vision.face.models.LivenessSessionAuditEntry]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6450,7 +6450,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6538,7 +6538,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6611,7 +6611,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6665,7 +6665,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: ~azure.ai.vision.face.models.LivenessWithVerifySession
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6736,7 +6736,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: list[~azure.ai.vision.face.models.LivenessSessionItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6808,7 +6808,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: list[~azure.ai.vision.face.models.LivenessSessionAuditEntry]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7127,7 +7127,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: list[~azure.ai.vision.face.models.FaceDetectionResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -7215,7 +7215,7 @@ class FaceSessionClientOperationsMixin(FaceSessionClientMixinABC):
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

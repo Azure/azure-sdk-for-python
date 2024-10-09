@@ -42,9 +42,7 @@ class TestIdentify(AzureRecordedTestCase):
         return face_ids
 
     async def _setup_group(self, operations):
-        await operations.create(
-            self.group_id, name=self.group_id, recognition_model=FaceRecognitionModel.RECOGNITION04
-        )
+        await operations.create(self.group_id, name=self.group_id, recognition_model=FaceRecognitionModel.RECOGNITION04)
 
         person_ids = []
         for image in self.test_images:
