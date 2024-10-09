@@ -1,5 +1,4 @@
-# flake8: noqa
-# pylint: disable=W0613,R0914,E0401,E0611,C0114,R0913,E0702,R0903,C0411
+# pylint: disable=R0914,E0401,E0611,C0114,R0913,E0702,R0903,C0411
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
@@ -93,7 +92,6 @@ class Simulator:
         query_response_generating_prompty_kwargs: Optional[Dict[str, Any]] = None,
         user_simulator_prompty_kwargs: Optional[Dict[str, Any]] = None,
         conversation_turns: Optional[List[List[str]]] = None,
-        **kwargs,
     ) -> List[JsonLineChatProtocol]:
         """
         Generates synthetic conversations based on provided parameters.
@@ -181,7 +179,6 @@ class Simulator:
             query_response_generating_prompty=query_response_generating_prompty,
             query_response_generating_prompty_kwargs=query_response_generating_prompty_kwargs,
             prompty_model_config=prompty_model_config,
-            **kwargs,
         )
         return await self._create_conversations_from_query_responses(
             query_responses=query_responses,
@@ -422,7 +419,6 @@ class Simulator:
         query_response_generating_prompty: Optional[str],
         query_response_generating_prompty_kwargs: Dict[str, Any],
         prompty_model_config: Any,
-        **kwargs,
     ) -> List[Dict[str, str]]:
         """
         Generates query responses using the specified prompty configuration.

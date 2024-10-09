@@ -233,8 +233,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         time_taken = time.time() - time_start
 
-        # pylint: disable=unexpected-keyword-arg
-        parsed_response = self._parse_response(response_data, request_data=request_data)  # type: ignore[call-arg]
+        parsed_response = self._parse_response(response_data)  # type: ignore[call-arg]
 
         return {
             "request": request_data,
