@@ -295,7 +295,9 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    def begin_translation(self, inputs: JSON, **kwargs: Any) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
+    def begin_translation(
+        self, inputs: JSON, **kwargs: Any
+    ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
         in the given language.
 
@@ -369,7 +371,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             returned for each translation on a document.
         :rtype: DocumentTranslationLROPoller[~azure.core.paging.ItemPaged[DocumentStatus]]
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    """
 
     @overload
     def begin_translation(

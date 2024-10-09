@@ -20,10 +20,13 @@ from ._operations import DocumentTranslationClientOperationsMixin, SingleDocumen
 from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class DocumentTranslationClient(DocumentTranslationClientOperationsMixin):
+class DocumentTranslationClient(
+    DocumentTranslationClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """DocumentTranslationClient.
 
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
@@ -103,7 +106,9 @@ class DocumentTranslationClient(DocumentTranslationClientOperationsMixin):
         self._client.__exit__(*exc_details)
 
 
-class SingleDocumentTranslationClient(SingleDocumentTranslationClientOperationsMixin):
+class SingleDocumentTranslationClient(
+    SingleDocumentTranslationClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """SingleDocumentTranslationClient.
 
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:

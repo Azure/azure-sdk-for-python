@@ -20,10 +20,13 @@ from ._configuration import DocumentTranslationClientConfiguration, SingleDocume
 from ._operations import DocumentTranslationClientOperationsMixin, SingleDocumentTranslationClientOperationsMixin
 
 if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DocumentTranslationClient(DocumentTranslationClientOperationsMixin):
+class DocumentTranslationClient(
+    DocumentTranslationClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """DocumentTranslationClient.
 
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
@@ -107,7 +110,9 @@ class DocumentTranslationClient(DocumentTranslationClientOperationsMixin):
         await self._client.__aexit__(*exc_details)
 
 
-class SingleDocumentTranslationClient(SingleDocumentTranslationClientOperationsMixin):
+class SingleDocumentTranslationClient(
+    SingleDocumentTranslationClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """SingleDocumentTranslationClient.
 
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
