@@ -5,15 +5,17 @@
 # ---------------------------------------------------------
 import asyncio
 import importlib.resources as pkg_resources
-from tqdm import tqdm
 import json
 import os
 import re
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
+
 from promptflow.core import AsyncPrompty
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from tqdm import tqdm
+
 from azure.ai.evaluation._common.utils import construct_prompty_model_config
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from .._exceptions import ErrorBlame, ErrorCategory, EvaluationException
 from .._user_agent import USER_AGENT
