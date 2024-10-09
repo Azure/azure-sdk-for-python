@@ -44,16 +44,9 @@ async def sample_get_chat_completions_client_async():
     #     workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
     # ) as ai_client:
 
-        # Get an authenticated async azure.ai.inference chat completions client for your default Serverless connection:
+        # Get an authenticated async ChatCompletionsClient (from azure.ai.inference) for your default Serverless connection:
+        async with await ai_client.inference.get_chat_completions_client() as client:
 
-        # TODO: How come this works:
-        # client = await ai_client.inference.get_chat_completions_client()
-        # response = await client.complete(messages=[UserMessage(content="How many feet are in a mile?")])
-        # print(response.choices[0].message.content)
-        # await client.close()
-
-        # But this doesn't:
-        async with ai_client.inference.get_chat_completions_client() as client:
             response = await client.complete(messages=[UserMessage(content="How many feet are in a mile?")])
             print(response.choices[0].message.content)
 
