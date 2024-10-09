@@ -40,7 +40,6 @@ class __EvaluatorInfo(TypedDict):
     metrics: Dict[str, Any]
 
 
-# pylint: disable=line-too-long
 def _aggregate_content_safety_metrics(
     df: pd.DataFrame, evaluators: Dict[str, Callable]
 ) -> Tuple[List[str], Dict[str, float]]:
@@ -411,7 +410,10 @@ def _process_column_mappings(
                 for map_to_key, map_value in mapping_config.items():
                     # Check if there's any unexpected reference other than ${target.} or ${data.}
                     if unexpected_references.search(map_value):
-                        msg = "Unexpected references detected in 'column_mapping'. Ensure only ${target.} and ${data.} are used."
+                        msg = (
+                            "Unexpected references detected in 'column_mapping'. "
+                            + "Ensure only ${target.} and ${data.} are used."
+                        )
                         raise EvaluationException(
                             message=msg,
                             internal_message=msg,
