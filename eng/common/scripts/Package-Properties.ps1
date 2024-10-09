@@ -130,7 +130,7 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
         {
             $filePath = Resolve-Path (Join-Path $RepoRoot $file)
             $shouldInclude = $filePath -like "$pkgDirectory*"
-            $pathComponents = $filel -split "/"
+            $pathComponents = $file -split "/"
 
             # sdk/<service>/<file.extension>
             if ($pathComponents.Length -eq 3 -and $pathComponents[0] -eq "sdk") {
