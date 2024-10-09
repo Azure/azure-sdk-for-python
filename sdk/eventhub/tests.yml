@@ -6,7 +6,7 @@ extends:
       ServiceDirectory: eventhub
       TestTimeoutInMinutes: 240
       BuildTargetingString: azure-eventhub*
-      SupportedClouds: 'Public,UsGov,China'
+      SupportedClouds: 'Public,UsGov'
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       EnvVars:
@@ -17,5 +17,4 @@ extends:
         AZURE_POD_IDENTITY_AUTHORITY_HOST: "FakeAuthorityHost"
       MatrixReplace:
         - TestSamples=.*/true
-      #Clouds: 'Public,Canary'
       Clouds: 'Public'
