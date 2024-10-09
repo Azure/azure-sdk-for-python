@@ -295,7 +295,7 @@ class RouteOperations(RouteOperationsGenerated):
 
     # cSpell:disable
     @distributed_trace_async
-    async def get_route_range( #type: ignore
+    async def get_route_range( # type: ignore
         self,
         coordinates: Union[LatLongPair, Tuple[float, float]],
         **kwargs: Any
@@ -495,7 +495,7 @@ class RouteOperations(RouteOperationsGenerated):
         )
 
     @distributed_trace_async
-    async def begin_get_route_directions_batch( #type: ignore
+    async def begin_get_route_directions_batch( # type: ignore
         self,
         **kwargs: Any
     ) -> AsyncLROPoller[RouteDirectionsBatchResult]:

@@ -41,7 +41,7 @@ def patch_sdk():
 class RouteOperations(RouteOperationsGenerated):
     # cSpell:disable
     @distributed_trace
-    def get_route_directions( #type: ignore
+    def get_route_directions( # type: ignore
         self,
         route_points: Union[List[LatLongPair], List[Tuple]],
         **kwargs: Any
@@ -299,7 +299,7 @@ class RouteOperations(RouteOperationsGenerated):
 
     # cSpell:disable
     @distributed_trace
-    def get_route_range( #type: ignore
+    def get_route_range( # type: ignore
         self,
         coordinates: Union[LatLongPair, Tuple],
         **kwargs: Any
@@ -499,7 +499,7 @@ class RouteOperations(RouteOperationsGenerated):
         )
 
     @distributed_trace
-    def begin_get_route_directions_batch( #type: ignore
+    def begin_get_route_directions_batch( # type: ignore
         self,
         **kwargs: Any
     ) -> LROPoller[RouteDirectionsBatchResult]:
