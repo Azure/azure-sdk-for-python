@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-VERSION = "unknown"
+VERSION = "1.0.0b2"
 
 
 class MapsRouteClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
@@ -36,7 +36,7 @@ class MapsRouteClientConfiguration:  # pylint: disable=too-many-instance-attribu
      security in Azure Maps see the following `articles <https://aka.ms/amauthdetails>`_ for
      guidance. Default value is None.
     :type client_id: str
-    :keyword api_version: Api Version. Default value is "2024-04-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "1.0". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
