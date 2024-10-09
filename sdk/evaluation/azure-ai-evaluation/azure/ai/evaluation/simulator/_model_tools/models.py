@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: skip-file
 import ast
 import asyncio
 import copy
@@ -138,7 +137,7 @@ class LLMBase(ABC):
         pass
 
     def _log_request(self, request: dict) -> None:
-        self.logger.info(f"Request: {request}")
+        self.logger.info("Request: %s", str(request))
 
     async def _add_successful_response(self, time_taken: Union[int, float]) -> None:
         async with self.lock:
@@ -258,7 +257,7 @@ class OpenAICompletionsModel(LLMBase):
                 "Both top_p and temperature are set.  OpenAI advises against using both at the same time."
             )
 
-        self.logger.info(f"Default model settings: {self.get_model_params()}")
+        self.logger.info("Default model settings: %s", str(self.get_model_params()))
 
     def get_model_params(self):
         return {param: getattr(self, param) for param in self.model_param_names if getattr(self, param) is not None}
@@ -323,7 +322,7 @@ class OpenAICompletionsModel(LLMBase):
         request_params: Additional parameters to pass to the API.
         """
         if api_call_max_parallel_count > 1:
-            self.logger.info(f"Using {api_call_max_parallel_count} parallel workers to query the API..")
+            self.logger.info("Using %d parallel workers to query the API..", api_call_max_parallel_count)
 
         # Format prompts and tag with index
         request_datas: List[Dict] = []
@@ -403,7 +402,7 @@ class OpenAICompletionsModel(LLMBase):
                     }
                     await self._add_error()
 
-                    self.logger.exception(f"Errored on prompt #{prompt_idx}")
+                    self.logger.exception("Errored on prompt #%s", str(prompt_idx))
 
                     # if we count too many errors, we stop and raise an exception
                     response_count = await self.get_response_count()
@@ -482,7 +481,7 @@ class OpenAICompletionsModel(LLMBase):
 
         response_data = response.json()
 
-        self.logger.info(f"Response: {response_data}")
+        self.logger.info("Response: %s", str(response_data))
 
         # Copy the full response and return it to be saved in jsonl.
         full_response = copy.copy(response_data)
