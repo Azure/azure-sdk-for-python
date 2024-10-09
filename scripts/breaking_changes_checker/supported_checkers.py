@@ -5,8 +5,10 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from checkers.method_overloads_checker import MethodOverloadsChecker
+from checkers.removed_method_overloads_checker import RemovedMethodOverloadChecker
+from checkers.added_method_overloads_checker import AddedMethodOverloadChecker
 
 CHECKERS = [
-    MethodOverloadsChecker(),
+    RemovedMethodOverloadChecker(),
+    AddedMethodOverloadChecker(),
 ]
