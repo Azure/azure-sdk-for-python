@@ -111,7 +111,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
         self,
         messages: List[Dict],
         session: AsyncHttpPipeline,
-        role: str = "assistant",  # pylint: disable=unused-argument
+        role: str = "assistant",
         **request_params,
     ) -> dict:
         """
@@ -219,9 +219,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
                 "Content-Type": "application/json",
                 "User-Agent": USER_AGENT,
             }
-            response = await exp_retry_client.get(  # pylint: disable=too-many-function-args,unexpected-keyword-arg
-                self.result_url, headers=proxy_headers
-            )
+            response = await exp_retry_client.get(self.result_url, headers=proxy_headers)
 
         response.raise_for_status()
 
@@ -233,7 +231,7 @@ class ProxyChatCompletionsModel(OpenAIChatCompletionsModel):
 
         time_taken = time.time() - time_start
 
-        parsed_response = self._parse_response(response_data)  # type: ignore[call-arg]
+        parsed_response = self._parse_response(response_data)
 
         return {
             "request": request_data,

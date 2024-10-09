@@ -207,9 +207,7 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         await asyncio.sleep(sleep_time)
 
 
-def parse_response(  # pylint: disable=too-many-branches,too-many-statements
-    batch_response: List[Dict], metric_name: str
-) -> Dict[str, Union[str, float]]:
+def parse_response(batch_response: List[Dict], metric_name: str) -> Dict[str, Union[str, float]]:
     """Parse the annotation response from Responsible AI service for a content harm evaluation.
 
     :param batch_response: The annotation response from Responsible AI service.

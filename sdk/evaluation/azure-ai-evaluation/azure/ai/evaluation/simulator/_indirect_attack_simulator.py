@@ -1,8 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=C0114,R0913,R0903
-# noqa: E501
 import logging
 from typing import Callable, cast
 

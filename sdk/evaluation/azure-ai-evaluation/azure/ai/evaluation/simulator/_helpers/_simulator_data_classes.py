@@ -1,7 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=C0103,C0114,C0116
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 

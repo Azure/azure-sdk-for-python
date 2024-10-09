@@ -568,7 +568,7 @@ def evaluate(
         raise e
 
 
-def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
+def _evaluate(  # pylint: disable=too-many-locals
     *,
     evaluators: Dict[str, Callable],
     evaluation_name: Optional[str] = None,

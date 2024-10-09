@@ -1,4 +1,3 @@
-# pylint: disable=R0914,E0401,E0611,C0114,R0913,E0702,R0903,C0411
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
@@ -345,7 +344,6 @@ class Simulator:
             resource_name = "task_simulate.prompty"
             try:
                 # Access the resource as a file path
-                # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     prompty_model_config = construct_prompty_model_config(
                         model_config=prompty_model_config,  # type: ignore
@@ -476,7 +474,6 @@ class Simulator:
             resource_name = "task_query_response.prompty"
             try:
                 # Access the resource as a file path
-                # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     prompty_model_config = construct_prompty_model_config(
                         model_config=prompty_model_config,  # type: ignore
