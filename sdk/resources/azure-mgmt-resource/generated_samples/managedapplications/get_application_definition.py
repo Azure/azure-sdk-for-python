@@ -30,7 +30,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.application_definitions.get(
+    response = client.application_definitions.get_by_id(
         resource_group_name="rg",
         application_definition_name="myManagedApplicationDef",
     )

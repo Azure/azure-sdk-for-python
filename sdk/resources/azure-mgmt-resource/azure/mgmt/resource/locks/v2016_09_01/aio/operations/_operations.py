@@ -21,15 +21,13 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
-from ..._vendor import _convert_request
 from ...operations._operations import (
     build_authorization_operations_list_request,
     build_management_locks_create_or_update_at_resource_group_level_request,
@@ -109,7 +107,6 @@ class AuthorizationOperationsOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -125,7 +122,6 @@ class AuthorizationOperationsOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -301,7 +297,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -315,11 +310,7 @@ class ManagementLocksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("ManagementLockObject", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("ManagementLockObject", pipeline_response)
+        deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -366,7 +357,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -419,7 +409,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -433,7 +422,7 @@ class ManagementLocksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ManagementLockObject", pipeline_response)
+        deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -555,7 +544,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -569,11 +557,7 @@ class ManagementLocksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("ManagementLockObject", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("ManagementLockObject", pipeline_response)
+        deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -615,7 +599,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -665,7 +648,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -679,7 +661,7 @@ class ManagementLocksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ManagementLockObject", pipeline_response)
+        deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -858,7 +840,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -872,11 +853,7 @@ class ManagementLocksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("ManagementLockObject", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("ManagementLockObject", pipeline_response)
+        deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -944,7 +921,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1017,7 +993,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1031,7 +1006,7 @@ class ManagementLocksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ManagementLockObject", pipeline_response)
+        deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1146,7 +1121,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1160,11 +1134,7 @@ class ManagementLocksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("ManagementLockObject", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("ManagementLockObject", pipeline_response)
+        deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1208,7 +1178,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1256,7 +1225,6 @@ class ManagementLocksOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1270,7 +1238,7 @@ class ManagementLocksOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("ManagementLockObject", pipeline_response)
+        deserialized = self._deserialize("ManagementLockObject", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1319,7 +1287,6 @@ class ManagementLocksOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -1335,7 +1302,6 @@ class ManagementLocksOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -1425,7 +1391,6 @@ class ManagementLocksOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -1441,7 +1406,6 @@ class ManagementLocksOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -1508,7 +1472,6 @@ class ManagementLocksOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -1524,7 +1487,6 @@ class ManagementLocksOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -1597,7 +1559,6 @@ class ManagementLocksOperations:
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -1613,7 +1574,6 @@ class ManagementLocksOperations:
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
