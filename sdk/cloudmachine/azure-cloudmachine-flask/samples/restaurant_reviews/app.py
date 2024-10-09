@@ -18,10 +18,15 @@ from azure.cloudmachine._client import FILE_UPLOADED
 
 from models import Restaurant, Review
 
-app = Flask(__name__, static_folder='static')
+app = Flask( 
+    __name__,
+    template_folder='templates',
+    static_folder='static'
+)
 csrf = CSRFProtect(app)
 
-deployment = CloudMachineDeployment(name="restaurantreviewapp")
+deployment = CloudMachineDeployment(name="restaurantreviewapp", host="local")
+#deployment.host.site.properties['siteConfig']['publicNetworkAccess'] = 'Enabled'
 
 cm = CloudMachine(app, deployment=deployment)
 
@@ -54,8 +59,8 @@ def echo():
     print(message.content, message.id, "delivery count", message.delivery_count)
     return str(message)
 
-@app.route('/len')
-def len():
+@app.route('/count')
+def count():
     print("receiving")
     length = cm.session.messaging.qsize(
         topic="cm_internal_topic",

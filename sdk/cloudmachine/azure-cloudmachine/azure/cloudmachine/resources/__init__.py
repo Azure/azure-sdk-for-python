@@ -10,8 +10,9 @@ import shutil
 import copy
 import os
 import subprocess
-from typing import Literal, Optional, List, Union
+from typing import Dict, Literal, Optional, List, Union
 
+from .._version import VERSION
 from ._resource import ResourceGroup, SubscriptionResourceId, PrincipalId, ResourceId, _serialize_resource, generate_envvar
 from .roles import RoleAssignment, RoleAssignmentProperties
 from .identity import ManagedIdentity, UserAssignedIdentities
@@ -57,6 +58,7 @@ from .appservice import (
     AppServiceSite,
     BasicPublishingCredentialsPolicy,
 )
+from .._httpclient._eventlistener import cloudmachine_events
 
 
 def azd_env_name(name: str, host: str, label: Optional[str]) -> str:
@@ -80,26 +82,46 @@ def shutdown_project(deployment: 'CloudMachineDeployment', label: Optional[str])
     print(output)
 
 
-def init_project(root_path: str, deployment: 'CloudMachineDeployment', label: Optional[str]) -> None:
+def deploy_project(deployment: 'CloudMachineDeployment', label: Optional[str]) -> None:
+    project_name = azd_env_name(deployment.name, deployment.host, label)
+    output = subprocess.run(['azd', 'provision', '-e', project_name])
+    if output.returncode == 0:
+        deployment_name = f"py-cloudmachine-{deployment.name}"
+        output = subprocess.run(['azd', 'deploy', deployment_name, '-e', project_name])
+    print(output)
+
+
+def init_project(
+        root_path: str,
+        deployment: 'CloudMachineDeployment',
+        label: Optional[str],
+        metadata: Optional[Dict[str, str]] = None
+) -> None:
     azure_dir = os.path.join(root_path, ".azure")
     azure_yaml = os.path.join(root_path, "azure.yaml")
     project_name = azd_env_name(deployment.name, deployment.host, label)
-    # TODO proper yaml parsin
+    project_dir = os.path.join(azure_dir, project_name)
+    # TODO proper yaml parsing
     # Needs to properly set code root
     # Shouldn't overwrite on every run
     with open(azure_yaml, 'w') as config:
         config.write("# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json\n\n")
-        config.write(f"name: {deployment.name}\n\n")
+        config.write(f"name: {deployment.name}\n")
+        config.write("metadata:\n")
+        config.write(f"  cloudmachine: {VERSION}\n")
+        if metadata:
+            for key, value in metadata.items():
+                config.write(f"  {key}: {value}\n")
         config.write("infra:\n")
         config.write("  path: .infra\n\n")
         if isinstance(deployment.host, AppServicePlan):
             config.write("services:\n")
-            config.write("  py-cloudmachine:\n")
+            config.write(f"  py-cloudmachine-{deployment.name}:\n")
             config.write("    project: .\n")
             config.write("    language: py\n")
             config.write("    host: appservice\n\n")
 
-    if not os.path.isdir(azure_dir):
+    if not os.path.isdir(azure_dir) or not os.path.isdir(project_dir):
         print(f"Adding environment: {project_name}.")
         output = subprocess.run(['azd', 'env', 'new', project_name])
         print(output)
@@ -151,7 +173,7 @@ class CloudMachineDeployment:
         location: Optional[str] = None,
         host: Literal['local', 'appservice', 'containerapp'] = 'local',
     ) -> None:
-        if not name:
+        if not name or not (name.isalnum() and name[0].isalpha() and len(name) <= 25):
             raise ValueError("CloudMachine must have a valid name.")
         self.name = name.lower()
         self.location = location
@@ -189,7 +211,7 @@ class CloudMachineDeployment:
             )
             site = AppServiceSite(
                     kind='app,linux',
-                    tags={'azd-service-name': self.name},
+                    tags={'azd-service-name': 'py-cloudmachine-' + self.name},
                     identity={
                         'type': 'UserAssigned',
                         'userAssignedIdentities': UserAssignedIdentities((self.identity, {}))
@@ -393,11 +415,7 @@ class CloudMachineDeployment:
                         ),
                         event_delivery_schema='EventGridSchema',
                         filter=EventSubscriptionFilter(
-                            included_event_types=[
-                                'Microsoft.Storage.BlobCreated',
-                                'Microsoft.Storage.BlobDeleted',
-                                'Microsoft.Storage.BlobRenamed',
-                            ],
+                            included_event_types=list(cloudmachine_events.keys()),
                             enable_advanced_filtering_on_arrays=True
                         ),
                         retry_policy=RetryPolicy(

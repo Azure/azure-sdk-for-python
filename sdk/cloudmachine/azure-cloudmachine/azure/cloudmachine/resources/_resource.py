@@ -11,7 +11,7 @@ import re
 import random
 import string
 import itertools
-from typing import IO, Any, List, Optional, Dict, Literal, Self, ClassVar
+from typing import IO, Any, List, Optional, Dict, Literal, Self, ClassVar, Union
 from dataclasses import InitVar, dataclass, field, fields, is_dataclass
 
 dataclass_model = dataclass(kw_only=True)
@@ -36,12 +36,13 @@ def resolve_key(key: Any) -> str:
     return f"'{key}'"
 
 
-class BicepResolver(str):
+class BicepResolver:
     def resolve(self) -> str:
         raise NotImplementedError()
 
-    def __str__(self) -> str:
-        return self.resolve()
+BicepStr = Union[str, BicepResolver]
+BicepInt = Union[int, BicepResolver]
+BicepBool = Union[bool, BicepResolver]
 
 
 class Output(BicepResolver):
@@ -88,6 +89,7 @@ class BoolLogic(BicepResolver):
 
     def resolve(self) -> str: 
         return f"{resolve_value(self._a)} {self._op} {resolve_value(self._b)}"
+
 
 class UniqueName(BicepResolver):
     def __init__(self, prefix: str, length: int, basestr: Optional[Any] = None) -> None:
@@ -300,10 +302,10 @@ class Resource:
 @dataclass_model
 class LocatedResource(Resource):
     friendly_name: InitVar[Optional[str]] = None
-    name: str = field(init=False, default_factory=ResourceName, metadata={'rest': 'name'})
-    location: str = field(default_factory=DefaultLocation, metadata={'rest': 'location'})
-    tags: Dict[str, str] = field(default_factory=dict, metadata={'rest': 'tags'})
-    _fname: Optional[str] = None
+    name: BicepStr = field(init=False, default_factory=ResourceName, metadata={'rest': 'name'})
+    location: BicepStr = field(default_factory=DefaultLocation, metadata={'rest': 'location'})
+    tags: Dict[BicepStr, BicepStr] = field(default_factory=dict, metadata={'rest': 'tags'})
+    _fname: Optional[BicepStr] = None
 
     def __post_init__(self, friendly_name: Optional[str] = None):
         self._fname = friendly_name
@@ -313,7 +315,7 @@ class LocatedResource(Resource):
 
 @dataclass_model
 class ResourceGroup(LocatedResource):
-    name: str = field(init=False, default_factory=ResourceName, metadata={'rest': 'name'})
+    name: BicepStr = field(init=False, default_factory=ResourceName, metadata={'rest': 'name'})
     resources: Dict[str, 'LocatedResource'] = field(default_factory=dict, init=False, repr=False, metadata={'rest': _SKIP})
     _resource: ClassVar[Literal['Microsoft.Resources/resourceGroups']] = 'Microsoft.Resources/resourceGroups'
     _version: ClassVar[str] = '2021-04-01'
@@ -332,34 +334,3 @@ class ResourceGroup(LocatedResource):
         for resource in self.resources.values():
             self._outputs.update(resource.write(bicep))
         return self._outputs
-
-    # def write(self, bicep: IO[str]) -> Dict[str, str]:
-    #     _serialize_resource(bicep, self)
-
-    #     indent: str = '  '
-    #     outputs = {}
-    #     cloudmachine_module = os.path.join(os.path.dirname(bicep.name), "cloudmachine.bicep")
-    #     with open(cloudmachine_module, 'w') as cm_bicep:
-    #         cm_bicep.write("param location string = resourceGroup().location\n")
-    #         cm_bicep.write("param principalId string\n")
-    #         cm_bicep.write("param cloudmachineId string\n")
-    #         cm_bicep.write("param tags object\n\n")
-    #         for resource in self.resources.values():
-    #             resource_outputs = resource.write(cm_bicep)
-    #             for output in resource_outputs.keys():
-    #                 outputs[f"{generate_envvar(output)}"] = f"cloudmachine.outputs.{output}"
-
-    #     bicep.write(f"module cloudmachine 'cloudmachine.bicep' = {{\n")
-    #     bicep.write(f"{indent}name: 'cloudmachine'\n")
-    #     bicep.write(f"{indent}scope: {self._symbolicname}\n")
-    #     bicep.write(f"{indent}params: {{\n")
-    #     bicep.write(f"{indent}  location: location\n")
-    #     bicep.write(f"{indent}  tags: tags\n")
-    #     bicep.write(f"{indent}  principalId: principalId\n")
-    #     bicep.write(f"{indent}  cloudmachineId: cloudmachineId\n")
-    #     bicep.write(f"{indent}}}\n")
-    #     bicep.write(f"}}\n\n")
-
-    #     for key, value in outputs.items():
-    #         bicep.write(f"output AZURE_CLOUDMACHINE_{key} string = {value}\n")
-    #     return outputs

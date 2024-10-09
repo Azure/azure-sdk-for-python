@@ -459,7 +459,7 @@ class AppServiceSite(LocatedResource):
 
         output_prefix = "AppService"
         self._outputs[output_prefix + "Id"] = Output(f"{self._symbolicname}.id")
-        self._outputs[output_prefix + "PrincipalId"] = Output(f"{self._symbolicname}.identity.principalId")
+        # self._outputs[output_prefix + "PrincipalId"] = Output(f"{self._symbolicname}.identity.principalId")
         self._outputs[output_prefix + "Name"] = Output(f"{self._symbolicname}.name")
         self._outputs[output_prefix + "Url"] = f"https://${{{self._symbolicname}.properties.defaultHostName}}"
         for key, value in self._outputs.items():

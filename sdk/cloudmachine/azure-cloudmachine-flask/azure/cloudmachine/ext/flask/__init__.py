@@ -24,7 +24,8 @@ from azure.cloudmachine.resources import (
     CloudMachineDeployment,
     init_project,
     run_project,
-    shutdown_project
+    shutdown_project,
+    deploy_project
 )
 
 __version__ = VERSION
@@ -168,7 +169,9 @@ def cm_infra(cm: CloudMachine) -> None:
     init_project(
         os.getcwd(),
         cm.deployment,
-        cm.label)
+        cm.label,
+        metadata={'cloudmachine-flask': VERSION}
+    )
     cm.deployment.write(os.getcwd())
 
 def cm_run_local(cm: CloudMachine) -> None:
@@ -181,4 +184,5 @@ def cm_down(cm: CloudMachine) -> None:
     shutdown_project(cm.deployment, cm.label)
 
 def cm_run_remote(cm: CloudMachine) -> None:
-    raise NotImplementedError()
+    cm_infra(cm)
+    deploy_project(cm.deployment, cm.label)

@@ -328,7 +328,7 @@ class CloudMachineClient:
         self._storage: Dict[CloudMachineStorage] = {}
         self._messaging: Dict[CloudMachineServiceBus] = {}
         self._data: Dict[CloudMachineTableData] = {}
-        self.executor: Executor = ThreadPoolExecutor(max_workers=kwargs.get('max_workers'))
+        self._executor: Executor = ThreadPoolExecutor(max_workers=kwargs.get('max_workers'))
 
 
     def _build_transport(self, **kwargs):
@@ -354,7 +354,7 @@ class CloudMachineClient:
             self._listener_thread.start()
             self._storage['default'] = CloudMachineStorage(
                 transport=self._http_transport,
-                executor=self.executor
+                executor=self._executor
             )
         return self._storage['default']
 
@@ -363,7 +363,7 @@ class CloudMachineClient:
         if not self._messaging:
             self._messaging['default'] = CloudMachineServiceBus(
                 transport=self._http_transport,
-                executor=self.executor
+                executor=self._executor
             )
         return self._messaging['default']
 
@@ -372,7 +372,7 @@ class CloudMachineClient:
         if not self._data:
             self._data['default'] = CloudMachineTableData(
                 transport=self._http_transport,
-                executor=self.executor
+                executor=self._executor
             )
         return self._data['default']
 
