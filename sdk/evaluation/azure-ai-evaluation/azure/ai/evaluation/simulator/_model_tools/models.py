@@ -417,7 +417,7 @@ class OpenAICompletionsModel(LLMBase):
                             target=ErrorTarget.MODELS,
                             category=ErrorCategory.FAILED_EXECUTION,
                             blame=ErrorBlame.UNKNOWN,
-                        )
+                        ) from e
 
                 response[self.prompt_idx_key] = prompt_idx
                 output_collector.append(response)
