@@ -1262,7 +1262,7 @@ class AIInferenceInstrumentor:
                     del tool_call["function"]
         return tool_calls_copy
 
-    def _get_finish_reasons(result):
+    def _get_finish_reasons(self, result):
         if hasattr(result, "choices") and result.choices:
             finish_reasons = []
             for choice in result.choices:

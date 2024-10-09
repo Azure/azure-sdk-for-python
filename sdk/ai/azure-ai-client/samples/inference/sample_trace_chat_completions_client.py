@@ -30,21 +30,6 @@ settings.tracing_implementation = "opentelemetry"
 #tracer = trace.get_tracer(__name__)
 #trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
 
-
-def chat_completion_streaming(client):
-    response = client.complete(
-        stream=True,
-        messages=[
-            SystemMessage(content="You are a helpful assistant."),
-            UserMessage(content="Tell me about software engineering in five sentences."),
-        ],
-    )
-    for update in response:
-        if update.choices:
-            print(update.choices[0].delta.content or "", end="")
-            pass
-    client.close()
-
  # [START trace_function]
 from opentelemetry.trace import get_tracer
 tracer = get_tracer(__name__)
@@ -160,7 +145,7 @@ def main():
     # )
 
     # Get an authenticated OpenAI client for your default Azure OpenAI connection:
-    client = ai_client.inference.get_azure_openai_client()    
+    client = ai_client.inference.get_azure_openai_client()
 
     # [START instrument_inferencing]
     instrumentor = ai_client.tracing.create_inference_instrumentor()
@@ -168,13 +153,8 @@ def main():
     instrumentor.instrument()
     # [END instrument_inferencing]
 
-    print("===== starting chat_completion_streaming() =====")
-    chat_completion_streaming(client)
-    print("===== chat_completion_streaming() done =====")
-
-    print("===== starting chat_completion_with_function_call() =====")
     chat_completion_with_function_call(client)
-    print("===== chat_completion_with_function_call() done =====")
+
     # [START uninstrument_inferencing]
     instrumentor.uninstrument()
     # [END uninstrument_inferencing]
