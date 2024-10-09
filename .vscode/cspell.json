@@ -1889,6 +1889,16 @@
         "deidentify",
         "deidentified"
       ]
+    },
+    {
+      "filename": "sdk/maps/azure-maps-route/**",
+      "words": [
+        "uturn",
+        "Einsteinweg",
+        "Hundredkm",
+        "TPEG",
+        "Hundredkm"
+      ]
     }
   ],
   "allowCompoundWords": true
