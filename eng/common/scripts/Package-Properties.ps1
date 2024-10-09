@@ -120,6 +120,7 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     $additionalValidationPackages = @()
     $lookup = @{}
 
+    # find all packages that have via comparison with changed files
     foreach ($pkg in $allPackageProperties)
     {
         $pkgDirectory = Resolve-Path "$($pkg.DirectoryPath)"
@@ -130,6 +131,17 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
         {
             $filePath = Resolve-Path (Join-Path $RepoRoot $file)
             $shouldInclude = $filePath -like "$pkgDirectory*"
+            $pathComponents = $filel -split "/"
+
+            # sdk/<service>/<file.extension>
+            if ($pathComponents.Length -eq 3 -and $pathComponents[0] -eq "sdk") {
+                $servicePkgs = $allPackageProperties | ? { $_.ServiceDirectory -eq $pathComponents[1] } | Foreach-Object { $_.Name }
+
+                if ($servicePkgs) {
+                    $additionalValidationPackages += $servicePkgs
+                }
+            }
+
             if ($shouldInclude) {
                 $packagesWithChanges += $pkg
 
@@ -156,6 +168,8 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     {
         $packagesWithChanges += &$AdditionalValidationPackagesFromPackageSetFn $packagesWithChanges $diff $allPackageProperties
     }
+
+    $packagesWithChanges = $packagesWithChanges | Get-Unique
 
     return $packagesWithChanges
 }
