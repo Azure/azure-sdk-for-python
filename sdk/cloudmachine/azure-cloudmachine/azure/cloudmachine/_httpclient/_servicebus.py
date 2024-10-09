@@ -84,9 +84,9 @@ class CloudMachineServiceBus:
     ):
         if name:
             name = name.upper()
-            endpoint = os.environ[f'AZURE_SERVICE_BUS_{name}_ENDPOINT']
+            endpoint = os.environ[f'AZURE_CLOUDMACHINE_SERVICE_BUS_{name}_ENDPOINT']
         else:
-            endpoint = os.environ['AZURE_SERVICE_BUS_ENDPOINT']
+            endpoint = os.environ['AZURE_CLOUDMACHINE_SERVICE_BUS_ENDPOINT']
 
         self._endpoint = endpoint.strip('/')
         auth_policy = BearerTokenChallengePolicy(

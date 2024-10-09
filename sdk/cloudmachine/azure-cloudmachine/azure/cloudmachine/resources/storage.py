@@ -5,11 +5,12 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from typing import IO, ClassVar, List, Optional, Literal
+from typing import IO, ClassVar, Dict, List, Optional, Literal
 from dataclasses import field
 from .roles import RoleAssignment
 from .identity import UserAssignedIdentities
 from ._resource import (
+    Output,
     PrincipalId,
     _serialize_resource,
     Resource,
@@ -18,7 +19,8 @@ from ._resource import (
     generate_symbol,
     _UNSET,
     _SKIP,
-    GuidName
+    GuidName,
+    resolve_value
 )
 
 
@@ -213,11 +215,18 @@ class BlobServices(Resource):
     name: str = field(init=False, default="default", metadata={'rest': 'name'})
     containers: List[Container] = field(default_factory=list, metadata={'rest': _SKIP})
 
-    def write(self, bicep: IO[str]) -> None:
+    def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)
         for container in self.containers:
             container._parent = self
-            container.write(bicep)
+            self._outputs.update(container.write(bicep))
+        if self._parent._fname:
+            output_prefix = self._parent._fname.title()
+        else:
+            output_prefix = ""
+        output_prefix = "Blob" + output_prefix
+        self._outputs[output_prefix + "Endpoint"] = Output(f"{self._parent._symbolicname}.properties.primaryEndpoints.blob")
+        return self._outputs
 
 
 @dataclass_model
@@ -228,11 +237,18 @@ class TableServices(Resource):
     name: str = field(init=False, default="default", metadata={'rest': 'name'})
     tables: List[Container] = field(default_factory=list, metadata={'rest': _SKIP})
 
-    def write(self, bicep: IO[str]) -> None:
+    def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)
         for table in self.tables:
             table._parent = self
-            table.write(bicep)
+            self._outputs.update(table.write(bicep))
+        if self._parent._fname:
+            output_prefix = self._parent._fname.title()
+        else:
+            output_prefix = ""
+        output_prefix = "Table" + output_prefix
+        self._outputs[output_prefix + "Endpoint"] = Output(f"{self._parent._symbolicname}.properties.primaryEndpoints.table")
+        return self._outputs
 
 
 @dataclass_model
@@ -249,34 +265,27 @@ class StorageAccount(LocatedResource):
     _version: ClassVar[str] = '2023-01-01'
     _symbolicname: str = field(default_factory=lambda: generate_symbol("storage"), init=False, repr=False)
 
-    def write(self, bicep: IO[str]) -> None:
+    def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)
         if self.blobs:
             self.blobs._parent = self
-            self.blobs.write(bicep)
+            self._outputs.update(self.blobs.write(bicep))
         if self.tables:
            self.tables._parent = self
-           self.tables.write(bicep)
+           self._outputs.update(self.tables.write(bicep))
         for role in self.roles:
             role.name = GuidName(self, PrincipalId(), role.properties.role_definition_id)
             role._scope = self
-            role.write(bicep)
+            self._outputs.update(role.write(bicep))
 
         if self._fname:
             output_prefix = self._fname.title()
         else:
             output_prefix = ""
-
         output_prefix = "Storage" + output_prefix
-        self._outputs.append(output_prefix + 'Id')
-        bicep.write(f"output {output_prefix}Id string = {self._symbolicname}.id\n")
-        self._outputs.append(output_prefix + 'Name')
-        bicep.write(f"output {output_prefix}Name string = {self._symbolicname}.name\n")
-        if self.blobs:
-            output_name = output_prefix + "BlobEndpoint"
-            self._outputs.append(output_name)
-            bicep.write(f"output {output_name} string = {self._symbolicname}.properties.primaryEndpoints.blob\n")
-        if self.tables:
-            output_name = output_prefix + "TableEndpoint"
-            self._outputs.append(output_name)
-            bicep.write(f"output {output_name} string = {self._symbolicname}.properties.primaryEndpoints.table\n\n")
+        self._outputs[output_prefix + "Id"] = Output(f"{self._symbolicname}.id")
+        self._outputs[output_prefix + "Name"] = Output(f"{self._symbolicname}.name")
+        for key, value in self._outputs.items():
+            bicep.write(f"output {key} string = {resolve_value(value)}\n")
+        bicep.write("\n")
+        return self._outputs

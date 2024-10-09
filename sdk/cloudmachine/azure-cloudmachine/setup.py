@@ -78,7 +78,6 @@ setup(
     install_requires=[
         "python-dotenv>=1.0.0",
         "azure-storage-blob>=12.1.0",
-        "azure-servicebus>=7.12",
         "azure-data-tables>=12.1.0",
         "azure-identity",
         "blinker",

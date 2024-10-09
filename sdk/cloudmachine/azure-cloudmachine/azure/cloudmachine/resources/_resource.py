@@ -31,15 +31,25 @@ def resolve_value(value: Any) -> str:
 def resolve_key(key: Any) -> str:
     if isinstance(key, Resource):
         return f"'${{{key._symbolicname}.id}}'"
-    if key[0].isalpha() or key[0] == '_':
-        if not any(not c.isalnum() for c in key[1:]):
-            return key
+    if key.isidentifier():
+        return key
     return f"'{key}'"
 
 
-class BicepResolver:
+class BicepResolver(str):
     def resolve(self) -> str:
         raise NotImplementedError()
+
+    def __str__(self) -> str:
+        return self.resolve()
+
+
+class Output(BicepResolver):
+    def __init__(self, value: str) -> None:
+        self._value = value
+
+    def resolve(self) -> str:
+        return self._value
 
 
 class DefaultLocation(BicepResolver):
@@ -69,6 +79,15 @@ class PrincipalId(BicepResolver):
             return f"{self._resource._symbolicname}.properties.principalId"
         return "principalId"
 
+
+class BoolLogic(BicepResolver):
+    def __init__(self, a_value, b_value, operator: Literal['==', '!=', '<', '>', '<=', '>=']):
+        self._a = a_value
+        self._b = b_value
+        self._op = operator
+
+    def resolve(self) -> str: 
+        return f"{resolve_value(self._a)} {self._op} {resolve_value(self._b)}"
 
 class UniqueName(BicepResolver):
     def __init__(self, prefix: str, length: int, basestr: Optional[Any] = None) -> None:
@@ -263,10 +282,11 @@ class Resource:
     _parent: Optional['Resource'] = field(init=False, default=None)
     _scope: Optional['Resource'] = field(init=False, default=None)
     _dependson: Optional[List['Resource']] = field(default_factory=list)
-    _outputs: List[str] = field(default_factory=list, init=False)
+    _outputs: Dict[str, Any] = field(default_factory=dict, init=False)
 
-    def write(self, bicep: IO[str]) -> None:
+    def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)
+        return self._outputs
 
     @classmethod
     def existing(self, scope: Optional['ResourceGroup'] = None) -> Self:
@@ -275,9 +295,6 @@ class Resource:
     @classmethod
     def from_json(self, resource: Dict[str, Any]) -> Self:
         raise NotImplementedError()
-
-    def write(self, bicep: IO[str]) -> None:
-        _serialize_resource(bicep, self)
 
 
 @dataclass_model
@@ -307,32 +324,42 @@ class ResourceGroup(LocatedResource):
     def add(self, resource: 'Resource') -> None:
         self.resources[resource._resource] = resource
 
-    def write(self, bicep: IO[str]) -> None:
-        _serialize_resource(bicep, self)
+    def write(self, bicep: IO[str]) -> Dict[str, str]:
+        bicep.write("param location string = resourceGroup().location\n")
+        bicep.write("param principalId string\n")
+        bicep.write("param cloudmachineId string\n")
+        bicep.write("param tags object\n\n")
+        for resource in self.resources.values():
+            self._outputs.update(resource.write(bicep))
+        return self._outputs
 
-        indent: str = '  '
-        outputs = {}
-        cloudmachine_module = os.path.join(os.path.dirname(bicep.name), "cloudmachine.bicep")
-        with open(cloudmachine_module, 'w') as cm_bicep:
-            cm_bicep.write("param location string = resourceGroup().location\n")
-            cm_bicep.write("param principalId string\n")
-            cm_bicep.write("param cloudmachineId string\n")
-            cm_bicep.write("param tags object\n\n")
-            for resource in self.resources.values():
-                resource.write(cm_bicep)
-                for output in resource._outputs:
-                    outputs[f"{generate_envvar(output)}"] = f"cloudmachine.outputs.{output}"
+    # def write(self, bicep: IO[str]) -> Dict[str, str]:
+    #     _serialize_resource(bicep, self)
 
-        bicep.write(f"module cloudmachine 'cloudmachine.bicep' = {{\n")
-        bicep.write(f"{indent}name: 'cloudmachine'\n")
-        bicep.write(f"{indent}scope: {self._symbolicname}\n")
-        bicep.write(f"{indent}params: {{\n")
-        bicep.write(f"{indent}  location: location\n")
-        bicep.write(f"{indent}  tags: tags\n")
-        bicep.write(f"{indent}  principalId: principalId\n")
-        bicep.write(f"{indent}  cloudmachineId: cloudmachineId\n")
-        bicep.write(f"{indent}}}\n")
-        bicep.write(f"}}\n\n")
+    #     indent: str = '  '
+    #     outputs = {}
+    #     cloudmachine_module = os.path.join(os.path.dirname(bicep.name), "cloudmachine.bicep")
+    #     with open(cloudmachine_module, 'w') as cm_bicep:
+    #         cm_bicep.write("param location string = resourceGroup().location\n")
+    #         cm_bicep.write("param principalId string\n")
+    #         cm_bicep.write("param cloudmachineId string\n")
+    #         cm_bicep.write("param tags object\n\n")
+    #         for resource in self.resources.values():
+    #             resource_outputs = resource.write(cm_bicep)
+    #             for output in resource_outputs.keys():
+    #                 outputs[f"{generate_envvar(output)}"] = f"cloudmachine.outputs.{output}"
 
-        for key, value in outputs.items():
-            bicep.write(f"output AZURE_{key} string = {value}\n")
+    #     bicep.write(f"module cloudmachine 'cloudmachine.bicep' = {{\n")
+    #     bicep.write(f"{indent}name: 'cloudmachine'\n")
+    #     bicep.write(f"{indent}scope: {self._symbolicname}\n")
+    #     bicep.write(f"{indent}params: {{\n")
+    #     bicep.write(f"{indent}  location: location\n")
+    #     bicep.write(f"{indent}  tags: tags\n")
+    #     bicep.write(f"{indent}  principalId: principalId\n")
+    #     bicep.write(f"{indent}  cloudmachineId: cloudmachineId\n")
+    #     bicep.write(f"{indent}}}\n")
+    #     bicep.write(f"}}\n\n")
+
+    #     for key, value in outputs.items():
+    #         bicep.write(f"output AZURE_CLOUDMACHINE_{key} string = {value}\n")
+    #     return outputs

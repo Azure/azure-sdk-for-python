@@ -10,6 +10,7 @@ from dataclasses import field
 
 from .roles import RoleAssignment
 from ._resource import (
+    Output,
     UniqueName,
     _serialize_resource,
     Resource,
@@ -19,7 +20,8 @@ from ._resource import (
     _UNSET,
     _SKIP,
     GuidName,
-    PrincipalId
+    PrincipalId,
+    resolve_value
 )
 
 
@@ -164,12 +166,12 @@ class ServiceBusTopic(Resource):
     properties: Optional[TopicProperties] = field(metadata={'rest': 'properties'})
     subscriptions: List[TopicSubsciprtion] = field(default_factory=list, metadata={'rest': _SKIP})
 
-    def write(self, bicep: IO[str]) -> None:
+    def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)
-
         for sub in self.subscriptions:
             sub._parent = self
-            sub.write(bicep)
+            self._outputs.update(sub.write(bicep))
+        return self._outputs
 
 @dataclass_model
 class ServiceBusNamespaceProperties:
@@ -196,28 +198,29 @@ class ServiceBusNamespace(LocatedResource):
     _version: ClassVar[str] = '2017-04-01'
     _symbolicname: str = field(default_factory=lambda: generate_symbol("sbns"), init=False, repr=False)
 
-    def write(self, bicep: IO[str]) -> None:
+    def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)
 
         for rule in self.auth_rules:
             rule._parent = self
-            rule.write(bicep)
+            self._outputs.update(rule.write(bicep))
         for role in self.roles:
             role.name = GuidName(self, PrincipalId(), role.properties.role_definition_id)
             role._scope = self
-            role.write(bicep)
+            self._outputs.update(role.write(bicep))
         for topic in self.topics:
             topic._parent = self
-            topic.write(bicep)
+            self._outputs.update(topic.write(bicep))
 
         if self._fname:
             output_prefix = self._fname.title()
         else:
             output_prefix = ""
         output_prefix = "ServiceBus" + output_prefix
-        self._outputs.append(output_prefix + 'Id')
-        bicep.write(f"output {output_prefix}Id string = {self._symbolicname}.id\n")
-        self._outputs.append(output_prefix + 'Name')
-        bicep.write(f"output {output_prefix}Name string = {self._symbolicname}.name\n")
-        self._outputs.append(output_prefix + 'Endpoint')
-        bicep.write(f"output {output_prefix}Endpoint string = {self._symbolicname}.properties.serviceBusEndpoint\n\n")
+        self._outputs[output_prefix + "Id"] = Output(f"{self._symbolicname}.id")
+        self._outputs[output_prefix + "Name"] = Output(f"{self._symbolicname}.name")
+        self._outputs[output_prefix + "Endpoint"] = Output(f"{self._symbolicname}.properties.serviceBusEndpoint")
+        for key, value in self._outputs.items():
+            bicep.write(f"output {key} string = {resolve_value(value)}\n")
+        bicep.write("\n")
+        return self._outputs

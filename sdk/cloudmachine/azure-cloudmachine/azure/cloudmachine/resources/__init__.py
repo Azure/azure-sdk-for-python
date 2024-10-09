@@ -12,7 +12,7 @@ import os
 import subprocess
 from typing import Literal, Optional, List, Union
 
-from ._resource import ResourceGroup, SubscriptionResourceId, PrincipalId, ResourceId
+from ._resource import ResourceGroup, SubscriptionResourceId, PrincipalId, ResourceId, _serialize_resource, generate_envvar
 from .roles import RoleAssignment, RoleAssignmentProperties
 from .identity import ManagedIdentity, UserAssignedIdentities
 from .servicebus import (
@@ -52,14 +52,10 @@ from .eventgrid import (
 )
 from .appservice import (
     AppServiceAppSettingsConfig,
+    AppServiceLogsConfig,
     AppServicePlan,
-    AppServicePlanProperties,
     AppServiceSite,
-    CorsSettings,
-    ManagedServiceIdentity,
-    SiteConfig,
-    SiteProperties,
-    SkuDescription
+    BasicPublishingCredentialsPolicy,
 )
 
 
@@ -88,12 +84,21 @@ def init_project(root_path: str, deployment: 'CloudMachineDeployment', label: Op
     azure_dir = os.path.join(root_path, ".azure")
     azure_yaml = os.path.join(root_path, "azure.yaml")
     project_name = azd_env_name(deployment.name, deployment.host, label)
-    if not os.path.isfile(azure_yaml):  # TODO proper yaml editing
-        print(f"No azure config found, building: {azure_yaml}.")
-        with open(azure_yaml, 'w') as config:
-            #TODO update config according to name and host.
-            config.write("# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json\n\n")
-            config.write(f"name: {deployment.name}\n\n")
+    # TODO proper yaml parsin
+    # Needs to properly set code root
+    # Shouldn't overwrite on every run
+    with open(azure_yaml, 'w') as config:
+        config.write("# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json\n\n")
+        config.write(f"name: {deployment.name}\n\n")
+        config.write("infra:\n")
+        config.write("  path: .infra\n\n")
+        if isinstance(deployment.host, AppServicePlan):
+            config.write("services:\n")
+            config.write("  py-cloudmachine:\n")
+            config.write("    project: .\n")
+            config.write("    language: py\n")
+            config.write("    host: appservice\n\n")
+
     if not os.path.isdir(azure_dir):
         print(f"Adding environment: {project_name}.")
         output = subprocess.run(['azd', 'env', 'new', project_name])
@@ -150,9 +155,13 @@ class CloudMachineDeployment:
             raise ValueError("CloudMachine must have a valid name.")
         self.name = name.lower()
         self.location = location
+        self.app_settings = {
+            'SCM_DO_BUILD_DURING_DEPLOYMENT': 'true',
+            'ENABLE_ORYX_BUILD': 'true',
+            'PYTHON_ENABLE_GUNICORN_MULTIWORKERS': 'true',
+        }
+
         self._params = copy.deepcopy(DEFAULT_PARAMS)
-        #if self.location:
-        #    self._params["parameters"]["location"]["value"] = f"${{AZURE_LOCATION={self.location}}}"
         self.core = ResourceGroup(
             friendly_name=self.name,
             tags={"abc": "def"},
@@ -164,7 +173,7 @@ class CloudMachineDeployment:
         self._messaging = self._define_messaging()
         self.core.add(self._messaging)
         self.core.add(self._define_events())
-        self.host = self._define_host(host)
+        self.host = self._define_host(host)        
 
     def _define_host(self, host: str) -> Union[str, AppServicePlan]:
         if host == 'local':
@@ -172,47 +181,62 @@ class CloudMachineDeployment:
         elif host == 'appservice':
             service_plan = AppServicePlan(
                 kind='linux',
-                sku=SkuDescription(
-                    name='B1',
-                    capacity=1
-                ),
-                properties=AppServicePlanProperties(
-                    reserved=True
-                )
+                sku={'name': 'B1', 'capacity': 1},
+                properties={'reserved': True}
+            )
+            settings = AppServiceAppSettingsConfig(
+                properties=self.app_settings
             )
             site = AppServiceSite(
                     kind='app,linux',
                     tags={'azd-service-name': self.name},
-                    identity=ManagedServiceIdentity(
-                        type='UserAssigned',
-                        user_assigned_identities=UserAssignedIdentities((self.identity, {}))
-                    ),
-                    properties=SiteProperties(
-                        server_farm_id=ResourceId(service_plan),
-                        https_only=True,
-                        client_affinity_enabled=False,
-                        site_config=SiteConfig(
-                            min_tls_version='1.2',
-                            use_32bit_worker_process=False,
-                            always_on=True,
-                            ftps_state='FtpsOnly',
-                            linux_fx_version='python|3.11',
-                            cors=CorsSettings(
-                                allowed_origins=['https://portal.azure.com', 'https://ms.portal.azure.com']
-                            )
-                        )
-                    ),
-                    configs=[
-                        AppServiceAppSettingsConfig(
-                            properties={
-                                'SCM_DO_BUILD_DURING_DEPLOYMENT': True,
-                                'ENABLE_ORYX_BUILD': True,
-                                'PYTHON_ENABLE_GUNICORN_MULTIWORKERS': True,
+                    identity={
+                        'type': 'UserAssigned',
+                        'userAssignedIdentities': UserAssignedIdentities((self.identity, {}))
+                    },
+                    properties={
+                        'serverFarmId': ResourceId(service_plan),
+                        'httpsOnly': True,
+                        'clientAffinityEnabled': False,
+                        'siteConfig': {
+                            'minTlsVersion': '1.2',
+                            'use32BitWorkerProcess': False,
+                            'alwaysOn': True,
+                            'ftpsState': 'FtpsOnly',
+                            'linuxFxVersion': 'python|3.12',
+                            'cors': {
+                                'allowedOrigins': ['https://portal.azure.com', 'https://ms.portal.azure.com']
                             }
+                        }
+                    },
+                    configs=[
+                        settings,
+                        AppServiceLogsConfig(
+                            properties={
+                                'applicationLogs': {
+                                    'fileSystem': {'level': 'Verbose'}
+                                },
+                                'detailedErrorMessages': {'enabled': True},
+                                'failedRequestsTracing': {'enabled': True},
+                                'httpLogs': {
+                                    'fileSystem': {'enabled':True, 'retentionInDays': 1, 'retentionInMb': 35}
+                                }
+                            },
+                            _dependson=[settings],
                         )
-                    ]
+                    ],
+                    policies=[
+                        BasicPublishingCredentialsPolicy(
+                            name='ftp',
+                            properties={'allow': False}
+                        ),
+                        BasicPublishingCredentialsPolicy(
+                            name='scm',
+                            properties={'allow': False}
+                        )
+                    ],
                 )
-            service_plan.sites.append(site)
+            service_plan.site = site
             return service_plan
 
     def _define_messaging(self) -> ServiceBusNamespace:
@@ -387,8 +411,9 @@ class CloudMachineDeployment:
         )
 
     def write(self, root_path: str):
-        infra_dir = _get_empty_directory(root_path, "infra")
+        infra_dir = _get_empty_directory(root_path, ".infra")
         main_bicep = os.path.join(infra_dir, "main.bicep")
+
         with open(main_bicep, 'w') as main:
             main.write("targetScope = 'subscription'\n\n")
             main.write("@minLength(1)\n")
@@ -402,10 +427,28 @@ class CloudMachineDeployment:
             main.write("param location string\n\n")
             main.write("var tags = { 'azd-env-name': environmentName }\n")
             main.write("var cloudmachineId = uniqueString(subscription().subscriptionId, environmentName, location)\n\n")
-            self.core.write(main)
+            cm_bicep = os.path.join(infra_dir, "cloudmachine.bicep")
+            with open(cm_bicep, 'w') as cm_file:
+                _serialize_resource(main, self.core)
+                outputs = self.core.write(cm_file)
+                if self.host != 'local':
+                    self.app_settings.update({f"AZURE_CLOUDMACHINE_{generate_envvar(k)}": v for k, v in outputs.items()})
+                    outputs.update(self.host.write(cm_file))
 
-            # if self.host != 'local':
-            #     self.host.write(main)
+            main.write("module cloudmachine 'cloudmachine.bicep' = {\n")
+            main.write("    name: 'cloudmachine'\n")
+            main.write(f"    scope: {self.core._symbolicname}\n")
+            main.write("    params: {\n")
+            main.write("        location: location\n")
+            main.write("        tags: tags\n")
+            main.write("        principalId: principalId\n")
+            main.write("        cloudmachineId: cloudmachineId\n")
+            main.write("    }\n")
+            main.write("}\n\n")
+            for output in outputs.keys():
+                main.write(f"output AZURE_CLOUDMACHINE_{generate_envvar(output)} string = cloudmachine.outputs.{output}\n")
+
+
         params_json = os.path.join(infra_dir, "main.parameters.json")
         with open(params_json, 'w') as params:
             json.dump(self._params, params, indent=4)

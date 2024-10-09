@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import IO, ClassVar, List, Optional, Literal, Union
+from typing import IO, ClassVar, Dict, List, Optional, Literal, Union
 from dataclasses import field
 
 from .identity import UserAssignedIdentities
@@ -412,8 +412,9 @@ class SystemTopics(LocatedResource):
     _version: ClassVar[str] = '2022-06-15'
     _symbolicname: str = field(default_factory=lambda: generate_symbol("egst"), init=False, repr=False)
 
-    def write(self, bicep: IO[str]) -> None:
+    def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)
         for sub in self.subscriptions:
             sub._parent = self
-            sub.write(bicep)
+            self._outputs.update(sub.write(bicep))
+        return self._outputs

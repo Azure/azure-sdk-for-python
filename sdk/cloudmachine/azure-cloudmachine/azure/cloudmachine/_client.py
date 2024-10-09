@@ -71,14 +71,10 @@ class CloudMachineStorage:
     ):
         if name:
             name = name.upper()
-            endpoint = os.environ[f'AZURE_STORAGE_{name}_BLOB_ENDPOINT']
+            endpoint = os.environ[f'AZURE_CLOUDMACHINE_{name}_BLOB_ENDPOINT']
         else:
-            endpoint = os.environ['AZURE_STORAGE_BLOB_ENDPOINT']
-        if f'AZURE_STORAGE_{name}_KEY' in os.environ:
-            account_name = os.environ[f'AZURE_STORAGE_{name}_NAME']
-            credential = AzureNamedKeyCredential(account_name, os.environ[f'AZURE_STORAGE_{name}_KEY'])
-        else:
-            credential = DefaultAzureCredential()
+            endpoint = os.environ['AZURE_CLOUDMACHINE_BLOB_ENDPOINT']
+        credential = DefaultAzureCredential()
         self._client = BlobServiceClient(
             account_url=endpoint,
             credential=credential,
@@ -164,14 +160,10 @@ class CloudMachineTableData:
     ):
         if name:
             name = name.upper()
-            endpoint = os.environ[f'AZURE_STORAGE_{name}_TABLE_ENDPOINT']
+            endpoint = os.environ[f'AZURE_CLOUDMACHINE_{name}_TABLE_ENDPOINT']
         else:
-            endpoint = os.environ['AZURE_STORAGE_TABLE_ENDPOINT']
-        if f'AZURE_STORAGE_{name}_KEY' in os.environ:
-            account_name = os.environ[f'AZURE_STORAGE_{name}_NAME']
-            credential = AzureNamedKeyCredential(account_name, os.environ[f'AZURE_STORAGE_{name}_KEY'])
-        else:
-            credential = DefaultAzureCredential()
+            endpoint = os.environ['AZURE_CLOUDMACHINE_TABLE_ENDPOINT']
+        credential = DefaultAzureCredential()
         self._client = TableServiceClient(
             endpoint=endpoint,
             credential=credential,
