@@ -120,7 +120,6 @@ function Get-PrPkgProperties([string]$InputDiffJson) {
     $additionalValidationPackages = @()
     $lookup = @{}
 
-    # find all packages that have via comparison with changed files
     foreach ($pkg in $allPackageProperties)
     {
         $pkgDirectory = Resolve-Path "$($pkg.DirectoryPath)"
