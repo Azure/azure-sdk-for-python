@@ -90,8 +90,6 @@ function Get-python-AdditionalValidationPackagesFromPackageSet {
 
   foreach ($changedService in $changedServices) {
     $additionalPackages = $AllPkgProps | Where-Object { $_.ServiceDirectory -eq $changedService }
-
-    $additionalPackages | % { Write-Host $_.Name }
     $additionalValidationPackages += $additionalPackages
   }
 
