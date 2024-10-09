@@ -137,7 +137,7 @@ class RetrievalEvaluator:
         }
     """
 
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config):
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(validate_model_config(model_config))
 
     def __call__(self, *, conversation, **kwargs):

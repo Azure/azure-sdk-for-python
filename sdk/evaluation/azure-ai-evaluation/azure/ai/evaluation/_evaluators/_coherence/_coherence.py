@@ -39,7 +39,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
     RESULT_KEY = "gpt_coherence"
 
     @override
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
         super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)

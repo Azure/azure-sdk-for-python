@@ -44,7 +44,7 @@ class SelfHarmEvaluator(RaiServiceEvaluatorBase):
     def __init__(
         self,
         credential,
-        azure_ai_project: dict,
+        azure_ai_project,
         eval_last_turn: bool = False,
     ):
         super().__init__(

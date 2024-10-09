@@ -107,7 +107,7 @@ class SimilarityEvaluator:
         }
     """
 
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config):
         self._async_evaluator = _AsyncSimilarityEvaluator(validate_model_config(model_config))
 
     def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):
