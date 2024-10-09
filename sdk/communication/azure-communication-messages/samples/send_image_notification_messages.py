@@ -43,8 +43,8 @@ class SendWhatsAppMessageSample(object):
         image_options = ImageNotificationContent(
             channel_registration_id=self.channel_id,
             to=[self.phone_number],
-            caption="Hello World via Notification Messaging SDK.",
-            media_uri="https://sample-videos.com/img/Sample-jpg-image-50kb.jpg",
+            content="Hello World via Notification Messaging SDK.",
+            media_uri="https://aka.ms/acsicon1",
         )
 
         # calling send() with whatsapp message details

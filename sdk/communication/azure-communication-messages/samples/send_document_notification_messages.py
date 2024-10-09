@@ -43,7 +43,7 @@ class SendWhatsAppMessageSample(object):
         text_options = DocumentNotificationContent(
             channel_registration_id=self.channel_id,
             to=[self.phone_number],
-            content="Hello World via Advanced Messaging SDK.This is document message",
+            caption="Hello World via Advanced Messaging SDK.This is document message",
             file_name="Product roadmap timeline.pptx",
             media_uri="https://sample-videos.com/ppt/Sample-PPT-File-500kb.ppt",
         )
