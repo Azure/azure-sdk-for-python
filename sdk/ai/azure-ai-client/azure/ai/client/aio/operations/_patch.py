@@ -60,7 +60,7 @@ class InferenceOperations:
 
         return client
 
-    async def get_async_embeddings_client(self) -> "EmbeddingsClient":
+    async def get_embeddings_client(self) -> "EmbeddingsClient":
         endpoint = await self.outer_instance.endpoints.get_default(
             endpoint_type=EndpointType.SERVERLESS, populate_secrets=True
         )
