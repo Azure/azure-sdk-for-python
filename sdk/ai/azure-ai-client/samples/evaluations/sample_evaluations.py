@@ -40,6 +40,9 @@ evaluation = Evaluation(
                     "azure_endpoint": "https://ai-anksingai0771286510468288.openai.azure.com/",
                 }
             },
+            data_mapping= {
+                "response": "${data.answer}", "query": "${data.question}"
+            }
         ),
     },
     # This is needed as a workaround until environment gets published to registry
