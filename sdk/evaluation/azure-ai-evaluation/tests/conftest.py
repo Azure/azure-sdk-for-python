@@ -178,6 +178,27 @@ def redirect_asyncio_requests_traffic() -> None:
 
 
 @pytest.fixture
+def simple_conversation():
+    return {
+        "messages": [
+            {
+                "content": "What is the capital of France?",
+                "role": "user",
+                "context": "Customer wants to know the capital of France",
+            },
+            {"content": "Paris", "role": "assistant", "context": "Paris is the capital of France"},
+            {
+                "content": "What is the capital of Hawaii?",
+                "role": "user",
+                "context": "Customer wants to know the capital of Hawaii",
+            },
+            {"content": "Honolulu", "role": "assistant", "context": "Honolulu is the capital of Hawaii"},
+        ],
+        "context": "Global context",
+    }
+
+
+@pytest.fixture
 def redirect_openai_requests():
     """Route requests from the openai package to the test proxy."""
     config = TestProxyConfig(
@@ -224,7 +245,7 @@ def dev_connections(
 @pytest.fixture(scope="session")
 def mock_model_config() -> AzureOpenAIModelConfiguration:
     return AzureOpenAIModelConfiguration(
-        azure_endpoint="https://Sanitized.openai.azure.com",
+        azure_endpoint="https://Sanitized.api.cognitive.microsoft.com",
         api_key="aoai-api-key",
         api_version="2024-04-01-preview",
         azure_deployment="aoai-deployment",

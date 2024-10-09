@@ -15,7 +15,7 @@ jobs:
     displayName: Validate Release Candidate Python - Linux
     variables:
       skipComponentGovernanceDetection: true
-      PythonVersion: '3.13.0-rc.2'
+      PythonVersion: '3.13.0-rc.3'
       TargetedPackages: ${{ parameters.TargetedPackages }}
 
     timeoutInMinutes: 90

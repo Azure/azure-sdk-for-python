@@ -3,11 +3,6 @@ name: Retrieval
 description: Evaluates retrieval score for Chat scenario
 model:
   api: chat
-  configuration:
-    type: azure_openai
-    azure_deployment: ${env:AZURE_DEPLOYMENT}
-    api_key: ${env:AZURE_OPENAI_API_KEY}
-    azure_endpoint: ${env:AZURE_OPENAI_ENDPOINT}
   parameters:
     temperature: 0.0
     top_p: 1.0

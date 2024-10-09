@@ -3,11 +3,11 @@
 # ---------------------------------------------------------
 import inspect
 import logging
+import math
 import os
 from concurrent.futures import Future
 from typing import Any, Callable, Dict, Optional, Union
 
-import numpy as np
 import pandas as pd
 from promptflow.client import PFClient
 from promptflow.entities import Run
@@ -53,7 +53,7 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
     def get_details(self, proxy_run: ProxyRun, all_results: bool = False) -> pd.DataFrame:
         run: Run = proxy_run.run.result()
         result_df = self._pf_client.get_details(run, all_results=all_results)
-        result_df.replace("(Failed)", np.nan, inplace=True)
+        result_df.replace("(Failed)", math.nan, inplace=True)
         return result_df
 
     def get_metrics(self, proxy_run: ProxyRun) -> Dict[str, Any]:
