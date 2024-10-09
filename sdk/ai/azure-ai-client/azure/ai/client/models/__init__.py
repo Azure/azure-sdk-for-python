@@ -17,6 +17,7 @@ from ._models import CodeInterpreterToolDefinition
 from ._models import CodeInterpreterToolResource
 from ._models import Dataset
 from ._models import Evaluation
+from ._models import EvaluationSchedule
 from ._models import EvaluatorConfiguration
 from ._models import FileContentResponse
 from ._models import FileDeletionStatus
@@ -59,6 +60,8 @@ from ._models import OpenAIPageableListOfThreadMessage
 from ._models import OpenAIPageableListOfThreadRun
 from ._models import OpenAIPageableListOfVectorStore
 from ._models import OpenAIPageableListOfVectorStoreFile
+from ._models import Recurrence
+from ._models import RecurrenceSchedule
 from ._models import RequiredAction
 from ._models import RequiredFunctionToolCall
 from ._models import RequiredFunctionToolCallDetails
@@ -98,6 +101,7 @@ from ._models import RunStepMessageCreationDetails
 from ._models import RunStepMessageCreationReference
 from ._models import RunStepToolCall
 from ._models import RunStepToolCallDetails
+from ._models import SamplingStrategy
 from ._models import SubmitToolOutputsAction
 from ._models import SubmitToolOutputsDetails
 from ._models import SystemData
@@ -138,6 +142,7 @@ from ._enums import DoneEvent
 from ._enums import ErrorEvent
 from ._enums import FilePurpose
 from ._enums import FileState
+from ._enums import Frequency
 from ._enums import IncompleteRunDetails
 from ._enums import ListSortOrder
 from ._enums import MessageIncompleteDetailsReason
@@ -160,12 +165,10 @@ from ._enums import VectorStoreFileErrorCode
 from ._enums import VectorStoreFileStatus
 from ._enums import VectorStoreFileStatusFilter
 from ._enums import VectorStoreStatus
+from ._enums import WeekDays
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
-from ._models import CredentialsSASAuth
-from ._enums import AuthenticationType
-from ._enums import EndpointType
 
 __all__ = [
     "Agent",
@@ -175,13 +178,11 @@ __all__ = [
     "AgentsApiResponseFormat",
     "AgentsNamedToolChoice",
     "AppInsightsConfiguration",
-    "AuthenticationType",
     "CodeInterpreterToolDefinition",
     "CodeInterpreterToolResource",
-    "CredentialsSASAuth",
     "Dataset",
-    "EndpointType",
     "Evaluation",
+    "EvaluationSchedule",
     "EvaluatorConfiguration",
     "FileContentResponse",
     "FileDeletionStatus",
@@ -224,6 +225,8 @@ __all__ = [
     "OpenAIPageableListOfThreadRun",
     "OpenAIPageableListOfVectorStore",
     "OpenAIPageableListOfVectorStoreFile",
+    "Recurrence",
+    "RecurrenceSchedule",
     "RequiredAction",
     "RequiredFunctionToolCall",
     "RequiredFunctionToolCallDetails",
@@ -263,6 +266,7 @@ __all__ = [
     "RunStepMessageCreationReference",
     "RunStepToolCall",
     "RunStepToolCallDetails",
+    "SamplingStrategy",
     "SubmitToolOutputsAction",
     "SubmitToolOutputsDetails",
     "SystemData",
@@ -302,6 +306,7 @@ __all__ = [
     "ErrorEvent",
     "FilePurpose",
     "FileState",
+    "Frequency",
     "IncompleteRunDetails",
     "ListSortOrder",
     "MessageIncompleteDetailsReason",
@@ -324,6 +329,7 @@ __all__ = [
     "VectorStoreFileStatus",
     "VectorStoreFileStatusFilter",
     "VectorStoreStatus",
+    "WeekDays",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

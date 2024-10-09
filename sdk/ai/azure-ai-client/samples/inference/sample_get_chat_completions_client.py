@@ -29,4 +29,3 @@ client = ai_client.inference.get_chat_completions_client()
 response = client.complete(messages=[UserMessage(content="How many feet are in a mile?")])
 
 print(response.choices[0].message.content)
-

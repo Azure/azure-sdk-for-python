@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -20,7 +20,6 @@ from ._enums import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import _types, models as _models
 
 
@@ -368,30 +367,25 @@ class AgentThreadCreationOptions(_model_base.Model):
 
 
 class InputData(_model_base.Model):
-    """Abstract data class.
+    """Abstract data class for input data configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AppInsightsConfiguration, Dataset
 
 
-    :ivar type: Discriminator property for InputData. Required. Default value is None.
+    :ivar type: Type of the data. Required. Default value is None.
     :vartype type: str
-    :ivar id: Evaluation input data. Required.
-    :vartype id: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     type: str = rest_discriminator(name="type")
-    """Discriminator property for InputData. Required. Default value is None."""
-    id: str = rest_field(name="Uri")
-    """Evaluation input data. Required."""
+    """Type of the data. Required. Default value is None."""
 
     @overload
     def __init__(
         self,
         *,
         type: str,
-        id: str,  # pylint: disable=redefined-builtin
     ): ...
 
     @overload
@@ -408,31 +402,35 @@ class InputData(_model_base.Model):
 class AppInsightsConfiguration(InputData, discriminator="app_insights"):
     """Data Source for Application Insight.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Evaluation input data. Required.
-    :vartype id: str
+
     :ivar type: Required. Default value is "app_insights".
     :vartype type: str
-    :ivar connection_string: Application Insight connection string. Required.
-    :vartype connection_string: str
-    :ivar query: Query to fetch data. Required.
+    :ivar resource_id: LogAnalytic Workspace resourceID associated with AppInsights. Required.
+    :vartype resource_id: str
+    :ivar query: Query to fetch the data. Required.
     :vartype query: str
+    :ivar service_name: Service name. Required.
+    :vartype service_name: str
     """
 
-    type: Literal["app_insights"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["app_insights"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"app_insights\"."""
-    connection_string: str = rest_field(name="connectionString")
-    """Application Insight connection string. Required."""
+    resource_id: str = rest_field(name="resourceId")
+    """LogAnalytic Workspace resourceID associated with AppInsights. Required."""
     query: str = rest_field()
-    """Query to fetch data. Required."""
+    """Query to fetch the data. Required."""
+    service_name: str = rest_field(name="serviceName")
+    """Service name. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
-        connection_string: str,
+        resource_id: str,
         query: str,
+        service_name: str,
     ): ...
 
     @overload
@@ -694,14 +692,16 @@ class Dataset(InputData, discriminator="dataset"):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
-    :ivar id: Evaluation input data. Required.
-    :vartype id: str
     :ivar type: Required. Default value is "dataset".
     :vartype type: str
+    :ivar id: Evaluation input data. Required.
+    :vartype id: str
     """
 
     type: Literal["dataset"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"dataset\"."""
+    id: str = rest_field(name="Uri")
+    """Evaluation input data. Required."""
 
     @overload
     def __init__(
@@ -731,8 +731,8 @@ class Evaluation(_model_base.Model):
     :vartype id: str
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.client.models.InputData
-    :ivar display_name: Update stage to 'Archive' to archive the asset. Default is Development,
-     which means the asset is under development.
+    :ivar display_name: Display Name for evaluation. It helps to find evaluation easily in AI
+     Studio. It does not need to be unique.
     :vartype display_name: str
     :ivar description: Description of the evaluation. It can be used to store additional
      information about the evaluation and is mutable.
@@ -755,8 +755,8 @@ class Evaluation(_model_base.Model):
     data: "_models.InputData" = rest_field()
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(name="displayName")
-    """Update stage to 'Archive' to archive the asset. Default is Development, which means the asset
-     is under development."""
+    """Display Name for evaluation. It helps to find evaluation easily in AI Studio. It does not need
+     to be unique."""
     description: Optional[str] = rest_field()
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
@@ -783,6 +783,96 @@ class Evaluation(_model_base.Model):
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class EvaluationSchedule(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+    """Evaluation Schedule Definition.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar id: Identifier of the evaluation.
+    :vartype id: str
+    :ivar data: Data for evaluation. Required.
+    :vartype data: ~azure.ai.client.models.InputData
+    :ivar display_name: Display Name for evaluation. It helps to find evaluation easily in AI
+     Studio. It does not need to be unique.
+    :vartype display_name: str
+    :ivar description: Description of the evaluation. It can be used to store additional
+     information about the evaluation and is mutable.
+    :vartype description: str
+    :ivar system_data: Metadata containing createdBy and modifiedBy information.
+    :vartype system_data: ~azure.ai.client.models.SystemData
+    :ivar status: Status of the evaluation. It is set by service and is read-only.
+    :vartype status: str
+    :ivar tags: Evaluation's tags. Unlike properties, tags are fully mutable.
+    :vartype tags: dict[str, str]
+    :ivar properties: Evaluation's properties. Unlike tags, properties are add-only. Once added, a
+     property cannot be removed.
+    :vartype properties: dict[str, str]
+    :ivar evaluators: Evaluators to be used for the evaluation. Required.
+    :vartype evaluators: dict[str, ~azure.ai.client.models.EvaluatorConfiguration]
+    :ivar recurrence: Recurrence pattern for the evaluation.
+    :vartype recurrence: ~azure.ai.client.models.Recurrence
+    :ivar cron_expression: Cron expression for the evaluation.
+    :vartype cron_expression: str
+    :ivar sampling_strategy: Sampling strategy for the evaluation. Required.
+    :vartype sampling_strategy: ~azure.ai.client.models.SamplingStrategy
+    """
+
+    id: Optional[str] = rest_field()
+    """Identifier of the evaluation."""
+    data: "_models.InputData" = rest_field()
+    """Data for evaluation. Required."""
+    display_name: Optional[str] = rest_field(name="displayName")
+    """Display Name for evaluation. It helps to find evaluation easily in AI Studio. It does not need
+     to be unique."""
+    description: Optional[str] = rest_field()
+    """Description of the evaluation. It can be used to store additional information about the
+     evaluation and is mutable."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Metadata containing createdBy and modifiedBy information."""
+    status: Optional[str] = rest_field(visibility=["read"])
+    """Status of the evaluation. It is set by service and is read-only."""
+    tags: Optional[Dict[str, str]] = rest_field()
+    """Evaluation's tags. Unlike properties, tags are fully mutable."""
+    properties: Optional[Dict[str, str]] = rest_field()
+    """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
+     removed."""
+    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field()
+    """Evaluators to be used for the evaluation. Required."""
+    recurrence: Optional["_models.Recurrence"] = rest_field()
+    """Recurrence pattern for the evaluation."""
+    cron_expression: Optional[str] = rest_field(name="cronExpression")
+    """Cron expression for the evaluation."""
+    sampling_strategy: "_models.SamplingStrategy" = rest_field(name="samplingStrategy")
+    """Sampling strategy for the evaluation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: "_models.InputData",
+        evaluators: Dict[str, "_models.EvaluatorConfiguration"],
+        sampling_strategy: "_models.SamplingStrategy",
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, str]] = None,
+        recurrence: Optional["_models.Recurrence"] = None,
+        cron_expression: Optional[str] = None,
     ): ...
 
     @overload
@@ -2434,6 +2524,91 @@ class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
         self.object: Literal["list"] = "list"
 
 
+class Recurrence(_model_base.Model):
+    """Recurrence Definition.
+
+
+    :ivar frequency: The frequency to trigger schedule. Required. Known values are: "Month",
+     "Week", "Day", "Hour", and "Minute".
+    :vartype frequency: str or ~azure.ai.client.models.Frequency
+    :ivar interval: Specifies schedule interval in conjunction with frequency. Required.
+    :vartype interval: int
+    :ivar schedule: The recurrence schedule. Required.
+    :vartype schedule: ~azure.ai.client.models.RecurrenceSchedule
+    """
+
+    frequency: Union[str, "_models.Frequency"] = rest_field()
+    """The frequency to trigger schedule. Required. Known values are: \"Month\", \"Week\", \"Day\",
+     \"Hour\", and \"Minute\"."""
+    interval: int = rest_field()
+    """Specifies schedule interval in conjunction with frequency. Required."""
+    schedule: "_models.RecurrenceSchedule" = rest_field()
+    """The recurrence schedule. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        frequency: Union[str, "_models.Frequency"],
+        interval: int,
+        schedule: "_models.RecurrenceSchedule",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class RecurrenceSchedule(_model_base.Model):
+    """RecurrenceSchedule Definition.
+
+
+    :ivar hours: List of hours for the schedule. Required.
+    :vartype hours: list[int]
+    :ivar minutes: List of minutes for the schedule. Required.
+    :vartype minutes: list[int]
+    :ivar week_days: List of days for the schedule. Required.
+    :vartype week_days: list[str or ~azure.ai.client.models.WeekDays]
+    :ivar month_days: List of month days for the schedule. Required.
+    :vartype month_days: list[int]
+    """
+
+    hours: List[int] = rest_field()
+    """List of hours for the schedule. Required."""
+    minutes: List[int] = rest_field()
+    """List of minutes for the schedule. Required."""
+    week_days: List[Union[str, "_models.WeekDays"]] = rest_field(name="weekDays")
+    """List of days for the schedule. Required."""
+    month_days: List[int] = rest_field(name="monthDays")
+    """List of month days for the schedule. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        hours: List[int],
+        minutes: List[int],
+        week_days: List[Union[str, "_models.WeekDays"]],
+        month_days: List[int],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class RequiredAction(_model_base.Model):
     """An abstract representation of a required action for an agent thread run to continue.
 
@@ -3951,6 +4126,35 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
+
+
+class SamplingStrategy(_model_base.Model):
+    """SamplingStrategy Definition.
+
+
+    :ivar rate: Sampling rate. Required.
+    :vartype rate: float
+    """
+
+    rate: float = rest_field()
+    """Sampling rate. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rate: float,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):

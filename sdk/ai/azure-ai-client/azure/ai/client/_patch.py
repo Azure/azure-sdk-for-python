@@ -17,6 +17,7 @@ from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperat
 from ._client import AzureAIClient as ClientGenerated
 from .operations._patch import InferenceOperations
 
+
 class AzureAIClient(ClientGenerated):
 
     def __init__(
@@ -119,7 +120,7 @@ class AzureAIClient(ClientGenerated):
             workspace_name=workspace_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
-            credential_scopes=["https://management.azure.com"],  # TODO: Update once service changes are ready
+            credential_scopes=["https://ml.azure.com"],  # TODO: Update once service changes are ready
             **kwargs3,
         )
         _policies3 = kwargs3.pop("policies", None)

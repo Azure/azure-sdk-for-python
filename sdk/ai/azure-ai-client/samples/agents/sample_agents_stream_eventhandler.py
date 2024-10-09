@@ -41,6 +41,7 @@ ai_client = AzureAIClient(
 )
 """
 
+
 class MyEventHandler(AgentEventHandler):
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         for content_part in delta.delta.content:
@@ -80,10 +81,7 @@ message = ai_client.agents.create_message(thread_id=thread.id, role="user", cont
 print(f"Created message, message ID {message.id}")
 
 with ai_client.agents.create_and_process_run(
-    thread_id=thread.id, 
-    assistant_id=agent.id,
-    stream=True,
-    event_handler=MyEventHandler()
+    thread_id=thread.id, assistant_id=agent.id, stream=True, event_handler=MyEventHandler()
 ) as stream:
     stream.until_done()
 
