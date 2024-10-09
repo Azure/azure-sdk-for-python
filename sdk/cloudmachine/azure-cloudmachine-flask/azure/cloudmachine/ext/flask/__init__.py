@@ -13,6 +13,7 @@ from flask import g, current_app, Flask
 
 from ._version import VERSION
 
+from azure.cloudmachine._httpclient._servicebus import CloudMachineServiceBus
 from azure.cloudmachine._client import (
     CloudMachineClient,
     CloudMachineStorage,
@@ -59,6 +60,11 @@ class CloudMachineSession:
             raise RuntimeError("CloudMachineSession only availble within an app context.")
         return self._client.data
 
+    @property
+    def messaging(self) -> CloudMachineServiceBus:
+        if not current_app:
+            raise RuntimeError("CloudMachineSession only available within an app context.")
+        return self._client.messaging
     # @property
     # def user(self) -> User:
     #     if not current_app:

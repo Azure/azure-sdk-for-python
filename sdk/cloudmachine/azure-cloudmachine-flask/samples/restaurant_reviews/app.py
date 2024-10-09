@@ -5,13 +5,16 @@
 # --------------------------------------------------------------------------
 
 import os
+from io import BytesIO
 from datetime import datetime
+from queue import Empty
 
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for
 from flask_wtf.csrf import CSRFProtect
 
 from azure.cloudmachine.ext.flask import CloudMachine
 from azure.cloudmachine.resources import CloudMachineDeployment
+from azure.cloudmachine._client import FILE_UPLOADED
 
 from models import Restaurant, Review
 
@@ -22,6 +25,43 @@ deployment = CloudMachineDeployment(name="restaurantreviewapp")
 
 cm = CloudMachine(app, deployment=deployment)
 
+
+@FILE_UPLOADED.connect
+def gotcha(self, event=None):
+    print("Wow a file uploaded")
+    print("Event", event)
+
+@app.route('/hello')
+def hello():
+    print("uploading")
+    cm.session.storage.upload("testblob", BytesIO(b"Hello, World!"))
+    print("done")
+    return 'Hello, World!'
+
+@app.route('/echo')
+def echo():
+    print("receiving")
+    try:
+        message = cm.session.messaging.get(
+            topic="cm_internal_topic",
+            subscription="cm_internal_subscription",
+            timeout=10,
+            lock=True,
+        )
+    except Empty:
+        return "No more messages...."
+    print(message)
+    print(message.content, message.id, "delivery count", message.delivery_count)
+    return str(message)
+
+@app.route('/len')
+def len():
+    print("receiving")
+    length = cm.session.messaging.qsize(
+        topic="cm_internal_topic",
+        subscription="cm_internal_subscription",
+    )
+    return str(length)
 
 @app.route('/', methods=['GET'])
 def index():

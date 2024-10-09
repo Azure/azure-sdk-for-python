@@ -7,19 +7,21 @@
 import os
 from typing import IO, Any, Dict, Generator, Mapping, Optional, Protocol, Type, Union, overload
 from threading import Thread
-from concurrent.futures import Executor
+from concurrent.futures import Executor, ThreadPoolExecutor
 
 from dotenv import load_dotenv, dotenv_values
+from blinker import Namespace
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.pipeline.transport import HttpTransport
 from azure.storage.blob import BlobServiceClient, ContainerClient
 from azure.data.tables import TableServiceClient, TableClient
 from azure.identity import DefaultAzureCredential
-from azure.servicebus import ServiceBusClient
 
 from .resources import azd_env_name
-from ._eventlistener import EventListener
+from ._httpclient._eventlistener import EventListener, cloudmachine_events
+from ._httpclient import TransportWrapper
+from ._httpclient._servicebus import CloudMachineServiceBus
 
 
 def load_dev_environment(name: str) -> Dict[str, str]:
@@ -41,6 +43,19 @@ def load_dev_environment(name: str) -> Dict[str, str]:
         if key.startswith('AZURE_CLOUDMACHINE_'):
             trimmed_env[key[19:]] = value
     return trimmed_env
+
+
+FILE_UPLOADED = cloudmachine_events.signal('Microsoft.Storage.BlobCreated')
+FILE_DELETED = cloudmachine_events.signal('Microsoft.Storage.BlobDeleted')
+FILE_RENAMED = cloudmachine_events.signal('Microsoft.Storage.BlobRenamed')
+
+
+class StorageFile:
+    content_length: int
+    content_type: str
+    etag: str
+    url: str
+    content: Optional[bytes]
 
 
 class CloudMachineStorage:
@@ -122,39 +137,6 @@ class CloudMachineStorage:
             container.delete_container()
         except KeyError:
             self._client.delete_container(name)
-
-    def close(self) -> None:
-        self._client.close()
-
-
-class CloudMachineMessaging:
-    default_queue_name: str = "default"
-
-    def __init__(
-            self,
-            *,
-            name: Optional[str] = None,
-    ):
-        if name:
-            name = name.upper()
-            endpoint = os.environ[f'AZURE_SERVICE_BUS_{name}_ENDPOINT']
-        else:
-            endpoint = os.environ['AZURE_SERVICE_BUS_ENDPOINT']
-        if f'AZURE_SERVICE_BUS_{name}_KEY' in os.environ:
-            account_name = os.environ[f'AZURE_SERVICE_BUS_{name}_NAME']
-            credential = AzureNamedKeyCredential(account_name, os.environ[f'AZURE_SERVICE_BUS_{name}_KEY'])
-        else:
-            credential = DefaultAzureCredential()
-        self._client = ServiceBusClient(
-            fully_qualified_namespace=endpoint,
-            credential=credential,
-        )
-        #self._default_queue_sender = self._client.get_queue_sender(self.default_queue_name)
-        #self._default_queue_receiver = 
-        #self._containers: Dict[str, ContainerClient] = {}
-
-    def get_client(self) -> ServiceBusClient:
-        return self._client
 
     def close(self) -> None:
         self._client.close()
@@ -337,6 +319,7 @@ class CloudMachineTableData:
 
 
 class CloudMachineClient:
+    executor: Executor
 
     def __init__(
             self,
@@ -345,11 +328,16 @@ class CloudMachineClient:
             **kwargs
     ):
         self._http_transport = http_transport or self._build_transport(**kwargs)
-        self._listener = EventListener()
+        self._wrapped_transport = TransportWrapper(self._http_transport)
+        self._listener = EventListener(
+            transport=self._wrapped_transport
+        )
         self._listener_thread = Thread(target=self._listener, daemon=True)
         self._storage: Dict[CloudMachineStorage] = {}
-        self._messaging: Dict[CloudMachineMessaging] = {}
+        self._messaging: Dict[CloudMachineServiceBus] = {}
         self._data: Dict[CloudMachineTableData] = {}
+        self.executor: Executor = ThreadPoolExecutor(max_workers=kwargs.get('max_workers'))
+
 
     def _build_transport(self, **kwargs):
         import requests
@@ -358,8 +346,8 @@ class CloudMachineClient:
         session.mount(
             'https://',
             requests.adapters.HTTPAdapter(
-                kwargs.pop('pool_connections', 10),
-                kwargs.pop('pool_maxsize', 10)
+                kwargs.pop('pool_connections', 25),
+                kwargs.pop('pool_maxsize', 25)
             )
         )
         return RequestsTransport(
@@ -372,19 +360,28 @@ class CloudMachineClient:
     def storage(self):
         if not self._storage:
             self._listener_thread.start()
-            self._storage['default'] = CloudMachineStorage(transport=self._http_transport)
+            self._storage['default'] = CloudMachineStorage(
+                transport=self._http_transport,
+                executor=self.executor
+            )
         return self._storage['default']
 
     @property
     def messaging(self):
         if not self._messaging:
-            self._messaging['default'] = CloudMachineMessaging()
+            self._messaging['default'] = CloudMachineServiceBus(
+                transport=self._http_transport,
+                executor=self.executor
+            )
         return self._messaging['default']
 
     @property
     def data(self):
         if not self._data:
-            self._data['default'] = CloudMachineTableData(transport=self._http_transport)
+            self._data['default'] = CloudMachineTableData(
+                transport=self._http_transport,
+                executor=self.executor
+            )
         return self._data['default']
 
     def close(self):

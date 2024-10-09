@@ -359,7 +359,7 @@ class SiteProperties:
     client_cert_enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'clientCertEnabled'})
     client_cert_exclusion_paths: Optional[str] = field(default=_UNSET, metadata={'rest': 'clientCertExclusionPaths'})
     client_cert_mode: Optional[Literal["Required", "Optional", "OptionalInteractiveUser"]] = field(default=_UNSET, metadata={'rest': 'clientCertMode'})
-    cloningInfo: Optional[CloningInfo] = field(default=_UNSET, metadata={'rest': 'cloningInfo'})
+    cloning_info: Optional[CloningInfo] = field(default=_UNSET, metadata={'rest': 'cloningInfo'})
     custom_domain_verification_id: Optional[str] = field(default=_UNSET, metadata={'rest': 'customDomainVerificationId'})
     daily_memory_time_quota: Optional[int] = field(default=_UNSET, metadata={'rest': 'dailyMemoryTimeQuota'})
     enabled: Optional[bool] = field(default=_UNSET, metadata={'rest': 'enabled'})

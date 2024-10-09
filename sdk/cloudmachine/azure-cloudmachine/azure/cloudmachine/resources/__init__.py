@@ -51,7 +51,15 @@ from .eventgrid import (
     RetryPolicy
 )
 from .appservice import (
-    AppServicePlan
+    AppServiceAppSettingsConfig,
+    AppServicePlan,
+    AppServicePlanProperties,
+    AppServiceSite,
+    CorsSettings,
+    ManagedServiceIdentity,
+    SiteConfig,
+    SiteProperties,
+    SkuDescription
 )
 
 
@@ -142,7 +150,6 @@ class CloudMachineDeployment:
             raise ValueError("CloudMachine must have a valid name.")
         self.name = name.lower()
         self.location = location
-        self.host = host
         self._params = copy.deepcopy(DEFAULT_PARAMS)
         #if self.location:
         #    self._params["parameters"]["location"]["value"] = f"${{AZURE_LOCATION={self.location}}}"
@@ -157,6 +164,56 @@ class CloudMachineDeployment:
         self._messaging = self._define_messaging()
         self.core.add(self._messaging)
         self.core.add(self._define_events())
+        self.host = self._define_host(host)
+
+    def _define_host(self, host: str) -> Union[str, AppServicePlan]:
+        if host == 'local':
+            return host
+        elif host == 'appservice':
+            service_plan = AppServicePlan(
+                kind='linux',
+                sku=SkuDescription(
+                    name='B1',
+                    capacity=1
+                ),
+                properties=AppServicePlanProperties(
+                    reserved=True
+                )
+            )
+            site = AppServiceSite(
+                    kind='app,linux',
+                    tags={'azd-service-name': self.name},
+                    identity=ManagedServiceIdentity(
+                        type='UserAssigned',
+                        user_assigned_identities=UserAssignedIdentities((self.identity, {}))
+                    ),
+                    properties=SiteProperties(
+                        server_farm_id=ResourceId(service_plan),
+                        https_only=True,
+                        client_affinity_enabled=False,
+                        site_config=SiteConfig(
+                            min_tls_version='1.2',
+                            use_32bit_worker_process=False,
+                            always_on=True,
+                            ftps_state='FtpsOnly',
+                            linux_fx_version='python|3.11',
+                            cors=CorsSettings(
+                                allowed_origins=['https://portal.azure.com', 'https://ms.portal.azure.com']
+                            )
+                        )
+                    ),
+                    configs=[
+                        AppServiceAppSettingsConfig(
+                            properties={
+                                'SCM_DO_BUILD_DURING_DEPLOYMENT': True,
+                                'ENABLE_ORYX_BUILD': True,
+                                'PYTHON_ENABLE_GUNICORN_MULTIWORKERS': True,
+                            }
+                        )
+                    ]
+                )
+            service_plan.sites.append(site)
+            return service_plan
 
     def _define_messaging(self) -> ServiceBusNamespace:
         return ServiceBusNamespace(
@@ -266,7 +323,8 @@ class CloudMachineDeployment:
             ),
             identity=Identity(
                 type='UserAssigned',
-                user_assigned_identities=UserAssignedIdentities((self.identity, {}))),
+                user_assigned_identities=UserAssignedIdentities((self.identity, {}))
+            ),
             roles=[
                 RoleAssignment(
                     properties=RoleAssignmentProperties(
