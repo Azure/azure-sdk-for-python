@@ -60,7 +60,7 @@ with ai_client:
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     print(f"Created message, message ID: {message.id}")
 
-    run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id, sleep_interval=4)
+    run = ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
 
     # poll the run as long as run status is queued or in progress
     while run.status in ["queued", "in_progress", "requires_action"]:
