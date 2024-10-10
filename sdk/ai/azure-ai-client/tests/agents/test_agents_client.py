@@ -59,20 +59,32 @@ agentClientPreparer = functools.partial(
 """
 
 # create tool for agent use
-def fetch_current_datetime():
+def fetch_current_datetime_live():
         """
         Get the current time as a JSON string.
 
-        :return: The current time in JSON format.
+        :return: Static time string so that test recordings work.
         :rtype: str
         """
-        current_time = datetime.datetime.now()
-        time_json = json.dumps({"current_time": current_time.strftime("%Y-%m-%d %H:%M:%S")})
+        current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        time_json = json.dumps({"current_time": current_datetime})
+        return time_json
+
+# create tool for agent use
+def fetch_current_datetime_recordings():
+        """
+        Get the current time as a JSON string.
+
+        :return: Static time string so that test recordings work.
+        :rtype: str
+        """
+        time_json = json.dumps({"current_time": "2024-10-10 12:30:19"})
         return time_json
 
 
 # Statically defined user functions for fast reference
-user_functions = {"fetch_current_datetime": fetch_current_datetime}
+user_functions_recording = {"fetch_current_datetime": fetch_current_datetime_recordings}
+user_functions_live = {"fetch_current_datetime": fetch_current_datetime_live}
 
 
 # The test class name needs to start with "Test" to get collected by pytest
@@ -82,10 +94,11 @@ class TestagentClient(AzureRecordedTestCase):
     def create_client(self, **kwargs):
         # fetch environment variables
         connection_string = kwargs.pop("azure_ai_client_connection_string")
+        credential = self.get_credential(AzureAIClient, is_async=False)
 
         # create and return client
         client = AzureAIClient.from_connection_string(
-            credential=DefaultAzureCredential(),
+            credential=credential,
             connection=connection_string,
         )
 
@@ -165,7 +178,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert isinstance(client, AzureAIClient)
 
         # initialize agent functions
-        functions = FunctionTool(functions=user_functions)
+        functions = FunctionTool(functions=user_functions_recording)
 
         # create agent with tools
         agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent", tools=functions.definitions)
@@ -749,7 +762,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert isinstance(client, AzureAIClient)
 
         # Initialize agent tools
-        functions = FunctionTool(user_functions)
+        functions = FunctionTool(user_functions_recording)
         code_interpreter = CodeInterpreterTool()
 
         toolset = ToolSet()
@@ -1037,14 +1050,18 @@ class TestagentClient(AzureRecordedTestCase):
     # #
     # # **********************************************************************************
 
+    """
+    # DISABLED, PASSES LIVE ONLY: recordings don't capture DNS lookup errors
     # test agent creation and deletion
     @agentClientPreparer()
     @recorded_by_proxy
     def test_negative_create_delete_agent(self, **kwargs):
         # create client using bad endpoint
         bad_connection_string = "https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm"
+
+        credential = self.get_credential(AzureAIClient, is_async=False)
         client = AzureAIClient.from_connection_string(
-            credential=DefaultAzureCredential(),
+            credential=credential,
             connection=bad_connection_string,
         )
         
@@ -1064,5 +1081,5 @@ class TestagentClient(AzureRecordedTestCase):
         # close client and confirm an exception was caught
         client.close()
         assert exception_caught
-
+    """
 
