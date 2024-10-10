@@ -7,7 +7,12 @@
 import time
 from urllib.parse import urlparse
 import dns.resolver
-from dns.resolver import NXDOMAIN, YXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
+from dns.resolver import (
+    NXDOMAIN,
+    YXDOMAIN,
+    LifetimeTimeout,
+    NoNameservers,
+)  # cspell:disable-line
 from dns.rdatatype import SRV  # cspell:disable-line
 
 request_retry_period = 5  # seconds
@@ -87,6 +92,8 @@ def _request_record(request):
             return []  # No records found
         except (LifetimeTimeout, NoNameservers):
             continue
+        except Exception as e:  # Handle all other errors
+            return []
     return None  # Timeout
 
 
