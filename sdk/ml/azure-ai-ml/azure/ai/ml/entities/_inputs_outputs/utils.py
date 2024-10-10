@@ -4,13 +4,15 @@
 
 # pylint: disable=protected-access
 # enable protected access for protected helper functions
+# cspell:words globalns, localns
 
 import copy
 from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
 from inspect import Parameter, getmro, signature
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast, overload
+from typing_extensions import get_type_hints as _get_type_hints
 
 from typing_extensions import Annotated, Literal, TypeAlias
 
@@ -27,6 +29,29 @@ SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
 
 Annotation: TypeAlias = Union[str, Type, Annotated, None]  # type: ignore
 
+# Use `get_type_hints` from `typing_extensions` instead of `typing` because the former has annotations for the signature
+# Python 3.8 and older
+@overload
+def get_type_hints(
+    obj: Callable[..., Any],
+    globalns: Union[Dict[str, Any], None] = None,
+    localns: Union[Dict[str, Any], None] = None,
+) -> Dict[str, Any]:
+    ...
+
+# Python 3.9 and newer
+# The `include_extras` parameter was added in Python 3.9 as part of PEP 593
+@overload
+def get_type_hints(
+    obj: Callable[..., Any],
+    globalns: Union[Dict[str, Any], None] = None,
+    localns: Union[Dict[str, Any], None] = None,
+    include_extras: bool = False,
+) -> Dict[str, Any]:
+    ...
+
+def get_type_hints(*args, **kwargs):
+    return _get_type_hints(*args, **kwargs)
 
 def is_group(obj: object) -> bool:
     """Return True if obj is a group or an instance of a parameter group class.
@@ -331,7 +356,13 @@ def _get_param_with_standard_annotation(
     skip_params = skip_params or []
     inherited_fields = _get_inherited_fields()
     # From annotations get field with type
-    annotations: Dict[str, Annotation] = getattr(cls_or_func, "__annotations__", {})
+    annotations: Dict[str, Annotation]
+    try:
+        # Python 3.9 and newer
+        annotations = get_type_hints(cls_or_func, include_extras=True)
+    except TypeError:
+        # Python 3.8 and older
+        annotations = get_type_hints(cls_or_func)
     annotations = {k: v for k, v in annotations.items() if k not in skip_params}
     annotations = _update_io_from_mldesigner(annotations)
     annotation_fields = _get_fields(annotations)
