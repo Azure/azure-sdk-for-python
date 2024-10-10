@@ -8,10 +8,10 @@ import time
 from urllib.parse import urlparse
 import dns.resolver
 from dns.resolver import (
-    NXDOMAIN,
-    YXDOMAIN,
-    LifetimeTimeout,
-    NoNameservers,
+    NXDOMAIN,  # cspell:disable-line
+    YXDOMAIN,  # cspell:disable-line
+    LifetimeTimeout,  # cspell:disable-line
+    NoNameservers,  # cspell:disable-line
 )  # cspell:disable-line
 from dns.rdatatype import SRV  # cspell:disable-line
 
