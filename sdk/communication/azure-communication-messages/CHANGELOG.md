@@ -10,6 +10,7 @@
 ### Other Changes
 
 ## 1.0.1 (2024-10-10)
+This is feature addition release.
 
 ### Features Added
 - Using `NotificationMessagesClient`
