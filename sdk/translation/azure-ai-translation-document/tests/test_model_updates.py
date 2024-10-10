@@ -12,6 +12,7 @@ from preparer import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.ai.translation.document import DocumentTranslationClient
+
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 class TestModelUpdates(DocumentTranslationTest):
@@ -33,23 +34,16 @@ class TestModelUpdates(DocumentTranslationTest):
         client = kwargs.pop("client")
         
         # get supported glossary formats
-        supported_glossary_formats = client._get_supported_formats(FileFormatType.GLOSSARY)
+        supported_glossary_formats = client._get_supported_formats(type=FileFormatType.GLOSSARY)
         assert supported_glossary_formats is not None
         # validate
-        for glossary_format in supported_glossary_formats:
+        for glossary_format in supported_glossary_formats.value:
             self._validate_format(glossary_format)
 
         # get supported document formats
-        supported_document_formats = client._get_supported_formats(FileFormatType.DOCUMENT)
+        supported_document_formats = client._get_supported_formats(type=FileFormatType.DOCUMENT)
         assert supported_document_formats is not None
         # validate
-        for document_format in supported_document_formats:
+        for document_format in supported_document_formats.value:
             self._validate_format(document_format)
-
-        # get supported formats
-        supported_formats = client._get_supported_formats()
-        assert supported_formats is not None
-        # validate
-        for format in supported_formats:
-            self._validate_format(format)
     
