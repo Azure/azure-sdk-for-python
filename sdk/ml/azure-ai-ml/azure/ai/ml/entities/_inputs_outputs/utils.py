@@ -24,8 +24,8 @@ if TYPE_CHECKING:
 
 SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
 
-
-Annotation: TypeAlias = Union[str, Type, None]  # type: ignore
+ValidAnnotated = Annotated[Any, Any]
+Annotation: TypeAlias = Union[str, Type, ValidAnnotated, None]  # type: ignore
 
 def is_group(obj: object) -> bool:
     """Return True if obj is a group or an instance of a parameter group class.
