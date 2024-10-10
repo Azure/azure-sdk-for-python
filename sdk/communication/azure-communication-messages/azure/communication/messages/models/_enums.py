@@ -11,33 +11,41 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class CommunicationMessageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of message. Supports text, image, template.
-    """
+    """The type of message."""
 
     TEXT = "text"
     """Text message type."""
     IMAGE = "image"
     """Image message type."""
+    IMAGE_V0 = "image_v0"
+    """Image message type. Legacy image type for ``MediaNotificationContent`` which is being
+    deprecated"""
+    DOCUMENT = "document"
+    """Document message type."""
+    VIDEO = "video"
+    """Video message type."""
+    AUDIO = "audio"
+    """Audio message type."""
     TEMPLATE = "template"
     """Template message type."""
 
+
 class CommunicationMessagesChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the communication messages channel.
-    """
+    """The type of the communication messages channel."""
 
     WHATSAPP = "whatsApp"
     """The WhatsApp communication messages channel type."""
 
+
 class MessageTemplateBindingsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the message template.
-    """
+    """The type of the message template."""
 
     WHATSAPP = "whatsApp"
     """The WhatsApp template type."""
 
+
 class MessageTemplateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The aggregated template status.
-    """
+    """The aggregated template status."""
 
     APPROVED = "approved"
     """Message template is approved."""
@@ -48,9 +56,9 @@ class MessageTemplateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PAUSED = "paused"
     """Message template is paused."""
 
+
 class MessageTemplateValueKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the template parameter.
-    """
+    """The type of the template parameter."""
 
     TEXT = "text"
     """The text template parameter type."""
@@ -65,9 +73,9 @@ class MessageTemplateValueKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     QUICK_ACTION = "quickAction"
     """The quick action template parameter type."""
 
+
 class RepeatabilityResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Repeatability Result header options.
-    """
+    """Repeatability Result header options."""
 
     ACCEPTED = "accepted"
     """If the request was accepted and the server guarantees that the server state reflects a single
@@ -78,9 +86,9 @@ class RepeatabilityResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     or because the Repeatability-First-Sent value was outside the range of values held by the
     server."""
 
+
 class WhatsAppMessageButtonSubType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The WhatsApp button sub type.
-    """
+    """The WhatsApp button sub type."""
 
     QUICK_REPLY = "quickReply"
     """The WhatsApp button sub type is quick reply."""

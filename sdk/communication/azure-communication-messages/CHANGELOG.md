@@ -1,8 +1,22 @@
 # Release History
-
-## 1.0.1 (Unreleased)
+## 1.1.2 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.1 (2024-10-10)
+This is feature addition release.
+
+### Features Added
+- Using `NotificationMessagesClient`
+  - Send Video messages
+  - Send Audio messages
+  - Send Document messages
 
 ### Breaking Changes
 
