@@ -12,8 +12,8 @@ from devtools_testutils import PowerShellPreparer, AzureMgmtPreparer, get_creden
 DocumentTranslationPreparer = functools.partial(
     PowerShellPreparer,
     "translation",
-    translation_document_test_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
-    translation_document_storage_name="redacted",
+    document_translation_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
+    document_translation_storage_name="redacted",
 )
 
 
@@ -24,7 +24,7 @@ class DocumentTranslationClientPreparer(AzureMgmtPreparer):
         self.client_cls = client_cls
 
     def create_resource(self, name, **kwargs):
-        doctranslation_test_endpoint = kwargs.get("translation_document_test_endpoint")
+        doctranslation_test_endpoint = kwargs.get("document_translation_endpoint")
 
         # set polling interval to 0 for recorded tests
         if not self.is_live:

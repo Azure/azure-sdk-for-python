@@ -14,9 +14,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_translate(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         from_language = "es"
@@ -32,9 +32,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_autodetect(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         to_language = ["cs"]
@@ -51,9 +51,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_no_translate_tag(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         from_language = "zh-chs"
@@ -73,9 +73,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_dictionary_tag(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         from_language = "en"
@@ -93,9 +93,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_transliteration(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         from_language = "ar"
@@ -118,9 +118,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_from_to_latin(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         from_language = "hi"
@@ -142,9 +142,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_multiple_input(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         to_language = ["cs"]
@@ -170,9 +170,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_multiple_target_languages(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         to_language = ["cs", "es", "de"]
@@ -190,9 +190,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_different_texttypes(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         to_language = ["cs"]
@@ -207,9 +207,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_profanity(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         to_language = ["zh-cn"]
@@ -230,9 +230,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_alignment(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         to_language = ["cs"]
@@ -248,9 +248,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_sentence_length(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         to_language = ["fr"]
@@ -269,9 +269,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_custom_endpoint(self, **kwargs):
-        endpoint = kwargs.get("translation_text_custom_endpoint")
-        apikey = kwargs.get("translation_text_custom_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_custom_endpoint")
+        apikey = kwargs.get("text_translation_custom_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client(endpoint, apikey, region)
 
         to_language = ["fr"]
@@ -287,9 +287,9 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_token(self, **kwargs):
-        endpoint = kwargs.get("translation_text_endpoint")
-        apikey = kwargs.get("translation_text_apikey")
-        region = kwargs.get("translation_text_region")
+        endpoint = kwargs.get("text_translation_endpoint")
+        apikey = kwargs.get("text_translation_apikey")
+        region = kwargs.get("text_translation_region")
         client = self.create_client_token(endpoint, apikey, region, "https://api.microsofttranslator.com/")
 
         to_language = ["cs"]
@@ -306,7 +306,7 @@ class TestTranslation(TextTranslationTest):
     @recorded_by_proxy
     def test_translate_aad(self, **kwargs):
         aadRegion = "westus2"
-        aadResourceId = kwargs.get("translation_text_resource_id")
+        aadResourceId = kwargs.get("text_translation_resource_id")
         token_credential = self.get_mt_credential(False)
         client = self.create_text_translation_client_with_aad(token_credential, aadRegion, aadResourceId)
 
@@ -324,7 +324,7 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_translate_aad_custom(self, **kwargs):
-        endpoint = kwargs.get("translation_text_custom_endpoint")
+        endpoint = kwargs.get("text_translation_custom_endpoint")
         token_credential = self.get_mt_credential(False)
         client = self.create_text_translation_client_custom_with_aad(token_credential, endpoint=endpoint)
 

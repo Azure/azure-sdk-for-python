@@ -8,8 +8,8 @@ Start by creating a new virtual environment for your perf tests. This will need 
 The following environment variable will need to be set for the tests to access the live resources:
 
 ```
-TRANSLATION_DOCUMENT_TEST_ENDPOINT=<translation-endpoint>
-TRANSLATION_DOCUMENT_STORAGE_NAME=<storage-blob-account-name>
+DOCUMENT_TRANSLATION_ENDPOINT=<translation-endpoint>
+DOCUMENT_TRANSLATION_STORAGE_NAME=<storage-blob-account-name>
 ```
 
 ### Setup for perf test runs

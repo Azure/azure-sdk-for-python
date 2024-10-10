@@ -35,7 +35,7 @@ class Document:
 class DocumentTranslationTest(AzureRecordedTestCase):
     @property
     def storage_name(self):
-        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME", "redacted")
+        return os.getenv("DOCUMENT_TRANSLATION_STORAGE_NAME", "redacted")
 
     @property
     def storage_endpoint(self):

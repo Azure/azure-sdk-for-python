@@ -33,7 +33,7 @@ def add_sanitizers(test_proxy):
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
     #  - AZSDK3424: $..to
-    remove_batch_sanitizers(["AZSDK3430", "AZSDK3424"])
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3424", "AZSDK4001"])
 
     # run tests
     yield
@@ -42,7 +42,7 @@ def add_sanitizers(test_proxy):
     # This is unnecessary for AzureCloud where each storage account is deleted at the end of testing
     if is_live() and os.getenv("TRANSLATION_ENVIRONMENT") == "Dogfood":
         client = BlobServiceClient(
-            "https://" + os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME") + ".blob.core.windows.net/",
+            "https://" + os.getenv("DOCUMENT_TRANSLATION_STORAGE_NAME") + ".blob.core.windows.net/",
             DefaultAzureCredential(),
         )
         for container in client.list_containers():

@@ -35,12 +35,12 @@ class TestTranslation(DocumentTranslationTest):
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     def test_active_directory_auth(self, **kwargs):
-        translation_document_test_endpoint = kwargs.pop("translation_document_test_endpoint")
+        document_translation_endpoint = kwargs.pop("document_translation_endpoint")
         token = self.get_credential(DocumentTranslationClient)
         kwargs = {}
         if os.getenv("AZURE_COGNITIVE_SCOPE"):
             kwargs["credential_scopes"] = [os.getenv("AZURE_COGNITIVE_SCOPE")]
-        client = DocumentTranslationClient(translation_document_test_endpoint, token, **kwargs)
+        client = DocumentTranslationClient(document_translation_endpoint, token, **kwargs)
         # prepare containers and test data
         blob_data = b"This is some text"
         source_container_url = self.create_source_container(data=Document(data=blob_data))
