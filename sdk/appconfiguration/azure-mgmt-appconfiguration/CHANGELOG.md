@@ -1,5 +1,13 @@
 # Release History
 
+## 3.1.0 (2024-10-21)
+
+### Features Added
+
+  - Added operation group SnapshotsOperations
+  - Model ConfigurationStore has a new parameter data_plane_proxy
+  - Model ConfigurationStoreUpdateParameters has a new parameter data_plane_proxy
+
 ## 3.0.0 (2023-03-27)
 
 ### Breaking Changes
