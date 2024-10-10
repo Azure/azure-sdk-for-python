@@ -17,7 +17,7 @@ Endpoint = "https://eastus2euap.api.azureml.ms"
 # Create an Azure AI client
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    connection=f"{Endpoint};{Subscription};{ResourceGroup};{Workspace}",
+    conn_str=f"{Endpoint};{Subscription};{ResourceGroup};{Workspace}",
     logging_enable=True,  # Optional. Remove this line if you don't want to show how to enable logging
 )
 

@@ -37,7 +37,7 @@ async def sample_endpoints_async():
     # It should be in the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
     async with AzureAIClient.from_connection_string(
         credential=DefaultAzureCredential(),
-        connection=os.environ["AI_CLIENT_CONNECTION_STRING"],
+        conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
     ) as ai_client:
 
         # List all endpoints of a particular "type", with or without their credentials:

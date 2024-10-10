@@ -11,11 +11,9 @@ from azure.identity import DefaultAzureCredential
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
 # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
-connection_string = os.environ["AI_CLIENT_CONNECTION_STRING"]
-
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    connection=connection_string,
+    conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
 )
 
 agent = ai_client.agents.create_agent(

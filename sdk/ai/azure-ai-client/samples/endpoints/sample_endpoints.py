@@ -16,7 +16,7 @@ from azure.core.credentials import AzureKeyCredential
 # It should be in the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    connection=os.environ["AI_CLIENT_CONNECTION_STRING"],
+    conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
 )
 
 # List all endpoints of a particular "type", with or without their credentials:

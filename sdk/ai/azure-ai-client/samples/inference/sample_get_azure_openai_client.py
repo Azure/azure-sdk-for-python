@@ -28,7 +28,7 @@ from azure.identity import DefaultAzureCredential
 # It should have the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
-    connection=os.environ["AI_CLIENT_CONNECTION_STRING"],
+    conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
 )
 
 # Get an authenticated OpenAI client for your default Azure OpenAI connection:

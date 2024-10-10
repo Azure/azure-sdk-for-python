@@ -32,7 +32,7 @@ async def sample_get_azure_openai_client_async():
     # It should have the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
     async with AzureAIClient.from_connection_string(
         credential=DefaultAzureCredential(),
-        connection=os.environ["AI_CLIENT_CONNECTION_STRING"],
+        conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
     ) as ai_client:
 
         # Get an authenticated AsyncAzureOpenAI client for your default Azure OpenAI connection:

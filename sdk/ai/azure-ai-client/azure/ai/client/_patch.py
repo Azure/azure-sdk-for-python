@@ -168,15 +168,15 @@ class AzureAIClient(ClientGenerated):
         self._client3.__exit__(*exc_details)
 
     @classmethod
-    def from_connection_string(cls, connection: str, credential: "TokenCredential", **kwargs) -> "AzureAIClient":
+    def from_connection_string(cls, conn_str: str, credential: "TokenCredential", **kwargs) -> "AzureAIClient":
         """
         Create an AzureAIClient from a connection string.
 
-        :param connection: The connection string, copied from your AI Studio project.
+        :param conn_str: The connection string, copied from your AI Studio project.
         """
-        if not connection:
+        if not conn_str:
             raise ValueError("Connection string is required")
-        parts = connection.split(";")
+        parts = conn_str.split(";")
         if len(parts) != 4:
             raise ValueError("Invalid connection string format")
         endpoint = parts[0]
