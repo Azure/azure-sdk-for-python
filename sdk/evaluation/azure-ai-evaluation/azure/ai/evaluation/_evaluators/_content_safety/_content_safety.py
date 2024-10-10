@@ -61,7 +61,7 @@ class ContentSafetyEvaluator:
         }
     """
 
-    def __init__(self, credential, azure_ai_project: dict, parallel: bool = True):
+    def __init__(self, credential, azure_ai_project, parallel: bool = True):
         self._parallel = parallel
         self._evaluators: List[Callable[..., Dict[str, Union[str, float]]]] = [
             ViolenceEvaluator(credential, azure_ai_project),

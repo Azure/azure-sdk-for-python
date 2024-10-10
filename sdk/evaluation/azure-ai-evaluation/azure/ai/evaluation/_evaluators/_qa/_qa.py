@@ -51,7 +51,7 @@ class QAEvaluator:
         }
     """
 
-    def __init__(self, model_config: dict, parallel: bool = True):
+    def __init__(self, model_config, parallel: bool = True):
         self._parallel = parallel
 
         self._evaluators: List[Callable[..., Dict[str, float]]] = [

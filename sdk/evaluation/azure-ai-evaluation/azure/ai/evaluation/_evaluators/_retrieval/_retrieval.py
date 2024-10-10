@@ -7,7 +7,7 @@ import logging
 import math
 import os
 import re
-from typing import Union
+from typing import Dict, Union
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
@@ -27,19 +27,19 @@ except ImportError:
 
 class _AsyncRetrievalScoreEvaluator:
     # Constants must be defined within eval's directory to be save/loadable
-    PROMPTY_FILE = "retrieval.prompty"
-    LLM_CALL_TIMEOUT = 600
-    DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
+    _PROMPTY_FILE = "retrieval.prompty"
+    _LLM_CALL_TIMEOUT = 600
+    _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         prompty_model_config = construct_prompty_model_config(
             model_config,
-            self.DEFAULT_OPEN_API_VERSION,
+            self._DEFAULT_OPEN_API_VERSION,
             USER_AGENT,
         )
 
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
     async def __call__(self, *, conversation, **kwargs):
@@ -47,6 +47,8 @@ class _AsyncRetrievalScoreEvaluator:
         queries = []
         responses = []
         contexts = []
+
+        conversation = conversation.get("messages", None)
 
         for each_turn in conversation:
             role = each_turn["role"]
@@ -70,7 +72,7 @@ class _AsyncRetrievalScoreEvaluator:
                 history.append({"user": query, "assistant": answer})
 
                 llm_output = await self._flow(
-                    query=query, history=history, documents=context, timeout=self.LLM_CALL_TIMEOUT, **kwargs
+                    query=query, history=history, documents=context, timeout=self._LLM_CALL_TIMEOUT, **kwargs
                 )
                 score = math.nan
                 if llm_output:
@@ -112,15 +114,17 @@ class RetrievalEvaluator:
     .. code-block:: python
 
         chat_eval = RetrievalScoreEvaluator(model_config)
-        conversation = [
-            {"role": "user", "content": "What is the value of 2 + 2?"},
-            {"role": "assistant", "content": "2 + 2 = 4", "context": {
-                "citations": [
-                        {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
-                        ]
+        conversation = {
+            "messages": [
+                {"role": "user", "content": "What is the value of 2 + 2?"},
+                {"role": "assistant", "content": "2 + 2 = 4", "context": {
+                    "citations": [
+                            {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
+                            ]
+                    }
                 }
-            }
-        ]
+            ]
+        }
         result = chat_eval(conversation=conversation)
 
     **Output format**
@@ -137,14 +141,14 @@ class RetrievalEvaluator:
         }
     """
 
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config):
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(validate_model_config(model_config))
 
-    def __call__(self, *, conversation, **kwargs):
+    def __call__(self, *, conversation: Dict, **kwargs):
         """Evaluates retrieval score chat scenario.
 
         :keyword conversation: The conversation to be evaluated.
-        :paramtype conversation: List[Dict]
+        :paramtype conversation: Dict
         :return: The scores for Chat scenario.
         :rtype: dict
         """

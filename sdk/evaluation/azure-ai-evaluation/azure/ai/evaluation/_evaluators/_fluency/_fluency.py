@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Optional
+from typing import Dict, Optional
 
 from typing_extensions import override
 
@@ -36,14 +36,14 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         }
     """
 
-    PROMPTY_FILE = "fluency.prompty"
-    RESULT_KEY = "gpt_fluency"
+    _PROMPTY_FILE = "fluency.prompty"
+    _RESULT_KEY = "gpt_fluency"
 
     @override
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
     @override
     def __call__(
@@ -51,7 +51,7 @@ class FluencyEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        conversation: Optional[Dict] = None,
         **kwargs,
     ):
         """

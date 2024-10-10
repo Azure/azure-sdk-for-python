@@ -461,7 +461,7 @@ def evaluate(
     azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
     **kwargs,
-):
+) -> Dict:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
         data will be run through target function and then results will be evaluated.
 
@@ -486,7 +486,7 @@ def evaluate(
     :keyword azure_ai_project: Logs evaluation results to AI Studio if set.
     :paramtype azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
     :return: Evaluation results.
-    :rtype: dict
+    :rtype: Dict
 
     :Example:
 

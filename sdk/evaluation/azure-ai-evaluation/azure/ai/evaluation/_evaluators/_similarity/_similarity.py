@@ -23,19 +23,19 @@ except ImportError:
 
 class _AsyncSimilarityEvaluator:
     # Constants must be defined within eval's directory to be save/loadable
-    PROMPTY_FILE = "similarity.prompty"
-    LLM_CALL_TIMEOUT = 600
-    DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
+    _PROMPTY_FILE = "similarity.prompty"
+    _LLM_CALL_TIMEOUT = 600
+    _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
     def __init__(self, model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]):
         prompty_model_config = construct_prompty_model_config(
             model_config,
-            self.DEFAULT_OPEN_API_VERSION,
+            self._DEFAULT_OPEN_API_VERSION,
             USER_AGENT,
         )
 
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._flow = AsyncPrompty.load(source=prompty_path, model=prompty_model_config)
 
     async def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):
@@ -68,7 +68,7 @@ class _AsyncSimilarityEvaluator:
 
         # Run the evaluation flow
         llm_output = await self._flow(
-            query=query, response=response, ground_truth=ground_truth, timeout=self.LLM_CALL_TIMEOUT, **kwargs
+            query=query, response=response, ground_truth=ground_truth, timeout=self._LLM_CALL_TIMEOUT, **kwargs
         )
 
         score = math.nan
@@ -107,7 +107,7 @@ class SimilarityEvaluator:
         }
     """
 
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config):
         self._async_evaluator = _AsyncSimilarityEvaluator(validate_model_config(model_config))
 
     def __call__(self, *, query: str, response: str, ground_truth: str, **kwargs):

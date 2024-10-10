@@ -36,8 +36,8 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
     :type ignore_queries: bool
     """
 
-    LLM_CALL_TIMEOUT = 600
-    DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
+    _LLM_CALL_TIMEOUT = 600
+    _DEFAULT_OPEN_API_VERSION = "2024-02-15-preview"
 
     def __init__(self, *, result_key: str, prompty_file: str, model_config: dict, eval_last_turn: bool = False):
         self._result_key = result_key
@@ -46,7 +46,7 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
 
         prompty_model_config = construct_prompty_model_config(
             validate_model_config(model_config),
-            self.DEFAULT_OPEN_API_VERSION,
+            self._DEFAULT_OPEN_API_VERSION,
             USER_AGENT,
         )
 
@@ -66,7 +66,7 @@ class PromptyEvaluatorBase(EvaluatorBase[float]):
         :return: The evaluation result.
         :rtype: Dict
         """
-        llm_output = await self._flow(timeout=self.LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
         if llm_output:

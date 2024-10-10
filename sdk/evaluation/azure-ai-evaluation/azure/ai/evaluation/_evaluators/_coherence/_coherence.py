@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Optional
+from typing import Dict, Optional
 
 from typing_extensions import override
 
@@ -35,14 +35,14 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         }
     """
 
-    PROMPTY_FILE = "coherence.prompty"
-    RESULT_KEY = "gpt_coherence"
+    _PROMPTY_FILE = "coherence.prompty"
+    _RESULT_KEY = "gpt_coherence"
 
     @override
-    def __init__(self, model_config: dict):
+    def __init__(self, model_config):
         current_dir = os.path.dirname(__file__)
-        prompty_path = os.path.join(current_dir, self.PROMPTY_FILE)
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self.RESULT_KEY)
+        prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY)
 
     @override
     def __call__(
@@ -50,7 +50,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[dict] = None,
+        conversation: Optional[Dict] = None,
         **kwargs,
     ):
         """Evaluate coherence. Accepts either a query and response for a single evaluation,
