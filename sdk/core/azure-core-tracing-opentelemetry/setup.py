@@ -55,6 +55,7 @@ setup(
     zip_safe=False,
     packages=[
         "azure.core.tracing.ext.opentelemetry_span",
+        "azure.core.tracing.ai.inference",
     ],
     include_package_data=True,
     package_data={
@@ -63,6 +64,6 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "opentelemetry-api>=1.12.0",
-        "azure-core>=1.24.0",
+        "azure-core>=1.30.0",
     ],
 )

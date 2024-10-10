@@ -6,3 +6,4 @@ requests
 azure-storage-blob
 ../../servicebus/azure-servicebus
 ../../eventhub/azure-eventhub
+../../ai/azure-ai-inference

@@ -68,4 +68,7 @@ setup(
         "typing-extensions>=4.6.0",
     ],
     python_requires=">=3.8",
+    extras_require={  
+        'trace': ['azure-core-tracing-opentelemetry']  
+    }
 )
