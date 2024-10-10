@@ -29,19 +29,6 @@ ai_client = AzureAIClient.from_connection_string(
     connection=connection_string,
 )
 
-# Or, you can create the Azure AI Client by giving all required parameters directly
-"""
-ai_client = AzureAIClient(
-    credential=DefaultAzureCredential(),
-    host_name=os.environ["AI_CLIENT_HOST_NAME"],
-    subscription_id=os.environ["AI_CLIENT_SUBSCRIPTION_ID"],
-    resource_group_name=os.environ["AI_CLIENT_RESOURCE_GROUP_NAME"],
-    workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
-    logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
-)
-"""
-
-
 class MyEventHandler(AgentEventHandler):
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         for content_part in delta.delta.content:

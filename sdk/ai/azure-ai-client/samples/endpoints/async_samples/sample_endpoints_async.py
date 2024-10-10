@@ -30,6 +30,7 @@ from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from azure.core.credentials import AzureKeyCredential
 
+
 async def sample_endpoints_async():
 
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -38,15 +39,6 @@ async def sample_endpoints_async():
         credential=DefaultAzureCredential(),
         connection=os.environ["AI_CLIENT_CONNECTION_STRING"],
     ) as ai_client:
-
-    # Or, you can create the Azure AI Client by giving all required parameters directly
-    # async with AzureAIClient(
-    #     credential=DefaultAzureCredential(),
-    #     endpoint=os.environ["AI_CLIENT_ENDPOINT"],
-    #     subscription_id=os.environ["AI_CLIENT_SUBSCRIPTION_ID"],
-    #     resource_group_name=os.environ["AI_CLIENT_RESOURCE_GROUP_NAME"],
-    #     workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
-    # ) as ai_client:
 
         # List all endpoints of a particular "type", with or without their credentials:
         print("====> Listing of all Azure Open AI endpoints:")
@@ -59,7 +51,8 @@ async def sample_endpoints_async():
         # Get the default endpoint of a particular "type" (note that since at the moment the service
         # does not have a notion of a default endpoint, this will return the first endpoint of that type):
         endpoint = await ai_client.endpoints.get_default(
-            endpoint_type=EndpointType.AZURE_OPEN_AI, populate_secrets=True  # Required.  # Optional. Defaults to "False"
+            endpoint_type=EndpointType.AZURE_OPEN_AI,
+            populate_secrets=True,  # Required.  # Optional. Defaults to "False"
         )
         print("====> Get default Azure Open AI endpoint:")
         print(endpoint)
@@ -120,11 +113,15 @@ async def sample_endpoints_async():
 
             if endpoint.authentication_type == AuthenticationType.API_KEY:
                 print("====> Creating ChatCompletionsClient using API key authentication")
-                client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key))
+                client = ChatCompletionsClient(
+                    endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key)
+                )
             elif endpoint.authentication_type == AuthenticationType.AAD:
                 # MaaS models do not yet support EntraID auth
                 print("====> Creating ChatCompletionsClient using Entra ID authentication")
-                client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=endpoint.properties.token_credential)
+                client = ChatCompletionsClient(
+                    endpoint=endpoint.endpoint_url, credential=endpoint.properties.token_credential
+                )
             elif endpoint.authentication_type == AuthenticationType.SAS:
                 # TODO - Not yet supported by the service. Expected 9/27.
                 print("====> Creating ChatCompletionsClient using SAS authentication")
@@ -134,8 +131,10 @@ async def sample_endpoints_async():
 
             print(response.choices[0].message.content)
 
+
 async def main():
     await sample_endpoints_async()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

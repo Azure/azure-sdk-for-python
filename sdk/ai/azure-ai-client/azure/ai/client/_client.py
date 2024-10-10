@@ -41,8 +41,8 @@ class AzureAIClient:
     :type subscription_id: str
     :param resource_group_name: The name of the Azure Resource Group. Required.
     :type resource_group_name: str
-    :param workspace_name: The name of the Azure AI Studio hub. Required.
-    :type workspace_name: str
+    :param project_name: The Azure AI Studio project name. Required.
+    :type project_name: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
@@ -56,16 +56,16 @@ class AzureAIClient:
         endpoint: str,
         subscription_id: str,
         resource_group_name: str,
-        workspace_name: str,
+        project_name: str,
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}/{subscriptionId}/{resourceGroupName}/{workspaceName}"
+        _endpoint = "{endpoint}/{subscriptionId}/{resourceGroupName}/{projectName}"
         self._config = AzureAIClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
+            project_name=project_name,
             credential=credential,
             **kwargs
         )
@@ -120,7 +120,7 @@ class AzureAIClient:
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

@@ -125,7 +125,7 @@ class ApiResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """to do."""
+    """Authentication type used by Azure AI service to connect to another service."""
 
     API_KEY = "ApiKey"
     """API Key authentication"""
@@ -146,11 +146,9 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
     AZURE_OPEN_AI = "AzureOpenAI"
-    """Azure OpenAI"""
+    """Azure OpenAI service"""
     SERVERLESS = "Serverless"
-    """Serverless API"""
-    AGENT = "Agent"
-    """Agent"""
+    """Serverless API service"""
 
 
 class ErrorEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):

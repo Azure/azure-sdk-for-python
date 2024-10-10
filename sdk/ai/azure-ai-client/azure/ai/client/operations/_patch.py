@@ -197,7 +197,7 @@ class EndpointsOperations(EndpointsOperationsGenerated):
                 connection_name=endpoint_name,
                 subscription_id=self._config.subscription_id,
                 resource_group_name=self._config.resource_group_name,
-                workspace_name=self._config.workspace_name,
+                workspace_name=self._config.project_name,
                 api_version_in_body=self._config.api_version,
             )
             if connection.properties.auth_type == AuthenticationType.AAD:
@@ -210,7 +210,7 @@ class EndpointsOperations(EndpointsOperationsGenerated):
                     credential=self._config.credential,
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
-                    workspace_name=self._config.workspace_name,
+                    project_name=self._config.project_name,
                     connection_name=endpoint_name,
                 )
                 return EndpointProperties(connection=connection, token_credential=token_credential)

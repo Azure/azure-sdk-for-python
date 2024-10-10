@@ -40,6 +40,7 @@ class InferenceOperations:
                 "[InferenceOperations.get_chat_completions_client] Creating ChatCompletionsClient using API key authentication"
             )
             from azure.core.credentials import AzureKeyCredential
+
             client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key))
         elif endpoint.authentication_type == AuthenticationType.AAD:
             # MaaS models do not yet support EntraID auth
@@ -171,19 +172,20 @@ class EndpointsOperations(EndpointsOperationsGenerated):
                 connection_name=endpoint_name,
                 subscription_id=self._config.subscription_id,
                 resource_group_name=self._config.resource_group_name,
-                workspace_name=self._config.workspace_name,
+                workspace_name=self._config.project_name,
                 api_version_in_body=self._config.api_version,
             )
             if connection.properties.auth_type == AuthenticationType.AAD:
                 return EndpointProperties(connection=connection, token_credential=self._config.credential)
             elif connection.properties.auth_type == AuthenticationType.SAS:
                 from ...models._patch import SASTokenCredential
+
                 token_credential = SASTokenCredential(
                     sas_token=connection.properties.credentials.sas,
                     credential=self._config.credential,
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
-                    workspace_name=self._config.workspace_name,
+                    project_name=self._config.project_name,
                     connection_name=endpoint_name,
                 )
                 return EndpointProperties(connection=connection, token_credential=token_credential)
@@ -225,4 +227,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-
