@@ -2,6 +2,24 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+"""
+FILE: sample_agents_stream_iteration_async.py
+
+DESCRIPTION:
+    This sample demonstrates how to use agent operations with interation in streaming from
+    the Azure Agents service using a asynchronous client.
+
+USAGE:
+    python sample_agents_stream_iteration_async.py
+
+    Before running the sample:
+
+    pip install azure.ai.client azure-identity
+
+    Set this environment variables with your own values:
+    AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+"""
 import asyncio
 import logging
 

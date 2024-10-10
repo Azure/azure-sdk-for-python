@@ -2,8 +2,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+"""
+FILE: sample_agents_basics_async.py
+
+DESCRIPTION:
+    This sample demonstrates how to use basic agent operations from
+    the Azure Agents service using a asynchronous client.
+
+USAGE:
+    python sample_agents_basics_async.py
+
+    Before running the sample:
+
+    pip install azure.ai.client azure-identity
+
+    Set this environment variables with your own values:
+    AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+"""
 import asyncio
 import logging
+import time
 
 from azure.ai.client.aio import AzureAIClient
 from azure.identity import DefaultAzureCredential
@@ -45,8 +64,17 @@ async def main():
         message = await ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         logging.info(f"Created message, message ID: {message.id}")
 
-        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id, sleep_interval=4)
-        logging.info(f"Created run, run ID: {run.id}")
+        run = await ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
+
+        # poll the run as long as run status is queued or in progress
+        while run.status in ["queued", "in_progress", "requires_action"]:
+            # wait for a second
+            time.sleep(1)
+            run = await ai_client.agents.get_run(thread_id=thread.id, run_id=run.id)
+
+            logging.info(f"Run status: {run.status}")
+
+        logging.info(f"Run completed with status: {run.status}")
 
         await ai_client.agents.delete_agent(agent.id)
         logging.info("Deleted assistant")

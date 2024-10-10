@@ -3,6 +3,24 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+"""
+FILE: sample_agents_basics.py
+
+DESCRIPTION:
+    This sample demonstrates how to use basic agent operations from
+    the Azure Agents service using a synchronous client.
+
+USAGE:
+    python sample_agents_basics.py
+
+    Before running the sample:
+
+    pip install azure.ai.client azure-identity
+
+    Set this environment variables with your own values:
+    AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+"""
+
 import os, time, logging
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
@@ -46,7 +64,14 @@ with ai_client:
     logging.info(f"Created message, message ID: {message.id}")
 
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id, sleep_interval=4)
-    logging.info(f"Run finished with status: {run.status}")
+
+    # poll the run as long as run status is queued or in progress
+    while run.status in ["queued", "in_progress", "requires_action"]:
+        # wait for a second
+        time.sleep(1)
+        run = ai_client.agents.get_run(thread_id=thread.id, run_id=run.id)
+
+        logging.info(f"Run status: {run.status}")
 
     ai_client.agents.delete_agent(agent.id)
     print("Deleted agent")

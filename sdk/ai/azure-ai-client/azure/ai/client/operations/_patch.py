@@ -1137,7 +1137,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.OpenAIFile
+        :rtype: ~azure.ai.client.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1158,7 +1158,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.OpenAIFile
+        :rtype: ~azure.ai.client.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1177,7 +1177,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.OpenAIFile
+        :rtype: ~azure.ai.client.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
         """        
 
