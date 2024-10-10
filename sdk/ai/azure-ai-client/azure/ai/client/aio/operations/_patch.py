@@ -435,7 +435,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     async def create_run(
         self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Union[_models.ThreadRun, _models.AsyncAgentRunStream]:
+    ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
         :param thread_id: Required.
@@ -462,7 +462,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessage]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        stream: Optional[bool] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -471,9 +470,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
-        **kwargs: Any
-    ) -> Union[_models.ThreadRun, _models.AsyncAgentRunStream]:
+        event_handler: Optional[_models.AgentEventHandler] = None,
+        **kwargs: Any,
+    ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
         :param thread_id: Required.
@@ -483,11 +482,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword model: The overridden model name that the agent should use to run the thread.
-         Default value is None.
+        :keyword model: The overridden model name that the agent should use to run the thread. Default
+         value is None.
         :paramtype model: str
-        :keyword instructions: The overridden system instructions that the agent should use to run
-         the thread. Default value is None.
+        :keyword instructions: The overridden system instructions that the agent should use to run the
+         thread. Default value is None.
         :paramtype instructions: str
         :keyword additional_instructions: Additional instructions to append at the end of the
          instructions for the run. This is useful for modifying the behavior
@@ -499,11 +498,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.client.models.ToolDefinition]
-        :keyword stream: If ``true``\\ , returns a stream of events that happen during the
-         Run as server-sent events,
-         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
-         value is None.
-        :paramtype stream: bool
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -536,15 +530,13 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or
-         ~azure.ai.client.models.AgentsApiToolChoiceOptionMode or
+        :paramtype tool_choice: str or str or ~azure.ai.client.models.AgentsApiToolChoiceOptionMode or
          ~azure.ai.client.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or
-         ~azure.ai.client.models.AgentsApiResponseFormatMode or
-         ~azure.ai.client.models.AgentsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.client.models.AgentsApiResponseFormatMode
+         or ~azure.ai.client.models.AgentsApiResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -552,7 +544,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AsyncAgentEventHandler
+        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -561,7 +553,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     async def create_run(
         self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> Union[_models.ThreadRun, _models.AsyncAgentRunStream]:
+    ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
         :param thread_id: Required.
@@ -588,7 +580,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessage]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        stream: Optional[bool] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -597,9 +588,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
-        **kwargs: Any
-    ) -> Union[_models.ThreadRun, _models.AsyncAgentRunStream]:
+        event_handler: Optional[_models.AgentEventHandler] = None,
+        **kwargs: Any,
+    ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
 
         :param thread_id: Required.
@@ -608,11 +599,11 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword assistant_id: The ID of the agent that should run the thread. Required.
         :paramtype assistant_id: str
-        :keyword model: The overridden model name that the agent should use to run the thread.
-         Default value is None.
+        :keyword model: The overridden model name that the agent should use to run the thread. Default
+         value is None.
         :paramtype model: str
-        :keyword instructions: The overridden system instructions that the agent should use to run
-         the thread. Default value is None.
+        :keyword instructions: The overridden system instructions that the agent should use to run the
+         thread. Default value is None.
         :paramtype instructions: str
         :keyword additional_instructions: Additional instructions to append at the end of the
          instructions for the run. This is useful for modifying the behavior
@@ -624,11 +615,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.client.models.ToolDefinition]
-        :keyword stream: If ``true``\\ , returns a stream of events that happen during the
-         Run as server-sent events,
-         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
-         value is None.
-        :paramtype stream: bool
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -661,15 +647,13 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
          the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
          AgentsNamedToolChoice Default value is None.
-        :paramtype tool_choice: str or str or
-         ~azure.ai.client.models.AgentsApiToolChoiceOptionMode or
+        :paramtype tool_choice: str or str or ~azure.ai.client.models.AgentsApiToolChoiceOptionMode or
          ~azure.ai.client.models.AgentsNamedToolChoice
         :keyword response_format: Specifies the format that the model must output. Is one of the
          following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
          AgentsApiResponseFormat Default value is None.
-        :paramtype response_format: str or str or
-         ~azure.ai.client.models.AgentsApiResponseFormatMode or
-         ~azure.ai.client.models.AgentsApiResponseFormat
+        :paramtype response_format: str or str or ~azure.ai.client.models.AgentsApiResponseFormatMode
+         or ~azure.ai.client.models.AgentsApiResponseFormat
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -677,7 +661,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AsyncAgentEventHandler
+        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -696,8 +680,8 @@ class AgentsOperations(AgentsOperationsGenerated):
                 additional_instructions=additional_instructions,
                 additional_messages=additional_messages,
                 tools=tools,
-                stream_parameter=stream,
-                stream=stream,
+                stream_parameter=False,
+                stream=False,
                 temperature=temperature,
                 top_p=top_p,
                 max_prompt_tokens=max_prompt_tokens,
@@ -706,7 +690,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 tool_choice=tool_choice,
                 response_format=response_format,
                 metadata=metadata,
-                **kwargs
+                **kwargs,
             )
 
         elif isinstance(body, io.IOBase):  # Handle overload with binary body.
@@ -717,10 +701,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             raise ValueError("Invalid combination of arguments provided.")
 
         # If streaming is enabled, return the custom stream object
-        if stream:
-            return _models.AsyncAgentRunStream(await response, event_handler)
-        else:
-            return await response
+        return await response
 
     @distributed_trace_async
     async def create_and_process_run(
@@ -732,7 +713,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         additional_instructions: Optional[str] = None,
         additional_messages: Optional[List[_models.ThreadMessage]] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
-        stream: Optional[bool] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         max_prompt_tokens: Optional[int] = None,
@@ -741,10 +721,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
+        event_handler: Optional[_models.AgentEventHandler] = None,
         sleep_interval: int = 1,
-        **kwargs: Any
-    ) -> Union[_models.ThreadRun, _models.AsyncAgentRunStream]:
+        **kwargs: Any,
+    ) -> _models.ThreadRun:
         """Creates a new run for an agent thread and processes the run.
 
         :param thread_id: Required.
@@ -767,11 +747,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword tools: The overridden list of enabled tools that the agent should use to run the
          thread. Default value is None.
         :paramtype tools: list[~azure.ai.client.models.ToolDefinition]
-        :keyword stream: If ``true``\\ , returns a stream of events that happen during the
-         Run as server-sent events,
-         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
-         value is None.
-        :paramtype stream: bool
         :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
          will make the output
          more random, while lower values like 0.2 will make it more focused and deterministic. Default
@@ -820,13 +795,12 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AsyncAgentEventHandler
+        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :keyword sleep_interval: The time in seconds to wait between polling the service for run status.
             Default value is 1.
-        :paramtype sleep_interval: int        
-        :return: str or AsyncAgentRunStream. The run completion status if streaming is disabled, otherwise 
-         the AsyncAgentRunStream object.
-        :rtype: str or ~azure.ai.client.models.AsyncAgentRunStream
+        :paramtype sleep_interval: int
+        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.client.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         # Create and initiate the run with additional parameters
@@ -838,7 +812,6 @@ class AgentsOperations(AgentsOperationsGenerated):
             additional_instructions=additional_instructions,
             additional_messages=additional_messages,
             tools=tools,
-            stream=stream,
             temperature=temperature,
             top_p=top_p,
             max_prompt_tokens=max_prompt_tokens,
@@ -848,13 +821,9 @@ class AgentsOperations(AgentsOperationsGenerated):
             response_format=response_format,
             metadata=metadata,
             event_handler=event_handler,
-            **kwargs
+            **kwargs,
         )
-
-        # Return the run stream object if streaming is enabled
-        if stream:
-            return run
-
+        
         # Monitor and process the run status
         while run.status in ["queued", "in_progress", "requires_action"]:
             time.sleep(sleep_interval)
@@ -863,8 +832,8 @@ class AgentsOperations(AgentsOperationsGenerated):
             if run.status == "requires_action" and run.required_action.submit_tool_outputs:
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
-                    logger.warning("No tool calls provided - cancelling run")
-                    await self.cancel_run(thread_id=thread_id, run_id=run.id)
+                    logging.warning("No tool calls provided - cancelling run")
+                    self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
 
                 toolset = self.get_toolset()
@@ -872,19 +841,411 @@ class AgentsOperations(AgentsOperationsGenerated):
                     tool_outputs = await toolset.execute_tool_calls(tool_calls)
                 else:
                     raise ValueError("Toolset is not available in the client.")
-                    
-                logger.info("Tool outputs: %s", tool_outputs)
-                if tool_outputs:
-                    await self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
 
-            logger.info("Current run status: %s", run.status)
+                logging.info("Tool outputs: %s", tool_outputs)
+                if tool_outputs:
+                    self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+
+            logging.info("Current run status: %s", run.status)
+
+        return run
+
+    @overload
+    async def create_stream(
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> Union[_models.ThreadRun, _models.AsyncAgentRunStream]:
+        """Creates a new stream for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.client.models.AsyncAgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_stream(
+        self,
+        thread_id: str,
+        *,
+        assistant_id: str,
+        content_type: str = "application/json",
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        additional_instructions: Optional[str] = None,
+        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_prompt_tokens: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        truncation_strategy: Optional[_models.TruncationObject] = None,
+        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        event_handler: Optional[_models.AgentEventHandler] = None,
+        **kwargs: Any,
+    ) -> _models.AsyncAgentRunStream:
+        """Creates a new run for an agent thread.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :keyword assistant_id: The ID of the agent that should run the thread. Required.
+        :paramtype assistant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword model: The overridden model name that the agent should use to run the thread. Default
+         value is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions that the agent should use to run the
+         thread. Default value is None.
+        :paramtype instructions: str
+        :keyword additional_instructions: Additional instructions to append at the end of the
+         instructions for the run. This is useful for modifying the behavior
+         on a per-run basis without overriding other instructions. Default value is None.
+        :paramtype additional_instructions: str
+        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+         Default value is None.
+        :paramtype additional_messages: list[~azure.ai.client.models.ThreadMessage]
+        :keyword tools: The overridden list of enabled tools that the agent should use to run the
+         thread. Default value is None.
+        :paramtype tools: list[~azure.ai.client.models.ToolDefinition]
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+         the course of the run. The run will make a best effort
+         to use only the number of completion tokens specified, across multiple turns of the run. If
+         the run exceeds the number of
+         completion tokens specified, the run will end with status ``incomplete``. See
+         ``incomplete_details`` for more info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+         moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.client.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or ~azure.ai.client.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.client.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.client.models.AgentsApiResponseFormatMode
+         or ~azure.ai.client.models.AgentsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
+        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.client.models.AsyncAgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_stream(
+        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AsyncAgentRunStream:
+        """Creates a new run for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.client.models.AsyncAgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_stream(
+        self,
+        thread_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        assistant_id: str = _Unset,
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        additional_instructions: Optional[str] = None,
+        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_prompt_tokens: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        truncation_strategy: Optional[_models.TruncationObject] = None,
+        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        event_handler: Optional[_models.AgentEventHandler] = None,
+        **kwargs: Any,
+    ) -> _models.AsyncAgentRunStream:
+        """Creates a new run for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword assistant_id: The ID of the agent that should run the thread. Required.
+        :paramtype assistant_id: str
+        :keyword model: The overridden model name that the agent should use to run the thread. Default
+         value is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions that the agent should use to run the
+         thread. Default value is None.
+        :paramtype instructions: str
+        :keyword additional_instructions: Additional instructions to append at the end of the
+         instructions for the run. This is useful for modifying the behavior
+         on a per-run basis without overriding other instructions. Default value is None.
+        :paramtype additional_instructions: str
+        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+         Default value is None.
+        :paramtype additional_messages: list[~azure.ai.client.models.ThreadMessage]
+        :keyword tools: The overridden list of enabled tools that the agent should use to run the
+         thread. Default value is None.
+        :paramtype tools: list[~azure.ai.client.models.ToolDefinition]
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+         the course of the run. The run will make a best effort
+         to use only the number of completion tokens specified, across multiple turns of the run. If
+         the run exceeds the number of
+         completion tokens specified, the run will end with status ``incomplete``. See
+         ``incomplete_details`` for more info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+         moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.client.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or ~azure.ai.client.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.client.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.client.models.AgentsApiResponseFormatMode
+         or ~azure.ai.client.models.AgentsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
+        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.client.models.AsyncAgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        if isinstance(body, dict):  # Handle overload with JSON body.
+            content_type = kwargs.get("content_type", "application/json")
+            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
+
+        elif assistant_id is not _Unset:  # Handle overload with keyword arguments.
+            response = super().create_run(
+                thread_id,
+                assistant_id=assistant_id,
+                model=model,
+                instructions=instructions,
+                additional_instructions=additional_instructions,
+                additional_messages=additional_messages,
+                tools=tools,
+                stream_parameter=True,
+                stream=True,
+                temperature=temperature,
+                top_p=top_p,
+                max_prompt_tokens=max_prompt_tokens,
+                max_completion_tokens=max_completion_tokens,
+                truncation_strategy=truncation_strategy,
+                tool_choice=tool_choice,
+                response_format=response_format,
+                metadata=metadata,
+                **kwargs,
+            )
+
+        elif isinstance(body, io.IOBase):  # Handle overload with binary body.
+            content_type = kwargs.get("content_type", "application/json")
+            response = super().create_run(thread_id, body, content_type=content_type, **kwargs)
+
+        else:
+            raise ValueError("Invalid combination of arguments provided.")
+
+        return _models.AsyncAgentRunStream(await response, event_handler)
+
+    @distributed_trace_async 
+    async def create_and_process_stream(
+        self,
+        thread_id: str,
+        assistant_id: str,
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        additional_instructions: Optional[str] = None,
+        additional_messages: Optional[List[_models.ThreadMessage]] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_prompt_tokens: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        truncation_strategy: Optional[_models.TruncationObject] = None,
+        tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        event_handler: Optional[_models.AgentEventHandler] = None,
+        **kwargs: Any,
+    ) -> _models.AsyncAgentRunStream:
+        """Creates a new run for an agent thread and processes the run.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :keyword assistant_id: The ID of the agent that should run the thread. Required.
+        :paramtype assistant_id: str
+        :keyword model: The overridden model name that the agent should use to run the thread.
+         Default value is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions that the agent should use to run
+         the thread. Default value is None.
+        :paramtype instructions: str
+        :keyword additional_instructions: Additional instructions to append at the end of the
+         instructions for the run. This is useful for modifying the behavior
+         on a per-run basis without overriding other instructions. Default value is None.
+        :paramtype additional_instructions: str
+        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+         Default value is None.
+        :paramtype additional_messages: list[~azure.ai.client.models.ThreadMessage]
+        :keyword tools: The overridden list of enabled tools that the agent should use to run the
+         thread. Default value is None.
+        :paramtype tools: list[~azure.ai.client.models.ToolDefinition]
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+         the course of the run. The run will make a best effort
+         to use only the number of completion tokens specified, across multiple turns of the run. If
+         the run exceeds the number of
+         completion tokens specified, the run will end with status ``incomplete``. See
+         ``incomplete_details`` for more info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+         moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.client.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+         the following types: str, Union[str, "_models.AgentsApiToolChoiceOptionMode"],
+         AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or
+         ~azure.ai.client.models.AgentsApiToolChoiceOptionMode or
+         ~azure.ai.client.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+         following types: str, Union[str, "_models.AgentsApiResponseFormatMode"],
+         AgentsApiResponseFormat Default value is None.
+        :paramtype response_format: str or str or
+         ~azure.ai.client.models.AgentsApiResponseFormatMode or
+         ~azure.ai.client.models.AgentsApiResponseFormat
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
+        :keyword sleep_interval: The time in seconds to wait between polling the service for run status.
+            Default value is 1.
+        :paramtype sleep_interval: int
+        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.client.models.AsyncAgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        # Create and initiate the run with additional parameters
+        run = await self.create_stream(
+            thread_id=thread_id,
+            assistant_id=assistant_id,
+            model=model,
+            instructions=instructions,
+            additional_instructions=additional_instructions,
+            additional_messages=additional_messages,
+            tools=tools,
+            temperature=temperature,
+            top_p=top_p,
+            max_prompt_tokens=max_prompt_tokens,
+            max_completion_tokens=max_completion_tokens,
+            truncation_strategy=truncation_strategy,
+            tool_choice=tool_choice,
+            response_format=response_format,
+            metadata=metadata,
+            event_handler=event_handler,
+            **kwargs,
+        )
 
         return run
 
     @overload
     async def submit_tool_outputs_to_run(
         self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Union[_models.ThreadRun, _models.AsyncAgentRunStream]:
+    ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
@@ -911,10 +1272,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         *,
         tool_outputs: List[_models.ToolOutput],
         content_type: str = "application/json",
-        stream: Optional[bool] = None,
         event_handler: Optional[_models.AsyncAgentEventHandler] = None,
-        **kwargs: Any
-    ) -> Union[_models.ThreadRun, _models.AsyncAgentRunStream]:
+        **kwargs: Any,
+    ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
@@ -928,11 +1288,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword stream: Default value is None.
-        :paramtype stream: bool
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AsyncAgentEventHandler
+        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -941,7 +1299,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     async def submit_tool_outputs_to_run(
         self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> Union[_models.ThreadRun, _models.AsyncAgentRunStream]:
+    ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
@@ -968,10 +1326,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        stream: Optional[bool] = None,
         event_handler: Optional[_models.AsyncAgentEventHandler] = None,
-        **kwargs: Any
-    ) -> Union[_models.ThreadRun, _models.AsyncAgentRunStream]:
+        **kwargs: Any,
+    ) -> _models.ThreadRun:
         """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
@@ -982,42 +1339,158 @@ class AgentsOperations(AgentsOperationsGenerated):
         :type run_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :param tool_outputs: List of tool outputs to submit.
-        :param stream: If ``true``\\ , returns a stream of events that happen during the
-         Run as server-sent events,
-         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
-         value is None.
+        :keyword tool_outputs: Required.
+        :paramtype tool_outputs: list[~azure.ai.client.models.ToolOutput]
         :param event_handler: The event handler to use for processing events during the run.
         :param kwargs: Additional parameters.
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
-        :raises: HttpResponseError for HTTP errors.
+        :rtype: ~azure.ai.client.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
 
         if isinstance(body, dict):
             content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, body, content_type=content_type, **kwargs
-            )
+            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
         elif tool_outputs is not _Unset:
             response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=stream, stream=stream, **kwargs
+                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=False, stream=False, **kwargs
             )
 
         elif isinstance(body, io.IOBase):
             content_type = kwargs.get("content_type", "application/json")
-            response = super().submit_tool_outputs_to_run(
-                thread_id, run_id, body, content_type=content_type, **kwargs
-            )
+            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
-        
+
         # If streaming is enabled, return the custom stream object
-        if stream:
-            return _models.AsyncAgentRunStream(await response, event_handler)
+        return await response
+
+    @overload
+    async def submit_tool_outputs_to_stream(
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AsyncAgentRunStream:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.client.models.AsyncAgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def submit_tool_outputs_to_stream(
+        self,
+        thread_id: str,
+        run_id: str,
+        *,
+        tool_outputs: List[_models.ToolOutput],
+        content_type: str = "application/json",
+        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
+        **kwargs: Any,
+    ) -> _models.AsyncAgentRunStream:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :keyword tool_outputs: Required.
+        :paramtype tool_outputs: list[~azure.ai.client.models.ToolOutput]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword event_handler: The event handler to use for processing events during the run. Default
+            value is None.
+        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
+        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.client.models.AsyncAgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def submit_tool_outputs_to_stream(
+        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AsyncAgentRunStream:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.client.models.AsyncAgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def submit_tool_outputs_to_stream(
+        self,
+        thread_id: str,
+        run_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        tool_outputs: List[_models.ToolOutput] = _Unset,
+        event_handler: Optional[_models.AgentEventHandler] = None,
+        **kwargs: Any,
+    ) -> _models.AsyncAgentRunStream:
+        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        outputs will have a status of 'requires_action' with a required_action.type of
+        'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
+
+        :param thread_id: Required.
+        :type thread_id: str
+        :param run_id: Required.
+        :type run_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword tool_outputs: Required.
+        :paramtype tool_outputs: list[~azure.ai.client.models.ToolOutput]
+        :param event_handler: The event handler to use for processing events during the run.
+        :param kwargs: Additional parameters.
+        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :rtype: ~azure.ai.client.models.AsyncAgentRunStream
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        if isinstance(body, dict):
+            content_type = kwargs.get("content_type", "application/json")
+            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
+
+        elif tool_outputs is not _Unset:
+            response = super().submit_tool_outputs_to_run(
+                thread_id, run_id, tool_outputs=tool_outputs, stream_parameter=True, stream=True, **kwargs
+            )
+
+        elif isinstance(body, io.IOBase):
+            content_type = kwargs.get("content_type", "application/json")
+            response = super().submit_tool_outputs_to_run(thread_id, run_id, body, content_type=content_type, **kwargs)
+
         else:
-            return await response
+            raise ValueError("Invalid combination of arguments provided.")
+
+        return _models.AsyncAgentRunStream(await response, event_handler)
+
         
     @overload
     async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:

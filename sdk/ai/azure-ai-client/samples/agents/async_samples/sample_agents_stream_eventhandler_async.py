@@ -92,10 +92,9 @@ async def main():
         message = await ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
         print(f"Created message, message ID {message.id}")
 
-        async with await ai_client.agents.create_and_process_run(
+        async with await ai_client.agents.create_and_process_stream(
             thread_id=thread.id, 
             assistant_id=agent.id,
-            stream=True,
             event_handler=MyEventHandler()
         ) as stream:
             await stream.until_done()

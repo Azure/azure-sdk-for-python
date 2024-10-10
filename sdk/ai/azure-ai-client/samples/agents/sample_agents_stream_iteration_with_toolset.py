@@ -57,11 +57,10 @@ ai_client = AzureAIClient(
 # Function to handle tool stream iteration
 def handle_submit_tool_outputs(operatiions: AgentsOperations, thread_id, run_id, tool_outputs):
     try:
-        with operatiions.submit_tool_outputs_to_run(
+        with operatiions.submit_tool_outputs_to_stream(
             thread_id=thread_id,
             run_id=run_id,
             tool_outputs=tool_outputs,
-            stream=True
         ) as tool_stream:
             for tool_event_type, tool_event_data in tool_stream:
                 if tool_event_type == AgentStreamEvent.ERROR:
@@ -101,7 +100,7 @@ with ai_client:
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
     print(f"Created message, message ID {message.id}")
 
-    with ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id, stream=True) as stream:
+    with ai_client.agents.create_and_process_stream(thread_id=thread.id, assistant_id=agent.id) as stream:
 
         for event_type, event_data in stream:
 

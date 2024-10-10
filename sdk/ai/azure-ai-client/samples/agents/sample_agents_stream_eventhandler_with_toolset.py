@@ -112,11 +112,10 @@ class MyEventHandler(AgentEventHandler):
         
         print(f"Tool outputs: {tool_outputs}")
         if tool_outputs:
-            with self._agents.submit_tool_outputs_to_run(
+            with self._agents.submit_tool_outputs_to_stream(
                 thread_id=run.thread_id, 
                 run_id=run.id, 
                 tool_outputs=tool_outputs, 
-                stream=True,
                 event_handler=self
         ) as stream:
                 stream.until_done()
@@ -139,10 +138,9 @@ with ai_client:
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York? Also let me know the details")
     print(f"Created message, message ID {message.id}")
 
-    with ai_client.agents.create_and_process_run(
+    with ai_client.agents.create_and_process_stream(
         thread_id=thread.id, 
         assistant_id=agent.id,
-        stream=True,
         event_handler=MyEventHandler(ai_client.agents)
     ) as stream:
         stream.until_done()
