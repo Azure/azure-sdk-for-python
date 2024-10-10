@@ -26,13 +26,11 @@ USAGE:
 # Licensed under the MIT License.
 # ------------------------------------
 
-import os, time, logging
+import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models._patch import FileSearchTool, ToolSet
 from azure.identity import DefaultAzureCredential
 
-# Set logging level
-logging.basicConfig(level=logging.INFO)
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -61,10 +59,10 @@ with ai_client:
     # Create file search tool
     file_search = FileSearchTool()
     openai_file = ai_client.agents.upload_file(file_path="product_info_1.md", purpose="assistants")
-    logging.info(f"Uploaded file, file ID: {openai_file.id}")
+    print(f"Uploaded file, file ID: {openai_file.id}")
     
     openai_vectorstore = ai_client.agents.create_vector_store_and_poll(file_ids=[openai_file.id], name="my_vectorstore")
-    logging.info(f"Created vector store, vector store ID: {openai_vectorstore.id}")
+    print(f"Created vector store, vector store ID: {openai_vectorstore.id}")
     
     file_search.add_vector_store(openai_vectorstore.id)
 
@@ -75,35 +73,35 @@ with ai_client:
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="Hello, you are helpful assistant and can search information from uploaded files", toolset=toolset
     )
-    logging.info(f"Created agent, agent ID: {agent.id}")
+    print(f"Created agent, agent ID: {agent.id}")
 
     # Create thread for communication
     thread = ai_client.agents.create_thread()
-    logging.info(f"Created thread, ID: {thread.id}")
+    print(f"Created thread, ID: {thread.id}")
 
     # Create message to thread
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what Contoso products do you know?")
-    logging.info(f"Created message, ID: {message.id}")
+    print(f"Created message, ID: {message.id}")
 
     # Create and process assistant run in thread with tools
     # Note: If vector store has been created just before this, there can be need to poll the status of vector store to be ready for information retrieval
     #       This can be done by calling `assistant_client.get_vector_store(vector_store_id)` and checking the status of vector store
     #       We may want to add conveniency around this
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-    logging.info(f"Run finished with status: {run.status}")
+    print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
         # Check if you got "Rate limit is exceeded.", then you want to get more quota
-        logging.error(f"Run failed: {run.last_error}")
+        print(f"Run failed: {run.last_error}")
 
     # Delete the file when done
     ai_client.agents.delete_vector_store(openai_vectorstore.id)
-    logging.info("Deleted vector store")
+    print("Deleted vector store")
 
     # Delete the assistant when done
     ai_client.agents.delete_agent(agent.id)
-    logging.info("Deleted assistant")
+    print("Deleted assistant")
 
     # Fetch and log all messages
     messages = ai_client.agents.list_messages(thread_id=thread.id)
-    logging.info(f"Messages: {messages}")
+    print(f"Messages: {messages}")

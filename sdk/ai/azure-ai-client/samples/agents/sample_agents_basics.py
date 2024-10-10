@@ -21,12 +21,9 @@ USAGE:
     AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
-import os, time, logging
+import os, time
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
-
-# Set logging level
-logging.basicConfig(level=logging.INFO)
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -55,13 +52,13 @@ with ai_client:
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
     )
-    logging.info(f"Created agent, agent ID: {agent.id}")
+    print(f"Created agent, agent ID: {agent.id}")
 
     thread = ai_client.agents.create_thread()
-    logging.info(f"Created thread, thread ID: {thread.id}")
+    print(f"Created thread, thread ID: {thread.id}")
 
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-    logging.info(f"Created message, message ID: {message.id}")
+    print(f"Created message, message ID: {message.id}")
 
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id, sleep_interval=4)
 
@@ -71,10 +68,10 @@ with ai_client:
         time.sleep(1)
         run = ai_client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
-        logging.info(f"Run status: {run.status}")
+        print(f"Run status: {run.status}")
 
     ai_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
     messages = ai_client.agents.list_messages(thread_id=thread.id)
-    logging.info(f"messages: {messages}")
+    print(f"messages: {messages}")

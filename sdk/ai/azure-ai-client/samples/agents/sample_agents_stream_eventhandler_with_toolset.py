@@ -20,7 +20,7 @@ USAGE:
     Set this environment variables with your own values:
     AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
-import logging
+
 import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import Agent, MessageDeltaChunk, MessageDeltaTextContent, RunStep, SubmitToolOutputsAction, ThreadMessage, ThreadRun
@@ -29,13 +29,11 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.client.models import FunctionTool, ToolSet
 
 
-import os, logging
+import os
 from typing import Any
 
 from user_functions import user_functions
 
-# Set logging level
-logging.basicConfig(level=logging.INFO)
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -70,42 +68,42 @@ class MyEventHandler(AgentEventHandler):
         for content_part in delta.delta.content:
             if isinstance(content_part, MessageDeltaTextContent):
                 text_value = content_part.text.value if content_part.text else "No text"
-                logging.info(f"Text delta received: {text_value}")
+                print(f"Text delta received: {text_value}")
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
-        logging.info(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
 
     def on_thread_run(self, run: "ThreadRun") -> None:
-        logging.info(f"ThreadRun status: {run.status}")
+        print(f"ThreadRun status: {run.status}")
 
         if run.status == "failed":
-            logging.error(f"Run failed. Error: {run.last_error}")
+            print(f"Run failed. Error: {run.last_error}")
 
         if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
             self._handle_submit_tool_outputs(run)
 
     def on_run_step(self, step: "RunStep") -> None:
-        logging.info(f"RunStep type: {step.type}, Status: {step.status}")
+        print(f"RunStep type: {step.type}, Status: {step.status}")
 
     def on_run_step(self, step: "RunStep") -> None:
-        logging.info(f"RunStep type: {step.type}, Status: {step.status}")
+        print(f"RunStep type: {step.type}, Status: {step.status}")
 
     def on_error(self, data: str) -> None:
-        logging.error(f"An error occurred. Data: {data}")
+        print(f"An error occurred. Data: {data}")
 
     def on_done(self) -> None:
-        logging.info("Stream completed.")
+        print("Stream completed.")
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        logging.warning(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+        print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
     def _handle_submit_tool_outputs(self, run: "ThreadRun") -> None:
         tool_calls = run.required_action.submit_tool_outputs.tool_calls
         if not tool_calls:
-            logging.warning("No tool calls to execute.")
+            print("No tool calls to execute.")
             return
         if not self._client:
-            logging.warning("AssistantClient not set. Cannot execute tool calls using toolset.")
+            print("AssistantClient not set. Cannot execute tool calls using toolset.")
             return
 
         toolset = self._client.get_toolset()
@@ -114,7 +112,7 @@ class MyEventHandler(AgentEventHandler):
         else:
             raise ValueError("Toolset is not available in the client.")
         
-        logging.info(f"Tool outputs: {tool_outputs}")
+        print(f"Tool outputs: {tool_outputs}")
         if tool_outputs:
             with self._client.submit_tool_outputs_to_run(
                 thread_id=run.thread_id, 
@@ -135,13 +133,13 @@ with ai_client:
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
     )
-    logging.info(f"Created agent, ID: {agent.id}")
+    print(f"Created agent, ID: {agent.id}")
 
     thread = ai_client.agents.create_thread()
-    logging.info(f"Created thread, thread ID {thread.id}")
+    print(f"Created thread, thread ID {thread.id}")
 
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York? Also let me know the details")
-    logging.info(f"Created message, message ID {message.id}")
+    print(f"Created message, message ID {message.id}")
 
     with ai_client.agents.create_and_process_run(
         thread_id=thread.id, 
@@ -152,7 +150,7 @@ with ai_client:
         stream.until_done()
 
     ai_client.agents.delete_agent(agent.id)
-    logging.info("Deleted assistant")
+    print("Deleted assistant")
 
     messages = ai_client.agents.list_messages(thread_id=thread.id)
-    logging.info(f"Messages: {messages}")
+    print(f"Messages: {messages}")

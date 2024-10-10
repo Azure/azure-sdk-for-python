@@ -21,7 +21,6 @@ USAGE:
     AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
-import logging
 import os
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
@@ -37,8 +36,6 @@ from azure.ai.client.models import (
 
 from typing import Any
 
-# Set logging level
-logging.basicConfig(level=logging.INFO)
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -71,22 +68,22 @@ class MyEventHandler(AgentEventHandler):
                 print(f"Text delta received: {text_value}")
 
     def on_thread_message(self, message: "ThreadMessage") -> None:
-        logging.info(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
+        print(f"ThreadMessage created. ID: {message.id}, Status: {message.status}")
 
     def on_thread_run(self, run: "ThreadRun") -> None:
-        logging.info(f"ThreadRun status: {run.status}")
+        print(f"ThreadRun status: {run.status}")
 
     def on_run_step(self, step: "RunStep") -> None:
-        logging.info(f"RunStep type: {step.type}, Status: {step.status}")
+        print(f"RunStep type: {step.type}, Status: {step.status}")
 
     def on_error(self, data: str) -> None:
-        logging.info(f"An error occurred. Data: {data}")
+        print(f"An error occurred. Data: {data}")
 
     def on_done(self) -> None:
-        logging.info("Stream completed.")
+        print("Stream completed.")
 
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
-        logging.info(f"Unhandled Event Type: {event_type}, Data: {event_data}")
+        print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 
 with ai_client:
@@ -94,13 +91,13 @@ with ai_client:
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant"
     )
-    logging.info(f"Created agent, agent ID {agent.id}")
+    print(f"Created agent, agent ID {agent.id}")
 
     thread = ai_client.agents.create_thread()
-    logging.info(f"Created thread, thread ID {thread.id}")
+    print(f"Created thread, thread ID {thread.id}")
 
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-    logging.info(f"Created message, message ID {message.id}")
+    print(f"Created message, message ID {message.id}")
 
     with ai_client.agents.create_and_process_run(
         thread_id=thread.id, assistant_id=agent.id, stream=True, event_handler=MyEventHandler()
@@ -108,7 +105,7 @@ with ai_client:
         stream.until_done()
 
     ai_client.agents.delete_agent(agent.id)
-    logging.info("Deleted agent")
+    print("Deleted agent")
 
     messages = ai_client.agents.list_messages(thread_id=thread.id)
-    logging.info(f"Messages: {messages}")
+    print(f"Messages: {messages}")

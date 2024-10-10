@@ -21,7 +21,6 @@ USAGE:
     AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
-import logging
 import os
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
@@ -34,8 +33,6 @@ from azure.ai.client.models import (
     RunStep,
 )
 
-# Set logging level
-logging.basicConfig(level=logging.INFO)
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -65,13 +62,13 @@ with ai_client:
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant"
     )
-    logging.info(f"Created agent, ID {agent.id}")
+    print(f"Created agent, ID {agent.id}")
 
     thread = ai_client.agents.create_thread()
-    logging.info(f"Created thread, thread ID {thread.id}")
+    print(f"Created thread, thread ID {thread.id}")
 
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-    logging.info(f"Created message, message ID {message.id}")
+    print(f"Created message, message ID {message.id}")
 
     with ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id, stream=True) as stream:
 
@@ -81,29 +78,29 @@ with ai_client:
                 for content_part in event_data.delta.content:
                     if isinstance(content_part, MessageDeltaTextContent):
                         text_value = content_part.text.value if content_part.text else "No text"
-                        logging.info(f"Text delta received: {text_value}")
+                        print(f"Text delta received: {text_value}")
 
             elif isinstance(event_data, ThreadMessage):
-                logging.info(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
+                print(f"ThreadMessage created. ID: {event_data.id}, Status: {event_data.status}")
 
             elif isinstance(event_data, ThreadRun):
-                logging.info(f"ThreadRun status: {event_data.status}")
+                print(f"ThreadRun status: {event_data.status}")
 
             elif isinstance(event_data, RunStep):
-                logging.info(f"RunStep type: {event_data.type}, Status: {event_data.status}")
+                print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
 
             elif event_type == AgentStreamEvent.ERROR:
-                logging.info(f"An error occurred. Data: {event_data}")
+                print(f"An error occurred. Data: {event_data}")
 
             elif event_type == AgentStreamEvent.DONE:
-                logging.info("Stream completed.")
+                print("Stream completed.")
                 break
 
             else:
                 print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
     ai_client.agents.delete_agent(agent.id)
-    logging.info("Deleted agent")
+    print("Deleted agent")
 
     messages = ai_client.agents.list_messages(thread_id=thread.id)
-    logging.info(f"Messages: {messages}")
+    print(f"Messages: {messages}")

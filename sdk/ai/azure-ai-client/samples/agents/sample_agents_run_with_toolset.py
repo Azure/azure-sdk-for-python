@@ -21,15 +21,12 @@ USAGE:
     AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
-import logging
 import os
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.client.models import FunctionTool, ToolSet, CodeInterpreterTool
 from user_functions import user_functions
 
-# Set logging level
-logging.basicConfig(level=logging.INFO)
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -67,11 +64,11 @@ with ai_client:
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
     )
-    logging.info(f"Created agent, ID: {agent.id}")
+    print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
     thread = ai_client.agents.create_thread()
-    logging.info(f"Created thread, ID: {thread.id}")
+    print(f"Created thread, ID: {thread.id}")
 
     # Create message to thread
     message = ai_client.agents.create_message(
@@ -79,19 +76,19 @@ with ai_client:
         role="user",
         content="Hello, send an email with the datetime and weather information in New York?",
     )
-    logging.info(f"Created message, ID: {message.id}")
+    print(f"Created message, ID: {message.id}")
 
     # Create and process agent run in thread with tools
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-    logging.info(f"Run finished with status: {run.status}")
+    print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
-        logging.info(f"Run failed: {run.last_error}")
+        print(f"Run failed: {run.last_error}")
 
     # Delete the assistant when done
     ai_client.agents.delete_agent(agent.id)
-    logging.info("Deleted agent")
+    print("Deleted agent")
 
     # Fetch and log all messages
     messages = ai_client.agents.list_messages(thread_id=thread.id)
-    logging.info(f"Messages: {messages}")
+    print(f"Messages: {messages}")

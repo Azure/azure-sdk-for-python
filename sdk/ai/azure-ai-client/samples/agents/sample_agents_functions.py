@@ -20,15 +20,12 @@ USAGE:
     Set this environment variables with your own values:
     AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
-import logging
 import os, time
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.client.models import FunctionTool
 from user_functions import user_functions
 
-# Set logging level
-logging.basicConfig(level=logging.INFO)
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -64,20 +61,20 @@ with ai_client:
         instructions="You are a helpful assistant",
         tools=functions.definitions,
     )
-    logging.info(f"Created agent, ID: {agent.id}")
+    print(f"Created agent, ID: {agent.id}")
 
     thread = ai_client.agents.create_thread()
-    logging.info(f"Created thread, ID: {thread.id}")
+    print(f"Created thread, ID: {thread.id}")
 
     message = ai_client.agents.create_message(
         thread_id=thread.id,
         role="user",
         content="Hello, send an email with the datetime and weather information in New York?",
     )
-    logging.info(f"Created message, ID: {message.id}")
+    print(f"Created message, ID: {message.id}")
 
     run = ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-    logging.info(f"Created run, ID: {run.id}")
+    print(f"Created run, ID: {run.id}")
 
     while run.status in ["queued", "in_progress", "requires_action"]:
         time.sleep(1)
@@ -99,18 +96,18 @@ with ai_client:
                 }
                 tool_outputs.append(tool_output)
 
-            logging.info(f"Tool outputs: {tool_outputs}")
+            print(f"Tool outputs: {tool_outputs}")
             if tool_outputs:
                 ai_client.agents.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
 
-        logging.info(f"Current run status: {run.status}")
+        print(f"Current run status: {run.status}")
 
-    logging.info(f"Run completed with status: {run.status}")
+    print(f"Run completed with status: {run.status}")
 
     # Delete the agent when done
     ai_client.agents.delete_agent(agent.id)
-    logging.info("Deleted agent")
+    print("Deleted agent")
 
     # Fetch and log all messages
     messages = ai_client.agents.list_messages(thread_id=thread.id)
-    logging.info(f"Messages: {messages}")
+    print(f"Messages: {messages}")

@@ -21,15 +21,13 @@ USAGE:
     AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
-import os, time, logging
+import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import FilePurpose
 from azure.ai.client.models import FileSearchToolResource, MessageAttachment, ToolResources
 from azure.ai.client.models import FileSearchTool, ToolSet
 from azure.identity import DefaultAzureCredential
 
-# Set logging level
-logging.basicConfig(level=logging.INFO)
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -58,12 +56,12 @@ with ai_client:
     
     # upload a file and wait for it to be processed
     file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS, sleep_interval=4)    
-    logging.info(f"Uploaded file, file ID: {file.id}")
+    print(f"Uploaded file, file ID: {file.id}")
 
     # create a vector store with the file and wait for it to be processed
     # if you do not specify a vector store, create_message will create a vector store with a default expiration policy of seven days after they were last active 
     vector_store = ai_client.agents.create_vector_store_and_poll(file_ids=[file.id], name="sample_vector_store", sleep_interval=4)
-    logging.info(f"Created vector store, vector store ID: {vector_store.id}")
+    print(f"Created vector store, vector store ID: {vector_store.id}")
         
     file_search_tool = FileSearchTool()
     file_search_tool.add_vector_store(vector_store.id)
@@ -75,27 +73,27 @@ with ai_client:
         tools=[file_search_tool],
         tool_resources=ToolResources(file_search=FileSearchToolResource(vector_store_ids=[vector_store.id]))
     )
-    logging.info(f"Created agent, agent ID: {agent.id}")
+    print(f"Created agent, agent ID: {agent.id}")
 
     thread = ai_client.agents.create_thread()
-    logging.info(f"Created thread, thread ID: {thread.id}")    
+    print(f"Created thread, thread ID: {thread.id}")    
 
     # create a message with the attachment
     attachment = MessageAttachment(file_id=file.id, tools=[file_search_tool.definitions])
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment])
-    logging.info(f"Created message, message ID: {message.id}")
+    print(f"Created message, message ID: {message.id}")
 
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id, sleep_interval=4)
-    logging.info(f"Created run, run ID: {run.id}")
+    print(f"Created run, run ID: {run.id}")
         
     ai_client.agents.delete_file(file.id)
-    logging.info("Deleted file")
+    print("Deleted file")
 
     ai_client.agents.delete_vector_store(vector_store.id)
-    logging.info("Deleted vectore store")
+    print("Deleted vectore store")
 
     ai_client.agents.delete_agent(agent.id)
-    logging.info("Deleted assistant")
+    print("Deleted assistant")
     
     messages = ai_client.agents.list_messages(thread_id=thread.id)    
-    logging.info(f"Messages: {messages}")
+    print(f"Messages: {messages}")

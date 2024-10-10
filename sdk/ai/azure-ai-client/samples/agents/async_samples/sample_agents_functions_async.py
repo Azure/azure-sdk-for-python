@@ -21,7 +21,6 @@ USAGE:
     AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 import asyncio
-import logging
 import time
 
 from azure.ai.client.aio import AzureAIClient
@@ -64,20 +63,20 @@ async def main():
         agent = await ai_client.agents.create_agent(
             model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant", tools=functions.definitions
         )
-        logging.info(f"Created agent, agent ID: {agent.id}")
-        logging.info("Created assistant client")
+        print(f"Created agent, agent ID: {agent.id}")
+        print("Created assistant client")
 
         # Create thread for communication
         thread = await ai_client.agents.create_thread()
-        logging.info(f"Created thread, ID: {thread.id}")
+        print(f"Created thread, ID: {thread.id}")
 
         # Create and send message
         message = await ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
-        logging.info(f"Created message, ID: {message.id}")
+        print(f"Created message, ID: {message.id}")
 
         # Create and run assistant task
         run = await ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
-        logging.info(f"Created run, ID: {run.id}")
+        print(f"Created run, ID: {run.id}")
 
         # Polling loop for run status
         while run.status in ["queued", "in_progress", "requires_action"]:
@@ -87,7 +86,7 @@ async def main():
             if run.status == "requires_action" and run.required_action.submit_tool_outputs:
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
-                    logging.warning("No tool calls provided - cancelling run")
+                    print("No tool calls provided - cancelling run")
                     await ai_client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
                     break
 
@@ -100,25 +99,24 @@ async def main():
                         }
                     tool_outputs.append(tool_output)
 
-                logging.info(f"Tool outputs: {tool_outputs}")
+                print(f"Tool outputs: {tool_outputs}")
                 if tool_outputs:
                     await ai_client.agents.submit_tool_outputs_to_run(
                         thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
                     )
 
-            logging.info(f"Current run status: {run.status}")
+            print(f"Current run status: {run.status}")
 
-        logging.info(f"Run completed with status: {run.status}")
+        print(f"Run completed with status: {run.status}")
 
         # Delete the assistant when done
         await ai_client.agents.delete_agent(agent.id)
-        logging.info("Deleted assistant")
+        print("Deleted assistant")
 
         # Fetch and log all messages
         messages = await ai_client.agents.list_messages(thread_id=thread.id)
-        logging.info(f"Messages: {messages}")
+        print(f"Messages: {messages}")
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
     asyncio.run(main());
