@@ -1,70 +1,46 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
+# pylint: disable=W0212, W0221, W0237, C4758
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
-# pylint: disable=unused-import,ungrouped-imports, R0904, C0302, W0212
-from typing import Union, Any, List, Tuple, overload
-from azure.core.tracing.decorator import distributed_trace
-from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.polling import LROPoller
-from ._base_client import MapsRouteClientBase
-from .models import (
-    RouteDirectionsBatchResult,
+"""Customize generated code here.
+
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
+from typing import List, Union, Any, Tuple
+
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.polling import AsyncLROPoller
+from ...models import (
+    ResponseFormat,
+    LatLongPair,
     RouteDirections,
     RouteRangeResult,
-    RouteMatrixResult,
+    RouteDirectionParameters,
+    RouteDirectionsBatchResult,
     RouteMatrixQuery,
-    LatLon,
-    TravelMode
+    RouteMatrixResult,
+    BatchRequest,
+    BatchRequestItem
 )
+from ._operations import RouteOperations as RouteOperationsGenerated
 
-from ._generated.models import (
-    ResponseFormat
-)
+__all__: List[str] = ["RouteOperations"]  # Add all objects you want publicly available to users at this package level
 
-def get_batch_id_from_poller(polling_method):
-    if hasattr(polling_method, "_operation"):
-        operation=polling_method._operation
-        return operation._location_url.split('/')[-1].split('?')[0]
-    return None
 
-# By default, use the latest supported API version
-class MapsRouteClient(MapsRouteClientBase):
-    """Azure Maps Route REST APIs.
+def patch_sdk():
+    """Do not remove from this file.
 
-    :param credential:
-        Credential needed for the client to connect to Azure.
-    :type credential:
-        ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
-    :keyword str base_url:
-        Supported Maps Services or Language resource base_url
-        (protocol and hostname, for example: 'https://us.atlas.microsoft.com').
-    :keyword str client_id:
-        Specifies which account is intended for usage with the Azure AD security model.
-        It represents a unique ID for the Azure Maps account.
-    :keyword api_version:
-        The API version of the service to use for requests. It defaults to the latest service version.
-        Setting to an older version may result in reduced feature compatibility.
-    :paramtype api_version: str
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-
-    def __init__(
+class RouteOperations(RouteOperationsGenerated):
+    @distributed_trace_async
+    async def get_route_directions( # type: ignore
         self,
-        credential: Union[AzureKeyCredential, TokenCredential],
-        **kwargs: Any
-    )-> None:
-
-        super().__init__(
-            credential=credential, **kwargs
-        )
-
-    # cSpell:disable
-    @distributed_trace
-    def get_route_directions(
-        self,
-        route_points: Union[List[LatLon], List[Tuple]],
+        route_points: Union[List[LatLongPair], List[Tuple]],
         **kwargs: Any
     ) -> RouteDirections:
         """
@@ -77,7 +53,7 @@ class MapsRouteClient(MapsRouteClientBase):
         instructions is also available, depending on the options selected.
 
         :param route_points: The Coordinate from which the range calculation should start, coordinates as (lat, lon)
-        :type route_points: List[LatLon] or List[Tuple]
+        :type route_points: List[LatLongPair] or List[Tuple]
         :keyword supporting_points: A GeoJSON Geometry collection representing sequence of coordinates
          used as input for route reconstruction and for calculating zero or more alternative routes to
          this reference route.
@@ -197,7 +173,7 @@ class MapsRouteClient(MapsRouteClientBase):
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType`` =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -282,40 +258,46 @@ class MapsRouteClient(MapsRouteClientBase):
         :rtype: ~azure.maps.route.models.RouteDirections
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        query_items=""
-        route_directions_body={}
+        query_items = ""
+
         if route_points:
-            query_items = ":".join([(str(route_point[0])+","+str(route_point[1])) for route_point in route_points])
+            coordinates = []
+            for route_point in route_points:
+                if isinstance(route_point, LatLongPair):
+                    coordinates.append(f"{route_point.latitude},{route_point.longitude}")
+                elif isinstance(route_point, tuple):
+                    coordinates.append(f"{route_point[0]},{route_point[1]}")
+            query_items = ":".join(coordinates)
 
         supporting_points = kwargs.pop('supporting_points', None)
         avoid_vignette = kwargs.pop('avoid_vignette', None)
         allow_vignette = kwargs.pop('allow_vignette', None)
         avoid_areas = kwargs.pop('avoid_areas', None)
-        if supporting_points or avoid_vignette or allow_vignette or avoid_areas is not None:
-            route_directions_body['supporting_points'] = supporting_points
-            route_directions_body['avoid_vignette'] = avoid_vignette
-            route_directions_body['allow_vignette'] = allow_vignette
-            route_directions_body['avoid_areas'] = avoid_areas
 
-        if route_directions_body:
-            # import pdb; pdb.set_trace()
-            return self._route_client.get_route_directions_with_additional_parameters(
-                format=ResponseFormat.JSON,
+        if supporting_points or avoid_areas or allow_vignette or avoid_vignette:
+            route_directions_body = RouteDirectionParameters(
+                supporting_points=supporting_points,
+                avoid_vignette=avoid_vignette,
+                allow_vignette=allow_vignette,
+                avoid_areas=avoid_areas
+            )
+            return await super().get_route_directions_with_additional_parameters(
                 route_direction_parameters=route_directions_body,
+                format=ResponseFormat.JSON,
                 route_points=query_items,
                 **kwargs
             )
-        return self._route_client.get_route_directions(
+        return await super().get_route_directions(
             format=ResponseFormat.JSON,
             route_points=query_items,
             **kwargs
         )
 
     # cSpell:disable
-    @distributed_trace
-    def get_route_range(
+    @distributed_trace_async
+    async def get_route_range( # type: ignore
         self,
-        coordinates: Union[LatLon, Tuple],
+        coordinates: Union[LatLongPair, Tuple[float, float]],
         **kwargs: Any
     ) -> RouteRangeResult:
 
@@ -327,28 +309,28 @@ class MapsRouteClient(MapsRouteClientBase):
         the result of the origin point.
 
         :param coordinates: The Coordinate from which the range calculation should start, coordinates as (lat, lon)
-        :type coordinates: LatLon or Tuple
+        :type coordinates: LatLongPair or Tuple
         :keyword fuel_budget_in_liters: Fuel budget in liters that determines maximal range which can
-         be travelled using the specified Combustion Consumption Model.:code:`<br>` When
+         be travelled using the specified Combustion Consumption Model. When
          fuelBudgetInLiters is used, it is mandatory to specify a detailed  Combustion Consumption
-         Model.:code:`<br>` Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
+         Model. Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
          or distanceBudgetInMeters) must be used. Default value is None.
         :paramtype fuel_budget_in_liters: float
         :keyword energy_budget_in_kw_h: Electric energy budget in kilowatt hours (kWh) that determines
          maximal range which can be travelled using the specified Electric Consumption
-         Model.:code:`<br>` When energyBudgetInkWh is used, it is mandatory to specify a detailed
-         Electric Consumption Model.:code:`<br>` Exactly one budget (fuelBudgetInLiters,
+         Model. When energyBudgetInkWh is used, it is mandatory to specify a detailed
+         Electric Consumption Model. Exactly one budget (fuelBudgetInLiters,
          energyBudgetInkWh, timeBudgetInSec, or distanceBudgetInMeters) must be used. Default value is
          None.
         :paramtype energy_budget_in_kw_h: float
         :keyword time_budget_in_sec: Time budget in seconds that determines maximal range which can be
          travelled using driving time. The Consumption Model will only affect the range when routeType
-         is eco.:code:`<br>` Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
+         is eco. Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
          or distanceBudgetInMeters) must be used. Default value is None.
         :paramtype time_budget_in_sec: float
         :keyword distance_budget_in_meters: Distance budget in meters that determines maximal range
          which can be travelled using driving distance.  The Consumption Model will only affect the
-         range when routeType is eco.:code:`<br>` Exactly one budget (fuelBudgetInLiters,
+         range when routeType is eco. Exactly one budget (fuelBudgetInLiters,
          energyBudgetInkWh, timeBudgetInSec, or distanceBudgetInMeters) must be used. Default value is
          None.
         :paramtype distance_budget_in_meters: float
@@ -379,11 +361,11 @@ class MapsRouteClient(MapsRouteClientBase):
          Default value is None.
         :paramtype travel_mode: str or ~azure.maps.route.models.TravelMode
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType`` =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType`` =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword vehicle_axle_weight: Weight per axle of the vehicle in kg. A value of 0 means that
@@ -473,17 +455,21 @@ class MapsRouteClient(MapsRouteClientBase):
         :rtype: ~azure.maps.route.models.RouteRangeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        query = [coordinates[0], coordinates[1]]
+        query = []
+        if isinstance(coordinates, Tuple):
+            query = [coordinates[0], coordinates[1]]
+        elif isinstance(coordinates, LatLongPair) and coordinates.latitude and coordinates.longitude:
+            query = [coordinates.latitude, coordinates.longitude]
 
-        return self._route_client.get_route_range(
+        return await super().get_route_range(
             format=ResponseFormat.JSON,
             query=query,
             **kwargs
         )
 
 
-    @distributed_trace
-    def get_route_directions_batch_sync(
+    @distributed_trace_async
+    async def get_route_directions_batch_sync(
         self,
         queries: List[str],
         **kwargs: Any
@@ -500,36 +486,19 @@ class MapsRouteClient(MapsRouteClientBase):
         :rtype: RouteDirectionsBatchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        batch_items = [{"query": f"?query={query}"} for query
-                       in queries] if queries else []
-        result = self._route_client.request_route_directions_batch_sync(
+        return await super().request_route_directions_batch_sync(
             format=ResponseFormat.JSON,
-            route_directions_batch_queries={"batch_items": batch_items},
+            route_directions_batch_queries=BatchRequest(
+                batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries] if queries else []
+            ),
             **kwargs
         )
-        return RouteDirectionsBatchResult(summary=result.batch_summary, items=result.batch_items)
 
-    @overload
-    def begin_get_route_directions_batch(
-        self,
-        batch_id: str,
-        **kwargs: Any
-    ) -> LROPoller[RouteDirectionsBatchResult]:
-        pass
-
-    @overload
-    def begin_get_route_directions_batch(
-        self,
-        queries: List[str],
-        **kwargs: Any
-    ) -> LROPoller[RouteDirectionsBatchResult]:
-        pass
-
-    @distributed_trace
-    def begin_get_route_directions_batch(
+    @distributed_trace_async
+    async def begin_get_route_directions_batch( # type: ignore
         self,
         **kwargs: Any
-    ) -> LROPoller[RouteDirectionsBatchResult]:
+    ) -> AsyncLROPoller[RouteDirectionsBatchResult]:
 
         """Sends batches of route direction queries.
         The method returns a poller for retrieving the result later.
@@ -547,33 +516,40 @@ class MapsRouteClient(MapsRouteClientBase):
         :paramtype polling: bool
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteDirectionsBatchResult
-        :rtype: ~azure.core.polling.LROPoller[RouteDirectionsBatchResult]
+        :return: An instance of AsyncLROPoller that returns RouteDirectionsBatchResult
+        :rtype: ~azure.core.polling.AsyncLROPoller[RouteDirectionsBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         queries=kwargs.pop('queries', None)
         batch_id=kwargs.pop('batch_id', None)
 
         if batch_id:
-            poller = self._route_client.begin_get_route_directions_batch(
+            poller = await super().begin_get_route_directions_batch(
                 format=ResponseFormat.JSON,
                 batch_id=batch_id,
                 **kwargs
             )
             return poller
 
-        batch_items = [{"query": f"?query={query}"} for query
-                       in queries] if queries else []
-        batch_poller = self._route_client.begin_request_route_directions_batch(
+        batch_poller = await super().begin_request_route_directions_batch(
             format=ResponseFormat.JSON,
-            route_directions_batch_queries={"batch_items": batch_items},
+            route_directions_batch_queries=BatchRequest(
+                batch_items=[BatchRequestItem(query=f"?query={query}") for query in queries] if queries else []
+            ),
             **kwargs
         )
-        batch_poller.batch_id = get_batch_id_from_poller(batch_poller.polling_method())
+
+        polling_method = batch_poller.polling_method()
+        if hasattr(polling_method, "_operation"):
+            operation = polling_method._operation
+            batch_poller.batch_id = operation._location_url.split('/')[-1].split('?')[0]
+        else:
+            batch_poller.batch_id = None
+
         return batch_poller
 
-    @distributed_trace
-    def get_route_matrix(
+    @distributed_trace_async
+    async def get_route_matrix(
         self,
         query: RouteMatrixQuery,
         **kwargs: Any
@@ -638,11 +614,11 @@ class MapsRouteClient(MapsRouteClientBase):
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType`` =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType`` =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -683,33 +659,17 @@ class MapsRouteClient(MapsRouteClientBase):
         :rtype: ~azure.maps.route.models.RouteMatrixResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._route_client.request_route_matrix_sync(
+        return await super().request_route_matrix_sync(
             format=ResponseFormat.JSON,
             route_matrix_query=query,
             **kwargs
         )
 
-    @overload
-    def begin_get_route_matrix_batch(
-        self,
-        query: RouteMatrixQuery,
-        **kwargs: Any
-    ) -> LROPoller[RouteMatrixResult]:
-        pass
-
-    @overload
-    def begin_get_route_matrix_batch(
-        self,
-        matrix_id: str,
-        **kwargs: Any
-    ) -> LROPoller[RouteMatrixResult]:
-        pass
-
-    @distributed_trace
-    def begin_get_route_matrix_batch(
+    @distributed_trace_async
+    async def begin_get_route_matrix_batch(
         self,
         **kwargs: Any
-    ) -> LROPoller[RouteMatrixResult]:
+    ) -> AsyncLROPoller[RouteMatrixResult]:
 
         """
         Calculates a matrix of route summaries for a set of routes defined by origin and destination locations.
@@ -773,11 +733,11 @@ class MapsRouteClient(MapsRouteClientBase):
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType`` =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType`` =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType=thrilling``. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -821,20 +781,20 @@ class MapsRouteClient(MapsRouteClientBase):
         :paramtype polling: bool
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteMatrixResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteMatrixResult]
+        :return: An instance of AsyncLROPoller that returns RouteMatrixResult
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.route.models.RouteMatrixResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         query=kwargs.pop('query', None)
         matrix_id = kwargs.pop('matrix_id', None)
 
         if matrix_id:
-            return self._route_client.begin_get_route_matrix(
+            return await super().begin_get_route_matrix(
                 matrix_id=matrix_id,
                 **kwargs
             )
 
-        poller = self._route_client.begin_request_route_matrix(
+        poller = await super().begin_request_route_matrix(
             format=ResponseFormat.JSON,
             route_matrix_query=query,
             **kwargs

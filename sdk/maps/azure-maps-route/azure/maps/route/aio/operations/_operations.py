@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, R0914
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,845 +7,45 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
-
+from io import IOBase
+import sys
+from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, Type, TypeVar, Union, cast, overload
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
-from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
-from .._serialization import Serializer
-from .._vendor import _format_url_section
+from ... import models as _models
+from ...operations._operations import (
+    build_route_get_route_directions_batch_request,
+    build_route_get_route_directions_request,
+    build_route_get_route_directions_with_additional_parameters_request,
+    build_route_get_route_matrix_request,
+    build_route_get_route_range_request,
+    build_route_request_route_directions_batch_request,
+    build_route_request_route_directions_batch_sync_request,
+    build_route_request_route_matrix_request,
+    build_route_request_route_matrix_sync_request,
+)
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
-
-
-def build_route_request_route_matrix_request(
-    format: Union[str, _models.JsonFormat] = "json",
-    *,
-    wait_for_results: Optional[bool] = None,
-    compute_travel_time: Optional[Union[str, _models.ComputeTravelTime]] = None,
-    filter_section_type: Optional[Union[str, _models.SectionType]] = None,
-    arrive_at: Optional[datetime.datetime] = None,
-    depart_at: Optional[datetime.datetime] = None,
-    vehicle_axle_weight: int = 0,
-    vehicle_length: float = 0,
-    vehicle_height: float = 0,
-    vehicle_width: float = 0,
-    vehicle_max_speed: int = 0,
-    vehicle_weight: int = 0,
-    windingness: Optional[Union[str, _models.WindingnessLevel]] = None,
-    incline_level: Optional[Union[str, _models.InclineLevel]] = None,
-    travel_mode: Optional[Union[str, _models.TravelMode]] = None,
-    avoid: Optional[List[Union[str, _models.RouteAvoidType]]] = None,
-    use_traffic_data: Optional[bool] = None,
-    route_type: Optional[Union[str, _models.RouteType]] = None,
-    vehicle_load_type: Optional[Union[str, _models.VehicleLoadType]] = None,
-    client_id: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "1.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/route/matrix/{format}"
-    path_format_arguments = {
-        "format": _SERIALIZER.url("format", format, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if wait_for_results is not None:
-        _params["waitForResults"] = _SERIALIZER.query("wait_for_results", wait_for_results, "bool")
-    if compute_travel_time is not None:
-        _params["computeTravelTimeFor"] = _SERIALIZER.query("compute_travel_time", compute_travel_time, "str")
-    if filter_section_type is not None:
-        _params["sectionType"] = _SERIALIZER.query("filter_section_type", filter_section_type, "str")
-    if arrive_at is not None:
-        _params["arriveAt"] = _SERIALIZER.query("arrive_at", arrive_at, "iso-8601")
-    if depart_at is not None:
-        _params["departAt"] = _SERIALIZER.query("depart_at", depart_at, "iso-8601")
-    if vehicle_axle_weight is not None:
-        _params["vehicleAxleWeight"] = _SERIALIZER.query("vehicle_axle_weight", vehicle_axle_weight, "int")
-    if vehicle_length is not None:
-        _params["vehicleLength"] = _SERIALIZER.query("vehicle_length", vehicle_length, "float")
-    if vehicle_height is not None:
-        _params["vehicleHeight"] = _SERIALIZER.query("vehicle_height", vehicle_height, "float")
-    if vehicle_width is not None:
-        _params["vehicleWidth"] = _SERIALIZER.query("vehicle_width", vehicle_width, "float")
-    if vehicle_max_speed is not None:
-        _params["vehicleMaxSpeed"] = _SERIALIZER.query("vehicle_max_speed", vehicle_max_speed, "int")
-    if vehicle_weight is not None:
-        _params["vehicleWeight"] = _SERIALIZER.query("vehicle_weight", vehicle_weight, "int")
-    if windingness is not None:
-        _params["windingness"] = _SERIALIZER.query("windingness", windingness, "str")
-    if incline_level is not None:
-        _params["hilliness"] = _SERIALIZER.query("incline_level", incline_level, "str")
-    if travel_mode is not None:
-        _params["travelMode"] = _SERIALIZER.query("travel_mode", travel_mode, "str")
-    if avoid is not None:
-        _params["avoid"] = [_SERIALIZER.query("avoid", q, "str") if q is not None else "" for q in avoid]
-    if use_traffic_data is not None:
-        _params["traffic"] = _SERIALIZER.query("use_traffic_data", use_traffic_data, "bool")
-    if route_type is not None:
-        _params["routeType"] = _SERIALIZER.query("route_type", route_type, "str")
-    if vehicle_load_type is not None:
-        _params["vehicleLoadType"] = _SERIALIZER.query("vehicle_load_type", vehicle_load_type, "str")
-
-    # Construct headers
-    if client_id is not None:
-        _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_route_get_route_matrix_request(
-    matrix_id: str, *, client_id: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "1.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/route/matrix/{format}"
-    path_format_arguments = {
-        "format": _SERIALIZER.url("matrix_id", matrix_id, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if client_id is not None:
-        _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_route_request_route_matrix_sync_request(
-    format: Union[str, _models.JsonFormat] = "json",
-    *,
-    wait_for_results: Optional[bool] = None,
-    compute_travel_time: Optional[Union[str, _models.ComputeTravelTime]] = None,
-    filter_section_type: Optional[Union[str, _models.SectionType]] = None,
-    arrive_at: Optional[datetime.datetime] = None,
-    depart_at: Optional[datetime.datetime] = None,
-    vehicle_axle_weight: int = 0,
-    vehicle_length: float = 0,
-    vehicle_height: float = 0,
-    vehicle_width: float = 0,
-    vehicle_max_speed: int = 0,
-    vehicle_weight: int = 0,
-    windingness: Optional[Union[str, _models.WindingnessLevel]] = None,
-    incline_level: Optional[Union[str, _models.InclineLevel]] = None,
-    travel_mode: Optional[Union[str, _models.TravelMode]] = None,
-    avoid: Optional[List[Union[str, _models.RouteAvoidType]]] = None,
-    use_traffic_data: Optional[bool] = None,
-    route_type: Optional[Union[str, _models.RouteType]] = None,
-    vehicle_load_type: Optional[Union[str, _models.VehicleLoadType]] = None,
-    client_id: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "1.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/route/matrix/sync/{format}"
-    path_format_arguments = {
-        "format": _SERIALIZER.url("format", format, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if wait_for_results is not None:
-        _params["waitForResults"] = _SERIALIZER.query("wait_for_results", wait_for_results, "bool")
-    if compute_travel_time is not None:
-        _params["computeTravelTimeFor"] = _SERIALIZER.query("compute_travel_time", compute_travel_time, "str")
-    if filter_section_type is not None:
-        _params["sectionType"] = _SERIALIZER.query("filter_section_type", filter_section_type, "str")
-    if arrive_at is not None:
-        _params["arriveAt"] = _SERIALIZER.query("arrive_at", arrive_at, "iso-8601")
-    if depart_at is not None:
-        _params["departAt"] = _SERIALIZER.query("depart_at", depart_at, "iso-8601")
-    if vehicle_axle_weight is not None:
-        _params["vehicleAxleWeight"] = _SERIALIZER.query("vehicle_axle_weight", vehicle_axle_weight, "int")
-    if vehicle_length is not None:
-        _params["vehicleLength"] = _SERIALIZER.query("vehicle_length", vehicle_length, "float")
-    if vehicle_height is not None:
-        _params["vehicleHeight"] = _SERIALIZER.query("vehicle_height", vehicle_height, "float")
-    if vehicle_width is not None:
-        _params["vehicleWidth"] = _SERIALIZER.query("vehicle_width", vehicle_width, "float")
-    if vehicle_max_speed is not None:
-        _params["vehicleMaxSpeed"] = _SERIALIZER.query("vehicle_max_speed", vehicle_max_speed, "int")
-    if vehicle_weight is not None:
-        _params["vehicleWeight"] = _SERIALIZER.query("vehicle_weight", vehicle_weight, "int")
-    if windingness is not None:
-        _params["windingness"] = _SERIALIZER.query("windingness", windingness, "str")
-    if incline_level is not None:
-        _params["hilliness"] = _SERIALIZER.query("incline_level", incline_level, "str")
-    if travel_mode is not None:
-        _params["travelMode"] = _SERIALIZER.query("travel_mode", travel_mode, "str")
-    if avoid is not None:
-        _params["avoid"] = [_SERIALIZER.query("avoid", q, "str") if q is not None else "" for q in avoid]
-    if use_traffic_data is not None:
-        _params["traffic"] = _SERIALIZER.query("use_traffic_data", use_traffic_data, "bool")
-    if route_type is not None:
-        _params["routeType"] = _SERIALIZER.query("route_type", route_type, "str")
-    if vehicle_load_type is not None:
-        _params["vehicleLoadType"] = _SERIALIZER.query("vehicle_load_type", vehicle_load_type, "str")
-
-    # Construct headers
-    if client_id is not None:
-        _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_route_get_route_directions_request(
-    format: Union[str, _models.ResponseFormat] = "json",
-    *,
-    route_points: str,
-    max_alternatives: Optional[int] = None,
-    alternative_type: Optional[Union[str, _models.AlternativeRouteType]] = None,
-    min_deviation_distance: Optional[int] = None,
-    arrive_at: Optional[datetime.datetime] = None,
-    depart_at: Optional[datetime.datetime] = None,
-    min_deviation_time: Optional[int] = None,
-    instructions_type: Optional[Union[str, _models.RouteInstructionsType]] = None,
-    language: Optional[str] = None,
-    compute_best_waypoint_order: Optional[bool] = None,
-    route_representation_for_best_order: Optional[Union[str, _models.RouteRepresentationForBestOrder]] = None,
-    compute_travel_time: Optional[Union[str, _models.ComputeTravelTime]] = None,
-    vehicle_heading: Optional[int] = None,
-    report: Optional[Union[str, _models.Report]] = None,
-    filter_section_type: Optional[Union[str, _models.SectionType]] = None,
-    vehicle_axle_weight: int = 0,
-    vehicle_width: float = 0,
-    vehicle_height: float = 0,
-    vehicle_length: float = 0,
-    vehicle_max_speed: int = 0,
-    vehicle_weight: int = 0,
-    is_commercial_vehicle: bool = False,
-    windingness: Optional[Union[str, _models.WindingnessLevel]] = None,
-    incline_level: Optional[Union[str, _models.InclineLevel]] = None,
-    travel_mode: Optional[Union[str, _models.TravelMode]] = None,
-    avoid: Optional[List[Union[str, _models.RouteAvoidType]]] = None,
-    use_traffic_data: Optional[bool] = None,
-    route_type: Optional[Union[str, _models.RouteType]] = None,
-    vehicle_load_type: Optional[Union[str, _models.VehicleLoadType]] = None,
-    vehicle_engine_type: Optional[Union[str, _models.VehicleEngineType]] = None,
-    constant_speed_consumption_in_liters_per_hundred_km: Optional[str] = None,
-    current_fuel_in_liters: Optional[float] = None,
-    auxiliary_power_in_liters_per_hour: Optional[float] = None,
-    fuel_energy_density_in_megajoules_per_liter: Optional[float] = None,
-    acceleration_efficiency: Optional[float] = None,
-    deceleration_efficiency: Optional[float] = None,
-    uphill_efficiency: Optional[float] = None,
-    downhill_efficiency: Optional[float] = None,
-    constant_speed_consumption_in_kw_h_per_hundred_km: Optional[str] = None,
-    current_charge_in_kw_h: Optional[float] = None,
-    max_charge_in_kw_h: Optional[float] = None,
-    auxiliary_power_in_kw: Optional[float] = None,
-    client_id: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "1.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/route/directions/{format}"
-    path_format_arguments = {
-        "format": _SERIALIZER.url("format", format, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["query"] = _SERIALIZER.query("route_points", route_points, "str")
-    if max_alternatives is not None:
-        _params["maxAlternatives"] = _SERIALIZER.query(
-            "max_alternatives", max_alternatives, "int", maximum=5, minimum=0
-        )
-    if alternative_type is not None:
-        _params["alternativeType"] = _SERIALIZER.query("alternative_type", alternative_type, "str")
-    if min_deviation_distance is not None:
-        _params["minDeviationDistance"] = _SERIALIZER.query("min_deviation_distance", min_deviation_distance, "int")
-    if arrive_at is not None:
-        _params["arriveAt"] = _SERIALIZER.query("arrive_at", arrive_at, "iso-8601")
-    if depart_at is not None:
-        _params["departAt"] = _SERIALIZER.query("depart_at", depart_at, "iso-8601")
-    if min_deviation_time is not None:
-        _params["minDeviationTime"] = _SERIALIZER.query("min_deviation_time", min_deviation_time, "int")
-    if instructions_type is not None:
-        _params["instructionsType"] = _SERIALIZER.query("instructions_type", instructions_type, "str")
-    if language is not None:
-        _params["language"] = _SERIALIZER.query("language", language, "str")
-    if compute_best_waypoint_order is not None:
-        _params["computeBestOrder"] = _SERIALIZER.query(
-            "compute_best_waypoint_order", compute_best_waypoint_order, "bool"
-        )
-    if route_representation_for_best_order is not None:
-        _params["routeRepresentation"] = _SERIALIZER.query(
-            "route_representation_for_best_order", route_representation_for_best_order, "str"
-        )
-    if compute_travel_time is not None:
-        _params["computeTravelTimeFor"] = _SERIALIZER.query("compute_travel_time", compute_travel_time, "str")
-    if vehicle_heading is not None:
-        _params["vehicleHeading"] = _SERIALIZER.query("vehicle_heading", vehicle_heading, "int", maximum=359, minimum=0)
-    if report is not None:
-        _params["report"] = _SERIALIZER.query("report", report, "str")
-    if filter_section_type is not None:
-        _params["sectionType"] = _SERIALIZER.query("filter_section_type", filter_section_type, "str")
-    if vehicle_axle_weight is not None:
-        _params["vehicleAxleWeight"] = _SERIALIZER.query("vehicle_axle_weight", vehicle_axle_weight, "int")
-    if vehicle_width is not None:
-        _params["vehicleWidth"] = _SERIALIZER.query("vehicle_width", vehicle_width, "float")
-    if vehicle_height is not None:
-        _params["vehicleHeight"] = _SERIALIZER.query("vehicle_height", vehicle_height, "float")
-    if vehicle_length is not None:
-        _params["vehicleLength"] = _SERIALIZER.query("vehicle_length", vehicle_length, "float")
-    if vehicle_max_speed is not None:
-        _params["vehicleMaxSpeed"] = _SERIALIZER.query("vehicle_max_speed", vehicle_max_speed, "int")
-    if vehicle_weight is not None:
-        _params["vehicleWeight"] = _SERIALIZER.query("vehicle_weight", vehicle_weight, "int")
-    if is_commercial_vehicle is not None:
-        _params["vehicleCommercial"] = _SERIALIZER.query("is_commercial_vehicle", is_commercial_vehicle, "bool")
-    if windingness is not None:
-        _params["windingness"] = _SERIALIZER.query("windingness", windingness, "str")
-    if incline_level is not None:
-        _params["hilliness"] = _SERIALIZER.query("incline_level", incline_level, "str")
-    if travel_mode is not None:
-        _params["travelMode"] = _SERIALIZER.query("travel_mode", travel_mode, "str")
-    if avoid is not None:
-        _params["avoid"] = [_SERIALIZER.query("avoid", q, "str") if q is not None else "" for q in avoid]
-    if use_traffic_data is not None:
-        _params["traffic"] = _SERIALIZER.query("use_traffic_data", use_traffic_data, "bool")
-    if route_type is not None:
-        _params["routeType"] = _SERIALIZER.query("route_type", route_type, "str")
-    if vehicle_load_type is not None:
-        _params["vehicleLoadType"] = _SERIALIZER.query("vehicle_load_type", vehicle_load_type, "str")
-    if vehicle_engine_type is not None:
-        _params["vehicleEngineType"] = _SERIALIZER.query("vehicle_engine_type", vehicle_engine_type, "str")
-    if constant_speed_consumption_in_liters_per_hundred_km is not None:
-        _params["constantSpeedConsumptionInLitersPerHundredkm"] = _SERIALIZER.query(
-            "constant_speed_consumption_in_liters_per_hundred_km",
-            constant_speed_consumption_in_liters_per_hundred_km,
-            "str",
-        )
-    if current_fuel_in_liters is not None:
-        _params["currentFuelInLiters"] = _SERIALIZER.query("current_fuel_in_liters", current_fuel_in_liters, "float")
-    if auxiliary_power_in_liters_per_hour is not None:
-        _params["auxiliaryPowerInLitersPerHour"] = _SERIALIZER.query(
-            "auxiliary_power_in_liters_per_hour", auxiliary_power_in_liters_per_hour, "float"
-        )
-    if fuel_energy_density_in_megajoules_per_liter is not None:
-        _params["fuelEnergyDensityInMJoulesPerLiter"] = _SERIALIZER.query(
-            "fuel_energy_density_in_megajoules_per_liter", fuel_energy_density_in_megajoules_per_liter, "float"
-        )
-    if acceleration_efficiency is not None:
-        _params["accelerationEfficiency"] = _SERIALIZER.query(
-            "acceleration_efficiency", acceleration_efficiency, "float", maximum=1, minimum=0
-        )
-    if deceleration_efficiency is not None:
-        _params["decelerationEfficiency"] = _SERIALIZER.query(
-            "deceleration_efficiency", deceleration_efficiency, "float", maximum=1, minimum=0
-        )
-    if uphill_efficiency is not None:
-        _params["uphillEfficiency"] = _SERIALIZER.query(
-            "uphill_efficiency", uphill_efficiency, "float", maximum=1, minimum=0
-        )
-    if downhill_efficiency is not None:
-        _params["downhillEfficiency"] = _SERIALIZER.query(
-            "downhill_efficiency", downhill_efficiency, "float", maximum=1, minimum=0
-        )
-    if constant_speed_consumption_in_kw_h_per_hundred_km is not None:
-        _params["constantSpeedConsumptionInkWhPerHundredkm"] = _SERIALIZER.query(
-            "constant_speed_consumption_in_kw_h_per_hundred_km",
-            constant_speed_consumption_in_kw_h_per_hundred_km,
-            "str",
-        )
-    if current_charge_in_kw_h is not None:
-        _params["currentChargeInkWh"] = _SERIALIZER.query("current_charge_in_kw_h", current_charge_in_kw_h, "float")
-    if max_charge_in_kw_h is not None:
-        _params["maxChargeInkWh"] = _SERIALIZER.query("max_charge_in_kw_h", max_charge_in_kw_h, "float")
-    if auxiliary_power_in_kw is not None:
-        _params["auxiliaryPowerInkW"] = _SERIALIZER.query("auxiliary_power_in_kw", auxiliary_power_in_kw, "float")
-
-    # Construct headers
-    if client_id is not None:
-        _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_route_get_route_directions_with_additional_parameters_request(
-    format: Union[str, _models.ResponseFormat] = "json",
-    *,
-    route_points: str,
-    max_alternatives: Optional[int] = None,
-    alternative_type: Optional[Union[str, _models.AlternativeRouteType]] = None,
-    min_deviation_distance: Optional[int] = None,
-    min_deviation_time: Optional[int] = None,
-    instructions_type: Optional[Union[str, _models.RouteInstructionsType]] = None,
-    language: Optional[str] = None,
-    compute_best_waypoint_order: Optional[bool] = None,
-    route_representation_for_best_order: Optional[Union[str, _models.RouteRepresentationForBestOrder]] = None,
-    compute_travel_time: Optional[Union[str, _models.ComputeTravelTime]] = None,
-    vehicle_heading: Optional[int] = None,
-    report: Optional[Union[str, _models.Report]] = None,
-    filter_section_type: Optional[Union[str, _models.SectionType]] = None,
-    arrive_at: Optional[datetime.datetime] = None,
-    depart_at: Optional[datetime.datetime] = None,
-    vehicle_axle_weight: int = 0,
-    vehicle_length: float = 0,
-    vehicle_height: float = 0,
-    vehicle_width: float = 0,
-    vehicle_max_speed: int = 0,
-    vehicle_weight: int = 0,
-    is_commercial_vehicle: bool = False,
-    windingness: Optional[Union[str, _models.WindingnessLevel]] = None,
-    incline_level: Optional[Union[str, _models.InclineLevel]] = None,
-    travel_mode: Optional[Union[str, _models.TravelMode]] = None,
-    avoid: Optional[List[Union[str, _models.RouteAvoidType]]] = None,
-    use_traffic_data: Optional[bool] = None,
-    route_type: Optional[Union[str, _models.RouteType]] = None,
-    vehicle_load_type: Optional[Union[str, _models.VehicleLoadType]] = None,
-    vehicle_engine_type: Optional[Union[str, _models.VehicleEngineType]] = None,
-    constant_speed_consumption_in_liters_per_hundred_km: Optional[str] = None,
-    current_fuel_in_liters: Optional[float] = None,
-    auxiliary_power_in_liters_per_hour: Optional[float] = None,
-    fuel_energy_density_in_megajoules_per_liter: Optional[float] = None,
-    acceleration_efficiency: Optional[float] = None,
-    deceleration_efficiency: Optional[float] = None,
-    uphill_efficiency: Optional[float] = None,
-    downhill_efficiency: Optional[float] = None,
-    constant_speed_consumption_in_kw_h_per_hundred_km: Optional[str] = None,
-    current_charge_in_kw_h: Optional[float] = None,
-    max_charge_in_kw_h: Optional[float] = None,
-    auxiliary_power_in_kw: Optional[float] = None,
-    client_id: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "1.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/route/directions/{format}"
-    path_format_arguments = {
-        "format": _SERIALIZER.url("format", format, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["query"] = _SERIALIZER.query("route_points", route_points, "str")
-    if max_alternatives is not None:
-        _params["maxAlternatives"] = _SERIALIZER.query(
-            "max_alternatives", max_alternatives, "int", maximum=5, minimum=0
-        )
-    if alternative_type is not None:
-        _params["alternativeType"] = _SERIALIZER.query("alternative_type", alternative_type, "str")
-    if min_deviation_distance is not None:
-        _params["minDeviationDistance"] = _SERIALIZER.query("min_deviation_distance", min_deviation_distance, "int")
-    if min_deviation_time is not None:
-        _params["minDeviationTime"] = _SERIALIZER.query("min_deviation_time", min_deviation_time, "int")
-    if instructions_type is not None:
-        _params["instructionsType"] = _SERIALIZER.query("instructions_type", instructions_type, "str")
-    if language is not None:
-        _params["language"] = _SERIALIZER.query("language", language, "str")
-    if compute_best_waypoint_order is not None:
-        _params["computeBestOrder"] = _SERIALIZER.query(
-            "compute_best_waypoint_order", compute_best_waypoint_order, "bool"
-        )
-    if route_representation_for_best_order is not None:
-        _params["routeRepresentation"] = _SERIALIZER.query(
-            "route_representation_for_best_order", route_representation_for_best_order, "str"
-        )
-    if compute_travel_time is not None:
-        _params["computeTravelTimeFor"] = _SERIALIZER.query("compute_travel_time", compute_travel_time, "str")
-    if vehicle_heading is not None:
-        _params["vehicleHeading"] = _SERIALIZER.query("vehicle_heading", vehicle_heading, "int", maximum=359, minimum=0)
-    if report is not None:
-        _params["report"] = _SERIALIZER.query("report", report, "str")
-    if filter_section_type is not None:
-        _params["sectionType"] = _SERIALIZER.query("filter_section_type", filter_section_type, "str")
-    if arrive_at is not None:
-        _params["arriveAt"] = _SERIALIZER.query("arrive_at", arrive_at, "iso-8601")
-    if depart_at is not None:
-        _params["departAt"] = _SERIALIZER.query("depart_at", depart_at, "iso-8601")
-    if vehicle_axle_weight is not None:
-        _params["vehicleAxleWeight"] = _SERIALIZER.query("vehicle_axle_weight", vehicle_axle_weight, "int")
-    if vehicle_length is not None:
-        _params["vehicleLength"] = _SERIALIZER.query("vehicle_length", vehicle_length, "float")
-    if vehicle_height is not None:
-        _params["vehicleHeight"] = _SERIALIZER.query("vehicle_height", vehicle_height, "float")
-    if vehicle_width is not None:
-        _params["vehicleWidth"] = _SERIALIZER.query("vehicle_width", vehicle_width, "float")
-    if vehicle_max_speed is not None:
-        _params["vehicleMaxSpeed"] = _SERIALIZER.query("vehicle_max_speed", vehicle_max_speed, "int")
-    if vehicle_weight is not None:
-        _params["vehicleWeight"] = _SERIALIZER.query("vehicle_weight", vehicle_weight, "int")
-    if is_commercial_vehicle is not None:
-        _params["vehicleCommercial"] = _SERIALIZER.query("is_commercial_vehicle", is_commercial_vehicle, "bool")
-    if windingness is not None:
-        _params["windingness"] = _SERIALIZER.query("windingness", windingness, "str")
-    if incline_level is not None:
-        _params["hilliness"] = _SERIALIZER.query("incline_level", incline_level, "str")
-    if travel_mode is not None:
-        _params["travelMode"] = _SERIALIZER.query("travel_mode", travel_mode, "str")
-    if avoid is not None:
-        _params["avoid"] = [_SERIALIZER.query("avoid", q, "str") if q is not None else "" for q in avoid]
-    if use_traffic_data is not None:
-        _params["traffic"] = _SERIALIZER.query("use_traffic_data", use_traffic_data, "bool")
-    if route_type is not None:
-        _params["routeType"] = _SERIALIZER.query("route_type", route_type, "str")
-    if vehicle_load_type is not None:
-        _params["vehicleLoadType"] = _SERIALIZER.query("vehicle_load_type", vehicle_load_type, "str")
-    if vehicle_engine_type is not None:
-        _params["vehicleEngineType"] = _SERIALIZER.query("vehicle_engine_type", vehicle_engine_type, "str")
-    if constant_speed_consumption_in_liters_per_hundred_km is not None:
-        _params["constantSpeedConsumptionInLitersPerHundredkm"] = _SERIALIZER.query(
-            "constant_speed_consumption_in_liters_per_hundred_km",
-            constant_speed_consumption_in_liters_per_hundred_km,
-            "str",
-        )
-    if current_fuel_in_liters is not None:
-        _params["currentFuelInLiters"] = _SERIALIZER.query("current_fuel_in_liters", current_fuel_in_liters, "float")
-    if auxiliary_power_in_liters_per_hour is not None:
-        _params["auxiliaryPowerInLitersPerHour"] = _SERIALIZER.query(
-            "auxiliary_power_in_liters_per_hour", auxiliary_power_in_liters_per_hour, "float"
-        )
-    if fuel_energy_density_in_megajoules_per_liter is not None:
-        _params["fuelEnergyDensityInMJoulesPerLiter"] = _SERIALIZER.query(
-            "fuel_energy_density_in_megajoules_per_liter", fuel_energy_density_in_megajoules_per_liter, "float"
-        )
-    if acceleration_efficiency is not None:
-        _params["accelerationEfficiency"] = _SERIALIZER.query(
-            "acceleration_efficiency", acceleration_efficiency, "float", maximum=1, minimum=0
-        )
-    if deceleration_efficiency is not None:
-        _params["decelerationEfficiency"] = _SERIALIZER.query(
-            "deceleration_efficiency", deceleration_efficiency, "float", maximum=1, minimum=0
-        )
-    if uphill_efficiency is not None:
-        _params["uphillEfficiency"] = _SERIALIZER.query(
-            "uphill_efficiency", uphill_efficiency, "float", maximum=1, minimum=0
-        )
-    if downhill_efficiency is not None:
-        _params["downhillEfficiency"] = _SERIALIZER.query(
-            "downhill_efficiency", downhill_efficiency, "float", maximum=1, minimum=0
-        )
-    if constant_speed_consumption_in_kw_h_per_hundred_km is not None:
-        _params["constantSpeedConsumptionInkWhPerHundredkm"] = _SERIALIZER.query(
-            "constant_speed_consumption_in_kw_h_per_hundred_km",
-            constant_speed_consumption_in_kw_h_per_hundred_km,
-            "str",
-        )
-    if current_charge_in_kw_h is not None:
-        _params["currentChargeInkWh"] = _SERIALIZER.query("current_charge_in_kw_h", current_charge_in_kw_h, "float")
-    if max_charge_in_kw_h is not None:
-        _params["maxChargeInkWh"] = _SERIALIZER.query("max_charge_in_kw_h", max_charge_in_kw_h, "float")
-    if auxiliary_power_in_kw is not None:
-        _params["auxiliaryPowerInkW"] = _SERIALIZER.query("auxiliary_power_in_kw", auxiliary_power_in_kw, "float")
-
-    # Construct headers
-    if client_id is not None:
-        _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_route_get_route_range_request(
-    format: Union[str, _models.ResponseFormat] = "json",
-    *,
-    query: List[float],
-    fuel_budget_in_liters: Optional[float] = None,
-    energy_budget_in_kw_h: Optional[float] = None,
-    time_budget_in_sec: Optional[float] = None,
-    distance_budget_in_meters: Optional[float] = None,
-    depart_at: Optional[datetime.datetime] = None,
-    route_type: Optional[Union[str, _models.RouteType]] = None,
-    use_traffic_data: Optional[bool] = None,
-    avoid: Optional[List[Union[str, _models.RouteAvoidType]]] = None,
-    travel_mode: Optional[Union[str, _models.TravelMode]] = None,
-    incline_level: Optional[Union[str, _models.InclineLevel]] = None,
-    windingness: Optional[Union[str, _models.WindingnessLevel]] = None,
-    vehicle_axle_weight: int = 0,
-    vehicle_width: float = 0,
-    vehicle_height: float = 0,
-    vehicle_length: float = 0,
-    vehicle_max_speed: int = 0,
-    vehicle_weight: int = 0,
-    is_commercial_vehicle: bool = False,
-    vehicle_load_type: Optional[Union[str, _models.VehicleLoadType]] = None,
-    vehicle_engine_type: Optional[Union[str, _models.VehicleEngineType]] = None,
-    constant_speed_consumption_in_liters_per_hundred_km: Optional[str] = None,
-    current_fuel_in_liters: Optional[float] = None,
-    auxiliary_power_in_liters_per_hour: Optional[float] = None,
-    fuel_energy_density_in_megajoules_per_liter: Optional[float] = None,
-    acceleration_efficiency: Optional[float] = None,
-    deceleration_efficiency: Optional[float] = None,
-    uphill_efficiency: Optional[float] = None,
-    downhill_efficiency: Optional[float] = None,
-    constant_speed_consumption_in_kw_h_per_hundred_km: Optional[str] = None,
-    current_charge_in_kw_h: Optional[float] = None,
-    max_charge_in_kw_h: Optional[float] = None,
-    auxiliary_power_in_kw: Optional[float] = None,
-    client_id: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "1.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/route/range/{format}"
-    path_format_arguments = {
-        "format": _SERIALIZER.url("format", format, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["query"] = _SERIALIZER.query("query", query, "[float]", div=",")
-    if fuel_budget_in_liters is not None:
-        _params["fuelBudgetInLiters"] = _SERIALIZER.query("fuel_budget_in_liters", fuel_budget_in_liters, "float")
-    if energy_budget_in_kw_h is not None:
-        _params["energyBudgetInkWh"] = _SERIALIZER.query("energy_budget_in_kw_h", energy_budget_in_kw_h, "float")
-    if time_budget_in_sec is not None:
-        _params["timeBudgetInSec"] = _SERIALIZER.query("time_budget_in_sec", time_budget_in_sec, "float")
-    if distance_budget_in_meters is not None:
-        _params["distanceBudgetInMeters"] = _SERIALIZER.query(
-            "distance_budget_in_meters", distance_budget_in_meters, "float"
-        )
-    if depart_at is not None:
-        _params["departAt"] = _SERIALIZER.query("depart_at", depart_at, "iso-8601")
-    if route_type is not None:
-        _params["routeType"] = _SERIALIZER.query("route_type", route_type, "str")
-    if use_traffic_data is not None:
-        _params["traffic"] = _SERIALIZER.query("use_traffic_data", use_traffic_data, "bool")
-    if avoid is not None:
-        _params["avoid"] = [_SERIALIZER.query("avoid", q, "str") if q is not None else "" for q in avoid]
-    if travel_mode is not None:
-        _params["travelMode"] = _SERIALIZER.query("travel_mode", travel_mode, "str")
-    if incline_level is not None:
-        _params["hilliness"] = _SERIALIZER.query("incline_level", incline_level, "str")
-    if windingness is not None:
-        _params["windingness"] = _SERIALIZER.query("windingness", windingness, "str")
-    if vehicle_axle_weight is not None:
-        _params["vehicleAxleWeight"] = _SERIALIZER.query("vehicle_axle_weight", vehicle_axle_weight, "int")
-    if vehicle_width is not None:
-        _params["vehicleWidth"] = _SERIALIZER.query("vehicle_width", vehicle_width, "float")
-    if vehicle_height is not None:
-        _params["vehicleHeight"] = _SERIALIZER.query("vehicle_height", vehicle_height, "float")
-    if vehicle_length is not None:
-        _params["vehicleLength"] = _SERIALIZER.query("vehicle_length", vehicle_length, "float")
-    if vehicle_max_speed is not None:
-        _params["vehicleMaxSpeed"] = _SERIALIZER.query("vehicle_max_speed", vehicle_max_speed, "int")
-    if vehicle_weight is not None:
-        _params["vehicleWeight"] = _SERIALIZER.query("vehicle_weight", vehicle_weight, "int")
-    if is_commercial_vehicle is not None:
-        _params["vehicleCommercial"] = _SERIALIZER.query("is_commercial_vehicle", is_commercial_vehicle, "bool")
-    if vehicle_load_type is not None:
-        _params["vehicleLoadType"] = _SERIALIZER.query("vehicle_load_type", vehicle_load_type, "str")
-    if vehicle_engine_type is not None:
-        _params["vehicleEngineType"] = _SERIALIZER.query("vehicle_engine_type", vehicle_engine_type, "str")
-    if constant_speed_consumption_in_liters_per_hundred_km is not None:
-        _params["constantSpeedConsumptionInLitersPerHundredkm"] = _SERIALIZER.query(
-            "constant_speed_consumption_in_liters_per_hundred_km",
-            constant_speed_consumption_in_liters_per_hundred_km,
-            "str",
-        )
-    if current_fuel_in_liters is not None:
-        _params["currentFuelInLiters"] = _SERIALIZER.query("current_fuel_in_liters", current_fuel_in_liters, "float")
-    if auxiliary_power_in_liters_per_hour is not None:
-        _params["auxiliaryPowerInLitersPerHour"] = _SERIALIZER.query(
-            "auxiliary_power_in_liters_per_hour", auxiliary_power_in_liters_per_hour, "float"
-        )
-    if fuel_energy_density_in_megajoules_per_liter is not None:
-        _params["fuelEnergyDensityInMJoulesPerLiter"] = _SERIALIZER.query(
-            "fuel_energy_density_in_megajoules_per_liter", fuel_energy_density_in_megajoules_per_liter, "float"
-        )
-    if acceleration_efficiency is not None:
-        _params["accelerationEfficiency"] = _SERIALIZER.query(
-            "acceleration_efficiency", acceleration_efficiency, "float", maximum=1, minimum=0
-        )
-    if deceleration_efficiency is not None:
-        _params["decelerationEfficiency"] = _SERIALIZER.query(
-            "deceleration_efficiency", deceleration_efficiency, "float", maximum=1, minimum=0
-        )
-    if uphill_efficiency is not None:
-        _params["uphillEfficiency"] = _SERIALIZER.query(
-            "uphill_efficiency", uphill_efficiency, "float", maximum=1, minimum=0
-        )
-    if downhill_efficiency is not None:
-        _params["downhillEfficiency"] = _SERIALIZER.query(
-            "downhill_efficiency", downhill_efficiency, "float", maximum=1, minimum=0
-        )
-    if constant_speed_consumption_in_kw_h_per_hundred_km is not None:
-        _params["constantSpeedConsumptionInkWhPerHundredkm"] = _SERIALIZER.query(
-            "constant_speed_consumption_in_kw_h_per_hundred_km",
-            constant_speed_consumption_in_kw_h_per_hundred_km,
-            "str",
-        )
-    if current_charge_in_kw_h is not None:
-        _params["currentChargeInkWh"] = _SERIALIZER.query("current_charge_in_kw_h", current_charge_in_kw_h, "float")
-    if max_charge_in_kw_h is not None:
-        _params["maxChargeInkWh"] = _SERIALIZER.query("max_charge_in_kw_h", max_charge_in_kw_h, "float")
-    if auxiliary_power_in_kw is not None:
-        _params["auxiliaryPowerInkW"] = _SERIALIZER.query("auxiliary_power_in_kw", auxiliary_power_in_kw, "float")
-
-    # Construct headers
-    if client_id is not None:
-        _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_route_request_route_directions_batch_request(
-    format: Union[str, _models.JsonFormat] = "json", *, client_id: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "1.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/route/directions/batch/{format}"
-    path_format_arguments = {
-        "format": _SERIALIZER.url("format", format, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if client_id is not None:
-        _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_route_get_route_directions_batch_request(
-    batch_id: str, *, client_id: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "1.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/route/directions/batch/{format}"
-    path_format_arguments = {
-        "format": _SERIALIZER.url("batch_id", batch_id, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if client_id is not None:
-        _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_route_request_route_directions_batch_sync_request(
-    format: Union[str, _models.JsonFormat] = "json", *, client_id: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "1.0"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/route/directions/batch/sync/{format}"
-    path_format_arguments = {
-        "format": _SERIALIZER.url("format", format, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if client_id is not None:
-        _headers["x-ms-client-id"] = _SERIALIZER.header("client_id", client_id, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class RouteOperations:
@@ -854,22 +54,22 @@ class RouteOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.maps.route.MapsRouteClient`'s
+        :class:`~azure.maps.route.aio.MapsRouteClient`'s
         :attr:`route` attribute.
     """
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def _request_route_matrix_initial(
+    async def _request_route_matrix_initial(
         self,
-        route_matrix_query: Union[_models.RouteMatrixQuery, IO],
+        route_matrix_query: Union[_models.RouteMatrixQuery, IO[bytes]],
         format: Union[str, _models.JsonFormat] = "json",
         *,
         wait_for_results: Optional[bool] = None,
@@ -891,8 +91,8 @@ class RouteOperations:
         route_type: Optional[Union[str, _models.RouteType]] = None,
         vehicle_load_type: Optional[Union[str, _models.VehicleLoadType]] = None,
         **kwargs: Any
-    ) -> Optional[_models.RouteMatrixResult]:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -903,18 +103,18 @@ class RouteOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.RouteMatrixResult]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(route_matrix_query, (IO, bytes)):
+        if isinstance(route_matrix_query, (IOBase, bytes)):
             _content = route_matrix_query
         else:
             _json = self._serialize.body(route_matrix_query, "RouteMatrixQuery")
 
-        request = build_route_request_route_matrix_request(
+        _request = build_route_request_route_matrix_request(
             format=format,
             wait_for_results=wait_for_results,
             compute_travel_time=compute_travel_time,
@@ -942,33 +142,36 @@ class RouteOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize("RouteMatrixResult", pipeline_response)
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+        deserialized = response.iter_bytes()
 
-        return deserialized
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
-    def begin_request_route_matrix(
+    async def begin_request_route_matrix(
         self,
         route_matrix_query: _models.RouteMatrixQuery,
         format: Union[str, _models.JsonFormat] = "json",
@@ -993,8 +196,8 @@ class RouteOperations:
         vehicle_load_type: Optional[Union[str, _models.VehicleLoadType]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.RouteMatrixResult]:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+    ) -> AsyncLROPoller[_models.RouteMatrixResult]:
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Matrix Routing service allows calculation of a matrix of route summaries for a set of
         routes defined by origin and destination locations by using an asynchronous (async) or
@@ -1023,8 +226,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1045,8 +247,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
@@ -1074,7 +275,7 @@ class RouteOperations:
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -1096,7 +297,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -1128,7 +329,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -1161,25 +362,23 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -1201,9 +400,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -1221,22 +419,15 @@ class RouteOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteMatrixResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteMatrixResult]
+        :return: An instance of AsyncLROPoller that returns RouteMatrixResult
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.route.models.RouteMatrixResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def begin_request_route_matrix(
+    async def begin_request_route_matrix(
         self,
-        route_matrix_query: IO,
+        route_matrix_query: IO[bytes],
         format: Union[str, _models.JsonFormat] = "json",
         *,
         wait_for_results: Optional[bool] = None,
@@ -1259,8 +450,8 @@ class RouteOperations:
         vehicle_load_type: Optional[Union[str, _models.VehicleLoadType]] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.RouteMatrixResult]:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+    ) -> AsyncLROPoller[_models.RouteMatrixResult]:
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Matrix Routing service allows calculation of a matrix of route summaries for a set of
         routes defined by origin and destination locations by using an asynchronous (async) or
@@ -1289,8 +480,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1311,8 +501,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
@@ -1340,7 +529,7 @@ class RouteOperations:
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -1362,7 +551,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -1380,7 +569,7 @@ class RouteOperations:
          parameters. The minimum and the maximum cell count supported are 1 and **700** for async and
          **100** for sync respectively. For example, it can be 35 origins and 20 destinations or 25
          origins and 25 destinations for async API. Required.
-        :type route_matrix_query: IO
+        :type route_matrix_query: IO[bytes]
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.route.models.JsonFormat
@@ -1394,7 +583,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -1427,25 +616,23 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -1467,9 +654,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -1487,22 +673,15 @@ class RouteOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteMatrixResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteMatrixResult]
+        :return: An instance of AsyncLROPoller that returns RouteMatrixResult
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.route.models.RouteMatrixResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def begin_request_route_matrix(
+    @distributed_trace_async
+    async def begin_request_route_matrix(
         self,
-        route_matrix_query: Union[_models.RouteMatrixQuery, IO],
+        route_matrix_query: Union[_models.RouteMatrixQuery, IO[bytes]],
         format: Union[str, _models.JsonFormat] = "json",
         *,
         wait_for_results: Optional[bool] = None,
@@ -1524,8 +703,8 @@ class RouteOperations:
         route_type: Optional[Union[str, _models.RouteType]] = None,
         vehicle_load_type: Optional[Union[str, _models.VehicleLoadType]] = None,
         **kwargs: Any
-    ) -> LROPoller[_models.RouteMatrixResult]:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+    ) -> AsyncLROPoller[_models.RouteMatrixResult]:
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Matrix Routing service allows calculation of a matrix of route summaries for a set of
         routes defined by origin and destination locations by using an asynchronous (async) or
@@ -1554,8 +733,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1576,36 +754,32 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
 
-        #.
-           Client sends a Route Matrix POST request to Azure Maps
+        #. Client sends a Route Matrix POST request to Azure Maps
 
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` -  Route Matrix request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Route Matrix request. This could
-        either be a 400 Bad Request or any other Error status code.
+              either be a 400 Bad Request or any other Error status code.
 
 
 
-        #.
-           If the Matrix Route request was accepted successfully, the Location header in the response
-        contains the URL to download the results of the request. This status URI looks like the
-        following:
+        #. If the Matrix Route request was accepted successfully, the Location header in the response
+           contains the URL to download the results of the request. This status URI looks like the
+           following:
 
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -1627,7 +801,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -1635,17 +809,18 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param route_matrix_query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
          parameters. The minimum and the maximum cell count supported are 1 and **700** for async and
          **100** for sync respectively. For example, it can be 35 origins and 20 destinations or 25
-         origins and 25 destinations for async API. Is either a model type or a IO type. Required.
-        :type route_matrix_query: ~azure.maps.route.models.RouteMatrixQuery or IO
+         origins and 25 destinations for async API. Is either a RouteMatrixQuery type or a IO[bytes]
+         type. Required.
+        :type route_matrix_query: ~azure.maps.route.models.RouteMatrixQuery or IO[bytes]
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.route.models.JsonFormat
@@ -1659,7 +834,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -1692,25 +867,23 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -1732,9 +905,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -1749,30 +921,20 @@ class RouteOperations:
          "otherHazmatExplosive", "otherHazmatGeneral", and "otherHazmatHarmfulToWater". Default value is
          None.
         :paramtype vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteMatrixResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteMatrixResult]
+        :return: An instance of AsyncLROPoller that returns RouteMatrixResult
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.route.models.RouteMatrixResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouteMatrixResult]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RouteMatrixResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._request_route_matrix_initial(  # type: ignore
+            raw_result = await self._request_route_matrix_initial(
                 route_matrix_query=route_matrix_query,
                 format=format,
                 wait_for_results=wait_for_results,
@@ -1799,33 +961,37 @@ class RouteOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("RouteMatrixResult", pipeline_response)
+            deserialized = self._deserialize("RouteMatrixResult", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
-            polling_method = cast(
-                PollingMethod, LROBasePolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs),
+            )
         elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.RouteMatrixResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller[_models.RouteMatrixResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
-    def _get_route_matrix_initial(self, matrix_id: str, **kwargs: Any) -> Optional[_models.RouteMatrixResult]:
-        error_map = {
+    async def _get_route_matrix_initial(self, matrix_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1836,43 +1002,46 @@ class RouteOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.RouteMatrixResult]]
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        request = build_route_get_route_matrix_request(
+        _request = build_route_get_route_matrix_request(
             matrix_id=matrix_id,
             client_id=self._config.client_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize("RouteMatrixResult", pipeline_response)
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    @distributed_trace
-    def begin_get_route_matrix(self, matrix_id: str, **kwargs: Any) -> LROPoller[_models.RouteMatrixResult]:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+    @distributed_trace_async
+    async def begin_get_route_matrix(self, matrix_id: str, **kwargs: Any) -> AsyncLROPoller[_models.RouteMatrixResult]:
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         If the Matrix Route request was accepted successfully, the Location header in the response
         contains the URL to download the results of the request. This status URI looks like the
@@ -1881,7 +1050,7 @@ class RouteOperations:
         .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -1903,7 +1072,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -1911,63 +1080,60 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param matrix_id: Matrix id received after the Matrix Route request was accepted successfully.
          Required.
         :type matrix_id: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteMatrixResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteMatrixResult]
+        :return: An instance of AsyncLROPoller that returns RouteMatrixResult
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.route.models.RouteMatrixResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouteMatrixResult]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls: ClsType[_models.RouteMatrixResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._get_route_matrix_initial(  # type: ignore
+            raw_result = await self._get_route_matrix_initial(
                 matrix_id=matrix_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("RouteMatrixResult", pipeline_response)
+            deserialized = self._deserialize("RouteMatrixResult", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
-            polling_method = cast(
-                PollingMethod, LROBasePolling(lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs)
-            )  # type: PollingMethod
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs),
+            )
         elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.RouteMatrixResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller[_models.RouteMatrixResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @overload
-    def request_route_matrix_sync(
+    async def request_route_matrix_sync(
         self,
         route_matrix_query: _models.RouteMatrixQuery,
         format: Union[str, _models.JsonFormat] = "json",
@@ -1993,7 +1159,7 @@ class RouteOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RouteMatrixResult:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Matrix Routing service allows calculation of a matrix of route summaries for a set of
         routes defined by origin and destination locations by using an asynchronous (async) or
@@ -2022,8 +1188,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2044,36 +1209,32 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
 
-        #.
-           Client sends a Route Matrix POST request to Azure Maps
+        #. Client sends a Route Matrix POST request to Azure Maps
 
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` -  Route Matrix request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Route Matrix request. This could
-        either be a 400 Bad Request or any other Error status code.
+              either be a 400 Bad Request or any other Error status code.
 
 
 
-        #.
-           If the Matrix Route request was accepted successfully, the Location header in the response
-        contains the URL to download the results of the request. This status URI looks like the
-        following:
+        #. If the Matrix Route request was accepted successfully, the Location header in the response
+           contains the URL to download the results of the request. This status URI looks like the
+           following:
 
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -2095,7 +1256,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -2103,10 +1264,10 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param route_matrix_query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
@@ -2127,7 +1288,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -2160,25 +1321,23 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -2200,9 +1359,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -2226,9 +1384,9 @@ class RouteOperations:
         """
 
     @overload
-    def request_route_matrix_sync(
+    async def request_route_matrix_sync(
         self,
-        route_matrix_query: IO,
+        route_matrix_query: IO[bytes],
         format: Union[str, _models.JsonFormat] = "json",
         *,
         wait_for_results: Optional[bool] = None,
@@ -2252,7 +1410,7 @@ class RouteOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RouteMatrixResult:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Matrix Routing service allows calculation of a matrix of route summaries for a set of
         routes defined by origin and destination locations by using an asynchronous (async) or
@@ -2281,8 +1439,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2303,36 +1460,32 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
 
-        #.
-           Client sends a Route Matrix POST request to Azure Maps
+        #. Client sends a Route Matrix POST request to Azure Maps
 
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` -  Route Matrix request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Route Matrix request. This could
-        either be a 400 Bad Request or any other Error status code.
+              either be a 400 Bad Request or any other Error status code.
 
 
 
-        #.
-           If the Matrix Route request was accepted successfully, the Location header in the response
-        contains the URL to download the results of the request. This status URI looks like the
-        following:
+        #. If the Matrix Route request was accepted successfully, the Location header in the response
+           contains the URL to download the results of the request. This status URI looks like the
+           following:
 
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -2354,7 +1507,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -2362,17 +1515,17 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param route_matrix_query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
          parameters. The minimum and the maximum cell count supported are 1 and **700** for async and
          **100** for sync respectively. For example, it can be 35 origins and 20 destinations or 25
          origins and 25 destinations for async API. Required.
-        :type route_matrix_query: IO
+        :type route_matrix_query: IO[bytes]
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.route.models.JsonFormat
@@ -2386,7 +1539,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -2419,25 +1572,23 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -2459,9 +1610,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -2484,10 +1634,10 @@ class RouteOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def request_route_matrix_sync(
+    @distributed_trace_async
+    async def request_route_matrix_sync(
         self,
-        route_matrix_query: Union[_models.RouteMatrixQuery, IO],
+        route_matrix_query: Union[_models.RouteMatrixQuery, IO[bytes]],
         format: Union[str, _models.JsonFormat] = "json",
         *,
         wait_for_results: Optional[bool] = None,
@@ -2510,7 +1660,7 @@ class RouteOperations:
         vehicle_load_type: Optional[Union[str, _models.VehicleLoadType]] = None,
         **kwargs: Any
     ) -> _models.RouteMatrixResult:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Matrix Routing service allows calculation of a matrix of route summaries for a set of
         routes defined by origin and destination locations by using an asynchronous (async) or
@@ -2539,8 +1689,7 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Submit Asynchronous Route Matrix Request
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2561,36 +1710,32 @@ class RouteOperations:
 
         .. code-block::
 
-           POST
-        https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
+           POST https://atlas.microsoft.com/route/matrix/json?api-version=1.0&subscription-key={subscription-key}
 
         Here's a typical sequence of asynchronous operations:
 
 
-        #.
-           Client sends a Route Matrix POST request to Azure Maps
+        #. Client sends a Route Matrix POST request to Azure Maps
 
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` -  Route Matrix request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Route Matrix request. This could
-        either be a 400 Bad Request or any other Error status code.
+              either be a 400 Bad Request or any other Error status code.
 
 
 
-        #.
-           If the Matrix Route request was accepted successfully, the Location header in the response
-        contains the URL to download the results of the request. This status URI looks like the
-        following:
+        #. If the Matrix Route request was accepted successfully, the Location header in the response
+           contains the URL to download the results of the request. This status URI looks like the
+           following:
 
            .. code-block::
 
                GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
 
         #. Client issues a GET request on the download URL obtained in Step 3 to download the results
@@ -2612,7 +1757,7 @@ class RouteOperations:
         .. code-block::
 
              GET
-        https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
+               https://atlas.microsoft.com/route/matrix/{matrixId}?api-version=1.0?subscription-key={subscription-key}
 
         The URL provided by the location header will return the following responses when a ``GET``
         request is issued.
@@ -2620,17 +1765,18 @@ class RouteOperations:
         ..
 
            HTTP ``202 Accepted`` - Matrix request was accepted but is still being processed. Please try
-        again in some time.
+           again in some time.
 
            HTTP ``200 OK`` - Matrix request successfully processed. The response body contains all of
-        the results.
+           the results.
 
         :param route_matrix_query: The matrix of origin and destination coordinates to compute the
          route distance, travel time and other summary for each cell of the matrix based on the input
          parameters. The minimum and the maximum cell count supported are 1 and **700** for async and
          **100** for sync respectively. For example, it can be 35 origins and 20 destinations or 25
-         origins and 25 destinations for async API. Is either a model type or a IO type. Required.
-        :type route_matrix_query: ~azure.maps.route.models.RouteMatrixQuery or IO
+         origins and 25 destinations for async API. Is either a RouteMatrixQuery type or a IO[bytes]
+         type. Required.
+        :type route_matrix_query: ~azure.maps.route.models.RouteMatrixQuery or IO[bytes]
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.route.models.JsonFormat
@@ -2644,7 +1790,7 @@ class RouteOperations:
          best-estimate travel time. Known values are: "none" and "all". Default value is None.
         :paramtype compute_travel_time: str or ~azure.maps.route.models.ComputeTravelTime
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -2677,25 +1823,23 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms. Default value is 0.
         :paramtype vehicle_weight: int
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -2717,9 +1861,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -2734,20 +1877,20 @@ class RouteOperations:
          "otherHazmatExplosive", "otherHazmatGeneral", and "otherHazmatHarmfulToWater". Default value is
          None.
         :paramtype vehicle_load_type: str or ~azure.maps.route.models.VehicleLoadType
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: RouteMatrixResult
         :rtype: ~azure.maps.route.models.RouteMatrixResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            408: lambda response: HttpResponseError(
-                response=response, model=self._deserialize(_models.ErrorResponse, response)
+            408: cast(
+                Type[HttpResponseError],
+                lambda response: HttpResponseError(
+                    response=response, model=self._deserialize(_models.ErrorResponse, response)
+                ),
             ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -2755,18 +1898,18 @@ class RouteOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouteMatrixResult]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RouteMatrixResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(route_matrix_query, (IO, bytes)):
+        if isinstance(route_matrix_query, (IOBase, bytes)):
             _content = route_matrix_query
         else:
             _json = self._serialize.body(route_matrix_query, "RouteMatrixQuery")
 
-        request = build_route_request_route_matrix_sync_request(
+        _request = build_route_request_route_matrix_sync_request(
             format=format,
             wait_for_results=wait_for_results,
             compute_travel_time=compute_travel_time,
@@ -2794,10 +1937,11 @@ class RouteOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2807,15 +1951,15 @@ class RouteOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RouteMatrixResult", pipeline_response)
+        deserialized = self._deserialize("RouteMatrixResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    @distributed_trace
-    def get_route_directions(
+    @distributed_trace_async
+    async def get_route_directions(
         self,
         format: Union[str, _models.ResponseFormat] = "json",
         *,
@@ -2863,7 +2007,7 @@ class RouteOperations:
         auxiliary_power_in_kw: Optional[float] = None,
         **kwargs: Any
     ) -> _models.RouteDirections:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Returns  a route between an origin and a destination, passing through waypoints if they are
         specified. The route will take into account factors such as current traffic and the typical
@@ -2978,7 +2122,7 @@ class RouteOperations:
          parameter was not specified by the caller. "effectiveSettings" Default value is None.
         :paramtype report: str or ~azure.maps.route.models.Report
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -3000,33 +2144,27 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms.
 
 
-         *
-           It is mandatory if any of the *Efficiency parameters are set.
+         * It is mandatory if any of the *Efficiency parameters are set.
 
-         *
-           It must be strictly positive when used in the context of the Consumption Model. Weight
-         restrictions are considered.
+         * It must be strictly positive when used in the context of the Consumption Model. Weight
+           restrictions are considered.
 
-         *
-           If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
-         non-zero, then weight restrictions are considered.
+         * If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
+           non-zero, then weight restrictions are considered.
 
-         *
-           In all other cases, this parameter is ignored.
+         * In all other cases, this parameter is ignored.
 
          Sensible Values : for **Combustion Model** : 1600, for **Electric Model** : 1900. Default
          value is 0.
@@ -3035,11 +2173,11 @@ class RouteOperations:
          vehicles may not be allowed to drive on some roads. Default value is False.
         :paramtype is_commercial_vehicle: bool
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -3061,9 +2199,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -3090,12 +2227,10 @@ class RouteOperations:
          as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -3143,7 +2278,7 @@ class RouteOperations:
 
          Must be paired with **decelerationEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **decelerationEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **decelerationEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.33, for **Electric Model** : 0.66. Default
          value is None.
@@ -3155,7 +2290,7 @@ class RouteOperations:
 
          Must be paired with **accelerationEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **accelerationEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **accelerationEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.83, for **Electric Model** : 0.91. Default
          value is None.
@@ -3167,7 +2302,7 @@ class RouteOperations:
 
          Must be paired with **downhillEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **downhillEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **downhillEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.27, for **Electric Model** : 0.74. Default
          value is None.
@@ -3179,7 +2314,7 @@ class RouteOperations:
 
          Must be paired with **uphillEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **uphillEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **uphillEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.51, for **Electric Model** : 0.73. Default
          value is None.
@@ -3191,12 +2326,10 @@ class RouteOperations:
          consumption curve. Consumption rates for speeds not in the list are found as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -3246,7 +2379,7 @@ class RouteOperations:
         :rtype: ~azure.maps.route.models.RouteDirections
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3257,9 +2390,9 @@ class RouteOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouteDirections]
+        cls: ClsType[_models.RouteDirections] = kwargs.pop("cls", None)
 
-        request = build_route_get_route_directions_request(
+        _request = build_route_get_route_directions_request(
             format=format,
             route_points=route_points,
             max_alternatives=max_alternatives,
@@ -3308,10 +2441,11 @@ class RouteOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3321,15 +2455,15 @@ class RouteOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RouteDirections", pipeline_response)
+        deserialized = self._deserialize("RouteDirections", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
-    def get_route_directions_with_additional_parameters(
+    async def get_route_directions_with_additional_parameters(  # pylint: disable=name-too-long
         self,
         route_direction_parameters: _models.RouteDirectionParameters,
         format: Union[str, _models.ResponseFormat] = "json",
@@ -3379,7 +2513,7 @@ class RouteOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RouteDirections:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Returns  a route between an origin and a destination, passing through waypoints if they are
         specified. The route will take into account factors such as current traffic and the typical
@@ -3408,14 +2542,14 @@ class RouteOperations:
 
 
          * The origin point of the calculateRoute request must be on (or very near) the input reference
-         route. If  this is not the case, an error is returned. However, the origin point does not need
-         to be at the beginning of  the input reference route (it can be thought of as the current
-         vehicle position on the reference route).
+           route. If  this is not the case, an error is returned. However, the origin point does not need
+           to be at the beginning of  the input reference route (it can be thought of as the current
+           vehicle position on the reference route).
          * The reference route, returned as the first route in the calculateRoute response, will start
-         at the origin  point specified in the calculateRoute request. The initial part of the input
-         reference route up until the  origin point will be excluded from the response.
+           at the origin  point specified in the calculateRoute request. The initial part of the input
+           reference route up until the  origin point will be excluded from the response.
          * The values of minDeviationDistance and minDeviationTime determine how far alternative routes
-         will be  guaranteed to follow the reference route from the origin point onwards.
+           will be  guaranteed to follow the reference route from the origin point onwards.
          * The route must use departAt.
          * The vehicleHeading is ignored. Required.
         :type route_direction_parameters: ~azure.maps.route.models.RouteDirectionParameters
@@ -3504,7 +2638,7 @@ class RouteOperations:
          parameter was not specified by the caller. "effectiveSettings" Default value is None.
         :paramtype report: str or ~azure.maps.route.models.Report
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -3537,33 +2671,27 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms.
 
 
-         *
-           It is mandatory if any of the *Efficiency parameters are set.
+         * It is mandatory if any of the *Efficiency parameters are set.
 
-         *
-           It must be strictly positive when used in the context of the Consumption Model. Weight
-         restrictions are considered.
+         * It must be strictly positive when used in the context of the Consumption Model. Weight
+           restrictions are considered.
 
-         *
-           If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
-         non-zero, then weight restrictions are considered.
+         * If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
+           non-zero, then weight restrictions are considered.
 
-         *
-           In all other cases, this parameter is ignored.
+         * In all other cases, this parameter is ignored.
 
          Sensible Values : for **Combustion Model** : 1600, for **Electric Model** : 1900. Default
          value is 0.
@@ -3572,11 +2700,11 @@ class RouteOperations:
          vehicles may not be allowed to drive on some roads. Default value is False.
         :paramtype is_commercial_vehicle: bool
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -3598,10 +2726,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
-        :paramtype use_traffic_data: bool
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.        :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
         :paramtype route_type: str or ~azure.maps.route.models.RouteType
@@ -3680,7 +2806,7 @@ class RouteOperations:
 
          Must be paired with **decelerationEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **decelerationEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **decelerationEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.33, for **Electric Model** : 0.66. Default
          value is None.
@@ -3692,7 +2818,7 @@ class RouteOperations:
 
          Must be paired with **accelerationEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **accelerationEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **accelerationEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.83, for **Electric Model** : 0.91. Default
          value is None.
@@ -3704,7 +2830,7 @@ class RouteOperations:
 
          Must be paired with **downhillEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **downhillEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **downhillEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.27, for **Electric Model** : 0.74. Default
          value is None.
@@ -3716,7 +2842,7 @@ class RouteOperations:
 
          Must be paired with **uphillEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **uphillEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **uphillEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.51, for **Electric Model** : 0.73. Default
          value is None.
@@ -3788,9 +2914,9 @@ class RouteOperations:
         """
 
     @overload
-    def get_route_directions_with_additional_parameters(
+    async def get_route_directions_with_additional_parameters(  # pylint: disable=name-too-long
         self,
-        route_direction_parameters: IO,
+        route_direction_parameters: IO[bytes],
         format: Union[str, _models.ResponseFormat] = "json",
         *,
         route_points: str,
@@ -3838,7 +2964,7 @@ class RouteOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RouteDirections:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Returns  a route between an origin and a destination, passing through waypoints if they are
         specified. The route will take into account factors such as current traffic and the typical
@@ -3867,17 +2993,17 @@ class RouteOperations:
 
 
          * The origin point of the calculateRoute request must be on (or very near) the input reference
-         route. If  this is not the case, an error is returned. However, the origin point does not need
-         to be at the beginning of  the input reference route (it can be thought of as the current
-         vehicle position on the reference route).
+           route. If  this is not the case, an error is returned. However, the origin point does not need
+           to be at the beginning of  the input reference route (it can be thought of as the current
+           vehicle position on the reference route).
          * The reference route, returned as the first route in the calculateRoute response, will start
-         at the origin  point specified in the calculateRoute request. The initial part of the input
-         reference route up until the  origin point will be excluded from the response.
+           at the origin  point specified in the calculateRoute request. The initial part of the input
+           reference route up until the  origin point will be excluded from the response.
          * The values of minDeviationDistance and minDeviationTime determine how far alternative routes
-         will be  guaranteed to follow the reference route from the origin point onwards.
+           will be  guaranteed to follow the reference route from the origin point onwards.
          * The route must use departAt.
          * The vehicleHeading is ignored. Required.
-        :type route_direction_parameters: IO
+        :type route_direction_parameters: IO[bytes]
         :param format: Desired format of the response. Value can be either *json* or *xml*. Known
          values are: "json" and "xml". Default value is "json".
         :type format: str or ~azure.maps.route.models.ResponseFormat
@@ -3963,7 +3089,7 @@ class RouteOperations:
          parameter was not specified by the caller. "effectiveSettings" Default value is None.
         :paramtype report: str or ~azure.maps.route.models.Report
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -3996,33 +3122,27 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms.
 
 
-         *
-           It is mandatory if any of the *Efficiency parameters are set.
+         * It is mandatory if any of the *Efficiency parameters are set.
 
-         *
-           It must be strictly positive when used in the context of the Consumption Model. Weight
-         restrictions are considered.
+         * It must be strictly positive when used in the context of the Consumption Model. Weight
+           restrictions are considered.
 
-         *
-           If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
-         non-zero, then weight restrictions are considered.
+         * If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
+           non-zero, then weight restrictions are considered.
 
-         *
-           In all other cases, this parameter is ignored.
+         * In all other cases, this parameter is ignored.
 
          Sensible Values : for **Combustion Model** : 1600, for **Electric Model** : 1900. Default
          value is 0.
@@ -4031,11 +3151,11 @@ class RouteOperations:
          vehicles may not be allowed to drive on some roads. Default value is False.
         :paramtype is_commercial_vehicle: bool
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -4057,9 +3177,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -4139,7 +3258,7 @@ class RouteOperations:
 
          Must be paired with **decelerationEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **decelerationEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **decelerationEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.33, for **Electric Model** : 0.66. Default
          value is None.
@@ -4151,7 +3270,7 @@ class RouteOperations:
 
          Must be paired with **accelerationEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **accelerationEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **accelerationEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.83, for **Electric Model** : 0.91. Default
          value is None.
@@ -4163,7 +3282,7 @@ class RouteOperations:
 
          Must be paired with **downhillEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **downhillEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **downhillEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.27, for **Electric Model** : 0.74. Default
          value is None.
@@ -4175,7 +3294,7 @@ class RouteOperations:
 
          Must be paired with **uphillEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **uphillEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **uphillEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.51, for **Electric Model** : 0.73. Default
          value is None.
@@ -4246,10 +3365,10 @@ class RouteOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def get_route_directions_with_additional_parameters(
+    @distributed_trace_async
+    async def get_route_directions_with_additional_parameters(  # pylint: disable=name-too-long
         self,
-        route_direction_parameters: Union[_models.RouteDirectionParameters, IO],
+        route_direction_parameters: Union[_models.RouteDirectionParameters, IO[bytes]],
         format: Union[str, _models.ResponseFormat] = "json",
         *,
         route_points: str,
@@ -4296,7 +3415,7 @@ class RouteOperations:
         auxiliary_power_in_kw: Optional[float] = None,
         **kwargs: Any
     ) -> _models.RouteDirections:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Returns  a route between an origin and a destination, passing through waypoints if they are
         specified. The route will take into account factors such as current traffic and the typical
@@ -4325,17 +3444,19 @@ class RouteOperations:
 
 
          * The origin point of the calculateRoute request must be on (or very near) the input reference
-         route. If  this is not the case, an error is returned. However, the origin point does not need
-         to be at the beginning of  the input reference route (it can be thought of as the current
-         vehicle position on the reference route).
+           route. If  this is not the case, an error is returned. However, the origin point does not need
+           to be at the beginning of  the input reference route (it can be thought of as the current
+           vehicle position on the reference route).
          * The reference route, returned as the first route in the calculateRoute response, will start
-         at the origin  point specified in the calculateRoute request. The initial part of the input
-         reference route up until the  origin point will be excluded from the response.
+           at the origin  point specified in the calculateRoute request. The initial part of the input
+           reference route up until the  origin point will be excluded from the response.
          * The values of minDeviationDistance and minDeviationTime determine how far alternative routes
-         will be  guaranteed to follow the reference route from the origin point onwards.
+           will be  guaranteed to follow the reference route from the origin point onwards.
          * The route must use departAt.
-         * The vehicleHeading is ignored. Is either a model type or a IO type. Required.
-        :type route_direction_parameters: ~azure.maps.route.models.RouteDirectionParameters or IO
+         * The vehicleHeading is ignored. Is either a RouteDirectionParameters type or a IO[bytes]
+           type. Required.
+        :type route_direction_parameters: ~azure.maps.route.models.RouteDirectionParameters or
+         IO[bytes]
         :param format: Desired format of the response. Value can be either *json* or *xml*. Known
          values are: "json" and "xml". Default value is "json".
         :type format: str or ~azure.maps.route.models.ResponseFormat
@@ -4421,7 +3542,7 @@ class RouteOperations:
          parameter was not specified by the caller. "effectiveSettings" Default value is None.
         :paramtype report: str or ~azure.maps.route.models.Report
         :keyword filter_section_type: Specifies which of the section types is reported in the route
-         response. :code:`<br>`:code:`<br>`For example if sectionType = pedestrian the sections which
+         response. For example if sectionType = pedestrian the sections which
          are suited for pedestrians only are returned. Multiple types can be used. The default
          sectionType refers to the travelMode input. By default travelMode is set to car. Known values
          are: "carTrain", "country", "ferry", "motorway", "pedestrian", "tollRoad", "tollVignette",
@@ -4454,33 +3575,27 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms.
 
 
-         *
-           It is mandatory if any of the *Efficiency parameters are set.
+         * It is mandatory if any of the Efficiency parameters are set.
 
-         *
-           It must be strictly positive when used in the context of the Consumption Model. Weight
-         restrictions are considered.
+         * It must be strictly positive when used in the context of the Consumption Model. Weight
+           restrictions are considered.
 
-         *
-           If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
-         non-zero, then weight restrictions are considered.
+         * If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
+           non-zero, then weight restrictions are considered.
 
-         *
-           In all other cases, this parameter is ignored.
+         * In all other cases, this parameter is ignored.
 
          Sensible Values : for **Combustion Model** : 1600, for **Electric Model** : 1900. Default
          value is 0.
@@ -4489,11 +3604,11 @@ class RouteOperations:
          vehicles may not be allowed to drive on some roads. Default value is False.
         :paramtype is_commercial_vehicle: bool
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword travel_mode: The mode of travel for the requested route. If not defined, default is
@@ -4515,9 +3630,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.
         :paramtype use_traffic_data: bool
         :keyword route_type: The type of route requested. Known values are: "fastest", "shortest",
          "eco", and "thrilling". Default value is None.
@@ -4544,12 +3658,10 @@ class RouteOperations:
          as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -4597,7 +3709,7 @@ class RouteOperations:
 
          Must be paired with **decelerationEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **decelerationEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **decelerationEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.33, for **Electric Model** : 0.66. Default
          value is None.
@@ -4609,7 +3721,7 @@ class RouteOperations:
 
          Must be paired with **accelerationEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **accelerationEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **accelerationEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.83, for **Electric Model** : 0.91. Default
          value is None.
@@ -4621,7 +3733,7 @@ class RouteOperations:
 
          Must be paired with **downhillEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **downhillEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **downhillEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.27, for **Electric Model** : 0.74. Default
          value is None.
@@ -4633,7 +3745,7 @@ class RouteOperations:
 
          Must be paired with **uphillEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **uphillEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **uphillEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.51, for **Electric Model** : 0.73. Default
          value is None.
@@ -4645,12 +3757,10 @@ class RouteOperations:
          consumption curve. Consumption rates for speeds not in the list are found as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -4696,14 +3806,11 @@ class RouteOperations:
 
          Sensible Values : 1.7. Default value is None.
         :paramtype auxiliary_power_in_kw: float
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: RouteDirections
         :rtype: ~azure.maps.route.models.RouteDirections
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -4714,18 +3821,18 @@ class RouteOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouteDirections]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RouteDirections] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(route_direction_parameters, (IO, bytes)):
+        if isinstance(route_direction_parameters, (IOBase, bytes)):
             _content = route_direction_parameters
         else:
             _json = self._serialize.body(route_direction_parameters, "RouteDirectionParameters")
 
-        request = build_route_get_route_directions_with_additional_parameters_request(
+        _request = build_route_get_route_directions_with_additional_parameters_request(
             format=format,
             route_points=route_points,
             max_alternatives=max_alternatives,
@@ -4777,10 +3884,11 @@ class RouteOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4790,15 +3898,15 @@ class RouteOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RouteDirections", pipeline_response)
+        deserialized = self._deserialize("RouteDirections", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    @distributed_trace
-    def get_route_range(
+    @distributed_trace_async
+    async def get_route_range(
         self,
         format: Union[str, _models.ResponseFormat] = "json",
         *,
@@ -4839,7 +3947,7 @@ class RouteOperations:
     ) -> _models.RouteRangeResult:
         """**Route Range (Isochrone) API**
 
-        **Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         This service will calculate a set of locations that can be reached from the origin point based
         on fuel, energy,  time or distance budget that is specified. A polygon boundary (or Isochrone)
@@ -4856,26 +3964,26 @@ class RouteOperations:
         :keyword query: The Coordinate from which the range calculation should start. Required.
         :paramtype query: list[float]
         :keyword fuel_budget_in_liters: Fuel budget in liters that determines maximal range which can
-         be travelled using the specified Combustion Consumption Model.:code:`<br>` When
+         be travelled using the specified Combustion Consumption Model. When
          fuelBudgetInLiters is used, it is mandatory to specify a detailed  Combustion Consumption
-         Model.:code:`<br>` Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
+         Model. Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
          or distanceBudgetInMeters) must be used. Default value is None.
         :paramtype fuel_budget_in_liters: float
         :keyword energy_budget_in_kw_h: Electric energy budget in kilowatt hours (kWh) that determines
          maximal range which can be travelled using the specified Electric Consumption
-         Model.:code:`<br>` When energyBudgetInkWh is used, it is mandatory to specify a detailed
-         Electric Consumption Model.:code:`<br>` Exactly one budget (fuelBudgetInLiters,
+         Model. When energyBudgetInkWh is used, it is mandatory to specify a detailed
+         Electric Consumption Model. Exactly one budget (fuelBudgetInLiters,
          energyBudgetInkWh, timeBudgetInSec, or distanceBudgetInMeters) must be used. Default value is
          None.
         :paramtype energy_budget_in_kw_h: float
         :keyword time_budget_in_sec: Time budget in seconds that determines maximal range which can be
          travelled using driving time. The Consumption Model will only affect the range when routeType
-         is eco.:code:`<br>` Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
+         is eco. Exactly one budget (fuelBudgetInLiters, energyBudgetInkWh, timeBudgetInSec,
          or distanceBudgetInMeters) must be used. Default value is None.
         :paramtype time_budget_in_sec: float
         :keyword distance_budget_in_meters: Distance budget in meters that determines maximal range
          which can be travelled using driving distance.  The Consumption Model will only affect the
-         range when routeType is eco.:code:`<br>` Exactly one budget (fuelBudgetInLiters,
+         range when routeType is eco. Exactly one budget (fuelBudgetInLiters,
          energyBudgetInkWh, timeBudgetInSec, or distanceBudgetInMeters) must be used. Default value is
          None.
         :paramtype distance_budget_in_meters: float
@@ -4892,10 +4000,8 @@ class RouteOperations:
 
          * true - Do consider all available traffic information during routing
          * false - Ignore current traffic data during routing. Note that although the current traffic
-         data is ignored
-           during routing, the effect of historic traffic on effective road speeds is still
-         incorporated. Default value is None.
-        :paramtype use_traffic_data: bool
+           data is ignored during routing, the effect of historic traffic on effective road speeds is still
+           incorporated. Default value is None.        :paramtype use_traffic_data: bool
         :keyword avoid: Specifies something that the route calculation should try to avoid when
          determining the route. Can be specified multiple times in one request, for example,
          '&avoid=motorways&avoid=tollRoads&avoid=ferries'. In calculateReachableRange requests, the
@@ -4911,11 +4017,11 @@ class RouteOperations:
          Default value is None.
         :paramtype travel_mode: str or ~azure.maps.route.models.TravelMode
         :keyword incline_level: Degree of hilliness for thrilling route. This parameter can only be
-         used in conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and
+         used in conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and
          "high". Default value is None.
         :paramtype incline_level: str or ~azure.maps.route.models.InclineLevel
         :keyword windingness: Level of turns for thrilling route. This parameter can only be used in
-         conjunction with ``routeType``\ =thrilling. Known values are: "low", "normal", and "high".
+         conjunction with ``routeType``\\ =thrilling. Known values are: "low", "normal", and "high".
          Default value is None.
         :paramtype windingness: str or ~azure.maps.route.models.WindingnessLevel
         :keyword vehicle_axle_weight: Weight per axle of the vehicle in kg. A value of 0 means that
@@ -4934,33 +4040,27 @@ class RouteOperations:
          vehicle profile is used to check whether a vehicle is allowed on motorways.
 
 
-         *
-           A value of 0 means that an appropriate value for the vehicle will be determined and applied
-         during route planning.
+         * A value of 0 means that an appropriate value for the vehicle will be determined and applied
+           during route planning.
 
-         *
-           A non-zero value may be overridden during route planning. For example, the current traffic
-         flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
-         consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
-         provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
-         again use 60 km/hour. Default value is 0.
+         * A non-zero value may be overridden during route planning. For example, the current traffic
+           flow is 60 km/hour. If the vehicle  maximum speed is set to 50 km/hour, the routing engine will
+           consider 60 km/hour as this is the current situation.  If the maximum speed of the vehicle is
+           provided as 80 km/hour but the current traffic flow is 60 km/hour, then routing engine will
+           again use 60 km/hour. Default value is 0.
         :paramtype vehicle_max_speed: int
         :keyword vehicle_weight: Weight of the vehicle in kilograms.
 
 
-         *
-           It is mandatory if any of the *Efficiency parameters are set.
+         * It is mandatory if any of the *Efficiency parameters are set.
 
-         *
-           It must be strictly positive when used in the context of the Consumption Model. Weight
-         restrictions are considered.
+         * It must be strictly positive when used in the context of the Consumption Model. Weight
+           restrictions are considered.
 
-         *
-           If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
-         non-zero, then weight restrictions are considered.
+         * If no detailed **Consumption Model** is specified and the value of **vehicleWeight** is
+           non-zero, then weight restrictions are considered.
 
-         *
-           In all other cases, this parameter is ignored.
+         * In all other cases, this parameter is ignored.
 
          Sensible Values : for **Combustion Model** : 1600, for **Electric Model** : 1900. Default
          value is 0.
@@ -4990,12 +4090,10 @@ class RouteOperations:
          as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -5043,7 +4141,7 @@ class RouteOperations:
 
          Must be paired with **decelerationEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **decelerationEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **decelerationEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.33, for **Electric Model** : 0.66. Default
          value is None.
@@ -5055,7 +4153,7 @@ class RouteOperations:
 
          Must be paired with **accelerationEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **accelerationEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **accelerationEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.83, for **Electric Model** : 0.91. Default
          value is None.
@@ -5067,7 +4165,7 @@ class RouteOperations:
 
          Must be paired with **downhillEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **downhillEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **downhillEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.27, for **Electric Model** : 0.74. Default
          value is None.
@@ -5079,7 +4177,7 @@ class RouteOperations:
 
          Must be paired with **uphillEfficiency**.
 
-         The range of values allowed are 0.0 to 1/\ **uphillEfficiency**.
+         The range of values allowed are 0.0 to 1/\\ **uphillEfficiency**.
 
          Sensible Values : for **Combustion Model** : 0.51, for **Electric Model** : 0.73. Default
          value is None.
@@ -5091,12 +4189,10 @@ class RouteOperations:
          consumption curve. Consumption rates for speeds not in the list are found as follows:
 
 
-         *
-           by linear interpolation, if the given speed lies in between two speeds in the list
+         * by linear interpolation, if the given speed lies in between two speeds in the list
 
-         *
-           by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
-         the nearest two points in the list
+         * by linear extrapolation otherwise, assuming a constant (ΔConsumption/ΔSpeed) determined by
+           the nearest two points in the list
 
          The list must contain between 1 and 25 points (inclusive), and may not contain duplicate
          points for the same speed. If it only contains a single point, then the consumption rate of
@@ -5146,7 +4242,7 @@ class RouteOperations:
         :rtype: ~azure.maps.route.models.RouteRangeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5157,9 +4253,9 @@ class RouteOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouteRangeResult]
+        cls: ClsType[_models.RouteRangeResult] = kwargs.pop("cls", None)
 
-        request = build_route_get_route_range_request(
+        _request = build_route_get_route_range_request(
             format=format,
             query=query,
             fuel_budget_in_liters=fuel_budget_in_liters,
@@ -5199,10 +4295,11 @@ class RouteOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5212,20 +4309,20 @@ class RouteOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RouteRangeResult", pipeline_response)
+        deserialized = self._deserialize("RouteRangeResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    def _request_route_directions_batch_initial(
+    async def _request_route_directions_batch_initial(
         self,
-        route_directions_batch_queries: Union[_models.BatchRequest, IO],
+        route_directions_batch_queries: Union[_models.BatchRequest, IO[bytes]],
         format: Union[str, _models.JsonFormat] = "json",
         **kwargs: Any
-    ) -> Optional[_models.RouteDirectionsBatchResult]:
-        error_map = {
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -5236,18 +4333,18 @@ class RouteOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.RouteDirectionsBatchResult]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(route_directions_batch_queries, (IO, bytes)):
+        if isinstance(route_directions_batch_queries, (IOBase, bytes)):
             _content = route_directions_batch_queries
         else:
             _json = self._serialize.body(route_directions_batch_queries, "BatchRequest")
 
-        request = build_route_request_route_directions_batch_request(
+        _request = build_route_request_route_directions_batch_request(
             format=format,
             client_id=self._config.client_id,
             content_type=content_type,
@@ -5257,43 +4354,46 @@ class RouteOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize("RouteDirectionsBatchResult", pipeline_response)
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+        deserialized = response.iter_bytes()
 
-        return deserialized
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
-    def begin_request_route_directions_batch(
+    async def begin_request_route_directions_batch(
         self,
         route_directions_batch_queries: _models.BatchRequest,
         format: Union[str, _models.JsonFormat] = "json",
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.RouteDirectionsBatchResult]:
+    ) -> AsyncLROPoller[_models.RouteDirectionsBatchResult]:
         """**Route Directions Batch API**
 
-        **Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
         <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
@@ -5323,25 +4423,23 @@ class RouteOperations:
 
 
         #. Client sends a Route Directions Batch ``POST`` request to Azure Maps
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Batch request. This could either be a
-        ``400 Bad Request`` or any other ``Error`` status code.
+              ``400 Bad Request`` or any other ``Error`` status code.
 
 
-        #.
-           If the batch request was accepted successfully, the ``Location`` header in the response
-        contains the URL to download the results of the batch request.
-            This status URI looks like following:
+        #. If the batch request was accepted successfully, the ``Location`` header in the response
+           contains the URL to download the results of the batch request.
+           This status URI looks like following:
 
-        ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
-        Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
-        <#security>`_\ ) to the *status URI* before running it. :code:`<br>`
+           ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
+           Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
+           <#security>`_\\ ) to the *status URI* before running it. 
 
 
         #. Client issues a ``GET`` request on the *download URL* obtained in Step 3 to download the
@@ -5360,10 +4458,10 @@ class RouteOperations:
            {
                "batchItems": [
                    { "query":
-        "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
-        },
+           "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
+           },
                    { "query":
-        "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
+           "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
                    { "query": "?query=48.923159,-122.557362:32.621279,-116.840362" }
                ]
            }
@@ -5393,16 +4491,15 @@ class RouteOperations:
 
 
         #. Client sends a ``GET`` request using the *download URL*.
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request was accepted but is still being processed. Please
-        try again in some time.
+              try again in some time.
 
               HTTP ``200 OK`` - Batch request successfully processed. The response body contains all
-        the batch results.
+              the batch results.
 
 
         Batch Response Model
@@ -5411,22 +4508,20 @@ class RouteOperations:
         The returned data content is similar for async and sync requests. When downloading the results
         of an async batch request, if the batch has finished processing, the response body contains the
         batch response. This batch response contains a ``summary`` component that indicates the
-        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\ i.e.
-        queries which were executed successfully. The batch response also includes a ``batchItems``
-        array which contains a response for each and every query in the batch request. The
-        ``batchItems`` will contain the results in the exact same order the original queries were sent
-        in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
+        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\\
+        i.e. queries which were executed successfully. The batch response also includes a
+        ``batchItems`` array which contains a response for each and every query in the batch request.
+        The ``batchItems`` will contain the results in the exact same order the original queries were
+        sent in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -5494,13 +4589,13 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain a max of 700 queries for async and 100 queries for sync version
@@ -5512,30 +4607,23 @@ class RouteOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteDirectionsBatchResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteDirectionsBatchResult]
+        :return: An instance of AsyncLROPoller that returns RouteDirectionsBatchResult
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.route.models.RouteDirectionsBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def begin_request_route_directions_batch(
+    async def begin_request_route_directions_batch(
         self,
-        route_directions_batch_queries: IO,
+        route_directions_batch_queries: IO[bytes],
         format: Union[str, _models.JsonFormat] = "json",
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.RouteDirectionsBatchResult]:
+    ) -> AsyncLROPoller[_models.RouteDirectionsBatchResult]:
         """**Route Directions Batch API**
 
-        **Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
         <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
@@ -5565,25 +4653,23 @@ class RouteOperations:
 
 
         #. Client sends a Route Directions Batch ``POST`` request to Azure Maps
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Batch request. This could either be a
-        ``400 Bad Request`` or any other ``Error`` status code.
+              ``400 Bad Request`` or any other ``Error`` status code.
 
 
-        #.
-           If the batch request was accepted successfully, the ``Location`` header in the response
-        contains the URL to download the results of the batch request.
-            This status URI looks like following:
+        #. If the batch request was accepted successfully, the ``Location`` header in the response
+           contains the URL to download the results of the batch request.
+           This status URI looks like following:
 
-        ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
-        Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
-        <#security>`_\ ) to the *status URI* before running it. :code:`<br>`
+           ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
+           Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
+           <#security>`_\\ ) to the *status URI* before running it. 
 
 
         #. Client issues a ``GET`` request on the *download URL* obtained in Step 3 to download the
@@ -5602,10 +4688,10 @@ class RouteOperations:
            {
                "batchItems": [
                    { "query":
-        "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
-        },
+           "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
+           },
                    { "query":
-        "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
+           "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
                    { "query": "?query=48.923159,-122.557362:32.621279,-116.840362" }
                ]
            }
@@ -5635,16 +4721,15 @@ class RouteOperations:
 
 
         #. Client sends a ``GET`` request using the *download URL*.
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request was accepted but is still being processed. Please
-        try again in some time.
+              try again in some time.
 
               HTTP ``200 OK`` - Batch request successfully processed. The response body contains all
-        the batch results.
+              the batch results.
 
 
         Batch Response Model
@@ -5653,22 +4738,20 @@ class RouteOperations:
         The returned data content is similar for async and sync requests. When downloading the results
         of an async batch request, if the batch has finished processing, the response body contains the
         batch response. This batch response contains a ``summary`` component that indicates the
-        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\ i.e.
-        queries which were executed successfully. The batch response also includes a ``batchItems``
-        array which contains a response for each and every query in the batch request. The
-        ``batchItems`` will contain the results in the exact same order the original queries were sent
-        in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
+        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\\
+        i.e. queries which were executed successfully. The batch response also includes a
+        ``batchItems`` array which contains a response for each and every query in the batch request.
+        The ``batchItems`` will contain the results in the exact same order the original queries were
+        sent in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -5736,46 +4819,39 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain a max of 700 queries for async and 100 queries for sync version
          and must contain at least 1 query. Required.
-        :type route_directions_batch_queries: IO
+        :type route_directions_batch_queries: IO[bytes]
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.route.models.JsonFormat
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteDirectionsBatchResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteDirectionsBatchResult]
+        :return: An instance of AsyncLROPoller that returns RouteDirectionsBatchResult
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.route.models.RouteDirectionsBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def begin_request_route_directions_batch(
+    @distributed_trace_async
+    async def begin_request_route_directions_batch(
         self,
-        route_directions_batch_queries: Union[_models.BatchRequest, IO],
+        route_directions_batch_queries: Union[_models.BatchRequest, IO[bytes]],
         format: Union[str, _models.JsonFormat] = "json",
         **kwargs: Any
-    ) -> LROPoller[_models.RouteDirectionsBatchResult]:
+    ) -> AsyncLROPoller[_models.RouteDirectionsBatchResult]:
         """**Route Directions Batch API**
 
-        **Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
         <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
@@ -5805,25 +4881,23 @@ class RouteOperations:
 
 
         #. Client sends a Route Directions Batch ``POST`` request to Azure Maps
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request has been accepted.
 
               HTTP ``Error`` - There was an error processing your Batch request. This could either be a
-        ``400 Bad Request`` or any other ``Error`` status code.
+              ``400 Bad Request`` or any other ``Error`` status code.
 
 
-        #.
-           If the batch request was accepted successfully, the ``Location`` header in the response
-        contains the URL to download the results of the batch request.
-            This status URI looks like following:
+        #. If the batch request was accepted successfully, the ``Location`` header in the response
+           contains the URL to download the results of the batch request.
+           This status URI looks like following:
 
-        ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
-        Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
-        <#security>`_\ ) to the *status URI* before running it. :code:`<br>`
+           ``GET https://atlas.microsoft.com/route/directions/batch/{batch-id}?api-version=1.0``
+           Note:- Please remember to add AUTH information (subscription-key/azure_auth - See `Security
+           <#security>`_\\ ) to the *status URI* before running it. 
 
 
         #. Client issues a ``GET`` request on the *download URL* obtained in Step 3 to download the
@@ -5842,10 +4916,10 @@ class RouteOperations:
            {
                "batchItems": [
                    { "query":
-        "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
-        },
+           "?query=47.620659,-122.348934:47.610101,-122.342015&travelMode=bicycle&routeType=eco&traffic=false"
+           },
                    { "query":
-        "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
+           "?query=40.759856,-73.985108:40.771136,-73.973506&travelMode=pedestrian&routeType=shortest" },
                    { "query": "?query=48.923159,-122.557362:32.621279,-116.840362" }
                ]
            }
@@ -5875,16 +4949,15 @@ class RouteOperations:
 
 
         #. Client sends a ``GET`` request using the *download URL*.
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request was accepted but is still being processed. Please
-        try again in some time.
+              try again in some time.
 
               HTTP ``200 OK`` - Batch request successfully processed. The response body contains all
-        the batch results.
+              the batch results.
 
 
         Batch Response Model
@@ -5893,22 +4966,20 @@ class RouteOperations:
         The returned data content is similar for async and sync requests. When downloading the results
         of an async batch request, if the batch has finished processing, the response body contains the
         batch response. This batch response contains a ``summary`` component that indicates the
-        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\ i.e.
-        queries which were executed successfully. The batch response also includes a ``batchItems``
-        array which contains a response for each and every query in the batch request. The
-        ``batchItems`` will contain the results in the exact same order the original queries were sent
-        in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
+        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\\
+        i.e. queries which were executed successfully. The batch response also includes a
+        ``batchItems`` array which contains a response for each and every query in the batch request.
+        The ``batchItems`` will contain the results in the exact same order the original queries were
+        sent in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -5976,45 +5047,35 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain a max of 700 queries for async and 100 queries for sync version
-         and must contain at least 1 query. Is either a model type or a IO type. Required.
-        :type route_directions_batch_queries: ~azure.maps.route.models.BatchRequest or IO
+         and must contain at least 1 query. Is either a BatchRequest type or a IO[bytes] type. Required.
+        :type route_directions_batch_queries: ~azure.maps.route.models.BatchRequest or IO[bytes]
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.route.models.JsonFormat
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteDirectionsBatchResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteDirectionsBatchResult]
+        :return: An instance of AsyncLROPoller that returns RouteDirectionsBatchResult
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.route.models.RouteDirectionsBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouteDirectionsBatchResult]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RouteDirectionsBatchResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._request_route_directions_batch_initial(  # type: ignore
+            raw_result = await self._request_route_directions_batch_initial(
                 route_directions_batch_queries=route_directions_batch_queries,
                 format=format,
                 content_type=content_type,
@@ -6023,35 +5084,37 @@ class RouteOperations:
                 params=_params,
                 **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("RouteDirectionsBatchResult", pipeline_response)
+            deserialized = self._deserialize("RouteDirectionsBatchResult", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
-            polling_method = cast(
-                PollingMethod, LROBasePolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )  # type: PollingMethod
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs),
+            )
         elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.RouteDirectionsBatchResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller[_models.RouteDirectionsBatchResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
-    def _get_route_directions_batch_initial(
-        self, batch_id: str, **kwargs: Any
-    ) -> Optional[_models.RouteDirectionsBatchResult]:
-        error_map = {
+    async def _get_route_directions_batch_initial(self, batch_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -6062,45 +5125,48 @@ class RouteOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.RouteDirectionsBatchResult]]
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        request = build_route_get_route_directions_batch_request(
+        _request = build_route_get_route_directions_batch_request(
             batch_id=batch_id,
             client_id=self._config.client_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = None
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize("RouteDirectionsBatchResult", pipeline_response)
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
+        deserialized = response.iter_bytes()
+
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    @distributed_trace
-    def begin_get_route_directions_batch(
+    @distributed_trace_async
+    async def begin_get_route_directions_batch(
         self, batch_id: str, **kwargs: Any
-    ) -> LROPoller[_models.RouteDirectionsBatchResult]:
-        """**Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+    ) -> AsyncLROPoller[_models.RouteDirectionsBatchResult]:
+        """**Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         Download Asynchronous Batch Results
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -6117,16 +5183,15 @@ class RouteOperations:
 
 
         #. Client sends a ``GET`` request using the *download URL*.
-        #.
-           The server will respond with one of the following:
+        #. The server will respond with one of the following:
 
            ..
 
               HTTP ``202 Accepted`` - Batch request was accepted but is still being processed. Please
-        try again in some time.
+              try again in some time.
 
               HTTP ``200 OK`` - Batch request successfully processed. The response body contains all
-        the batch results.
+              the batch results.
 
 
         Batch Response Model
@@ -6135,22 +5200,20 @@ class RouteOperations:
         The returned data content is similar for async and sync requests. When downloading the results
         of an async batch request, if the batch has finished processing, the response body contains the
         batch response. This batch response contains a ``summary`` component that indicates the
-        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\ i.e.
-        queries which were executed successfully. The batch response also includes a ``batchItems``
-        array which contains a response for each and every query in the batch request. The
-        ``batchItems`` will contain the results in the exact same order the original queries were sent
-        in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
+        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\\
+        i.e. queries which were executed successfully. The batch response also includes a
+        ``batchItems`` array which contains a response for each and every query in the batch request.
+        The ``batchItems`` will contain the results in the exact same order the original queries were
+        sent in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -6218,65 +5281,62 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message": 
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param batch_id: Batch id for querying the operation. Required.
         :type batch_id: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns RouteDirectionsBatchResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.maps.route.models.RouteDirectionsBatchResult]
+        :return: An instance of AsyncLROPoller that returns RouteDirectionsBatchResult
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.maps.route.models.RouteDirectionsBatchResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouteDirectionsBatchResult]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls: ClsType[_models.RouteDirectionsBatchResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._get_route_directions_batch_initial(  # type: ignore
+            raw_result = await self._get_route_directions_batch_initial(
                 batch_id=batch_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
+            await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("RouteDirectionsBatchResult", pipeline_response)
+            deserialized = self._deserialize("RouteDirectionsBatchResult", pipeline_response.http_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
-            polling_method = cast(
-                PollingMethod, LROBasePolling(lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs)
-            )  # type: PollingMethod
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, lro_options={"final-state-via": "original-uri"}, **kwargs),
+            )
         elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return AsyncLROPoller[_models.RouteDirectionsBatchResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller[_models.RouteDirectionsBatchResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @overload
-    def request_route_directions_batch_sync(
+    async def request_route_directions_batch_sync(
         self,
         route_directions_batch_queries: _models.BatchRequest,
         format: Union[str, _models.JsonFormat] = "json",
@@ -6286,7 +5346,7 @@ class RouteOperations:
     ) -> _models.RouteDirectionsBatchResult:
         """**Route Directions Batch API**
 
-        **Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
         <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
@@ -6306,7 +5366,7 @@ class RouteOperations:
         .. code-block::
 
            POST
-        https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
+           https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Batch Response Model
         ^^^^^^^^^^^^^^^^^^^^
@@ -6314,22 +5374,20 @@ class RouteOperations:
         The returned data content is similar for async and sync requests. When downloading the results
         of an async batch request, if the batch has finished processing, the response body contains the
         batch response. This batch response contains a ``summary`` component that indicates the
-        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\ i.e.
-        queries which were executed successfully. The batch response also includes a ``batchItems``
-        array which contains a response for each and every query in the batch request. The
-        ``batchItems`` will contain the results in the exact same order the original queries were sent
-        in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
+        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\\
+        i.e. queries which were executed successfully. The batch response also includes a
+        ``batchItems`` array which contains a response for each and every query in the batch request.
+        The ``batchItems`` will contain the results in the exact same order the original queries were
+        sent in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -6397,13 +5455,13 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain  a max of 700 queries for async and 100 queries for sync version
@@ -6421,9 +5479,9 @@ class RouteOperations:
         """
 
     @overload
-    def request_route_directions_batch_sync(
+    async def request_route_directions_batch_sync(
         self,
-        route_directions_batch_queries: IO,
+        route_directions_batch_queries: IO[bytes],
         format: Union[str, _models.JsonFormat] = "json",
         *,
         content_type: str = "application/json",
@@ -6431,7 +5489,7 @@ class RouteOperations:
     ) -> _models.RouteDirectionsBatchResult:
         """**Route Directions Batch API**
 
-        **Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
         <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
@@ -6451,7 +5509,7 @@ class RouteOperations:
         .. code-block::
 
            POST
-        https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
+           https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Batch Response Model
         ^^^^^^^^^^^^^^^^^^^^
@@ -6459,22 +5517,20 @@ class RouteOperations:
         The returned data content is similar for async and sync requests. When downloading the results
         of an async batch request, if the batch has finished processing, the response body contains the
         batch response. This batch response contains a ``summary`` component that indicates the
-        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\ i.e.
-        queries which were executed successfully. The batch response also includes a ``batchItems``
-        array which contains a response for each and every query in the batch request. The
-        ``batchItems`` will contain the results in the exact same order the original queries were sent
-        in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
+        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\\
+        i.e. queries which were executed successfully. The batch response also includes a
+        ``batchItems`` array which contains a response for each and every query in the batch request.
+        The ``batchItems`` will contain the results in the exact same order the original queries were
+        sent in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -6542,18 +5598,18 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain  a max of 700 queries for async and 100 queries for sync version
          and must contain at least 1 query. Required.
-        :type route_directions_batch_queries: IO
+        :type route_directions_batch_queries: IO[bytes]
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.route.models.JsonFormat
@@ -6565,16 +5621,16 @@ class RouteOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def request_route_directions_batch_sync(
+    @distributed_trace_async
+    async def request_route_directions_batch_sync(
         self,
-        route_directions_batch_queries: Union[_models.BatchRequest, IO],
+        route_directions_batch_queries: Union[_models.BatchRequest, IO[bytes]],
         format: Union[str, _models.JsonFormat] = "json",
         **kwargs: Any
     ) -> _models.RouteDirectionsBatchResult:
         """**Route Directions Batch API**
 
-        **Applies to**\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
+        **Applies to**\\ : see pricing `tiers <https://aka.ms/AzureMapsPricingTier>`_.
 
         The Route Directions Batch API sends batches of queries to `Route Directions API
         <https://docs.microsoft.com/rest/api/maps/route/getroutedirections>`_ using just a single API
@@ -6594,7 +5650,7 @@ class RouteOperations:
         .. code-block::
 
            POST
-        https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
+           https://atlas.microsoft.com/route/directions/batch/sync/json?api-version=1.0&subscription-key={subscription-key}
 
         Batch Response Model
         ^^^^^^^^^^^^^^^^^^^^
@@ -6602,22 +5658,20 @@ class RouteOperations:
         The returned data content is similar for async and sync requests. When downloading the results
         of an async batch request, if the batch has finished processing, the response body contains the
         batch response. This batch response contains a ``summary`` component that indicates the
-        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\ i.e.
-        queries which were executed successfully. The batch response also includes a ``batchItems``
-        array which contains a response for each and every query in the batch request. The
-        ``batchItems`` will contain the results in the exact same order the original queries were sent
-        in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
+        ``totalRequests`` that were part of the original batch request and ``successfulRequests``\\
+        i.e. queries which were executed successfully. The batch response also includes a
+        ``batchItems`` array which contains a response for each and every query in the batch request.
+        The ``batchItems`` will contain the results in the exact same order the original queries were
+        sent in the batch request. Each item in ``batchItems`` contains ``statusCode`` and ``response``
         fields. Each ``response`` in ``batchItems`` is of one of the following types:
 
 
-        *
-          `\ ``RouteDirections``
-        <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
-        query completed successfully.
+        * `\\ ``RouteDirections``
+          <https://docs.microsoft.com/rest/api/maps/route/getroutedirections#routedirections>`_ - If the
+          query completed successfully.
 
-        *
-          ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
-        this case.
+        * ``Error`` - If the query failed. The response will contain a ``code`` and a ``message`` in
+          this case.
 
         Here's a sample Batch Response with 1 *successful* and 1 *failed* result:
 
@@ -6685,35 +5739,35 @@ class RouteOperations:
                            "error":
                            {
                                "code": "400 BadRequest",
-                               "message": "Bad request: one or more parameters were incorrectly
-        specified or are mutually exclusive."
+                               "message":
+                            "Bad request: one or more parameters were incorrectly specified or are mutually exclusive."
                            }
                        }
                    }
                ]
-           }.
+           }
 
         :param route_directions_batch_queries: The list of route directions queries/requests to
          process. The list can contain  a max of 700 queries for async and 100 queries for sync version
-         and must contain at least 1 query. Is either a model type or a IO type. Required.
-        :type route_directions_batch_queries: ~azure.maps.route.models.BatchRequest or IO
+         and must contain at least 1 query. Is either a BatchRequest type or a IO[bytes] type. Required.
+        :type route_directions_batch_queries: ~azure.maps.route.models.BatchRequest or IO[bytes]
         :param format: Desired format of the response. Only ``json`` format is supported. "json"
          Default value is "json".
         :type format: str or ~azure.maps.route.models.JsonFormat
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
         :return: RouteDirectionsBatchResult
         :rtype: ~azure.maps.route.models.RouteDirectionsBatchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
-            408: lambda response: HttpResponseError(
-                response=response, model=self._deserialize(_models.ErrorResponse, response)
+            408: cast(
+                Type[HttpResponseError],
+                lambda response: HttpResponseError(
+                    response=response, model=self._deserialize(_models.ErrorResponse, response)
+                ),
             ),
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
@@ -6721,18 +5775,18 @@ class RouteOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RouteDirectionsBatchResult]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RouteDirectionsBatchResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(route_directions_batch_queries, (IO, bytes)):
+        if isinstance(route_directions_batch_queries, (IOBase, bytes)):
             _content = route_directions_batch_queries
         else:
             _json = self._serialize.body(route_directions_batch_queries, "BatchRequest")
 
-        request = build_route_request_route_directions_batch_sync_request(
+        _request = build_route_request_route_directions_batch_sync_request(
             format=format,
             client_id=self._config.client_id,
             content_type=content_type,
@@ -6742,10 +5796,11 @@ class RouteOperations:
             headers=_headers,
             params=_params,
         )
-        request.url = self._client.format_url(request.url)  # type: ignore
+        _request.url = self._client.format_url(_request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6755,9 +5810,9 @@ class RouteOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("RouteDirectionsBatchResult", pipeline_response)
+        deserialized = self._deserialize("RouteDirectionsBatchResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
