@@ -179,7 +179,7 @@ class AzureAIClient(ClientGenerated):
         parts = conn_str.split(";")
         if len(parts) != 4:
             raise ValueError("Invalid connection string format")
-        endpoint = parts[0]
+        endpoint = "https://" + parts[0]
         subscription_id = parts[1]
         resource_group_name = parts[2]
         project_name = parts[3]
