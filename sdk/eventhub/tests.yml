@@ -6,7 +6,7 @@ extends:
       ServiceDirectory: eventhub
       TestTimeoutInMinutes: 240
       BuildTargetingString: azure-eventhub*
-      SupportedClouds: 'Public,UsGov'
+      SupportedClouds: 'Public,UsGov,China'
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       EnvVars:
