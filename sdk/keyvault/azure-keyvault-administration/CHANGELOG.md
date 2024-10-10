@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added support for service API version `7.6-preview.1`
+- Added support for Continuous Access Evaluation (CAE)
 
 ### Breaking Changes
 
