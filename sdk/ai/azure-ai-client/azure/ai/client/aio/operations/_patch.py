@@ -98,7 +98,7 @@ class InferenceOperations:
 
         return client
 
-    async def get_azure_openai_client(self) -> "AzureOpenAI":
+    async def get_azure_openai_client(self) -> "AsyncAzureOpenAI":
         endpoint = await self.outer_instance.endpoints.get_default(
             endpoint_type=EndpointType.AZURE_OPEN_AI, populate_secrets=True
         )
@@ -106,7 +106,7 @@ class InferenceOperations:
             raise ValueError("No Azure OpenAI endpoint found.")
 
         try:
-            from openai_async import AzureOpenAI
+            from openai import AsyncAzureOpenAI
         except ModuleNotFoundError as _:
             raise ModuleNotFoundError("OpenAI SDK is not installed. Please install it using 'pip install openai-async'")
 
@@ -114,7 +114,7 @@ class InferenceOperations:
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
             )
-            client = AzureOpenAI(
+            client = AsyncAzureOpenAI(
                 api_key=endpoint.key,
                 azure_endpoint=endpoint.endpoint_url,
                 api_version="2024-08-01-preview",  # TODO: Is this needed?
@@ -129,7 +129,7 @@ class InferenceOperations:
                 raise ModuleNotFoundError(
                     "azure.identity package not installed. Please install it using 'pip install azure.identity'"
                 )
-            client = AzureOpenAI(
+            client = AsyncAzureOpenAI(
                 # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
                 azure_ad_token_provider=get_bearer_token_provider(
                     endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
@@ -139,7 +139,7 @@ class InferenceOperations:
             )
         elif endpoint.authentication_type == AuthenticationType.SAS:
             logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using SAS authentication")
-            client = AzureOpenAI(
+            client = AsyncAzureOpenAI(
                 azure_ad_token_provider=get_bearer_token_provider(
                     endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
