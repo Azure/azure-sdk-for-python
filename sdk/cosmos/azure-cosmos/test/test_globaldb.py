@@ -4,20 +4,23 @@
 
 import time
 import unittest
+from unittest.mock import patch
+import uuid
 from urllib.parse import urlparse
-
-import pytest
 
 import azure.cosmos._global_endpoint_manager as global_endpoint_manager
 import azure.cosmos.cosmos_client as cosmos_client
 import test_config
-from azure.cosmos import _endpoint_discovery_retry_policy, _retry_utility, documents, exceptions, \
-    DatabaseProxy, ContainerProxy
+from azure.cosmos import documents, exceptions, DatabaseProxy, ContainerProxy,\
+    _synchronized_request, _endpoint_discovery_retry_policy, PartitionKey, ConnectionRetryPolicy
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-
+from azure.core.exceptions import ServiceRequestError
 
 #   TODO: These tests need to be properly configured in the pipeline with locational endpoints.
 #    For now we use the is_not_default_host() method to skip regional checks.
+
+contoso_west = 'https://contoso-westus.documents.azure.com:443/'
+contoso_west2 = 'https://contoso-westus2.documents.azure.com:443/'
 
 
 def is_not_default_host(endpoint):
@@ -34,12 +37,28 @@ def _mock_execute_function(function, *args, **kwargs):
         response=response)
 
 
-def _mock_get_database_account(url_connection):
+def _mock_pipeline_run_function_error(pipeline_client,
+                                      request,
+                                      **kwargs):
+    response = test_config.FakePipelineResponse(headers={'x-ms-substatus': SubStatusCodes.WRITE_FORBIDDEN},
+                                                status_code=StatusCodes.FORBIDDEN, message="Write Forbidden")
+    return response
+
+
+def _mock_get_database_account(url_connection=None, **kwargs):
     database_account = documents.DatabaseAccount()
+    database_account._ReadableLocations = \
+        [{'databaseAccountEndpoint': contoso_west2, 'name': 'West US 2'}]
+    database_account._WritableLocations = \
+        [{'databaseAccountEndpoint': contoso_west, 'name': 'West US'}]
     return database_account
 
 
-@pytest.mark.cosmosEmulator
+def _mock_pipeline_run_function(pipeline_client, request, **kwargs):
+    assert contoso_west in request.url
+    return test_config.FakePipelineResponse()
+
+
 class TestGlobalDB(unittest.TestCase):
     host = test_config.TestConfig.global_host
     write_location_host = test_config.TestConfig.write_location_host
@@ -400,37 +419,62 @@ class TestGlobalDB(unittest.TestCase):
                                                                                                    location_name)
         self.assertEqual(locational_endpoint, 'https://contoso-EastUS.documents.azure.com:443/')
 
+    def test_global_db_service_request_errors(self):
+        mock_connection_policy = documents.ConnectionPolicy()
+        mock_retry_policy = test_config.MockConnectionRetryPolicy(
+            retry_total=5,
+            retry_connect=None,
+            retry_read=None,
+            retry_status=None,
+            retry_backoff_max=1,
+            retry_on_status_codes=[],
+            retry_backoff_factor=0.8,
+        )
+        mock_connection_policy.ConnectionRetryConfiguration = mock_retry_policy
+        try:
+            cosmos_client.CosmosClient(self.host, self.masterKey, connection_policy=mock_connection_policy)
+        except ServiceRequestError:
+            assert mock_retry_policy.count == 3
+
     def test_global_db_endpoint_discovery_retry_policy_mock(self):
         client = cosmos_client.CosmosClient(self.host, self.masterKey)
-
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
-        _retry_utility.ExecuteFunction = _mock_execute_function
-
-        self.OriginalGetDatabaseAccount = client.client_connection.GetDatabaseAccount
-        client.client_connection.GetDatabaseAccount = _mock_get_database_account
-
-        max_retry_attempt_count = 10
-        retry_after_in_milliseconds = 500
-
-        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = max_retry_attempt_count
-        _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = (
-            retry_after_in_milliseconds)
-
-        document_definition = {'id': 'doc7',
-                               'pk': 'pk',
-                               'name': 'sample document',
-                               'key': 'value'}
-
         database = client.get_database_client(self.configs.TEST_DATABASE_ID)
-        container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+        container = database.create_container_if_not_exists("TEST" + str(uuid.uuid4()), PartitionKey(path="/pk"))
 
-        self.__AssertHTTPFailureWithStatus(
-            StatusCodes.FORBIDDEN,
-            SubStatusCodes.WRITE_FORBIDDEN,
-            container.create_item,
-            document_definition)
+        # Replace GetDatabaseAccount method
+        original_get_database_account = client.client_connection.GetDatabaseAccount
+        cc_copy = client.client_connection
+        cc_copy.GetDatabaseAccount = _mock_get_database_account
+        client.client_connection = cc_copy
 
-        _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+        # Replace _PipelineRunFunction to send a 403/3
+        with patch.object(_synchronized_request, '_PipelineRunFunction', new=_mock_pipeline_run_function_error):
+            # original_pipeline_function = _synchronized_request._PipelineRunFunction
+            # _synchronized_request._PipelineRunFunction = _mock_pipeline_run_function_error
+
+            document_definition = {'id': 'doc7',
+                                   'pk': 'pk',
+                                   'name': 'sample document',
+                                   'key': 'value'}
+
+            max_retry_attempt_count = 10
+            retry_after_in_milliseconds = 500
+            _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Max_retry_attempt_count = max_retry_attempt_count
+            _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds = (
+                retry_after_in_milliseconds)
+
+            self.__AssertHTTPFailureWithStatus(
+                StatusCodes.FORBIDDEN,
+                SubStatusCodes.WRITE_FORBIDDEN,
+                container.create_item,
+                document_definition)
+
+        with patch.object(_synchronized_request, '_PipelineRunFunction', new=_mock_pipeline_run_function):
+            # Verify next outgoing requests have the new updated regions from the 403 retry
+            _synchronized_request._PipelineRunFunction = _mock_pipeline_run_function
+            container.create_item(document_definition)
+        cc_copy.GetDatabaseAccount = original_get_database_account
+        client.client_connection = cc_copy
 
 
 if __name__ == '__main__':

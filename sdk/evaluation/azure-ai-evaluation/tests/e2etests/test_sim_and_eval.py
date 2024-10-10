@@ -4,7 +4,6 @@ import pathlib
 import time
 from typing import Dict, List, Any
 import asyncio
-import numpy as np
 import pandas as pd
 import pytest
 import requests
@@ -36,7 +35,6 @@ def questions_file():
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
 @pytest.mark.localtest
 class TestSimAndEval:
-
     @pytest.mark.azuretest
     @pytest.mark.skip(reason="Skip as it only failed in CI pipeline. Will re-enable once the CI issue is fixed")
     def test_protected_material_sim_into_eval(self, project_scope, azure_cred):
@@ -97,7 +95,7 @@ class TestSimAndEval:
             file.writelines([json.dumps({"conversation": conversation}) + "\n" for conversation in simulator_output])
 
         # Evaluator simulator output
-        violence_eval = ViolenceEvaluator(project_scope, credential=DefaultAzureCredential())
+        violence_eval = ViolenceEvaluator(DefaultAzureCredential(), project_scope)
         # run the evaluation
         eval_output = evaluate(
             data=file_name,

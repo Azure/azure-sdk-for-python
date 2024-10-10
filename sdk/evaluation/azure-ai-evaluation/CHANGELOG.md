@@ -6,7 +6,11 @@
 
 ### Breaking Changes
 
+- Removed `numpy` dependency. All NaN values returned by the SDK have been changed to from `numpy.nan` to `math.nan`.
+- `credential` is now required to be passed in for all content safety evaluators and `ProtectedMaterialsEvaluator`. `DefaultAzureCredential` will no longer be chosen if a credential is not passed. 
+
 ### Bugs Fixed
+- Adversarial Conversation simulations would fail with `Forbidden`. Added logic to re-fetch token in the exponential retry logic to retrive RAI Service response.
 
 ### Other Changes
 
@@ -63,6 +67,26 @@ evaluate(
     ...
 )
 ```
+
+- Simulator now requires a model configuration to call the prompty instead of an Azure AI project scope. This enables the usage of simulator with Entra ID based auth.
+Before:
+```python
+azure_ai_project = {
+    "subscription_id": os.environ.get("AZURE_SUBSCRIPTION_ID"),
+    "resource_group_name": os.environ.get("RESOURCE_GROUP"),
+    "project_name": os.environ.get("PROJECT_NAME"),
+}
+sim = Simulator(azure_ai_project=azure_ai_project, credentails=DefaultAzureCredentials())
+```
+After:
+```python
+model_config = {
+    "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
+    "azure_deployment": os.environ.get("AZURE_DEPLOYMENT"),
+}
+sim = Simulator(model_config=model_config)
+```
+If `api_key` is not included in the `model_config`, the prompty runtime in `promptflow-core` will pick up `DefaultAzureCredential`.
 
 ### Bugs Fixed
 

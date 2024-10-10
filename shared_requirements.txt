@@ -71,6 +71,5 @@ openai
 dnspython
 promptflow-core
 promptflow-devkit
-numpy
 nltk
 rouge-score

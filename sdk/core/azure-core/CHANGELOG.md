@@ -1,12 +1,10 @@
 # Release History
 
-## 1.31.1 (Unreleased)
+## 1.32.0 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added a default implementation to handle token challenges in `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy`.
 
 ### Other Changes
 

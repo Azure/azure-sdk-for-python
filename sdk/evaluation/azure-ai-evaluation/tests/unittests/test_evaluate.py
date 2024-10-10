@@ -1,9 +1,9 @@
 import json
+import math
 import os
 import pathlib
 from unittest.mock import patch
 
-import numpy as np
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
@@ -400,9 +400,9 @@ class TestEvaluate:
         expected.rename(columns={"query": "inputs.query", "response": "inputs.response"}, inplace=True)
 
         expected["outputs.yeti.result"] = expected["inputs.response"].str.len()
-        expected.at[0, "outputs.yeti.result"] = np.nan
-        expected.at[2, "outputs.yeti.result"] = np.nan
-        expected.at[3, "outputs.yeti.result"] = np.nan
+        expected.at[0, "outputs.yeti.result"] = math.nan
+        expected.at[2, "outputs.yeti.result"] = math.nan
+        expected.at[3, "outputs.yeti.result"] = math.nan
         assert_frame_equal(expected, result_df)
 
     @patch("azure.ai.evaluation._evaluate._evaluate._evaluate")
