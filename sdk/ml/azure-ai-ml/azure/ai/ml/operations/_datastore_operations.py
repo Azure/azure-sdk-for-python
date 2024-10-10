@@ -56,7 +56,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._operation = serviceclient_2024_07_01_preview.datastores
         self._compute_operation = serviceclient_2024_01_01_preview.compute
         self._credential = serviceclient_2024_07_01_preview._config.credential

@@ -68,7 +68,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(OnlineDeploymentOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._local_deployment_helper = local_deployment_helper
         self._online_deployment = service_client_04_2023_preview.online_deployments
         self._online_endpoint_operations = service_client_04_2023_preview.online_endpoints

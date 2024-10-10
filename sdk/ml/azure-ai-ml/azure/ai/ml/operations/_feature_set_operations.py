@@ -68,7 +68,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(FeatureSetOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._operation = service_client.featureset_versions
         self._container_operation = service_client.featureset_containers
         self._jobs_operation = service_client_for_jobs.jobs

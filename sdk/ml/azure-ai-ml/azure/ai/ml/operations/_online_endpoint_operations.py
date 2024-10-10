@@ -72,7 +72,7 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(OnlineEndpointOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._online_operation = service_client_02_2022_preview.online_endpoints
         self._online_deployment_operation = service_client_02_2022_preview.online_deployments
         self._all_operations = all_operations
@@ -288,7 +288,6 @@ class OnlineEndpointOperations(_ScopeDependentOperations):
 
         if endpoint.properties.auth_mode.lower() == "key":
             return self._regenerate_online_keys(name=name, key_type=key_type)
-
         raise ValidationException(
             message=f"Endpoint '{name}' does not use keys for authentication.",
             target=ErrorTarget.ONLINE_ENDPOINT,

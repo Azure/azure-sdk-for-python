@@ -46,7 +46,7 @@ class ComputeOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ) -> None:
         super(ComputeOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._operation = service_client.compute
         self._operation2024 = service_client_2024.compute
         self._workspace_operations = service_client.workspaces

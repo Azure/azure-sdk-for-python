@@ -14,6 +14,8 @@
 ### Bugs Fixed
   - #35820 - using compute location attribute to fill compute location to align the experience with UI.
 
+### Other Changes
+  - Added dependency on `azure-monitor-opentelemetry`.
   
 ## 1.20.0 (2024-09-10)
 

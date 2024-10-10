@@ -97,7 +97,7 @@ class ComponentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ) -> None:
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        ops_logger.update_filter()
         self._version_operation = service_client.component_versions
         self._preflight_operation = preflight_operation
         self._container_operation = service_client.component_containers

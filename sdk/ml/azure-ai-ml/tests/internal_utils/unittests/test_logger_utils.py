@@ -1,12 +1,9 @@
 import logging
 
 import pytest
-from mock import patch
-from opencensus.ext.azure.log_exporter import AzureLogHandler
-from opencensus.trace.tracer import Tracer
+from mock import MagicMock, patch
 
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, get_appinsights_log_handler
-from azure.ai.ml._telemetry.logging_handler import AzureMLSDKLogHandler
+from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, set_appinsights_distro
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._logger_utils import OpsLogger, initialize_logger_info
 
@@ -28,17 +25,22 @@ class TestLoggerUtils:
 
 @pytest.mark.unittest
 class TestLoggingHandler:
-    def test_logging_enabled(self) -> None:
+    @patch("azure.ai.ml._telemetry.logging_handler.configure_azure_monitor")
+    @patch("azure.ai.ml._telemetry.logging_handler.logging.getLogger")
+    def test_logging_enabled(self, mock_get_logger, mock_configure_azure_monitor) -> None:
+        mock_logger = MagicMock()
+        mock_get_logger.return_value = mock_logger
         with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=False):
-            handler, tracer = get_appinsights_log_handler(user_agent=USER_AGENT)
-            assert isinstance(handler, logging.NullHandler)
-            assert tracer is None
+            set_appinsights_distro(user_agent=USER_AGENT)
+            assert len(mock_logger.addHandler.call_args_list) == 1
+            assert isinstance(mock_logger.addHandler.call_args[0][0], logging.NullHandler)
+            mock_configure_azure_monitor.assert_not_called()
+            mock_logger.reset_mock()
 
         with patch("azure.ai.ml._telemetry.logging_handler.in_jupyter_notebook", return_value=True):
-            handler, tracer = get_appinsights_log_handler(user_agent=USER_AGENT)
-            assert isinstance(handler, AzureLogHandler)
-            assert isinstance(handler, AzureMLSDKLogHandler)
-            assert isinstance(tracer, Tracer)
+            set_appinsights_distro(user_agent=USER_AGENT)
+            mock_logger.addHandler.assert_not_called()
+            mock_configure_azure_monitor.assert_called_once()
 
 
 @pytest.mark.unittest
@@ -48,19 +50,20 @@ class TestOpsLogger:
         test_logger = OpsLogger(name=test_name)
 
         assert test_logger is not None
-        assert test_logger.package_logger.name == AML_INTERNAL_LOGGER_NAMESPACE + test_name
-        assert not test_logger.package_logger.propagate
+        assert test_logger.package_logger.name == AML_INTERNAL_LOGGER_NAMESPACE + "." + test_name
+        assert test_logger.package_logger.propagate
+        assert test_logger.package_tracer is not None
         assert test_logger.module_logger.name == test_name
         assert len(test_logger.custom_dimensions) == 0
 
-    def test_update_info(self) -> None:
+    def test_update_filter(self) -> None:
         test_name = "test"
-        test_handler = (logging.NullHandler(), None)
-        test_data = {"app_insights_handler": test_handler}
 
         test_logger = OpsLogger(name=test_name)
-        test_logger.update_info(test_data)
+        assert len(test_logger.package_logger.filters) == 0
 
-        assert len(test_data) == 0
-        assert test_logger.package_logger.hasHandlers()
-        assert test_logger.package_logger.handlers[0] == test_handler[0]
+        test_logger.package_logger.parent = logging.getLogger("parent")
+        test_logger.package_logger.parent.addFilter(logging.Filter)
+        test_logger.update_filter()
+
+        assert len(test_logger.package_logger.filters) == 1
