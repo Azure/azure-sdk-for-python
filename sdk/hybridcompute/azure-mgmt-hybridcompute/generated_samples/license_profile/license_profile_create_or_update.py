@@ -15,7 +15,7 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-hybridcompute
 # USAGE
-    python gateway_delete.py
+    python license_profile_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,15 +27,28 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
 def main():
     client = HybridComputeManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="ffd506c8-3415-42d3-9612-fdb423fb17df",
+        subscription_id="{subscriptionId}",
     )
 
-    client.gateways.begin_delete(
+    response = client.license_profiles.begin_create_or_update(
         resource_group_name="myResourceGroup",
-        gateway_name="{gatewayName}",
+        machine_name="myMachine",
+        parameters={
+            "location": "eastus2euap",
+            "properties": {
+                "esuProfile": {"assignedLicense": "{LicenseResourceId}"},
+                "productProfile": {
+                    "productFeatures": [{"name": "Hotpatch", "subscriptionStatus": "Enabled"}],
+                    "productType": "WindowsServer",
+                    "subscriptionStatus": "Enabled",
+                },
+                "softwareAssurance": {"softwareAssuranceCustomer": True},
+            },
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-05-20-preview/examples/gateway/Gateway_Delete.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/stable/2024-07-10/examples/licenseProfile/LicenseProfile_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

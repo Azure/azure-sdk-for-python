@@ -18,6 +18,8 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -38,7 +40,6 @@ from ...operations._machines_operations import (
     build_list_by_resource_group_request,
     build_list_by_subscription_request,
 )
-from .._vendor import HybridComputeManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -123,7 +124,11 @@ class MachinesOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, machine_name: str, expand: Optional[str] = None, **kwargs: Any
+        self,
+        resource_group_name: str,
+        machine_name: str,
+        expand: Optional[Union[str, _models.InstanceViewTypes]] = None,
+        **kwargs: Any
     ) -> _models.Machine:
         """Retrieves information about the model view or the instance view of a hybrid machine.
 
@@ -132,8 +137,9 @@ class MachinesOperations:
         :type resource_group_name: str
         :param machine_name: The name of the hybrid machine. Required.
         :type machine_name: str
-        :param expand: The expand expression to apply on the operation. Default value is None.
-        :type expand: str
+        :param expand: The expand expression to apply on the operation. "instanceView" Default value is
+         None.
+        :type expand: str or ~azure.mgmt.hybridcompute.models.InstanceViewTypes
         :return: Machine or the result of cls(response)
         :rtype: ~azure.mgmt.hybridcompute.models.Machine
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -207,6 +213,7 @@ class MachinesOperations:
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -215,19 +222,19 @@ class MachinesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            await response.read()  # Load the body in memory and close the socket
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -339,6 +346,7 @@ class MachinesOperations:
         )
         _request.url = self._client.format_url(_request.url)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -347,19 +355,19 @@ class MachinesOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            await response.read()  # Load the body in memory and close the socket
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        if response.status_code == 200:
-            deserialized = response.stream_download(self._client._pipeline)
-
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-            deserialized = response.stream_download(self._client._pipeline)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

@@ -28,7 +28,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ...operations._private_link_resources_operations import build_get_request, build_list_by_private_link_scope_request
-from .._vendor import HybridComputeManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping

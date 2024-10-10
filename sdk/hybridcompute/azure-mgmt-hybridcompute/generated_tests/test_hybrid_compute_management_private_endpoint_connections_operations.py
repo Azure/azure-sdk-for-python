@@ -25,7 +25,7 @@ class TestHybridComputeManagementPrivateEndpointConnectionsOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             scope_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-05-20-preview",
+            api_version="2024-07-10",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestHybridComputeManagementPrivateEndpointConnectionsOperations(AzureMgmtR
                 },
                 "type": "str",
             },
-            api_version="2024-05-20-preview",
+            api_version="2024-07-10",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestHybridComputeManagementPrivateEndpointConnectionsOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             scope_name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-05-20-preview",
+            api_version="2024-07-10",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestHybridComputeManagementPrivateEndpointConnectionsOperations(AzureMgmtR
         response = self.client.private_endpoint_connections.list_by_private_link_scope(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2024-05-20-preview",
+            api_version="2024-07-10",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

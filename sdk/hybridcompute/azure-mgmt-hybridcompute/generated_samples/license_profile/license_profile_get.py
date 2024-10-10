@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.hybridcompute import HybridComputeManagementClient
@@ -17,7 +15,7 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-hybridcompute
 # USAGE
-    python settings_patch.py
+    python license_profile_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,26 +27,16 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
 def main():
     client = HybridComputeManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-1111-2222-3333-444444444444",
+        subscription_id="{subscriptionId}",
     )
 
-    response = client.settings.patch(
-        resource_group_name="hybridRG",
-        base_provider="Microsoft.HybridCompute",
-        base_resource_type="machines",
-        base_resource_name="testMachine",
-        settings_resource_name="default",
-        parameters={
-            "properties": {
-                "gatewayProperties": {
-                    "gatewayResourceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/hybridRG/providers/Microsoft.HybridCompute/gateways/newGateway"
-                }
-            }
-        },
+    response = client.license_profiles.get(
+        resource_group_name="myResourceGroup",
+        machine_name="myMachine",
     )
     print(response)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-05-20-preview/examples/settings/SettingsPatch.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/stable/2024-07-10/examples/licenseProfile/LicenseProfile_Get.json
 if __name__ == "__main__":
     main()

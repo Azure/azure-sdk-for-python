@@ -14,7 +14,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 AZURE_LOCATION = "eastus"
 
 
-
+@pytest.mark.live_test_only
 class TestHybridComputeManagementLicensesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(HybridComputeManagementClient, is_async=True)
@@ -24,7 +24,6 @@ class TestHybridComputeManagementLicensesOperationsAsync(AzureMgmtRecordedTestCa
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.licenses.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-20-preview",
         )
         result = [r async for r in response]
         assert result == []
@@ -33,9 +32,7 @@ class TestHybridComputeManagementLicensesOperationsAsync(AzureMgmtRecordedTestCa
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_by_subscription(self, resource_group):
-        response = self.client.licenses.list_by_subscription(
-            api_version="2024-05-20-preview",
-        )
+        response = self.client.licenses.list_by_subscription()
         result = [r async for r in response]
         assert response
         

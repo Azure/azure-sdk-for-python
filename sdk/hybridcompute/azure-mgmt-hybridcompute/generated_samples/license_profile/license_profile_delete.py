@@ -15,7 +15,7 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-hybridcompute
 # USAGE
-    python gateway_list_by_subscription.py
+    python license_profile_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,14 +27,15 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
 def main():
     client = HybridComputeManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="ffd506c8-3415-42d3-9612-fdb423fb17df",
+        subscription_id="{subscriptionId}",
     )
 
-    response = client.gateways.list_by_subscription()
-    for item in response:
-        print(item)
+    client.license_profiles.begin_delete(
+        resource_group_name="myResourceGroup",
+        machine_name="myMachine",
+    ).result()
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-05-20-preview/examples/gateway/Gateway_ListBySubscription.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/stable/2024-07-10/examples/licenseProfile/LicenseProfile_Delete.json
 if __name__ == "__main__":
     main()

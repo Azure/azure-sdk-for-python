@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.hybridcompute import HybridComputeManagementClient
@@ -17,7 +15,7 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-hybridcompute
 # USAGE
-    python gateway_create_or_update.py
+    python license_profile_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,17 +27,27 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
 def main():
     client = HybridComputeManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="ffd506c8-3415-42d3-9612-fdb423fb17df",
+        subscription_id="{subscriptionId}",
     )
 
-    response = client.gateways.begin_create_or_update(
+    response = client.license_profiles.begin_update(
         resource_group_name="myResourceGroup",
-        gateway_name="{gatewayName}",
-        parameters={"location": "eastus2euap", "properties": {"allowedFeatures": ["*"], "gatewayType": "Public"}},
+        machine_name="myMachine",
+        parameters={
+            "properties": {
+                "esuProfile": {"assignedLicense": "{LicenseResourceId}"},
+                "productProfile": {
+                    "productFeatures": [{"name": "Hotpatch", "subscriptionStatus": "Enable"}],
+                    "productType": "WindowsServer",
+                    "subscriptionStatus": "Enable",
+                },
+                "softwareAssurance": {"softwareAssuranceCustomer": True},
+            }
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-05-20-preview/examples/gateway/Gateway_CreateOrUpdate.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/stable/2024-07-10/examples/licenseProfile/LicenseProfile_Update.json
 if __name__ == "__main__":
     main()

@@ -27,7 +27,7 @@ class TestHybridComputeManagementExtensionMetadataOperationsAsync(AzureMgmtRecor
             publisher="str",
             extension_type="str",
             version="str",
-            api_version="2024-05-20-preview",
+            api_version="2024-07-10",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestHybridComputeManagementExtensionMetadataOperationsAsync(AzureMgmtRecor
             location="str",
             publisher="str",
             extension_type="str",
-            api_version="2024-05-20-preview",
+            api_version="2024-07-10",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

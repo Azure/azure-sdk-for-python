@@ -15,7 +15,7 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-hybridcompute
 # USAGE
-    python settings_get.py
+    python license_profile_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -27,19 +27,17 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
 def main():
     client = HybridComputeManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="00000000-1111-2222-3333-444444444444",
+        subscription_id="{subscriptionId}",
     )
 
-    response = client.settings.get(
-        resource_group_name="hybridRG",
-        base_provider="Microsoft.HybridCompute",
-        base_resource_type="machines",
-        base_resource_name="testMachine",
-        settings_resource_name="default",
+    response = client.license_profiles.list(
+        resource_group_name="myResourceGroup",
+        machine_name="myMachine",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-05-20-preview/examples/settings/SettingsGet.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/stable/2024-07-10/examples/licenseProfile/LicenseProfile_List.json
 if __name__ == "__main__":
     main()
