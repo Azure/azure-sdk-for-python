@@ -473,8 +473,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         instance_count: Optional[int] = None,
         locations: Optional[List[str]] = None,
         properties: Optional[Dict] = None,
-        docker_args: Optional[str] = None,
-        docker_args_list: Optional[List[str]] = None,
+        docker_args: Optional[Union[str, List[str]]] = None,
         shm_size: Optional[str] = None,
         # pylint: disable=unused-argument
         **kwargs: Any,
@@ -493,9 +492,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         :keyword properties: The properties of the job.
         :paramtype properties: Optional[dict]
         :keyword docker_args: The Docker arguments for the job.
-        :paramtype docker_args: Optional[str]
-        :keyword docker_args_list: The Docker arguments list for the job.
-        :paramtype docker_args_list: Optional[List[str]]
+        :paramtype docker_args: Optional[Union[str,List[str]]]
         :keyword shm_size: The size of the docker container's shared memory block. This should be in the
             format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
             b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
@@ -523,8 +520,6 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             self.resources.properties = properties
         if docker_args is not None:
             self.resources.docker_args = docker_args
-        if docker_args_list is not None:
-            self.resources.docker_args_list = docker_args_list
         if shm_size is not None:
             self.resources.shm_size = shm_size
 
