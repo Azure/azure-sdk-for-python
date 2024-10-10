@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Optional
+from typing import Dict, Optional
 
 from typing_extensions import override
 
