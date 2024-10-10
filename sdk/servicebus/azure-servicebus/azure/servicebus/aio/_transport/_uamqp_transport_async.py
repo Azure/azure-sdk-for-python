@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 import functools
-from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast
+from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast, List
 
 try:
     from uamqp import (
@@ -18,8 +18,14 @@ try:
     from ..._transport._uamqp_transport import UamqpTransport
     from ._base_async import AmqpTransportAsync
     from .._async_utils import get_running_loop
-    from ..._common.tracing import get_receive_links, receive_trace_context_manager
+    from ..._common.tracing import (
+        get_receive_links,
+        receive_trace_context_manager,
+        settle_trace_context_manager,
+        get_span_link_from_message,
+    )
     from ..._common.constants import ServiceBusReceiveMode
+    from ...exceptions import MessageLockLostError, SessionLockLostError, ServiceBusConnectionError
 
     if TYPE_CHECKING:
         from uamqp import AMQPClientAsync, Message
@@ -247,7 +253,7 @@ try:
 
         @staticmethod
         async def reset_link_credit_async(
-            handler: "ReceiveClientAsync", link_credit: int
+            handler: "ReceiveClientAsync", link_credit: int,  *, drain = False
         ) -> None:
             """
             Resets the link credit on the link.
@@ -262,9 +268,20 @@ try:
             handler: "ReceiveClientAsync",
             message: "ServiceBusReceivedMessage",
             settle_operation: str,
+            logger: "Logger",
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
         ) -> None:  # pylint: disable=unused-argument
+            # pylint: disable=protected-access
+            # uamqp doesn't have the ability to wait to receive disposition result returned
+            # from the service after settlement, so there's no way we could tell whether a
+            # disposition succeeds or not and there's no error condition info.
+            # (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
+            if not handler._session and message._lock_expired:
+                raise MessageLockLostError(
+                    message="The lock on the message lock has expired.",
+                    error=message.auto_renew_error,
+                )
             await get_running_loop().run_in_executor(
                 None,
                 UamqpTransportAsync.settle_message_via_receiver_link_impl(
@@ -348,5 +365,134 @@ try:
                 timeout=timeout * UamqpTransportAsync.TIMEOUT_FACTOR if timeout else None,
                 callback=functools.partial(callback, amqp_transport=UamqpTransportAsync)
             )
+
+        @staticmethod
+        async def receive_loop_async(
+            receiver,
+            amqp_receive_client: "ReceiveClientAsync",
+            max_message_count: int,
+            batch,
+            abs_timeout,
+            timeout,
+            **kwargs: Any
+        ) -> List["ServiceBusReceivedMessage"]:
+            # pylint: disable=protected-access
+            first_message_received = expired = False
+            receiving = True
+            while receiving and not expired and len(batch) < max_message_count:
+                while receiving and amqp_receive_client._received_messages.qsize() < max_message_count:
+                    if (
+                        abs_timeout
+                        and receiver._amqp_transport.get_current_time(amqp_receive_client)
+                        > abs_timeout
+                    ):
+                        expired = True
+                        break
+                    before = amqp_receive_client._received_messages.qsize()
+                    receiving = await amqp_receive_client.do_work_async()
+                    received = amqp_receive_client._received_messages.qsize() - before
+                    if (
+                        not first_message_received
+                        and amqp_receive_client._received_messages.qsize() > 0
+                        and received > 0
+                    ):
+                        # first message(s) received, continue receiving for some time
+                        first_message_received = True
+                        abs_timeout = (
+                            receiver._amqp_transport.get_current_time(amqp_receive_client)
+                            + receiver._further_pull_receive_timeout
+                        )
+                while (
+                    not amqp_receive_client._received_messages.empty() and len(batch) < max_message_count
+                ):
+                    batch.append(amqp_receive_client._received_messages.get())
+                    amqp_receive_client._received_messages.task_done()
+            return [receiver._build_received_message(message) for message in batch]
+
+        @staticmethod
+        async def _settle_message_with_retry_async(
+            receiver,
+            message,
+            settle_operation,
+            dead_letter_reason=None,
+            dead_letter_error_description=None,
+        ):
+            # pylint: disable=protected-access
+            # The following condition check is a hot fix for settling a message received for non-session queue after
+            # lock expiration.
+            # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition
+            # result returned from the service after settlement, so there's no way we could tell whether a
+            # disposition succeeds or not and there's no error condition info.
+            # (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
+            if not receiver._session and message._lock_expired:
+                raise MessageLockLostError(
+                    message="The lock on the message lock has expired.",
+                    error=message.auto_renew_error,
+                )
+            link = get_span_link_from_message(message)
+            trace_links = [link] if link else []
+            with settle_trace_context_manager(receiver, settle_operation, links=trace_links):
+                await receiver._do_retryable_operation(
+                    receiver._settle_message,
+                    timeout=None,
+                    message=message,
+                    settle_operation=settle_operation,
+                    dead_letter_reason=dead_letter_reason,
+                    dead_letter_error_description=dead_letter_error_description,
+                )
+                message._settled = True
+
+        @staticmethod
+        async def check_if_exception_is_retriable_async(receiver, error):
+            """
+            Check if exception is retriable.
+            :param ServiceBusReceiver receiver: The receiver.
+            :param Exception error: The error.
+            """
+            # pylint: disable=protected-access
+            try:
+                # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
+                # the receiver should no longer be used and should create a new session receiver
+                # instance to receive from session. There are pitfalls WRT both next session IDs,
+                # and the diversity of session failure modes, that motivates us to disallow this.
+                if (
+                    receiver._session
+                    and receiver._running
+                    and isinstance(error, (SessionLockLostError, ServiceBusConnectionError))
+                ):
+                    receiver._session._lock_lost = True
+                    await receiver._close_handler()
+                    raise error
+            except AttributeError:
+                pass
+
+
+        @staticmethod
+        def check_live(receiver):
+            # pylint: disable=protected-access
+            if receiver._shutdown.is_set():
+                raise ValueError(
+                    "The handler has already been shutdown. Please use ServiceBusClient to "
+                    "create a new instance."
+                )
+            # The following client validation is for two purposes in a session receiver:
+            # 1. self._session._lock_lost is set when a session receiver encounters a connection error,
+            # once there's a connection error, we don't retry on the session entity and simply
+            # raise SessionlockLostError.
+            # 2. self._session._lock_expired is a hot fix as client validation for session lock expiration.
+            # Because currently uamqp doesn't have the ability to detect remote session lock lost.
+            # Usually the service would send a detach frame once a session lock gets expired, however, in the edge case
+            # when we drain messages in a queue and try to settle messages after lock expiration,
+            # we are not able to receive the detach frame by calling uamqp connection.work(),
+            # Eventually this should be a fix in the uamqp library.
+            # see issue: https://github.com/Azure/azure-uamqp-python/issues/183
+            try:
+                if receiver._session and (
+                    receiver._session._lock_lost or receiver._session._lock_expired
+                ):
+                    raise SessionLockLostError(error=receiver._session.auto_renew_error)
+            except AttributeError:
+                pass
+
 except ImportError:
     pass

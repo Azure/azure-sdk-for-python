@@ -7,6 +7,7 @@ import struct
 import uuid
 import logging
 import time
+import threading
 
 from ._encode import encode_payload
 from .link import Link
@@ -88,6 +89,7 @@ class SenderLink(Link):
         self.update_pending_deliveries()
 
     def _outgoing_transfer(self, delivery):
+        print(f"SenderLink._outgoing_transfer: {threading.current_thread().name}")
         output = bytearray()
         encode_payload(output, delivery.message)
         delivery_count = self.delivery_count + 1
@@ -108,6 +110,7 @@ class SenderLink(Link):
             delivery,
             self.network_trace_params if self.network_trace else None
         )
+        self._session._session_sender_queue.put(delivery)
         sent_and_settled = False
         if delivery.transfer_state == SessionTransferState.OKAY:
             self.delivery_count = delivery_count

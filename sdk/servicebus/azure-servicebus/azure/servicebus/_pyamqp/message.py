@@ -277,3 +277,4 @@ class _MessageDelivery:
         self.reason = None
         self.delivery = None
         self.error = None
+        self.blocking_event = None
