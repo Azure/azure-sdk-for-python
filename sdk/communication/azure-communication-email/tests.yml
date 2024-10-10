@@ -7,10 +7,12 @@ extends:
       JobName: email
       ServiceDirectory: communication
       CloudConfig:
-        Public:
+        Communication:
           SubscriptionConfigurations:
             - $(sub-config-communication-services-cloud-test-resources-common)
             - $(sub-config-communication-services-cloud-test-resources-python)
+      Clouds: communication
+      SupportedClouds: communication
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
