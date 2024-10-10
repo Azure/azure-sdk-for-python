@@ -1,18 +1,13 @@
 # Release History
 
-## 4.10.0b1 (Unreleased)
+## 4.10.0 (Unreleased)
 
 ### Features Added
-- Added support for service API version `7.6-preview.1`
-
-### Breaking Changes
+- Added support for Continuous Access Evaluation (CAE)
 
 ### Bugs Fixed
 - Typing errors from using Key Vault clients as context managers have been fixed
   ([#34744](https://github.com/Azure/azure-sdk-for-python/issues/34744))
-
-### Other Changes
-- Key Vault API version `7.6-preview.1` is now the default
 
 ## 4.9.0 (2024-02-22)
 

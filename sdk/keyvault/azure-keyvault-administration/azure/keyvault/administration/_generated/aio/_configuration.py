@@ -19,13 +19,13 @@ class KeyVaultClientConfiguration:  # pylint: disable=too-many-instance-attribut
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :keyword api_version: Api Version. Default value is "7.6-preview.1". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "7.5". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "7.6-preview.1")
+        api_version: str = kwargs.pop("api_version", "7.5")
 
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "keyvault/{}".format(VERSION))

@@ -24,13 +24,11 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):  # pylint: disable=client-a
     Vault service.
 
     :ivar role_definitions: RoleDefinitionsOperations operations
-    :vartype role_definitions:
-     azure.keyvault.v7_6_preview_1.aio.operations.RoleDefinitionsOperations
+    :vartype role_definitions: azure.keyvault.v7_5.aio.operations.RoleDefinitionsOperations
     :ivar role_assignments: RoleAssignmentsOperations operations
-    :vartype role_assignments:
-     azure.keyvault.v7_6_preview_1.aio.operations.RoleAssignmentsOperations
-    :keyword api_version: Api Version. Default value is "7.6-preview.1". Note that overriding this
-     default value may result in unsupported behavior.
+    :vartype role_assignments: azure.keyvault.v7_5.aio.operations.RoleAssignmentsOperations
+    :keyword api_version: Api Version. Default value is "7.5". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

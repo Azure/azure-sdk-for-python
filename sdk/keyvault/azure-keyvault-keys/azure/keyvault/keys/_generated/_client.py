@@ -23,8 +23,8 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):  # pylint: disable=client-a
     """The key vault client performs cryptographic key operations and vault operations against the Key
     Vault service.
 
-    :keyword api_version: Api Version. Default value is "7.6-preview.1". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "7.5". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

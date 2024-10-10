@@ -45,7 +45,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
@@ -68,7 +68,7 @@ setup(
     ),
     python_requires=">=3.8",
     install_requires=[
-        "azure-core>=1.29.5",
+        "azure-core>=1.31.0",
         "isodate>=0.6.1",
         "typing-extensions>=4.0.1",
     ],
