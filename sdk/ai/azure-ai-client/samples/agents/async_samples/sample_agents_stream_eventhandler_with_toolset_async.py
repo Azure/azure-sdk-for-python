@@ -27,6 +27,7 @@ from azure.ai.client.aio import AzureAIClient
 from azure.ai.client.models import _models
 from azure.ai.client.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, SubmitToolOutputsAction, ThreadMessage, ThreadRun
 from azure.ai.client.models import AsyncAgentEventHandler, AsyncFunctionTool, AsyncToolSet
+from azure.ai.client.operations._patch import AgentsOperations
 from azure.identity import DefaultAzureCredential
 
 import os
@@ -35,8 +36,8 @@ from user_async_functions import user_async_functions
 
 class MyEventHandler(AsyncAgentEventHandler):
 
-    def __init__(self, client: _models.Agent):
-        self._client = client
+    def __init__(self, agents: AgentsOperations) -> None:
+        self._agents = agents
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         for content_part in delta.delta.content:
@@ -76,11 +77,11 @@ class MyEventHandler(AsyncAgentEventHandler):
         if not tool_calls:
             print("No tool calls to execute.")
             return
-        if not self._client:
+        if not self._agents:
             print("AssistantClient not set. Cannot execute tool calls using toolset.")
             return
 
-        toolset = self._client.get_toolset()
+        toolset = self._agents.get_toolset()
         if toolset:
             tool_outputs = await toolset.execute_tool_calls(tool_calls)
         else:
@@ -88,7 +89,7 @@ class MyEventHandler(AsyncAgentEventHandler):
         
         print(f"Tool outputs: {tool_outputs}")
         if tool_outputs:
-            async with await self._client.submit_tool_outputs_to_run(
+            async with await self._agents.submit_tool_outputs_to_run(
                 thread_id=run.thread_id, 
                 run_id=run.id, 
                 tool_outputs=tool_outputs, 
@@ -144,7 +145,7 @@ async def main():
             thread_id=thread.id, 
             assistant_id=agent.id,
             stream=True,
-            event_handler=MyEventHandler(agent)
+            event_handler=MyEventHandler(ai_client.agents)
         ) as stream:
             await stream.until_done()
 

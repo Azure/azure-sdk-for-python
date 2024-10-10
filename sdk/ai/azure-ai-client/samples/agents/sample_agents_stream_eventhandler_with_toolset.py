@@ -25,6 +25,7 @@ import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import Agent, MessageDeltaChunk, MessageDeltaTextContent, RunStep, SubmitToolOutputsAction, ThreadMessage, ThreadRun
 from azure.ai.client.models import AgentEventHandler
+from azure.ai.client.operations._patch import AgentsOperations
 from azure.identity import DefaultAzureCredential
 from azure.ai.client.models import FunctionTool, ToolSet
 
@@ -61,8 +62,8 @@ ai_client = AzureAIClient(
 
 class MyEventHandler(AgentEventHandler):
 
-    def __init__(self, client: Agent):
-        self._client = client
+    def __init__(self, agents: AgentsOperations):
+        self._agents = agents
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         for content_part in delta.delta.content:
@@ -102,11 +103,8 @@ class MyEventHandler(AgentEventHandler):
         if not tool_calls:
             print("No tool calls to execute.")
             return
-        if not self._client:
-            print("AssistantClient not set. Cannot execute tool calls using toolset.")
-            return
 
-        toolset = self._client.get_toolset()
+        toolset = self._agents.get_toolset()
         if toolset:
             tool_outputs = toolset.execute_tool_calls(tool_calls)
         else:
@@ -114,7 +112,7 @@ class MyEventHandler(AgentEventHandler):
         
         print(f"Tool outputs: {tool_outputs}")
         if tool_outputs:
-            with self._client.submit_tool_outputs_to_run(
+            with self._agents.submit_tool_outputs_to_run(
                 thread_id=run.thread_id, 
                 run_id=run.id, 
                 tool_outputs=tool_outputs, 
@@ -145,7 +143,7 @@ with ai_client:
         thread_id=thread.id, 
         assistant_id=agent.id,
         stream=True,
-        event_handler=MyEventHandler(agent)
+        event_handler=MyEventHandler(ai_client.agents)
     ) as stream:
         stream.until_done()
 
