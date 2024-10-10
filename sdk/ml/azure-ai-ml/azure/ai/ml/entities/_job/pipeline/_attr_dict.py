@@ -4,7 +4,6 @@
 
 # pylint: disable=protected-access, unnecessary-comprehension
 
-import logging
 from abc import ABC
 from typing import Any, Dict, Generic, List, Optional, TypeVar
 
@@ -48,7 +47,6 @@ class _AttrDict(Generic[K, V], Dict, ABC):
             # Otherwise use allowed_keys to restrict keys can be set for _AttrDict
             self._allowed_keys = dict(allowed_keys)
             self._key_restriction = True
-        self._logger = logging.getLogger("attr_dict")
 
     def _initializing(self) -> bool:
         # use this to indicate ongoing init process, sub class need to make sure this return True during init process.
@@ -106,7 +104,6 @@ class _AttrDict(Generic[K, V], Dict, ABC):
     def __getattr__(self, key: Any) -> Any:
         if not self._is_arbitrary_attr(key):
             return super().__getattribute__(key)
-        self._logger.debug("getting %s", key)
         try:
             return super().__getitem__(key)
         except KeyError:
@@ -119,7 +116,6 @@ class _AttrDict(Generic[K, V], Dict, ABC):
         if not self._is_arbitrary_attr(key):
             super().__setattr__(key, value)
         else:
-            self._logger.debug("setting %s to %s", key, value)
             super().__setitem__(key, value)
 
     def __setitem__(self, key: Any, value: V) -> None:
