@@ -28,7 +28,22 @@ import functools
 from urllib.parse import urlparse
 from enum import Enum
 from io import IOBase
-from typing import Any, Callable, Dict, Union, IO, List, Literal, Optional, overload, Tuple, Type, TYPE_CHECKING, Iterator, Iterable
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Union,
+    IO,
+    List,
+    Literal,
+    Optional,
+    overload,
+    Tuple,
+    Type,
+    TYPE_CHECKING,
+    Iterator,
+    Iterable,
+)
 
 from azure.core.exceptions import AzureError
 from azure.core.pipeline import PipelineResponse
@@ -43,18 +58,11 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceNotModifiedError,
 )
-TRACING_LIBRARY_AVAILABLE = False
+
 # pylint: disable = no-name-in-module
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
-try:
-    # pylint: disable = no-name-in-module
-    from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore
-    from opentelemetry.trace import StatusCode, Span
-    TRACING_LIBRARY_AVAILABLE = True
-except ModuleNotFoundError as _:
-    TRACING_LIBRARY_AVAILABLE = False
-
 from azure.core.settings import settings
+
 from . import models as _models
 from ._model_base import SdkJSONEncoder, _deserialize
 from ._serialization import Serializer
@@ -66,6 +74,16 @@ from ._operations._operations import (
 from ._client import ChatCompletionsClient as ChatCompletionsClientGenerated
 from ._client import EmbeddingsClient as EmbeddingsClientGenerated
 from ._client import ImageEmbeddingsClient as ImageEmbeddingsClientGenerated
+
+try:
+    # pylint: disable = no-name-in-module
+    from azure.core.tracing import AbstractSpan, SpanKind  # type: ignore
+    from opentelemetry.trace import StatusCode, Span
+
+    TRACING_LIBRARY_AVAILABLE = True
+except ModuleNotFoundError as _:
+    TRACING_LIBRARY_AVAILABLE = False
+
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -473,7 +491,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
+    # pylint:disable=client-method-missing-tracing-decorator
     def complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -1266,8 +1284,9 @@ class TraceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):  # pylint: disabl
 
 class SemanticConventionsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):  # pylint: disable=C4747
     """An enumeration class to represent different semantic conventions versions."""
-    PREVIEW = "preview", # latest known preview
-    #VERSION_0_1 = "0.1"
+
+    PREVIEW = ("preview",)  # latest known preview
+    # VERSION_0_1 = "0.1"
 
 
 class AIInferenceInstrumentor:
@@ -1284,9 +1303,13 @@ class AIInferenceInstrumentor:
                     library, then the latest known preview version is used.
     :type version: SemanticConventionsVersion, optional
     """
-    def __init__(self, version : SemanticConventionsVersion = SemanticConventionsVersion.PREVIEW):
+
+    def __init__(self, version: SemanticConventionsVersion = SemanticConventionsVersion.PREVIEW):
         if not TRACING_LIBRARY_AVAILABLE:
-            raise ModuleNotFoundError("Azure Core Tracing Opentelemetry is not installed. Please install it using 'pip install azure-core-tracing-opentelemetry'")
+            raise ModuleNotFoundError(
+                "Azure Core Tracing Opentelemetry is not installed. "
+                "Please install it using 'pip install azure-core-tracing-opentelemetry'"
+            )
         if version == SemanticConventionsVersion.PREVIEW:
             self._impl = AIInferenceInstrumentorPreview()
         else:
@@ -1311,7 +1334,7 @@ class AIInferenceInstrumentor:
 
         This method removes any active instrumentation, stopping the tracing
         of AI Inference.
-        """        
+        """
         self._impl.uninstrument()
 
     def is_instrumented(self):
@@ -1331,6 +1354,7 @@ class AIInferenceInstrumentorPreview:
     This class allows enabling or disabling tracing for AI Inference.
     and provides functionality to check whether instrumentation is active.
     """
+
     def _str_to_bool(self, s):
         if s is None:
             return False
@@ -1346,7 +1370,7 @@ class AIInferenceInstrumentorPreview:
         This method checks the environment variable
         'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to determine
         whether to enable content tracing.
-        """        
+        """
         if self.is_instrumented():
             raise RuntimeError("Already instrumented")
 
@@ -1363,7 +1387,7 @@ class AIInferenceInstrumentorPreview:
 
         This method removes any active instrumentation, stopping the tracing
         of AI Inference.
-        """        
+        """
         if not self.is_instrumented():
             raise RuntimeError("Not instrumented")
         self._uninstrument_inference()
@@ -1377,13 +1401,13 @@ class AIInferenceInstrumentorPreview:
         """
         return self._is_instrumented()
 
-    def _set_attributes(self, span: 'AbstractSpan', *attrs: Tuple[str, Any]) -> None:
+    def _set_attributes(self, span: "AbstractSpan", *attrs: Tuple[str, Any]) -> None:
         for attr in attrs:
             key, value = attr
             if value is not None:
                 span.add_attribute(key, value)
 
-    def _add_request_chat_message_event(self, span: 'AbstractSpan', **kwargs: Any) -> None:
+    def _add_request_chat_message_event(self, span: "AbstractSpan", **kwargs: Any) -> None:
         for message in kwargs.get("messages", []):
             try:
                 message = message.as_dict()
@@ -1394,7 +1418,10 @@ class AIInferenceInstrumentorPreview:
                 name = f"gen_ai.{message.get('role')}.message"
                 span.span_instance.add_event(
                     name=name,
-                    attributes={"gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME, "gen_ai.event.content": json.dumps(message)},
+                    attributes={
+                        "gen_ai.system": INFERENCE_GEN_AI_SYSTEM_NAME,
+                        "gen_ai.event.content": json.dumps(message),
+                    },
                 )
 
     def _parse_url(self, url):
@@ -1403,7 +1430,7 @@ class AIInferenceInstrumentorPreview:
         port = parsed.port
         return server_address, port
 
-    def _add_request_chat_attributes(self, span: 'AbstractSpan', *args: Any, **kwargs: Any) -> None:
+    def _add_request_chat_attributes(self, span: "AbstractSpan", *args: Any, **kwargs: Any) -> None:
         client = args[0]
         endpoint = client._config.endpoint  # pylint: disable=protected-access
         server_address, port = self._parse_url(endpoint)
@@ -1462,10 +1489,12 @@ class AIInferenceInstrumentorPreview:
 
     def _get_finish_reason_for_choice(self, choice):
         return (
-            getattr(choice, "finish_reason", None).value if getattr(choice, "finish_reason", None) is not None else "none"
+            getattr(choice, "finish_reason", None).value
+            if getattr(choice, "finish_reason", None) is not None
+            else "none"
         )
 
-    def _add_response_chat_message_event(self, span: 'AbstractSpan', result: _models.ChatCompletions) -> None:
+    def _add_response_chat_message_event(self, span: "AbstractSpan", result: _models.ChatCompletions) -> None:
         for choice in result.choices:
             if _trace_inference_content:
                 full_response: Dict[str, Any] = {
@@ -1499,10 +1528,8 @@ class AIInferenceInstrumentorPreview:
                 }
             span.span_instance.add_event(name="gen_ai.choice", attributes=attributes)
 
-
     def _add_response_chat_attributes(
-        self,
-        span: 'AbstractSpan', result: Union[_models.ChatCompletions, _models.StreamingChatCompletionsUpdate]
+        self, span: "AbstractSpan", result: Union[_models.ChatCompletions, _models.StreamingChatCompletionsUpdate]
     ) -> None:
         self._set_attributes(
             span,
@@ -1520,12 +1547,12 @@ class AIInferenceInstrumentorPreview:
         finish_reasons = self._get_finish_reasons(result)
         span.add_attribute("gen_ai.response.finish_reasons", finish_reasons)
 
-    def _add_request_span_attributes(self, span: 'AbstractSpan', _span_name: str, args: Any, kwargs: Any) -> None:
+    def _add_request_span_attributes(self, span: "AbstractSpan", _span_name: str, args: Any, kwargs: Any) -> None:
         self._add_request_chat_attributes(span, *args, **kwargs)
         if _trace_inference_content:
             self._add_request_chat_message_event(span, **kwargs)
 
-    def _add_response_span_attributes(self, span: 'AbstractSpan', result: object) -> None:
+    def _add_response_span_attributes(self, span: "AbstractSpan", result: object) -> None:
         if isinstance(result, _models.ChatCompletions):
             self._add_response_chat_attributes(span, result)
             self._add_response_chat_message_event(span, result)
@@ -1557,8 +1584,7 @@ class AIInferenceInstrumentorPreview:
                         accumulate["message"]["tool_calls"][-1]["function"]["arguments"] += tool_call.function.arguments
 
     def _wrapped_stream(
-        self,
-        stream_obj:_models.StreamingChatCompletions, span: 'AbstractSpan'
+        self, stream_obj: _models.StreamingChatCompletions, span: "AbstractSpan"
     ) -> _models.StreamingChatCompletions:
         class StreamWrapper(_models.StreamingChatCompletions):
             def __init__(self, stream_obj, instrumentor):
@@ -1581,7 +1607,7 @@ class AIInferenceInstrumentorPreview:
                     # Set the span status to error
                     if isinstance(span.span_instance, Span):
                         span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
-                    module = exc.__module__ if hasattr(exc, '__module__') and exc.__module__ != "builtins" else ""
+                    module = exc.__module__ if hasattr(exc, "__module__") and exc.__module__ != "builtins" else ""
                     error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                     self._instrumentor._set_attributes(span, ("error.type", error_type))
                     raise
@@ -1603,7 +1629,9 @@ class AIInferenceInstrumentorPreview:
                             if "message" in accumulate:
                                 if "tool_calls" in accumulate["message"]:
                                     tool_calls_function_names_and_arguments_removed = (
-                                        self._instrumentor._remove_function_call_names_and_arguments(accumulate["message"]["tool_calls"])
+                                        self._instrumentor._remove_function_call_names_and_arguments(
+                                            accumulate["message"]["tool_calls"]
+                                        )
                                     )
                                     accumulate["message"]["tool_calls"] = list(
                                         tool_calls_function_names_and_arguments_removed
@@ -1747,7 +1775,7 @@ class AIInferenceInstrumentorPreview:
                     module = getattr(exc, "__module__", "")
                     module = module if module != "builtins" else ""
                     error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
-                    self._get_finish_reasons_set_attributes(span, ("error.type", error_type))
+                    self._set_attributes(span, ("error.type", error_type))
                     span.finish()
                     raise
 
@@ -1806,7 +1834,10 @@ class AIInferenceInstrumentorPreview:
                 except AttributeError as e:
                     # Log the attribute exception with the missing class information
                     logging.warning(
-                        "AttributeError: The module '%s' does not have the class '%s'. %s", module_name, class_name, str(e)
+                        "AttributeError: The module '%s' does not have the class '%s'. %s",
+                        module_name,
+                        class_name,
+                        str(e),
                     )
                 except Exception as e:  # pylint: disable=broad-except
                     # Log other exceptions as a warning, as we're not sure what they might be
@@ -1867,14 +1898,13 @@ class AIInferenceInstrumentorPreview:
         return _inference_traces_enabled
 
 
-
 __all__: List[str] = [
     "load_client",
     "ChatCompletionsClient",
     "EmbeddingsClient",
     "ImageEmbeddingsClient",
     "SemanticConventionsVersion",
-    "AIInferenceInstrumentor"
+    "AIInferenceInstrumentor",
 ]  # Add all objects you want publicly available to users at this package level
 
 

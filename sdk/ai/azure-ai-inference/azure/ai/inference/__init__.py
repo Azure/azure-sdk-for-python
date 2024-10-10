@@ -24,8 +24,8 @@ __all__ = [
     "ChatCompletionsClient",
     "EmbeddingsClient",
     "ImageEmbeddingsClient",
-    "SemanticConventionsVersion"
-    "AIInferenceInstrumentor"
+    "SemanticConventionsVersion",
+    "AIInferenceInstrumentor",
 ]
 
 
