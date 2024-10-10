@@ -25,7 +25,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperationsAsync(AzureMgmtRe
         response = await self.client.managed_environments_storages.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             environment_name="str",
             storage_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,8 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperationsAsync(AzureMgmtRe
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "azureFile": {"accessMode": "str", "accountKey": "str", "accountName": "str", "shareName": "str"}
+                    "azureFile": {"accessMode": "str", "accountKey": "str", "accountName": "str", "shareName": "str"},
+                    "nfsAzureFile": {"accessMode": "str", "server": "str", "shareName": "str"},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -67,7 +68,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperationsAsync(AzureMgmtRe
                 },
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +81,7 @@ class TestContainerAppsAPIManagedEnvironmentsStoragesOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             environment_name="str",
             storage_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself

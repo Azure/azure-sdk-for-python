@@ -23,7 +23,7 @@ class TestContainerAppsAPIAvailableWorkloadProfilesOperations(AzureMgmtRecordedT
     def test_get(self, resource_group):
         response = self.client.available_workload_profiles.get(
             location="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.appcontainers import ContainerAppsAPIClient
@@ -41,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ConnectedEnvironmentsCertificates_Patch.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2024-08-02-preview/examples/ConnectedEnvironmentsCertificates_Patch.json
 if __name__ == "__main__":
     main()

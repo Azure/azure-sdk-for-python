@@ -26,7 +26,6 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ...operations._namespaces_operations import build_check_name_availability_request
-from .._vendor import ContainerAppsAPIClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping

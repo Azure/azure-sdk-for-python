@@ -25,7 +25,7 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperationsAsync(AzureMgmtRecor
         response = self.client.container_apps_auth_configs.list_by_container_app(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             container_app_name="str",
             auth_config_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -162,7 +162,7 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperationsAsync(AzureMgmtRecor
                 },
                 "type": "str",
             },
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -175,7 +175,7 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             container_app_name="str",
             auth_config_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself

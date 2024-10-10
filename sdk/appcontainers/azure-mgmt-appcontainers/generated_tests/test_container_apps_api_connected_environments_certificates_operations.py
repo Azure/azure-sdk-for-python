@@ -24,7 +24,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperations(AzureMgmtR
         response = self.client.connected_environments_certificates.list(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             certificate_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             certificate_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperations(AzureMgmtR
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             certificate_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -77,7 +77,7 @@ class TestContainerAppsAPIConnectedEnvironmentsCertificatesOperations(AzureMgmtR
             connected_environment_name="str",
             certificate_name="str",
             certificate_envelope={"tags": {"str": "str"}},
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
