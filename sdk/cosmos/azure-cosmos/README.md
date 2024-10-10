@@ -427,13 +427,13 @@ client = CosmosClient(URL, credential=KEY)
 # Database
 DATABASE_NAME = 'testDatabase'
 database = client.get_database_client(DATABASE_NAME)
-db_offer = database.read_offer()
+db_offer = database.get_throughput()
 print('Found Offer \'{0}\' for Database \'{1}\' and its throughput is \'{2}\''.format(db_offer.properties['id'], database.id, db_offer.properties['content']['offerThroughput']))
 
 # Container with dedicated throughput only. Will return error "offer not found" for containers without dedicated throughput
 CONTAINER_NAME = 'testContainer'
 container = database.get_container_client(CONTAINER_NAME)
-container_offer = container.read_offer()
+container_offer = container.get_throughput()
 print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(container_offer.properties['id'], container.id, container_offer.properties['content']['offerThroughput']))
 ```
 
@@ -466,6 +466,50 @@ print(json.dumps(container_props['defaultTtl']))
 ```
 
 For more information on TTL, see [Time to Live for Azure Cosmos DB data][cosmos_ttl].
+
+### Using item operation response headers
+
+Response headers include metadata information from the executed operations like `etag`, which allows for optimistic concurrency scenarios, or `x-ms-request-charge` which lets you know how many RUs were consumed by the request.
+This applies to all item operations in both the sync and async clients - and can be used by referencing the `get_response_headers()` method of any response as such:
+```python
+from azure.cosmos import CosmosClient
+import os
+
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+DATABASE_NAME = 'testDatabase'
+CONTAINER_NAME = 'products'
+client = CosmosClient(URL, credential=KEY)
+database = client.get_database_client(DATABASE_NAME)
+container = database.get_container_client(CONTAINER_NAME)
+
+operation_response = container.create_item({"id": "test_item", "productName": "test_item"})
+operation_headers = operation_response.get_response_headers()
+etag_value = operation_headers['etag']
+request_charge = operation_headers['x-ms-request-charge']
+```
+For queries, response headers will be present when using paging only - and will only be populated once you start going through your pages:
+```python
+from azure.cosmos import CosmosClient
+import os
+
+URL = os.environ['ACCOUNT_URI']
+KEY = os.environ['ACCOUNT_KEY']
+DATABASE_NAME = 'testDatabase'
+CONTAINER_NAME = 'products'
+client = CosmosClient(URL, credential=KEY)
+database = client.get_database_client(DATABASE_NAME)
+container = database.get_container_client(CONTAINER_NAME)
+
+query_response = container.query_items("select * from c", enable_cross_partition_query=True)
+item_pages = query_response.by_page()
+for page in item_pages:
+    current_page_headers = item_pages.get_response_headers()
+    etag_value = current_page_headers['etag']
+    request_charge = current_page_headers['x-ms-request-charge']
+    for item in page:
+        print(item)
+```
 
 ### Using the asynchronous client
 

@@ -67,7 +67,7 @@ class TestStreamingFailOver(unittest.TestCase):
         created_document = created_container.create_item(document_definition)
 
         self.assertDictEqual(created_document, {})
-        self.assertDictEqual(client.client_connection.last_response_headers, {})
+        self.assertDictEqual(created_document.get_response_headers(), {})
 
         self.assertEqual(self.counter, 10)
         # First request is an initial read collection.
