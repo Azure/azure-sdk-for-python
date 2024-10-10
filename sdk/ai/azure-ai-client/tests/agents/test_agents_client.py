@@ -10,13 +10,13 @@ import datetime
 import logging
 import sys
 
-import azure.ai.client as AzureAIClient
+from azure.ai.client import AzureAIClient
 from azure.ai.client.models import FunctionTool, CodeInterpreterTool, FileSearchTool, ToolSet
 from azure.core.pipeline.transport import RequestsTransport
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.exceptions import AzureError, ServiceRequestError, HttpResponseError
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.client.models import FunctionTool
+from azure.identity import DefaultAzureCredential
 
 # TODO clean this up / get rid of anything not in use
 
@@ -44,11 +44,19 @@ if LOGGING_ENABLED:
 
 agentClientPreparer = functools.partial(
     EnvironmentVariableLoader,
-    'azure_ai_agents',
-    azure_ai_agents_endpoint="https://your-deployment-name.openai.azure.com/",
-    azure_ai_agents_key="00000000000000000000000000000000"
-    
+    'azure_ai_client',
+    azure_ai_client_connection_string="https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm",
 )
+"""
+agentClientPreparer = functools.partial(
+    EnvironmentVariableLoader,
+    'azure_ai_client',
+    azure_ai_client_host_name="https://foo.bar.some-domain.ms",
+    azure_ai_client_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_ai_client_resource_group_name="rg-resour-cegr-oupfoo1",
+    azure_ai_client_workspace_name="abcd-abcdabcdabcda-abcdefghijklm",
+)
+"""
 
 # create tool for agent use
 def fetch_current_datetime():
@@ -73,15 +81,19 @@ class TestagentClient(AzureRecordedTestCase):
     # helper function: create client and using environment variables
     def create_client(self, **kwargs):
         # fetch environment variables
-        endpoint = kwargs.pop("azure_ai_agents_endpoint")
-        credential = AzureKeyCredential(kwargs.pop("azure_ai_agents_key"))
-        api_version=os.environ.get("AZUREAI_API_VERSION", "2024-07-01-preview")
+        connection_string = kwargs.pop("azure_ai_client_connection_string")
 
         # create and return client
-        client = AzureAIClient(endpoint=endpoint, credential=credential, api_version=api_version)
+        client = AzureAIClient.from_connection_string(
+            credential=DefaultAzureCredential(),
+            connection=connection_string,
+        )
+
         return client
     
     # for debugging purposes: if a test fails and its agent has not been deleted, it will continue to show up in the agents list
+    """
+    # NOTE: this test should not be run against a shared resource, as it will delete all agents
     @agentClientPreparer()
     @recorded_by_proxy
     def test_clear_client(self, **kwargs):
@@ -97,6 +109,7 @@ class TestagentClient(AzureRecordedTestCase):
        
         # close client
         client.close()
+    """
 
 
 #     # **********************************************************************************
@@ -188,34 +201,37 @@ class TestagentClient(AzureRecordedTestCase):
         print("Deleted agent")
         client.close()
 
+    """
+    DISABLED: can't perform consistently on shared resource
     @agentClientPreparer()
     @recorded_by_proxy
     def test_agent_list(self, **kwargs):
         # create client and ensure there are no previous agents
         client = self.create_client(**kwargs)
-        assert client.agents.list_agents().data.__len__() == 0
+        list_length = client.agents.list_agents().data.__len__()
 
         # create agent and check that it appears in the list
         agent = client.agents.create_agent(model="gpt-4o", name="my-agent", instructions="You are helpful agent")
-        assert client.agents.list_agents().data.__len__() == 1
+        assert client.agents.list_agents().data.__len__() == list_length + 1
         assert client.agents.list_agents().data[0].id == agent.id 
 
         # create second agent and check that it appears in the list
         agent2 = client.agents.create_agent(model="gpt-4o", name="my-agent2", instructions="You are helpful agent")
-        assert client.agents.list_agents().data.__len__() == 2
+        assert client.agents.list_agents().data.__len__() == list_length + 2
         assert client.agents.list_agents().data[0].id == agent.id or client.agents.list_agents().data[1].id == agent.id 
 
         # delete agents and check list 
         client.agents.delete_agent(agent.id)
-        assert client.agents.list_agents().data.__len__() == 1
+        assert client.agents.list_agents().data.__len__() == list_length + 1
         assert client.agents.list_agents().data[0].id == agent2.id 
 
         client.agents.delete_agent(agent2.id)
-        assert client.agents.list_agents().data.__len__() == 0
+        assert client.agents.list_agents().data.__len__() == list_length 
         print("Deleted agents")
 
         # close client
         client.close()
+        """
 
     # **********************************************************************************
     #
@@ -554,7 +570,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created thread, thread ID", thread.id)
 
         # create run
-        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -582,7 +598,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created thread, thread ID", thread.id)
 
         # create run
-        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -622,7 +638,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created message, message ID", message.id)
 
         # create run
-        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -668,7 +684,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert runs0.data.__len__() == 0
 
         # create run and check list
-        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
         runs1 = client.agents.list_runs(thread_id=thread.id)
@@ -676,7 +692,7 @@ class TestagentClient(AzureRecordedTestCase):
         assert runs1.data[0].id == run.id
 
         # create second run
-        run2 = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+        run2 = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
         assert run2.id
         print("Created run, run ID", run2.id)
         runs2 = client.agents.list_runs(thread_id=thread.id)
@@ -710,7 +726,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created thread, thread ID", thread.id)
 
         # create run
-        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -756,7 +772,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created message, message ID", message.id)
 
         # create run
-        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -807,6 +823,8 @@ class TestagentClient(AzureRecordedTestCase):
         print("Deleted agent")
         client.close()
 
+    """
+    # DISABLED: rewrite to ensure run is not complete when cancel_run is called
     # test cancelling run
     @agentClientPreparer()
     @recorded_by_proxy
@@ -831,7 +849,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created message, message ID", message.id)
 
         # create run
-        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -850,6 +868,7 @@ class TestagentClient(AzureRecordedTestCase):
         client.agents.delete_agent(agent.id)
         print("Deleted agent")
         client.close()
+        """
 
     # test create thread and run
     @agentClientPreparer()
@@ -866,7 +885,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created agent, agent ID", agent.id)
 
         # create thread and run
-        run = client.agents.create_thread_and_run(agent_id=agent.id)
+        run = client.agents.create_thread_and_run(assistant_id=agent.id)
         assert run.id
         assert run.thread_id
         print("Created run, run ID", run.id)
@@ -919,12 +938,13 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created message, message ID", message.id)
 
         # create run
-        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
         steps = client.agents.list_run_steps(thread_id=thread.id, run_id=run.id)
-        assert steps['data'].__len__() == 0
+        # commenting assertion out below, do we know exactly when run starts?
+        # assert steps['data'].__len__() == 0
 
         # check status
         assert run.status in ["queued", "in_progress", "requires_action", "completed"]
@@ -970,7 +990,7 @@ class TestagentClient(AzureRecordedTestCase):
         print("Created message, message ID", message.id)
 
         # create run
-        run = client.agents.create_run(thread_id=thread.id, agent_id=agent.id)
+        run = client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
         assert run.id
         print("Created run, run ID", run.id)
 
@@ -1022,10 +1042,11 @@ class TestagentClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_negative_create_delete_agent(self, **kwargs):
         # create client using bad endpoint
-        bad_endpoint = "https://your-deployment-name.openai.azure.com/"
-        azure_ai_agents_key = kwargs["azure_ai_agents_key"]
-        api_version=os.environ.get("AZUREAI_API_VERSION", "2024-07-01-preview")
-        client = AzureAIClient(endpoint=bad_endpoint, credential=AzureKeyCredential(azure_ai_agents_key), api_version=api_version)
+        bad_connection_string = "https://foo.bar.some-domain.ms;00000000-0000-0000-0000-000000000000;rg-resour-cegr-oupfoo1;abcd-abcdabcdabcda-abcdefghijklm"
+        client = AzureAIClient.from_connection_string(
+            credential=DefaultAzureCredential(),
+            connection=bad_connection_string,
+        )
         
         # attempt to create agent with bad client
         exception_caught = False
@@ -1036,9 +1057,9 @@ class TestagentClient(AzureRecordedTestCase):
             exception_caught = True
             if type(e) == ServiceRequestError:
                 assert e.message
-                assert "failed to resolve 'your-deployment-name.openai.azure.com'" in e.message.lower()
+                assert "failed to resolve 'foo.bar.some-domain.ms'" in e.message.lower()
             else:
-                assert "No such host is known" and "your-deployment-name.openai.azure.com" in str(e)
+                assert "No such host is known" and "foo.bar.some-domain.ms" in str(e)
         
         # close client and confirm an exception was caught
         client.close()

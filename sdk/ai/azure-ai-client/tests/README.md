@@ -1,6 +1,6 @@
 # copied from azure-ai-inference TODO update
 
-# Azure AI Assistants client library tests for Python
+# Azure AI client library tests for Python
 
 The instructions below are for running tests locally, on a Windows machine, against the live service.
 
@@ -8,26 +8,26 @@ The instructions below are for running tests locally, on a Windows machine, agai
 
 The live tests were written against the AI models mentioned below. You will need to deploy a gpt-4o model in the Azure OpenAI Studio, and have the endpoint and key for it:
 
-- `gpt-4o` on Azure OpenAI (AOAI), for assistants tests
+- `gpt-4o` on Azure OpenAI (AOAI), for Agents tests
 
 ## Setup
 
 - Clone or download this sample repository.
-- Open a command prompt window in the folder `sdk\ai\azure-ai-assistants`.
+- Open a command prompt window in the folder `sdk\ai\azure-ai-client`.
 - If you want to run tests against the latest published client library, install it by running:
    ```bash
-   pip install azure-ai-assistants
+   pip install azure-ai-client
    ```
 - If you want to run tests against a locally built client library:
     - First build the wheel:
         ```bash
         pip install wheel
         pip install -r dev_requirements.txt
-        python setup.py bdist_whee
+        python setup.py bdist_wheel
         ```
     - Then install the resulting local wheel (update version `1.0.0b2` to the current one):
         ```bash
-        pip install dist\azure_ai_inference-1.0.0b2-py3-none-any.whl --user --force-reinstall
+        pip install dist\azure_ai_client-1.0.0b1-py3-none-any.whl --user --force-reinstall
         ```
 
 ## Set environment variables
@@ -35,11 +35,11 @@ The live tests were written against the AI models mentioned below. You will need
 Here is the list of environment variables used by the tests:
 
 ```bash
-# For assistants, including tools
-set AZURE_AI_ASSISTANTS_ENDPOINT=https://<endpoint-name>.openai.azure.com/
-set AZURE_AI_ASSISTANTS_KEY=<32-char-api-key>
+# For agents, including tools
+set AZURE_AI_CLIENT_CONNECTION_STRING=<your_connection_string>
 ```
 
+<!--
 In addition, the following environment values **must be** defined, although not used. Assign any value to them:
 
 ```bash
@@ -47,6 +47,7 @@ set AI_TENANT_ID=not-used
 set AI_CLIENT_ID=not-used
 set AI_CLIENT_SECRET=not-used
 ```
+-->
 
 ## Configure test proxy
 
@@ -65,6 +66,12 @@ To run all tests, type:
 
 ```bash
 pytest
+```
+
+For windows run:
+
+```bash
+python -m pytest tests\agents
 ```
 
 ## Additional information
