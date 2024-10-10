@@ -95,7 +95,7 @@ def _log_metrics_and_instance_results(
     evaluation_name: Optional[str],
 ) -> Optional[str]:
     if trace_destination is None:
-        LOGGER.error("Unable to log traces as trace destination was not defined.")
+        LOGGER.debug("Skip uploading evaluation results to AI Studio since no trace destination was provided.")
         return None
 
     azure_pf_client, ws_triad = _azure_pf_client_and_triad(trace_destination)
