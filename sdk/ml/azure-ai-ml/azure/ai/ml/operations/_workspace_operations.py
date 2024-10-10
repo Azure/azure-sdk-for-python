@@ -137,7 +137,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
                 :dedent: 8
                 :caption: Get the workspace with the given name.
         """
-
+        import pdb; pdb.set_trace()
         return super().get(workspace_name=name, **kwargs)
 
     @monitor_with_activity(ops_logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
