@@ -16,7 +16,7 @@ class AzureOpenAIModelConfiguration(TypedDict):
     """Name of Azure OpenAI deployment to make request to"""
     azure_endpoint: str
     """Endpoint of Azure OpenAI resource to make request to"""
-    api_key: str
+    api_key: NotRequired[str]
     """API key of Azure OpenAI resource"""
     api_version: NotRequired[str]
     """(Optional) API version to use in request to Azure OpenAI deployment"""

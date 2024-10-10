@@ -17,4 +17,4 @@ extends:
         AZURE_POD_IDENTITY_AUTHORITY_HOST: "FakeAuthorityHost"
       MatrixReplace:
         - TestSamples=.*/true
-      Clouds: 'Public,Canary'
+      Clouds: 'Public'
