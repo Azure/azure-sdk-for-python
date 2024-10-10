@@ -602,8 +602,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         )
     except MissingAzurePackage:
         msg = (
-            'The required package for remote tracking is missing.\n'
-            'To resolve this, please install it by running "azure-ai-evaluation[remote]".'
+            'The required packages for remote tracking are missing.\n'
+            'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
         )
 
         raise EvaluationException(
