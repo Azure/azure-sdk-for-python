@@ -37,7 +37,6 @@ from .operations import (
     PrivateEndpointConnectionOperations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
-    QuotaUsagesOperations,
     ReplicasOperations,
     ServerCapabilitiesOperations,
     ServerThreatProtectionSettingsOperations,
@@ -108,8 +107,6 @@ class PostgreSQLManagementClient(
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.postgresqlflexibleservers.operations.PrivateLinkResourcesOperations
-    :ivar quota_usages: QuotaUsagesOperations operations
-    :vartype quota_usages: azure.mgmt.postgresqlflexibleservers.operations.QuotaUsagesOperations
     :ivar replicas: ReplicasOperations operations
     :vartype replicas: azure.mgmt.postgresqlflexibleservers.operations.ReplicasOperations
     :ivar log_files: LogFilesOperations operations
@@ -129,8 +126,8 @@ class PostgreSQLManagementClient(
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-12-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-08-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -206,7 +203,6 @@ class PostgreSQLManagementClient(
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.quota_usages = QuotaUsagesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
         self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.server_threat_protection_settings = ServerThreatProtectionSettingsOperations(

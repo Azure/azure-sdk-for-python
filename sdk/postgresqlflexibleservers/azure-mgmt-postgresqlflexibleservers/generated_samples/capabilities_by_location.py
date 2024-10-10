@@ -31,12 +31,12 @@ def main():
     )
 
     response = client.location_based_capabilities.execute(
-        location_name="westus",
+        location_name="eastus",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-12-01-preview/examples/CapabilitiesByLocation.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/CapabilitiesByLocation.json
 if __name__ == "__main__":
     main()

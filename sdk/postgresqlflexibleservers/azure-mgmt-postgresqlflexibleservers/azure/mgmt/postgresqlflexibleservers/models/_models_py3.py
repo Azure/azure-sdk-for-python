@@ -570,7 +570,7 @@ class Configuration(ProxyResource):  # pylint: disable=too-many-instance-attribu
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar value: Value of the configuration.
+    :ivar value: Value of the configuration. Required to update the configuration.
     :vartype value: str
     :ivar description: Description of the configuration.
     :vartype description: str
@@ -581,7 +581,7 @@ class Configuration(ProxyResource):  # pylint: disable=too-many-instance-attribu
     :vartype data_type: str or ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationDataType
     :ivar allowed_values: Allowed values of the configuration.
     :vartype allowed_values: str
-    :ivar source: Source of the configuration.
+    :ivar source: Source of the configuration. Required to update the configuration.
     :vartype source: str
     :ivar is_dynamic_config: Configuration dynamic or static.
     :vartype is_dynamic_config: bool
@@ -631,9 +631,9 @@ class Configuration(ProxyResource):  # pylint: disable=too-many-instance-attribu
 
     def __init__(self, *, value: Optional[str] = None, source: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: Value of the configuration.
+        :keyword value: Value of the configuration. Required to update the configuration.
         :paramtype value: str
-        :keyword source: Source of the configuration.
+        :keyword source: Source of the configuration. Required to update the configuration.
         :paramtype source: str
         """
         super().__init__(**kwargs)
@@ -655,7 +655,7 @@ class ConfigurationForUpdate(_serialization.Model):  # pylint: disable=too-many-
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: Value of the configuration.
+    :ivar value: Value of the configuration. Required to update the configuration.
     :vartype value: str
     :ivar description: Description of the configuration.
     :vartype description: str
@@ -666,7 +666,7 @@ class ConfigurationForUpdate(_serialization.Model):  # pylint: disable=too-many-
     :vartype data_type: str or ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationDataType
     :ivar allowed_values: Allowed values of the configuration.
     :vartype allowed_values: str
-    :ivar source: Source of the configuration.
+    :ivar source: Source of the configuration. Required to update the configuration.
     :vartype source: str
     :ivar is_dynamic_config: Configuration dynamic or static.
     :vartype is_dynamic_config: bool
@@ -708,9 +708,9 @@ class ConfigurationForUpdate(_serialization.Model):  # pylint: disable=too-many-
 
     def __init__(self, *, value: Optional[str] = None, source: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: Value of the configuration.
+        :keyword value: Value of the configuration. Required to update the configuration.
         :paramtype value: str
-        :keyword source: Source of the configuration.
+        :keyword source: Source of the configuration. Required to update the configuration.
         :paramtype source: str
         """
         super().__init__(**kwargs)
@@ -2243,12 +2243,14 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
      ipaddress:port@username or hostname:port@username.
     :vartype source_db_server_resource_id: str
     :ivar source_db_server_fully_qualified_domain_name: Source server fully qualified domain name
-     or ip. It is a optional value, if customer provide it, dms will always use it for connection.
+     (FQDN) or IP address. It is a optional value, if customer provide it, migration service will
+     always use it for connection.
     :vartype source_db_server_fully_qualified_domain_name: str
     :ivar target_db_server_resource_id: ResourceId of the source database server.
     :vartype target_db_server_resource_id: str
     :ivar target_db_server_fully_qualified_domain_name: Target server fully qualified domain name
-     or ip. It is a optional value, if customer provide it, dms will always use it for connection.
+     (FQDN) or IP address. It is a optional value, if customer provide it, migration service will
+     always use it for connection.
     :vartype target_db_server_fully_qualified_domain_name: str
     :ivar secret_parameters: Migration secret parameters.
     :vartype secret_parameters:
@@ -2405,12 +2407,12 @@ class MigrationResource(TrackedResource):  # pylint: disable=too-many-instance-a
          ipaddress:port@username or hostname:port@username.
         :paramtype source_db_server_resource_id: str
         :keyword source_db_server_fully_qualified_domain_name: Source server fully qualified domain
-         name or ip. It is a optional value, if customer provide it, dms will always use it for
-         connection.
+         name (FQDN) or IP address. It is a optional value, if customer provide it, migration service
+         will always use it for connection.
         :paramtype source_db_server_fully_qualified_domain_name: str
         :keyword target_db_server_fully_qualified_domain_name: Target server fully qualified domain
-         name or ip. It is a optional value, if customer provide it, dms will always use it for
-         connection.
+         name (FQDN) or IP address. It is a optional value, if customer provide it, migration service
+         will always use it for connection.
         :paramtype target_db_server_fully_qualified_domain_name: str
         :keyword secret_parameters: Migration secret parameters.
         :paramtype secret_parameters:
@@ -2488,10 +2490,12 @@ class MigrationResourceForPatch(_serialization.Model):  # pylint: disable=too-ma
     :ivar source_db_server_resource_id: ResourceId of the source database server.
     :vartype source_db_server_resource_id: str
     :ivar source_db_server_fully_qualified_domain_name: Source server fully qualified domain name
-     or ip. It is a optional value, if customer provide it, dms will always use it for connection.
+     (FQDN) or IP address. It is a optional value, if customer provide it, migration service will
+     always use it for connection.
     :vartype source_db_server_fully_qualified_domain_name: str
     :ivar target_db_server_fully_qualified_domain_name: Target server fully qualified domain name
-     or ip. It is a optional value, if customer provide it, dms will always use it for connection.
+     (FQDN) or IP address. It is a optional value, if customer provide it, migration service will
+     always use it for connection.
     :vartype target_db_server_fully_qualified_domain_name: str
     :ivar secret_parameters: Migration secret parameters.
     :vartype secret_parameters:
@@ -2596,12 +2600,12 @@ class MigrationResourceForPatch(_serialization.Model):  # pylint: disable=too-ma
         :keyword source_db_server_resource_id: ResourceId of the source database server.
         :paramtype source_db_server_resource_id: str
         :keyword source_db_server_fully_qualified_domain_name: Source server fully qualified domain
-         name or ip. It is a optional value, if customer provide it, dms will always use it for
-         connection.
+         name (FQDN) or IP address. It is a optional value, if customer provide it, migration service
+         will always use it for connection.
         :paramtype source_db_server_fully_qualified_domain_name: str
         :keyword target_db_server_fully_qualified_domain_name: Target server fully qualified domain
-         name or ip. It is a optional value, if customer provide it, dms will always use it for
-         connection.
+         name (FQDN) or IP address. It is a optional value, if customer provide it, migration service
+         will always use it for connection.
         :paramtype target_db_server_fully_qualified_domain_name: str
         :keyword secret_parameters: Migration secret parameters.
         :paramtype secret_parameters:
@@ -2877,32 +2881,6 @@ class NameAvailability(CheckNameAvailabilityResponse):
         super().__init__(name_available=name_available, reason=reason, message=message, **kwargs)
         self.name = None
         self.type = None
-
-
-class NameProperty(_serialization.Model):
-    """Name property for quota usage.
-
-    :ivar value: Name value.
-    :vartype value: str
-    :ivar localized_value: Localized name.
-    :vartype localized_value: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "str"},
-        "localized_value": {"key": "localizedValue", "type": "str"},
-    }
-
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword value: Name value.
-        :paramtype value: str
-        :keyword localized_value: Localized name.
-        :paramtype localized_value: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.localized_value = localized_value
 
 
 class Network(_serialization.Model):
@@ -3324,87 +3302,6 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         self.actions_required = actions_required
 
 
-class QuotaUsage(_serialization.Model):
-    """Quota usage for flexible servers.
-
-    :ivar name: Name of quota usage for flexible servers.
-    :vartype name: ~azure.mgmt.postgresqlflexibleservers.models.NameProperty
-    :ivar limit: Quota limit.
-    :vartype limit: int
-    :ivar unit: Quota unit.
-    :vartype unit: str
-    :ivar current_value: Current Quota usage value.
-    :vartype current_value: int
-    :ivar id: Fully qualified ARM resource Id.
-    :vartype id: str
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "NameProperty"},
-        "limit": {"key": "limit", "type": "int"},
-        "unit": {"key": "unit", "type": "str"},
-        "current_value": {"key": "currentValue", "type": "int"},
-        "id": {"key": "id", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional["_models.NameProperty"] = None,
-        limit: Optional[int] = None,
-        unit: str = "Count",
-        current_value: Optional[int] = None,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Name of quota usage for flexible servers.
-        :paramtype name: ~azure.mgmt.postgresqlflexibleservers.models.NameProperty
-        :keyword limit: Quota limit.
-        :paramtype limit: int
-        :keyword unit: Quota unit.
-        :paramtype unit: str
-        :keyword current_value: Current Quota usage value.
-        :paramtype current_value: int
-        :keyword id: Fully qualified ARM resource Id.
-        :paramtype id: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.limit = limit
-        self.unit = unit
-        self.current_value = current_value
-        self.id = id
-
-
-class QuotaUsagesListResult(_serialization.Model):
-    """Capability for the PostgreSQL server.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: A list of quota usages.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.QuotaUsage]
-    :ivar next_link: Link to retrieve next page of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[QuotaUsage]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
-
-
 class Replica(_serialization.Model):
     """Replica properties of a server.
 
@@ -3539,8 +3436,8 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar administrator_login_password: The administrator login password (required for server
      creation).
     :vartype administrator_login_password: str
-    :ivar version: PostgreSQL Server version. Known values are: "15", "14", "13", "12", "11", and
-     "16".
+    :ivar version: PostgreSQL Server version. Known values are: "16", "15", "14", "13", "12", and
+     "11".
     :vartype version: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerVersion
     :ivar minor_version: The minor version of the server.
     :vartype minor_version: str
@@ -3679,8 +3576,8 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword administrator_login_password: The administrator login password (required for server
          creation).
         :paramtype administrator_login_password: str
-        :keyword version: PostgreSQL Server version. Known values are: "15", "14", "13", "12", "11",
-         and "16".
+        :keyword version: PostgreSQL Server version. Known values are: "16", "15", "14", "13", "12",
+         and "11".
         :paramtype version: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerVersion
         :keyword storage: Storage properties of a server.
         :paramtype storage: ~azure.mgmt.postgresqlflexibleservers.models.Storage
@@ -3760,7 +3657,7 @@ class ServerBackup(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar backup_type: Backup type. "Full"
+    :ivar backup_type: Backup type. Known values are: "Full" and "Customer On-Demand".
     :vartype backup_type: str or ~azure.mgmt.postgresqlflexibleservers.models.Origin
     :ivar completed_time: Backup completed time (ISO8601 format).
     :vartype completed_time: ~datetime.datetime
@@ -3794,7 +3691,7 @@ class ServerBackup(ProxyResource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword backup_type: Backup type. "Full"
+        :keyword backup_type: Backup type. Known values are: "Full" and "Customer On-Demand".
         :paramtype backup_type: str or ~azure.mgmt.postgresqlflexibleservers.models.Origin
         :keyword completed_time: Backup completed time (ISO8601 format).
         :paramtype completed_time: ~datetime.datetime
@@ -3844,10 +3741,14 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
     :vartype identity: ~azure.mgmt.postgresqlflexibleservers.models.UserAssignedIdentity
     :ivar tags: Application-specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
+    :ivar administrator_login: The administrator's login name of a server. Can only be specified
+     when the server is trying to switch to password authentication and does not have default
+     administrator login.
+    :vartype administrator_login: str
     :ivar administrator_login_password: The password of the administrator login.
     :vartype administrator_login_password: str
     :ivar version: PostgreSQL Server version. Version 16 is currently not supported for MVU. Known
-     values are: "15", "14", "13", "12", "11", and "16".
+     values are: "16", "15", "14", "13", "12", and "11".
     :vartype version: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerVersion
     :ivar storage: Storage properties of a server.
     :vartype storage: ~azure.mgmt.postgresqlflexibleservers.models.Storage
@@ -3879,6 +3780,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         "sku": {"key": "sku", "type": "Sku"},
         "identity": {"key": "identity", "type": "UserAssignedIdentity"},
         "tags": {"key": "tags", "type": "{str}"},
+        "administrator_login": {"key": "properties.administratorLogin", "type": "str"},
         "administrator_login_password": {"key": "properties.administratorLoginPassword", "type": "str"},
         "version": {"key": "properties.version", "type": "str"},
         "storage": {"key": "properties.storage", "type": "Storage"},
@@ -3899,6 +3801,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         sku: Optional["_models.Sku"] = None,
         identity: Optional["_models.UserAssignedIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
+        administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
         version: Optional[Union[str, "_models.ServerVersion"]] = None,
         storage: Optional["_models.Storage"] = None,
@@ -3920,10 +3823,14 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         :paramtype identity: ~azure.mgmt.postgresqlflexibleservers.models.UserAssignedIdentity
         :keyword tags: Application-specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
+        :keyword administrator_login: The administrator's login name of a server. Can only be specified
+         when the server is trying to switch to password authentication and does not have default
+         administrator login.
+        :paramtype administrator_login: str
         :keyword administrator_login_password: The password of the administrator login.
         :paramtype administrator_login_password: str
         :keyword version: PostgreSQL Server version. Version 16 is currently not supported for MVU.
-         Known values are: "15", "14", "13", "12", "11", and "16".
+         Known values are: "16", "15", "14", "13", "12", and "11".
         :paramtype version: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerVersion
         :keyword storage: Storage properties of a server.
         :paramtype storage: ~azure.mgmt.postgresqlflexibleservers.models.Storage
@@ -3955,6 +3862,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         self.sku = sku
         self.identity = identity
         self.tags = tags
+        self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.version = version
         self.storage = storage

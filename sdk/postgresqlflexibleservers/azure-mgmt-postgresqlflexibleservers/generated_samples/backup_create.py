@@ -15,7 +15,7 @@ from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-postgresqlflexibleservers
 # USAGE
-    python databases_list_by_server.py
+    python backup_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.databases.list_by_server(
+    response = client.backups.begin_create(
         resource_group_name="TestGroup",
-        server_name="testserver",
-    )
-    for item in response:
-        print(item)
+        server_name="postgresqltestserver",
+        backup_name="backup_20210615T160516",
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/DatabasesListByServer.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/BackupCreate.json
 if __name__ == "__main__":
     main()
