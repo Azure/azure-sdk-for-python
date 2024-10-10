@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
+import logging
 
-import os, time, logging
-from azure.ai.client import AzureAIClient
+from azure.ai.client.aio import AzureAIClient
 from azure.identity import DefaultAzureCredential
 
-# Set logging level
-logging.basicConfig(level=logging.INFO)
+import os
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -32,24 +32,29 @@ ai_client = AzureAIClient(
     logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
 )
 """
+async def main():
+    async with ai_client:
+        agent = await ai_client.agents.create_agent(
+            model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+        ) 
+        logging.info(f"Created agent, agent ID: {agent.id}")
+        
+        thread = await ai_client.agents.create_thread()
+        logging.info(f"Created thread, thread ID: {thread.id}")
 
-with ai_client:
-    agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
-    )
-    logging.info(f"Created agent, agent ID: {agent.id}")
+        message = await ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        logging.info(f"Created message, message ID: {message.id}")
 
-    thread = ai_client.agents.create_thread()
-    logging.info(f"Created thread, thread ID: {thread.id}")
+        run = await ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id, sleep_interval=4)
+        logging.info(f"Created run, run ID: {run.id}")
 
-    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-    logging.info(f"Created message, message ID: {message.id}")
+        await ai_client.agents.delete_agent(agent.id)
+        logging.info("Deleted assistant")
 
-    run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id, sleep_interval=4)
-    logging.info(f"Run finished with status: {run.status}")
+        messages = await ai_client.agents.list_messages(thread_id=thread.id)
+        logging.info(f"Messages: {messages}")
 
-    ai_client.agents.delete_agent(agent.id)
-    print("Deleted agent")
 
-    messages = ai_client.agents.list_messages(thread_id=thread.id)
-    logging.info(f"messages: {messages}")
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)    
+    asyncio.run(main())

@@ -3,12 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import logging
-import os
+import os, time, logging
 from azure.ai.client import AzureAIClient
+from azure.ai.client.models import CodeInterpreterTool
+from azure.ai.client.models._enums import FilePurpose
+from azure.ai.client.models._models import MessageAttachment
 from azure.identity import DefaultAzureCredential
-from azure.ai.client.models import FunctionTool, ToolSet, CodeInterpreterTool
-from user_functions import user_functions
 
 # Set logging level
 logging.basicConfig(level=logging.INFO)
@@ -36,44 +36,39 @@ ai_client = AzureAIClient(
 )
 """
 
-# Initialize agent toolset with user functions and code interpreter
-functions = FunctionTool(user_functions)
-code_interpreter = CodeInterpreterTool()
-
-toolset = ToolSet()
-toolset.add(functions)
-toolset.add(code_interpreter)
-
-# Create agent with toolset and process assistant run
 with ai_client:
+    # upload a file and wait for it to be processed
+    file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS, sleep_interval=4)
+    logging.info(f"Uploaded file, file ID: {file.id}")
+        
+    code_interpreter = CodeInterpreterTool
+    code_interpreter.add_file(file.id)
+    
+    # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to view the file
     agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
+        model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant",
+        tools=[code_interpreter]
     )
-    logging.info(f"Created agent, ID: {agent.id}")
+    logging.info(f"Created assistant, assistant ID: {agent.id}")
 
-    # Create thread for communication
     thread = ai_client.agents.create_thread()
-    logging.info(f"Created thread, ID: {thread.id}")
+    logging.info(f"Created thread, thread ID: {thread.id}")    
 
-    # Create message to thread
-    message = ai_client.agents.create_message(
-        thread_id=thread.id,
-        role="user",
-        content="Hello, send an email with the datetime and weather information in New York?",
-    )
-    logging.info(f"Created message, ID: {message.id}")
+    # create a message with the attachment
+    attachment = MessageAttachment(file_id=file.id, tools=[code_interpreter])
+    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment])
+    logging.info(f"Created message, message ID: {message.id}")
 
-    # Create and process agent run in thread with tools
-    run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
-    logging.info(f"Run finished with status: {run.status}")
+    run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id, sleep_interval=4)
+    logging.info(f"Created run, run ID: {run.id}")
+    
+    
+    ai_client.agents.delete_file(file.id)
+    logging.info("Deleted file")
 
-    if run.status == "failed":
-        logging.info(f"Run failed: {run.last_error}")
-
-    # Delete the assistant when done
     ai_client.agents.delete_agent(agent.id)
-    logging.info("Deleted agent")
+    logging.info("Deleted assistant")
 
-    # Fetch and log all messages
     messages = ai_client.agents.list_messages(thread_id=thread.id)
     logging.info(f"Messages: {messages}")
+
