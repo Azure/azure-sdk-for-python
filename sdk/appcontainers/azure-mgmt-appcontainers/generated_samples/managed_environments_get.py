@@ -33,7 +33,7 @@ def main():
     )
     print(response)
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedEnvironments_Get.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2024-08-02-preview/examples/ManagedEnvironments_Get.json
 if __name__ == "__main__":
     main()
 n__":
