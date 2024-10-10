@@ -1,5 +1,14 @@
 # Release History
 
+## 10.2.0b18 (2024-10-08)
+
+### Other Changes
+
+  - module `mysql_flexibleservers` of `azure-mgmt-rdbms` is deprecated and you can migrate to [azure-mgmt-mysqlflexibleservers](https://pypi.org/project/azure-mgmt-mysqlflexibleservers). It is very easy since you only need to change code from `from azure.mgmt.rdbms.mysql_flexibleservers import *` to `from azure.mgmt.mysqlflexibleservers import *`. For more info, please see [mysqlflexibleservers doc](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/mysqlflexibleservers/azure-mgmt-mysqlflexibleservers).
+  - module `postgresql_flexibleservers` of `azure-mgmt-rdbms` is deprecated and you can migrate to [azure-mgmt-postgresqlflexibleservers](https://pypi.org/project/azure-mgmt-postgresqlflexibleservers). It is very easy since you only need to change code from `from azure.mgmt.rdbms.postgresql_flexibleservers import *` to `from azure.mgmt.postgresqlflexibleservers import *`. For more info, please see [postgresqlflexibleservers doc](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/postgresqlflexibleservers/azure-mgmt-postgresqlflexibleservers).
+  - Since [DBForMySQL single server will be retired by 16 September 2024](https://learn.microsoft.com/azure/mysql/migrate/whats-happening-to-mysql-single-server), if you are still using `mysql` of `azure-mgmt-rdbms`, please migrate to [azure-mgmt-mysqlflexibleservers](https://pypi.org/project/azure-mgmt-mysqlflexibleservers) as soon as possible.
+  - Since [DBForPostgreSQL will be retired by 28 March 2025](https://azure.microsoft.com/updates/azure-database-for-postgresql-single-server-will-be-retired-migrate-to-flexible-server-by-28-march-2025/#:~:text=On%2028%20March%202025%2C%20Azure%20Database%20for%20PostgreSQL,Database%20for%20PostgreSQL%20Flexible%20Server%20by%20that%20date.), if you are still using module `postgresql` of `azure-mgmt-rdbms`, please migrate to [azure-mgmt-postgresqlflexibleservers](https://pypi.org/project/azure-mgmt-postgresqlflexibleservers) as soon as possible.
+
 ## 10.2.0b17 (2024-06-03)
 
 ### Features Added
