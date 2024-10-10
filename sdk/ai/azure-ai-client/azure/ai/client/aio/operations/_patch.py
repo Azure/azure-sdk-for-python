@@ -1037,7 +1037,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """Uploads a file for use by other operations.
 
         :keyword file: Required.
-        :paramtype file: ~azure.ai.assistants._vendor.FileType
+        :paramtype file: ~azure.ai.client._vendor.FileType
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.client.models.FilePurpose
@@ -1138,7 +1138,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """Uploads a file for use by other operations.
 
         :keyword file: Required.
-        :paramtype file: ~azure.ai.assistants._vendor.FileType
+        :paramtype file: ~azure.ai.client._vendor.FileType
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
         :paramtype purpose: str or ~azure.ai.client.models.FilePurpose

@@ -1148,10 +1148,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         """Uploads a file for use by other operations.
 
         :keyword file: Required.
-        :paramtype file: ~azure.ai.assistants._vendor.FileType
+        :paramtype file: ~azure.ai.client._vendor.FileType
         :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
          "assistants_output", "batch", "batch_output", and "vision". Required.
-        :paramtype purpose: str or ~azure.ai.assistants.models.FilePurpose
+        :paramtype purpose: str or ~azure.ai.client.models.FilePurpose
         :keyword filename: Default value is None.
         :paramtype filename: str
         :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
@@ -1234,7 +1234,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.VectorStore
+        :rtype: ~azure.ai.client.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1262,10 +1262,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.assistants.models.VectorStoreExpirationPolicy
+        :paramtype expires_after: ~azure.ai.client.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.assistants.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1275,7 +1275,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.VectorStore
+        :rtype: ~azure.ai.client.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1294,7 +1294,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.VectorStore
+        :rtype: ~azure.ai.client.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
     @distributed_trace
@@ -1320,10 +1320,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword name: The name of the vector store. Default value is None.
         :paramtype name: str
         :keyword expires_after: Details on when this vector store expires. Default value is None.
-        :paramtype expires_after: ~azure.ai.assistants.models.VectorStoreExpirationPolicy
+        :paramtype expires_after: ~azure.ai.client.models.VectorStoreExpirationPolicy
         :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
          use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
-        :paramtype chunking_strategy: ~azure.ai.assistants.models.VectorStoreChunkingStrategyRequest
+        :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
         :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
          for storing additional information about that object in a structured format. Keys may be up to
          64 characters in length and values may be up to 512 characters in length. Default value is
@@ -1333,7 +1333,7 @@ class AgentsOperations(AgentsOperationsGenerated):
          is 1.
         :paramtype sleep_interval: float
         :return: VectorStore. The VectorStore is compatible with MutableMapping
-        :rtype: ~azure.ai.assistants.models.VectorStore
+        :rtype: ~azure.ai.client.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         
