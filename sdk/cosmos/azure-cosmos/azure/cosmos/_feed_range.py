@@ -51,11 +51,12 @@ class FeedRange(ABC):
 class FeedRangeEpk(FeedRange):
     type_property_name = "Range"
 
-    def __init__(self, feed_range: Range) -> None:
+    def __init__(self, feed_range: Range, container_link: str) -> None:
         if feed_range is None:
             raise ValueError("feed_range cannot be None")
 
         self._feed_range_internal = FeedRangeInternalEpk(feed_range)
+        self._container_link = container_link
 
     def __str__(self) -> str:
         """Get a json representation of the feed range.

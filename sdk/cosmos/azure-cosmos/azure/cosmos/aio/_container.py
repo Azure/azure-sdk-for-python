@@ -77,11 +77,11 @@ class ContainerProxy:
     """
 
     def __init__(
-        self,
-        client_connection: CosmosClientConnection,
-        database_link: str,
-        id: str,
-        properties: Optional[Dict[str, Any]] = None
+            self,
+            client_connection: CosmosClientConnection,
+            database_link: str,
+            id: str,
+            properties: Optional[Dict[str, Any]] = None
     ) -> None:
         self.client_connection = client_connection
         self.id = id
@@ -130,8 +130,8 @@ class ContainerProxy:
         return conflict_or_link["_self"]
 
     async def _set_partition_key(
-        self,
-        partition_key: PartitionKeyType
+            self,
+            partition_key: PartitionKeyType
     ) -> Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
@@ -147,14 +147,14 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def read(
-        self,
-        *,
-        populate_partition_key_range_statistics: Optional[bool] = None,
-        populate_quota_info: Optional[bool] = None,
-        session_token: Optional[str] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+            self,
+            *,
+            populate_partition_key_range_statistics: Optional[bool] = None,
+            populate_quota_info: Optional[bool] = None,
+            session_token: Optional[str] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            **kwargs: Any
     ) -> Dict[str, Any]:
         """Read the container properties.
 
@@ -191,20 +191,20 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def create_item(
-        self,
-        body: Dict[str, Any],
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        indexing_directive: Optional[int] = None,
-        enable_automatic_id_generation: bool = False,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        no_response: Optional[bool] = None,
-        **kwargs: Any
+            self,
+            body: Dict[str, Any],
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            indexing_directive: Optional[int] = None,
+            enable_automatic_id_generation: bool = False,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            no_response: Optional[bool] = None,
+            **kwargs: Any
     ) -> Dict[str, Any]:
         """Create an item in the container.
 
@@ -231,8 +231,8 @@ class ContainerProxy:
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :keyword bool no_response: Indicates whether service should be instructed to skip
-            sending response payloads. When not specified explicitly here, the default value will be determined from 
-            client-level options.  
+            sending response payloads. When not specified explicitly here, the default value will be determined from
+            client-level options.
         :returns: A dict representing the new item. The dict will be empty if `no_response` is specified.
         :rtype: Dict[str, Any]
         """
@@ -260,23 +260,22 @@ class ContainerProxy:
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.CreateItem(
-            database_or_container_link=self.container_link, document=body, options=request_options,
-            request_context={}, **kwargs
+            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
         )
         return result or {}
 
     @distributed_trace_async
     async def read_item(
-        self,
-        item: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
-        *,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        max_integrated_cache_staleness_in_ms: Optional[int] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        **kwargs: Any
+            self,
+            item: Union[str, Mapping[str, Any]],
+            partition_key: PartitionKeyType,
+            *,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
     ) -> Dict[str, Any]:
         """Get the item identified by `item`.
 
@@ -327,19 +326,18 @@ class ContainerProxy:
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
-        return await self.client_connection.ReadItem(document_link=doc_link, options=request_options,
-                                                     request_context={}, **kwargs)
+        return await self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
     def read_all_items(
-        self,
-        *,
-        max_item_count: Optional[int] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        max_integrated_cache_staleness_in_ms: Optional[int] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        **kwargs: Any
+            self,
+            *,
+            max_item_count: Optional[int] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the items in the container.
 
@@ -376,8 +374,7 @@ class ContainerProxy:
             feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.ReadItems(
-            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook,
-            request_context={}, **kwargs
+            collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
@@ -385,21 +382,21 @@ class ContainerProxy:
 
     @distributed_trace
     def query_items(
-        self,
-        query: str,
-        *,
-        parameters: Optional[List[Dict[str, object]]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
-        max_item_count: Optional[int] = None,
-        enable_scan_in_query: Optional[bool] = None,
-        populate_query_metrics: Optional[bool] = None,
-        populate_index_metrics: Optional[bool] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        max_integrated_cache_staleness_in_ms: Optional[int] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        continuation_token_limit: Optional[int] = None,
-        **kwargs: Any
+            self,
+            query: str,
+            *,
+            parameters: Optional[List[Dict[str, object]]] = None,
+            partition_key: Optional[PartitionKeyType] = None,
+            max_item_count: Optional[int] = None,
+            enable_scan_in_query: Optional[bool] = None,
+            populate_query_metrics: Optional[bool] = None,
+            populate_index_metrics: Optional[bool] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            continuation_token_limit: Optional[int] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
@@ -496,7 +493,6 @@ class ContainerProxy:
             options=feed_options,
             partition_key=partition_key,
             response_hook=response_hook,
-            request_context= {},
             **kwargs
         )
         if response_hook:
@@ -690,16 +686,14 @@ class ContainerProxy:
             feed_options["maxItemCount"] = kwargs.pop('max_item_count')
 
         if kwargs.get("partition_key") is not None:
-            change_feed_state_context["partitionKey"] =\
+            change_feed_state_context["partitionKey"] = \
                 self._set_partition_key(cast(PartitionKeyType, kwargs.get("partition_key")))
             change_feed_state_context["partitionKeyFeedRange"] = \
                 self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
-        request_context = {}
         if kwargs.get("feed_range") is not None:
             feed_range: FeedRangeEpk = kwargs.pop('feed_range')
             change_feed_state_context["feedRange"] = feed_range._feed_range_internal
-            request_context["feedRange"] = feed_range
 
         feed_options["containerProperties"] = self._get_properties()
         feed_options["changeFeedStateContext"] = change_feed_state_context
@@ -712,8 +706,7 @@ class ContainerProxy:
             feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryItemsChangeFeed(
-            self.container_link, options=feed_options, response_hook=response_hook,
-            request_context=request_context, **kwargs
+            self.container_link, options=feed_options, response_hook=response_hook, **kwargs
         )
 
         if response_hook:
@@ -722,18 +715,18 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def upsert_item(
-        self,
-        body: Dict[str, Any],
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        no_response: Optional[bool] = None,
-        **kwargs: Any
+            self,
+            body: Dict[str, Any],
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            no_response: Optional[bool] = None,
+            **kwargs: Any
     ) -> Dict[str, Any]:
         """Insert or update the specified item.
 
@@ -756,9 +749,9 @@ class ContainerProxy:
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :keyword bool no_response: Indicates whether service should be instructed to skip
-            sending response payloads. When not specified explicitly here, the default value will be determined from 
-            client-level options.  
-        :returns: A dict representing the item after the upsert operation went through. The dict will be empty if 
+            sending response payloads. When not specified explicitly here, the default value will be determined from
+            client-level options.
+        :returns: A dict representing the item after the upsert operation went through. The dict will be empty if
             `no_response` is specified.
         :rtype: Dict[str, Any]
         """
@@ -787,26 +780,25 @@ class ContainerProxy:
             database_or_container_link=self.container_link,
             document=body,
             options=request_options,
-            request_context={},
             **kwargs
         )
         return result or {}
 
     @distributed_trace_async
     async def replace_item(
-        self,
-        item: Union[str, Mapping[str, Any]],
-        body: Dict[str, Any],
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        no_response: Optional[bool] = None,
-        **kwargs: Any
+            self,
+            item: Union[str, Mapping[str, Any]],
+            body: Dict[str, Any],
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            no_response: Optional[bool] = None,
+            **kwargs: Any
     ) -> Dict[str, Any]:
         """Replaces the specified item if it exists in the container.
 
@@ -831,9 +823,9 @@ class ContainerProxy:
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
             given id does not exist.
         :keyword bool no_response: Indicates whether service should be instructed to skip
-            sending response payloads. When not specified explicitly here, the default value will be determined from 
-            client-level options.  
-        :returns: A dict representing the item after replace went through. The dict will be empty if `no_response` 
+            sending response payloads. When not specified explicitly here, the default value will be determined from
+            client-level options.
+        :returns: A dict representing the item after replace went through. The dict will be empty if `no_response`
             is specified.
         :rtype: Dict[str, Any]
         """
@@ -860,27 +852,26 @@ class ContainerProxy:
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = await self.client_connection.ReplaceItem(
-            document_link=item_link, new_document=body, options=request_options,
-            request_context={}, **kwargs
+            document_link=item_link, new_document=body, options=request_options, **kwargs
         )
         return result or {}
 
     @distributed_trace_async
     async def patch_item(
-        self,
-        item: Union[str, Dict[str, Any]],
-        partition_key: PartitionKeyType,
-        patch_operations: List[Dict[str, Any]],
-        *,
-        filter_predicate: Optional[str] = None,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        no_response: Optional[bool] = None,
-        **kwargs: Any
+            self,
+            item: Union[str, Dict[str, Any]],
+            partition_key: PartitionKeyType,
+            patch_operations: List[Dict[str, Any]],
+            *,
+            filter_predicate: Optional[str] = None,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            no_response: Optional[bool] = None,
+            **kwargs: Any
     ) -> Dict[str, Any]:
         """ Patches the specified item with the provided operations if it
          exists in the container.
@@ -905,9 +896,9 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword bool no_response: Indicates whether service should be instructed to skip
-            sending response payloads. When not specified explicitly here, the default value will be determined from 
-            client-level options.  
-        :returns: A dict representing the item after the patch operation went through. The dict will be empty if 
+            sending response payloads. When not specified explicitly here, the default value will be determined from
+            client-level options.
+        :returns: A dict representing the item after the patch operation went through. The dict will be empty if
             `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
@@ -937,24 +928,23 @@ class ContainerProxy:
 
         item_link = self._get_document_link(item)
         result = await self.client_connection.PatchItem(
-            document_link=item_link, operations=patch_operations, options=request_options,
-            request_context={}, **kwargs)
+            document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
         return result or {}
 
     @distributed_trace_async
     async def delete_item(
-        self,
-        item: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        **kwargs: Any
+            self,
+            item: Union[str, Mapping[str, Any]],
+            partition_key: PartitionKeyType,
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
 
@@ -1001,8 +991,7 @@ class ContainerProxy:
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         document_link = self._get_document_link(item)
-        await self.client_connection.DeleteItem(document_link=document_link, options=request_options,
-                                                request_context={}, **kwargs)
+        await self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
     @distributed_trace_async
     async def get_throughput(self, **kwargs: Any) -> ThroughputProperties:
@@ -1036,9 +1025,9 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def replace_throughput(
-        self,
-        throughput: Union[int, ThroughputProperties],
-        **kwargs: Any
+            self,
+            throughput: Union[int, ThroughputProperties],
+            **kwargs: Any
     ) -> ThroughputProperties:
         """Replace the container's throughput.
 
@@ -1073,10 +1062,10 @@ class ContainerProxy:
 
     @distributed_trace
     def list_conflicts(
-        self,
-        *,
-        max_item_count: Optional[int] = None,
-        **kwargs: Any
+            self,
+            *,
+            max_item_count: Optional[int] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the conflicts in the container.
 
@@ -1102,13 +1091,13 @@ class ContainerProxy:
 
     @distributed_trace
     def query_conflicts(
-        self,
-        query: str,
-        *,
-        parameters: Optional[List[Dict[str, object]]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
-        max_item_count: Optional[int] = None,
-        **kwargs: Any
+            self,
+            query: str,
+            *,
+            parameters: Optional[List[Dict[str, object]]] = None,
+            partition_key: Optional[PartitionKeyType] = None,
+            max_item_count: Optional[int] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all conflicts matching a given `query`.
 
@@ -1147,10 +1136,10 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def get_conflict(
-        self,
-        conflict: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
-        **kwargs: Any,
+            self,
+            conflict: Union[str, Mapping[str, Any]],
+            partition_key: PartitionKeyType,
+            **kwargs: Any,
     ) -> Dict[str, Any]:
         """Get the conflict identified by `conflict`.
 
@@ -1175,10 +1164,10 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def delete_conflict(
-        self,
-        conflict: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
-        **kwargs: Any,
+            self,
+            conflict: Union[str, Mapping[str, Any]],
+            partition_key: PartitionKeyType,
+            **kwargs: Any,
     ) -> None:
         """Delete a specified conflict from the container.
 
@@ -1203,15 +1192,15 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def delete_all_items_by_partition_key(
-        self,
-        partition_key: PartitionKeyType,
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
+            self,
+            partition_key: PartitionKeyType,
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            **kwargs: Any
     ) -> None:
         """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
         documents with the same logical partition key value, using the Cosmos SDK. The delete by partition key
@@ -1251,17 +1240,17 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def execute_item_batch(
-        self,
-        batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
-        partition_key: PartitionKeyType,
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        **kwargs: Any
+            self,
+            batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
+            partition_key: PartitionKeyType,
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            **kwargs: Any
     ) -> List[Dict[str, Any]]:
         """ Executes the transactional batch for the specified partition key.
 
@@ -1303,8 +1292,7 @@ class ContainerProxy:
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return await self.client_connection.Batch(
-            collection_link=self.container_link, batch_operations=batch_operations, options=request_options,
-            request_context={}, **kwargs)
+            collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
 
     async def read_feed_ranges(
             self,
@@ -1330,17 +1318,18 @@ class ContainerProxy:
                 [Range("", "FF", True, False)],
                 **kwargs)
 
-        return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange))
+        return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange), self.container_link)
                 for partitionKeyRange in partition_key_ranges]
 
-    async def get_updated_session_token(self,
+    def get_updated_session_token(self,
                                   feed_ranges_to_session_tokens: List[Tuple[str, FeedRange]],
                                   target_feed_range: FeedRange
-                                  ) -> "Session Token":
+                                  ) -> str:
         """Gets the the most up to date session token from the list of session token and feed range tuples
         for a specific target feed range. The feed range can be obtained from a response from any crud operation.
         This should only be used if maintaining own session token or else the sdk will keep track of
-        session token.
+        session token. Session tokens and feed ranges are scoped to a container. Only input session tokens
+        and feed ranges obtained from the same container.
         :param feed_ranges_to_session_tokens: List of partition key and session token tuples.
         :type feed_ranges_to_session_tokens: List[Tuple(str, FeedRange)]
         :param target_feed_range: feed range to get most up to date session token.
@@ -1348,7 +1337,7 @@ class ContainerProxy:
         :returns: a session token
         :rtype: str
         """
-        return get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range)
+        return get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range, self.container_link)
 
     async def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> FeedRange:
         """Gets the feed range for a given partition key.
@@ -1357,9 +1346,9 @@ class ContainerProxy:
         :returns: a feed range
         :rtype: FeedRange
         """
-        return FeedRangeEpk(await self._get_epk_range_for_partition_key(partition_key))
+        return FeedRangeEpk(await self._get_epk_range_for_partition_key(partition_key), self.container_link)
 
-    async def is_feed_range_subset(self, parent_feed_range: FeedRange, child_feed_range: FeedRange) -> bool:
+    def is_feed_range_subset(self, parent_feed_range: FeedRange, child_feed_range: FeedRange) -> bool:
         """Checks if child feed range is a subset of parent feed range.
         :param parent_feed_range: left feed range
         :type parent_feed_range: FeedRange
@@ -1368,4 +1357,7 @@ class ContainerProxy:
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
         """
+        if (child_feed_range._container_link != self.container_link or
+                parent_feed_range._container_link != self.container_link):
+            raise ValueError("Feed ranges must be from the same container.")
         return child_feed_range._feed_range_internal.get_normalized_range().is_subset(parent_feed_range._feed_range_internal.get_normalized_range())

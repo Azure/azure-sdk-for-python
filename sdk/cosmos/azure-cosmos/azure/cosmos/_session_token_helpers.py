@@ -22,28 +22,29 @@
 """Internal Helper functions for manipulating session tokens.
 """
 from azure.cosmos._routing.routing_range import Range
+from ._feed_range import FeedRange
 from azure.cosmos._vector_session_token import VectorSessionToken
 
 # pylint: disable=protected-access
 
-def merge_session_tokens_with_same_range(session_token1, session_token2):
+def merge_session_tokens_with_same_range(session_token1: str, session_token2: str) -> str:
     pk_range_id1, vector_session_token1 = parse_session_token(session_token1)
     pk_range_id2, vector_session_token2 = parse_session_token(session_token2)
     pk_range_id = pk_range_id1
     if pk_range_id1 != pk_range_id2:
         pk_range_id = pk_range_id1 \
-            if vector_session_token1.is_greater(vector_session_token2) else pk_range_id2
+            if vector_session_token1.global_lsn > vector_session_token2.global_lsn else pk_range_id2
     vector_session_token = vector_session_token1.merge(vector_session_token2)
     return pk_range_id + ":" +  vector_session_token.session_token
 
-def is_compound_session_token(session_token):
+def is_compound_session_token(session_token: str) -> bool:
     return "," in session_token
 
-def parse_session_token(session_token):
+def parse_session_token(session_token: str) -> (str, VectorSessionToken):
     tokens = session_token.split(":")
     return tokens[0], VectorSessionToken.create(tokens[1])
 
-def split_compound_session_tokens(compound_session_tokens):
+def split_compound_session_tokens(compound_session_tokens: [(Range, str)]) -> [str]:
     session_tokens = []
     for _, session_token in compound_session_tokens:
         if is_compound_session_token(session_token):
@@ -54,7 +55,7 @@ def split_compound_session_tokens(compound_session_tokens):
             session_tokens.append(session_token)
     return session_tokens
 
-def merge_session_tokens_with_same_pkrangeid(session_tokens):
+def merge_session_tokens_for_same_physical_pk(session_tokens: [str]) -> [str]:
     i = 0
     while i < len(session_tokens):
         j = i + 1
@@ -74,7 +75,7 @@ def merge_session_tokens_with_same_pkrangeid(session_tokens):
 
     return session_tokens
 
-def merge_ranges_with_subsets(overlapping_ranges):
+def merge_ranges_with_subsets(overlapping_ranges: [(Range, str)]) -> [(Range, str)]:
     processed_ranges = []
     while len(overlapping_ranges) != 0:
         feed_range_cmp, session_token_cmp = overlapping_ranges[0]
@@ -101,7 +102,7 @@ def merge_ranges_with_subsets(overlapping_ranges):
             merged_indices = [subsets[j][2]]
             if len(subsets) == 1:
                 _, vector_session_token = parse_session_token(session_tokens[0])
-                if vector_session_token_cmp.is_greater(vector_session_token):
+                if vector_session_token_cmp.global_lsn > vector_session_token.global_lsn:
                     overlapping_ranges.remove(overlapping_ranges[merged_indices[0]])
             else:
                 for k, subset in enumerate(subsets):
@@ -116,16 +117,22 @@ def merge_ranges_with_subsets(overlapping_ranges):
                         # take the subsets if their global lsn is larger
                         # else take the current feed range
                         children_more_updated = True
+                        parent_more_updated = True
                         for session_token in session_tokens:
                             _, vector_session_token = parse_session_token(session_token)
-                            if vector_session_token_cmp.is_greater(vector_session_token):
+                            if vector_session_token_cmp.global_lsn > vector_session_token.global_lsn:
                                 children_more_updated = False
+                            else:
+                                parent_more_updated = False
                         feed_ranges_to_remove = [overlapping_ranges[i] for i in merged_indices]
                         for feed_range_to_remove in feed_ranges_to_remove:
                             overlapping_ranges.remove(feed_range_to_remove)
                         if children_more_updated:
                             overlapping_ranges.append((merged_range, ','.join(map(str, session_tokens))))
                             overlapping_ranges.remove(overlapping_ranges[0])
+                        elif not parent_more_updated and not children_more_updated:
+                            session_tokens.append(session_token_cmp)
+                            overlapping_ranges.append((merged_range, ','.join(map(str, session_tokens))))
                         not_found = False
                         break
 
@@ -135,15 +142,21 @@ def merge_ranges_with_subsets(overlapping_ranges):
         overlapping_ranges.remove(overlapping_ranges[0])
     return processed_ranges
 
-def get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range):
+def get_updated_session_token(feed_ranges_to_session_tokens: [(FeedRange, str)], target_feed_range: FeedRange,
+                              container_link: str):
+    if target_feed_range._container_link != container_link:
+        raise ValueError('The target feed range does not belong to the container.')
     target_feed_range_normalized = target_feed_range._feed_range_internal.get_normalized_range()
     # filter out tuples that overlap with target_feed_range and normalizes all the ranges
-    overlapping_ranges = [(feed_range_to_session_token[0]._feed_range_internal.get_normalized_range(),
-                           feed_range_to_session_token[1])
-                          for feed_range_to_session_token in feed_ranges_to_session_tokens if Range.overlaps(
-            target_feed_range_normalized, feed_range_to_session_token[0]._feed_range_internal.get_normalized_range())]
-    # Is there a feed_range that is a superset of some of the other feed_ranges excluding tuples
-    # with compound session tokens?
+    overlapping_ranges = []
+    for feed_range_to_session_token in feed_ranges_to_session_tokens:
+        if feed_range_to_session_token[0]._container_link != container_link:
+            raise ValueError('The feed range does not belong to the container.')
+        if Range.overlaps(target_feed_range_normalized,
+                          feed_range_to_session_token[0]._feed_range_internal.get_normalized_range()):
+            overlapping_ranges.append((feed_range_to_session_token[0]._feed_range_internal.get_normalized_range(),
+                                       feed_range_to_session_token[1]))
+
     if len(overlapping_ranges) == 0:
         raise ValueError('There were no overlapping feed ranges with the target.')
 
@@ -178,7 +191,7 @@ def get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range):
     if len(remaining_session_tokens) == 1:
         return remaining_session_tokens[0]
     # merging any session tokens with same physical partition key range id
-    remaining_session_tokens = merge_session_tokens_with_same_pkrangeid(remaining_session_tokens)
+    remaining_session_tokens = merge_session_tokens_for_same_physical_pk(remaining_session_tokens)
 
     updated_session_token = ""
     # compound the remaining session tokens

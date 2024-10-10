@@ -113,11 +113,6 @@ class VectorSessionToken(object):
             and self.are_region_progress_equal(other.local_lsn_by_region)
         )
 
-    def is_greater(self, other):
-        if self.global_lsn > other.global_lsn:
-            return True
-        return False
-
     def merge(self, other):
         if other is None:
             raise ValueError("Invalid Session Token (should not be None)")

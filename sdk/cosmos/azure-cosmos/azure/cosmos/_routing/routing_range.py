@@ -202,7 +202,7 @@ class Range(object):
             return True
         return False
 
-    def can_merge(self, other):
+    def can_merge(self, other: 'Range') -> bool:
         if self.isSingleValue() and other.isSingleValue():
             return self.min == other.min
         # if share the same boundary, they can merge
@@ -212,7 +212,7 @@ class Range(object):
             return True
         return self.overlaps(self, other)
 
-    def merge(self, other):
+    def merge(self, other: 'Range') -> 'Range':
         if not self.can_merge(other):
             raise ValueError("Ranges do not overlap")
         min_val = self.min if self.min < other.min else other.min
@@ -221,7 +221,7 @@ class Range(object):
         is_max_inclusive = self.isMaxInclusive if self.max > other.max else other.isMaxInclusive
         return Range(min_val, max_val, is_min_inclusive, is_max_inclusive)
 
-    def is_subset(self, parent_range) -> bool:
+    def is_subset(self, parent_range: 'Range') -> bool:
         normalized_parent_range = parent_range.to_normalized_range()
         normalized_child_range = self.to_normalized_range()
         return normalized_parent_range.contains(normalized_child_range.min) and \

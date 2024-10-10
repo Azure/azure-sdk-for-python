@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import random
-import time
 import unittest
-import uuid
 
 import pytest
 
@@ -32,8 +30,7 @@ def setup():
     }
 
 def create_split_ranges():
-    # add one with several ranges being equal to one
-    test_params = [ # split with two children
+    return [ # split with two children
                    ([(("AA", "DD"), "0:1#51#3=52"), (("AA", "BB"),"1:1#55#3=52"), (("BB", "DD"),"2:1#54#3=52")],
                     ("AA", "DD"), "1:1#55#3=52,2:1#54#3=52"),
                     # split with one child
@@ -47,6 +44,10 @@ def create_split_ranges():
                    ([(("AA", "DD"), "0:1#60#3=52"), (("AA", "BB"), "1:1#51#3=52"),
                     (("BB", "CC"),"1:1#53#3=52"), (("CC", "DD"),"1:1#55#3=52")],
                     ("AA", "DD"), "0:1#60#3=52"),
+                    # several ranges being equal to one range
+                   ([(("AA", "DD"), "0:1#60#3=52"), (("AA", "BB"), "1:1#51#3=52"),
+                    (("BB", "CC"),"1:1#66#3=52"), (("CC", "DD"),"1:1#55#3=52")],
+                    ("AA", "DD"), "0:1#60#3=52,1:1#66#3=52"),
                     # merge with one child
                    ([(("AA", "DD"), "0:1#55#3=52"), (("AA", "BB"),"1:1#51#3=52")],
                     ("AA", "DD"), "0:1#55#3=52"),
@@ -66,15 +67,6 @@ def create_split_ranges():
                    ([(("AA", "BB"), "0:1#54#3=52"), (("AA", "BB"),"0:2#57#3=53")],
                     ("AA", "BB"), "0:2#57#3=53")
                   ]
-    actual_test_params = []
-    for test_param in test_params:
-        split_ranges = []
-        for feed_range, session_token in test_param[0]:
-            split_ranges.append((FeedRangeEpk(Range(feed_range[0], feed_range[1],
-                                            True, False)), session_token))
-        target_feed_range = FeedRangeEpk(Range(test_param[1][0], test_param[1][1], True, False))
-        actual_test_params.append((split_ranges, target_feed_range, test_param[2]))
-    return actual_test_params
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.unittest
@@ -91,7 +83,8 @@ class TestSessionTokenHelpers:
     TEST_COLLECTION_ID = configs.TEST_SINGLE_PARTITION_CONTAINER_ID
 
     def test_get_session_token_update(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
+        feed_range = FeedRangeEpk(Range("AA", "BB", True, False),
+                                  setup[COLLECTION].container_link)
         session_token = "0:1#54#3=50"
         feed_ranges_and_session_tokens = [(feed_range, session_token)]
         session_token = "0:1#51#3=52"
@@ -100,7 +93,8 @@ class TestSessionTokenHelpers:
         assert session_token == "0:1#54#3=52"
 
     def test_many_session_tokens_update_same_range(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
+        feed_range = FeedRangeEpk(Range("AA", "BB", True, False),
+                                  setup[COLLECTION].container_link)
         feed_ranges_and_session_tokens = []
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
@@ -112,15 +106,18 @@ class TestSessionTokenHelpers:
         assert updated_session_token == session_token
 
     def test_many_session_tokens_update(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
+        feed_range = FeedRangeEpk(Range("AA", "BB", True, False),
+                                  setup[COLLECTION].container_link)
         feed_ranges_and_session_tokens = []
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
             feed_ranges_and_session_tokens.append((feed_range, session_token))
 
         # adding irrelevant feed ranges
-        feed_range1 = FeedRangeEpk(Range("CC", "FF", True, False))
-        feed_range2 = FeedRangeEpk(Range("00", "55", True, False))
+        feed_range1 = FeedRangeEpk(Range("CC", "FF", True, False),
+                                   setup[COLLECTION].container_link)
+        feed_range2 = FeedRangeEpk(Range("00", "55", True, False),
+                                   setup[COLLECTION].container_link)
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
             if i % 2 == 0:
@@ -135,16 +132,30 @@ class TestSessionTokenHelpers:
 
     @pytest.mark.parametrize("split_ranges, target_feed_range, expected_session_token", create_split_ranges())
     def test_simulated_splits_merges(self, setup, split_ranges, target_feed_range, expected_session_token):
-        updated_session_token = setup[COLLECTION].get_updated_session_token(split_ranges, target_feed_range)
+        actual_split_ranges = []
+        for feed_range, session_token in split_ranges:
+            actual_split_ranges.append((FeedRangeEpk(Range(feed_range[0], feed_range[1],
+                                                True, False),
+                                          setup[COLLECTION].container_link), session_token))
+        target_feed_range = FeedRangeEpk(Range(target_feed_range[0], target_feed_range[1][1],
+                                               True, False),
+                                         setup[COLLECTION].container_link)
+        updated_session_token = setup[COLLECTION].get_updated_session_token(actual_split_ranges, target_feed_range)
         assert updated_session_token == expected_session_token
 
     def test_invalid_feed_range(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
+        feed_range = FeedRangeEpk(Range("AA", "BB", True, False),
+                                  setup[COLLECTION].container_link)
         session_token = "0:1#54#3=50"
         feed_ranges_and_session_tokens = [(feed_range, session_token)]
         with pytest.raises(ValueError, match='There were no overlapping feed ranges with the target.'):
             setup["created_collection"].get_updated_session_token(feed_ranges_and_session_tokens,
-                            FeedRangeEpk(Range("CC", "FF", True, False)))
+                                                                  FeedRangeEpk(Range(
+                                                                      "CC",
+                                                                      "FF",
+                                                                      True,
+                                                                      False),
+                                                                      setup[COLLECTION].container_link))
 
 if __name__ == '__main__':
     unittest.main()
