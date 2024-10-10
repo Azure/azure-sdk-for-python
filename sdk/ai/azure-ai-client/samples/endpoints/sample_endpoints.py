@@ -38,7 +38,7 @@ print(endpoint)
 
 # Get an endpoint by its name:
 endpoint = ai_client.endpoints.get(
-    endpoint_name=os.environ["AI_CLIENT_CONNECTION_NAME"], populate_secrets=True  # Required.
+    endpoint_name=os.environ["AI_CLIENT_ENDPOINT_NAME"], populate_secrets=True  # Required.
 )
 print("====> Get endpoint by name:")
 print(endpoint)

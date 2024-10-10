@@ -59,7 +59,7 @@ async def sample_endpoints_async():
 
         # Get an endpoint by its name:
         endpoint = await ai_client.endpoints.get(
-            endpoint_name=os.environ["AI_CLIENT_CONNECTION_NAME"], populate_secrets=True  # Required.
+            endpoint_name=os.environ["AI_CLIENT_ENDPOINT_NAME"], populate_secrets=True  # Required.
         )
         print("====> Get endpoint by name:")
         print(endpoint)
