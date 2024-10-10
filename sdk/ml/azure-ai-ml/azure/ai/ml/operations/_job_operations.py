@@ -7,7 +7,7 @@ import json
 import os.path
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Set, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, List, Optional, Set, TextIO, Union, cast
 
 import jwt
 from marshmallow import ValidationError
@@ -794,12 +794,35 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(ops_logger, "Job.Stream", ActivityType.PUBLICAPI)
-    def stream(self, name: str) -> None:
+    def stream(
+        self,
+        name: str,
+        *,
+        raise_exception_on_failed_job: bool = True,
+        file_handle: Optional[TextIO] = None,
+        from_start: bool = False
+    ) -> None:
         """Streams the logs of a running job.
 
         :param name: The name of the job.
         :type name: str
-        :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job with the given name can be found.
+        :keyword raise_exception_on_failed_job: If true (default), this raises a
+            JobException exception if the job fails or failed before. Else if
+            false an error is output and the function returns silently.
+        :type raise_exception_on_failed_job: Boolean
+        :keyword file_handle: Output file which to output to. Defaults to
+            'sys.stdout'.
+        :type file_handle: ~typing.TextIO
+        :keyword from_start: Optional, default False. If True and the job has
+            finished, treats as if the job was running and output all log files
+            once. Then proceeds to output status or raise error (see
+            'raise_exception_on_failed_job'). If the job is running, this
+            parameter has no effect.
+        :type from_start: Boolean
+        :raises azure.core.exceptions.ResourceNotFoundError: Raised if no job
+            with the given name can be found.
+        :raises azure.core.exceptions.JobException: Raised if the job
+            fails/failed and 'raise_exception_on_failed_job' is True.
 
         .. admonition:: Example:
 
@@ -816,7 +839,13 @@ class JobOperations(_ScopeDependentOperations):
             raise PipelineChildJobError(job_id=job_object.id)
 
         self._stream_logs_until_completion(
-            self._runs_operations, job_object, self._datastore_operations, requests_pipeline=self._requests_pipeline
+            self._runs_operations,
+            job_object,
+            self._datastore_operations,
+            requests_pipeline=self._requests_pipeline,
+            raise_exception_on_failed_job=raise_exception_on_failed_job,
+            file_handle=file_handle,
+            from_start=from_start
         )
 
     @distributed_trace
