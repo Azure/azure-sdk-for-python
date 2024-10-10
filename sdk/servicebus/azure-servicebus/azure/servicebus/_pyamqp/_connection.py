@@ -118,7 +118,8 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         self._hostname = parsed_url.hostname
         kwargs["http_proxy"] = http_proxy
         endpoint = self._hostname
-        if parsed_url.port:
+        if parsed_url.port and not kwargs.get("use_tls"):
+            # if we are using an emulator, use the port passed in url
             self._port = parsed_url.port
         elif parsed_url.scheme == "amqps":
             self._port = SECURE_PORT
