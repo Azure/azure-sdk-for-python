@@ -84,9 +84,7 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :rtype: ~azure.ai.translation.document.TranslationStatus
         """
         if self._polling_method._current_body:
-            return TranslationStatus(
-                self._polling_method._current_body
-            )
+            return TranslationStatus(self._polling_method._current_body)
         return TranslationStatus(id=self._polling_method._get_id_from_headers())  # type: ignore
 
     @classmethod
@@ -191,7 +189,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
 class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClientOperationsMixin):
 
     @distributed_trace
-    async def _begin_start_translation(  # type: ignore[override]
+    async def _begin_translation(  # type: ignore[override]
         self, body: Union[_models.StartTranslationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[_models.TranslationStatus]:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -203,7 +201,7 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self.__begin_start_translation_initial(  # type: ignore[func-returns-value]
+            raw_result = await self.__begin_translation_initial(  # type: ignore[func-returns-value]
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
         kwargs.pop("error_map", None)
