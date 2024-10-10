@@ -1,19 +1,19 @@
-# flake8: noqa
-# pylint: disable=W0102,W0613,R0914,C0301,E0401,E0611,C0114,R0913,E0702,R0903,C0411
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import asyncio
 import importlib.resources as pkg_resources
-from tqdm import tqdm
 import json
 import os
 import re
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
+
 from promptflow.core import AsyncPrompty
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from tqdm import tqdm
+
 from azure.ai.evaluation._common.utils import construct_prompty_model_config
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from .._exceptions import ErrorBlame, ErrorCategory, EvaluationException
 from .._user_agent import USER_AGENT
@@ -32,8 +32,9 @@ class Simulator:
         """
         Initializes the task simulator with the model configuration.
 
-        :param model_config: A dictionary defining the configuration for the model. Acceptable types are AzureOpenAIModelConfiguration and OpenAIModelConfiguration.
-        :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration, ~azure.ai.evaluation.OpenAIModelConfiguration]
+        :param model_config: A dictionary defining the configuration for the model.
+        :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+            ~azure.ai.evaluation.OpenAIModelConfiguration]
         :raises ValueError: If the model_config does not contain the required keys or any value is None.
         """
         self._validate_model_config(model_config)
@@ -81,27 +82,40 @@ class Simulator:
         *,
         target: Callable,
         max_conversation_turns: int = 5,
-        tasks: List[str] = [],
+        tasks: Optional[List[str]] = None,
         text: str = "",
         num_queries: int = 5,
         query_response_generating_prompty: Optional[str] = None,
         user_simulator_prompty: Optional[str] = None,
         api_call_delay_sec: float = 1,
-        query_response_generating_prompty_kwargs: Dict[str, Any] = {},
-        user_simulator_prompty_kwargs: Dict[str, Any] = {},
-        conversation_turns: List[List[str]] = [],
-        **kwargs,
+        query_response_generating_prompty_kwargs: Optional[Dict[str, Any]] = None,
+        user_simulator_prompty_kwargs: Optional[Dict[str, Any]] = None,
+        conversation_turns: Optional[List[List[str]]] = None,
     ) -> List[JsonLineChatProtocol]:
         """
         Generates synthetic conversations based on provided parameters.
 
+        Modes:
+
+        * Task-Free Mode: When only num_queries is specified and tasks is not, the method generates
+            num_queries x max_conversation_turns lines of simulated data grounded in the context of the text.
+        * Task-Specific Mode: When both num_queries and tasks are specified, the method generates lines of simulated
+            data based on the tasks. If num_queries > len(tasks), the remaining lines will be simulated in task-free
+            mode. If num_queries < len(tasks), only the first num_queries tasks are used.
+        * Conversation Starter Mode: When conversation_turns are specified, the method starts each conversation with
+            the user-specified queries and then follows the conversation history for the remaining turns.
+
         :keyword target: The target function to call during the simulation.
         :paramtype target: Callable
-        :keyword max_conversation_turns: Maximum number of conversation turns for the simulation. Each turn consists of a user and an assistant message.
+        :keyword max_conversation_turns: Maximum number of conversation turns for the simulation. Each turn consists
+             of a user and an assistant message.
         :paramtype max_conversation_turns: int
-        :keyword tasks: A list of user tasks, each represented as a list of strings. Text should be relevant for the tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
-        :paramtype tasks: List[str]
-        :keyword text: The initial input text for generating query responses. Given that the same 'text' is provided for a list of tasks, one example use is to break down a user task into sub-tasks that can share the 'text' variable for context.
+        :keyword tasks: A list of user tasks, each represented as a list of strings. Text should be relevant for the
+             tasks and facilitate the simulation. One example is to use text to provide context for the tasks.
+        :paramtype tasks: Optional[List[str]]
+        :keyword text: The initial input text for generating query responses. Given that the same 'text' is provided
+            for a list of tasks, one example use is to break down a user task into sub-tasks that can share the 'text'
+            variable for context.
         :paramtype text: str
         :keyword num_queries: The number of queries to generate.
         :paramtype num_queries: int
@@ -111,30 +125,32 @@ class Simulator:
         :paramtype user_simulator_prompty: Optional[str]
         :keyword api_call_delay_sec: Delay in seconds between API calls.
         :paramtype api_call_delay_sec: float
-        :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the query response generating prompty.
-        :paramtype query_response_generating_prompty_kwargs: Dict[str, Any]
+        :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the query response
+            generating prompty.
+        :paramtype query_response_generating_prompty_kwargs: Optional[Dict[str, Any]]
         :keyword user_simulator_prompty_kwargs: Additional keyword arguments for the user simulator prompty.
-        :paramtype user_simulator_prompty_kwargs: Dict[str, Any]
+        :paramtype user_simulator_prompty_kwargs: Optional[Dict[str, Any]]
         :keyword conversation_turns: Predefined conversation turns to simulate.
-        :paramtype conversation_turns: List[List[str]]
-        :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
+        :paramtype conversation_turns: Optional[List[List[str]]]
+        :returns: A list of simulated conversations represented as JsonLineChatProtocol objects, which contain
+             messages and context. Context includes all the metadata related to the conversation, such as the task,
+             expected response, and query. The messages contain the conversation history, including the user and
+             assistant messages.
         :rtype: List[JsonLineChatProtocol]
-
-        Return Value:
-        The method returns a list of JsonLineChatProtocol objects, which are essentially a list of dictionaries where the dictionary contains the messages and context. Context includes all the metadata related to the conversation, such as the task, expected response, and query. The messages contain the conversation history, including the user and assistant messages.
-
-        Modes:
-        - Task-Free Mode: When only num_queries is specified and tasks is not, the method generates num_queries x max_conversation_turns lines of simulated data grounded in the context of the text.
-        - Task-Specific Mode: When both num_queries and tasks are specified, the method generates lines of simulated data based on the tasks. If num_queries > len(tasks), the remaining lines will be simulated in task-free mode. If num_queries < len(tasks), only the first num_queries tasks are used.
-        - Conversation Starter Mode: When conversation_turns are specified, the method starts each conversation with the user-specified queries and then follows the conversation history for the remaining turns.
         """
+        tasks = tasks or []
+        query_response_generating_prompty_kwargs = query_response_generating_prompty_kwargs or {}
+        user_simulator_prompty_kwargs = user_simulator_prompty_kwargs or {}
+        conversation_turns = conversation_turns or []
+
         if conversation_turns and (text or tasks):
             raise ValueError("Cannot specify both conversation_turns and text/tasks")
 
         if num_queries > len(tasks):
             warnings.warn(
                 f"You have specified 'num_queries' > len('tasks') ({num_queries} > {len(tasks)}). "
-                f"All tasks will be used for generation and the remaining {num_queries - len(tasks)} lines will be simulated in task-free mode"
+                + f"All tasks will be used for generation and the remaining {num_queries - len(tasks)} "
+                + "lines will be simulated in task-free mode"
             )
         elif num_queries < len(tasks):
             warnings.warn(
@@ -162,7 +178,6 @@ class Simulator:
             query_response_generating_prompty=query_response_generating_prompty,
             query_response_generating_prompty_kwargs=query_response_generating_prompty_kwargs,
             prompty_model_config=prompty_model_config,
-            **kwargs,
         )
         return await self._create_conversations_from_query_responses(
             query_responses=query_responses,
@@ -329,7 +344,6 @@ class Simulator:
             resource_name = "task_simulate.prompty"
             try:
                 # Access the resource as a file path
-                # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     prompty_model_config = construct_prompty_model_config(
                         model_config=prompty_model_config,  # type: ignore
@@ -403,7 +417,6 @@ class Simulator:
         query_response_generating_prompty: Optional[str],
         query_response_generating_prompty_kwargs: Dict[str, Any],
         prompty_model_config: Any,
-        **kwargs,
     ) -> List[Dict[str, str]]:
         """
         Generates query responses using the specified prompty configuration.
@@ -414,7 +427,8 @@ class Simulator:
         :paramtype num_queries: int
         :keyword query_response_generating_prompty: Path to the query response generating prompty file.
         :paramtype query_response_generating_prompty: Optional[str]
-        :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the query response generating prompty.
+        :keyword query_response_generating_prompty_kwargs: Additional keyword arguments for the query response
+            generating prompty.
         :paramtype query_response_generating_prompty_kwargs: Dict[str, Any]
         :keyword prompty_model_config: The configuration for the prompty model.
         :paramtype prompty_model_config: Any
@@ -460,7 +474,6 @@ class Simulator:
             resource_name = "task_query_response.prompty"
             try:
                 # Access the resource as a file path
-                # pylint: disable=deprecated-method
                 with pkg_resources.path(package, resource_name) as prompty_path:
                     prompty_model_config = construct_prompty_model_config(
                         model_config=prompty_model_config,  # type: ignore

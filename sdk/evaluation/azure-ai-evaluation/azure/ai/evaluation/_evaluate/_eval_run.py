@@ -29,7 +29,7 @@ LOGGER = logging.getLogger(__name__)
 # promptflow-azure is installed.
 try:
     from azure.ai.ml import MLClient
-    from azure.ai.ml.entities._credentials import AccountKeyConfiguration  # pylint: disable=ungrouped-imports
+    from azure.ai.ml.entities._credentials import AccountKeyConfiguration
     from azure.ai.ml.entities._datastore.datastore import Datastore
     from azure.storage.blob import BlobServiceClient
 except (ModuleNotFoundError, ImportError):
@@ -312,7 +312,7 @@ class EvalRun(contextlib.AbstractContextManager):  # pylint: disable=too-many-in
     def _get_token(self):
         # We have to use lazy import because promptflow.azure
         # is an optional dependency.
-        from promptflow.azure._utils._token_cache import ArmTokenCache  # pylint: disable=import-error,no-name-in-module
+        from promptflow.azure._utils._token_cache import ArmTokenCache
 
         return ArmTokenCache().get_token(self._ml_client._credential)  # pylint: disable=protected-access
 
