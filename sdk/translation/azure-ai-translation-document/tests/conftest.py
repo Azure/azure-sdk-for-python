@@ -17,6 +17,7 @@ from devtools_testutils import (
     remove_batch_sanitizers,
 )
 from azure.storage.blob import BlobServiceClient
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -42,7 +43,7 @@ def add_sanitizers(test_proxy):
     if is_live() and os.getenv("TRANSLATION_ENVIRONMENT") == "Dogfood":
         client = BlobServiceClient(
             "https://" + os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME") + ".blob.core.windows.net/",
-            os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY"),
+            DefaultAzureCredential(),
         )
         for container in client.list_containers():
             client.delete_container(container)

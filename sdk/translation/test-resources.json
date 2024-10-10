@@ -264,10 +264,6 @@
         }
     ],
     "outputs": {
-        "TRANSLATION_DOCUMENT_NAME": {
-            "type": "string",
-            "value": "[variables('docTranslationBaseName')]"
-        },
         "TRANSLATION_DOCUMENT_TEST_ENDPOINT": {
             "type": "string",
             "value": "[variables('azureDocTranslationUrl')]"
@@ -275,11 +271,6 @@
         "TRANSLATION_DOCUMENT_STORAGE_NAME": {
             "type": "string",
             "value": "[parameters('blobStorageAccount')]"
-        },
-        "TRANSLATION_DOCUMENT_STORAGE_KEY": {
-            "condition": "[not(parameters('useStaticStorageResource'))]",
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), variables('storageMgmtApiVersion')).keys[0].value]"
         },
         "AZURE_DOCUMENT_TRANSLATION_KEY": {
             "type": "string",

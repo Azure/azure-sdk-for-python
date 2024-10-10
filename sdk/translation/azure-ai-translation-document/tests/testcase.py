@@ -7,10 +7,13 @@ import os
 import time
 import datetime
 import uuid
-from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
-from azure.storage.blob import generate_container_sas, ContainerClient
+from devtools_testutils import AzureRecordedTestCase
+from azure.storage.blob import ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
-
+from azure.ai.translation.document.models._models import BatchRequest, SourceInput, StartTranslationDetails
+from devtools_testutils import AzureRecordedTestCase
+from azure.storage.blob import ContainerClient
+from azure.identity import DefaultAzureCredential
 
 class Document:
     """Represents a document to be uploaded to source/target container"""
@@ -38,10 +41,6 @@ class DocumentTranslationTest(AzureRecordedTestCase):
     def storage_endpoint(self):
         return "https://" + self.storage_name + ".blob.core.windows.net/"
 
-    @property
-    def storage_key(self):
-        return os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY", "fakeZmFrZV9hY29jdW50X2tleQ==")
-
     def upload_documents(self, data, container_client):
         if isinstance(data, list):
             for blob in data:
@@ -54,40 +53,23 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         var_key = "source_container_name" + container_suffix
         if self.is_live:
             self.source_container_name = variables[var_key] = "src" + str(uuid.uuid4())
-            container_client = ContainerClient(self.storage_endpoint, variables[var_key], self.storage_key)
+            container_client = ContainerClient(self.storage_endpoint, variables[var_key], DefaultAzureCredential())
             container_client.create_container()
 
             self.upload_documents(data, container_client)
-        return self.generate_sas_url(variables[var_key], "rl")
+        return self.storage_endpoint + variables[var_key]
 
     def create_target_container(self, data=None, variables={}, **kwargs):
         container_suffix = kwargs.get("container_suffix", "")
         var_key = "target_container_name" + container_suffix
         if self.is_live:
             self.target_container_name = variables[var_key] = "target" + str(uuid.uuid4())
-            container_client = ContainerClient(self.storage_endpoint, variables[var_key], self.storage_key)
+            container_client = ContainerClient(self.storage_endpoint, variables[var_key], DefaultAzureCredential())
             container_client.create_container()
             if data:
                 self.upload_documents(data, container_client)
 
-        return self.generate_sas_url(variables[var_key], "wl")
-
-    def generate_sas_url(self, container_name, permission):
-        # this can be reverted to set_bodiless_matcher() after tests are re-recorded and don't contain these headers
-        set_custom_default_matcher(
-            compare_bodies=False, excluded_headers="Authorization,Content-Length,x-ms-client-request-id,x-ms-request-id"
-        )
-        sas_token = self.generate_sas(
-            generate_container_sas,
-            account_name=self.storage_name,
-            container_name=container_name,
-            account_key=self.storage_key,
-            permission=permission,
-            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=2),
-        )
-
-        container_sas_url = self.storage_endpoint + container_name + "?" + sas_token
-        return container_sas_url
+        return self.storage_endpoint + variables[var_key]
 
     def wait(self, duration=30):
         if self.is_live:
@@ -244,18 +226,18 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         for i in range(operations_count):
             # prepare containers and test data
             blob_data = Document.create_dummy_docs(docs_per_operation)
-            source_container_sas_url = self.create_source_container(
+            source_container_url = self.create_source_container(
                 data=blob_data, variables=variables, container_suffix=str(i) + container_suffix
             )
-            target_container_sas_url = self.create_target_container(
+            target_container_url = self.create_target_container(
                 variables=variables, container_suffix=str(i) + container_suffix
             )
 
             # prepare translation inputs
             translation_inputs = [
                 DocumentTranslationInput(
-                    source_url=source_container_sas_url,
-                    targets=[TranslationTarget(target_url=target_container_sas_url, language=language)],
+                    source_url=source_container_url,
+                    targets=[TranslationTarget(target_url=target_container_url, language=language)],
                 )
             ]
 
@@ -278,14 +260,14 @@ class DocumentTranslationTest(AzureRecordedTestCase):
 
         # prepare containers and test data
         blob_data = Document.create_dummy_docs(docs_count=docs_count)
-        source_container_sas_url = self.create_source_container(data=blob_data, variables=variables)
-        target_container_sas_url = self.create_target_container(variables=variables)
+        source_container_url = self.create_source_container(data=blob_data, variables=variables)
+        target_container_url = self.create_target_container(variables=variables)
 
         # prepare translation inputs
         translation_inputs = [
             DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[TranslationTarget(target_url=target_container_sas_url, language=language)],
+                source_url=source_container_url,
+                targets=[TranslationTarget(target_url=target_container_url, language=language)],
             )
         ]
 
@@ -300,4 +282,40 @@ class DocumentTranslationTest(AzureRecordedTestCase):
         # validate
         self._validate_translation_metadata(poller=poller)
 
+        return poller
+    
+    def _prepare_and_validate_start_translation_details(self, client, docs_count, **kwargs):
+        # get input params
+        wait_for_operation = kwargs.pop("wait", False)
+        variables = kwargs.get("variables", {})
+        language = kwargs.pop("language", "es")
+
+        # prepare test data
+        blob_data = Document.create_dummy_docs(docs_count=docs_count)
+        source_input = SourceInput(
+            source_url=self.create_source_container(data=blob_data, variables=variables)
+        )        
+        target = TranslationTarget(
+            target_url=self.create_target_container(variables=variables),
+            language=language
+        )        
+        batch_request = BatchRequest(
+            source=source_input,
+            targets=[target]
+        )        
+        start_translation_details = StartTranslationDetails(
+            inputs=[batch_request]
+        )
+
+        # submit job
+        poller = client.begin_translation(start_translation_details)
+        assert poller.id is not None
+        # wait for result
+        if wait_for_operation:
+            result = poller.result()
+            for doc in result:
+                self._validate_doc_status(doc, "es")
+        # validate
+        self._validate_translation_metadata(poller=poller)
+        
         return poller

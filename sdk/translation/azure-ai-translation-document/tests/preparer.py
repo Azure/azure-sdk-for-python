@@ -13,9 +13,7 @@ DocumentTranslationPreparer = functools.partial(
     PowerShellPreparer,
     "translation",
     translation_document_test_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
-    translation_document_name="redacted",
     translation_document_storage_name="redacted",
-    translation_document_storage_key="fakeZmFrZV9hY29jdW50X2tleQ==",
 )
 
 
