@@ -25,15 +25,15 @@ class TestDocumentStatus(DocumentTranslationTest):
         variables = kwargs.pop("variables", {})
         # prepare containers and test data
         blob_data = [Document(data=b"This is some text")]
-        source_container_sas_url = self.create_source_container(data=blob_data, variables=variables)
-        target_container_sas_url = self.create_target_container(variables=variables)
+        source_container_url = self.create_source_container(data=blob_data, variables=variables)
+        target_container_url = self.create_target_container(variables=variables)
         target_language = "es"
 
         # prepare translation inputs
         translation_inputs = [
             DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[TranslationTarget(target_url=target_container_sas_url, language=target_language)],
+                source_url=source_container_url,
+                targets=[TranslationTarget(target_url=target_container_url, language=target_language)],
             )
         ]
 

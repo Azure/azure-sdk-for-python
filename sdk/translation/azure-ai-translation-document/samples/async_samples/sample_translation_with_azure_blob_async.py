@@ -39,7 +39,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ResourceExistsError
 from azure.ai.translation.document.aio import DocumentTranslationClient
 from azure.storage.blob.aio import BlobServiceClient, BlobClient
-from azure.storage.blob import generate_container_sas
+from azure.identity import DefaultAzureCredential
 
 
 class SampleTranslationWithAzureBlobAsync:
@@ -48,7 +48,6 @@ class SampleTranslationWithAzureBlobAsync:
         self.key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
         self.storage_endpoint = os.environ["AZURE_STORAGE_SOURCE_ENDPOINT"]
         self.storage_account_name = os.environ["AZURE_STORAGE_ACCOUNT_NAME"]
-        self.storage_key = os.environ["AZURE_STORAGE_SOURCE_KEY"]
         self.storage_source_container_name = os.getenv("AZURE_STORAGE_SOURCE_CONTAINER_NAME", None)  # Optional
         self.storage_target_container_name = os.getenv("AZURE_STORAGE_TARGET_CONTAINER_NAME", None)  # Optional
         self.document_name = os.getenv(
@@ -59,7 +58,7 @@ class SampleTranslationWithAzureBlobAsync:
 
         translation_client = DocumentTranslationClient(self.endpoint, AzureKeyCredential(self.key))
 
-        blob_service_client = BlobServiceClient(self.storage_endpoint, credential=self.storage_key)
+        blob_service_client = BlobServiceClient(self.storage_endpoint, credential=DefaultAzureCredential())
 
         source_container = await self.create_container(
             blob_service_client,
@@ -81,10 +80,7 @@ class SampleTranslationWithAzureBlobAsync:
             )
         print(f"Uploaded document {self.document_name} to storage container {source_container.container_name}")
 
-        source_container_sas_url = self.generate_sas_url(source_container, permissions="rl")
-        target_container_sas_url = self.generate_sas_url(target_container, permissions="wl")
-
-        poller = await translation_client.begin_translation(source_container_sas_url, target_container_sas_url, "fr")
+        poller = await translation_client.begin_translation(source_container.url, target_container.url, "fr")
         print(f"Created translation operation with ID: {poller.id}")
         print("Waiting until translation completes...")
 
@@ -100,7 +96,7 @@ class SampleTranslationWithAzureBlobAsync:
                 print(f"Translated document location: {document.translated_document_url}")
                 print(f"Translated to language: {document.translated_to}\n")
 
-                blob_client = BlobClient.from_blob_url(document.translated_document_url, credential=self.storage_key)
+                blob_client = BlobClient.from_blob_url(document.translated_document_url, credential=DefaultAzureCredential())
                 async with blob_client:
                     with open("translated_" + self.document_name, "wb") as my_blob:
                         download_stream = await blob_client.download_blob()
@@ -122,20 +118,6 @@ class SampleTranslationWithAzureBlobAsync:
             print(f"The container with name {container_name} already exists")
             container_client = blob_service_client.get_container_client(container=container_name)
         return container_client
-
-    def generate_sas_url(self, container, permissions):
-        sas_token = generate_container_sas(
-            account_name=self.storage_account_name,
-            container_name=container.container_name,
-            account_key=self.storage_key,
-            permission=permissions,
-            expiry=datetime.datetime.utcnow() + datetime.timedelta(hours=1),
-        )
-
-        container_sas_url = self.storage_endpoint + container.container_name + "?" + sas_token
-        print(f"Generating {container.container_name} SAS URL")
-        return container_sas_url
-
 
 async def main():
     sample = SampleTranslationWithAzureBlobAsync()
