@@ -76,11 +76,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     """
 
     def __init__(
-            self,
-            client_connection: CosmosClientConnection,
-            database_link: str,
-            id: str,
-            properties: Optional[Dict[str, Any]] = None
+        self,
+        client_connection: CosmosClientConnection,
+        database_link: str,
+        id: str,
+        properties: Optional[Dict[str, Any]] = None
     ) -> None:
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
@@ -125,8 +125,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return conflict_or_link["_self"]
 
     def _set_partition_key(
-            self,
-            partition_key: PartitionKeyType
+        self,
+        partition_key: PartitionKeyType
     ) -> Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined]:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(self.is_system_key)
@@ -144,15 +144,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def read(  # pylint:disable=docstring-missing-param
-            self,
-            populate_query_metrics: Optional[bool] = None,
-            populate_partition_key_range_statistics: Optional[bool] = None,
-            populate_quota_info: Optional[bool] = None,
-            *,
-            session_token: Optional[str] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            **kwargs: Any
+        self,
+        populate_query_metrics: Optional[bool] = None,
+        populate_partition_key_range_statistics: Optional[bool] = None,
+        populate_quota_info: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Read the container properties.
 
@@ -194,17 +194,17 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def read_item(  # pylint:disable=docstring-missing-param
-            self,
-            item: Union[str, Mapping[str, Any]],
-            partition_key: PartitionKeyType,
-            populate_query_metrics: Optional[bool] = None,
-            post_trigger_include: Optional[str] = None,
-            *,
-            session_token: Optional[str] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            max_integrated_cache_staleness_in_ms: Optional[int] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            **kwargs: Any
+        self,
+        item: Union[str, Mapping[str, Any]],
+        partition_key: PartitionKeyType,
+        populate_query_metrics: Optional[bool] = None,
+        post_trigger_include: Optional[str] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Get the item identified by `item`.
 
@@ -262,15 +262,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def read_all_items(  # pylint:disable=docstring-missing-param
-            self,
-            max_item_count: Optional[int] = None,
-            populate_query_metrics: Optional[bool] = None,
-            *,
-            session_token: Optional[str] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            max_integrated_cache_staleness_in_ms: Optional[int] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            **kwargs: Any
+        self,
+        max_item_count: Optional[int] = None,
+        populate_query_metrics: Optional[bool] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List all the items in the container.
 
@@ -522,9 +522,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 feed_options["maxItemCount"] = args[3]
 
         if kwargs.get("partition_key") is not None:
-            change_feed_state_context["partitionKey"] = \
+            change_feed_state_context["partitionKey"] =\
                 self._set_partition_key(cast(PartitionKeyType, kwargs.get('partition_key')))
-            change_feed_state_context["partitionKeyFeedRange"] = \
+            change_feed_state_context["partitionKeyFeedRange"] =\
                 self._get_epk_range_for_partition_key(kwargs.pop('partition_key'))
 
         if kwargs.get("feed_range") is not None:
@@ -548,22 +548,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def query_items(  # pylint:disable=docstring-missing-param
-            self,
-            query: str,
-            parameters: Optional[List[Dict[str, object]]] = None,
-            partition_key: Optional[PartitionKeyType] = None,
-            enable_cross_partition_query: Optional[bool] = None,
-            max_item_count: Optional[int] = None,
-            enable_scan_in_query: Optional[bool] = None,
-            populate_query_metrics: Optional[bool] = None,
-            *,
-            populate_index_metrics: Optional[bool] = None,
-            session_token: Optional[str] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            max_integrated_cache_staleness_in_ms: Optional[int] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            continuation_token_limit: Optional[int] = None,
-            **kwargs: Any
+        self,
+        query: str,
+        parameters: Optional[List[Dict[str, object]]] = None,
+        partition_key: Optional[PartitionKeyType] = None,
+        enable_cross_partition_query: Optional[bool] = None,
+        max_item_count: Optional[int] = None,
+        enable_scan_in_query: Optional[bool] = None,
+        populate_query_metrics: Optional[bool] = None,
+        *,
+        populate_index_metrics: Optional[bool] = None,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        max_integrated_cache_staleness_in_ms: Optional[int] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        continuation_token_limit: Optional[int] = None,
+        **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
@@ -671,7 +671,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return items
 
     def __is_prefix_partitionkey(
-            self, partition_key: PartitionKeyType) -> bool:
+        self, partition_key: PartitionKeyType) -> bool:
         properties = self._get_properties()
         pk_properties = properties["partitionKey"]
         partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
@@ -680,20 +680,20 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def replace_item(  # pylint:disable=docstring-missing-param
-            self,
-            item: Union[str, Mapping[str, Any]],
-            body: Dict[str, Any],
-            populate_query_metrics: Optional[bool] = None,
-            pre_trigger_include: Optional[str] = None,
-            post_trigger_include: Optional[str] = None,
-            *,
-            session_token: Optional[str] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            no_response: Optional[bool] = None,
-            **kwargs: Any
+        self,
+        item: Union[str, Mapping[str, Any]],
+        body: Dict[str, Any],
+        populate_query_metrics: Optional[bool] = None,
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        no_response: Optional[bool] = None,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Replaces the specified item if it exists in the container.
 
@@ -715,9 +715,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword bool no_response: Indicates whether service should be instructed to skip
-            sending response payloads. When not specified explicitly here, the default value will be determined from
-            kwargs or when also not specified there from client-level kwargs.
-        :returns: A dict representing the item after replace went through. The dict will be empty if `no_response`
+            sending response payloads. When not specified explicitly here, the default value will be determined from 
+            kwargs or when also not specified there from client-level kwargs.  
+        :returns: A dict representing the item after replace went through. The dict will be empty if `no_response` 
             is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
@@ -753,24 +753,24 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReplaceItem(
-            document_link=item_link, new_document=body, options=request_options, **kwargs)
+                document_link=item_link, new_document=body, options=request_options, **kwargs)
         return result or {}
 
     @distributed_trace
     def upsert_item(  # pylint:disable=docstring-missing-param
-            self,
-            body: Dict[str, Any],
-            populate_query_metrics: Optional[bool]=None,
-            pre_trigger_include: Optional[str] = None,
-            post_trigger_include: Optional[str] = None,
-            *,
-            session_token: Optional[str] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            no_response: Optional[bool] = None,
-            **kwargs: Any
+        self,
+        body: Dict[str, Any],
+        populate_query_metrics: Optional[bool]=None,
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        no_response: Optional[bool] = None,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Insert or update the specified item.
 
@@ -790,9 +790,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool no_response: Indicates whether service should be instructed to skip sending
-            response payloads. When not specified explicitly here, the default value will be determined from kwargs or
-            when also not specified there from client-level kwargs.
+        :keyword bool no_response: Indicates whether service should be instructed to skip sending 
+            response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
+            when also not specified there from client-level kwargs.   
         :returns: A dict representing the upserted item. The dict will be empty if `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :rtype: Dict[str, Any]
@@ -825,30 +825,30 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.UpsertItem(
-            database_or_container_link=self.container_link,
-            document=body,
-            options=request_options,
-            **kwargs
-        )
+                database_or_container_link=self.container_link,
+                document=body,
+                options=request_options,
+                **kwargs
+            )
         return result or {}
 
     @distributed_trace
     def create_item(  # pylint:disable=docstring-missing-param
-            self,
-            body: Dict[str, Any],
-            populate_query_metrics: Optional[bool] = None,
-            pre_trigger_include: Optional[str] = None,
-            post_trigger_include: Optional[str] = None,
-            indexing_directive: Optional[int] = None,
-            *,
-            enable_automatic_id_generation: bool = False,
-            session_token: Optional[str] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            no_response: Optional[bool] = None,
-            **kwargs: Any
+        self,
+        body: Dict[str, Any],
+        populate_query_metrics: Optional[bool] = None,
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        indexing_directive: Optional[int] = None,
+        *,
+        enable_automatic_id_generation: bool = False,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        no_response: Optional[bool] = None,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Create an item in the container.
 
@@ -872,8 +872,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool no_response: Indicates whether service should be instructed to skip sending
-            response payloads. When not specified explicitly here, the default value will be determined from kwargs or
+        :keyword bool no_response: Indicates whether service should be instructed to skip sending 
+            response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
             when also not specified there from client-level kwargs.
         :returns: A dict representing the new item. The dict will be empty if `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
@@ -908,25 +908,25 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if self.container_link in self.__get_client_container_caches():
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.CreateItem(
-            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
+                database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
         return result or {}
 
     @distributed_trace
     def patch_item(
-            self,
-            item: Union[str, Dict[str, Any]],
-            partition_key: PartitionKeyType,
-            patch_operations: List[Dict[str, Any]],
-            *,
-            filter_predicate: Optional[str] = None,
-            pre_trigger_include: Optional[str] = None,
-            post_trigger_include: Optional[str] = None,
-            session_token: Optional[str] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            no_response: Optional[bool] = None,
-            **kwargs: Any
+        self,
+        item: Union[str, Dict[str, Any]],
+        partition_key: PartitionKeyType,
+        patch_operations: List[Dict[str, Any]],
+        *,
+        filter_predicate: Optional[str] = None,
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        session_token: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        no_response: Optional[bool] = None,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """ Patches the specified item with the provided operations if it
          exists in the container.
@@ -950,10 +950,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool no_response: Indicates whether service should be instructed to skip sending
-            response payloads. When not specified explicitly here, the default value will be determined from kwargs or
+        :keyword bool no_response: Indicates whether service should be instructed to skip sending 
+            response payloads. When not specified explicitly here, the default value will be determined from kwargs or 
             when also not specified there from client-level kwargs.
-        :returns: A dict representing the item after the patch operations went through. The dict will be empty
+        :returns: A dict representing the item after the patch operations went through. The dict will be empty 
             if `no_response` is specified.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
@@ -983,22 +983,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
         item_link = self._get_document_link(item)
         result = self.client_connection.PatchItem(
-            document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
+                document_link=item_link, operations=patch_operations, options=request_options, **kwargs)
         return result or {}
 
     @distributed_trace
     def execute_item_batch(
-            self,
-            batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
-            partition_key: PartitionKeyType,
-            *,
-            pre_trigger_include: Optional[str] = None,
-            post_trigger_include: Optional[str] = None,
-            session_token: Optional[str] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            **kwargs: Any
+        self,
+        batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
+        partition_key: PartitionKeyType,
+        *,
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        session_token: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        **kwargs: Any
     ) -> List[Dict[str, Any]]:
         """ Executes the transactional batch for the specified partition key.
 
@@ -1042,19 +1042,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def delete_item(  # pylint:disable=docstring-missing-param
-            self,
-            item: Union[Mapping[str, Any], str],
-            partition_key: PartitionKeyType,
-            populate_query_metrics: Optional[bool] = None,
-            pre_trigger_include: Optional[str] = None,
-            post_trigger_include: Optional[str] = None,
-            *,
-            session_token: Optional[str] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            priority: Optional[Literal["High", "Low"]] = None,
-            **kwargs: Any
+        self,
+        item: Union[Mapping[str, Any], str],
+        partition_key: PartitionKeyType,
+        populate_query_metrics: Optional[bool] = None,
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        *,
+        session_token: Optional[str] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        priority: Optional[Literal["High", "Low"]] = None,
+        **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
 
@@ -1154,9 +1154,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def replace_throughput(
-            self,
-            throughput: Union[int, ThroughputProperties],
-            **kwargs: Any
+        self,
+        throughput: Union[int, ThroughputProperties],
+        **kwargs: Any
     ) -> ThroughputProperties:
         """Replace the container's throughput.
 
@@ -1188,9 +1188,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_conflicts(
-            self,
-            max_item_count: Optional[int] = None,
-            **kwargs: Any
+        self,
+        max_item_count: Optional[int] = None,
+        **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """List all the conflicts in the container.
 
@@ -1215,13 +1215,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def query_conflicts(
-            self,
-            query: str,
-            parameters: Optional[List[Dict[str, object]]] = None,
-            enable_cross_partition_query: Optional[bool] = None,
-            partition_key: Optional[PartitionKeyType] = None,
-            max_item_count: Optional[int] = None,
-            **kwargs: Any
+        self,
+        query: str,
+        parameters: Optional[List[Dict[str, object]]] = None,
+        enable_cross_partition_query: Optional[bool] = None,
+        partition_key: Optional[PartitionKeyType] = None,
+        max_item_count: Optional[int] = None,
+        **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
         """Return all conflicts matching a given `query`.
 
@@ -1261,10 +1261,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def get_conflict(
-            self,
-            conflict: Union[str, Mapping[str, Any]],
-            partition_key: PartitionKeyType,
-            **kwargs: Any
+        self,
+        conflict: Union[str, Mapping[str, Any]],
+        partition_key: PartitionKeyType,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Get the conflict identified by `conflict`.
 
@@ -1289,10 +1289,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def delete_conflict(
-            self,
-            conflict: Union[str, Mapping[str, Any]],
-            partition_key: PartitionKeyType,
-            **kwargs: Any
+        self,
+        conflict: Union[str, Mapping[str, Any]],
+        partition_key: PartitionKeyType,
+        **kwargs: Any
     ) -> None:
         """Delete a specified conflict from the container.
 
@@ -1319,15 +1319,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def delete_all_items_by_partition_key(
-            self,
-            partition_key: PartitionKeyType,
-            *,
-            pre_trigger_include: Optional[str] = None,
-            post_trigger_include: Optional[str] = None,
-            session_token: Optional[str] = None,
-            etag: Optional[str] = None,
-            match_condition: Optional[MatchConditions] = None,
-            **kwargs: Any
+        self,
+        partition_key: PartitionKeyType,
+        *,
+        pre_trigger_include: Optional[str] = None,
+        post_trigger_include: Optional[str] = None,
+        session_token: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> None:
         """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
         documents with the same logical partition key value, using the Cosmos SDK. The delete by partition key
@@ -1389,7 +1389,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 **kwargs)
 
         return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange), self.container_link)
-            for partitionKeyRange in partition_key_ranges]
+                for partitionKeyRange in partition_key_ranges]
 
     def get_updated_session_token(
             self,

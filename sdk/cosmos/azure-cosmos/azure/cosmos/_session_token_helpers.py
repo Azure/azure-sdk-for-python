@@ -22,8 +22,8 @@
 """Internal Helper functions for manipulating session tokens.
 """
 from azure.cosmos._routing.routing_range import Range
-from ._feed_range import FeedRange
 from azure.cosmos._vector_session_token import VectorSessionToken
+from ._feed_range import FeedRange
 
 # pylint: disable=protected-access
 
@@ -55,7 +55,7 @@ def split_compound_session_tokens(compound_session_tokens: [(Range, str)]) -> [s
             session_tokens.append(session_token)
     return session_tokens
 
-def merge_session_tokens_for_same_physical_pk(session_tokens: [str]) -> [str]:
+def merge_session_tokens_for_same_partition(session_tokens: [str]) -> [str]:
     i = 0
     while i < len(session_tokens):
         j = i + 1
@@ -75,7 +75,7 @@ def merge_session_tokens_for_same_physical_pk(session_tokens: [str]) -> [str]:
 
     return session_tokens
 
-def merge_ranges_with_subsets(overlapping_ranges: [(Range, str)]) -> [(Range, str)]:
+def merge_ranges_with_subsets(overlapping_ranges: [(Range, str)]) -> [(Range, str)]: # pylint: disable=too-many-nested-blocks
     processed_ranges = []
     while len(overlapping_ranges) != 0:
         feed_range_cmp, session_token_cmp = overlapping_ranges[0]
@@ -191,14 +191,14 @@ def get_updated_session_token(feed_ranges_to_session_tokens: [(FeedRange, str)],
     if len(remaining_session_tokens) == 1:
         return remaining_session_tokens[0]
     # merging any session tokens with same physical partition key range id
-    remaining_session_tokens = merge_session_tokens_for_same_physical_pk(remaining_session_tokens)
+    remaining_session_tokens = merge_session_tokens_for_same_partition(remaining_session_tokens)
 
     updated_session_token = ""
     # compound the remaining session tokens
-    for i in range(len(remaining_session_tokens)):
+    for i, remaining_session_token in enumerate(remaining_session_tokens):
         if i == len(remaining_session_tokens) - 1:
-            updated_session_token += remaining_session_tokens[i]
+            updated_session_token += remaining_session_token
         else:
-            updated_session_token += remaining_session_tokens[i] + ","
+            updated_session_token += remaining_session_token + ","
 
     return updated_session_token

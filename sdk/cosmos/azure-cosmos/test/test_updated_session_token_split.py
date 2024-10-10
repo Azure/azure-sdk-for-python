@@ -14,6 +14,24 @@ from azure.cosmos._session_token_helpers import is_compound_session_token, parse
 from azure.cosmos.http_constants import HttpHeaders
 
 
+def create_item(hpk):
+    if hpk:
+        item = {
+            'id': 'item' + str(uuid.uuid4()),
+            'name': 'sample',
+            'state': 'CA',
+            'city': 'LA' + str(random.randint(1, 10)),
+            'zipcode': '90001'
+        }
+    else:
+        item = {
+            'id': 'item' + str(uuid.uuid4()),
+            'name': 'sample',
+            'pk': 'A' + str(random.randint(1, 10))
+        }
+    return item
+
+
 class TestUpdatedSessionTokenSplit(unittest.TestCase):
     """Test for session token helpers"""
 
@@ -44,8 +62,9 @@ class TestUpdatedSessionTokenSplit(unittest.TestCase):
         session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
         assert session_token == target_session_token
+        feed_ranges_and_session_tokens.append((target_feed_range, session_token))
 
-        self.trigger_split(container)
+        self.trigger_split(container, 11000)
 
         target_session_token, _ = self.create_items_logical_pk(container, target_pk, session_token,
                                                                feed_ranges_and_session_tokens)
@@ -56,7 +75,7 @@ class TestUpdatedSessionTokenSplit(unittest.TestCase):
         self.database.delete_container(container.id)
 
     def test_updated_session_token_from_physical_pk(self):
-        container = self.database.create_container("test_updated_session_token_from_logical_pk" + str(uuid.uuid4()),
+        container = self.database.create_container("test_updated_session_token_from_physical_pk" + str(uuid.uuid4()),
                                                    PartitionKey(path="/pk"),
                                                     offer_throughput=400)
         feed_ranges_and_session_tokens = []
@@ -69,7 +88,7 @@ class TestUpdatedSessionTokenSplit(unittest.TestCase):
         session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert session_token == target_session_token
 
-        self.trigger_split(container)
+        self.trigger_split(container, 11000)
 
         _, target_feed_range, previous_session_token = self.create_items_physical_pk(container, pk_feed_range,
                                                                                 session_token,
@@ -88,11 +107,47 @@ class TestUpdatedSessionTokenSplit(unittest.TestCase):
         assert '2' in pk_range_ids
         self.database.delete_container(container.id)
 
+    def test_updated_session_token_hpk(self):
+        container = self.database.create_container("test_updated_session_token_hpk" + str(uuid.uuid4()),
+                                                   PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"),
+                                                   offer_throughput=400)
+        feed_ranges_and_session_tokens = []
+        previous_session_token = ""
+        pk = ['CA', 'LA1', '90001']
+        pk_feed_range = container.feed_range_from_partition_key(pk)
+        target_session_token, target_feed_range, previous_session_token = self.create_items_physical_pk(container,
+                                                                                                        pk_feed_range,
+                                                                                                        previous_session_token,
+                                                                                                        feed_ranges_and_session_tokens,
+                                                                                                        True)
+
+        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        assert session_token == target_session_token
+        self.database.delete_container(container.id)
+
+
+    def test_updated_session_token_logical_hpk(self):
+        container = self.database.create_container("test_updated_session_token_from_logical_hpk" + str(uuid.uuid4()),
+                                                   PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"),
+                                                   offer_throughput=400)
+        feed_ranges_and_session_tokens = []
+        previous_session_token = ""
+        target_pk = ['CA1', 'LA1', '900011']
+        target_session_token, previous_session_token = self.create_items_logical_pk(container, target_pk,
+                                                                                    previous_session_token,
+                                                                                    feed_ranges_and_session_tokens,
+                                                                                    True)
+        target_feed_range = container.feed_range_from_partition_key(target_pk)
+        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+
+        assert session_token == target_session_token
+        self.database.delete_container(container.id)
+
 
     @staticmethod
-    def trigger_split(container):
+    def trigger_split(container, throughput):
         print("Triggering a split in session token helpers")
-        container.replace_throughput(11000)
+        container.replace_throughput(throughput)
         print("changed offer to 11k")
         print("--------------------------------")
         print("Waiting for split to complete")
@@ -112,25 +167,22 @@ class TestUpdatedSessionTokenSplit(unittest.TestCase):
     print("Split in session token helpers has completed")
 
     @staticmethod
-    def create_items_logical_pk(container, target_pk, previous_session_token, feed_ranges_and_session_tokens):
+    def create_items_logical_pk(container, target_pk, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
         target_session_token = ""
         for i in range(100):
-            item = {
-                'id': 'item' + str(uuid.uuid4()),
-                'name': 'sample',
-                'pk': 'A' + str(random.randint(1, 10))
-            }
+            item = create_item(hpk)
             container.create_item(item, session_token=previous_session_token)
             session_token = container.client_connection.last_response_headers[HttpHeaders.SessionToken]
-            if item['pk'] == target_pk:
+            pk = item['pk'] if not hpk else [item['state'], item['city'], item['zipcode']]
+            if pk == target_pk:
                 target_session_token = session_token
             previous_session_token = session_token
-            feed_ranges_and_session_tokens.append((container.feed_range_from_partition_key(item['pk']),
+            feed_ranges_and_session_tokens.append((container.feed_range_from_partition_key(pk),
                                                session_token))
         return target_session_token, previous_session_token
 
     @staticmethod
-    def create_items_physical_pk(container, pk_feed_range, previous_session_token, feed_ranges_and_session_tokens):
+    def create_items_physical_pk(container, pk_feed_range, previous_session_token, feed_ranges_and_session_tokens, hpk=False):
         target_session_token = ""
         container_feed_ranges = container.read_feed_ranges()
         target_feed_range = None
@@ -140,14 +192,14 @@ class TestUpdatedSessionTokenSplit(unittest.TestCase):
                 break
 
         for i in range(100):
-            item = {
-                'id': 'item' + str(uuid.uuid4()),
-                'name': 'sample',
-                'pk': 'A' + str(random.randint(1, 10))
-            }
+            item = create_item(hpk)
             container.create_item(item, session_token=previous_session_token)
             session_token = container.client_connection.last_response_headers[HttpHeaders.SessionToken]
-            curr_feed_range = container.feed_range_from_partition_key(item['pk'])
+            if hpk:
+                pk = [item['state'], item['city'], item['zipcode']]
+                curr_feed_range = container.feed_range_from_partition_key(pk)
+            else:
+                curr_feed_range = container.feed_range_from_partition_key(item['pk'])
             if container.is_feed_range_subset(target_feed_range, curr_feed_range):
                 target_session_token = session_token
             previous_session_token = session_token
