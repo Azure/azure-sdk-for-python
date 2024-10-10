@@ -1127,6 +1127,231 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         raise ValueError("Invalid parameters for upload_file. Please provide the necessary arguments.")
 
+    @overload
+    def upload_file_and_poll(self, body: JSON, sleep_interval: float = 1, **kwargs: Any) -> _models.OpenAIFile:
+        """Uploads a file for use by other operations.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.OpenAIFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upload_file_and_poll(
+        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, sleep_interval: float = 1, **kwargs: Any
+    ) -> _models.OpenAIFile:
+        """Uploads a file for use by other operations.
+
+        :keyword file: Required.
+        :paramtype file: ~azure.ai.client._vendor.FileType
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :paramtype purpose: str or ~azure.ai.client.models.FilePurpose
+        :keyword filename: Default value is None.
+        :paramtype filename: str
+        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.OpenAIFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def upload_file_and_poll(
+        self, file_path: str, *, purpose: str, sleep_interval: float = 1, **kwargs: Any
+    ) -> _models.OpenAIFile:
+        """Uploads a file for use by other operations.
+
+        :param file_path: Required.
+        :type file_path: str
+        :keyword purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+         "assistants_output", "batch", "batch_output", and "vision". Required.
+        :paramtype purpose: str
+        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.OpenAIFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """        
+
+    @distributed_trace
+    def upload_file_and_poll(
+        self,
+        body: Union[JSON, None] = None,
+        *,
+        file: Union[FileType, None] = None,
+        file_path: Optional[str] = None,
+        purpose: Optional[Union[str, _models.FilePurpose]] = None,
+        filename: Optional[str] = None,
+        sleep_interval: float = 1,
+        **kwargs: Any
+    ) -> _models.OpenAIFile:
+        """
+        Uploads a file for use by other operations, delegating to the generated operations.
+
+        :param body: JSON. Required if `file` and `purpose` are not provided.
+        :param file: File content. Required if `body` and `purpose` are not provided.
+        :param file_path: Path to the file. Required if `body` and `purpose` are not provided.
+        :param purpose: Known values are: "fine-tune", "fine-tune-results", "assistants",
+            "assistants_output", "batch", "batch_output", and "vision". Required if `body` and `file` are not provided.
+        :param filename: The name of the file.
+        :keyword sleep_interval: Time to wait before polling for the status of the uploaded file. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :param kwargs: Additional parameters.
+        :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
+        :raises FileNotFoundError: If the file_path is invalid.
+        :raises IOError: If there are issues with reading the file.
+        :raises: HttpResponseError for HTTP errors.
+        """
+        file = self.upload_file(body=body, file=file, file_path=file_path, purpose=purpose, filename=filename, **kwargs)
+    
+        while file.status in ["uploaded", "pending", "running"]:
+            time.sleep(sleep_interval)
+            file = self.get_file(file.id)
+            
+        return file
+    
+    @overload
+    def create_vector_store_and_poll(
+        self, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
+    ) -> _models.VectorStore:
+        """Creates a vector store and poll.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_vector_store_and_poll(
+        self,
+        *,
+        content_type: str = "application/json",
+        file_ids: Optional[List[str]] = None,
+        name: Optional[str] = None,
+        expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        sleep_interval: float = 1, 
+        **kwargs: Any
+    ) -> _models.VectorStore:
+        """Creates a vector store and poll.
+
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword file_ids: A list of file IDs that the vector store should use. Useful for tools like
+         ``file_search`` that can access files. Default value is None.
+        :paramtype file_ids: list[str]
+        :keyword name: The name of the vector store. Default value is None.
+        :paramtype name: str
+        :keyword expires_after: Details on when this vector store expires. Default value is None.
+        :paramtype expires_after: ~azure.ai.client.models.VectorStoreExpirationPolicy
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_vector_store_and_poll(
+        self, body: IO[bytes], *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
+    ) -> _models.VectorStore:
+        """Creates a vector store and poll.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+    @distributed_trace
+    def create_vector_store_and_poll(
+        self,
+        body: Union[JSON, IO[bytes]] = None,
+        *,
+        file_ids: Optional[List[str]] = None,
+        name: Optional[str] = None,
+        expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        sleep_interval: float = 1, 
+        **kwargs: Any
+    ) -> _models.VectorStore:
+        """Creates a vector store.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword file_ids: A list of file IDs that the vector store should use. Useful for tools like
+         ``file_search`` that can access files. Default value is None.
+        :paramtype file_ids: list[str]
+        :keyword name: The name of the vector store. Default value is None.
+        :paramtype name: str
+        :keyword expires_after: Details on when this vector store expires. Default value is None.
+        :paramtype expires_after: ~azure.ai.client.models.VectorStoreExpirationPolicy
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.client.models.VectorStoreChunkingStrategyRequest
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :keyword sleep_interval: Time to wait before polling for the status of the vector store. Default value
+         is 1.
+        :paramtype sleep_interval: float
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.client.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        
+        vector_store = self.create_vector_store(
+            body=body,
+            file_ids=file_ids,
+            name=name,
+            expires_after=expires_after,
+            chunking_strategy=chunking_strategy,
+            metadata=metadata,
+            **kwargs
+        )
+        while vector_store.status == "in_progress":
+            time.sleep(sleep_interval)
+            vector_store = self.get_vector_store(vector_store.id)
+            
+        return vector_store
+
 
 __all__: List[str] = [
     "AgentsOperations",
