@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, too-many-lines, docstring-keyword-should-match-keyword-only
+# pylint: disable=too-many-lines, docstring-keyword-should-match-keyword-only
 
 import functools
 from typing import (
