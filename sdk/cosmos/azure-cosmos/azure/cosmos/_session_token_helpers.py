@@ -75,9 +75,9 @@ def merge_session_tokens_for_same_partition(session_tokens: [str]) -> [str]:
 
     return session_tokens
 
-def merge_ranges_with_subsets(overlapping_ranges: [(Range, str)]) -> [(Range, str)]: # pylint: disable=too-many-nested-blocks
+def merge_ranges_with_subsets(overlapping_ranges: [(Range, str)]) -> [(Range, str)]:
     processed_ranges = []
-    while len(overlapping_ranges) != 0:
+    while len(overlapping_ranges) != 0: # pylint: disable=too-many-nested-blocks
         feed_range_cmp, session_token_cmp = overlapping_ranges[0]
         # compound session tokens are not considered for merging
         if is_compound_session_token(session_token_cmp):
@@ -144,13 +144,13 @@ def merge_ranges_with_subsets(overlapping_ranges: [(Range, str)]) -> [(Range, st
 
 def get_updated_session_token(feed_ranges_to_session_tokens: [(FeedRange, str)], target_feed_range: FeedRange,
                               container_link: str):
-    if target_feed_range._container_link != container_link:
+    if target_feed_range._feed_range_internal._container_link != container_link:
         raise ValueError('The target feed range does not belong to the container.')
     target_feed_range_normalized = target_feed_range._feed_range_internal.get_normalized_range()
     # filter out tuples that overlap with target_feed_range and normalizes all the ranges
     overlapping_ranges = []
     for feed_range_to_session_token in feed_ranges_to_session_tokens:
-        if feed_range_to_session_token[0]._container_link != container_link:
+        if feed_range_to_session_token[0]._feed_range_internal._container_link != container_link:
             raise ValueError('The feed range does not belong to the container.')
         if Range.overlaps(target_feed_range_normalized,
                           feed_range_to_session_token[0]._feed_range_internal.get_normalized_range()):

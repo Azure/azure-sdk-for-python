@@ -1357,8 +1357,8 @@ class ContainerProxy:
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
         """
-        if (child_feed_range._container_link != self.container_link or
-                parent_feed_range._container_link != self.container_link):
+        if (child_feed_range._feed_range_internal._container_link != self.container_link or
+                parent_feed_range._feed_range_internal._container_link != self.container_link):
             raise ValueError("Feed ranges must be from the same container.")
         return child_feed_range._feed_range_internal.get_normalized_range().is_subset(
             parent_feed_range._feed_range_internal.get_normalized_range())
