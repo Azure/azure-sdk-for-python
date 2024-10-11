@@ -217,6 +217,9 @@ class AMQPClient(
         # Emulator
         self._use_tls: bool = kwargs.get("use_tls", True)
 
+        # Event waiting
+        self._operation_waiting = threading.Event()
+
     def __enter__(self):
         """Run Client in a context manager.
 
@@ -232,18 +235,17 @@ class AMQPClient(
         """
         self.close()
 
-    # def _keep_alive(self):
-    #     start_time = time.time()
-    #     try:
-    #         while self._connection and not self._shutdown:
-    #             current_time = time.time()
-    #             elapsed_time = current_time - start_time
-    #             if elapsed_time >= self._keep_alive_interval:
-    #                 self._connection.listen(wait=self._socket_timeout, batch=self._link.total_link_credit)
-    #                 start_time = current_time
-    #             time.sleep(1)
-    #     except Exception as e:  # pylint: disable=broad-except
-    #         _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
+    def _keep_alive(self):
+        start_time = time.time()
+        try:
+            while self._connection and not self._shutdown:
+                if not self._connection._transport._incoming_queue.empty():
+                    if self._operation_waiting.isSet():
+                        self._connection._transport._receive_event.set()
+                    elif not self._operation_waiting.isSet():
+                        self._connection._read_frame()
+        except Exception as e:  # pylint: disable=broad-except
+            _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
 
     def _client_ready(self):
         """Determine whether the client is ready to start sending and/or
@@ -331,16 +333,17 @@ class AMQPClient(
                 use_tls=self._use_tls,
             )
             self._connection.open()
+        if self._keep_alive_interval:
+            self._keep_alive_thread = threading.Thread(target=self._keep_alive)
+            self._keep_alive_thread.daemon = True
+            self._keep_alive_thread.start()
         if not self._session:
             self._session = self._connection.create_session(
                 incoming_window=self._incoming_window,
                 outgoing_window=self._outgoing_window,
             )
+            print("session begin")
             self._session.begin()
-        # if self._keep_alive_interval:
-        #     self._keep_alive_thread = threading.Thread(target=self._keep_alive)
-        #     self._keep_alive_thread.daemon = True
-        #     self._keep_alive_thread.start()
         if self._auth.auth_type == AUTH_TYPE_CBS:
             self._cbs_authenticator = CBSAuthenticator(
                 session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
@@ -687,8 +690,14 @@ class SendClient(AMQPClient):
         
         # idea #1
         # sent_message = threading.Event()
+
+        print("sending message")
+        self._operation_waiting.set()
         self._transfer_message(message_delivery, timeout)
-        # sent_message.wait()
+        print("message sent")
+        self._connection._transport._receive_event.wait()
+        print("wait done, read frame")
+        self._connection._read_frame()
 
         # idea #2
         # build this into message_delivery.state() instead.
@@ -698,8 +707,8 @@ class SendClient(AMQPClient):
 
         # running = True
         # TODO: message_delivery.state is a race condition?
-        while message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            time.sleep(1)
+        # while message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+        #     time.sleep(1)
         
 
         # while message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:

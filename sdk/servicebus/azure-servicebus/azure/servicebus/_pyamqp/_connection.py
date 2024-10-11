@@ -256,7 +256,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
                 else:
                     self._set_state(ConnectionState.HDR_SENT)
 
-                self.start_read_loop()
+                # self.start_read_loop()
             except (OSError, IOError, SSLError, socket.error) as exc:
                 # FileNotFoundError is being raised for exception parity with uamqp when invalid
                 # `connection_verify` file path is passed in. Remove later when resolving issue #27128.
@@ -285,14 +285,14 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         """
         return self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END)
     
-    def start_read_loop(self):
-        new_thread = threading.Thread(target=self.read_loop)
-        new_thread.start()
+    # def start_read_loop(self):
+    #     new_thread = threading.Thread(target=self.read_loop)
+    #     new_thread.start()
 
 
-    def read_loop(self):
-        while self._can_read() and not self._transport._negotiating:
-            self._read_frame()
+    # def read_loop(self):
+    #     while self._can_read() and not self._transport._negotiating:
+    #         self._read_frame()
 
     def _read_frame(
         self, wait: Union[bool, float] = True, **kwargs: Any
@@ -637,8 +637,7 @@ class Connection:  # pylint:disable=too-many-instance-attributes
         """
 
         # TODO bring this down to the receiver level and loop there? or just have a thread looping here on process_incoming_frame
-        print("INCOMING FRAME")
-        print(f"THREAD: {threading.current_thread().name}")
+        print(f"PROCESSING INCOMING FRAME THREAD: {threading.current_thread().name}")
         # with self._incoming_lock:
         try:
             performative, fields = cast(Union[bytes, Tuple], frame)

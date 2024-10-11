@@ -195,8 +195,9 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.start_read = False
         self.sel = selectors.DefaultSelector()
         self._recieve_callback = kwargs.get('recieve_callback')
-        self._lock = threading.RLock()   
-        self._negotiating = False     
+        self._lock = threading.RLock() 
+        self._negotiating = True
+        self._receive_event = threading.Event()     
 
         self._use_tls = use_tls
 
@@ -466,6 +467,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     read_frame_buffer.write(self._read(payload_size, buffer=payload))
                 offset -= 2
                 self._incoming_queue.put((frame_header, channel, payload[offset:]))
+                print("INCOMING MSG")
             except (socket.timeout, TimeoutError) as k:
                 # _LOGGER.info(f"Socket timeout: {k}")
                 time_end = time.time()

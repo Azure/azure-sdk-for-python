@@ -63,7 +63,6 @@ import time
 
 class SASLTransportMixin:
     def _negotiate(self):
-            self._negotiating = True
             self.write(SASL_HEADER_FRAME) # todo this could be a sep func
             self.start_loop()
             _, returned_header = self.receive_frame()
@@ -88,7 +87,6 @@ class SASLTransportMixin:
             self.send_frame(0, sasl_init, frame_type=_SASL_FRAME_TYPE)
             _, next_frame = self.receive_frame(verify_frame_type=1)
             frame_type, fields = next_frame
-            self._negotiating = False
             if frame_type != 0x00000044:  # SASLOutcome
                 raise NotImplementedError("Unsupported SASL challenge")
             if fields[0] == SASLCode.Ok:  # code

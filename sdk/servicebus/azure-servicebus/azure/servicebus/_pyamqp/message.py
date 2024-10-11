@@ -270,11 +270,11 @@ class BatchMessage(Message):
 
 
 class _MessageDelivery:
-    def __init__(self, message, state=MessageDeliveryState.WaitingToBeSent, expiry=None):
+    def __init__(self, message, state=MessageDeliveryState.WaitingToBeSent, expiry=None, blocking_event=None):
         self.message = message
         self.state = state
         self.expiry = expiry
         self.reason = None
         self.delivery = None
         self.error = None
-        self.blocking_event = None
+        self.blocking_event = blocking_event
