@@ -4,6 +4,7 @@
 
 import os
 from typing import Optional
+
 from typing_extensions import override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
@@ -55,7 +56,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         response: Optional[str] = None,
         context: Optional[str] = None,
         conversation: Optional[dict] = None,
-        **kwargs
+        **kwargs,
     ):
         """Evaluate relevance. Accepts either a response and context a single evaluation,
         or a conversation for a multi-turn evaluation. If the conversation has more than one turn,
@@ -72,6 +73,6 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[Dict]
         :return: The relevance score.
-        :rtype: dict
+        :rtype: Dict[str, float]
         """
         return super().__call__(query=query, response=response, context=context, conversation=conversation, **kwargs)
