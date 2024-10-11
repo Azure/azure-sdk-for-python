@@ -138,7 +138,7 @@ with ai_client:
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York? Also let me know the details")
     print(f"Created message, message ID {message.id}")
 
-    with ai_client.agents.create_and_process_stream(
+    with ai_client.agents.create_stream(
         thread_id=thread.id, 
         assistant_id=agent.id,
         event_handler=MyEventHandler(ai_client.agents)
