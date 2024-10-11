@@ -39,6 +39,7 @@ TClient = TypeVar("TClient", ProxyClient, CodeClient)
 class __EvaluatorInfo(TypedDict):
     result: pd.DataFrame
     metrics: Dict[str, Any]
+    run_summary: Dict
 
 
 # pylint: disable=line-too-long
