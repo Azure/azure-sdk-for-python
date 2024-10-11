@@ -2,9 +2,9 @@ import argparse, sys, os, logging, glob, shutil
 
 from subprocess import run
 
-from typing import List
-from ci_tools.functions import discover_targeted_packages, process_requires
-from ci_tools.parsing import ParsedSetup
+from typing import List, Optional
+from ci_tools.functions import discover_targeted_packages, process_requires, get_pip_list_output,
+from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.variables import DEFAULT_BUILD_ID, str_to_bool, discover_repo_root, get_artifact_directory
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
@@ -84,7 +84,7 @@ def build() -> None:
         help=(
             "Where is the start directory that we are building against? If not provided, the current working directory will be used. Please ensure you are within the azure-sdk-for-python repository."
         ),
-    ),
+    )
 
     parser.add_argument(
         "--build_id",
@@ -124,7 +124,6 @@ def build() -> None:
         targeted_packages,
         artifact_directory,
         str_to_bool(args.is_dev_build),
-        str_to_bool(args.apiview_closure),
         build_id,
     )
 
@@ -144,9 +143,8 @@ def cleanup_build_artifacts(build_folder):
 
 def build_packages(
     targeted_packages: List[str],
-    distribution_directory: str = None,
+    distribution_directory: Optional[str] = None,
     is_dev_build: bool = False,
-    build_apiview_artifact: bool = False,
     build_id: str = "",
 ):
     logging.log(level=logging.INFO, msg=f"Generating {targeted_packages} using python{sys.version}")
@@ -154,7 +152,11 @@ def build_packages(
     for package_root in targeted_packages:
         setup_parsed = ParsedSetup.from_path(package_root)
         package_name_in_artifacts = os.path.join(os.path.basename(package_root))
-        dist_dir = os.path.join(distribution_directory, package_name_in_artifacts)
+
+        if distribution_directory:
+            dist_dir = os.path.join(distribution_directory, package_name_in_artifacts)
+        else:
+            dist_dir = package_name_in_artifacts
 
         if is_dev_build:
             process_requires(package_root, True)
@@ -170,7 +172,7 @@ def build_packages(
 
 
 def create_package(
-    setup_directory_or_file: str, dest_folder: str = None, enable_wheel: bool = True, enable_sdist: bool = True
+    setup_directory_or_file: str, dest_folder: str, enable_wheel: bool = True, enable_sdist: bool = True
 ):
     """
     Uses the invoking python executable to build a wheel and sdist file given a setup.py or setup.py directory. Outputs
@@ -189,7 +191,7 @@ def create_package(
         # given the additional requirements of the package, we should install them in the current environment before attempting to build the package
         # we assume the presence of `wheel`, `build`, `setuptools>=61.0.0`
         pip_output = get_pip_list_output(sys.executable)
-        necessary_install_requirements = [req for req in setup_parsed.requires if parse_require(req)[0] not in pip_output.keys()]
+        necessary_install_requirements = [req for req in setup_parsed.requires if parse_require(req).key not in pip_output.keys()]
         run([sys.executable, "-m", "pip", "install", *necessary_install_requirements], cwd=setup_parsed.folder)
         run([sys.executable, "-m", "build", f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}", "-o", dist], cwd=setup_parsed.folder)
     else:
