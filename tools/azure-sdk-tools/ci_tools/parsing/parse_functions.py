@@ -354,40 +354,44 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
 
         if parsed_version_py:
             with open(parsed_version_py, 'r') as f:
-                parsed_version = re.search(VERSION_REGEX, f.read(), re.MULTILINE).group(1)
+                parsed_version = re.search(VERSION_REGEX, f.read(), re.MULTILINE)
 
-    if project_config:
-        name = project_config.get("name")
-        version = parsed_version
-        python_requires = project_config.get("requires-python")
-        requires = project_config.get("dependencies")
-        is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).key in NEW_REQ_PACKAGES), requires))
-        name_space = name.replace("-", ".")
-        package_data = get_value_from_dict(toml_dict, "tool.setuptools.package-data", None)
-        include_package_data = get_value_from_dict(toml_dict, "tool.setuptools.include-package-data", True)
-        classifiers = project_config.get("classifiers", [])
-        keywords = project_config.get("keywords", [])
-        # TODO we need to evaluate the setup.py and grab ext_package/ext_modules kwarg values
-        # ext_package = project_config.get("ext_package", None) TODO
-        # ext_modules = project_config.get("ext_modules", []) TODO
+                if parsed_version:
+                    parsed_version = parsed_version.group(1)
+                else:
+                    parsed_version = "0.0.0"
 
-        # fmt: off
-        return (
-            name,                   # str
-            version,                # str
-            python_requires,        # str
-            requires,               # List[str]
-            is_new_sdk,             # bool
-            pyproject_filename,     # str
-            name_space,             # str,
-            package_data,           # Dict[str, Any],
-            include_package_data,   # bool,
-            classifiers,            # List[str],
-            keywords,               # List[str] ADJUSTED
-            "",                     # str
-            [],                     # List[Extension]
-        )
-        # fmt: on
+    name = project_config.get("name")
+    version = parsed_version
+    python_requires = project_config.get("requires-python")
+    requires = project_config.get("dependencies")
+    is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).key in NEW_REQ_PACKAGES), requires))
+    name_space = name.replace("-", ".")
+    package_data = get_value_from_dict(toml_dict, "tool.setuptools.package-data", None)
+    include_package_data = get_value_from_dict(toml_dict, "tool.setuptools.include-package-data", True)
+    classifiers = project_config.get("classifiers", [])
+    keywords = project_config.get("keywords", [])
+    # TODO we need to evaluate the setup.py and grab ext_package/ext_modules kwarg values
+    # ext_package = project_config.get("ext_package", None) TODO
+    # ext_modules = project_config.get("ext_modules", []) TODO
+
+    # fmt: off
+    return (
+        name,                   # str
+        version,                # str
+        python_requires,        # str
+        requires,               # List[str]
+        is_new_sdk,             # bool
+        pyproject_filename,     # str
+        name_space,             # str,
+        package_data,           # Dict[str, Any],
+        include_package_data,   # bool,
+        classifiers,            # List[str],
+        keywords,               # List[str] ADJUSTED
+        "",                     # str
+        [],                     # List[Extension]
+    )
+    # fmt: on
 
 def get_version_py(setup_path: str):
     file_path, _ = os.path.split(setup_path)
@@ -401,7 +405,7 @@ def get_version_py(setup_path: str):
 
     return None
 
-def get_pyproject(folder: str) -> Union[str, None]:
+def get_pyproject(folder: str) -> Optional[str]:
     """
     Given a folder, attempts to find a pyproject.toml file with a "project" configuration and return its location.
     """
@@ -414,16 +418,13 @@ def get_pyproject(folder: str) -> Union[str, None]:
 
     return None
 
-def get_setup_py(folder: str) -> Union[str, None]:
+def get_setup_py(folder: str) -> str:
     """
     Given a folder, attempts to find a setup.py file and return its location.
     """
     setup_filename = os.path.join(folder, "setup.py")
 
-    if os.path.exists(setup_filename):
-        return setup_filename
-
-    return None
+    return setup_filename
 
 def parse_setup(
     setup_filename_or_folder: str,
