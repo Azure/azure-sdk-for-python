@@ -53,7 +53,7 @@ class TestElasticSanMgmtVolumesOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestElasticSanMgmtVolumesOperations(AzureMgmtRecordedTestCase):
             volume_group_name="str",
             volume_name="str",
             parameters={"properties": {"managedBy": {"resourceId": "str"}, "sizeGiB": 0}},
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestElasticSanMgmtVolumesOperations(AzureMgmtRecordedTestCase):
             elastic_san_name="str",
             volume_group_name="str",
             volume_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestElasticSanMgmtVolumesOperations(AzureMgmtRecordedTestCase):
             elastic_san_name="str",
             volume_group_name="str",
             volume_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -109,7 +109,7 @@ class TestElasticSanMgmtVolumesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             elastic_san_name="str",
             volume_group_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
