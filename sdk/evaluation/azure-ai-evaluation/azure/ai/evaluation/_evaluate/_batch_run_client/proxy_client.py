@@ -65,7 +65,6 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
         run = proxy_run.run.result()
         return OrderedDict([
             ("status", run.status),
-            ("start_time", str(run._created_on)),
             ("duration", str(run._end_time - run._created_on)),
             ("completed_lines", run._properties.get("system_metrics", {}).get("__pf__.lines.completed", "NA")),
             ("failed_lines", run._properties.get("system_metrics", {}).get("__pf__.lines.failed", "NA")),
