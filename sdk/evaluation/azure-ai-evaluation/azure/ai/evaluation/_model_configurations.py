@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Literal, TypedDict
+from typing import Any, Dict, Literal, TypedDict
 
 from typing_extensions import NotRequired
 
@@ -53,3 +53,13 @@ class EvaluatorConfig(TypedDict, total=False):
 
     column_mapping: Dict[str, str]
     """Dictionary mapping evaluator input name to column in data"""
+
+class Message(TypedDict):
+    role: str
+    content: str
+    context: NotRequired[Dict[str, Any]]
+
+
+class Conversaton(TypedDict):
+    messages: List[Message]
+    context: NotRequired[Dict[str, Any]]

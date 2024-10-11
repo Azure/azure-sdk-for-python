@@ -144,11 +144,11 @@ class RetrievalEvaluator:
     def __init__(self, model_config):
         self._async_evaluator = _AsyncRetrievalScoreEvaluator(validate_model_config(model_config))
 
-    def __call__(self, *, conversation: Dict, **kwargs):
+    def __call__(self, *, conversation, **kwargs):
         """Evaluates retrieval score chat scenario.
 
         :keyword conversation: The conversation to be evaluated.
-        :paramtype conversation: Dict
+        :paramtype conversation: ~azure.ai.evaluation.Conversation
         :return: The scores for Chat scenario.
         :rtype: Dict[str, Union[float, Dict[str, Dict[str, List[float]]]]]
         """

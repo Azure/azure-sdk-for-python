@@ -29,6 +29,8 @@ from ._model_configurations import (
     AzureOpenAIModelConfiguration,
     EvaluatorConfig,
     OpenAIModelConfiguration,
+    Conversation,
+    Message
 )
 
 __all__ = [
@@ -57,4 +59,6 @@ __all__ = [
     "AzureOpenAIModelConfiguration",
     "OpenAIModelConfiguration",
     "EvaluatorConfig",
+    "Conversation",
+    "Message",
 ]

@@ -50,7 +50,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[Dict] = None,
+        conversation = None,
         **kwargs,
     ):
         """Evaluate coherence. Accepts either a query and response for a single evaluation,
@@ -64,7 +64,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages". Conversation turns are expected
             to be dictionaries with keys "content" and "role".
-        :paramtype conversation: Optional[Dict]
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         :return: The relevance score.
         :rtype: Dict[str, float]
         """
