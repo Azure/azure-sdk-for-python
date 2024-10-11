@@ -25,7 +25,7 @@ class AzureAIClient(ClientGenerated):
         endpoint: str,
         subscription_id: str,
         resource_group_name: str,
-        workspace_name: str,
+        project_name: str,
         credential: "TokenCredential",
         **kwargs: Any,
     ) -> None:
@@ -36,8 +36,8 @@ class AzureAIClient(ClientGenerated):
             raise ValueError("subscription_id ID is required")
         if not resource_group_name:
             raise ValueError("resource_group_name is required")
-        if not workspace_name:
-            raise ValueError("workspace_name is required")
+        if not project_name:
+            raise ValueError("project_name is required")
         if not credential:
             raise ValueError("Credential is required")
         if "api_version" in kwargs:
@@ -50,12 +50,12 @@ class AzureAIClient(ClientGenerated):
         kwargs3 = kwargs.copy()
 
         # For Endpoints operations (enumerating connections, getting SAS tokens)
-        _endpoint1 = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
+        _endpoint1 = f"https://management.azure.com/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{project_name}"  # pylint: disable=line-too-long
         self._config1 = AzureAIClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
+            project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",
             credential_scopes=["https://management.azure.com"],
@@ -81,12 +81,12 @@ class AzureAIClient(ClientGenerated):
         self._client1 = PipelineClient(base_url=_endpoint1, policies=_policies1, **kwargs1)
 
         # For Agents operations
-        _endpoint2 = f"{endpoint}/agents/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
+        _endpoint2 = f"{endpoint}/agents/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{project_name}"  # pylint: disable=line-too-long
         self._config2 = AzureAIClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
+            project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
             credential_scopes=["https://ml.azure.com"],
@@ -112,12 +112,12 @@ class AzureAIClient(ClientGenerated):
         self._client2 = PipelineClient(base_url=_endpoint2, policies=_policies2, **kwargs2)
 
         # For Cloud Evaluations operations
-        _endpoint3 = f"{endpoint}/raisvc/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}"  # pylint: disable=line-too-long
+        _endpoint3 = f"{endpoint}/raisvc/v1.0/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{project_name}"  # pylint: disable=line-too-long
         self._config3 = AzureAIClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
+            project_name=project_name,
             credential=credential,
             api_version="2024-07-01-preview",  # TODO: Update me
             credential_scopes=["https://ml.azure.com"],  # TODO: Update once service changes are ready
@@ -167,24 +167,23 @@ class AzureAIClient(ClientGenerated):
         self._client2.__exit__(*exc_details)
         self._client3.__exit__(*exc_details)
 
-
     @classmethod
-    def from_connection_string(cls, connection: str, credential: "TokenCredential", **kwargs) -> "AzureAIClient":
+    def from_connection_string(cls, conn_str: str, credential: "TokenCredential", **kwargs) -> "AzureAIClient":
         """
         Create an AzureAIClient from a connection string.
 
-        :param connection: The connection string, copied from your AI Studio project.
+        :param conn_str: The connection string, copied from your AI Studio project.
         """
-        if not connection:
+        if not conn_str:
             raise ValueError("Connection string is required")
-        parts = connection.split(";")
+        parts = conn_str.split(";")
         if len(parts) != 4:
             raise ValueError("Invalid connection string format")
-        endpoint = parts[0]
+        endpoint = "https://" + parts[0]
         subscription_id = parts[1]
         resource_group_name = parts[2]
-        workspace_name = parts[3]
-        return cls(endpoint, subscription_id, resource_group_name, workspace_name, credential, **kwargs)
+        project_name = parts[3]
+        return cls(endpoint, subscription_id, resource_group_name, project_name, credential, **kwargs)
 
 
 __all__: List[str] = [

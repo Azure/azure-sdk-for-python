@@ -25,23 +25,13 @@ import asyncio
 from azure.ai.client.aio import AzureAIClient
 from azure.identity import DefaultAzureCredential
 
+
 async def sample_get_azure_openai_client_async():
 
-    # Create an Azure AI Client from a connection string, copied from your AI Studio project.
-    # It should have the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
     async with AzureAIClient.from_connection_string(
         credential=DefaultAzureCredential(),
-        connection=os.environ["AI_CLIENT_CONNECTION_STRING"],
+        conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
     ) as ai_client:
-
-    # Or, you can create the Azure AI Client by giving all required parameters directly
-    # async with AzureAIClient(
-    #     credential=DefaultAzureCredential(),
-    #     endpoint=os.environ["AI_CLIENT_ENDPOINT"],
-    #     subscription_id=os.environ["AI_CLIENT_SUBSCRIPTION_ID"],
-    #     resource_group_name=os.environ["AI_CLIENT_RESOURCE_GROUP_NAME"],
-    #     workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
-    # ) as ai_client:
 
         # Get an authenticated AsyncAzureOpenAI client for your default Azure OpenAI connection:
         async with await ai_client.inference.get_azure_openai_client() as client:
@@ -58,8 +48,10 @@ async def sample_get_azure_openai_client_async():
 
             print(response.choices[0].message.content)
 
+
 async def main():
     await sample_get_azure_openai_client_async()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -134,6 +134,10 @@ class InferenceOperations:
         except ModuleNotFoundError as _:
             raise ModuleNotFoundError("OpenAI SDK is not installed. Please install it using 'pip install openai'")
 
+        # Pick latest GA version from the "Data plane - Inference" row in the table
+        # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
+        AZURE_OPENAI_API_VERSION = "2024-06-01"
+
         if endpoint.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
@@ -141,7 +145,7 @@ class InferenceOperations:
             client = AzureOpenAI(
                 api_key=endpoint.key,
                 azure_endpoint=endpoint.endpoint_url,
-                api_version="2024-08-01-preview",  # TODO: Is this needed?
+                api_version=AZURE_OPENAI_API_VERSION
             )
         elif endpoint.authentication_type == AuthenticationType.AAD:
             logger.debug(
@@ -159,7 +163,7 @@ class InferenceOperations:
                     endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
                 azure_endpoint=endpoint.endpoint_url,
-                api_version="2024-08-01-preview",
+                api_version=AZURE_OPENAI_API_VERSION
             )
         elif endpoint.authentication_type == AuthenticationType.SAS:
             logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using SAS authentication")
@@ -168,7 +172,7 @@ class InferenceOperations:
                     endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
                 azure_endpoint=endpoint.endpoint_url,
-                api_version="2024-08-01-preview",
+                api_version=AZURE_OPENAI_API_VERSION
             )
         else:
             raise ValueError("Unknown authentication type")
@@ -197,7 +201,7 @@ class EndpointsOperations(EndpointsOperationsGenerated):
                 connection_name=endpoint_name,
                 subscription_id=self._config.subscription_id,
                 resource_group_name=self._config.resource_group_name,
-                workspace_name=self._config.workspace_name,
+                workspace_name=self._config.project_name,
                 api_version_in_body=self._config.api_version,
             )
             if connection.properties.auth_type == AuthenticationType.AAD:
@@ -210,7 +214,7 @@ class EndpointsOperations(EndpointsOperationsGenerated):
                     credential=self._config.credential,
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
-                    workspace_name=self._config.workspace_name,
+                    project_name=self._config.project_name,
                     connection_name=endpoint_name,
                 )
                 return EndpointProperties(connection=connection, token_credential=token_credential)

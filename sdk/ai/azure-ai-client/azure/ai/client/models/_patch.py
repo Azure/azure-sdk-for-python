@@ -81,14 +81,14 @@ class SASTokenCredential(TokenCredential):
         credential: TokenCredential,
         subscription_id: str,
         resource_group_name: str,
-        workspace_name: str,
+        project_name: str,
         connection_name: str,
     ):
         self._sas_token = sas_token
         self._credential = credential
         self._subscription_id = subscription_id
         self._resource_group_name = resource_group_name
-        self._workspace_name = workspace_name
+        self._project_name = project_name
         self._connection_name = connection_name
         self._expires_on = SASTokenCredential._get_expiration_date_from_token(self._sas_token)
         logger.debug("[SASTokenCredential.__init__] Exit. Given token expires on %s.", self._expires_on)
@@ -112,7 +112,7 @@ class SASTokenCredential(TokenCredential):
             endpoint="not-needed",  # Since we are only going to use the "endpoints" operations, we don't need to supply an endpoint. http://management.azure.com is hard coded in the SDK.
             subscription_id=self._subscription_id,
             resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
+            project_name=self._project_name,
         )
 
         connection = ai_client.endpoints.get(endpoint_name=self._connection_name, populate_secrets=True)

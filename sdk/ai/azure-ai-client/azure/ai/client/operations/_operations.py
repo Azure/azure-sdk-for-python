@@ -1658,7 +1658,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1749,7 +1749,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -1814,7 +1814,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2063,7 +2063,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2128,7 +2128,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2293,7 +2293,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2358,7 +2358,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2526,7 +2526,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2591,7 +2591,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2787,7 +2787,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2886,7 +2886,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -2954,7 +2954,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3119,7 +3119,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3443,7 +3443,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3538,7 +3538,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3606,7 +3606,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3771,7 +3771,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -3948,7 +3948,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4016,7 +4016,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4327,7 +4327,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4398,7 +4398,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4497,7 +4497,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4566,7 +4566,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4692,7 +4692,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4757,7 +4757,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4822,7 +4822,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4887,7 +4887,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -4978,7 +4978,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5155,7 +5155,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5220,7 +5220,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5386,7 +5386,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5452,7 +5452,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5552,7 +5552,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5710,7 +5710,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5778,7 +5778,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -5851,7 +5851,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6009,7 +6009,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6079,7 +6079,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6150,7 +6150,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6254,7 +6254,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6334,7 +6334,7 @@ class EndpointsOperations:
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6477,7 +6477,7 @@ class EndpointsOperations:
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6618,7 +6618,7 @@ class EvaluationsOperations:
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6695,9 +6695,7 @@ class EvaluationsOperations:
                     "resourceGroupName": self._serialize.url(
                         "self._config.resource_group_name", self._config.resource_group_name, "str"
                     ),
-                    "workspaceName": self._serialize.url(
-                        "self._config.workspace_name", self._config.workspace_name, "str"
-                    ),
+                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6722,9 +6720,7 @@ class EvaluationsOperations:
                     "resourceGroupName": self._serialize.url(
                         "self._config.resource_group_name", self._config.resource_group_name, "str"
                     ),
-                    "workspaceName": self._serialize.url(
-                        "self._config.workspace_name", self._config.workspace_name, "str"
-                    ),
+                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6863,7 +6859,7 @@ class EvaluationsOperations:
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -6928,7 +6924,7 @@ class EvaluationsOperations:
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7053,7 +7049,7 @@ class EvaluationsOperations:
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7118,7 +7114,7 @@ class EvaluationsOperations:
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7195,9 +7191,7 @@ class EvaluationsOperations:
                     "resourceGroupName": self._serialize.url(
                         "self._config.resource_group_name", self._config.resource_group_name, "str"
                     ),
-                    "workspaceName": self._serialize.url(
-                        "self._config.workspace_name", self._config.workspace_name, "str"
-                    ),
+                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7222,9 +7216,7 @@ class EvaluationsOperations:
                     "resourceGroupName": self._serialize.url(
                         "self._config.resource_group_name", self._config.resource_group_name, "str"
                     ),
-                    "workspaceName": self._serialize.url(
-                        "self._config.workspace_name", self._config.workspace_name, "str"
-                    ),
+                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7304,9 +7296,7 @@ class EvaluationsOperations:
                     "resourceGroupName": self._serialize.url(
                         "self._config.resource_group_name", self._config.resource_group_name, "str"
                     ),
-                    "workspaceName": self._serialize.url(
-                        "self._config.workspace_name", self._config.workspace_name, "str"
-                    ),
+                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7331,9 +7321,7 @@ class EvaluationsOperations:
                     "resourceGroupName": self._serialize.url(
                         "self._config.resource_group_name", self._config.resource_group_name, "str"
                     ),
-                    "workspaceName": self._serialize.url(
-                        "self._config.workspace_name", self._config.workspace_name, "str"
-                    ),
+                    "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
                 }
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -7398,7 +7386,7 @@ class EvaluationsOperations:
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
+            "projectName": self._serialize.url("self._config.project_name", self._config.project_name, "str"),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 

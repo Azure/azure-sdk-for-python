@@ -75,7 +75,7 @@ class TestUnit:
             credential=FakeTokenCredential(),
             subscription_id="fake_subscription_id",
             resource_group_name="fake_resouce_group",
-            workspace_name="fake_workspace_name",
+            project_name="fake_project_name",
             connection_name="fake_connection_name",
         )
         assert sas_token_credential._expires_on == sas_token_expiration
@@ -106,7 +106,7 @@ class TestUnit:
             credential=None,
             subscription_id=None,
             resource_group_name=None,
-            workspace_name=None,
+            project_name=None,
             connection_name=None,
         )
 

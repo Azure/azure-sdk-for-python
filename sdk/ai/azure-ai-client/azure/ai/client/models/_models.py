@@ -539,7 +539,7 @@ class CodeInterpreterToolResource(_model_base.Model):
 
 
 class ConnectionProperties(_model_base.Model):
-    """to do.
+    """Connetion properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ConnectionPropertiesAADAuth, ConnectionPropertiesApiKeyAuth, ConnectionPropertiesSASAuth
@@ -564,20 +564,19 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     :ivar auth_type: Authentication type of the connection target. Required. Entra ID
      authentication
     :vartype auth_type: str or ~azure.ai.client.models.AAD
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", and "Agent".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
+     "Serverless".
     :vartype category: str or ~azure.ai.client.models.EndpointType
-    :ivar target: to do. Required.
+    :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
     """
 
     auth_type: Literal[AuthenticationType.AAD] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. Entra ID authentication"""
-    category: Union[str, "_models._enums.EndpointType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\", and
-     \"Agent\"."""
+    category: Union[str, "_models.EndpointType"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
     target: str = rest_field()
-    """to do. Required."""
+    """The connection URL to be used for this service. Required."""
 
 
 class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey"):
@@ -586,24 +585,23 @@ class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey
 
     :ivar auth_type: Authentication type of the connection target. Required. API Key authentication
     :vartype auth_type: str or ~azure.ai.client.models.API_KEY
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", and "Agent".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
+     "Serverless".
     :vartype category: str or ~azure.ai.client.models.EndpointType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
     :vartype credentials: ~azure.ai.client.models._models.CredentialsApiKeyAuth
-    :ivar target: to do. Required.
+    :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
     """
 
     auth_type: Literal[AuthenticationType.API_KEY] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. API Key authentication"""
-    category: Union[str, "_models._enums.EndpointType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\", and
-     \"Agent\"."""
+    category: Union[str, "_models.EndpointType"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
     credentials: "_models._models.CredentialsApiKeyAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
     target: str = rest_field()
-    """to do. Required."""
+    """The connection URL to be used for this service. Required."""
 
 
 class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
@@ -613,41 +611,40 @@ class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
     :ivar auth_type: Authentication type of the connection target. Required. Shared Access
      Signature (SAS) authentication
     :vartype auth_type: str or ~azure.ai.client.models.SAS
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", and "Agent".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
+     "Serverless".
     :vartype category: str or ~azure.ai.client.models.EndpointType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
     :vartype credentials: ~azure.ai.client.models._models.CredentialsSASAuth
-    :ivar target: to do. Required.
+    :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
     """
 
     auth_type: Literal[AuthenticationType.SAS] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. Shared Access Signature (SAS)
      authentication"""
-    category: Union[str, "_models._enums.EndpointType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\", and
-     \"Agent\"."""
+    category: Union[str, "_models.EndpointType"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
     credentials: "_models._models.CredentialsSASAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
     target: str = rest_field()
-    """to do. Required."""
+    """The connection URL to be used for this service. Required."""
 
 
 class ConnectionsListResponse(_model_base.Model):
-    """to do.
+    """Response from the list operation.
 
 
-    :ivar value: to do. Required.
+    :ivar value: A list of connection list secrets. Required.
     :vartype value: list[~azure.ai.client.models._models.ConnectionsListSecretsResponse]
     """
 
     value: List["_models._models.ConnectionsListSecretsResponse"] = rest_field()
-    """to do. Required."""
+    """A list of connection list secrets. Required."""
 
 
 class ConnectionsListSecretsResponse(_model_base.Model):
-    """to do.
+    """Response from the listSecrets operation.
 
 
     :ivar name: The name of the resource. Required.
@@ -663,27 +660,27 @@ class ConnectionsListSecretsResponse(_model_base.Model):
 
 
 class CredentialsApiKeyAuth(_model_base.Model):
-    """to do.
+    """The credentials needed for API key authentication.
 
 
-    :ivar key: to do. Required.
+    :ivar key: The API key. Required.
     :vartype key: str
     """
 
     key: str = rest_field()
-    """to do. Required."""
+    """The API key. Required."""
 
 
 class CredentialsSASAuth(_model_base.Model):
-    """to do.
+    """The credentials neede for Shared Access Signatures (SAS) authentication.
 
 
-    :ivar sas: to do. Required.
+    :ivar sas: The Shared Access Signatures (SAS) token. Required.
     :vartype sas: str
     """
 
     sas: str = rest_field(name="SAS")
-    """to do. Required."""
+    """The Shared Access Signatures (SAS) token. Required."""
 
 
 class Dataset(InputData, discriminator="dataset"):
