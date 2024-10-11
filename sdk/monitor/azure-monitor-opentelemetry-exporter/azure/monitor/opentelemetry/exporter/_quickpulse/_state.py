@@ -9,7 +9,10 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _POST_INTERVAL_SECONDS,
     _SHORT_PING_INTERVAL_SECONDS,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import DocumentIngress
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    DerivedMetricInfo,
+    DocumentIngress,
+)
 
 
 class _QuickpulseState(Enum):
@@ -27,6 +30,8 @@ _QUICKPULSE_DOCUMENTS: List[DocumentIngress] = []
 _QUICKPULSE_LAST_PROCESS_TIME = 0.0
 _QUICKPULSE_PROCESS_ELAPSED_TIME = datetime.now()
 _QUICKPULSE_LAST_PROCESS_CPU = 0.0
+_QUICKPULSE_ETAG = ""
+_QUICKPULSE_METRIC_FILTERS: List[DerivedMetricInfo] = []
 
 def _set_global_quickpulse_state(state: _QuickpulseState) -> None:
     # pylint: disable=global-statement
@@ -101,3 +106,23 @@ def _get_and_clear_quickpulse_documents() -> List[DocumentIngress]:
     documents = list(_QUICKPULSE_DOCUMENTS)
     _QUICKPULSE_DOCUMENTS = []
     return documents
+
+
+def _set_quickpulse_etag(etag: str) -> None:
+    # pylint: disable=global-statement
+    global _QUICKPULSE_ETAG
+    _QUICKPULSE_ETAG = etag
+
+
+def _get_quickpulse_etag() -> str:
+    return _QUICKPULSE_ETAG
+
+
+def _set_quickpulse_metric_filters(filters: List[DerivedMetricInfo]) -> None:
+    # pylint: disable=global-statement
+    global _QUICKPULSE_METRIC_FILTERS
+    _QUICKPULSE_METRIC_FILTERS = filters
+
+
+def _get_quickpulse_metric_filters() -> List[DerivedMetricInfo]:
+    return _QUICKPULSE_METRIC_FILTERS

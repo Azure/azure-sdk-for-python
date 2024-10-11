@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import json
 import logging
-from typing import Any, Optional
+from typing import Any, List, Optional
 import weakref
 
 from opentelemetry.context import (
@@ -29,17 +30,23 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
     _POST_CANCEL_INTERVAL_SECONDS,
     _POST_INTERVAL_SECONDS,
+    _QUICKPULSE_ETAG_HEADER_NAME,
     _QUICKPULSE_SUBSCRIBED_HEADER_NAME,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._configuration import QuickpulseClientConfiguration
 from azure.monitor.opentelemetry.exporter._quickpulse._generated._client import QuickpulseClient
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import MonitoringDataPoint
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    DerivedMetricInfo,
+    MonitoringDataPoint,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
+    _get_and_clear_quickpulse_documents,
     _get_global_quickpulse_state,
+    _get_quickpulse_etag,
     _is_ping_state,
     _set_global_quickpulse_state,
-    _get_and_clear_quickpulse_documents,
+    _set_quickpulse_etag,
     _QuickpulseState,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
@@ -144,13 +151,14 @@ class _QuickpulseExporter(MetricExporter):
             base_monitoring_data_point=base_monitoring_data_point,
             documents=_get_and_clear_quickpulse_documents(),
         )
-
+        configuration_etag = _get_quickpulse_etag() or ""
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
         try:
             post_response = self._client.publish(  # type: ignore
                 endpoint=self._live_endpoint,
                 monitoring_data_points=data_points,
-                ikey=self._instrumentation_key,
+                ikey=self._instrumentation_key,  # type: ignore
+                configuration_etag=configuration_etag,
                 transmission_time=_ticks_since_dot_net_epoch(),
                 cls=_Response,
             )
@@ -162,6 +170,24 @@ class _QuickpulseExporter(MetricExporter):
                 if header != "true":
                     # User leaving the live metrics page will be treated as an unsuccessful
                     result = MetricExportResult.FAILURE
+                else:
+                    # Check if etag has changed
+                    etag = post_response._response_headers.get(_QUICKPULSE_ETAG_HEADER_NAME)
+                    if etag != _get_quickpulse_etag():
+                        # Update and apply configuration changes
+                        config = post_response._pipeline_response.http_response.content
+                        # Content will only be populated if configuration has changed (etag is different)
+                        if config:
+                            # config is a byte string that when decoded is a json
+                            config = json.loads(config.decode("utf-8"))
+                            metric_filters: List[DerivedMetricInfo] = []
+                            for metric_filter in config.get("Metrics", []):
+                                # TODO: Test if this works
+                                metric_info = DerivedMetricInfo(**metric_filter)
+                                metric_filters.append(metric_info)
+                            _set_quickpulse_metric_filters(metric_filters)
+
+
         except Exception:  # pylint: disable=broad-except,invalid-name
             _logger.exception("Exception occurred while publishing live metrics.")
             result = MetricExportResult.FAILURE
@@ -202,21 +228,23 @@ class _QuickpulseExporter(MetricExporter):
     def _ping(self, monitoring_data_point: MonitoringDataPoint) -> Optional[_Response]:
         ping_response = None
         token = attach(set_value(_SUPPRESS_INSTRUMENTATION_KEY, True))
+        etag = _get_quickpulse_etag() or ""
         try:
             ping_response = self._client.is_subscribed(  # type: ignore
                 endpoint=self._live_endpoint,
                 monitoring_data_point=monitoring_data_point,
-                ikey=self._instrumentation_key,
+                ikey=self._instrumentation_key,  # type: ignore
                 transmission_time=_ticks_since_dot_net_epoch(),
                 machine_name=monitoring_data_point.machine_name,
                 instance_name=monitoring_data_point.instance,
                 stream_id=monitoring_data_point.stream_id,
                 role_name=monitoring_data_point.role_name,
-                invariant_version=monitoring_data_point.invariant_version,
+                invariant_version=monitoring_data_point.invariant_version,  # type: ignore
+                configuration_etag=etag,
                 cls=_Response,
             )
             return ping_response  # type: ignore
-        except HttpResponseError:
+        except Exception:  # pylint: disable=broad-except,invalid-name
             _logger.exception("Exception occurred while pinging live metrics.")
         detach(token)
         return ping_response
@@ -244,24 +272,40 @@ class _QuickpulseMetricReader(MetricReader):
         )
         self._worker.start()
 
+    # pylint: disable=protected-access
     def _ticker(self) -> None:
         if _is_ping_state():
+            print("ping")
             # Send a ping if elapsed number of request meets the threshold
             if self._elapsed_num_seconds % _get_global_quickpulse_state().value == 0:
-                ping_response = self._exporter._ping(  # pylint: disable=protected-access
+                ping_response = self._exporter._ping(
                     self._base_monitoring_data_point,
                 )
                 if ping_response:
-                    header = ping_response._response_headers.get(_QUICKPULSE_SUBSCRIBED_HEADER_NAME)  # pylint: disable=protected-access
-                    if header and header == "true":
-                        # Switch state to post if subscribed
-                        _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
-                        self._elapsed_num_seconds = 0
-                    else:
-                        # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
-                        if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
-                            self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
-                            _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
+                    try:
+                        subscribed = ping_response._response_headers.get(_QUICKPULSE_SUBSCRIBED_HEADER_NAME)
+                        if subscribed and subscribed == "true":
+                            # Switch state to post if subscribed
+                            _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
+                            self._elapsed_num_seconds = 0
+                            # Update config etag
+                            etag = ping_response._response_headers.get(_QUICKPULSE_ETAG_HEADER_NAME)
+                            if etag is None:
+                                etag = ""
+                            if _get_quickpulse_etag() != etag:
+                                _set_quickpulse_etag(etag)
+                            # TODO: Set default document filter config from response body
+                            # config = ping_response._pipeline_response.http_response.content
+                        else:
+                            # Backoff after _LONG_PING_INTERVAL_SECONDS (60s) of no successful requests
+                            if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
+                                self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
+                                _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
+                            # Reset etag to default if not subscribed
+                            _set_quickpulse_etag("")
+                    except Exception:  # pylint: disable=broad-except,invalid-name
+                        _logger.exception("Exception occurred while pinging live metrics.")
+                        _set_quickpulse_etag("")
                 # TODO: Implement redirect
                 else:
                     # Erroneous ping responses instigate backoff logic
@@ -269,6 +313,8 @@ class _QuickpulseMetricReader(MetricReader):
                     if _get_global_quickpulse_state() is _QuickpulseState.PING_SHORT and \
                         self._elapsed_num_seconds >= _LONG_PING_INTERVAL_SECONDS:
                         _set_global_quickpulse_state(_QuickpulseState.PING_LONG)
+                    # Reset etag to default if error
+                        _set_quickpulse_etag("")
         else:
             try:
                 self.collect()

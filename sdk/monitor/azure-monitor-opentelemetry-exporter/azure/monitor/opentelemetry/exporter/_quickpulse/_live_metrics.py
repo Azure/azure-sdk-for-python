@@ -92,7 +92,8 @@ class _QuickpulseManager(metaclass=Singleton):
         id_generator = RandomIdGenerator()
         self._base_monitoring_data_point = MonitoringDataPoint(
             version=_get_sdk_version(),
-            invariant_version=1,
+            # Invariant version 5 indicates filtering is supported
+            invariant_version=5,
             instance=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, ""),
             role_name=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""),
             machine_name=platform.node(),
