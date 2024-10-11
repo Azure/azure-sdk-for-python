@@ -57,7 +57,7 @@ with ai_client:
     file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose=FilePurpose.AGENTS, sleep_interval=4)
     print(f"Uploaded file, file ID: {file.id}")
         
-    code_interpreter = CodeInterpreterTool
+    code_interpreter = CodeInterpreterTool()
     code_interpreter.add_file(file.id)
     
     # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to view the file
