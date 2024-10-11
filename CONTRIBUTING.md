@@ -179,7 +179,7 @@ This tox test( devtest) will fail if installed dependent packages are not dev bu
 
 ## Tools Overview
 
-We utilize a variety of tools to ensure smooth development, testing, and code quality for the Azure Python SDK. Below is a list of key tools and their purpose in the contribution workflow:
+We utilize a variety of tools to ensure smooth development, testing, and code quality for the Azure Python SDK. Below is a list of key tools and their purpose in the workflow:
 
 - Tox: [Tox](https://tox.wiki/en/latest/) is our primary tool for managing test environments. It allows us to distribute tests to virtual environments, install dependencies, and maintain consistency between local and CI builds. Tox is configured to handle various testing scenarios, including linting, type checks, and running unit tests.
 
