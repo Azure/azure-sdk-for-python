@@ -99,7 +99,7 @@ with ai_client:
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
     print(f"Created message, message ID {message.id}")
 
-    with ai_client.agents.create_and_process_stream(
+    with ai_client.agents.create_stream(
         thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
     ) as stream:
         stream.until_done()
