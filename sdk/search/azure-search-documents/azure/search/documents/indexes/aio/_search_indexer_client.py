@@ -10,8 +10,8 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .._generated.aio import SearchClient as _SearchServiceClient
-from .._generated.models import (
+from ..._generated.aio import SearchClient as _SearchServiceClient
+from ..._generated.models import (
     SearchIndexer,
     SearchIndexerStatus,
 )

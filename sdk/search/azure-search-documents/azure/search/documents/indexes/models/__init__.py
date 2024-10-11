@@ -32,7 +32,7 @@ from ._index import (
     SearchIndex,
 )
 from . import _edm
-from .._generated.models import (
+from ..._generated.models import (
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,

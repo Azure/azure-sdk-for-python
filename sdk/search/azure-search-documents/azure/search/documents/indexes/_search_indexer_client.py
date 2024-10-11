@@ -9,8 +9,8 @@ from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 
-from ._generated import SearchClient as _SearchServiceClient
-from ._generated.models import (
+from .._generated import SearchClient as _SearchServiceClient
+from .._generated.models import (
     SearchIndexer,
     SearchIndexerStatus,
 )

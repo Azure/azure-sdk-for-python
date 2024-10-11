@@ -15,32 +15,52 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import SearchClientConfiguration
-from .operations import DocumentsOperationsOperations
+from .operations import (
+    DataSourcesOperationsOperations,
+    DocumentsOperationsOperations,
+    IndexersOperationsOperations,
+    IndexesOperationsOperations,
+    SearchClientOperationsMixin,
+    SkillsetsOperationsOperations,
+    SynonymMapsOperationsOperations,
+)
 
 
-class SearchClient:  # pylint: disable=client-accepts-api-version-keyword
-    """Client that can be used to query an index and upload, merge, or delete
-    documents.
+class SearchClient(
+    SearchClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """Client that can be used to manage and query indexes and documents, as well as
+    manage other resources, on a search service.
 
+    :ivar data_sources_operations: DataSourcesOperationsOperations operations
+    :vartype data_sources_operations:
+     azure.search.documents.aio.operations.DataSourcesOperationsOperations
+    :ivar indexers_operations: IndexersOperationsOperations operations
+    :vartype indexers_operations:
+     azure.search.documents.aio.operations.IndexersOperationsOperations
+    :ivar skillsets_operations: SkillsetsOperationsOperations operations
+    :vartype skillsets_operations:
+     azure.search.documents.aio.operations.SkillsetsOperationsOperations
+    :ivar synonym_maps_operations: SynonymMapsOperationsOperations operations
+    :vartype synonym_maps_operations:
+     azure.search.documents.aio.operations.SynonymMapsOperationsOperations
+    :ivar indexes_operations: IndexesOperationsOperations operations
+    :vartype indexes_operations: azure.search.documents.aio.operations.IndexesOperationsOperations
     :ivar documents_operations: DocumentsOperationsOperations operations
     :vartype documents_operations:
      azure.search.documents.aio.operations.DocumentsOperationsOperations
-    :param endpoint: Client that can be used to query an index and upload, merge, or delete
-     documents. Required.
+    :param endpoint: Service host. Required.
     :type endpoint: str
-    :param index_name: Client that can be used to query an index and upload, merge, or delete
-     documents. Required.
-    :type index_name: str
     :keyword api_version: The API version to use for this operation. Default value is "2024-07-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, index_name: str, **kwargs: Any
+        self, endpoint: str, **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}/indexes({indexName})"
-        self._config = SearchClientConfiguration(endpoint=endpoint, index_name=index_name, **kwargs)
+        _endpoint = "{endpoint}"
+        self._config = SearchClientConfiguration(endpoint=endpoint, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -63,6 +83,21 @@ class SearchClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.data_sources_operations = DataSourcesOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.indexers_operations = IndexersOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.skillsets_operations = SkillsetsOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.synonym_maps_operations = SynonymMapsOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.indexes_operations = IndexesOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.documents_operations = DocumentsOperationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -89,8 +124,7 @@ class SearchClient:  # pylint: disable=client-accepts-api-version-keyword
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "indexName": self._serialize.url("self._config.index_name", self._config.index_name, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

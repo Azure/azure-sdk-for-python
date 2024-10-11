@@ -15,7 +15,7 @@ from ._api_versions import DEFAULT_VERSION
 
 
 def convert_search_result(result):
-    ret = result.additional_properties
+    ret = result
     ret["@search.score"] = result.score
     ret["@search.reranker_score"] = result.reranker_score
     ret["@search.highlights"] = result.highlights
@@ -108,13 +108,14 @@ def _ensure_response(f):
 
 
 class SearchPageIterator(PageIterator):
-    def __init__(self, client, initial_query, kwargs, continuation_token=None) -> None:
+    def __init__(self, client, index_name, initial_query, kwargs, continuation_token=None) -> None:
         super(SearchPageIterator, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
             continuation_token=continuation_token,
         )
         self._client = client
+        self._index_name = index_name
         self._initial_query = initial_query
         self._kwargs = kwargs
         self._facets = None
@@ -122,11 +123,11 @@ class SearchPageIterator(PageIterator):
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
-            return self._client.documents_operations.search_post(search_request=self._initial_query.request, **self._kwargs)
+            return self._client.documents_operations.search_post(index_name=self._index_name, search_request=self._initial_query.request, **self._kwargs)
 
         _next_link, next_page_request = unpack_continuation_token(continuation_token)
 
-        return self._client.documents_operations.search_post(search_request=next_page_request, **self._kwargs)
+        return self._client.documents_operations.search_post(index_name=self._index_name, search_request=next_page_request, **self._kwargs)
 
     def _extract_data_cb(self, response):
         continuation_token = pack_continuation_token(response, api_version=self._api_version)

@@ -12,7 +12,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from .._generated.aio import SearchClient as _SearchServiceClient
+from ..._generated.aio import SearchClient as _SearchServiceClient
 from ...aio._search_client_async import SearchClient
 from .._utils import (
     get_access_conditions,
@@ -303,7 +303,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes_operations.analyze(
             index_name=index_name,
-            request=analyze_request._to_analyze_request(),  # pylint:disable=protected-access
+            request=analyze_request._to_generated(),  # pylint:disable=protected-access
             **kwargs
         )
         return result

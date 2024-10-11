@@ -166,7 +166,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             for result in results:
                 try:
                     assert self._index_key is not None  # Hint for mypy
-                    action = next(x for x in actions if x.additional_properties.get(self._index_key) == result.key)
+                    action = next(x for x in actions if x.get(self._index_key) == result.key)
                     if result.succeeded:
                         await self._callback_succeed(action)
                     elif is_retryable_status_code(result.status_code):
@@ -275,7 +275,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = await self._client.documents_operations.index(batch=batch, error_map=error_map, **kwargs)
+            batch_response = await self._client.documents_operations.index(index_name=self._index_name, batch=batch, error_map=error_map, **kwargs)
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError as ex:
             if len(actions) == 1:
@@ -320,7 +320,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         if not self._index_key:
             await self._callback_fail(action)
             return
-        key = action.additional_properties.get(self._index_key)
+        key = action.get(self._index_key)
         counter = self._retry_counter.get(key)
         if not counter:
             # first time that fails
