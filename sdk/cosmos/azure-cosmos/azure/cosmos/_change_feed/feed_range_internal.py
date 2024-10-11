@@ -105,7 +105,7 @@ class FeedRangeInternalEpk(FeedRangeInternal):
     type_property_name = "Range"
     container_link_property_name = "Container"
 
-    def __init__(self, feed_range: Range, container_link: str) -> None:
+    def __init__(self, feed_range: Range, container_link: Optional[any]) -> None:
         if feed_range is None:
             raise ValueError("feed_range cannot be None")
 

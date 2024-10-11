@@ -43,11 +43,13 @@ class TestUpdatedSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
     configs = test_config.TestConfig
     TEST_DATABASE_ID = configs.TEST_DATABASE_ID
 
-    @classmethod
-    def setUpClass(cls):
-        cls.client = CosmosClient(cls.host, cls.masterKey)
-        cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
+    async def asyncSetUp(self):
+        self.client = CosmosClient(self.host, self.masterKey)
+        self.database = self.client.get_database_client(self.TEST_DATABASE_ID)
 
+    async def tearDown(self):
+        await self.client.delete_database(self.database.id)
+        await self.client.close()
 
     async def test_updated_session_token_from_logical_pk(self):
         container = await self.database.create_container("test_updated_session_token_from_logical_pk" + str(uuid.uuid4()),

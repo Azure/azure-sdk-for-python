@@ -21,6 +21,8 @@
 
 """Internal Helper functions for manipulating session tokens.
 """
+from typing import Tuple, List
+
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._vector_session_token import VectorSessionToken
 from ._feed_range import FeedRange
@@ -40,11 +42,11 @@ def merge_session_tokens_with_same_range(session_token1: str, session_token2: st
 def is_compound_session_token(session_token: str) -> bool:
     return "," in session_token
 
-def parse_session_token(session_token: str) -> (str, VectorSessionToken):
+def parse_session_token(session_token: str) -> Tuple[str, VectorSessionToken]:
     tokens = session_token.split(":")
     return tokens[0], VectorSessionToken.create(tokens[1])
 
-def split_compound_session_tokens(compound_session_tokens: [(Range, str)]) -> [str]:
+def split_compound_session_tokens(compound_session_tokens: List[Tuple[Range, str]]) -> List[str]:
     session_tokens = []
     for _, session_token in compound_session_tokens:
         if is_compound_session_token(session_token):
@@ -55,7 +57,7 @@ def split_compound_session_tokens(compound_session_tokens: [(Range, str)]) -> [s
             session_tokens.append(session_token)
     return session_tokens
 
-def merge_session_tokens_for_same_partition(session_tokens: [str]) -> [str]:
+def merge_session_tokens_for_same_partition(session_tokens: List[str]) -> List[str]:
     i = 0
     while i < len(session_tokens):
         j = i + 1
@@ -75,7 +77,7 @@ def merge_session_tokens_for_same_partition(session_tokens: [str]) -> [str]:
 
     return session_tokens
 
-def merge_ranges_with_subsets(overlapping_ranges: [(Range, str)]) -> [(Range, str)]:
+def merge_ranges_with_subsets(overlapping_ranges: List[Tuple[Range, str]]) -> List[Tuple[Range, str]]:
     processed_ranges = []
     while len(overlapping_ranges) != 0: # pylint: disable=too-many-nested-blocks
         feed_range_cmp, session_token_cmp = overlapping_ranges[0]

@@ -32,6 +32,9 @@ class FeedRange(ABC):
     """Represents a single feed range in an Azure Cosmos DB SQL API container.
 
     """
+    def __init__(self) -> None:
+        self._feed_range_internal = None
+
     @staticmethod
     def from_string(json_str: str) -> 'FeedRange':
         """
