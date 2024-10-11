@@ -48,7 +48,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation: Optional[Dict] = None,
+        conversation = None,
         **kwargs,
     ):
         """Evaluate either a query and response or a conversation. Must supply either a query AND response,
@@ -61,7 +61,7 @@ class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
         :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
-        :paramtype conversation: Optional[Dict]
+        :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
 

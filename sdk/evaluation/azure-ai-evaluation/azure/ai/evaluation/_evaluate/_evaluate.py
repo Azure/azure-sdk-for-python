@@ -21,11 +21,10 @@ from .._constants import (
     Prefixes,
     _InternalEvaluationMetrics,
 )
-from .._model_configurations import AzureAIProject, EvaluatorConfig
+from .._model_configurations import AzureAIProject, EvaluatorConfig, EvaluateResult
 from .._user_agent import USER_AGENT
 from ._batch_run_client import BatchRunContext, CodeClient, ProxyClient
 from ._utils import (
-    EvaluateResult,
     _apply_column_mapping,
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
@@ -461,7 +460,7 @@ def evaluate(
     azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
     **kwargs,
-) -> Dict:
+) -> EvaluateResult:
     """Evaluates target or data with built-in or custom evaluators. If both target and data are provided,
         data will be run through target function and then results will be evaluated.
 

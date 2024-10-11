@@ -37,12 +37,6 @@ class AzureMLWorkspace(NamedTuple):
     workspace_name: str
 
 
-class EvaluateResult(TypedDict):
-    metrics: Dict[str, float]
-    studio_url: Optional[str]
-    rows: List[Dict]
-
-
 def is_none(value) -> bool:
     return value is None or str(value).lower() == "none"
 

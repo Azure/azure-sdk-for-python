@@ -30,7 +30,8 @@ from ._model_configurations import (
     EvaluatorConfig,
     OpenAIModelConfiguration,
     Conversation,
-    Message
+    Message,
+    EvaluateResult,
 )
 
 __all__ = [
@@ -61,4 +62,5 @@ __all__ = [
     "EvaluatorConfig",
     "Conversation",
     "Message",
+    "EvaluateResult",
 ]
