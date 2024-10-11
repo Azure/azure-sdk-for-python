@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-* Fixed a number of cases where snake case was used instead of pascel case for feature flag telemetry.
+* Fixed a number of cases where snake case was used instead of pascal case for feature flag telemetry.
   * etag -> ETag
   * feature_flag_reference -> FeatureFlagReference
   * feature_flag_id -> FeatureFlagId
