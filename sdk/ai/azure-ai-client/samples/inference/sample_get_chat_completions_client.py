@@ -25,8 +25,6 @@ from azure.ai.client import AzureAIClient
 from azure.ai.inference.models import UserMessage
 from azure.identity import DefaultAzureCredential
 
-# Create an Azure AI Client from a connection string, copied from your AI Studio project.
-# It should have the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
 ai_client = AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],

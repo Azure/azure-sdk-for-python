@@ -29,8 +29,6 @@ from azure.identity import DefaultAzureCredential
 
 async def sample_get_chat_completions_client_async():
 
-    # Create an Azure AI Client from a connection string, copied from your AI Studio project.
-    # It should have the format "<Endpoint>;<AzureSubscriptionId>;<ResourceGroup>;<WorkspaceName>"
     async with AzureAIClient.from_connection_string(
         credential=DefaultAzureCredential(),
         conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
