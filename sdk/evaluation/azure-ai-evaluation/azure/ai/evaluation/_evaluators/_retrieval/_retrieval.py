@@ -7,7 +7,7 @@ import logging
 import math
 import os
 import re
-from typing import Dict, Union
+from typing import Union
 
 from promptflow._utils.async_utils import async_run_allowing_running_loop
 from promptflow.core import AsyncPrompty
