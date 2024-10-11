@@ -485,7 +485,7 @@ def evaluate(
     :keyword azure_ai_project: Logs evaluation results to AI Studio if set.
     :paramtype azure_ai_project: Optional[~azure.ai.evaluation.AzureAIProject]
     :return: Evaluation results.
-    :rtype: Dict
+    :rtype: ~azure.ai.evaluation.EvaluateResult
 
     :Example:
 
