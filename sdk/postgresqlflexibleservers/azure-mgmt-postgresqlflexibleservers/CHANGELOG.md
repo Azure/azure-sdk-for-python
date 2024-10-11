@@ -18,24 +18,30 @@
 
 ### Other Changes
 
-  - Upgrade api-version to `2024-08-01`
-  - Storage auto growth
-  - IOPS scaling
-  - Backup - Long Term Retention
-  - Backup - On-demand
-  - Geo-redundant backup encryption key - Revive Dropped
-  - Server Logs
-  - Migrations
-  - Migration Pre-validation
-  - Migration Roles
-  - Private endpoint Migration
-  - Private Endpoints
-  - Read replicas - Switchover
-  - Read replicas - Virtual Endpoints
-  - Azure Defender / Threat Protection APIs
-  - PG 16 support
-  - PremiumV2_LRS storage type support
-  - Location capabilities updates
+  - Added operation group `LongRunningBackupOperations`
+  - Added operation group `LongRunningBackupsOperations`
+  - Added operation group `MaintenancesOperations`
+  - Added operation group `LogFilesOperations`
+  - Added operation group `MigrationsOperations`
+  - Added operation group `PrivateEndpointConnectionOperations`
+  - Added operation group `VirtualEndpointsOperations`
+  - Added operation group `ServerThreatProtectionSettingsOperations`
+  - Added operation group `AdvancedThreatProtectionSettingsOperations`
+  - Added operation group `LocationBasedCapabilitySetOperations`
+  - Added operation group `OperationProgressOperations`
+  - Added operation group `OperationResultsOperations`
+  - Model `DataEncryption` has a new parameter `geo_backup_encryption_key_status`
+  - Model `DataEncryption` has a new parameter `geo_backup_key_uri`
+  - Model `DataEncryption` has a new parameter `geo_backup_user_assigned_identity_id`
+  - Model `DataEncryption` has a new parameter `primary_encryption_key_status`
+  - Model `Storage` has a new parameter `auto_grow`
+  - Model `Storage` has a new parameter `iops`
+  - Model `Storage` has a new parameter `iops_tier`
+  - Model `Storage` has a new parameter `throughput`
+  - Model `Storage` has a new parameter `type`
+  - Model `Server` has a new parameter `private_endpoint_connections`
+  - Model `Server` has a new parameter `replica`
+  - Model `ServerForUpdate` has a new parameter `replica`
 
 ## 1.0.0b1 (2024-08-27)
 
