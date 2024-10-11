@@ -47,7 +47,7 @@ def build_set_properties_request(
     restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -83,7 +83,7 @@ def build_get_properties_request(
 
     restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -117,7 +117,7 @@ def build_get_statistics_request(
 
     restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
     comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -158,7 +158,7 @@ def build_list_containers_segment_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -200,7 +200,7 @@ def build_get_user_delegation_key_request(
     restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
     comp: Literal["userdelegationkey"] = kwargs.pop("comp", _params.pop("comp", "userdelegationkey"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -236,7 +236,7 @@ def build_get_account_info_request(
 
     restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -276,7 +276,7 @@ def build_submit_batch_request(
 
     comp: Literal["batch"] = kwargs.pop("comp", _params.pop("comp", "batch"))
     multipart_content_type: Optional[str] = kwargs.pop("multipart_content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -319,7 +319,7 @@ def build_filter_blobs_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["blobs"] = kwargs.pop("comp", _params.pop("comp", "blobs"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -379,6 +379,7 @@ class ServiceOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Sets properties for a storage account's Blob service endpoint, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -397,7 +398,7 @@ class ServiceOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -455,6 +456,7 @@ class ServiceOperations:
     def get_properties(
         self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> _models.StorageServiceProperties:
+        # pylint: disable=line-too-long
         """gets the properties of a storage account's Blob service, including properties for Storage
         Analytics and CORS (Cross-Origin Resource Sharing) rules.
 
@@ -471,7 +473,7 @@ class ServiceOperations:
         :rtype: ~azure.storage.blob.models.StorageServiceProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -528,6 +530,7 @@ class ServiceOperations:
     def get_statistics(
         self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> _models.StorageServiceStats:
+        # pylint: disable=line-too-long
         """Retrieves statistics related to replication for the Blob service. It is only available on the
         secondary location endpoint when read-access geo-redundant replication is enabled for the
         storage account.
@@ -545,7 +548,7 @@ class ServiceOperations:
         :rtype: ~azure.storage.blob.models.StorageServiceStats
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -610,6 +613,7 @@ class ServiceOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ListContainersSegmentResponse:
+        # pylint: disable=line-too-long
         """The List Containers Segment operation returns a list of the containers under the specified
         account.
 
@@ -646,7 +650,7 @@ class ServiceOperations:
         :rtype: ~azure.storage.blob.models.ListContainersSegmentResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -709,6 +713,7 @@ class ServiceOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> _models.UserDelegationKey:
+        # pylint: disable=line-too-long
         """Retrieves a user delegation key for the Blob service. This is only a valid operation when using
         bearer token authentication.
 
@@ -727,7 +732,7 @@ class ServiceOperations:
         :rtype: ~azure.storage.blob.models.UserDelegationKey
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -790,6 +795,7 @@ class ServiceOperations:
     def get_account_info(  # pylint: disable=inconsistent-return-statements
         self, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Returns the sku name and account kind.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -805,7 +811,7 @@ class ServiceOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -867,6 +873,7 @@ class ServiceOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
+        # pylint: disable=line-too-long
         """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
 
         :param content_length: The length of the request. Required.
@@ -886,7 +893,7 @@ class ServiceOperations:
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -959,6 +966,7 @@ class ServiceOperations:
         include: Optional[List[Union[str, _models.FilterBlobsIncludeItem]]] = None,
         **kwargs: Any
     ) -> _models.FilterBlobSegment:
+        # pylint: disable=line-too-long
         """The Filter Blobs operation enables callers to list blobs across all containers whose tags match
         a given search expression.  Filter blobs searches across all containers within a storage
         account but can be scoped within the expression to a single container.
@@ -996,7 +1004,7 @@ class ServiceOperations:
         :rtype: ~azure.storage.blob.models.FilterBlobSegment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

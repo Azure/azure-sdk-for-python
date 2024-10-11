@@ -290,6 +290,7 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backup type."""
 
     FULL = "Full"
+    CUSTOMER_ON_DEMAND = "Customer On-Demand"
 
 
 class OverwriteDbsInTargetEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -413,12 +414,12 @@ class ServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The version of a server."""
 
+    SIXTEEN = "16"
     FIFTEEN = "15"
     FOURTEEN = "14"
     THIRTEEN = "13"
     TWELVE = "12"
     ELEVEN = "11"
-    SIXTEEN = "16"
 
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):

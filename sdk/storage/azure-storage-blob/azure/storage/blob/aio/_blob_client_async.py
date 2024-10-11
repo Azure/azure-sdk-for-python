@@ -1125,6 +1125,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
             .. versionadded:: 12.10.0
                 This was introduced in API version '2020-10-02'.
 
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to check if it exists.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -1135,10 +1138,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :rtype: Dict[str, str]
         """
 
+        version_id = get_version_id(self.version_id, kwargs)
         kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
         kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
-        return cast(Dict[str, str],
-                    await self._client.blob.set_immutability_policy(cls=return_response_headers, **kwargs))
+        return cast(Dict[str, str], await self._client.blob.set_immutability_policy(
+            cls=return_response_headers,version_id=version_id, **kwargs))
 
     @distributed_trace_async
     async def delete_immutability_policy(self, **kwargs: Any) -> None:
@@ -1147,6 +1151,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         .. versionadded:: 12.10.0
             This operation was introduced in API version '2020-10-02'.
 
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to check if it exists.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -1157,7 +1164,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :rtype: Dict[str, str]
         """
 
-        await self._client.blob.delete_immutability_policy(**kwargs)
+        version_id = get_version_id(self.version_id, kwargs)
+        await self._client.blob.delete_immutability_policy(version_id=version_id, **kwargs)
 
     @distributed_trace_async
     async def set_legal_hold(self, legal_hold: bool, **kwargs: Any) -> Dict[str, Union[str, datetime, bool]]:
@@ -1168,6 +1176,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
 
         :param bool legal_hold:
             Specified if a legal hold should be set on the blob.
+        :keyword str version_id:
+            The version id parameter is an opaque DateTime
+            value that, when present, specifies the version of the blob to check if it exists.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -1178,8 +1189,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Storag
         :rtype: Dict[str, Union[str, datetime, bool]]
         """
 
-        return cast(Dict[str, Union[str, datetime, bool]],
-                    await self._client.blob.set_legal_hold(legal_hold, cls=return_response_headers, **kwargs))
+        version_id = get_version_id(self.version_id, kwargs)
+        return cast(Dict[str, Union[str, datetime, bool]], await self._client.blob.set_legal_hold(
+            legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
 
     @distributed_trace_async
     async def create_page_blob(
