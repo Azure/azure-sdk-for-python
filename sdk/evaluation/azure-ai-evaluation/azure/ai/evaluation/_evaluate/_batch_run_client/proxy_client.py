@@ -64,7 +64,7 @@ class ProxyClient:  # pylint: disable=client-accepts-api-version-keyword
         run: Run = proxy_run.run.result()
         return self._pf_client.get_metrics(run)
 
-    def get_run_summary(self, proxy_run: ProxyRun):
+    def get_run_summary(self, proxy_run: ProxyRun) -> Dict[str, Any]:
         run = proxy_run.run.result()
         return OrderedDict([
             ("status", run.status),
