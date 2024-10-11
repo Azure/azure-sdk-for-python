@@ -33,10 +33,10 @@ from azure.cosmos.partition_key import _Undefined, _Empty
 
 class FeedRangeInternal(ABC):
 
-    @property
-    @abstractmethod
-    def _container_link(self) -> str:
-        pass
+    def __init__(self, container_link: str) -> None:
+        if container_link is None:
+            raise ValueError("container_link cannot be None")
+        self._container_link = container_link
 
     @abstractmethod
     def get_normalized_range(self) -> Range:
@@ -68,12 +68,9 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
             raise ValueError("PartitionKey cannot be None")
         if feed_range is None:
             raise ValueError("Feed range cannot be None")
-        if container_link is None:
-            raise ValueError("Container link cannot be None")
-
+        super().__init__(container_link)
         self._pk_value = pk_value
         self._feed_range = feed_range
-        self._container_link = container_link
 
     def get_normalized_range(self) -> Range:
         return self._feed_range.to_normalized_range()
@@ -105,8 +102,6 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
         raise ValueError(f"Can not parse FeedRangeInternalPartitionKey from the json,"
                          f" there is no property {cls.type_property_name}")
 
-    def _container_link(self) -> str:
-        return self._container_link
 
 
 class FeedRangeInternalEpk(FeedRangeInternal):
@@ -116,9 +111,9 @@ class FeedRangeInternalEpk(FeedRangeInternal):
     def __init__(self, feed_range: Range, container_link: str) -> None:
         if feed_range is None:
             raise ValueError("feed_range cannot be None")
+        super().__init__(container_link)
 
         self._range = feed_range
-        self._container_link = container_link
         self._base64_encoded_string: Optional[str] = None
 
     def get_normalized_range(self) -> Range:
@@ -149,6 +144,3 @@ class FeedRangeInternalEpk(FeedRangeInternal):
             self._base64_encoded_string = self._to_base64_encoded_string()
 
         return self._base64_encoded_string
-
-    def _container_link(self) -> str:
-        return self._container_link

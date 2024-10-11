@@ -21,7 +21,7 @@
 
 import base64
 import json
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Any, Dict
 
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk, FeedRangeInternal
@@ -33,10 +33,8 @@ class FeedRange(ABC):
 
     """
 
-    @property
-    @abstractmethod
-    def _feed_range_internal(self) -> FeedRangeInternal:
-        pass
+    def __init__(self, feed_range_internal: FeedRangeInternal) -> None:
+        self._feed_range_internal = feed_range_internal
 
     @staticmethod
     def from_string(json_str: str) -> 'FeedRange':
@@ -60,8 +58,7 @@ class FeedRangeEpk(FeedRange):
     def __init__(self, feed_range: Range, container_link: str) -> None:
         if feed_range is None:
             raise ValueError("feed_range cannot be None")
-
-        self._feed_range_internal = FeedRangeInternalEpk(feed_range, container_link)
+        super().__init__(FeedRangeInternalEpk(feed_range, container_link))
 
     def __str__(self) -> str:
         """Get a json representation of the feed range.
@@ -75,6 +72,3 @@ class FeedRangeEpk(FeedRange):
     def _from_json(cls, data: Dict[str, Any]) -> 'FeedRange':
         feed_range_internal = FeedRangeInternalEpk.from_json(data)
         return cls(feed_range_internal._range, feed_range_internal._container_link)
-
-    def _feed_range_internal(self):
-        return self._feed_range_internal

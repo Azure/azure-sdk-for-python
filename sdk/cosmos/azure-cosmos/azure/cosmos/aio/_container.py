@@ -1322,7 +1322,7 @@ class ContainerProxy:
                 for partitionKeyRange in partition_key_ranges]
 
     def get_updated_session_token(self,
-                                  feed_ranges_to_session_tokens: List[Tuple[str, FeedRange]],
+                                  feed_ranges_to_session_tokens: List[Tuple[FeedRange, str]],
                                   target_feed_range: FeedRange
                                   ) -> str:
         """Gets the the most up to date session token from the list of session token and feed range tuples
@@ -1331,7 +1331,7 @@ class ContainerProxy:
         session token. Session tokens and feed ranges are scoped to a container. Only input session tokens
         and feed ranges obtained from the same container.
         :param feed_ranges_to_session_tokens: List of partition key and session token tuples.
-        :type feed_ranges_to_session_tokens: List[Tuple(str, FeedRange)]
+        :type feed_ranges_to_session_tokens: List[Tuple[str, FeedRange]]
         :param target_feed_range: feed range to get most up to date session token.
         :type target_feed_range: FeedRange
         :returns: a session token
