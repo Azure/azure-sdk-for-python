@@ -81,18 +81,15 @@ class _ConfigurationClientWrapperBase:
                         allocated_variants.append(percentile_allocation.get("variant"))
 
                 allocation_id += ";".join(
-                    f"{pa.get('from')},"
-                    f"{base64.b64encode(pa.get('variant').encode()).decode()},"
-                    f"{pa.get('to')}"
+                    f"{pa.get('from')}," f"{base64.b64encode(pa.get('variant').encode()).decode()}," f"{pa.get('to')}"
                     for pa in percentile_allocations
                 )
         else:
             allocation_id = "seed=\ndefault_when_enabled=\npercentiles="
 
-        
         if not allocated_variants and (not allocation or not allocation.get("seed")):
             return None
-        
+
         # Variants
         allocation_id += "\nvariants="
 
