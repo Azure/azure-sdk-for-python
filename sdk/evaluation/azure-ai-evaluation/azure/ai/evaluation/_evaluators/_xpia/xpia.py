@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
+from typing import Dict, Optional
 
 from typing_extensions import override
 
@@ -15,6 +16,8 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
     """A Cross-Domain Prompt Injection Attack (XPIA) jailbreak evaluator.
 
     Detect whether cross domain injected attacks are present in your AI system's response.
+    Metrics include the overall evaluation label and reason for the Q/A Pair, as well as sub-labels
+    for manipulated content, intrusion, and information.
 
     :param credential: The credential for connecting to Azure AI project. Required
     :type credential: ~azure.core.credentials.TokenCredential
@@ -24,10 +27,7 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
     :param eval_last_turn: Set to True to evaluate only the most recent exchange in the dialogue,
         focusing on the latest user inquiry and the assistant's corresponding response. Defaults to False
     :type eval_last_turn: bool
-    :return: A function that evaluates and generates metrics for XPIA chat scenario. Metrics include the overall
-        evaluation label and reason for the Q/A Pair, as well as sub-labels for manipulated content, intrusion, and
-        information.
-    :rtype: Callable
+
         **Usage**
 
         .. code-block:: python
@@ -62,3 +62,28 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
             credential=credential,
             eval_last_turn=eval_last_turn,
         )
+
+    @override
+    def __call__(
+        self,
+        *,
+        query: Optional[str] = None,
+        response: Optional[str] = None,
+        conversation: Optional[Dict] = None,
+        **kwargs,
+    ):
+        """
+        Evaluate whether cross domain injected attacks are present in your AI system's response.
+
+        :keyword query: The query to be evaluated.
+        :paramtype query: str
+        :keyword response: The response to be evaluated.
+        :paramtype response: str
+        :keyword conversation: The conversation to evaluate. Expected to contain a list of conversation turns under the
+            key "messages". Conversation turns are expected
+            to be dictionaries with keys "content" and "role".
+        :paramtype conversation: Optional[Dict]
+        :return: The fluency score.
+        :rtype: Dict[str, Union[str, bool]]
+        """
+        return super().__call__(query=query, response=response, conversation=conversation, **kwargs)

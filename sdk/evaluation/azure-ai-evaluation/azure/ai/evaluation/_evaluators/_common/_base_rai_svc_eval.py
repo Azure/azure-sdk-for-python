@@ -62,8 +62,6 @@ class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[Dict]
-        :return: The evaluation result.
-        :rtype: Dict[str, Union[str, float]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
 
