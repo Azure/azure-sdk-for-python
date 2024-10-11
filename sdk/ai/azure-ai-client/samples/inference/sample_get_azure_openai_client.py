@@ -24,22 +24,22 @@ import os
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
 
-ai_client = AzureAIClient.from_connection_string(
+with AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
-)
+) as ai_client:
 
-# Get an authenticated OpenAI client for your default Azure OpenAI connection:
-client = ai_client.inference.get_azure_openai_client()
+    # Get an authenticated OpenAI client for your default Azure OpenAI connection:
+    with ai_client.inference.get_azure_openai_client() as client:
 
-response = client.chat.completions.create(
-    model="gpt-4-0613",
-    messages=[
-        {
-            "role": "user",
-            "content": "How many feet are in a mile?",
-        },
-    ],
-)
+        response = client.chat.completions.create(
+            model="gpt-4-0613",
+            messages=[
+                {
+                    "role": "user",
+                    "content": "How many feet are in a mile?",
+                },
+            ],
+        )
 
-print(response.choices[0].message.content)
+        print(response.choices[0].message.content)

@@ -24,19 +24,19 @@ import os
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
 
-ai_client = AzureAIClient.from_connection_string(
+with AzureAIClient.from_connection_string(
     credential=DefaultAzureCredential(),
     conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"],
-)
+) as ai_client:
 
-# Get an authenticated azure.ai.inference embeddings client for your default Serverless connection:
-client = ai_client.inference.get_embeddings_client()
+    # Get an authenticated azure.ai.inference embeddings client for your default Serverless connection:
+    with ai_client.inference.get_embeddings_client() as client:
 
-response = client.embed(input=["first phrase", "second phrase", "third phrase"])
+        response = client.embed(input=["first phrase", "second phrase", "third phrase"])
 
-for item in response.data:
-    length = len(item.embedding)
-    print(
-        f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
-        f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
-    )
+        for item in response.data:
+            length = len(item.embedding)
+            print(
+                f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
+                f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
+            )

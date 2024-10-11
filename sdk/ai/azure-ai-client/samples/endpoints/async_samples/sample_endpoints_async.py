@@ -4,13 +4,14 @@
 # ------------------------------------
 
 """
-FILE: sample_endpoints_async
+FILE: sample_endpoints_async.py
 
 DESCRIPTION:
-    This sample demonstrates how to enumerate and get endpoints from an AzureAIClient.
+    Given an asynchronous AzureAIClient, this sample demonstrates how to enumerate endpoints
+    and get endpoint properties.
 
 USAGE:
-    python sample_endpoints_async
+    python sample_endpoints_async.py
 
     Before running the sample:
 
@@ -24,12 +25,7 @@ import asyncio
 import os
 from azure.ai.client.aio import AzureAIClient
 from azure.ai.client.models import EndpointType, AuthenticationType
-from openai import AzureOpenAI
-from azure.ai.inference.aio import ChatCompletionsClient
-from azure.ai.inference.models import UserMessage
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-from azure.core.credentials import AzureKeyCredential
-
+from azure.identity import DefaultAzureCredential
 
 async def sample_endpoints_async():
 
@@ -64,72 +60,66 @@ async def sample_endpoints_async():
         print("====> Get endpoint by name:")
         print(endpoint)
 
-        exit()
+    # Examples of how you would create Inference client
+    if endpoint.endpoint_type == EndpointType.AZURE_OPEN_AI:
 
-        # Here is how you would create the appropriate AOAI or Inference SDK for these endpoint
-        if endpoint.endpoint_type == EndpointType.AZURE_OPEN_AI:
+        from openai import AsyncAzureOpenAI
 
-            if endpoint.authentication_type == AuthenticationType.API_KEY:
-                print("====> Creating AzureOpenAI client using API key authentication")
-                client = AzureOpenAI(
-                    api_key=endpoint.key,
-                    azure_endpoint=endpoint.endpoint_url,
-                    api_version="2024-08-01-preview",  # TODO: Is this needed?
-                )
-            elif endpoint.authentication_type == AuthenticationType.AAD:
-                print("====> Creating AzureOpenAI client using Entra ID authentication")
-                client = AzureOpenAI(
-                    # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
-                    azure_ad_token_provider=get_bearer_token_provider(
-                        endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
-                    ),
-                    azure_endpoint=endpoint.endpoint_url,
-                    api_version="2024-08-01-preview",
-                )
-            elif endpoint.authentication_type == AuthenticationType.SAS:
-                # TODO - Not yet supported by the service. Expected 9/27.
-                print("====> Creating AzureOpenAI client using SAS authentication")
-                client = AzureOpenAI(
-                    azure_ad_token_provider=get_bearer_token_provider(
-                        endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
-                    ),
-                    azure_endpoint=endpoint.endpoint_url,
-                    api_version="2024-08-01-preview",
-                )
-
-            response = client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {
-                        "role": "user",
-                        "content": "How many feet are in a mile?",
-                    },
-                ],
+        if endpoint.authentication_type == AuthenticationType.API_KEY:
+            print("====> Creating AzureOpenAI client using API key authentication")
+            client = AsyncAzureOpenAI(
+                api_key=endpoint.key,
+                azure_endpoint=endpoint.endpoint_url,
+                api_version="2024-08-01-preview",  # TODO: Is this needed?
             )
+        elif endpoint.authentication_type == AuthenticationType.AAD:
+            print("====> Creating AzureOpenAI client using Entra ID authentication")
+            from azure.identity import get_bearer_token_provider
+            client = AsyncAzureOpenAI(
+                # See https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider
+                azure_ad_token_provider=get_bearer_token_provider(
+                    endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
+                ),
+                azure_endpoint=endpoint.endpoint_url,
+                api_version="2024-08-01-preview",
+            )
+        else:
+                raise ValueError(f"Authentication type {endpoint.authentication_type} not supported.")
 
-            print(response.choices[0].message.content)
+        response = await client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "user",
+                    "content": "How many feet are in a mile?",
+                },
+            ],
+        )
+        print(response.choices[0].message.content)
 
-        elif endpoint.endpoint_type == EndpointType.SERVERLESS:
+    elif endpoint.endpoint_type == EndpointType.SERVERLESS:
 
-            if endpoint.authentication_type == AuthenticationType.API_KEY:
-                print("====> Creating ChatCompletionsClient using API key authentication")
-                client = ChatCompletionsClient(
-                    endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key)
-                )
-            elif endpoint.authentication_type == AuthenticationType.AAD:
-                # MaaS models do not yet support EntraID auth
-                print("====> Creating ChatCompletionsClient using Entra ID authentication")
-                client = ChatCompletionsClient(
-                    endpoint=endpoint.endpoint_url, credential=endpoint.properties.token_credential
-                )
-            elif endpoint.authentication_type == AuthenticationType.SAS:
-                # TODO - Not yet supported by the service. Expected 9/27.
-                print("====> Creating ChatCompletionsClient using SAS authentication")
-                client = ChatCompletionsClient(endpoint=endpoint.endpoint_url, credential=endpoint.token_credential)
+        from azure.ai.inference.aio import ChatCompletionsClient
+        from azure.ai.inference.models import UserMessage
 
-            response = client.complete(messages=[UserMessage(content="How many feet are in a mile?")])
+        if endpoint.authentication_type == AuthenticationType.API_KEY:
+            print("====> Creating ChatCompletionsClient using API key authentication")
+            from azure.core.credentials import AzureKeyCredential
+            client = ChatCompletionsClient(
+                endpoint=endpoint.endpoint_url, credential=AzureKeyCredential(endpoint.key)
+            )
+        elif endpoint.authentication_type == AuthenticationType.AAD:
+            # MaaS models do not yet support EntraID auth
+            print("====> Creating ChatCompletionsClient using Entra ID authentication")
+            client = ChatCompletionsClient(
+                endpoint=endpoint.endpoint_url, credential=endpoint.properties.token_credential
+            )
+        else:
+            raise ValueError(f"Authentication type {endpoint.authentication_type} not supported.")
 
-            print(response.choices[0].message.content)
+        response = await client.complete(messages=[UserMessage(content="How many feet are in a mile?")])
+        await client.close()
+        print(response.choices[0].message.content)
 
 
 async def main():
