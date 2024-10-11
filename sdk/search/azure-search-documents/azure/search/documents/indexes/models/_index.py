@@ -218,7 +218,7 @@ class SearchField(Model):
 
     @classmethod
     def _from_generated(cls, search_field) -> Optional[Self]:
-        if not search_field:
+        if search_field is None:
             return None
         # pylint:disable=protected-access
         fields = [SearchField._from_generated(x) for x in search_field.fields] if search_field.fields else None
@@ -653,7 +653,7 @@ class SearchIndex(Model):
 
     @classmethod
     def _from_generated(cls, search_index) -> Optional[Self]:
-        if not search_index:
+        if search_index is None:
             return None
         if search_index.analyzers:
             analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore

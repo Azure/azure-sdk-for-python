@@ -199,8 +199,8 @@ class TokenFilter(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: The discriminator for derived types. Required. Default value is None.
-    :vartype odata_type: str
+    :ivar o_data_type: The discriminator for derived types. Required. Default value is None.
+    :vartype o_data_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and
      is limited to 128 characters. Required.
@@ -208,7 +208,7 @@ class TokenFilter(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    o_data_type: str = rest_discriminator(name="@odata.type")
     """The discriminator for derived types. Required. Default value is None."""
     name: str = rest_field()
     """The name of the token filter. It must only contain letters, digits, spaces,
@@ -219,7 +219,7 @@ class TokenFilter(_model_base.Model):
     def __init__(
         self,
         *,
-        odata_type: str,
+        o_data_type: str,
         name: str,
     ): ...
 
@@ -249,14 +249,14 @@ class AsciiFoldingTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Searc
     :ivar preserve_original: A value indicating whether the original token will be kept. Default is
      false.
     :vartype preserve_original: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.AsciiFoldingTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     preserve_original: Optional[bool] = rest_field(name="preserveOriginal")
     """A value indicating whether the original token will be kept. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.AsciiFoldingTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.AsciiFoldingTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.AsciiFoldingTokenFilter\"."""
 
@@ -276,7 +276,7 @@ class AsciiFoldingTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Searc
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.AsciiFoldingTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.AsciiFoldingTokenFilter", **kwargs)
 
 
 class AutocompleteItem(_model_base.Model):
@@ -489,8 +489,8 @@ class SearchIndexerSkill(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: The discriminator for derived types. Required. Default value is None.
-    :vartype odata_type: str
+    :ivar o_data_type: The discriminator for derived types. Required. Default value is None.
+    :vartype o_data_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the
      skills array, prefixed with the character '#'.
@@ -512,7 +512,7 @@ class SearchIndexerSkill(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    o_data_type: str = rest_discriminator(name="@odata.type")
     """The discriminator for derived types. Required. Default value is None."""
     name: Optional[str] = rest_field()
     """The name of the skill which uniquely identifies it within the skillset. A skill
@@ -536,7 +536,7 @@ class SearchIndexerSkill(_model_base.Model):
     def __init__(
         self,
         *,
-        odata_type: str,
+        o_data_type: str,
         inputs: List["_models.InputFieldMappingEntry"],
         outputs: List["_models.OutputFieldMappingEntry"],
         name: Optional[str] = None,
@@ -596,9 +596,9 @@ class AzureOpenAIEmbeddingSkill(
     :ivar dimensions: The number of dimensions the resulting output embeddings should have. Only
      supported in text-embedding-3 and later models.
     :vartype dimensions: int
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     resource_url: Optional[str] = rest_field(name="resourceUri")
@@ -616,7 +616,7 @@ class AzureOpenAIEmbeddingSkill(
     dimensions: Optional[int] = rest_field()
     """The number of dimensions the resulting output embeddings should have. Only
      supported in text-embedding-3 and later models."""
-    odata_type: Literal["#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill\"."""
 
@@ -645,7 +645,7 @@ class AzureOpenAIEmbeddingSkill(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.AzureOpenAIEmbeddingSkill", **kwargs)
 
 
 class VectorSearchVectorizer(_model_base.Model):
@@ -910,19 +910,19 @@ class SimilarityAlgorithm(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: The discriminator for derived types. Required. Default value is None.
-    :vartype odata_type: str
+    :ivar o_data_type: The discriminator for derived types. Required. Default value is None.
+    :vartype o_data_type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    o_data_type: str = rest_discriminator(name="@odata.type")
     """The discriminator for derived types. Required. Default value is None."""
 
     @overload
     def __init__(
         self,
         *,
-        odata_type: str,
+        o_data_type: str,
     ): ...
 
     @overload
@@ -954,8 +954,8 @@ class BM25SimilarityAlgorithm(SimilarityAlgorithm, discriminator="#Microsoft.Azu
      normalization is applied, while a value of 1.0 means the score is fully
      normalized by the length of the document.
     :vartype b: float
-    :ivar odata_type: Required. Default value is "#Microsoft.Azure.Search.BM25Similarity".
-    :vartype odata_type: str
+    :ivar o_data_type: Required. Default value is "#Microsoft.Azure.Search.BM25Similarity".
+    :vartype o_data_type: str
     """
 
     k1: Optional[float] = rest_field()
@@ -968,7 +968,7 @@ class BM25SimilarityAlgorithm(SimilarityAlgorithm, discriminator="#Microsoft.Azu
      score. By default, a value of 0.75 is used. A value of 0.0 means no length
      normalization is applied, while a value of 1.0 means the score is fully
      normalized by the length of the document."""
-    odata_type: Literal["#Microsoft.Azure.Search.BM25Similarity"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.BM25Similarity"] = rest_discriminator(name="@odata.type")  # type: ignore
     """Required. Default value is \"#Microsoft.Azure.Search.BM25Similarity\"."""
 
     @overload
@@ -987,7 +987,7 @@ class BM25SimilarityAlgorithm(SimilarityAlgorithm, discriminator="#Microsoft.Azu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.BM25Similarity", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.BM25Similarity", **kwargs)
 
 
 class CharFilter(_model_base.Model):
@@ -998,8 +998,8 @@ class CharFilter(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: The discriminator for derived types. Required. Default value is None.
-    :vartype odata_type: str
+    :ivar o_data_type: The discriminator for derived types. Required. Default value is None.
+    :vartype o_data_type: str
     :ivar name: The name of the char filter. It must only contain letters, digits, spaces,
      dashes or underscores, can only start and end with alphanumeric characters, and
      is limited to 128 characters. Required.
@@ -1007,7 +1007,7 @@ class CharFilter(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    o_data_type: str = rest_discriminator(name="@odata.type")
     """The discriminator for derived types. Required. Default value is None."""
     name: str = rest_field()
     """The name of the char filter. It must only contain letters, digits, spaces,
@@ -1018,7 +1018,7 @@ class CharFilter(_model_base.Model):
     def __init__(
         self,
         *,
-        odata_type: str,
+        o_data_type: str,
         name: str,
     ): ...
 
@@ -1050,9 +1050,9 @@ class CjkBigramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.C
      true), or
      just bigrams (if false). Default is false.
     :vartype output_unigrams: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.CjkBigramTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     ignore_scripts: Optional[List[Union[str, "_models.CjkBigramTokenFilterScripts"]]] = rest_field(name="ignoreScripts")
@@ -1060,7 +1060,7 @@ class CjkBigramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.C
     output_unigrams: Optional[bool] = rest_field(name="outputUnigrams")
     """A value indicating whether to output both unigrams and bigrams (if true), or
      just bigrams (if false). Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.CjkBigramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.CjkBigramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.CjkBigramTokenFilter\"."""
 
@@ -1081,7 +1081,7 @@ class CjkBigramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.C
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.CjkBigramTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.CjkBigramTokenFilter", **kwargs)
 
 
 class ClassicSimilarityAlgorithm(SimilarityAlgorithm, discriminator="#Microsoft.Azure.Search.ClassicSimilarity"):
@@ -1092,11 +1092,11 @@ class ClassicSimilarityAlgorithm(SimilarityAlgorithm, discriminator="#Microsoft.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: Required. Default value is "#Microsoft.Azure.Search.ClassicSimilarity".
-    :vartype odata_type: str
+    :ivar o_data_type: Required. Default value is "#Microsoft.Azure.Search.ClassicSimilarity".
+    :vartype o_data_type: str
     """
 
-    odata_type: Literal["#Microsoft.Azure.Search.ClassicSimilarity"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.ClassicSimilarity"] = rest_discriminator(name="@odata.type")  # type: ignore
     """Required. Default value is \"#Microsoft.Azure.Search.ClassicSimilarity\"."""
 
 
@@ -1111,8 +1111,8 @@ class LexicalTokenizer(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: The discriminator for derived types. Required. Default value is None.
-    :vartype odata_type: str
+    :ivar o_data_type: The discriminator for derived types. Required. Default value is None.
+    :vartype o_data_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters. Required.
@@ -1120,7 +1120,7 @@ class LexicalTokenizer(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    o_data_type: str = rest_discriminator(name="@odata.type")
     """The discriminator for derived types. Required. Default value is None."""
     name: str = rest_field()
     """The name of the tokenizer. It must only contain letters, digits, spaces, dashes
@@ -1131,7 +1131,7 @@ class LexicalTokenizer(_model_base.Model):
     def __init__(
         self,
         *,
-        odata_type: str,
+        o_data_type: str,
         name: str,
     ): ...
 
@@ -1160,15 +1160,15 @@ class ClassicTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
      maximum length
      are split. The maximum token length that can be used is 300 characters.
     :vartype max_token_length: int
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.ClassicTokenizer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     max_token_length: Optional[int] = rest_field(name="maxTokenLength")
     """The maximum token length. Default is 255. Tokens longer than the maximum length
      are split. The maximum token length that can be used is 300 characters."""
-    odata_type: Literal["#Microsoft.Azure.Search.ClassicTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.ClassicTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.ClassicTokenizer\"."""
 
@@ -1188,7 +1188,7 @@ class ClassicTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.ClassicTokenizer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.ClassicTokenizer", **kwargs)
 
 
 class CognitiveServicesAccount(_model_base.Model):
@@ -1199,14 +1199,14 @@ class CognitiveServicesAccount(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: The discriminator for derived types. Required. Default value is None.
-    :vartype odata_type: str
+    :ivar o_data_type: The discriminator for derived types. Required. Default value is None.
+    :vartype o_data_type: str
     :ivar description: Description of the Azure AI service resource attached to a skillset.
     :vartype description: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    o_data_type: str = rest_discriminator(name="@odata.type")
     """The discriminator for derived types. Required. Default value is None."""
     description: Optional[str] = rest_field()
     """Description of the Azure AI service resource attached to a skillset."""
@@ -1215,7 +1215,7 @@ class CognitiveServicesAccount(_model_base.Model):
     def __init__(
         self,
         *,
-        odata_type: str,
+        o_data_type: str,
         description: Optional[str] = None,
     ): ...
 
@@ -1243,14 +1243,15 @@ class CognitiveServicesAccountKey(
     :ivar key: The key used to provision the Azure AI service resource attached to a skillset.
      Required.
     :vartype key: str
-    :ivar odata_type: A URI fragment specifying the type of Azure AI service resource attached to a
+    :ivar o_data_type: A URI fragment specifying the type of Azure AI service resource attached to
+     a
      skillset. Required. Default value is "#Microsoft.Azure.Search.CognitiveServicesByKey".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     key: str = rest_field()
     """The key used to provision the Azure AI service resource attached to a skillset. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.CognitiveServicesByKey"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.CognitiveServicesByKey"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of Azure AI service resource attached to a
      skillset. Required. Default value is \"#Microsoft.Azure.Search.CognitiveServicesByKey\"."""
 
@@ -1270,7 +1271,7 @@ class CognitiveServicesAccountKey(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.CognitiveServicesByKey", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.CognitiveServicesByKey", **kwargs)
 
 
 class CommonGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.CommonGramTokenFilter"):
@@ -1294,9 +1295,9 @@ class CommonGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.
      mode, the token filter generates bigrams and then removes common words and
      single terms followed by a common word. Default is false.
     :vartype use_query_mode: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.CommonGramTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     common_words: List[str] = rest_field(name="commonWords")
@@ -1308,7 +1309,7 @@ class CommonGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.
     """A value that indicates whether the token filter is in query mode. When in query
      mode, the token filter generates bigrams and then removes common words and
      single terms followed by a common word. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.CommonGramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.CommonGramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.CommonGramTokenFilter\"."""
 
@@ -1330,7 +1331,7 @@ class CommonGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.CommonGramTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.CommonGramTokenFilter", **kwargs)
 
 
 class ConditionalSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.ConditionalSkill"):
@@ -1357,12 +1358,12 @@ class ConditionalSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Util.ConditionalSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
-    odata_type: Literal["#Microsoft.Skills.Util.ConditionalSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Util.ConditionalSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Util.ConditionalSkill\"."""
 
@@ -1385,7 +1386,7 @@ class ConditionalSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Util.ConditionalSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Util.ConditionalSkill", **kwargs)
 
 
 class CorsOptions(_model_base.Model):
@@ -1441,8 +1442,8 @@ class LexicalAnalyzer(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: The discriminator for derived types. Required. Default value is None.
-    :vartype odata_type: str
+    :ivar o_data_type: The discriminator for derived types. Required. Default value is None.
+    :vartype o_data_type: str
     :ivar name: The name of the analyzer. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is
      limited to 128 characters. Required.
@@ -1450,7 +1451,7 @@ class LexicalAnalyzer(_model_base.Model):
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    o_data_type: str = rest_discriminator(name="@odata.type")
     """The discriminator for derived types. Required. Default value is None."""
     name: str = rest_field()
     """The name of the analyzer. It must only contain letters, digits, spaces, dashes
@@ -1461,7 +1462,7 @@ class LexicalAnalyzer(_model_base.Model):
     def __init__(
         self,
         *,
-        odata_type: str,
+        o_data_type: str,
         name: str,
     ): ...
 
@@ -1506,9 +1507,9 @@ class CustomAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Cus
      by the tokenizer. For instance, they can replace certain characters or symbols.
      The filters are run in the order in which they are listed.
     :vartype char_filters: list[str or ~azure.search.documents.models.CharFilterName]
-    :ivar odata_type: A URI fragment specifying the type of analyzer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of analyzer. Required. Default value is
      "#Microsoft.Azure.Search.CustomAnalyzer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     tokenizer: Union[str, "_models.LexicalTokenizerName"] = rest_field()
@@ -1526,7 +1527,7 @@ class CustomAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Cus
     """A list of character filters used to prepare input text before it is processed
      by the tokenizer. For instance, they can replace certain characters or symbols.
      The filters are run in the order in which they are listed."""
-    odata_type: Literal["#Microsoft.Azure.Search.CustomAnalyzer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.CustomAnalyzer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of analyzer. Required. Default value is
      \"#Microsoft.Azure.Search.CustomAnalyzer\"."""
 
@@ -1548,7 +1549,7 @@ class CustomAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Cus
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.CustomAnalyzer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.CustomAnalyzer", **kwargs)
 
 
 class CustomEntity(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -1783,9 +1784,9 @@ class CustomEntityLookupSkill(
      FuzzyEditDistance is not set in
      CustomEntity, this value will be the default value.
     :vartype global_default_fuzzy_edit_distance: int
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.CustomEntityLookupSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     default_language_code: Optional[Union[str, "_models.CustomEntityLookupSkillLanguage"]] = rest_field(
@@ -1809,7 +1810,7 @@ class CustomEntityLookupSkill(
     global_default_fuzzy_edit_distance: Optional[int] = rest_field(name="globalDefaultFuzzyEditDistance")
     """A global flag for FuzzyEditDistance. If FuzzyEditDistance is not set in
      CustomEntity, this value will be the default value."""
-    odata_type: Literal["#Microsoft.Skills.Text.CustomEntityLookupSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.CustomEntityLookupSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.CustomEntityLookupSkill\"."""
 
@@ -1838,7 +1839,7 @@ class CustomEntityLookupSkill(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.CustomEntityLookupSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.CustomEntityLookupSkill", **kwargs)
 
 
 class DataChangeDetectionPolicy(_model_base.Model):
@@ -1849,19 +1850,19 @@ class DataChangeDetectionPolicy(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: The discriminator for derived types. Required. Default value is None.
-    :vartype odata_type: str
+    :ivar o_data_type: The discriminator for derived types. Required. Default value is None.
+    :vartype o_data_type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    o_data_type: str = rest_discriminator(name="@odata.type")
     """The discriminator for derived types. Required. Default value is None."""
 
     @overload
     def __init__(
         self,
         *,
-        odata_type: str,
+        o_data_type: str,
     ): ...
 
     @overload
@@ -1883,19 +1884,19 @@ class DataDeletionDetectionPolicy(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: The discriminator for derived types. Required. Default value is None.
-    :vartype odata_type: str
+    :ivar o_data_type: The discriminator for derived types. Required. Default value is None.
+    :vartype o_data_type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    o_data_type: str = rest_discriminator(name="@odata.type")
     """The discriminator for derived types. Required. Default value is None."""
 
     @overload
     def __init__(
         self,
         *,
-        odata_type: str,
+        o_data_type: str,
     ): ...
 
     @overload
@@ -1952,12 +1953,13 @@ class DefaultCognitiveServicesAccount(
 
     :ivar description: Description of the Azure AI service resource attached to a skillset.
     :vartype description: str
-    :ivar odata_type: A URI fragment specifying the type of Azure AI service resource attached to a
+    :ivar o_data_type: A URI fragment specifying the type of Azure AI service resource attached to
+     a
      skillset. Required. Default value is "#Microsoft.Azure.Search.DefaultCognitiveServices".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
-    odata_type: Literal["#Microsoft.Azure.Search.DefaultCognitiveServices"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.DefaultCognitiveServices"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of Azure AI service resource attached to a
      skillset. Required. Default value is \"#Microsoft.Azure.Search.DefaultCognitiveServices\"."""
 
@@ -1976,7 +1978,7 @@ class DefaultCognitiveServicesAccount(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.DefaultCognitiveServices", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.DefaultCognitiveServices", **kwargs)
 
 
 class DictionaryDecompounderTokenFilter(
@@ -2009,9 +2011,9 @@ class DictionaryDecompounderTokenFilter(
      to the
      output. Default is false.
     :vartype only_longest_match: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     word_list: List[str] = rest_field(name="wordList")
@@ -2028,7 +2030,7 @@ class DictionaryDecompounderTokenFilter(
     only_longest_match: Optional[bool] = rest_field(name="onlyLongestMatch")
     """A value indicating whether to add only the longest matching subword to the
      output. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter\"."""
 
@@ -2052,7 +2054,7 @@ class DictionaryDecompounderTokenFilter(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter", **kwargs)
 
 
 class ScoringFunction(_model_base.Model):
@@ -2231,9 +2233,9 @@ class DocumentExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skil
     :vartype data_to_extract: str
     :ivar configuration: A dictionary of configurations for the skill.
     :vartype configuration: dict[str, any]
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Util.DocumentExtractionSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     parsing_mode: Optional[str] = rest_field(name="parsingMode")
@@ -2243,7 +2245,7 @@ class DocumentExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skil
      'contentAndMetadata' if not defined."""
     configuration: Optional[Dict[str, Any]] = rest_field()
     """A dictionary of configurations for the skill."""
-    odata_type: Literal["#Microsoft.Skills.Util.DocumentExtractionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Util.DocumentExtractionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Util.DocumentExtractionSkill\"."""
 
@@ -2269,7 +2271,7 @@ class DocumentExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skil
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Util.DocumentExtractionSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Util.DocumentExtractionSkill", **kwargs)
 
 
 class EdgeNGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilter"):
@@ -2290,9 +2292,9 @@ class EdgeNGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.E
     :ivar side: Specifies which side of the input the n-gram should be generated from. Default
      is "front". Known values are: "front" and "back".
     :vartype side: str or ~azure.search.documents.models.EdgeNGramTokenFilterSide
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.EdgeNGramTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     min_gram: Optional[int] = rest_field(name="minGram")
@@ -2302,7 +2304,7 @@ class EdgeNGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.E
     side: Optional[Union[str, "_models.EdgeNGramTokenFilterSide"]] = rest_field()
     """Specifies which side of the input the n-gram should be generated from. Default
      is \"front\". Known values are: \"front\" and \"back\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.EdgeNGramTokenFilter\"."""
 
@@ -2324,7 +2326,7 @@ class EdgeNGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.E
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.EdgeNGramTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.EdgeNGramTokenFilter", **kwargs)
 
 
 class EdgeNGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"):
@@ -2345,9 +2347,9 @@ class EdgeNGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search
     :ivar side: Specifies which side of the input the n-gram should be generated from. Default
      is "front". Known values are: "front" and "back".
     :vartype side: str or ~azure.search.documents.models.EdgeNGramTokenFilterSide
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.EdgeNGramTokenFilterV2".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     min_gram: Optional[int] = rest_field(name="minGram")
@@ -2358,7 +2360,7 @@ class EdgeNGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search
     side: Optional[Union[str, "_models.EdgeNGramTokenFilterSide"]] = rest_field()
     """Specifies which side of the input the n-gram should be generated from. Default
      is \"front\". Known values are: \"front\" and \"back\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.EdgeNGramTokenFilterV2\"."""
 
@@ -2380,7 +2382,7 @@ class EdgeNGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.EdgeNGramTokenFilterV2", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.EdgeNGramTokenFilterV2", **kwargs)
 
 
 class EdgeNGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenizer"):
@@ -2400,9 +2402,9 @@ class EdgeNGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Searc
     :vartype max_gram: int
     :ivar token_chars: Character classes to keep in the tokens.
     :vartype token_chars: list[str or ~azure.search.documents.models.TokenCharacterKind]
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.EdgeNGramTokenizer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     min_gram: Optional[int] = rest_field(name="minGram")
@@ -2412,7 +2414,7 @@ class EdgeNGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Searc
     """The maximum n-gram length. Default is 2. Maximum is 300."""
     token_chars: Optional[List[Union[str, "_models.TokenCharacterKind"]]] = rest_field(name="tokenChars")
     """Character classes to keep in the tokens."""
-    odata_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.EdgeNGramTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.EdgeNGramTokenizer\"."""
 
@@ -2434,7 +2436,7 @@ class EdgeNGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Searc
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.EdgeNGramTokenizer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.EdgeNGramTokenizer", **kwargs)
 
 
 class ElisionTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.ElisionTokenFilter"):
@@ -2449,14 +2451,14 @@ class ElisionTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Eli
     :vartype name: str
     :ivar articles: The set of articles to remove.
     :vartype articles: list[str]
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.ElisionTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     articles: Optional[List[str]] = rest_field()
     """The set of articles to remove."""
-    odata_type: Literal["#Microsoft.Azure.Search.ElisionTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.ElisionTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.ElisionTokenFilter\"."""
 
@@ -2476,7 +2478,7 @@ class ElisionTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Eli
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.ElisionTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.ElisionTokenFilter", **kwargs)
 
 
 class EntityLinkingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.EntityLinkingSkill"):
@@ -2514,9 +2516,9 @@ class EntityLinkingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Te
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary.
     :vartype model_version: str
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.V3.EntityLinkingSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     default_language_code: Optional[str] = rest_field(name="defaultLanguageCode")
@@ -2529,7 +2531,7 @@ class EntityLinkingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Te
     """The version of the model to use when calling the Text Analytics service. It
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary."""
-    odata_type: Literal["#Microsoft.Skills.Text.V3.EntityLinkingSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.V3.EntityLinkingSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.V3.EntityLinkingSkill\"."""
 
@@ -2555,7 +2557,7 @@ class EntityLinkingSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Te
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.V3.EntityLinkingSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.V3.EntityLinkingSkill", **kwargs)
 
 
 class EntityRecognitionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.EntityRecognitionSkill"):
@@ -2599,9 +2601,9 @@ class EntityRecognitionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skill
      score is greater than the value specified. If not set (default), or if
      explicitly set to null, all entities will be included.
     :vartype minimum_precision: float
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.EntityRecognitionSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     categories: Optional[List[Union[str, "_models.EntityCategory"]]] = rest_field()
@@ -2622,7 +2624,7 @@ class EntityRecognitionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skill
     """A value between 0 and 1 that be used to only include entities whose confidence
      score is greater than the value specified. If not set (default), or if
      explicitly set to null, all entities will be included."""
-    odata_type: Literal["#Microsoft.Skills.Text.EntityRecognitionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.EntityRecognitionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.EntityRecognitionSkill\"."""
 
@@ -2649,7 +2651,7 @@ class EntityRecognitionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skill
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.EntityRecognitionSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.EntityRecognitionSkill", **kwargs)
 
 
 class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.EntityRecognitionSkill"):
@@ -2689,9 +2691,9 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
      default to the latest available when not specified. We recommend you do not
      specify this value unless absolutely necessary.
     :vartype model_version: str
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.V3.EntityRecognitionSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     categories: Optional[List[str]] = rest_field()
@@ -2706,7 +2708,7 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
     """The version of the model to use when calling the Text Analytics API. It will
      default to the latest available when not specified. We recommend you do not
      specify this value unless absolutely necessary."""
-    odata_type: Literal["#Microsoft.Skills.Text.V3.EntityRecognitionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.V3.EntityRecognitionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.V3.EntityRecognitionSkill\"."""
 
@@ -2733,7 +2735,7 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.V3.EntityRecognitionSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.V3.EntityRecognitionSkill", **kwargs)
 
 
 class VectorSearchAlgorithmConfiguration(_model_base.Model):
@@ -3063,14 +3065,14 @@ class HighWaterMarkChangeDetectionPolicy(
 
     :ivar high_water_mark_column_name: The name of the high water mark column. Required.
     :vartype high_water_mark_column_name: str
-    :ivar odata_type: A URI fragment specifying the type of data change detection policy. Required.
-     Default value is "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy".
-    :vartype odata_type: str
+    :ivar o_data_type: A URI fragment specifying the type of data change detection policy.
+     Required. Default value is "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy".
+    :vartype o_data_type: str
     """
 
     high_water_mark_column_name: str = rest_field(name="highWaterMarkColumnName")
     """The name of the high water mark column. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of data change detection policy. Required. Default value is
      \"#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy\"."""
 
@@ -3089,7 +3091,7 @@ class HighWaterMarkChangeDetectionPolicy(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy", **kwargs)
 
 
 class HnswAlgorithmConfiguration(VectorSearchAlgorithmConfiguration, discriminator="hnsw"):
@@ -3232,9 +3234,9 @@ class ImageAnalysisSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vi
     :vartype visual_features: list[str or ~azure.search.documents.models.VisualFeature]
     :ivar details: A string indicating which domain-specific details to return.
     :vartype details: list[str or ~azure.search.documents.models.ImageDetail]
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Vision.ImageAnalysisSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     default_language_code: Optional[Union[str, "_models.ImageAnalysisSkillLanguage"]] = rest_field(
@@ -3250,7 +3252,7 @@ class ImageAnalysisSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vi
     """A list of visual features."""
     details: Optional[List[Union[str, "_models.ImageDetail"]]] = rest_field()
     """A string indicating which domain-specific details to return."""
-    odata_type: Literal["#Microsoft.Skills.Vision.ImageAnalysisSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Vision.ImageAnalysisSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Vision.ImageAnalysisSkill\"."""
 
@@ -3276,7 +3278,7 @@ class ImageAnalysisSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vi
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Vision.ImageAnalysisSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Vision.ImageAnalysisSkill", **kwargs)
 
 
 class IndexAction(_model_base.Model):
@@ -3788,16 +3790,16 @@ class KeepTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.KeepTo
     :ivar lower_case_keep_words: A value indicating whether to lower case all words first. Default
      is false.
     :vartype lower_case_keep_words: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.KeepTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     keep_words: List[str] = rest_field(name="keepWords")
     """The list of words to keep. Required."""
     lower_case_keep_words: Optional[bool] = rest_field(name="keepWordsCase")
     """A value indicating whether to lower case all words first. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.KeepTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.KeepTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.KeepTokenFilter\"."""
 
@@ -3818,7 +3820,7 @@ class KeepTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.KeepTo
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.KeepTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.KeepTokenFilter", **kwargs)
 
 
 class KeyPhraseExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.KeyPhraseExtractionSkill"):
@@ -3858,9 +3860,9 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Ski
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary.
     :vartype model_version: str
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.KeyPhraseExtractionSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     default_language_code: Optional[Union[str, "_models.KeyPhraseExtractionSkillLanguage"]] = rest_field(
@@ -3876,7 +3878,7 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Ski
     """The version of the model to use when calling the Text Analytics service. It
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary."""
-    odata_type: Literal["#Microsoft.Skills.Text.KeyPhraseExtractionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.KeyPhraseExtractionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.KeyPhraseExtractionSkill\"."""
 
@@ -3902,7 +3904,7 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill, discriminator="#Microsoft.Ski
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.KeyPhraseExtractionSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.KeyPhraseExtractionSkill", **kwargs)
 
 
 class KeywordMarkerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.KeywordMarkerTokenFilter"):
@@ -3920,9 +3922,9 @@ class KeywordMarkerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sear
      to
      lower case first. Default is false.
     :vartype ignore_case: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.KeywordMarkerTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     keywords: List[str] = rest_field()
@@ -3930,7 +3932,7 @@ class KeywordMarkerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sear
     ignore_case: Optional[bool] = rest_field(name="ignoreCase")
     """A value indicating whether to ignore case. If true, all words are converted to
      lower case first. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.KeywordMarkerTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.KeywordMarkerTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.KeywordMarkerTokenFilter\"."""
 
@@ -3951,7 +3953,7 @@ class KeywordMarkerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sear
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.KeywordMarkerTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.KeywordMarkerTokenFilter", **kwargs)
 
 
 class KeywordTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizer"):
@@ -3966,14 +3968,14 @@ class KeywordTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
     :vartype name: str
     :ivar buffer_size: The read buffer size in bytes. Default is 256.
     :vartype buffer_size: int
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.KeywordTokenizer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     buffer_size: Optional[int] = rest_field(name="bufferSize")
     """The read buffer size in bytes. Default is 256."""
-    odata_type: Literal["#Microsoft.Azure.Search.KeywordTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.KeywordTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.KeywordTokenizer\"."""
 
@@ -3993,7 +3995,7 @@ class KeywordTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.KeywordTokenizer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.KeywordTokenizer", **kwargs)
 
 
 class KeywordTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizerV2"):
@@ -4010,15 +4012,15 @@ class KeywordTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Searc
      maximum length
      are split. The maximum token length that can be used is 300 characters.
     :vartype max_token_length: int
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.KeywordTokenizerV2".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     max_token_length: Optional[int] = rest_field(name="maxTokenLength")
     """The maximum token length. Default is 256. Tokens longer than the maximum length
      are split. The maximum token length that can be used is 300 characters."""
-    odata_type: Literal["#Microsoft.Azure.Search.KeywordTokenizerV2"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.KeywordTokenizerV2"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.KeywordTokenizerV2\"."""
 
@@ -4038,7 +4040,7 @@ class KeywordTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Searc
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.KeywordTokenizerV2", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.KeywordTokenizerV2", **kwargs)
 
 
 class LanguageDetectionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.LanguageDetectionSkill"):
@@ -4075,9 +4077,9 @@ class LanguageDetectionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skill
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary.
     :vartype model_version: str
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.LanguageDetectionSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     default_country_hint: Optional[str] = rest_field(name="defaultCountryHint")
@@ -4087,7 +4089,7 @@ class LanguageDetectionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skill
     """The version of the model to use when calling the Text Analytics service. It
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary."""
-    odata_type: Literal["#Microsoft.Skills.Text.LanguageDetectionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.LanguageDetectionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.LanguageDetectionSkill\"."""
 
@@ -4112,7 +4114,7 @@ class LanguageDetectionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skill
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.LanguageDetectionSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.LanguageDetectionSkill", **kwargs)
 
 
 class LengthTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.LengthTokenFilter"):
@@ -4130,9 +4132,9 @@ class LengthTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Leng
     :vartype min_length: int
     :ivar max_length: The maximum length in characters. Default and maximum is 300.
     :vartype max_length: int
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.LengthTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     min_length: Optional[int] = rest_field(name="min")
@@ -4140,7 +4142,7 @@ class LengthTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Leng
      than the value of max."""
     max_length: Optional[int] = rest_field(name="max")
     """The maximum length in characters. Default and maximum is 300."""
-    odata_type: Literal["#Microsoft.Azure.Search.LengthTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.LengthTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.LengthTokenFilter\"."""
 
@@ -4161,7 +4163,7 @@ class LengthTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Leng
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.LengthTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.LengthTokenFilter", **kwargs)
 
 
 class LimitTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.LimitTokenFilter"):
@@ -4180,9 +4182,9 @@ class LimitTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Limit
      even if
      maxTokenCount is reached. Default is false.
     :vartype consume_all_tokens: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.LimitTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     max_token_count: Optional[int] = rest_field(name="maxTokenCount")
@@ -4190,7 +4192,7 @@ class LimitTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Limit
     consume_all_tokens: Optional[bool] = rest_field(name="consumeAllTokens")
     """A value indicating whether all tokens from the input must be consumed even if
      maxTokenCount is reached. Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.LimitTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.LimitTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.LimitTokenFilter\"."""
 
@@ -4211,7 +4213,7 @@ class LimitTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Limit
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.LimitTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.LimitTokenFilter", **kwargs)
 
 
 class ListDataSourcesResult(_model_base.Model):
@@ -4294,9 +4296,9 @@ class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Se
     :vartype max_token_length: int
     :ivar stopwords: A list of stopwords.
     :vartype stopwords: list[str]
-    :ivar odata_type: A URI fragment specifying the type of analyzer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of analyzer. Required. Default value is
      "#Microsoft.Azure.Search.StandardAnalyzer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     max_token_length: Optional[int] = rest_field(name="maxTokenLength")
@@ -4304,7 +4306,7 @@ class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Se
      are split. The maximum token length that can be used is 300 characters."""
     stopwords: Optional[List[str]] = rest_field()
     """A list of stopwords."""
-    odata_type: Literal["#Microsoft.Azure.Search.StandardAnalyzer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.StandardAnalyzer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of analyzer. Required. Default value is
      \"#Microsoft.Azure.Search.StandardAnalyzer\"."""
 
@@ -4325,7 +4327,7 @@ class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Se
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.StandardAnalyzer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.StandardAnalyzer", **kwargs)
 
 
 class LuceneStandardTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizer"):
@@ -4342,15 +4344,15 @@ class LuceneStandardTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.
      maximum length
      are split.
     :vartype max_token_length: int
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.StandardTokenizer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     max_token_length: Optional[int] = rest_field(name="maxTokenLength")
     """The maximum token length. Default is 255. Tokens longer than the maximum length
      are split."""
-    odata_type: Literal["#Microsoft.Azure.Search.StandardTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.StandardTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.StandardTokenizer\"."""
 
@@ -4370,7 +4372,7 @@ class LuceneStandardTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.StandardTokenizer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.StandardTokenizer", **kwargs)
 
 
 class LuceneStandardTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizerV2"):
@@ -4387,15 +4389,15 @@ class LuceneStandardTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azur
      maximum length
      are split. The maximum token length that can be used is 300 characters.
     :vartype max_token_length: int
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.StandardTokenizerV2".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     max_token_length: Optional[int] = rest_field(name="maxTokenLength")
     """The maximum token length. Default is 255. Tokens longer than the maximum length
      are split. The maximum token length that can be used is 300 characters."""
-    odata_type: Literal["#Microsoft.Azure.Search.StandardTokenizerV2"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.StandardTokenizerV2"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.StandardTokenizerV2\"."""
 
@@ -4415,7 +4417,7 @@ class LuceneStandardTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azur
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.StandardTokenizerV2", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.StandardTokenizerV2", **kwargs)
 
 
 class MagnitudeScoringFunction(ScoringFunction, discriminator="magnitude"):
@@ -4526,15 +4528,15 @@ class MappingCharFilter(CharFilter, discriminator="#Microsoft.Azure.Search.Mappi
     :ivar mappings: A list of mappings of the following format: "a=>b" (all occurrences of the
      character "a" will be replaced with character "b"). Required.
     :vartype mappings: list[str]
-    :ivar odata_type: A URI fragment specifying the type of char filter. Required. Default value is
-     "#Microsoft.Azure.Search.MappingCharFilter".
-    :vartype odata_type: str
+    :ivar o_data_type: A URI fragment specifying the type of char filter. Required. Default value
+     is "#Microsoft.Azure.Search.MappingCharFilter".
+    :vartype o_data_type: str
     """
 
     mappings: List[str] = rest_field()
     """A list of mappings of the following format: \"a=>b\" (all occurrences of the
      character \"a\" will be replaced with character \"b\"). Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.MappingCharFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.MappingCharFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of char filter. Required. Default value is
      \"#Microsoft.Azure.Search.MappingCharFilter\"."""
 
@@ -4554,7 +4556,7 @@ class MappingCharFilter(CharFilter, discriminator="#Microsoft.Azure.Search.Mappi
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.MappingCharFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.MappingCharFilter", **kwargs)
 
 
 class MergeSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.MergeSkill"):
@@ -4589,9 +4591,9 @@ class MergeSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.Merge
      empty
      space.
     :vartype insert_post_tag: str
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.MergeSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     insert_pre_tag: Optional[str] = rest_field(name="insertPreTag")
@@ -4600,7 +4602,7 @@ class MergeSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.Merge
     insert_post_tag: Optional[str] = rest_field(name="insertPostTag")
     """The tag indicates the end of the merged text. By default, the tag is an empty
      space."""
-    odata_type: Literal["#Microsoft.Skills.Text.MergeSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.MergeSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.MergeSkill\"."""
 
@@ -4625,7 +4627,7 @@ class MergeSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.Merge
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.MergeSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.MergeSkill", **kwargs)
 
 
 class MicrosoftLanguageStemmingTokenizer(
@@ -4658,9 +4660,9 @@ class MicrosoftLanguageStemmingTokenizer(
      "romanian", "russian", "serbianCyrillic", "serbianLatin", "slovak", "slovenian", "spanish",
      "swedish", "tamil", "telugu", "turkish", "ukrainian", and "urdu".
     :vartype language: str or ~azure.search.documents.models.MicrosoftStemmingTokenizerLanguage
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     max_token_length: Optional[int] = rest_field(name="maxTokenLength")
@@ -4680,7 +4682,7 @@ class MicrosoftLanguageStemmingTokenizer(
      \"portuguese\", \"portugueseBrazilian\", \"punjabi\", \"romanian\", \"russian\",
      \"serbianCyrillic\", \"serbianLatin\", \"slovak\", \"slovenian\", \"spanish\", \"swedish\",
      \"tamil\", \"telugu\", \"turkish\", \"ukrainian\", and \"urdu\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer\"."""
 
@@ -4702,7 +4704,7 @@ class MicrosoftLanguageStemmingTokenizer(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer", **kwargs)
 
 
 class MicrosoftLanguageTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.MicrosoftLanguageTokenizer"):
@@ -4732,9 +4734,9 @@ class MicrosoftLanguageTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azu
      "russian", "serbianCyrillic", "serbianLatin", "slovenian", "spanish", "swedish", "tamil",
      "telugu", "thai", "ukrainian", "urdu", and "vietnamese".
     :vartype language: str or ~azure.search.documents.models.MicrosoftTokenizerLanguage
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.MicrosoftLanguageTokenizer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     max_token_length: Optional[int] = rest_field(name="maxTokenLength")
@@ -4754,7 +4756,7 @@ class MicrosoftLanguageTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azu
      \"portugueseBrazilian\", \"punjabi\", \"romanian\", \"russian\", \"serbianCyrillic\",
      \"serbianLatin\", \"slovenian\", \"spanish\", \"swedish\", \"tamil\", \"telugu\", \"thai\",
      \"ukrainian\", \"urdu\", and \"vietnamese\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.MicrosoftLanguageTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.MicrosoftLanguageTokenizer\"."""
 
@@ -4776,7 +4778,7 @@ class MicrosoftLanguageTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.MicrosoftLanguageTokenizer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.MicrosoftLanguageTokenizer", **kwargs)
 
 
 class NGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilter"):
@@ -4794,16 +4796,16 @@ class NGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.NGram
     :vartype min_gram: int
     :ivar max_gram: The maximum n-gram length. Default is 2.
     :vartype max_gram: int
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.NGramTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     min_gram: Optional[int] = rest_field(name="minGram")
     """The minimum n-gram length. Default is 1. Must be less than the value of maxGram."""
     max_gram: Optional[int] = rest_field(name="maxGram")
     """The maximum n-gram length. Default is 2."""
-    odata_type: Literal["#Microsoft.Azure.Search.NGramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.NGramTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.NGramTokenFilter\"."""
 
@@ -4824,7 +4826,7 @@ class NGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.NGram
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.NGramTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.NGramTokenFilter", **kwargs)
 
 
 class NGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilterV2"):
@@ -4842,9 +4844,9 @@ class NGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.NGr
     :vartype min_gram: int
     :ivar max_gram: The maximum n-gram length. Default is 2. Maximum is 300.
     :vartype max_gram: int
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.NGramTokenFilterV2".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     min_gram: Optional[int] = rest_field(name="minGram")
@@ -4852,7 +4854,7 @@ class NGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.NGr
      value of maxGram."""
     max_gram: Optional[int] = rest_field(name="maxGram")
     """The maximum n-gram length. Default is 2. Maximum is 300."""
-    odata_type: Literal["#Microsoft.Azure.Search.NGramTokenFilterV2"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.NGramTokenFilterV2"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.NGramTokenFilterV2\"."""
 
@@ -4873,7 +4875,7 @@ class NGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.NGr
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.NGramTokenFilterV2", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.NGramTokenFilterV2", **kwargs)
 
 
 class NGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.NGramTokenizer"):
@@ -4893,9 +4895,9 @@ class NGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.NG
     :vartype max_gram: int
     :ivar token_chars: Character classes to keep in the tokens.
     :vartype token_chars: list[str or ~azure.search.documents.models.TokenCharacterKind]
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.NGramTokenizer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     min_gram: Optional[int] = rest_field(name="minGram")
@@ -4905,7 +4907,7 @@ class NGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.NG
     """The maximum n-gram length. Default is 2. Maximum is 300."""
     token_chars: Optional[List[Union[str, "_models.TokenCharacterKind"]]] = rest_field(name="tokenChars")
     """Character classes to keep in the tokens."""
-    odata_type: Literal["#Microsoft.Azure.Search.NGramTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.NGramTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.NGramTokenizer\"."""
 
@@ -4927,7 +4929,7 @@ class NGramTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.NG
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.NGramTokenizer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.NGramTokenizer", **kwargs)
 
 
 class OcrSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.OcrSkill"):
@@ -4976,9 +4978,9 @@ class OcrSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.OcrSk
      by the OCR skill. The default value is "space". Known values are: "space", "carriageReturn",
      "lineFeed", and "carriageReturnLineFeed".
     :vartype line_ending: str or ~azure.search.documents.models.OcrLineEnding
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Vision.OcrSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     default_language_code: Optional[Union[str, "_models.OcrSkillLanguage"]] = rest_field(name="defaultLanguageCode")
@@ -5006,7 +5008,7 @@ class OcrSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.OcrSk
     """Defines the sequence of characters to use between the lines of text recognized
      by the OCR skill. The default value is \"space\". Known values are: \"space\",
      \"carriageReturn\", \"lineFeed\", and \"carriageReturnLineFeed\"."""
-    odata_type: Literal["#Microsoft.Skills.Vision.OcrSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Vision.OcrSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Vision.OcrSkill\"."""
 
@@ -5032,7 +5034,7 @@ class OcrSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vision.OcrSk
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Vision.OcrSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Vision.OcrSkill", **kwargs)
 
 
 class OutputFieldMappingEntry(_model_base.Model):
@@ -5092,9 +5094,9 @@ class PathHierarchyTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure
     :vartype reverse_token_order: bool
     :ivar number_of_tokens_to_skip: The number of initial tokens to skip. Default is 0.
     :vartype number_of_tokens_to_skip: int
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.PathHierarchyTokenizerV2".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     delimiter: Optional[str] = rest_field()
@@ -5108,7 +5110,7 @@ class PathHierarchyTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure
      false."""
     number_of_tokens_to_skip: Optional[int] = rest_field(name="skip")
     """The number of initial tokens to skip. Default is 0."""
-    odata_type: Literal["#Microsoft.Azure.Search.PathHierarchyTokenizerV2"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.PathHierarchyTokenizerV2"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.PathHierarchyTokenizerV2\"."""
 
@@ -5132,7 +5134,7 @@ class PathHierarchyTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.PathHierarchyTokenizerV2", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.PathHierarchyTokenizerV2", **kwargs)
 
 
 class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.PatternAnalyzer"):
@@ -5156,9 +5158,9 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
     :vartype flags: str or ~azure.search.documents.models.RegexFlags
     :ivar stopwords: A list of stopwords.
     :vartype stopwords: list[str]
-    :ivar odata_type: A URI fragment specifying the type of analyzer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of analyzer. Required. Default value is
      "#Microsoft.Azure.Search.PatternAnalyzer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     lower_case_terms: Optional[bool] = rest_field(name="lowercase")
@@ -5171,7 +5173,7 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
      \"DOTALL\", \"LITERAL\", \"MULTILINE\", \"UNICODE_CASE\", and \"UNIX_LINES\"."""
     stopwords: Optional[List[str]] = rest_field()
     """A list of stopwords."""
-    odata_type: Literal["#Microsoft.Azure.Search.PatternAnalyzer"] = rest_discriminator(name="odataType")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.PatternAnalyzer"] = rest_discriminator(name="oDataType")  # type: ignore
     """A URI fragment specifying the type of analyzer. Required. Default value is
      \"#Microsoft.Azure.Search.PatternAnalyzer\"."""
 
@@ -5194,7 +5196,7 @@ class PatternAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Pa
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.PatternAnalyzer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.PatternAnalyzer", **kwargs)
 
 
 class PatternCaptureTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.PatternCaptureTokenFilter"):
@@ -5213,9 +5215,9 @@ class PatternCaptureTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sea
      the
      patterns matches. Default is true.
     :vartype preserve_original: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.PatternCaptureTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     patterns: List[str] = rest_field()
@@ -5223,7 +5225,7 @@ class PatternCaptureTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sea
     preserve_original: Optional[bool] = rest_field(name="preserveOriginal")
     """A value indicating whether to return the original token even if one of the
      patterns matches. Default is true."""
-    odata_type: Literal["#Microsoft.Azure.Search.PatternCaptureTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.PatternCaptureTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.PatternCaptureTokenFilter\"."""
 
@@ -5244,7 +5246,7 @@ class PatternCaptureTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sea
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.PatternCaptureTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.PatternCaptureTokenFilter", **kwargs)
 
 
 class PatternReplaceCharFilter(CharFilter, discriminator="#Microsoft.Azure.Search.PatternReplaceCharFilter"):
@@ -5265,16 +5267,16 @@ class PatternReplaceCharFilter(CharFilter, discriminator="#Microsoft.Azure.Searc
     :vartype pattern: str
     :ivar replacement: The replacement text. Required.
     :vartype replacement: str
-    :ivar odata_type: A URI fragment specifying the type of char filter. Required. Default value is
-     "#Microsoft.Azure.Search.PatternReplaceCharFilter".
-    :vartype odata_type: str
+    :ivar o_data_type: A URI fragment specifying the type of char filter. Required. Default value
+     is "#Microsoft.Azure.Search.PatternReplaceCharFilter".
+    :vartype o_data_type: str
     """
 
     pattern: str = rest_field()
     """A regular expression pattern. Required."""
     replacement: str = rest_field()
     """The replacement text. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.PatternReplaceCharFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.PatternReplaceCharFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of char filter. Required. Default value is
      \"#Microsoft.Azure.Search.PatternReplaceCharFilter\"."""
 
@@ -5295,7 +5297,7 @@ class PatternReplaceCharFilter(CharFilter, discriminator="#Microsoft.Azure.Searc
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.PatternReplaceCharFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.PatternReplaceCharFilter", **kwargs)
 
 
 class PatternReplaceTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.PatternReplaceTokenFilter"):
@@ -5316,16 +5318,16 @@ class PatternReplaceTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sea
     :vartype pattern: str
     :ivar replacement: The replacement text. Required.
     :vartype replacement: str
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.PatternReplaceTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     pattern: str = rest_field()
     """A regular expression pattern. Required."""
     replacement: str = rest_field()
     """The replacement text. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.PatternReplaceTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.PatternReplaceTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.PatternReplaceTokenFilter\"."""
 
@@ -5346,7 +5348,7 @@ class PatternReplaceTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sea
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.PatternReplaceTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.PatternReplaceTokenFilter", **kwargs)
 
 
 class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.PatternTokenizer"):
@@ -5369,9 +5371,9 @@ class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
      to extract into tokens. Use -1 if you want to use the entire pattern to split
      the input into tokens, irrespective of matching groups. Default is -1.
     :vartype group: int
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.PatternTokenizer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     pattern: Optional[str] = rest_field()
@@ -5384,7 +5386,7 @@ class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
     """The zero-based ordinal of the matching group in the regular expression pattern
      to extract into tokens. Use -1 if you want to use the entire pattern to split
      the input into tokens, irrespective of matching groups. Default is -1."""
-    odata_type: Literal["#Microsoft.Azure.Search.PatternTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.PatternTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.PatternTokenizer\"."""
 
@@ -5406,7 +5408,7 @@ class PatternTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.PatternTokenizer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.PatternTokenizer", **kwargs)
 
 
 class PhoneticTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.PhoneticTokenFilter"):
@@ -5427,9 +5429,9 @@ class PhoneticTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Ph
      original tokens. If
      false, encoded tokens are added as synonyms. Default is true.
     :vartype replace_original_tokens: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.PhoneticTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     encoder: Optional[Union[str, "_models.PhoneticEncoder"]] = rest_field()
@@ -5439,7 +5441,7 @@ class PhoneticTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Ph
     replace_original_tokens: Optional[bool] = rest_field(name="replace")
     """A value indicating whether encoded tokens should replace original tokens. If
      false, encoded tokens are added as synonyms. Default is true."""
-    odata_type: Literal["#Microsoft.Azure.Search.PhoneticTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.PhoneticTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.PhoneticTokenFilter\"."""
 
@@ -5460,7 +5462,7 @@ class PhoneticTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Ph
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.PhoneticTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.PhoneticTokenFilter", **kwargs)
 
 
 class PIIDetectionSkill(
@@ -5512,9 +5514,9 @@ class PIIDetectionSkill(
     :ivar domain: If specified, will set the PII domain to include only a subset of the entity
      categories. Possible values include: 'phi', 'none'. Default is 'none'.
     :vartype domain: str
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.PIIDetectionSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     default_language_code: Optional[str] = rest_field(name="defaultLanguageCode")
@@ -5538,7 +5540,7 @@ class PIIDetectionSkill(
     domain: Optional[str] = rest_field()
     """If specified, will set the PII domain to include only a subset of the entity
      categories. Possible values include: 'phi', 'none'. Default is 'none'."""
-    odata_type: Literal["#Microsoft.Skills.Text.PIIDetectionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.PIIDetectionSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.PIIDetectionSkill\"."""
 
@@ -5568,7 +5570,7 @@ class PIIDetectionSkill(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.PIIDetectionSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.PIIDetectionSkill", **kwargs)
 
 
 class QueryAnswerResult(_model_base.Model):
@@ -6551,19 +6553,19 @@ class SearchIndexerDataIdentity(_model_base.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: The discriminator for derived types. Required. Default value is None.
-    :vartype odata_type: str
+    :ivar o_data_type: The discriminator for derived types. Required. Default value is None.
+    :vartype o_data_type: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type")
+    o_data_type: str = rest_discriminator(name="@odata.type")
     """The discriminator for derived types. Required. Default value is None."""
 
     @overload
     def __init__(
         self,
         *,
-        odata_type: str,
+        o_data_type: str,
     ): ...
 
     @overload
@@ -6584,12 +6586,12 @@ class SearchIndexerDataNoneIdentity(
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: A URI fragment specifying the type of identity. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of identity. Required. Default value is
      "#Microsoft.Azure.Search.DataNoneIdentity".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
-    odata_type: Literal["#Microsoft.Azure.Search.DataNoneIdentity"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.DataNoneIdentity"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of identity. Required. Default value is
      \"#Microsoft.Azure.Search.DataNoneIdentity\"."""
 
@@ -6702,9 +6704,9 @@ class SearchIndexerDataUserAssignedIdentity(
     "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"  # pylint: disable=line-too-long
      that should have been assigned to the search service. Required.
     :vartype resource_id: str
-    :ivar odata_type: A URI fragment specifying the type of identity. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of identity. Required. Default value is
      "#Microsoft.Azure.Search.DataUserAssignedIdentity".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     resource_id: str = rest_field(name="userAssignedIdentity")
@@ -6712,7 +6714,7 @@ class SearchIndexerDataUserAssignedIdentity(
      typically in the form
      \"/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId\"  # pylint: disable=line-too-long
      that should have been assigned to the search service. Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.DataUserAssignedIdentity"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.DataUserAssignedIdentity"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of identity. Required. Default value is
      \"#Microsoft.Azure.Search.DataUserAssignedIdentity\"."""
 
@@ -6731,7 +6733,7 @@ class SearchIndexerDataUserAssignedIdentity(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.DataUserAssignedIdentity", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.DataUserAssignedIdentity", **kwargs)
 
 
 class SearchIndexerError(_model_base.Model):
@@ -8190,9 +8192,9 @@ class SentimentSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.S
      Known values are: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT", "ru",
      "es", "sv", and "tr".
     :vartype default_language_code: str or ~azure.search.documents.models.SentimentSkillLanguage
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.SentimentSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = rest_field(
@@ -8201,7 +8203,7 @@ class SentimentSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.S
     """A value indicating which language code to use. Default is ``en``. Known values are: \"da\",
      \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\", \"it\", \"no\", \"pl\", \"pt-PT\", \"ru\",
      \"es\", \"sv\", and \"tr\"."""
-    odata_type: Literal["#Microsoft.Skills.Text.SentimentSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.SentimentSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.SentimentSkill\"."""
 
@@ -8225,7 +8227,7 @@ class SentimentSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.S
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.SentimentSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.SentimentSkill", **kwargs)
 
 
 class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text.V3.SentimentSkill"):
@@ -8266,9 +8268,9 @@ class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary.
     :vartype model_version: str
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.V3.SentimentSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     default_language_code: Optional[str] = rest_field(name="defaultLanguageCode")
@@ -8281,7 +8283,7 @@ class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text
     """The version of the model to use when calling the Text Analytics service. It
      will default to the latest available when not specified. We recommend you do
      not specify this value unless absolutely necessary."""
-    odata_type: Literal["#Microsoft.Skills.Text.V3.SentimentSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.V3.SentimentSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.V3.SentimentSkill\"."""
 
@@ -8307,7 +8309,7 @@ class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.V3.SentimentSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.V3.SentimentSkill", **kwargs)
 
 
 class ShaperSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.ShaperSkill"):
@@ -8334,12 +8336,12 @@ class ShaperSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.Shap
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~azure.search.documents.models.OutputFieldMappingEntry]
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Util.ShaperSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
-    odata_type: Literal["#Microsoft.Skills.Util.ShaperSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Util.ShaperSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Util.ShaperSkill\"."""
 
@@ -8362,7 +8364,7 @@ class ShaperSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Util.Shap
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Util.ShaperSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Util.ShaperSkill", **kwargs)
 
 
 class ShingleTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.ShingleTokenFilter"):
@@ -8398,9 +8400,9 @@ class ShingleTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Shi
      is
      an underscore ("_").
     :vartype filter_token: str
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.ShingleTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     max_shingle_size: Optional[int] = rest_field(name="maxShingleSize")
@@ -8421,7 +8423,7 @@ class ShingleTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Shi
     filter_token: Optional[str] = rest_field(name="filterToken")
     """The string to insert for each position at which there is no token. Default is
      an underscore (\"_\")."""
-    odata_type: Literal["#Microsoft.Azure.Search.ShingleTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.ShingleTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.ShingleTokenFilter\"."""
 
@@ -8446,7 +8448,7 @@ class ShingleTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Shi
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.ShingleTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.ShingleTokenFilter", **kwargs)
 
 
 class SnowballTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.SnowballTokenFilter"):
@@ -8464,9 +8466,9 @@ class SnowballTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Sn
      "italian", "kp", "lovins", "norwegian", "porter", "portuguese", "romanian", "russian",
      "spanish", "swedish", and "turkish".
     :vartype language: str or ~azure.search.documents.models.SnowballTokenFilterLanguage
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.SnowballTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     language: Union[str, "_models.SnowballTokenFilterLanguage"] = rest_field()
@@ -8474,7 +8476,7 @@ class SnowballTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Sn
      \"danish\", \"dutch\", \"english\", \"finnish\", \"french\", \"german\", \"german2\",
      \"hungarian\", \"italian\", \"kp\", \"lovins\", \"norwegian\", \"porter\", \"portuguese\",
      \"romanian\", \"russian\", \"spanish\", \"swedish\", and \"turkish\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.SnowballTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.SnowballTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.SnowballTokenFilter\"."""
 
@@ -8494,7 +8496,7 @@ class SnowballTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Sn
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.SnowballTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.SnowballTokenFilter", **kwargs)
 
 
 class SoftDeleteColumnDeletionDetectionPolicy(
@@ -8510,16 +8512,16 @@ class SoftDeleteColumnDeletionDetectionPolicy(
     :vartype soft_delete_column_name: str
     :ivar soft_delete_marker_value: The marker value that identifies an item as deleted.
     :vartype soft_delete_marker_value: str
-    :ivar odata_type: A URI fragment specifying the type of data deletion detection policy.
+    :ivar o_data_type: A URI fragment specifying the type of data deletion detection policy.
      Required. Default value is "#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     soft_delete_column_name: Optional[str] = rest_field(name="softDeleteColumnName")
     """The name of the column to use for soft-deletion detection."""
     soft_delete_marker_value: Optional[str] = rest_field(name="softDeleteMarkerValue")
     """The marker value that identifies an item as deleted."""
-    odata_type: Literal["#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of data deletion detection policy. Required. Default value
      is \"#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy\"."""
 
@@ -8539,7 +8541,7 @@ class SoftDeleteColumnDeletionDetectionPolicy(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy", **kwargs)
 
 
 class SplitSkill(
@@ -8587,9 +8589,9 @@ class SplitSkill(
      'maximumPagesToTake' pages, in order to improve performance when only a few
      initial pages are needed from each document.
     :vartype maximum_pages_to_take: int
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.SplitSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     default_language_code: Optional[Union[str, "_models.SplitSkillLanguage"]] = rest_field(name="defaultLanguageCode")
@@ -8609,7 +8611,7 @@ class SplitSkill(
      SplitSkill will discontinue splitting after processing the first
      'maximumPagesToTake' pages, in order to improve performance when only a few
      initial pages are needed from each document."""
-    odata_type: Literal["#Microsoft.Skills.Text.SplitSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.SplitSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.SplitSkill\"."""
 
@@ -8637,7 +8639,7 @@ class SplitSkill(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.SplitSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.SplitSkill", **kwargs)
 
 
 class SqlIntegratedChangeTrackingPolicy(
@@ -8648,12 +8650,12 @@ class SqlIntegratedChangeTrackingPolicy(
 
     All required parameters must be populated in order to send to server.
 
-    :ivar odata_type: A URI fragment specifying the type of data change detection policy. Required.
-     Default value is "#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy".
-    :vartype odata_type: str
+    :ivar o_data_type: A URI fragment specifying the type of data change detection policy.
+     Required. Default value is "#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy".
+    :vartype o_data_type: str
     """
 
-    odata_type: Literal["#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of data change detection policy. Required. Default value is
      \"#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy\"."""
 
@@ -8674,15 +8676,15 @@ class StemmerOverrideTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Se
     :ivar rules: A list of stemming rules in the following format: "word => stem", for example:
      "ran => run". Required.
     :vartype rules: list[str]
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.StemmerOverrideTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     rules: List[str] = rest_field()
     """A list of stemming rules in the following format: \"word => stem\", for example:
      \"ran => run\". Required."""
-    odata_type: Literal["#Microsoft.Azure.Search.StemmerOverrideTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.StemmerOverrideTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.StemmerOverrideTokenFilter\"."""
 
@@ -8702,7 +8704,7 @@ class StemmerOverrideTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Se
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.StemmerOverrideTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.StemmerOverrideTokenFilter", **kwargs)
 
 
 class StemmerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.StemmerTokenFilter"):
@@ -8725,9 +8727,9 @@ class StemmerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Ste
      "portuguese", "lightPortuguese", "minimalPortuguese", "portugueseRslp", "romanian", "russian",
      "lightRussian", "spanish", "lightSpanish", "swedish", "lightSwedish", and "turkish".
     :vartype language: str or ~azure.search.documents.models.StemmerTokenFilterLanguage
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.StemmerTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     language: Union[str, "_models.StemmerTokenFilterLanguage"] = rest_field()
@@ -8742,7 +8744,7 @@ class StemmerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Ste
      \"lightPortuguese\", \"minimalPortuguese\", \"portugueseRslp\", \"romanian\", \"russian\",
      \"lightRussian\", \"spanish\", \"lightSpanish\", \"swedish\", \"lightSwedish\", and
      \"turkish\"."""
-    odata_type: Literal["#Microsoft.Azure.Search.StemmerTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.StemmerTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.StemmerTokenFilter\"."""
 
@@ -8762,7 +8764,7 @@ class StemmerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Ste
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.StemmerTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.StemmerTokenFilter", **kwargs)
 
 
 class StopAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StopAnalyzer"):
@@ -8777,14 +8779,14 @@ class StopAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StopA
     :vartype name: str
     :ivar stopwords: A list of stopwords.
     :vartype stopwords: list[str]
-    :ivar odata_type: A URI fragment specifying the type of analyzer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of analyzer. Required. Default value is
      "#Microsoft.Azure.Search.StopAnalyzer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     stopwords: Optional[List[str]] = rest_field()
     """A list of stopwords."""
-    odata_type: Literal["#Microsoft.Azure.Search.StopAnalyzer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.StopAnalyzer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of analyzer. Required. Default value is
      \"#Microsoft.Azure.Search.StopAnalyzer\"."""
 
@@ -8804,7 +8806,7 @@ class StopAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.StopA
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.StopAnalyzer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.StopAnalyzer", **kwargs)
 
 
 class StopwordsTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.StopwordsTokenFilter"):
@@ -8836,9 +8838,9 @@ class StopwordsTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.S
      it's a stop word.
      Default is true.
     :vartype remove_trailing_stop_words: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.StopwordsTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     stopwords: Optional[List[str]] = rest_field()
@@ -8858,7 +8860,7 @@ class StopwordsTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.S
     remove_trailing_stop_words: Optional[bool] = rest_field(name="removeTrailing")
     """A value indicating whether to ignore the last search term if it's a stop word.
      Default is true."""
-    odata_type: Literal["#Microsoft.Azure.Search.StopwordsTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.StopwordsTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.StopwordsTokenFilter\"."""
 
@@ -8881,7 +8883,7 @@ class StopwordsTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.S
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.StopwordsTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.StopwordsTokenFilter", **kwargs)
 
 
 class SuggestDocumentsResult(_model_base.Model):
@@ -9147,9 +9149,9 @@ class SynonymTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Syn
      be equivalent to: incredible, unbelievable, fabulous, amazing => incredible.
      Default is true.
     :vartype expand: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.SynonymTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     synonyms: List[str] = rest_field()
@@ -9169,7 +9171,7 @@ class SynonymTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Syn
      If false, the following list: incredible, unbelievable, fabulous, amazing will
      be equivalent to: incredible, unbelievable, fabulous, amazing => incredible.
      Default is true."""
-    odata_type: Literal["#Microsoft.Azure.Search.SynonymTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.SynonymTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.SynonymTokenFilter\"."""
 
@@ -9191,7 +9193,7 @@ class SynonymTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Syn
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.SynonymTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.SynonymTokenFilter", **kwargs)
 
 
 class TagScoringFunction(ScoringFunction, discriminator="tag"):
@@ -9331,9 +9333,9 @@ class TextTranslationSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.
      "pt-PT", "otq", "ro", "ru", "sm", "sr-Cyrl", "sr-Latn", "sk", "sl", "es", "sv", "ty", "ta",
      "te", "th", "to", "tr", "uk", "ur", "vi", "cy", "yua", "ga", "kn", "mi", "ml", and "pa".
     :vartype suggested_from: str or ~azure.search.documents.models.TextTranslationSkillLanguage
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Text.TranslationSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     default_to_language_code: Union[str, "_models.TextTranslationSkillLanguage"] = rest_field(
@@ -9371,7 +9373,7 @@ class TextTranslationSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.
      \"pt-br\", \"pt-PT\", \"otq\", \"ro\", \"ru\", \"sm\", \"sr-Cyrl\", \"sr-Latn\", \"sk\",
      \"sl\", \"es\", \"sv\", \"ty\", \"ta\", \"te\", \"th\", \"to\", \"tr\", \"uk\", \"ur\", \"vi\",
      \"cy\", \"yua\", \"ga\", \"kn\", \"mi\", \"ml\", and \"pa\"."""
-    odata_type: Literal["#Microsoft.Skills.Text.TranslationSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Text.TranslationSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Text.TranslationSkill\"."""
 
@@ -9397,7 +9399,7 @@ class TextTranslationSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Text.TranslationSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Text.TranslationSkill", **kwargs)
 
 
 class TextWeights(_model_base.Model):
@@ -9445,14 +9447,14 @@ class TruncateTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Tr
     :vartype name: str
     :ivar length: The length at which terms will be truncated. Default and maximum is 300.
     :vartype length: int
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.TruncateTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     length: Optional[int] = rest_field()
     """The length at which terms will be truncated. Default and maximum is 300."""
-    odata_type: Literal["#Microsoft.Azure.Search.TruncateTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.TruncateTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.TruncateTokenFilter\"."""
 
@@ -9472,7 +9474,7 @@ class TruncateTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Tr
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.TruncateTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.TruncateTokenFilter", **kwargs)
 
 
 class UaxUrlEmailTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.UaxUrlEmailTokenizer"):
@@ -9489,15 +9491,15 @@ class UaxUrlEmailTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Sea
      maximum length
      are split. The maximum token length that can be used is 300 characters.
     :vartype max_token_length: int
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of tokenizer. Required. Default value is
      "#Microsoft.Azure.Search.UaxUrlEmailTokenizer".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     max_token_length: Optional[int] = rest_field(name="maxTokenLength")
     """The maximum token length. Default is 255. Tokens longer than the maximum length
      are split. The maximum token length that can be used is 300 characters."""
-    odata_type: Literal["#Microsoft.Azure.Search.UaxUrlEmailTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.UaxUrlEmailTokenizer"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of tokenizer. Required. Default value is
      \"#Microsoft.Azure.Search.UaxUrlEmailTokenizer\"."""
 
@@ -9517,7 +9519,7 @@ class UaxUrlEmailTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Sea
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.UaxUrlEmailTokenizer", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.UaxUrlEmailTokenizer", **kwargs)
 
 
 class UniqueTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.UniqueTokenFilter"):
@@ -9534,15 +9536,15 @@ class UniqueTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Uniq
      position.
      Default is false.
     :vartype only_on_same_position: bool
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.UniqueTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     only_on_same_position: Optional[bool] = rest_field(name="onlyOnSamePosition")
     """A value indicating whether to remove duplicates only at the same position.
      Default is false."""
-    odata_type: Literal["#Microsoft.Azure.Search.UniqueTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.UniqueTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.UniqueTokenFilter\"."""
 
@@ -9562,7 +9564,7 @@ class UniqueTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Uniq
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.UniqueTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.UniqueTokenFilter", **kwargs)
 
 
 class VectorQuery(_model_base.Model):
@@ -9932,9 +9934,9 @@ class WebApiSkill(
      the value remains unchanged. If set to "none", the value of this property is
      cleared.
     :vartype auth_identity: ~azure.search.documents.models.SearchIndexerDataIdentity
-    :ivar odata_type: A URI fragment specifying the type of skill. Required. Default value is
+    :ivar o_data_type: A URI fragment specifying the type of skill. Required. Default value is
      "#Microsoft.Skills.Custom.WebApiSkill".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     uri: str = rest_field()
@@ -9963,7 +9965,7 @@ class WebApiSkill(
      identity is used. On updates to the indexer, if the identity is unspecified,
      the value remains unchanged. If set to \"none\", the value of this property is
      cleared."""
-    odata_type: Literal["#Microsoft.Skills.Custom.WebApiSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Skills.Custom.WebApiSkill"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of skill. Required. Default value is
      \"#Microsoft.Skills.Custom.WebApiSkill\"."""
 
@@ -9994,7 +9996,7 @@ class WebApiSkill(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Skills.Custom.WebApiSkill", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Skills.Custom.WebApiSkill", **kwargs)
 
 
 class WebApiVectorizer(VectorSearchVectorizer, discriminator="customWebApi"):
@@ -10164,9 +10166,9 @@ class WordDelimiterTokenFilter(
     :vartype stem_english_possessive: bool
     :ivar protected_words: A list of tokens to protect from being delimited.
     :vartype protected_words: list[str]
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required. Default value
+    :ivar o_data_type: A URI fragment specifying the type of token filter. Required. Default value
      is "#Microsoft.Azure.Search.WordDelimiterTokenFilter".
-    :vartype odata_type: str
+    :vartype o_data_type: str
     """
 
     generate_word_parts: Optional[bool] = rest_field(name="generateWordParts")
@@ -10199,7 +10201,7 @@ class WordDelimiterTokenFilter(
      true."""
     protected_words: Optional[List[str]] = rest_field(name="protectedWords")
     """A list of tokens to protect from being delimited."""
-    odata_type: Literal["#Microsoft.Azure.Search.WordDelimiterTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
+    o_data_type: Literal["#Microsoft.Azure.Search.WordDelimiterTokenFilter"] = rest_discriminator(name="@odata.type")  # type: ignore
     """A URI fragment specifying the type of token filter. Required. Default value is
      \"#Microsoft.Azure.Search.WordDelimiterTokenFilter\"."""
 
@@ -10228,4 +10230,4 @@ class WordDelimiterTokenFilter(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, odata_type="#Microsoft.Azure.Search.WordDelimiterTokenFilter", **kwargs)
+        super().__init__(*args, o_data_type="#Microsoft.Azure.Search.WordDelimiterTokenFilter", **kwargs)

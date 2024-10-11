@@ -111,7 +111,7 @@ class SearchIndexerSkillset(Model):
 
     @classmethod
     def _from_generated(cls, skillset) -> Optional[Self]:
-        if not skillset:
+        if skillset is None:
             return None
         custom_skills = []
         for skill in skillset.skills:
@@ -297,7 +297,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
 
     @classmethod
     def _from_generated(cls, skill):
-        if not skill:
+        if skill is None:
             return None
         kwargs = skill.as_dict()
         if isinstance(skill, _EntityRecognitionSkillV3):
@@ -411,7 +411,7 @@ class SentimentSkill(SearchIndexerSkill):
 
     @classmethod
     def _from_generated(cls, skill):
-        if not skill:
+        if skill is None:
             return None
         kwargs = skill.as_dict()
         if isinstance(skill, _SentimentSkillV3):
@@ -609,7 +609,7 @@ class CustomAnalyzer(LexicalAnalyzer):
 
     @classmethod
     def _from_generated(cls, custom_analyzer):
-        if not custom_analyzer:
+        if custom_analyzer is None:
             return None
         return cls(
             name=custom_analyzer.name,
@@ -666,7 +666,7 @@ class PatternAnalyzer(LexicalAnalyzer):
 
     @classmethod
     def _from_generated(cls, pattern_analyzer):
-        if not pattern_analyzer:
+        if pattern_analyzer is None:
             return None
         if not pattern_analyzer.flags:
             flags = None
@@ -724,7 +724,7 @@ class PatternTokenizer(LexicalTokenizer):
 
     @classmethod
     def _from_generated(cls, pattern_tokenizer):
-        if not pattern_tokenizer:
+        if pattern_tokenizer is None:
             return None
         if not pattern_tokenizer.flags:
             flags = None
@@ -786,7 +786,7 @@ class SearchResourceEncryptionKey(Model):
 
     @classmethod
     def _from_generated(cls, search_resource_encryption_key) -> Optional[Self]:
-        if not search_resource_encryption_key:
+        if search_resource_encryption_key is None:
             return None
         if search_resource_encryption_key.access_credentials:
             application_id = search_resource_encryption_key.access_credentials.application_id
@@ -905,7 +905,7 @@ class SynonymMap(Model):
 
     @classmethod
     def _from_generated(cls, synonym_map) -> Optional[Self]:
-        if not synonym_map:
+        if synonym_map is None:
             return None
         return cls(
             name=synonym_map.name,
@@ -1037,7 +1037,7 @@ class SearchIndexerDataSourceConnection(Model):
 
     @classmethod
     def _from_generated(cls, search_indexer_data_source) -> Optional[Self]:
-        if not search_indexer_data_source:
+        if search_indexer_data_source is None:
             return None
         connection_string = (
             search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
@@ -1111,7 +1111,7 @@ class SearchIndexerDataSourceConnection(Model):
 
 
 def pack_analyzer(analyzer):
-    if not analyzer:
+    if analyzer is None:
         return None
     if isinstance(analyzer, (PatternAnalyzer, CustomAnalyzer)):
         return analyzer._to_generated()  # pylint:disable=protected-access
@@ -1119,7 +1119,7 @@ def pack_analyzer(analyzer):
 
 
 def unpack_analyzer(analyzer):
-    if not analyzer:
+    if analyzer is None:
         return None
     if isinstance(analyzer, _PatternAnalyzer):
         return PatternAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
