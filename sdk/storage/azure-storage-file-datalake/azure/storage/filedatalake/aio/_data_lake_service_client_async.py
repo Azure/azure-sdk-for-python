@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import (
     Any, Dict, Optional, Union,
@@ -391,7 +391,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
     async def delete_file_system(
         self, file_system: Union[FileSystemProperties, str],
         **kwargs: Any
-    ) -> FileSystemClient:  # pylint: disable=delete-operation-wrong-return-type
+    ) -> FileSystemClient:
         """Marks the specified file system for deletion.
 
         The file system and any files contained within it are later deleted during garbage collection.
