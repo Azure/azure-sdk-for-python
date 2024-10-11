@@ -15,7 +15,7 @@ from ._configuration import AzureAIClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import AgentsOperations, EndpointsOperations, EvaluationsOperations
 from ._client import AzureAIClient as ClientGenerated
-from .operations._patch import InferenceOperations
+from .operations._patch import InferenceOperations, TracingOperations
 
 
 class AzureAIClient(ClientGenerated):
@@ -150,6 +150,7 @@ class AzureAIClient(ClientGenerated):
         self.agents = AgentsOperations(self._client2, self._config2, self._serialize, self._deserialize)
         self.evaluations = EvaluationsOperations(self._client3, self._config3, self._serialize, self._deserialize)
         self.inference = InferenceOperations(self)
+        self.tracing = TracingOperations(self)
 
     def close(self) -> None:
         self._client1.close()
