@@ -3,6 +3,24 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+"""
+FILE: sample_agents_stream_eventhandler.py
+
+DESCRIPTION:
+    This sample demonstrates how to use agent operations with an event handler in streaming from
+    the Azure Agents service using a synchronous client.
+
+USAGE:
+    python sample_agents_stream_eventhandler.py
+
+    Before running the sample:
+
+    pip install azure.ai.client azure-identity
+
+    Set this environment variables with your own values:
+    AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
+"""
+
 import os
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
@@ -17,6 +35,7 @@ from azure.ai.client.models import (
 )
 
 from typing import Any
+
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
 # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -53,25 +72,26 @@ class MyEventHandler(AgentEventHandler):
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 
-# Create an agent and run stream with event handler
-agent = ai_client.agents.create_agent(
-    model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant"
-)
-print(f"Created agent, agent ID {agent.id}")
+with ai_client:
+    # Create an agent and run stream with event handler
+    agent = ai_client.agents.create_agent(
+        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant"
+    )
+    print(f"Created agent, agent ID {agent.id}")
 
-thread = ai_client.agents.create_thread()
-print(f"Created thread, thread ID {thread.id}")
+    thread = ai_client.agents.create_thread()
+    print(f"Created thread, thread ID {thread.id}")
 
-message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-print(f"Created message, message ID {message.id}")
+    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+    print(f"Created message, message ID {message.id}")
 
-with ai_client.agents.create_and_process_run(
-    thread_id=thread.id, assistant_id=agent.id, stream=True, event_handler=MyEventHandler()
-) as stream:
-    stream.until_done()
+    with ai_client.agents.create_and_process_run(
+        thread_id=thread.id, assistant_id=agent.id, stream=True, event_handler=MyEventHandler()
+    ) as stream:
+        stream.until_done()
 
-ai_client.agents.delete_agent(agent.id)
-print("Deleted agent")
+    ai_client.agents.delete_agent(agent.id)
+    print("Deleted agent")
 
-messages = ai_client.agents.list_messages(thread_id=thread.id)
-print(f"Messages: {messages}")
+    messages = ai_client.agents.list_messages(thread_id=thread.id)
+    print(f"Messages: {messages}")
