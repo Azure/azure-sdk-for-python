@@ -33,6 +33,11 @@ from azure.cosmos.partition_key import _Undefined, _Empty
 
 class FeedRangeInternal(ABC):
 
+    @property
+    @abstractmethod
+    def _container_link(self) -> str:
+        pass
+
     @abstractmethod
     def get_normalized_range(self) -> Range:
         pass
@@ -88,7 +93,7 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
     def from_json(cls, data: Dict[str, Any], feed_range: Range) -> 'FeedRangeInternalPartitionKey':
         if data.get(cls.type_property_name) and data.get(cls.container_link_property_name):
             pk_value = data.get(cls.type_property_name)
-            container_link = data.get(cls.container_link_property_name)
+            container_link = str(data.get(cls.container_link_property_name))
             if not pk_value:
                 return cls(_Empty(), feed_range, container_link)
             if pk_value == [{}]:
@@ -100,12 +105,15 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
         raise ValueError(f"Can not parse FeedRangeInternalPartitionKey from the json,"
                          f" there is no property {cls.type_property_name}")
 
+    def _container_link(self) -> str:
+        return self._container_link
+
 
 class FeedRangeInternalEpk(FeedRangeInternal):
     type_property_name = "Range"
     container_link_property_name = "Container"
 
-    def __init__(self, feed_range: Range, container_link: Optional[any]) -> None:
+    def __init__(self, feed_range: Range, container_link: str) -> None:
         if feed_range is None:
             raise ValueError("feed_range cannot be None")
 
@@ -126,7 +134,7 @@ class FeedRangeInternalEpk(FeedRangeInternal):
     def from_json(cls, data: Dict[str, Any]) -> 'FeedRangeInternalEpk':
         if data.get(cls.type_property_name) and data.get(cls.container_link_property_name):
             feed_range = Range.ParseFromDict(data.get(cls.type_property_name))
-            container_link = data.get(cls.container_link_property_name)
+            container_link = str(data.get(cls.container_link_property_name))
             return cls(feed_range, container_link)
         raise ValueError(f"Can not parse FeedRangeInternalEPK from the json,"
                          f" there is no property {cls.type_property_name}")
@@ -141,3 +149,6 @@ class FeedRangeInternalEpk(FeedRangeInternal):
             self._base64_encoded_string = self._to_base64_encoded_string()
 
         return self._base64_encoded_string
+
+    def _container_link(self) -> str:
+        return self._container_link

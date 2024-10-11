@@ -144,7 +144,7 @@ def merge_ranges_with_subsets(overlapping_ranges: List[Tuple[Range, str]]) -> Li
         overlapping_ranges.remove(overlapping_ranges[0])
     return processed_ranges
 
-def get_updated_session_token(feed_ranges_to_session_tokens: [(FeedRange, str)], target_feed_range: FeedRange,
+def get_updated_session_token(feed_ranges_to_session_tokens: List[Tuple[FeedRange, str]], target_feed_range: FeedRange,
                               container_link: str):
     if target_feed_range._feed_range_internal._container_link != container_link:
         raise ValueError('The target feed range does not belong to the container.')
