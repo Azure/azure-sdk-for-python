@@ -1063,11 +1063,15 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         message = None
         self._last_activity_timestamp = time.time()
         self._timeout = timeout if timeout else self._timeout
+        self._operation_waiting.set()
         try:
             while not self._timeout_reached:
                 if self._timeout > 0:
                     if time.time() - self._last_activity_timestamp >= self._timeout:
                         self._timeout_reached = True
+
+                if not self._connection._transport._incoming_queue.empty():
+                    self._connection._read_frame()
 
                 while not self._received_messages.empty():
                     message = self._received_messages.get()
@@ -1076,6 +1080,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                     yield message
 
         finally:
+            self._operation_waiting.clear()
             if self._shutdown:
                 self.close()
 
