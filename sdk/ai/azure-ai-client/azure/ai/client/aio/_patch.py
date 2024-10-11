@@ -168,7 +168,7 @@ class AzureAIClient(ClientGenerated):
         await self._client3.__aexit__(*exc_details)
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, credential: "AzureTokenCredential", **kwargs) -> "AzureAIClient":
+    def from_connection_string(cls, conn_str: str, credential: "AsyncTokenCredential", **kwargs) -> "AzureAIClient":
         """
         Create an asynchronous AzureAIClient from a connection string.
 
