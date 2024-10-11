@@ -1476,8 +1476,8 @@ class AIInferenceInstrumentorPreview:
         finish_reason = getattr(choice, "finish_reason", None)
         if finish_reason is not None:
             return finish_reason.value
-        else:
-            return "none"
+
+        return "none"
 
     def _add_response_chat_message_event(self, span: "AbstractSpan", result: _models.ChatCompletions) -> None:
         for choice in result.choices:
