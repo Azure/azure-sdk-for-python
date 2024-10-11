@@ -36,7 +36,7 @@ Here is the list of environment variables used by the tests:
 
 ```bash
 # For agents, including tools
-set AZURE_AI_CLIENT_CONNECTION_STRING=<your_connection_string>
+set AZURE_AI_CLIENT_AGENTS_CONNECTION_STRING=<your_connection_string>
 ```
 
 <!--
