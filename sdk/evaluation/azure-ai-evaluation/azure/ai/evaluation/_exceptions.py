@@ -4,9 +4,9 @@
 """This includes enums and classes for exceptions for use in azure-ai-evaluation."""
 
 from enum import Enum
-from typing import Optiona
+from typing import Optional
 
-from azure.core.exceptions import AzureErrorl
+from azure.core.exceptions import AzureError
 
 
 class ErrorCategory(Enum):
