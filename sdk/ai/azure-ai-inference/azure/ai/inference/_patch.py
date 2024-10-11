@@ -1576,9 +1576,9 @@ class AIInferenceInstrumentorPreview:
                 super().__init__(stream_obj._response)
                 self._instrumentor = instrumentor
 
-            def __iter__(
+            def __iter__(  # pyright: ignore [reportIncompatibleMethodOverride]
                 self,
-            ) -> Iterator[_models.StreamingChatCompletionsUpdate]:  # pyright: ignore [reportIncompatibleMethodOverride]
+            ) -> Iterator[_models.StreamingChatCompletionsUpdate]:
                 accumulate: Dict[str, Any] = {}
                 try:
                     chunk = None
@@ -1594,8 +1594,8 @@ class AIInferenceInstrumentorPreview:
                     # Set the span status to error
                     if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
                         span.span_instance.set_status(
-                            StatusCode.ERROR, description=str(exc)
-                        )  # pyright: ignore [reportPossiblyUnboundVariable]
+                            StatusCode.ERROR, description=str(exc)  # pyright: ignore [reportPossiblyUnboundVariable]
+                        )
                     module = exc.__module__ if hasattr(exc, "__module__") and exc.__module__ != "builtins" else ""
                     error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                     self._instrumentor._set_attributes(span, ("error.type", error_type))
@@ -1678,8 +1678,8 @@ class AIInferenceInstrumentorPreview:
                     span_name = f"chat {model}"
 
                 span = span_impl_type(
-                    name=span_name, kind=SpanKind.CLIENT
-                )  # pyright: ignore [reportPossiblyUnboundVariable]
+                    name=span_name, kind=SpanKind.CLIENT  # pyright: ignore [reportPossiblyUnboundVariable]
+                )
                 try:
                     # tracing events not supported in azure-core-tracing-opentelemetry
                     # so need to access the span instance directly
@@ -1694,8 +1694,8 @@ class AIInferenceInstrumentorPreview:
                     # Set the span status to error
                     if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
                         span.span_instance.set_status(
-                            StatusCode.ERROR, description=str(exc)
-                        )  # pyright: ignore [reportPossiblyUnboundVariable]
+                            StatusCode.ERROR, description=str(exc)  # pyright: ignore [reportPossiblyUnboundVariable]
+                        )
                     module = getattr(exc, "__module__", "")
                     module = module if module != "builtins" else ""
                     error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
@@ -1751,8 +1751,8 @@ class AIInferenceInstrumentorPreview:
                     span_name = f"chat {model}"
 
                 span = span_impl_type(
-                    name=span_name, kind=SpanKind.CLIENT
-                )  # pyright: ignore [reportPossiblyUnboundVariable]
+                    name=span_name, kind=SpanKind.CLIENT  # pyright: ignore [reportPossiblyUnboundVariable]
+                )
                 try:
                     # tracing events not supported in azure-core-tracing-opentelemetry
                     # so need to access the span instance directly
@@ -1767,8 +1767,8 @@ class AIInferenceInstrumentorPreview:
                     # Set the span status to error
                     if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
                         span.span_instance.set_status(
-                            StatusCode.ERROR, description=str(exc)
-                        )  # pyright: ignore [reportPossiblyUnboundVariable]
+                            StatusCode.ERROR, description=str(exc)  # pyright: ignore [reportPossiblyUnboundVariable]
+                        )
                     module = getattr(exc, "__module__", "")
                     module = module if module != "builtins" else ""
                     error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
