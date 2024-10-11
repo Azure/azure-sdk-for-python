@@ -698,6 +698,8 @@ class SendClient(AMQPClient):
         self._connection._transport._receive_event.wait()
         print("wait done, read frame")
         self._connection._read_frame()
+        self._connection._transport._receive_event.clear()
+        self._operation_waiting.clear()
 
         # idea #2
         # build this into message_delivery.state() instead.
@@ -1216,6 +1218,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         on_disposition_received = partial(self._on_disposition_received, message_delivery)
 
         print("SENDING DISPOSITION")
+        self._operation_waiting.set()
         self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
@@ -1227,12 +1230,10 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             on_disposition=on_disposition_received,
             timeout=timeout
         )
+        self._connection._transport._receive_event.wait()
+        self._connection._read_frame()
+        self._connection._transport._receive_event.clear()
 
-        running = True
-        # this would do the same with an event as above 
-        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            # running = self.do_work(flow=False)
-            time.sleep(1)
 
         if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             raise MessageException(

@@ -1107,6 +1107,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         time_sent = time.time()
         # If we have sent a drain, but have not yet received the drain response, we should continue to receive
         while not expired and len(batch) < max_message_count:
+            # an operation is starting on the MainThread we will be listening for frames here
+            receiver._handler._operation_waiting.set()
             while amqp_receive_client._received_messages.qsize() < max_message_count:
                 if (
                     abs_timeout
@@ -1138,7 +1140,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                             break
 
                 before = amqp_receive_client._received_messages.qsize()
-                # receiving = amqp_receive_client.do_work()
+                if not receiver._handler._connection._transport._incoming_queue.empty():
+                    receiver._handler._connection._read_frame()
                 received = amqp_receive_client._received_messages.qsize() - before
 
                 with receiver._handler._link._drain_lock:
@@ -1163,6 +1166,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             ):
                 batch.append(amqp_receive_client._received_messages.get())
                 amqp_receive_client._received_messages.task_done()
+        receiver._handler._operation_waiting.clear()
 
         return [receiver._build_received_message(message) for message in batch]
 
