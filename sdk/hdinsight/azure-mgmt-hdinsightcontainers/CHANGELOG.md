@@ -1,5 +1,87 @@
 # Release History
 
+## 1.0.0b3 (2024-08-26)
+
+### Features Added
+
+  - The 'HDInsightContainersMgmtClient' client had operation group 'cluster_pool_upgrade_histories' added in the current version
+  - The 'HDInsightContainersMgmtClient' client had operation group 'cluster_upgrade_histories' added in the current version
+  - The 'HDInsightContainersMgmtClient' client had operation group 'cluster_libraries' added in the current version
+  - The 'ClustersOperations' method 'begin_upgrade_manual_rollback' was added in the current version
+  - The model or publicly exposed class 'ClusterLibrariesOperations' was added in the current version
+  - The model or publicly exposed class 'ClusterPoolUpgradeHistoriesOperations' was added in the current version
+  - The model or publicly exposed class 'ClusterUpgradeHistoriesOperations' was added in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradeType' had property 'PATCH_VERSION_UPGRADE' added in the current version
+  - The model or publicly exposed class 'ClusterPoolComputeProfile' had property 'availability_zones' added in the current version
+  - The model or publicly exposed class 'ClusterPoolProfile' had property 'public_ip_tag' added in the current version
+  - The model or publicly exposed class 'ClusterPoolResourcePropertiesClusterPoolProfile' had property 'public_ip_tag' added in the current version
+  - The model or publicly exposed class 'ClusterPoolResourcePropertiesComputeProfile' had property 'availability_zones' added in the current version
+  - The model or publicly exposed class 'ClusterProfile' had property 'managed_identity_profile' added in the current version
+  - The model or publicly exposed class 'ClusterUpgradeType' had property 'PATCH_VERSION_UPGRADE' added in the current version
+  - The model or publicly exposed class 'ComputeProfile' had property 'availability_zones' added in the current version
+  - The model or publicly exposed class 'SshProfile' had property 'vm_size' added in the current version
+  - The model or publicly exposed class 'UpdatableClusterProfile' had property 'secrets_profile' added in the current version
+  - The model or publicly exposed class 'UpdatableClusterProfile' had property 'trino_profile' added in the current version
+  - The model or publicly exposed class 'Category' was added in the current version
+  - The model or publicly exposed class 'ClusterAksPatchUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterAvailableInPlaceUpgradeProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradePatchVersionUpgradeProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterHotfixUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterHotfixUpgradeRollbackHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterInPlaceUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterInPlaceUpgradeProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterLibrary' was added in the current version
+  - The model or publicly exposed class 'ClusterLibraryList' was added in the current version
+  - The model or publicly exposed class 'ClusterLibraryManagementOperation' was added in the current version
+  - The model or publicly exposed class 'ClusterLibraryManagementOperationProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterLibraryProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterPatchVersionUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterPatchVersionUpgradeProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterPatchVersionUpgradeRollbackHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterPoolAksPatchUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterPoolNodeOsUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterPoolUpgradeHistory' was added in the current version
+  - The model or publicly exposed class 'ClusterPoolUpgradeHistoryListResult' was added in the current version
+  - The model or publicly exposed class 'ClusterPoolUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterPoolUpgradeHistoryType' was added in the current version
+  - The model or publicly exposed class 'ClusterPoolUpgradeHistoryUpgradeResultType' was added in the current version
+  - The model or publicly exposed class 'ClusterUpgradeHistory' was added in the current version
+  - The model or publicly exposed class 'ClusterUpgradeHistoryListResult' was added in the current version
+  - The model or publicly exposed class 'ClusterUpgradeHistoryProperties' was added in the current version
+  - The model or publicly exposed class 'ClusterUpgradeHistorySeverityType' was added in the current version
+  - The model or publicly exposed class 'ClusterUpgradeHistoryType' was added in the current version
+  - The model or publicly exposed class 'ClusterUpgradeHistoryUpgradeResultType' was added in the current version
+  - The model or publicly exposed class 'ClusterUpgradeRollback' was added in the current version
+  - The model or publicly exposed class 'ClusterUpgradeRollbackProperties' was added in the current version
+  - The model or publicly exposed class 'IpTag' was added in the current version
+  - The model or publicly exposed class 'LibraryManagementAction' was added in the current version
+  - The model or publicly exposed class 'ManagedIdentityProfile' was added in the current version
+  - The model or publicly exposed class 'ManagedIdentitySpec' was added in the current version
+  - The model or publicly exposed class 'ManagedIdentityType' was added in the current version
+  - The model or publicly exposed class 'MavenLibraryProperties' was added in the current version
+  - The model or publicly exposed class 'PyPiLibraryProperties' was added in the current version
+  - The model or publicly exposed class 'Status' was added in the current version
+  - The model or publicly exposed class 'Type' was added in the current version
+
+### Breaking Changes
+
+  - The model or publicly exposed class 'ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'description' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'source_oss_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'source_cluster_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'source_build_number' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'target_oss_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'target_cluster_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'target_build_number' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'component_name' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'severity' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'extended_properties' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterAvailableUpgradeHotfixUpgradeProperties' had its instance variable 'created_time' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterHotfixUpgradeProperties' had its instance variable 'target_oss_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterHotfixUpgradeProperties' had its instance variable 'target_cluster_version' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterHotfixUpgradeProperties' had its instance variable 'target_build_number' deleted or renamed in the current version
+  - The model or publicly exposed class 'ClusterHotfixUpgradeProperties' had its instance variable 'component_name' deleted or renamed in the current version
+  - The model or publicly exposed class 'KafkaProfile' had its instance variable 'cluster_identity' deleted or renamed in the current version
+
 ## 1.0.0b2 (2024-04-07)
 
 ### Features Added

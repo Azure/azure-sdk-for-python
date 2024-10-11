@@ -40,7 +40,7 @@ Here is the list of environment variables used by the tests:
 
 ```bash
 # For chat completions test, including tools
-set AZURE_AI_CHAT_ENDPOINT=https://<endpoint-name>.<azure-region>.inference.ai.azure.com
+set AZURE_AI_CHAT_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
 set AZURE_AI_CHAT_KEY=<32-char-api-key>
 
 # For chat completions tests using image input
@@ -48,7 +48,7 @@ set AZURE_OPENAI_CHAT_ENDPOINT=https://<endpont-name>.openai.azure.com/openai/de
 set AZURE_OPENAI_CHAT_KEY=<32-char-api-key>
 
 # For text embedding tests
-set AZURE_AI_EMBEDDINGS_ENDPOINT=https://<endpoint-name>.<azure-region>.inference.ai.azure.com
+set AZURE_AI_EMBEDDINGS_ENDPOINT=https://<endpoint-name>.<azure-region>.models.ai.azure.com
 set AZURE_AI_EMBEDDINGS_KEY=<32-char-api-key>
 ```
 

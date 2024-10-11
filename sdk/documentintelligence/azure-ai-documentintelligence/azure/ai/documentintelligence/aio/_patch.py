@@ -15,6 +15,7 @@ from ._client import (
     DocumentIntelligenceClient as DIClientGenerated,
     DocumentIntelligenceAdministrationClient as DIAClientGenerated,
 )
+from ..aio._operations._patch import AsyncAnalyzeDocumentLROPoller
 
 
 class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
@@ -84,6 +85,7 @@ class DocumentIntelligenceAdministrationClient(
 __all__: List[str] = [
     "DocumentIntelligenceClient",
     "DocumentIntelligenceAdministrationClient",
+    "AsyncAnalyzeDocumentLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
 
 

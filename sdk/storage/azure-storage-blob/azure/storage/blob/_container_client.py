@@ -624,7 +624,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             process_storage_error(error)
 
     @distributed_trace
-    def _get_blob_service_client(self) -> "BlobServiceClient":  # pylint: disable=client-method-missing-kwargs
+    def _get_blob_service_client(self) -> "BlobServiceClient":
         """Get a client to interact with the container's parent service account.
 
         Defaults to current container's credentials.
@@ -648,7 +648,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 policies=self._pipeline._impl_policies # pylint: disable = protected-access
             )
         else:
-            _pipeline = self._pipeline   # pylint: disable = protected-access
+            _pipeline = self._pipeline
         return BlobServiceClient(
             f"{self.scheme}://{self.primary_hostname}",
             credential=self._raw_credential, api_version=self.api_version, _configuration=self._config,
@@ -1412,6 +1412,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         """
         if len(blobs) == 0:
             return iter([])
+        if self._is_localhost:
+            kwargs['url_prepend'] = self.account_name
 
         reqs, options = _generate_delete_blobs_options(
             self._query_str,
@@ -1494,6 +1496,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :return: An iterator of responses, one for each blob in order
         :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
+        if self._is_localhost:
+            kwargs['url_prepend'] = self.account_name
         reqs, options = _generate_set_tiers_options(
             self._query_str,
             self.container_name,
@@ -1553,6 +1557,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :return: An iterator of responses, one for each blob in order
         :rtype: Iterator[~azure.core.pipeline.transport.HttpResponse]
         """
+        if self._is_localhost:
+            kwargs['url_prepend'] = self.account_name
         reqs, options = _generate_set_tiers_options(
             self._query_str,
             self.container_name,

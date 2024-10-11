@@ -136,18 +136,22 @@ class PathClient(StorageAccountHostsMixin):
 
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
-        api_version = get_api_version(kwargs)
+        self._api_version = get_api_version(kwargs)
+        self._client = self._build_generated_client(self.url)
+        self._datalake_client_for_blob_operation = self._build_generated_client(self._blob_client.url)
 
-        self._client = _create_api_client(self.url, self.file_system_name, self.path_name, self._pipeline, api_version)
-        self._datalake_client_for_blob_operation = _create_api_client(
-            self._blob_account_url,
-            self.file_system_name,
-            self.path_name,
-            self._pipeline,
-            api_version
+    def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
+        client = AzureDataLakeStorageRESTAPI(
+            url,
+            base_url=url,
+            file_system=self.file_system_name,
+            path=self.path_name,
+            pipeline=self._pipeline
         )
+        client._config.version = self._api_version  # pylint: disable=protected-access
+        return client
 
-    def __exit__(self, *args: Any) -> None:
+    def __exit__(self, *args):
         self._blob_client.close()
         self._datalake_client_for_blob_operation.close()
         super(PathClient, self).__exit__(*args)

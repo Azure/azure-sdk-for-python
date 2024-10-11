@@ -21,11 +21,11 @@ import subprocess
 from enum import Enum
 from typing import Dict, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
-from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES
+from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
 from pathlib import Path
-
+from supported_checkers import CHECKERS
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 _LOGGER = logging.getLogger(__name__)
@@ -242,6 +242,133 @@ def create_function_report(f: Callable, is_async: bool = False) -> Dict:
     return func_obj
 
 
+def get_parameter_default_ast(default):
+    if isinstance(default, ast.Constant):
+        return default.value
+    if isinstance(default, ast.Name):
+        return default.id
+    if isinstance(default, ast.Attribute):
+        return default.attr
+    return None
+
+
+def get_parameter_type(annotation) -> str:
+    if isinstance(annotation, ast.Name):
+        return annotation.id
+    if isinstance(annotation, ast.Attribute):
+        return annotation.attr
+    if isinstance(annotation, ast.Constant):
+        return annotation.value
+    if isinstance(annotation, ast.Subscript):
+        if isinstance(annotation.slice, tuple):
+            # TODO handle multiple types in the subscript
+            return get_parameter_type(annotation.value)
+        return f"{get_parameter_type(annotation.value)}[{get_parameter_type(annotation.slice)}]"
+    return annotation
+
+
+def create_parameters(args: ast.arg) -> Dict:
+    params = {}
+    if hasattr(args, "posonlyargs"):
+        for arg in args.posonlyargs:
+            # Initialize the function parameters
+            params.update({arg.arg: {
+                "type": get_parameter_type(arg.annotation),
+                "default": None,
+                "param_type": "positional_only"
+            }})
+    if hasattr(args, "args"):
+        for arg in args.args:
+            # Initialize the function parameters
+            params.update({arg.arg: {
+                "type": get_parameter_type(arg.annotation),
+                "default": None,
+                "param_type": "positional_or_keyword"
+            }})
+    # Range through the corresponding default values
+    all_args = args.posonlyargs + args.args
+    positional_defaults = [None] * (len(all_args) - len(args.defaults)) + args.defaults
+    for arg, default in zip(all_args, positional_defaults):
+        params[arg.arg]["default"] = get_parameter_default_ast(default)
+    if hasattr(args, "vararg"):
+        if args.vararg:
+            params.update({args.vararg.arg: {
+                "type": get_parameter_type(args.vararg.annotation),
+                "default": None,
+                "param_type": "var_positional"
+            }})
+    if hasattr(args, "kwonlyargs"):
+        for arg in args.kwonlyargs:
+            # Initialize the function parameters
+            params.update({
+                arg.arg: {
+                    "type": get_parameter_type(arg.annotation),
+                    "default": None,
+                    "param_type": "keyword_only"
+                }
+            })
+        # Range through the corresponding default values
+        for i in range(len(args.kwonlyargs) - len(args.kw_defaults), len(args.kwonlyargs)):
+            params[args.kwonlyargs[i].arg]["default"] = get_parameter_default_ast(args.kw_defaults[i])
+    return params
+
+def get_overloads(cls: Type, cls_methods: Dict):
+    path = inspect.getsourcefile(cls)
+    with open(path, "r", encoding="utf-8-sig") as source:
+        module = ast.parse(source.read())
+
+    analyzer = ClassTreeAnalyzer(cls.__name__)
+    analyzer.visit(module)
+    cls_node = analyzer.cls_node
+    extract_base_classes = check_base_classes(cls_node)
+
+    if extract_base_classes:
+        base_classes = inspect.getmro(cls)  # includes cls itself
+        for base_class in base_classes:
+            try:
+                path = inspect.getsourcefile(base_class)
+                with open(path, "r", encoding="utf-8-sig") as source:
+                    module = ast.parse(source.read())
+            except (TypeError, SyntaxError):
+                _LOGGER.info(f"Unable to create ast of {base_class}")
+                continue  # was a built-in, e.g. "object", Exception, or a Model from msrest fails here
+
+            analyzer = ClassTreeAnalyzer(base_class.__name__)
+            analyzer.visit(module)
+            cls_node = analyzer.cls_node
+            if cls_node:
+                get_overload_data(cls_node, cls_methods)
+            else:
+                # Abstract base classes fail here, e.g. "collections.abc.MuttableMapping"
+                _LOGGER.info(f"Unable to get class node for {base_class.__name__}. Skipping...")
+    else:
+        get_overload_data(cls_node, cls_methods)
+
+
+def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
+    func_nodes = [node for node in node.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))]
+    public_func_nodes = [func for func in func_nodes if not func.name.startswith("_") or func.name.startswith("__init__")]
+    # Check for method overloads on a class
+    for func in public_func_nodes:
+        if func.name not in cls_methods:
+            _LOGGER.debug(f"Skipping overloads check for method {func.name}.")
+            continue
+        if "overloads" not in cls_methods[func.name]:
+            cls_methods[func.name]["overloads"] = []
+        is_async = False
+        if isinstance(func, ast.AsyncFunctionDef):
+            is_async = True
+        # method_overloads.update({func.name: {"parameters": {}, "is_async": False, "return_type": None}})
+        for decorator in func.decorator_list:
+            if hasattr(decorator, "id") and decorator.id == "overload":
+                overload_report = {
+                    "parameters": create_parameters(func.args),
+                    "is_async": is_async,
+                    "return_type": None
+                }
+                cls_methods[func.name]["overloads"].append(overload_report)
+
+
 def create_class_report(cls: Type) -> Dict:
     cls_info = {
         "type": None,
@@ -270,7 +397,8 @@ def create_class_report(cls: Type) -> Dict:
             if inspect.iscoroutinefunction(m):
                 async_func = True
             cls_info["methods"][method] = create_function_report(m, async_func)
-
+    # Search for overloads
+    get_overloads(cls, cls_info["methods"])
     return cls_info
 
 
@@ -312,11 +440,20 @@ def test_compare_reports(pkg_dir: str, changelog: bool, source_report: str = "st
         stable = json.load(fd)
     with open(os.path.join(pkg_dir, target_report), "r") as fd:
         current = json.load(fd)
-    diff = jsondiff.diff(stable, current)
 
-    checker = BreakingChangesTracker(stable, current, diff, package_name)
+    if "azure-mgmt-" in package_name:
+        stable = report_azure_mgmt_versioned_module(stable)
+        current = report_azure_mgmt_versioned_module(current)
+
+    checker = BreakingChangesTracker(
+        stable,
+        current,
+        package_name,
+        checkers = CHECKERS,
+        ignore = IGNORE_BREAKING_CHANGES
+    )
     if changelog:
-        checker = ChangelogTracker(stable, current, diff, package_name)
+        checker = ChangelogTracker(stable, current, package_name, checkers = CHECKERS, ignore = IGNORE_BREAKING_CHANGES)
     checker.run_checks()
 
     remove_json_files(pkg_dir)
@@ -335,6 +472,30 @@ def remove_json_files(pkg_dir: str) -> None:
     if os.path.isfile(current_json):
         os.remove(current_json)
     _LOGGER.info("cleaning up")
+
+
+def report_azure_mgmt_versioned_module(code_report):
+    
+    def parse_module_name(module):
+        split_module = module.split(".")
+        # Azure mgmt packages are typically in the form of: azure.mgmt.<service>
+        # If the module has a version, it will be in the form of: azure.mgmt.<service>.<version> or azure.mgmt.<service>.<version>.<submodule>
+        if len(split_module) >= 4:
+            for i in range(3, len(split_module)):
+                if re.search(r"v\d{4}_\d{2}_\d{2}", split_module[i]):
+                    split_module.pop(i)
+                    break
+        return ".".join(split_module)
+
+    sorted_modules = sorted(code_report.keys())
+    merged_report = {}
+    for module in sorted_modules:
+        non_version_module_name = parse_module_name(module)
+        if non_version_module_name not in merged_report:
+            merged_report[non_version_module_name] = code_report[module]
+            continue
+        merged_report[non_version_module_name].update(code_report[module])
+    return merged_report
 
 
 def main(

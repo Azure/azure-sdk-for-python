@@ -19,14 +19,12 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -70,6 +68,8 @@ def build_upload_request(
     immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
     legal_hold: Optional[bool] = None,
     transactional_content_crc64: Optional[bytes] = None,
+    structured_body_type: Optional[str] = None,
+    structured_content_length: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -77,7 +77,7 @@ def build_upload_request(
 
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -162,6 +162,12 @@ def build_upload_request(
         _headers["x-ms-content-crc64"] = _SERIALIZER.header(
             "transactional_content_crc64", transactional_content_crc64, "bytearray"
         )
+    if structured_body_type is not None:
+        _headers["x-ms-structured-body"] = _SERIALIZER.header("structured_body_type", structured_body_type, "str")
+    if structured_content_length is not None:
+        _headers["x-ms-structured-content-length"] = _SERIALIZER.header(
+            "structured_content_length", structured_content_length, "int"
+        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -211,7 +217,7 @@ def build_put_blob_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -329,6 +335,8 @@ def build_stage_block_request(
     encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
     encryption_scope: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    structured_body_type: Optional[str] = None,
+    structured_content_length: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -336,7 +344,7 @@ def build_stage_block_request(
 
     comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -378,6 +386,12 @@ def build_stage_block_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if structured_body_type is not None:
+        _headers["x-ms-structured-body"] = _SERIALIZER.header("structured_body_type", structured_body_type, "str")
+    if structured_content_length is not None:
+        _headers["x-ms-structured-content-length"] = _SERIALIZER.header(
+            "structured_content_length", structured_content_length, "int"
+        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -412,7 +426,7 @@ def build_stage_block_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -513,7 +527,7 @@ def build_commit_block_list_request(
 
     comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -619,7 +633,7 @@ def build_get_block_list_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
-    version: Literal["2024-08-04"] = kwargs.pop("version", _headers.pop("x-ms-version", "2024-08-04"))
+    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -685,6 +699,8 @@ class BlockBlobOperations:
         immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
         legal_hold: Optional[bool] = None,
         transactional_content_crc64: Optional[bytes] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -692,6 +708,7 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Upload Block Blob operation updates the content of an existing block blob. Updating an
         existing block blob overwrites any existing metadata on the blob. Partial updates are not
         supported with Put Blob; the content of the existing blob is overwritten with the content of
@@ -740,6 +757,13 @@ class BlockBlobOperations:
         :param transactional_content_crc64: Specify the transactional crc64 for the body, to be
          validated by the service. Default value is None.
         :type transactional_content_crc64: bytes
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param blob_http_headers: Parameter group. Default value is None.
         :type blob_http_headers: ~azure.storage.blob.models.BlobHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -754,7 +778,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -837,6 +861,8 @@ class BlockBlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             transactional_content_crc64=transactional_content_crc64,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             blob_type=blob_type,
             content_type=content_type,
             version=self._config.version,
@@ -844,7 +870,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -879,6 +904,9 @@ class BlockBlobOperations:
         response_headers["x-ms-encryption-scope"] = self._deserialize(
             "str", response.headers.get("x-ms-encryption-scope")
         )
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -906,6 +934,7 @@ class BlockBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Put Blob from URL operation creates a new Block Blob where the contents of the blob are
         read from a given URL.  This API is supported beginning with the 2020-04-08 version. Partial
         updates are not supported with Put Blob from URL; the content of an existing blob is
@@ -976,7 +1005,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1079,7 +1108,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1128,11 +1156,14 @@ class BlockBlobOperations:
         transactional_content_crc64: Optional[bytes] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
         cpk_scope_info: Optional[_models.CpkScopeInfo] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Stage Block operation creates a new block to be committed as part of a blob.
 
         :param block_id: A valid Base64 string value that identifies the block. Prior to encoding, the
@@ -1158,6 +1189,13 @@ class BlockBlobOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param cpk_info: Parameter group. Default value is None.
@@ -1168,7 +1206,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1211,6 +1249,8 @@ class BlockBlobOperations:
             encryption_algorithm=_encryption_algorithm,
             encryption_scope=_encryption_scope,
             request_id_parameter=request_id_parameter,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             comp=comp,
             content_type=content_type,
             version=self._config.version,
@@ -1218,7 +1258,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1253,6 +1292,9 @@ class BlockBlobOperations:
         response_headers["x-ms-encryption-scope"] = self._deserialize(
             "str", response.headers.get("x-ms-encryption-scope")
         )
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -1275,6 +1317,7 @@ class BlockBlobOperations:
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Stage Block operation creates a new block to be committed as part of a blob where the
         contents are read from a URL.
 
@@ -1319,7 +1362,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1381,7 +1424,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1441,6 +1483,7 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """The Commit Block List operation writes a blob by specifying the list of block IDs that make up
         the blob. In order to be written as part of a blob, a block must have been successfully written
         to the server in a prior Put Block operation. You can call Put Block List to update a blob by
@@ -1503,7 +1546,7 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1592,7 +1635,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1645,6 +1687,7 @@ class BlockBlobOperations:
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> _models.BlockList:
+        # pylint: disable=line-too-long
         """The Get Block List operation retrieves the list of blocks that have been uploaded as part of a
         block blob.
 
@@ -1675,7 +1718,7 @@ class BlockBlobOperations:
         :rtype: ~azure.storage.blob.models.BlockList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1709,7 +1752,6 @@ class BlockBlobOperations:
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1738,7 +1780,7 @@ class BlockBlobOperations:
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
 
-        deserialized = self._deserialize("BlockList", pipeline_response)
+        deserialized = self._deserialize("BlockList", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

@@ -19,7 +19,7 @@ USAGE:
 import asyncio
 import os
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def begin_get_route_directions_batch_async():
     from azure.core.credentials import AzureKeyCredential
@@ -34,8 +34,8 @@ async def begin_get_route_directions_batch_async():
             polling=True,
         )
 
-    print("Get route directions batch batch_id to fetch the result later")
-    print(result.batch_id)
+    print("Get route directions batch continuation_token to fetch the result later")
+    print(result.continuation_token())
 
 if __name__ == '__main__':
     asyncio.run(begin_get_route_directions_batch_async())

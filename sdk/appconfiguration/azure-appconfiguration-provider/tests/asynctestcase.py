@@ -142,6 +142,16 @@ class AppConfigTestCase(AzureRecordedTestCase):
             feature_flag_refresh_enabled=feature_flag_refresh_enabled,
         )
 
+    @staticmethod
+    def create_sdk_client(appconfiguration_connection_string):
+        return AzureAppConfigurationClient.from_connection_string(
+            appconfiguration_connection_string, user_agent="SDK/Integration"
+        )
+
+    def create_aad_sdk_client(self, appconfiguration_endpoint_string):
+        cred = self.get_credential(AzureAppConfigurationClient)
+        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
+
 
 async def setup_configs(client, keyvault_secret_url):
     async with client:

@@ -9,7 +9,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List
 
 from enum import Enum
+
 from azure.core import CaseInsensitiveEnumMeta
+from ._enums import SchemaContentTypeValues
 
 
 class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -22,18 +24,16 @@ class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CUSTOM = "Custom"
     """Represents a custom schema format."""
 
+# Normalizing the schema content type strings for whitespace and case insensitive comparison.
+class NormalizedSchemaContentTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes closed list of normalized schema content type values."""
 
-class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """
-    Represents the Schema Registry API version to use for requests.
-    """
-
-    V2021_10 = "2021-10"
-    V2022_10 = "2022-10"
-    """This is the default version."""
-
-
-DEFAULT_VERSION = ApiVersion.V2022_10
+    AVRO = SchemaContentTypeValues.AVRO.value.replace(" ", "").lower()
+    """Avro encoding."""
+    JSON = SchemaContentTypeValues.JSON.value.replace(" ", "").lower()
+    """JSON encoding"""
+    CUSTOM = SchemaContentTypeValues.CUSTOM.value.replace(" ", "").lower()
+    """Plain text custom encoding."""
 
 
 __all__: List[str] = []  # Add all objects you want publicly available to users at this package level

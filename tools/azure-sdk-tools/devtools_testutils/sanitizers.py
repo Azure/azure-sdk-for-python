@@ -490,7 +490,7 @@ def remove_batch_sanitizers(sanitizers: List[str], headers: Optional[Dict] = Non
     if is_live_and_not_recording():
         return
 
-    data = {"Sanitizers" : sanitizers}
+    data = {"Sanitizers": sanitizers}
 
     headers_to_send = {"Content-Type": "application/json"}
     if headers is not None:

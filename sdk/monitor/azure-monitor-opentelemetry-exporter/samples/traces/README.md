@@ -121,7 +121,7 @@ $ python sample_requests.py
 * Run the sample
 
 ```sh
-$ pip install opentelemetry-instrumentation-psygopg2
+$ pip install opentelemetry-instrumentation-psycopg2
 $ # from this directory
 $ python sample_psycopg2.py
 ```

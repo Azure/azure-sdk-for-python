@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.privatedns import PrivateDnsManagementClient
 
 """
@@ -41,7 +42,7 @@ def main():
                     "email": "azureprivatedns-hostmaster.microsoft.com",
                     "expireTime": 2419200,
                     "host": "azureprivatedns.net",
-                    "minimumTTL": 300,
+                    "minimumTtl": 300,
                     "refreshTime": 3600,
                     "retryTime": 300,
                     "serialNumber": 1,
@@ -53,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/privatedns/resource-manager/Microsoft.Network/stable/2020-06-01/examples/RecordSetSOAPut.json
+# x-ms-original-file: specification/privatedns/resource-manager/Microsoft.Network/stable/2024-06-01/examples/RecordSetSOAPut.json
 if __name__ == "__main__":
     main()

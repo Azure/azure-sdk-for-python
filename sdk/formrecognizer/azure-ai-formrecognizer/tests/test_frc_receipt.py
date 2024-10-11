@@ -11,20 +11,19 @@ from datetime import date, time
 from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
-from preparers import GlobalClientPreparer as _GlobalClientPreparer
-from preparers import FormRecognizerPreparer
+from preparers import FormRecognizerPreparer, get_sync_client
 from conftest import skip_flaky_test
 
-FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
+get_fr_client = functools.partial(get_sync_client, FormRecognizerClient)
 
 class TestReceiptFromStream(FormRecognizerTest):
 
     @pytest.mark.live_test_only
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_passing_enum_content_type_v2(self, client):
+    def test_passing_enum_content_type_v2(self):
+        client = get_fr_client()
         with open(self.receipt_png, "rb") as fd:
             my_file = fd.read()
         poller = client.begin_recognize_receipts(
@@ -35,9 +34,8 @@ class TestReceiptFromStream(FormRecognizerTest):
         assert result is not None
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     def test_damaged_file_bytes_fails_autodetect_content_type(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         damaged_pdf = b"\x50\x44\x46\x55\x55\x55"  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_receipts(
@@ -45,10 +43,9 @@ class TestReceiptFromStream(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     # TODO should there be a v3 version of this test?
     def test_damaged_file_bytes_io_fails_autodetect(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         damaged_pdf = BytesIO(b"\x50\x44\x46\x55\x55\x55")  # doesn't match any magic file numbers
         with pytest.raises(ValueError):
             poller = client.begin_recognize_receipts(
@@ -56,9 +53,8 @@ class TestReceiptFromStream(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     def test_passing_bad_content_type_param_passed(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         with open(self.receipt_jpg, "rb") as fd:
             my_file = fd.read()
         with pytest.raises(ValueError):
@@ -68,9 +64,8 @@ class TestReceiptFromStream(FormRecognizerTest):
             )
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     def test_passing_unsupported_url_content_type(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client()
         with pytest.raises(TypeError):
             poller = client.begin_recognize_receipts(
                 "https://badurl.jpg",
@@ -79,9 +74,9 @@ class TestReceiptFromStream(FormRecognizerTest):
 
     @skip_flaky_test
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer()
     @recorded_by_proxy
-    def test_receipt_jpg_include_field_elements(self, client):
+    def test_receipt_jpg_include_field_elements(self):
+        client = get_fr_client()
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         poller = client.begin_recognize_receipts(receipt, include_field_elements=True)
@@ -113,9 +108,8 @@ class TestReceiptFromStream(FormRecognizerTest):
         assert receipt_type.value ==  'Itemized'
 
     @FormRecognizerPreparer()
-    @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     def test_receipt_locale_v2(self, **kwargs):
-        client = kwargs.pop("client")
+        client = get_fr_client(api_version=FormRecognizerApiVersion.V2_0)
         with open(self.receipt_jpg, "rb") as fd:
             receipt = fd.read()
         with pytest.raises(ValueError) as e:

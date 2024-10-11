@@ -17,6 +17,8 @@ import sys
 from typing import List, AsyncIterator, Iterator, Optional, Union
 from azure.core.rest import HttpResponse, AsyncHttpResponse
 from ._models import ImageUrl as ImageUrlGenerated
+from ._models import ChatCompletions as ChatCompletionsGenerated
+from ._models import EmbeddingsResult as EmbeddingsResultGenerated
 from .. import models as _models
 
 if sys.version_info >= (3, 11):
@@ -25,6 +27,55 @@ else:
     from typing_extensions import Self
 
 logger = logging.getLogger(__name__)
+
+
+class ChatCompletions(ChatCompletionsGenerated):
+    """Representation of the response data from a chat completions request.
+    Completions support a wide variety of tasks and generate text that continues from or
+    "completes"
+    provided prompt data.
+
+
+    :ivar id: A unique identifier associated with this chat completions response. Required.
+    :vartype id: str
+    :ivar created: The first timestamp associated with generation activity for this completions
+     response,
+     represented as seconds since the beginning of the Unix epoch of 00:00 on 1 Jan 1970. Required.
+    :vartype created: ~datetime.datetime
+    :ivar model: The model used for the chat completion. Required.
+    :vartype model: str
+    :ivar usage: Usage information for tokens processed and generated as part of this completions
+     operation. Required.
+    :vartype usage: ~azure.ai.inference.models.CompletionsUsage
+    :ivar choices: The collection of completions choices associated with this completions response.
+     Generally, ``n`` choices are generated per provided prompt with a default value of 1.
+     Token limits and other settings may limit the number of choices generated. Required.
+    :vartype choices: list[~azure.ai.inference.models.ChatChoice]
+    """
+
+    def __str__(self) -> str:
+        # pylint: disable=client-method-name-no-double-underscore
+        return json.dumps(self.as_dict(), indent=2)
+
+
+class EmbeddingsResult(EmbeddingsResultGenerated):
+    """Representation of the response data from an embeddings request.
+    Embeddings measure the relatedness of text strings and are commonly used for search,
+    clustering,
+    recommendations, and other similar scenarios.
+
+
+    :ivar data: Embedding values for the prompts submitted in the request. Required.
+    :vartype data: list[~azure.ai.inference.models.EmbeddingItem]
+    :ivar usage: Usage counts for tokens input using the embeddings API. Required.
+    :vartype usage: ~azure.ai.inference.models.EmbeddingsUsage
+    :ivar model: The model ID used to generate this result. Required.
+    :vartype model: str
+    """
+
+    def __str__(self) -> str:
+        # pylint: disable=client-method-name-no-double-underscore
+        return json.dumps(self.as_dict(), indent=2)
 
 
 class ImageUrl(ImageUrlGenerated):
@@ -115,12 +166,22 @@ class BaseStreamingChatCompletions:
             # where the curly braces contain a valid JSON object.
             # Deserialize it into a StreamingChatCompletionsUpdate object
             # and add it to the queue.
-            self._queue.put(
-                # pylint: disable=W0212 # Access to a protected member _deserialize of a client class
-                _models.StreamingChatCompletionsUpdate._deserialize(
-                    json.loads(line[len(self._SSE_DATA_EVENT_PREFIX) : -1]), []
-                )
+            # pylint: disable=W0212 # Access to a protected member _deserialize of a client class
+            update = _models.StreamingChatCompletionsUpdate._deserialize(
+                json.loads(line[len(self._SSE_DATA_EVENT_PREFIX) : -1]), []
             )
+
+            # We skip any update that has a None or empty choices list
+            # (this is what OpenAI Python SDK does)
+            if update.choices:
+
+                # We update all empty content strings to None
+                # (this is what OpenAI Python SDK does)
+                # for choice in update.choices:
+                #    if not choice.delta.content:
+                #        choice.delta.content = None
+
+                self._queue.put(update)
 
             if self._ENABLE_CLASS_LOGS:
                 logger.debug("[Added to queue]")
@@ -207,6 +268,8 @@ class AsyncStreamingChatCompletions(BaseStreamingChatCompletions):
 
 __all__: List[str] = [
     "ImageUrl",
+    "ChatCompletions",
+    "EmbeddingsResult",
     "StreamingChatCompletions",
     "AsyncStreamingChatCompletions",
 ]  # Add all objects you want publicly available to users at this package level

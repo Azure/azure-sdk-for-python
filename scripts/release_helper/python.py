@@ -24,9 +24,9 @@ _FILE_OUT = 'published_issues_python.csv'
 
 class IssueProcessPython(IssueProcess):
 
-    def __init__(self, issue_package: IssuePackage, request_repo_dict: Dict[str, Repository],
+    def __init__(self, issue_package: IssuePackage, request_repo: Repository,
                  assignee_candidates: Set[str], language_owner: Set[str]):
-        IssueProcess.__init__(self, issue_package, request_repo_dict, assignee_candidates, language_owner)
+        IssueProcess.__init__(self, issue_package, request_repo, assignee_candidates, language_owner)
         self.output_folder = '' # network of sdk/network/azure-mgmt-XXX
         self.delay_time = self.get_delay_time()
         self.python_tag = ''

@@ -77,7 +77,11 @@ def return_origin_path(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         current_path = os.getcwd()
-        result = func(*args, **kwargs)
+        try:
+            result = func(*args, **kwargs)
+        except Exception as e:
+            os.chdir(current_path)
+            raise e
         os.chdir(current_path)
         return result
 

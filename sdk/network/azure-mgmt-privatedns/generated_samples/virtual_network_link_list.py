@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.privatedns import PrivateDnsManagementClient
 
 """
@@ -31,12 +32,12 @@ def main():
 
     response = client.virtual_network_links.list(
         resource_group_name="resourceGroup1",
-        private_zone_name="privatezone1.com",
+        private_zone_name="privatelink.contoso.com",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/privatedns/resource-manager/Microsoft.Network/stable/2020-06-01/examples/VirtualNetworkLinkList.json
+# x-ms-original-file: specification/privatedns/resource-manager/Microsoft.Network/stable/2024-06-01/examples/VirtualNetworkLinkList.json
 if __name__ == "__main__":
     main()

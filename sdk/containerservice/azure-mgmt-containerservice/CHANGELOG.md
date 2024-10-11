@@ -1,5 +1,20 @@
 # Release History
 
+## 32.0.0 (2024-09-12)
+
+### Features Added
+
+  - Added operation AgentPoolsOperations.begin_delete_machines
+  - Model AdvancedNetworking has a new parameter security
+  - Model AdvancedNetworkingObservability has a new parameter tls_management
+  - Model AgentPool has a new parameter security_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter security_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter security_profile
+
+### Breaking Changes
+
+  - Model AgentPoolSecurityProfile no longer has parameter ssh_access
+
 ## 31.0.0 (2024-07-18)
 
 ### Features Added

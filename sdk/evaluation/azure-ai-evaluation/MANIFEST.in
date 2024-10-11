@@ -1,0 +1,6 @@
+recursive-include tests *.py
+include *.md
+include azure/__init__.py
+include azure/ai/__init__.py
+include azure/ai/evaluation/py.typed
+recursive-include azure/ai/evaluation *.prompty

@@ -22,7 +22,7 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_list(self, resource_group):
         response = self.client.snapshots.list(
-            api_version="2021-08-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
     def test_list_by_resource_group(self, resource_group):
         response = self.client.snapshots.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2021-08-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
         response = self.client.snapshots.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2021-08-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -60,8 +60,13 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
             parameters={
                 "location": "str",
                 "creationData": {"sourceResourceId": "str"},
+                "enableFIPS": bool,
                 "id": "str",
+                "kubernetesVersion": "str",
                 "name": "str",
+                "nodeImageVersion": "str",
+                "osSku": "str",
+                "osType": "Linux",
                 "snapshotType": "NodePool",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -73,8 +78,9 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
                 "type": "str",
+                "vmSize": "str",
             },
-            api_version="2021-08-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +93,7 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2021-08-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -99,7 +105,7 @@ class TestContainerServiceSnapshotsOperations(AzureMgmtRecordedTestCase):
         response = self.client.snapshots.delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2021-08-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

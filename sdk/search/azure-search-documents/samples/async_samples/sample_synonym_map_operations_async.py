@@ -55,8 +55,9 @@ async def get_synonym_map():
     # [START get_synonym_map_async]
     result = await client.get_synonym_map("test-syn-map")
     print("Retrived Synonym Map 'test-syn-map' with synonyms")
-    for syn in result.synonyms:
-        print("    {}".format(syn))
+    if result:
+        for syn in result.synonyms:
+            print("    {}".format(syn))
     # [END get_synonym_map_async]
 
 

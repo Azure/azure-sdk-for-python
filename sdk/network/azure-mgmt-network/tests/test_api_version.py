@@ -17,7 +17,8 @@ TEST_API_VERSION = "2021-02-01"
 
 def raw_requst_check(request):
     assert request.http_request.query["api-version"] == TEST_API_VERSION
-
+    
+@pytest.mark.live_test_only
 class TestMgmtNetworkApiVersion(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.mgmt_client = self.create_mgmt_client(

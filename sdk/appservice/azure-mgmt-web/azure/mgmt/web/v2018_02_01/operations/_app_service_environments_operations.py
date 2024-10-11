@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, Type, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -17,13 +17,14 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -31,7 +32,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from ..._serialization import Serializer
-from .._vendor import WebSiteManagementClientMixinABC, _convert_request
+from .._vendor import WebSiteManagementClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -1758,7 +1759,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -1774,7 +1774,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -1844,7 +1843,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -1860,7 +1858,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -1926,7 +1923,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -1941,7 +1937,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AppServiceEnvironmentResource", pipeline_response)
+        deserialized = self._deserialize("AppServiceEnvironmentResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1954,7 +1950,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         name: str,
         hosting_environment_envelope: Union[_models.AppServiceEnvironmentResource, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.AppServiceEnvironmentResource]:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1968,7 +1964,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.AppServiceEnvironmentResource]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1989,10 +1985,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2000,15 +1996,14 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400, 404, 409]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("AppServiceEnvironmentResource", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("AppServiceEnvironmentResource", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2125,10 +2120,11 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("AppServiceEnvironmentResource", pipeline_response)
+            deserialized = self._deserialize("AppServiceEnvironmentResource", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -2150,9 +2146,9 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    def _delete_initial(  # pylint: disable=inconsistent-return-statements
+    def _delete_initial(
         self, resource_group_name: str, name: str, force_delete: Optional[bool] = None, **kwargs: Any
-    ) -> None:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2165,7 +2161,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_delete_request(
             resource_group_name=resource_group_name,
@@ -2176,10 +2172,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2187,11 +2183,19 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 204, 400, 404, 409]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def begin_delete(
@@ -2222,7 +2226,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._delete_initial(  # type: ignore
+            raw_result = self._delete_initial(
                 resource_group_name=resource_group_name,
                 name=name,
                 force_delete=force_delete,
@@ -2232,6 +2236,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -2370,7 +2375,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2385,11 +2389,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("AppServiceEnvironmentResource", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("AppServiceEnvironmentResource", pipeline_response)
+        deserialized = self._deserialize("AppServiceEnvironmentResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2435,7 +2435,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -2451,7 +2450,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -2517,7 +2515,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2532,7 +2529,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("AddressResponse", pipeline_response)
+        deserialized = self._deserialize("AddressResponse", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2545,7 +2542,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         name: str,
         vnet_info: Union[_models.VirtualNetworkProfile, IO[bytes]],
         **kwargs: Any
-    ) -> _models.WebAppCollection:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -2559,7 +2556,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2580,10 +2577,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -2591,15 +2588,15 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("WebAppCollection", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("WebAppCollection", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2728,7 +2725,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -2744,13 +2740,12 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("WebAppCollection", pipeline_response)
+            deserialized = self._deserialize("WebAppCollection", pipeline_response.http_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -2787,6 +2782,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -2852,7 +2848,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2867,7 +2862,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[HostingEnvironmentDiagnostics]", pipeline_response)
+        deserialized = self._deserialize("[HostingEnvironmentDiagnostics]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2915,7 +2910,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -2930,7 +2924,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("HostingEnvironmentDiagnostics", pipeline_response)
+        deserialized = self._deserialize("HostingEnvironmentDiagnostics", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2980,7 +2974,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -2996,7 +2989,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3062,7 +3054,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3077,7 +3068,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MetricDefinition", pipeline_response)
+        deserialized = self._deserialize("MetricDefinition", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3140,7 +3131,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -3156,7 +3146,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3227,7 +3216,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -3243,7 +3231,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3309,7 +3296,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3324,7 +3310,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
+        deserialized = self._deserialize("WorkerPoolResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3337,7 +3323,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         name: str,
         multi_role_pool_envelope: Union[_models.WorkerPoolResource, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.WorkerPoolResource]:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3351,7 +3337,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.WorkerPoolResource]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -3372,10 +3358,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3383,15 +3369,14 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400, 404, 409]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3502,10 +3487,11 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
+            deserialized = self._deserialize("WorkerPoolResource", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -3641,7 +3627,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -3656,11 +3641,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
+        deserialized = self._deserialize("WorkerPoolResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3715,7 +3696,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -3731,7 +3711,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3809,7 +3788,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -3825,7 +3803,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -3898,7 +3875,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -3914,7 +3890,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -4012,7 +3987,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4028,7 +4002,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -4099,7 +4072,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4115,7 +4087,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -4184,7 +4155,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4200,7 +4170,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -4266,7 +4235,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4281,7 +4249,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("[Operation]", pipeline_response)
+        deserialized = self._deserialize("[Operation]", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4331,7 +4299,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4347,7 +4314,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -4415,7 +4381,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -4432,7 +4397,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    def _resume_initial(self, resource_group_name: str, name: str, **kwargs: Any) -> _models.WebAppCollection:
+    def _resume_initial(self, resource_group_name: str, name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4445,7 +4410,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
-        cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_resume_request(
             resource_group_name=resource_group_name,
@@ -4455,10 +4420,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4466,15 +4431,15 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("WebAppCollection", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("WebAppCollection", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4523,7 +4488,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4539,13 +4503,12 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("WebAppCollection", pipeline_response)
+            deserialized = self._deserialize("WebAppCollection", pipeline_response.http_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -4580,6 +4543,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -4648,7 +4612,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4664,7 +4627,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -4739,7 +4701,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4755,7 +4716,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -4785,7 +4745,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
 
         return ItemPaged(get_next, extract_data)
 
-    def _suspend_initial(self, resource_group_name: str, name: str, **kwargs: Any) -> _models.WebAppCollection:
+    def _suspend_initial(self, resource_group_name: str, name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4798,7 +4758,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
-        cls: ClsType[_models.WebAppCollection] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_suspend_request(
             resource_group_name=resource_group_name,
@@ -4808,10 +4768,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -4819,15 +4779,15 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if response.status_code == 200:
-            deserialized = self._deserialize("WebAppCollection", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("WebAppCollection", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4876,7 +4836,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -4892,13 +4851,12 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("WebAppCollection", pipeline_response)
+            deserialized = self._deserialize("WebAppCollection", pipeline_response.http_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -4933,6 +4891,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -5007,7 +4966,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5023,7 +4981,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5094,7 +5051,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5110,7 +5066,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5181,7 +5136,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5196,7 +5150,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             error = self._deserialize.failsafe_deserialize(_models.DefaultErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
+        deserialized = self._deserialize("WorkerPoolResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5210,7 +5164,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         worker_pool_name: str,
         worker_pool_envelope: Union[_models.WorkerPoolResource, IO[bytes]],
         **kwargs: Any
-    ) -> Optional[_models.WorkerPoolResource]:
+    ) -> Iterator[bytes]:
         error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5224,7 +5178,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2018-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.WorkerPoolResource]] = kwargs.pop("cls", None)
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -5246,10 +5200,10 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -5257,15 +5211,14 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 400, 404, 409]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5385,10 +5338,11 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 params=_params,
                 **kwargs
             )
+            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
+            deserialized = self._deserialize("WorkerPoolResource", pipeline_response.http_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -5533,7 +5487,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             headers=_headers,
             params=_params,
         )
-        _request = _convert_request(_request)
         _request.url = self._client.format_url(_request.url)
 
         _stream = False
@@ -5548,11 +5501,7 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
-
-        if response.status_code == 202:
-            deserialized = self._deserialize("WorkerPoolResource", pipeline_response)
+        deserialized = self._deserialize("WorkerPoolResource", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5608,7 +5557,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5624,7 +5572,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5718,7 +5665,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5734,7 +5680,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5810,7 +5755,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5826,7 +5770,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -5916,7 +5859,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -5932,7 +5874,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6006,7 +5947,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -6022,7 +5962,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request
@@ -6096,7 +6035,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                     headers=_headers,
                     params=_params,
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
 
             else:
@@ -6112,7 +6050,6 @@ class AppServiceEnvironmentsOperations:  # pylint: disable=too-many-public-metho
                 _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                _request = _convert_request(_request)
                 _request.url = self._client.format_url(_request.url)
                 _request.method = "GET"
             return _request

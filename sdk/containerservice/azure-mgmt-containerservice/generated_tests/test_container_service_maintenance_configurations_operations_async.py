@@ -25,7 +25,7 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
         response = self.client.maintenance_configurations.list_by_managed_cluster(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2020-12-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             resource_name="str",
             config_name="str",
-            api_version="2020-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -53,6 +53,19 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
             config_name="str",
             parameters={
                 "id": "str",
+                "maintenanceWindow": {
+                    "durationHours": 24,
+                    "schedule": {
+                        "absoluteMonthly": {"dayOfMonth": 0, "intervalMonths": 0},
+                        "daily": {"intervalDays": 0},
+                        "relativeMonthly": {"dayOfWeek": "str", "intervalMonths": 0, "weekIndex": "str"},
+                        "weekly": {"dayOfWeek": "str", "intervalWeeks": 0},
+                    },
+                    "startTime": "str",
+                    "notAllowedDates": [{"end": "2020-02-20", "start": "2020-02-20"}],
+                    "startDate": "2020-02-20",
+                    "utcOffset": "str",
+                },
                 "name": "str",
                 "notAllowedTime": [{"end": "2020-02-20 00:00:00", "start": "2020-02-20 00:00:00"}],
                 "systemData": {
@@ -66,7 +79,7 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
                 "timeInWeek": [{"day": "str", "hourSlots": [0]}],
                 "type": "str",
             },
-            api_version="2020-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +92,7 @@ class TestContainerServiceMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             resource_name="str",
             config_name="str",
-            api_version="2020-12-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

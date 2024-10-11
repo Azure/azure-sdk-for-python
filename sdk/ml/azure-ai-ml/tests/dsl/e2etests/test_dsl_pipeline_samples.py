@@ -311,6 +311,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
+    @pytest.mark.skip("Skipping due to Spark version Upgrade")
     def test_spark_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
             generate_dsl_pipeline_from_yaml as spark_job_in_pipeline,
@@ -320,6 +321,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
+    @pytest.mark.skip("Skipping due to Spark version Upgrade")
     def test_spark_job_with_builder_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
             generate_dsl_pipeline_from_builder as spark_job_in_pipeline,
@@ -329,6 +331,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert_job_cancel(pipeline, client)
 
     @pytest.mark.e2etest
+    @pytest.mark.skip("Skipping due to Spark version Upgrade")
     def test_spark_job_with_multiple_node_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.kmeans_sample.pipeline import (
             generate_dsl_pipeline_from_yaml as spark_job_in_pipeline,
