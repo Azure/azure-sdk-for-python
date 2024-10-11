@@ -1473,11 +1473,11 @@ class AIInferenceInstrumentorPreview:
         return None
 
     def _get_finish_reason_for_choice(self, choice):
-        return (
-            getattr(choice, "finish_reason", None).value
-            if getattr(choice, "finish_reason", None) is not None
-            else "none"
-        )
+        finish_reason = getattr(choice, "finish_reason", None)
+        if finish_reason is not None:
+            return finish_reason.value
+        else:
+            return "none"
 
     def _add_response_chat_message_event(self, span: "AbstractSpan", result: _models.ChatCompletions) -> None:
         for choice in result.choices:
@@ -1576,9 +1576,11 @@ class AIInferenceInstrumentorPreview:
                 super().__init__(stream_obj._response)
                 self._instrumentor = instrumentor
 
-            def __iter__(self) -> Iterator[_models.StreamingChatCompletionsUpdate]:
+            def __iter__(
+                self,
+            ) -> Iterator[_models.StreamingChatCompletionsUpdate]:  # pyright: ignore [reportIncompatibleMethodOverride]
+                accumulate: Dict[str, Any] = {}
                 try:
-                    accumulate: Dict[str, Any] = {}
                     chunk = None
                     for chunk in stream_obj:
                         for item in chunk.choices:
@@ -1590,8 +1592,10 @@ class AIInferenceInstrumentorPreview:
 
                 except Exception as exc:
                     # Set the span status to error
-                    if isinstance(span.span_instance, Span):
-                        span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
+                    if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+                        span.span_instance.set_status(
+                            StatusCode.ERROR, description=str(exc)
+                        )  # pyright: ignore [reportPossiblyUnboundVariable]
                     module = exc.__module__ if hasattr(exc, "__module__") and exc.__module__ != "builtins" else ""
                     error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
                     self._instrumentor._set_attributes(span, ("error.type", error_type))
@@ -1673,7 +1677,9 @@ class AIInferenceInstrumentorPreview:
                     model = kwargs.get("model")
                     span_name = f"chat {model}"
 
-                span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
+                span = span_impl_type(
+                    name=span_name, kind=SpanKind.CLIENT
+                )  # pyright: ignore [reportPossiblyUnboundVariable]
                 try:
                     # tracing events not supported in azure-core-tracing-opentelemetry
                     # so need to access the span instance directly
@@ -1686,8 +1692,10 @@ class AIInferenceInstrumentorPreview:
 
                 except Exception as exc:
                     # Set the span status to error
-                    if isinstance(span.span_instance, Span):
-                        span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
+                    if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+                        span.span_instance.set_status(
+                            StatusCode.ERROR, description=str(exc)
+                        )  # pyright: ignore [reportPossiblyUnboundVariable]
                     module = getattr(exc, "__module__", "")
                     module = module if module != "builtins" else ""
                     error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
@@ -1742,7 +1750,9 @@ class AIInferenceInstrumentorPreview:
                     model = kwargs.get("model")
                     span_name = f"chat {model}"
 
-                span = span_impl_type(name=span_name, kind=SpanKind.CLIENT)
+                span = span_impl_type(
+                    name=span_name, kind=SpanKind.CLIENT
+                )  # pyright: ignore [reportPossiblyUnboundVariable]
                 try:
                     # tracing events not supported in azure-core-tracing-opentelemetry
                     # so need to access the span instance directly
@@ -1755,8 +1765,10 @@ class AIInferenceInstrumentorPreview:
 
                 except Exception as exc:
                     # Set the span status to error
-                    if isinstance(span.span_instance, Span):
-                        span.span_instance.set_status(StatusCode.ERROR, description=str(exc))
+                    if isinstance(span.span_instance, Span):  # pyright: ignore [reportPossiblyUnboundVariable]
+                        span.span_instance.set_status(
+                            StatusCode.ERROR, description=str(exc)
+                        )  # pyright: ignore [reportPossiblyUnboundVariable]
                     module = getattr(exc, "__module__", "")
                     module = module if module != "builtins" else ""
                     error_type = f"{module}.{type(exc).__name__}" if module else type(exc).__name__
@@ -1774,12 +1786,12 @@ class AIInferenceInstrumentorPreview:
 
     def _inject_async(self, f, _trace_type, _name):
         wrapper_fun = self._trace_async_function(f)
-        wrapper_fun._original = f  # pylint: disable=protected-access
+        wrapper_fun._original = f  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
         return wrapper_fun
 
     def _inject_sync(self, f, _trace_type, _name):
         wrapper_fun = self._trace_sync_function(f)
-        wrapper_fun._original = f  # pylint: disable=protected-access
+        wrapper_fun._original = f  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
         return wrapper_fun
 
     def _inference_apis(self):
