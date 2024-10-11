@@ -1,6 +1,10 @@
 # Release History
 
-## 12.18.0b1 (2024-10-08)
+## 12.18.0 (Unreleased)
+
+### Features Added
+
+## 12.18.0b1 (2024-10-10)
 
 ### Features Added
 - Added support for service version 2025-01-05.
