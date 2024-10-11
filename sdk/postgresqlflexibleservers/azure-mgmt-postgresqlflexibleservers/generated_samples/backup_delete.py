@@ -15,7 +15,7 @@ from azure.mgmt.postgresqlflexibleservers import PostgreSQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-postgresqlflexibleservers
 # USAGE
-    python quota_usages_for_flexible_servers.py
+    python backup_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.quota_usages.list(
-        location_name="westus",
-    )
-    for item in response:
-        print(item)
+    client.backups.begin_delete(
+        resource_group_name="TestGroup",
+        server_name="testserver",
+        backup_name="backup_20210615T160516",
+    ).result()
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2023-12-01-preview/examples/QuotaUsagesForFlexibleServers.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/BackupDelete.json
 if __name__ == "__main__":
     main()
