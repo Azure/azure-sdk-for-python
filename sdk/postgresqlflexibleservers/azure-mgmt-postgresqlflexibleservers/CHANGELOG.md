@@ -8,16 +8,6 @@
   - Model `ServerForUpdate` added property `administrator_login`
   - Model `BackupsOperations` added method `begin_create`
   - Model `BackupsOperations` added method `begin_delete`
-
-### Breaking Changes
-
-  - Deleted or renamed client operation group `PostgreSQLManagementClient.quota_usages`
-  - Deleted or renamed model `NameProperty`
-  - Deleted or renamed model `QuotaUsage`
-  - Deleted or renamed model `QuotaUsagesOperations`
-
-### Other Changes
-
   - Added operation group `LongRunningBackupOperations`
   - Added operation group `LongRunningBackupsOperations`
   - Added operation group `MaintenancesOperations`
@@ -42,6 +32,13 @@
   - Model `Server` has a new parameter `private_endpoint_connections`
   - Model `Server` has a new parameter `replica`
   - Model `ServerForUpdate` has a new parameter `replica`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.quota_usages`
+  - Deleted or renamed model `NameProperty`
+  - Deleted or renamed model `QuotaUsage`
+  - Deleted or renamed model `QuotaUsagesOperations`
 
 ## 1.0.0b1 (2024-08-27)
 
