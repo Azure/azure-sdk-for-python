@@ -4,6 +4,8 @@
 
 ### Features Added
 
+* Support for tracing. Please find more information in the package [README.md](README.md#tracing).
+
 ### Breaking Changes
 
 ### Bugs Fixed
