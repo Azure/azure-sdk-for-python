@@ -778,6 +778,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: None
         """
         # pylint: disable=protected-access
+        print("reset_link_credit")
         handler._link.flow(link_credit=link_credit, drain=drain)
 
     @staticmethod
