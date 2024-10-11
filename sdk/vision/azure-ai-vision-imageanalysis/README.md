@@ -75,7 +75,7 @@ client = ImageAnalysisClient(
 
 #### Using Entra ID
 
-To use the [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python) provider shown below, or other credential providers in this library, install the `azure-identity` package:
+To use the [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential?view=azure-python) provider shown below, or other credential providers, install the `azure-identity` package:
 
 ```bash
 pip install azure.identity
