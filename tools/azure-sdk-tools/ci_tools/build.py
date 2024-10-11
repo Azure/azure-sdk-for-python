@@ -180,11 +180,24 @@ def create_package(
     dist = get_artifact_directory(dest_folder)
     setup_parsed = ParsedSetup.from_path(setup_directory_or_file)
 
-    if enable_wheel:
-        if setup_parsed.ext_modules:
-            run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
-        else:
-            run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_parsed.folder, check=True)
+    if setup_parsed.is_pyproject:
+        # when building with pyproject, we will use `python -m build` to build the package
+        # -n argument will not use an isolated environment, which means the current environment must have all the dependencies of the package installed, to successfully
+        # pull in the dynamic `__version__` attribute. This is because setuptools is actually walking the __init__.py to get that attribute, which will fail
+        # if the imports within the setup.py don't work. Perhaps an isolated environment is better, pulling all the "dependencies" into the [build-system].requires list
 
-    if enable_sdist:
-        run([sys.executable, "setup.py", "sdist", "-d", dist], cwd=setup_parsed.folder, check=True)
+        # given the additional requirements of the package, we should install them in the current environment before attempting to build the package
+        # we assume the presence of `wheel`, `build`, `setuptools>=61.0.0`
+        pip_output = get_pip_list_output(sys.executable)
+        necessary_install_requirements = [req for req in setup_parsed.requires if parse_require(req)[0] not in pip_output.keys()]
+        run([sys.executable, "-m", "pip", "install", *necessary_install_requirements], cwd=setup_parsed.folder)
+        run([sys.executable, "-m", "build", f"-n{'s' if enable_sdist else ''}{'w' if enable_wheel else ''}", "-o", dist], cwd=setup_parsed.folder)
+    else:
+        if enable_wheel:
+            if setup_parsed.ext_modules:
+                run([sys.executable, "-m", "cibuildwheel", "--output-dir", dist], cwd=setup_parsed.folder, check=True)
+            else:
+                run([sys.executable, "setup.py", "bdist_wheel", "-d", dist], cwd=setup_parsed.folder, check=True)
+
+        if enable_sdist:
+            run([sys.executable, "setup.py", "sdist", "-d", dist], cwd=setup_parsed.folder, check=True)
