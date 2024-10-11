@@ -41,8 +41,11 @@ class AlertNotification(RestTranslatableMixin):
     ) -> EmailMonitoringAlertNotificationSettings:
         return EmailMonitoringAlertNotificationSettings(
             email_notification_setting=NotificationSetting(
-                emails=self.emails, 
-                email_on=[EmailNotificationEnableType.JOB_FAILED,EmailNotificationEnableType.JOB_COMPLETED]
+                emails=self.emails,
+                email_on=[
+                    EmailNotificationEnableType.JOB_FAILED,
+                    EmailNotificationEnableType.JOB_COMPLETED,
+                ],
             )
         )
 
