@@ -147,9 +147,9 @@ class _ConfigurationClientWrapperBase:
                 feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_ID_KEY] = self._calculate_feature_id(
                     feature_flag.key, feature_flag.label
                 )
-                feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = self._generate_allocation_id(
-                    feature_flag_value
-                )
+                allocation_id = self._generate_allocation_id(feature_flag_value)
+                if allocation_id:
+                    feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = allocation_id
 
     def _feature_flag_appconfig_telemetry(
         self, feature_flag: FeatureFlagConfigurationSetting, filters_used: Dict[str, bool]
