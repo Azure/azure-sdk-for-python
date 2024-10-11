@@ -82,13 +82,17 @@ class _ConfigurationClientWrapperBase:
 
                 allocation_id += ";".join(
                     f"{pa.get('from')},"
-                    f"{base64.b64encode(pa.get('variant').encode('utf-8')).decode('utf-8')},"
+                    f"{base64.b64encode(pa.get('variant').encode()).decode()},"
                     f"{pa.get('to')}"
                     for pa in percentile_allocations
                 )
         else:
             allocation_id = "seed=\ndefault_when_enabled=\npercentiles="
 
+        
+        if not allocated_variants and (not allocation or not allocation.get("seed")):
+            return None
+        
         # Variants
         allocation_id += "\nvariants="
 
@@ -102,21 +106,18 @@ class _ConfigurationClientWrapperBase:
                     )
 
                     for v in sorted_variants:
-                        allocation_id += f"{base64.b64encode(v.get('name', '').encode('utf-8')).decode('utf-8')},"
+                        allocation_id += f"{base64.b64encode(v.get('name', '').encode()).decode()},"
                         if "configuration_value" in v:
                             allocation_id += f"{json.dumps(v.get('configuration_value', ''), separators=(',', ':'))}"
                         allocation_id += ";"
                     allocation_id = allocation_id[:-1]
-
-        if not allocated_variants and (not allocation or not allocation.get("seed")):
-            return None
 
         # Create a sha256 hash of the allocation_id
         hash_object = hashlib.sha256(allocation_id.encode())
         hash_digest = hash_object.digest()
 
         # Encode the first 15 bytes in base64 url
-        allocation_id_hash = base64.urlsafe_b64encode(hash_digest[:15]).decode("utf-8")
+        allocation_id_hash = base64.urlsafe_b64encode(hash_digest[:15]).decode()
         return allocation_id_hash
 
     @staticmethod
