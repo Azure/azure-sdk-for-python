@@ -17,6 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import process_storage_error
+from ._generated import AzureDataLakeStorageRESTAPI
 from ._models import (
     AccessControlChangeCounters,
     AccessControlChangeFailure,
@@ -37,7 +38,6 @@ from ._serialize import (
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 from ._path_client_helpers import (
-    _create_api_client,
     _create_path_options,
     _delete_path_options,
     _format_url,

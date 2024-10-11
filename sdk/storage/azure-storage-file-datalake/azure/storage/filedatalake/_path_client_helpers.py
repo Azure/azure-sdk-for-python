@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=docstring-keyword-should-match-keyword-only
 
 from typing import (
     Any, Dict, Optional,
@@ -11,7 +10,6 @@ from typing import (
 )
 from urllib.parse import quote, urlparse
 
-from ._generated.aio import AzureDataLakeStorageRESTAPI
 from ._serialize import (
     add_metadata_headers,
     convert_datetime_to_rfc1123,
@@ -43,24 +41,6 @@ def _parse_url(account_url: str) -> "ParseResult":
 def _format_url(scheme: str, hostname: str, file_system_name: str, path_name: str, query_str: str) -> str:
     file_system_name = file_system_name.encode('UTF-8')
     return f"{scheme}://{hostname}/{quote(file_system_name)}/{quote(path_name, safe='~')}{query_str}"
-
-
-def _create_api_client(
-    url: str,
-    file_system: str,
-    path: str,
-    pipeline: "Pipeline",
-    api_version: str
-) -> AzureDataLakeStorageRESTAPI:
-    api_client = AzureDataLakeStorageRESTAPI(
-        url=url,
-        base_url=url,
-        file_system=file_system,
-        path=path,
-        pipeline=pipeline
-    )
-    api_client._config.version = api_version  # pylint: disable=protected-access
-    return api_client
 
 
 def _create_path_options(

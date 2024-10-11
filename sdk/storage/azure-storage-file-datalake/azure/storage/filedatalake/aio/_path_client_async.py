@@ -17,6 +17,7 @@ from azure.storage.blob.aio import BlobClient
 from .._serialize import compare_api_versions, convert_dfs_url_to_blob_url, get_api_version
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._models import (
     AccessControlChangeCounters,
     AccessControlChangeFailure,
@@ -28,7 +29,6 @@ from ._data_lake_lease_async import DataLakeLeaseClient
 from .._deserialize import process_storage_error
 from .._shared.policies_async import ExponentialRetry
 from .._path_client_helpers import (
-    _create_api_client,
     _create_path_options,
     _delete_path_options,
     _format_url,
@@ -130,18 +130,21 @@ class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
 
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
-        api_version = get_api_version(kwargs)
-
-        self._client = _create_api_client(self.url, self.file_system_name, self.path_name, self._pipeline, api_version)
-        self._datalake_client_for_blob_operation = _create_api_client(
-            self._blob_account_url,
-            self.file_system_name,
-            self.path_name,
-            self._pipeline,
-            api_version
-        )
-
+        self._api_version = get_api_version(kwargs)
+        self._client = self._build_generated_client(self.url)
+        self._datalake_client_for_blob_operation = self._build_generated_client(self._blob_client.url)
         self._loop = kwargs.get('loop', None)
+
+    def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
+        client = AzureDataLakeStorageRESTAPI(
+            url,
+            base_url=url,
+            file_system=self.file_system_name,
+            path=self.path_name,
+            pipeline=self._pipeline
+        )
+        client._config.version = self._api_version  # pylint: disable=protected-access
+        return client
 
     async def __aexit__(self, *args: Any) -> None:
         await self._blob_client.close()
