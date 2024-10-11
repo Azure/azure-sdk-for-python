@@ -10,6 +10,7 @@ import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
 from promptflow.client import PFClient
 from promptflow.entities import Run
+from promptflow._sdk._errors import MissingAzurePackage
 
 from azure.ai.evaluation._common.math import list_sum
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -592,12 +593,25 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     _validate_columns(input_data_df, evaluators, target, column_mapping)
 
     # Target Run
-    pf_client = PFClient(
-        config=(
-            {"trace.destination": _trace_destination_from_project_scope(azure_ai_project)} if azure_ai_project else None
-        ),
-        user_agent=USER_AGENT,
-    )
+    try:
+        pf_client = PFClient(
+            config=(
+                {"trace.destination": _trace_destination_from_project_scope(azure_ai_project)} if azure_ai_project else None
+            ),
+            user_agent=USER_AGENT,
+        )
+    except MissingAzurePackage:
+        msg = (
+            'The required packages for remote tracking are missing.\n'
+            'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
+        )
+
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.MISSING_PACKAGE,
+            blame=ErrorBlame.USER_ERROR,
+        )
 
     trace_destination: Optional[str] = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
     target_run: Optional[Run] = None
