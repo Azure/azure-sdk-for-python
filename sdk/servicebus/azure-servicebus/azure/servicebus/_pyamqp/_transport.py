@@ -660,7 +660,7 @@ class SSLTransport(_AbstractTransport):
         }
 
         context = ssl.SSLContext(ssl_version)
-        context.keylog_filename = "/home/llawrence/repos/azure-sdk-for-python/sdk/servicebus/azure-servicebus/keylog.txt"
+        # context.keylog_filename = "/home/llawrence/repos/azure-sdk-for-python/sdk/servicebus/azure-servicebus/keylog.txt"
 
         if ca_certs is not None:
             try:
