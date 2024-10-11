@@ -229,7 +229,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         'headers': headers,
     }
     options.update(kwargs)
-    if not overwrite and not _any_conditions(**options): # pylint: disable=protected-access
+    if not overwrite and not _any_conditions(**options):
         options['modified_access_conditions'].if_none_match = '*'
     return options
 

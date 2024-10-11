@@ -111,7 +111,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         self._blob_account_url = blob_account_url
 
         self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
-        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  # pylint: disable=protected-access
+        self._blob_service_client._hosts[LocationMode.SECONDARY] = ""
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
@@ -122,7 +122,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         self._hosts[LocationMode.SECONDARY] = ""
 
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)
         self._loop = kwargs.get('loop', None)
 
     async def __aenter__(self) -> Self:
@@ -226,7 +226,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
             key_start_time=key_start_time,
             key_expiry_time=key_expiry_time,
             **kwargs
-        )  # pylint: disable=protected-access
+        )
         return UserDelegationKey._from_generated(delegation_key)  # pylint: disable=protected-access
 
     @distributed_trace
@@ -278,7 +278,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
             name_starts_with=name_starts_with,
             include_metadata=include_metadata,
             **kwargs
-        )  # pylint: disable=protected-access
+        )
         item_paged._page_iterator_class = FileSystemPropertiesPaged  # pylint: disable=protected-access
         return item_paged
 
@@ -383,7 +383,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         new_name = kwargs.pop('new_name', None)
-        await self._blob_service_client.undelete_container(name, deleted_version, new_name=new_name, **kwargs)  # pylint: disable=protected-access
+        await self._blob_service_client.undelete_container(name, deleted_version, new_name=new_name, **kwargs)
         file_system = self.get_file_system_client(new_name or name)
         return file_system
 
@@ -618,7 +618,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         """
-        await self._blob_service_client.set_service_properties(**kwargs)  # pylint: disable=protected-access
+        await self._blob_service_client.set_service_properties(**kwargs)
 
     @distributed_trace_async
     async def get_service_properties(self, **kwargs: Any) -> Dict[str, Any]:
@@ -638,5 +638,5 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
             analytics logging, hour/minute metrics, cors rules, etc.
         :rtype: Dict[str, Any]
         """
-        props = await self._blob_service_client.get_service_properties(**kwargs)  # pylint: disable=protected-access
+        props = await self._blob_service_client.get_service_properties(**kwargs)
         return get_datalake_service_properties(props)

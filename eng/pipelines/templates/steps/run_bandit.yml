@@ -2,6 +2,7 @@ parameters:
   ServiceDirectory: ''
   TestMarkArgument: ''
   EnvVars: {}
+  AdditionalTestArgs: ''
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
@@ -21,5 +22,6 @@ steps:
         --toxenv="bandit"
         --disablecov
         --filter-type="Omit_management"
+        ${{ parameters.AdditionalTestArgs }}
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Bandit'],'true'))

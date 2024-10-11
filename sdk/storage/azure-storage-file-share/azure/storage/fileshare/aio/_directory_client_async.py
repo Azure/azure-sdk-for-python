@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 import sys
@@ -40,9 +40,9 @@ from ._file_client_async import ShareFileClient
 from ._models import DirectoryPropertiesPaged, Handle, HandlesPaged
 
 if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+    from typing import Literal
 else:
-    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
+    from typing_extensions import Literal
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -142,7 +142,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMix
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
     @classmethod
     def from_directory_url(

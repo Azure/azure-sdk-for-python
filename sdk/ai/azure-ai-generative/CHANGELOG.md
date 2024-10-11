@@ -1,5 +1,10 @@
 # Release History
 
+## 1.0.0b11 (2024-10-04)
+
+### Other Changes
+- Deprecation message added. 
+
 ## 1.0.0b10 (2024-10-03)
 
 ### Bugs Fixed

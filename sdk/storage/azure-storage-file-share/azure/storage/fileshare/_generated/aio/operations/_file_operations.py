@@ -90,6 +90,7 @@ class FileOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Creates a new file or replaces a file. Note it only initializes the file with no content.
 
         :param file_content_length: Specifies the maximum size for the file, up to 4 TB. Required.
@@ -140,7 +141,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -247,9 +248,11 @@ class FileOperations:
         timeout: Optional[int] = None,
         range: Optional[str] = None,
         range_get_content_md5: Optional[bool] = None,
+        structured_body_type: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
+        # pylint: disable=line-too-long
         """Reads or downloads a file from the system, including its metadata and properties.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -263,13 +266,16 @@ class FileOperations:
          Range header, the service returns the MD5 hash for the range, as long as the range is less than
          or equal to 4 MB in size. Default value is None.
         :type range_get_content_md5: bool
+        :param structured_body_type: Specifies the response content should be returned as a structured
+         message and specifies the message schema version and properties. Default value is None.
+        :type structured_body_type: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: AsyncIterator[bytes] or the result of cls(response)
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -291,6 +297,7 @@ class FileOperations:
             timeout=timeout,
             range=range,
             range_get_content_md5=range_get_content_md5,
+            structured_body_type=structured_body_type,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
@@ -367,6 +374,12 @@ class FileOperations:
         response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
         response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
         response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
+        response_headers["x-ms-structured-content-length"] = self._deserialize(
+            "int", response.headers.get("x-ms-structured-content-length")
+        )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
 
@@ -383,6 +396,7 @@ class FileOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Returns all user-defined metadata, standard HTTP properties, and system properties for the
         file. It does not return the content of the file.
 
@@ -400,7 +414,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -501,6 +515,7 @@ class FileOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """removes the file from the storage account.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -514,7 +529,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -579,6 +594,7 @@ class FileOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Sets HTTP headers on the file.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -628,7 +644,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -736,6 +752,7 @@ class FileOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Updates user-defined metadata for the specified file.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -752,7 +769,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -817,6 +834,7 @@ class FileOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
@@ -841,7 +859,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -902,6 +920,7 @@ class FileOperations:
     async def release_lease(  # pylint: disable=inconsistent-return-statements
         self, lease_id: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
@@ -920,7 +939,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -984,6 +1003,7 @@ class FileOperations:
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
@@ -1006,7 +1026,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1071,6 +1091,7 @@ class FileOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """[Update] The Lease File operation establishes and manages a lock on a file for write and delete
         operations.
 
@@ -1089,7 +1110,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1158,10 +1179,13 @@ class FileOperations:
         file_range_write: Union[str, _models.FileRangeWriteType] = "update",
         content_md5: Optional[bytes] = None,
         file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         optionalbody: Optional[IO[bytes]] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Upload a range of bytes to a file.
 
         :param range: Specifies the range of bytes to be written. Both the start and end of the range
@@ -1194,6 +1218,13 @@ class FileOperations:
         :param file_last_written_mode: If the file last write time should be preserved or overwritten.
          Known values are: "Now" and "Preserve". Default value is None.
         :type file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
+        :param structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :type structured_body_type: str
+        :param structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :type structured_content_length: int
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :param optionalbody: Initial data. Default value is None.
@@ -1202,7 +1233,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1231,6 +1262,8 @@ class FileOperations:
             content_md5=content_md5,
             lease_id=_lease_id,
             file_last_written_mode=file_last_written_mode,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
@@ -1267,6 +1300,9 @@ class FileOperations:
         response_headers["x-ms-file-last-write-time"] = self._deserialize(
             "str", response.headers.get("x-ms-file-last-write-time")
         )
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -1286,6 +1322,7 @@ class FileOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Upload a range of bytes to a file where the contents are read from a URL.
 
         :param range: Writes data to the specified byte range in the file. Required.
@@ -1327,7 +1364,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1416,6 +1453,7 @@ class FileOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> _models.ShareFileRangeList:
+        # pylint: disable=line-too-long
         """Returns the list of valid ranges for a file.
 
         :param sharesnapshot: The snapshot parameter is an opaque DateTime value that, when present,
@@ -1445,7 +1483,7 @@ class FileOperations:
         :rtype: ~azure.storage.fileshare.models.ShareFileRangeList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1514,11 +1552,13 @@ class FileOperations:
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
         file_permission: str = "inherit",
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
         copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Copies a blob or file to a destination file within the storage account.
 
         :param copy_source: Specifies the URL of the source file or blob, up to 2 KB in length. To copy
@@ -1543,6 +1583,13 @@ class FileOperations:
          input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
          x-ms-file-permission-key should be specified. Default value is "inherit".
         :type file_permission: str
+        :param file_permission_format: Optional. Available for version 2023-06-01 and later. Specifies
+         the format in which the permission is returned. Acceptable values are SDDL or binary. If
+         x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+         returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+         permission is returned as a base64 string representing the binary encoding of the permission.
+         Known values are: "Sddl" and "Binary". Default value is None.
+        :type file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :param file_permission_key: Key of the permission to be set for the directory/file. Note: Only
          one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default value
          is None.
@@ -1555,7 +1602,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1593,6 +1640,7 @@ class FileOperations:
             timeout=timeout,
             metadata=metadata,
             file_permission=file_permission,
+            file_permission_format=file_permission_format,
             file_permission_key=file_permission_key,
             file_permission_copy_mode=_file_permission_copy_mode,
             ignore_read_only=_ignore_read_only,
@@ -1643,6 +1691,7 @@ class FileOperations:
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Aborts a pending Copy File operation, and leaves a destination file with zero length and full
         metadata.
 
@@ -1660,7 +1709,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1725,6 +1774,7 @@ class FileOperations:
         sharesnapshot: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ListHandlesResponse:
+        # pylint: disable=line-too-long
         """Lists handles for file.
 
         :param marker: A string value that identifies the portion of the list to be returned with the
@@ -1748,7 +1798,7 @@ class FileOperations:
         :rtype: ~azure.storage.fileshare.models.ListHandlesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1811,6 +1861,7 @@ class FileOperations:
         sharesnapshot: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Closes all handles open for given file.
 
         :param handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
@@ -1833,7 +1884,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1906,6 +1957,7 @@ class FileOperations:
         file_http_headers: Optional[_models.FileHTTPHeaders] = None,
         **kwargs: Any
     ) -> None:
+        # pylint: disable=line-too-long
         """Renames a file.
 
         :param rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB in
@@ -1962,7 +2014,7 @@ class FileOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
