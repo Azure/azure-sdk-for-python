@@ -1,8 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# noqa: E501
-# pylint: disable=E0401,E0611
 import asyncio
 import logging
 import random
