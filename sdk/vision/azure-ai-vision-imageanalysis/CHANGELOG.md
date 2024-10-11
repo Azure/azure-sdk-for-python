@@ -1,14 +1,8 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0 (2024-10-18)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+First stable release. No changes compared to previous beta release (1.0.0b3).
 
 ## 1.0.0b3 (2024-07-26)
 
