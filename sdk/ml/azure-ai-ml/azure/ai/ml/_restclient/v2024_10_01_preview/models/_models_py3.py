@@ -30415,8 +30415,6 @@ class ServicePrincipalDatastoreSecrets(DatastoreSecrets):
 class ServiceTagDestination(msrest.serialization.Model):
     """Service Tag destination for a Service Tag Outbound Rule for the managed network of a machine learning workspace.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar action: The action enum for networking rule. Possible values include: "Allow", "Deny".
     :vartype action: str or ~azure.mgmt.machinelearningservices.models.RuleAction
     :ivar address_prefixes: Optional, if provided, the ServiceTag property will be ignored.
@@ -30428,10 +30426,6 @@ class ServiceTagDestination(msrest.serialization.Model):
     :ivar service_tag:
     :vartype service_tag: str
     """
-
-    _validation = {
-        'address_prefixes': {'readonly': True},
-    }
 
     _attribute_map = {
         'action': {'key': 'action', 'type': 'str'},
@@ -30445,6 +30439,7 @@ class ServiceTagDestination(msrest.serialization.Model):
         self,
         *,
         action: Optional[Union[str, "RuleAction"]] = None,
+        address_prefixes: Optional[List[str]] = None,
         port_ranges: Optional[str] = None,
         protocol: Optional[str] = None,
         service_tag: Optional[str] = None,
@@ -30453,6 +30448,8 @@ class ServiceTagDestination(msrest.serialization.Model):
         """
         :keyword action: The action enum for networking rule. Possible values include: "Allow", "Deny".
         :paramtype action: str or ~azure.mgmt.machinelearningservices.models.RuleAction
+        :keyword address_prefixes: Optional, if provided, the ServiceTag property will be ignored.
+        :paramtype address_prefixes: list[str]
         :keyword port_ranges:
         :paramtype port_ranges: str
         :keyword protocol:
@@ -30462,7 +30459,7 @@ class ServiceTagDestination(msrest.serialization.Model):
         """
         super(ServiceTagDestination, self).__init__(**kwargs)
         self.action = action
-        self.address_prefixes = None
+        self.address_prefixes = address_prefixes
         self.port_ranges = port_ranges
         self.protocol = protocol
         self.service_tag = service_tag
@@ -34879,6 +34876,9 @@ class Workspace(Resource):
          the workspace. Possible values include: "AccessKey", "Identity", "UserDelegationSAS".
         :paramtype system_datastores_auth_mode: str or
          ~azure.mgmt.machinelearningservices.models.SystemDatastoresAuthMode
+        :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
+         the workspace.
+        :paramtype system_datastores_auth_mode: str
         :keyword v1_legacy_mode: Enabling v1_legacy_mode may prevent you from using features provided
          by the v2 API.
         :paramtype v1_legacy_mode: bool

@@ -4,12 +4,9 @@ import pytest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_workspace
-from azure.ai.ml._restclient.v2024_07_01_preview.models import Workspace
+from azure.ai.ml._restclient.v2024_10_01_preview.models import Workspace
 from azure.ai.ml.constants._workspace import IsolationMode
-from azure.ai.ml.entities import (
-    ServerlessComputeSettings,
-    Workspace,
-)
+from azure.ai.ml.entities import ServerlessComputeSettings, Workspace
 
 
 @pytest.mark.unittest

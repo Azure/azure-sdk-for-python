@@ -5,10 +5,8 @@
 # pylint: disable=too-many-instance-attributes,protected-access
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2024_07_01_preview.models import (
-    Workspace as RestWorkspace,
-    WorkspaceHubConfig as RestWorkspaceHubConfig,
-)
+from azure.ai.ml._restclient.v2024_10_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2024_10_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._schema.workspace import HubSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import WorkspaceKind

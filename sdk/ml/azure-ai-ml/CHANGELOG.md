@@ -3,7 +3,8 @@
 ## 1.22.0 (unreleased)
 
 ### Features Added
-
+  - Added support to select firewall sku to used for provisioning azure firewall when FQDN rules are added in
+  AllowOnlyApprovedOutbound mode. FirewallSku options are `Standard` or `Basic`, defaults to `Strandard`
 ### Bugs Fixed
 
 ## 1.21.0 (2024-09-30)
