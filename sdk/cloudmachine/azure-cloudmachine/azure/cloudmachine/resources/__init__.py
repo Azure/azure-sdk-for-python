@@ -357,11 +357,7 @@ class CloudMachineDeployment:
                     Container(name="default")
                 ]
             ),
-            tables=TableServices(
-                tables=[
-                    Table(name="default")
-                ]
-            ),
+            tables=TableServices(),
             properties=Properties(
                 access_tier="Hot",
                 allow_blob_public_access=False,

@@ -19,6 +19,7 @@ class CloudMachinePipelineConfig:
 
     def __init__(self, **kwargs: Any) -> None:
         self.api_version: str = kwargs.get("api_version")
+        self.transport: Optional[HttpTransport[HTTPRequestType, HTTPResponseType]] = kwargs.get('transport')
         self.pipeline = self._build_pipeline(**kwargs)
 
     def _build_pipeline(

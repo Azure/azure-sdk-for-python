@@ -18,32 +18,13 @@ from concurrent.futures import Executor
 import xml.etree.ElementTree as ET
 from typing import IO, Any, Dict, Generator, List, Literal, Mapping, Optional, Protocol, Type, Union, overload
 
-from azure.core import PipelineClient
-from azure.core.pipeline.transport import HttpTransport
-from azure.identity import DefaultAzureCredential
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.core.exceptions import HttpResponseError
 
-from ._config import CloudMachinePipelineConfig
-from ._auth_policy import BearerTokenChallengePolicy, TOKEN_AUTH_SCOPES
-from ._api_versions import DEFAULT_API_VERSIONS
-
-
-def deserialize_rfc(value: str) -> datetime:
-    """Deserialize RFC-1123 formatted string into Datetime object.
-
-    :param str value: response string to be deserialized.
-    :rtype: ~datetime.datetime
-    """
-    parsed_date = email.utils.parsedate_tz(value)  # type: ignore
-    date_obj = datetime(
-        *parsed_date[:6], tzinfo=timezone(timedelta(minutes=(parsed_date[9] or 0) / 60))
-    )
-    if not date_obj.tzinfo:
-        date_obj = date_obj.astimezone(tz=timezone.utc)
-    return date_obj
+from ._base import CloudMachineClientlet
+from ._utils import deserialize_rfc
 
 
 @dataclass
@@ -69,64 +50,10 @@ class LockedMessage(Message):
     _stop_renew: Event = field(default_factory=Event)
 
 
-class CloudMachineServiceBus:
+class CloudMachineServiceBus(CloudMachineClientlet):
     _id: Literal["ServiceBus"] = "ServiceBus"
     default_topic_name: str = "cm_default_topic"
     default_subscription_name: str = "cm_default_subscription"
-
-    def __init__(
-            self,
-            *,
-            transport: Optional[HttpTransport] = None,
-            executor: Optional[Executor] = None,
-            name: Optional[str] = None,
-            **kwargs
-    ):
-        if name:
-            name = name.upper()
-            endpoint = os.environ[f'AZURE_CLOUDMACHINE_SERVICE_BUS_{name}_ENDPOINT']
-        else:
-            endpoint = os.environ['AZURE_CLOUDMACHINE_SERVICE_BUS_ENDPOINT']
-
-        self._endpoint = endpoint.strip('/')
-        auth_policy = BearerTokenChallengePolicy(
-            DefaultAzureCredential(),
-            *TOKEN_AUTH_SCOPES[self._id]
-        )
-        self._config = CloudMachinePipelineConfig(
-            authentication_policy=auth_policy,
-            transport=transport,
-            api_version=kwargs.pop('api_version', DEFAULT_API_VERSIONS[self._id]),
-            **kwargs
-        )
-        self._client = PipelineClient(
-            base_url=endpoint,
-            pipeline=self._config.pipeline,
-        )
-        self._executor = executor
-
-    def close(self) -> None:
-        self._client.close()
-
-    def get_client(self, **kwargs) -> 'azure.servicebus.ServiceBusClient':
-        try:
-            from azure.servicebus import ServiceBusClient
-        except ImportError as e:
-            raise ImportError("Please install azure-servicebus SDK to use SDK client.") from e
-        return ServiceBusClient(
-            fully_qualified_namespace=self._endpoint,
-            credential=DefaultAzureCredential(),
-            **kwargs
-        )
-    
-    def _send_request(self, request: HttpRequest, **kwargs) -> HttpResponse:
-        path_format_arguments = {
-            "endpoint": self._endpoint
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-        response = self._client.send_request(request, **kwargs)
-        response.raise_for_status()
-        return response
 
     def _load_response(self, response: HttpResponse) -> ET:
         return ET.fromstring(response.read().decode('utf-8'))
@@ -150,6 +77,17 @@ class CloudMachineServiceBus:
                 # log renewal exception
                 print("Lock renew failed", e)
                 return
+
+    def get_client(self, **kwargs) -> 'azure.servicebus.ServiceBusClient':
+        try:
+            from azure.servicebus import ServiceBusClient
+        except ImportError as e:
+            raise ImportError("Please install azure-servicebus SDK to use SDK client.") from e
+        return ServiceBusClient(
+            fully_qualified_namespace=self._endpoint,
+            credential=self._credential,
+            **kwargs
+        )
 
     def full(self, **kwargs) -> Literal[False]:
         return False
