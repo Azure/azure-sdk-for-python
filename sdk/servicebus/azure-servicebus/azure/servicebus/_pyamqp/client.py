@@ -698,9 +698,9 @@ class SendClient(AMQPClient):
         self._connection._transport._receive_event.wait()
         print("wait done, read frame")
         self._connection._read_frame()
-        self._connection._transport._receive_event.clear()
         self._operation_waiting.clear()
-
+        self._connection._transport._receive_event.clear()
+    
         # idea #2
         # build this into message_delivery.state() instead.
         # class message_delivery:
@@ -905,6 +905,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         try:
             flow = kwargs.pop("flow", True)
             if self._link.total_link_credit <= 0 and flow:
+                print("client run")
                 self._link.flow(link_credit=self._link_credit)
             # self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:

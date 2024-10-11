@@ -284,6 +284,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
         # FlowFrame is calculated as follows: The link credit to flow on the wire
         # `self.current_link_credit` is the desired link credit
         # `link_credit` minus the current link credit on the wire `self.total_link_credit`.
+        print("Link credit: ", link_credit)
         self.current_link_credit = link_credit - self.total_link_credit if link_credit is not None \
             else self.link_credit
 
@@ -294,4 +295,10 @@ class Link:  # pylint: disable=too-many-instance-attributes
             # Calculate the total link credit on the wire, by adding the credit we will flow to the total link credit.
             self.total_link_credit = self.current_link_credit + self.total_link_credit if link_credit is not None \
                 else self.link_credit
+            
+            if kwargs.get("drain"):
+                _LOGGER.debug("Draining link credit: %r", self.current_link_credit, extra=self.network_trace_params)
+                self.current_link_credit = 0
+                self.total_link_credit = 0
+                
             self._outgoing_flow(**kwargs)
