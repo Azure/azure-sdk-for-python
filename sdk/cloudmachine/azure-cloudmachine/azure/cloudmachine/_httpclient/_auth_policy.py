@@ -11,7 +11,8 @@ from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 
 TOKEN_AUTH_SCOPES = {
-    "StorageTables": ["https://storage.azure.com/.default"],
+    "Table": ["https://storage.azure.com/.default"],
+    "Blob": ["https://storage.azure.com/.default"],
     "ServiceBus": ["https://servicebus.azure.net/.default"]
 }
 

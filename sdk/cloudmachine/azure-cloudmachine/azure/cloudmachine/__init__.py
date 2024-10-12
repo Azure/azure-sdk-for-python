@@ -6,18 +6,26 @@
 from ._version import VERSION
 from ._client import (
     CloudMachineClient,
-    CloudMachineStorage,
-    CloudMachineMessaging,
     CloudMachineTableData,
-    load_dev_environment
+    DataModel,
 )
+from ._httpclient._storage import CloudMachineStorage, StorageFile
+from ._httpclient._servicebus import CloudMachineServiceBus, Message, LockedMessage
+from ._httpclient._utils import Pages, Stream
+from ._httpclient._api_versions import DEFAULT_API_VERSIONS
 
 __version__ = VERSION
 
 __all__ = [
     "CloudMachineClient",
     "CloudMachineStorage",
-    "CloudMachineMessaging",
+    "StorageFile",
+    "CloudMachineServiceBus",
+    "Message",
+    "LockedMessage",
     "CloudMachineTableData",
-    "load_dev_environment"
+    "DataModel",
+    "Pages",
+    "Stream",
+    "DEFAULT_API_VERSIONS"
 ]

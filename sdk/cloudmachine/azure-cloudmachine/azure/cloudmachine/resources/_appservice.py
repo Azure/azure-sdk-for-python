@@ -4,164 +4,163 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import IO, Any, ClassVar, List, Optional, Dict, Literal, Required, TypedDict, Union
-from dataclasses import field
+# pylint: disable=line-too-long
+
+from typing import IO, Any, ClassVar, List, Optional, Dict, Literal, Required, TypedDict
+from dataclasses import field, dataclass
 
 from ._resource import (
     _SKIP,
     Output,
     _serialize_resource,
     Resource,
-    ResourceId,
     LocatedResource,
-    dataclass_model,
     generate_symbol,
     _UNSET,
     resolve_value,
+    BicepStr,
+    BicepBool,
+    BicepInt
 )
 
 
 class Capability(TypedDict, total=False):
-    name: str
-    reason: str
-    value: str
+    name: BicepStr
+    reason: BicepStr
+    value: BicepStr
 
 
 class SkuCapacity(TypedDict, total=False):
-    default: int
-    elasticMaximum: int
-    maximum: int
-    minimum: int
-    scaleType: str
+    default: BicepInt
+    elasticMaximum: BicepInt
+    maximum: BicepInt
+    minimum: BicepInt
+    scaleType: BicepStr
 
 
 class SkuDescription(TypedDict, total=False):
-    name: Required[str]
+    name: Required[BicepStr]
     capabilities: List[Capability]
-    capacity: int
-    family: str
-    locations: List[str]
-    size: str
+    capacity: BicepInt
+    family: BicepStr
+    locations: List[BicepStr]
+    size: BicepStr
     skuCapacity: SkuCapacity
-    tier: str
+    tier: BicepStr
 
 
 class ExtendedLocation(TypedDict, total=False):
-    name: Required[str]
+    name: Required[BicepStr]
 
 
 class KubeEnvironmentProfile(TypedDict, total=False):
-    id: Required[str]
+    id: Required[BicepStr]
 
 
 class HostingEnvironmentProfile(TypedDict, total=False):
-    id: Required[str]
+    id: Required[BicepStr]
 
 
 class AppServicePlanProperties(TypedDict, total=False):
-    elasticScaleEnabled: bool
-    freeOfferExpirationTime: str
+    elasticScaleEnabled: BicepBool
+    freeOfferExpirationTime: BicepStr
     hostingEnvironmentProfile: HostingEnvironmentProfile
-    hyperV: bool
-    isSpot: bool
-    isXenon: bool
+    hyperV: BicepBool
+    isSpot: BicepBool
+    isXenon: BicepBool
     kubeEnvironmentProfile: KubeEnvironmentProfile
-    maximumElasticWorkerCount: int
-    perSiteScaling: bool
-    reserved: bool
-    spotExpirationTime: str
-    targetWorkerCount: int
-    targetWorkerSizeId: int
-    workerTierName: str
-    zoneRedundant: bool
+    maximumElasticWorkerCount: BicepInt
+    perSiteScaling: BicepBool
+    reserved: BicepBool
+    spotExpirationTime: BicepStr
+    targetWorkerCount: BicepInt
+    targetWorkerSizeId: BicepInt
+    workerTierName: BicepStr
+    zoneRedundant: BicepBool
 
 
 class ManagedServiceIdentity(TypedDict, total=False):
     type: Required[Literal['None', 'SystemAssigned', 'SystemAssigned,UserAssigned','UserAssigned']]
-    userAssignedIdentities: Dict[str, str]
+    userAssignedIdentities: Dict[BicepStr, BicepStr]
 
 
 class CloningInfo(TypedDict, total=False):
-    sourceWebAppId: Required[str]
-    appSettingsOverrides: Dict[str, str]
-    cloneCustomHostNames: bool
-    cloneSourceControl: bool
-    configureLoadBalancing: bool
-    correlationId: str
-    hostingEnvironment: str
-    overwrite: bool
-    sourceWebAppLocation: str
-    trafficManagerProfileId: str
-    trafficManagerProfileName: str
-
-
-class HostingEnvironmentProfile(TypedDict, total=False):
-    id: Required[str]
+    sourceWebAppId: Required[BicepStr]
+    appSettingsOverrides: Dict[BicepStr, BicepStr]
+    cloneCustomHostNames: BicepBool
+    cloneSourceControl: BicepBool
+    configureLoadBalancing: BicepBool
+    correlationId: BicepStr
+    hostingEnvironment: BicepStr
+    overwrite: BicepBool
+    sourceWebAppLocation: BicepStr
+    trafficManagerProfileId: BicepStr
+    trafficManagerProfileName: BicepStr
 
 
 class HostNameSslState(TypedDict, total=False):
     hostType: Literal['Repository', 'Standard']
-    name: str
+    name: BicepStr
     sslState: Literal['Disabled', 'IpBasedEnabled', 'SniEnabled']
-    thumbprint: str
-    toUpdate: bool
-    virtualIP: str
+    thumbprint: BicepStr
+    toUpdate: BicepBool
+    virtualIP: BicepStr
 
 
 class NameValuePair(TypedDict, total=False):
-    name: Required[str]
-    value: Required[str]
+    name: Required[BicepStr]
+    value: Required[BicepStr]
 
 
 class ApiDefinitionInfo(TypedDict, total=False):
-    url: Required[str]
+    url: Required[BicepStr]
 
 
 class ApiManagementConfig(TypedDict, total=False):
-    id: Required[str]
+    id: Required[BicepStr]
 
 
 class AutoHealCustomAction(TypedDict, total=False):
-    exe: str
-    parameters: str
+    exe: BicepStr
+    parameters: BicepStr
 
 
 class AutoHealActions(TypedDict, total=False):
     actionType: Literal['CustomAction', 'LogEvent', 'Recycle']
     customAction: AutoHealCustomAction
-    minProcessExecutionTime: str
+    minProcessExecutionTime: BicepStr
 
 
 class RequestsBasedTrigger(TypedDict, total=False):
-    count: int
-    timeInterval: str
+    count: BicepInt
+    timeInterval: BicepStr
 
 
 class SlowRequestsBasedTrigger(TypedDict, total=False):
-    count: int
-    path: str
-    timeTaken: str
-    timeInterval: str
+    count: BicepInt
+    path: BicepStr
+    timeTaken: BicepStr
+    timeInterval: BicepStr
 
 
 class StatusCodesBasedTrigger(TypedDict, total=False):
-    count: int
-    path: str
-    status: int
-    subStatus: int
-    timeInterval: str
-    win32Status: int
+    count: BicepInt
+    path: BicepStr
+    status: BicepInt
+    subStatus: BicepInt
+    timeInterval: BicepStr
+    win32Status: BicepInt
 
 
 class StatusCodesRangeBasedTrigger(TypedDict, total=False):
-    count: int
-    path: str
-    statusCodes: str
-    timeInterval: str
+    count: BicepInt
+    path: BicepStr
+    statusCodes: BicepStr
+    timeInterval: BicepStr
 
 
 class AutoHealTriggers(TypedDict, total=False):
-    privateBytesInKB: int
+    privateBytesInKB: BicepInt
     requests: RequestsBasedTrigger
     slowRequests: SlowRequestsBasedTrigger
     slowRequestsWithPath: SlowRequestsBasedTrigger
@@ -175,25 +174,25 @@ class AutoHealRules(TypedDict, total=False):
 
 
 class ConnStringInfo(TypedDict, total=False):
-    connectionString: str
-    name: str
+    connectionString: BicepStr
+    name: BicepStr
     type: Literal['ApiHub', 'Custom', 'DocDb', 'EventHub', 'MySql', 'NotificationHub', 'PostgreSQL', 'RedisCache', 'SQLAzure', 'SQLServer', 'ServiceBus']
 
 
 class CorsSettings(TypedDict, total=False):
-    allowedOrigins: List[str]
-    supportCredentials: bool
+    allowedOrigins: List[BicepStr]
+    supportCredentials: BicepBool
 
 
 class RampUpRule(TypedDict, total=False):
-    actionHostName: str
-    changeDecisionCallbackUrl: str
-    changeIntervalInMinutes: int
-    changeStep: int
-    maxReroutePercentage: int
-    minReroutePercentage: int
-    name: str
-    reroutePercentage: int
+    actionHostName: BicepStr
+    changeDecisionCallbackUrl: BicepStr
+    changeIntervalInMinutes: BicepInt
+    changeStep: BicepInt
+    maxReroutePercentage: BicepInt
+    minReroutePercentage: BicepInt
+    name: BicepStr
+    reroutePercentage: BicepInt
 
 
 class Experiments(TypedDict, total=False):
@@ -201,167 +200,167 @@ class Experiments(TypedDict, total=False):
 
 
 class HandlerMapping(TypedDict, total=False):
-    arguments: str
-    extension: str
-    scriptProcessor: str
+    arguments: BicepStr
+    extension: BicepStr
+    scriptProcessor: BicepStr
 
 
 class IpSecurityRestriction(TypedDict, total=False):
-    action: str
-    description: str
+    action: BicepStr
+    description: BicepStr
     headers: Dict[str, str]
-    ipAddress: str
-    name: str
-    priority: int
-    subnetMask: str
-    subnetTrafficTag: int
+    ipAddress: BicepStr
+    name: BicepStr
+    priority: BicepInt
+    subnetMask: BicepStr
+    subnetTrafficTag: BicepInt
     tag: Literal['Default', 'ServiceTag', 'XffProxy']
-    vnetSubnetResourceId: str
-    vnetTrafficTag: int
+    vnetSubnetResourceId: BicepStr
+    vnetTrafficTag: BicepInt
 
 
 class SiteLimits(TypedDict, total=False):
-    maxDiskSizeInMb: int
-    maxMemoryInMb: int
-    maxPercentageCpu: int
+    maxDiskSizeInMb: BicepInt
+    maxMemoryInMb: BicepInt
+    maxPercentageCpu: BicepInt
 
 
 class PushSettingsProperties(TypedDict, total=False):
-    isPushEnabled: Required[bool]
-    dynamicTagsJson: str
-    tagsRequiringAuth: str
-    tagWhitelistJson: str
+    isPushEnabled: Required[BicepBool]
+    dynamicTagsJson: BicepStr
+    tagsRequiringAuth: BicepStr
+    tagWhitelistJson: BicepStr
 
 
 class PushSettings(TypedDict, total=False):
-    kind: Required[str]
+    kind: Required[BicepStr]
     properties: PushSettingsProperties
 
 
 class VirtualDirectory(TypedDict, total=False):
-    physicalPath: str
-    virtualPath: str
+    physicalPath: BicepStr
+    virtualPath: BicepStr
 
 
 class VirtualApplication(TypedDict, total=False):
-    physicalPath: str
-    preloadEnabled: bool
+    physicalPath: BicepStr
+    preloadEnabled: BicepBool
     virtualDirectories: List[VirtualDirectory]
-    virtualPath: str
+    virtualPath: BicepStr
 
 
 class SiteConfig(TypedDict, total=False):
-    acrUseManagedIdentityCreds: bool
-    acrUserManagedIdentityID: str
-    alwaysOn: bool
+    acrUseManagedIdentityCreds: BicepBool
+    acrUserManagedIdentityID: BicepStr
+    alwaysOn: BicepBool
     apiDefinition: ApiDefinitionInfo
     apiManagementConfig: ApiManagementConfig
-    appCommandLine: str
+    appCommandLine: BicepStr
     appSettings: List[NameValuePair]
-    autoHealEnabled: bool
+    autoHealEnabled: BicepBool
     autoHealRules: AutoHealRules
-    autoSwapSlotName: str
-    azureStorageAccounts: Dict[str, str]
+    autoSwapSlotName: BicepStr
+    azureStorageAccounts: Dict[BicepStr, BicepStr]
     connectionStrings: List[ConnStringInfo]
     cors: CorsSettings
-    defaultDocuments: List[str]
-    detailedErrorLoggingEnabled: bool
-    documentRoot: str
-    elasticWebAppScaleLimit: int
+    defaultDocuments: List[BicepStr]
+    detailedErrorLoggingEnabled: BicepBool
+    documentRoot: BicepStr
+    elasticWebAppScaleLimit: BicepInt
     experiments: Experiments
     ftpsState: Literal['AllAllowed', 'Disabled', 'FtpsOnly']
-    functionAppScaleLimit: int
-    functionsRuntimeScaleMonitoringEnabled: bool
+    functionAppScaleLimit: BicepInt
+    functionsRuntimeScaleMonitoringEnabled: BicepBool
     handlerMappings: List[HandlerMapping]
-    healthCheckPath: str
-    http20Enabled: bool
-    httpLoggingEnabled: bool
+    healthCheckPath: BicepStr
+    http20Enabled: BicepBool
+    httpLoggingEnabled: BicepBool
     ipSecurityRestrictions: List[IpSecurityRestriction]
     ipSecurityRestrictionsDefaultAction: Literal['Allow', 'Deny']
-    javaContainer: str
-    javaContainerVersion: str
-    javaVersion: str
-    keyVaultReferenceIdentity: str
+    javaContainer: BicepStr
+    javaContainerVersion: BicepStr
+    javaVersion: BicepStr
+    keyVaultReferenceIdentity: BicepStr
     limits: SiteLimits
-    linuxFxVersion: str
+    linuxFxVersion: BicepStr
     loadBalancing: Literal['LeastRequests', 'LeastResponseTime', 'PerSiteRoundRobin', 'RequestHash', 'WeightedRoundRobin', 'WeightedTotalTraffic']
-    localMySqlEnabled: bool
-    logsDirectorySizeLimit: int
+    localMySqlEnabled: BicepBool
+    logsDirectorySizeLimit: BicepInt
     managedPipelineMode: Literal['Classic', 'Integrated']
-    managedServiceIdentityId: int
+    managedServiceIdentityId: BicepInt
     metadata: List[NameValuePair]
-    minimumElasticInstanceCount: int
+    minimumElasticInstanceCount: BicepInt
     minTlsVersion: Literal['1.0', '1.1', '1.2']
-    netFrameworkVersion: str
-    nodeVersion: str
-    numberOfWorkers: int
-    phpVersion: str
-    powerShellVersion: str
-    preWarmedInstanceCount: int
-    publicNetworkAccess: str
-    publishingUsername: str
+    netFrameworkVersion: BicepStr
+    nodeVersion: BicepStr
+    numberOfWorkers: BicepInt
+    phpVersion: BicepStr
+    powerShellVersion: BicepStr
+    preWarmedInstanceCount: BicepInt
+    publicNetworkAccess: BicepStr
+    publishingUsername: BicepStr
     push: PushSettings
-    pythonVersion: str
-    remoteDebuggingEnabled: bool
-    remoteDebuggingVersion: str
-    requestTracingEnabled: bool
-    requestTracingExpirationTime: str
+    pythonVersion: BicepStr
+    remoteDebuggingEnabled: BicepBool
+    remoteDebuggingVersion: BicepStr
+    requestTracingEnabled: BicepBool
+    requestTracingExpirationTime: BicepStr
     scmIpSecurityRestrictions: List[IpSecurityRestriction]
     scmIpSecurityRestrictionsDefaultAction: Literal['Allow', 'Deny']
-    scmIpSecurityRestrictionsUseMain: bool
+    scmIpSecurityRestrictionsUseMain: BicepBool
     scmMinTlsVersion: Literal['1.0', '1.1', '1.2']
     scmType: Literal['BitbucketGit', 'BitbucketHg', 'CodePlexGit', 'CodePlexHg', 'Dropbox', 'ExternalGit', 'ExternalHg', 'GitHub', 'LocalGit', 'None', 'OneDrive', 'Tfs', 'VSO', 'VSTSRM']
-    tracingOptions: str
-    use32BitWorkerProcess: bool
+    tracingOptions: BicepStr
+    use32BitWorkerProcess: BicepBool
     virtualApplications: List[VirtualApplication]
-    vnetName: str
-    vnetPrivatePortsCount: int
-    vnetRouteAllEnabled: bool
-    websiteTimeZone: str
-    webSocketsEnabled: bool
-    windowsFxVersion: str
-    xManagedServiceIdentityId: int
+    vnetName: BicepStr
+    vnetPrivatePortsCount: BicepInt
+    vnetRouteAllEnabled: BicepBool
+    websiteTimeZone: BicepStr
+    webSocketsEnabled: BicepBool
+    windowsFxVersion: BicepStr
+    xManagedServiceIdentityId: BicepInt
 
 
 class SiteProperties(TypedDict, total=False):
-    clientAffinityEnabled: bool
-    clientCertEnabled: bool
-    clientCertExclusionPaths: str
+    clientAffinityEnabled: BicepBool
+    clientCertEnabled: BicepBool
+    clientCertExclusionPaths: BicepStr
     clientCertMode: Literal["Required", "Optional", "OptionalInteractiveUser"]
     cloningInfo: CloningInfo
-    customDomainVerificationId: str
-    dailyMemoryTimeQuota: int
-    enabled: bool
+    customDomainVerificationId: BicepStr
+    dailyMemoryTimeQuota: BicepInt
+    enabled: BicepBool
     hostingEnvironmentProfile: HostingEnvironmentProfile
-    hostNamesDisabled: bool
+    hostNamesDisabled: BicepBool
     hostNameSslStates: List[HostNameSslState]
-    httpsOnly: bool
-    hyperV: bool
-    isXenon: bool
-    keyVaultReferenceIdentity: str
-    managedEnvironmentId: str
+    httpsOnly: BicepBool
+    hyperV: BicepBool
+    isXenon: BicepBool
+    keyVaultReferenceIdentity: BicepStr
+    managedEnvironmentId: BicepStr
     publicNetworkAccess: Literal["Enabled", "Disabled", ""]
     redundancyMode: Literal['ActiveActive', 'Failover', 'GeoRedundant', 'Manual', 'None']
-    reserved: bool
-    scmSiteAlsoStopped: bool
-    serverFarmId: str
+    reserved: BicepBool
+    scmSiteAlsoStopped: BicepBool
+    serverFarmId: BicepStr
     siteConfig: SiteConfig
-    storageAccountRequired: bool
-    virtualNetworkSubnetId: str
-    vnetContentShareEnabled: bool
-    vnetImagePullEnabled: bool
-    vnetRouteAllEnabled: bool
+    storageAccountRequired: BicepBool
+    virtualNetworkSubnetId: BicepStr
+    vnetContentShareEnabled: BicepBool
+    vnetImagePullEnabled: BicepBool
+    vnetRouteAllEnabled: BicepBool
 
 
 class AzureBlobStorageApplicationLogsConfig(TypedDict, total=False):
     level: Literal['Error', 'Information', 'Off', 'Verbose', 'Warning']
-    retentionInDays: int
-    sasUrl: Required[str]
+    retentionInDays: BicepInt
+    sasUrl: Required[BicepStr]
 
 
 class AzureTableStorageApplicationLogsConfig(TypedDict, total=False):
     level: Literal['Error', 'Information', 'Off', 'Verbose', 'Warning']
-    sasUrl: Required[str]
+    sasUrl: Required[BicepStr]
 
 
 class FileSystemApplicationLogsConfig(TypedDict, total=False):
@@ -375,19 +374,19 @@ class ApplicationLogsConfig(TypedDict, total=False):
 
 
 class EnabledConfig(TypedDict, total=False):
-    enabled: Required[bool]
+    enabled: Required[BicepBool]
 
 
 class AzureBlobStorageHttpLogsConfig(TypedDict, total=False):
-    enabled: bool
-    retentionInDays: int
-    sasUrl: str
+    enabled: BicepBool
+    retentionInDays: BicepInt
+    sasUrl: BicepStr
 
 
 class FileSystemHttpLogsConfig(TypedDict, total=False):
-    enabled: bool
-    retentionInDays: int
-    retentionInMb: int
+    enabled: BicepBool
+    retentionInDays: BicepInt
+    retentionInMb: BicepInt
 
 
 class HttpLogsConfig(TypedDict, total=False):
@@ -402,43 +401,43 @@ class SiteLogsConfigProperties(TypedDict, total=False):
     httpLogs: HttpLogsConfig
 
 
-@dataclass_model
+@dataclass(kw_only=True)
 class AppServiceConfig(Resource):
     _resource: ClassVar[Literal['Microsoft.Web/sites/config']] = 'Microsoft.Web/sites/config'
     _version: ClassVar[str] = '2022-09-01'
     _symbolicname: str = field(default_factory=lambda: generate_symbol("siteconfig"), init=False, repr=False)
-    kind: Optional[str] = field(default=_UNSET, metadata={'rest': 'kind'})
+    kind: Optional[BicepStr] = field(default=_UNSET, metadata={'rest': 'kind'})
 
 
-@dataclass_model
+@dataclass(kw_only=True)
 class AppServiceAppSettingsConfig(AppServiceConfig):
     name: str = field(init=False, default="appsettings", metadata={'rest': 'name'})
     properties: Dict[str, Any] = field(default_factory=dict, metadata={'rest': 'properties'})
 
 
-@dataclass_model
+@dataclass(kw_only=True)
 class AppServiceLogsConfig(AppServiceConfig):
     name: str = field(init=False, default="logs", metadata={'rest': 'name'})
     properties: SiteLogsConfigProperties = field(metadata={'rest': 'properties'})
 
 
 class PublishingCredentialsPoliciesProperties(TypedDict, total=False):
-    allow: Required[bool]
+    allow: Required[BicepBool]
 
 
-@dataclass_model
+@dataclass(kw_only=True)
 class BasicPublishingCredentialsPolicy(Resource):
     _resource: ClassVar[Literal['Microsoft.Web/sites/basicPublishingCredentialsPolicies']] = 'Microsoft.Web/sites/basicPublishingCredentialsPolicies'
     _version: ClassVar[str] = '2022-09-01'
     _symbolicname: str = field(default_factory=lambda: generate_symbol("siteconfig"), init=False, repr=False)
     name: Literal['scm', 'ftp'] = field(metadata={'rest': 'name'})
-    kind: Optional[str] = field(default=_UNSET, metadata={'rest': 'kind'})
+    kind: Optional[BicepStr] = field(default=_UNSET, metadata={'rest': 'kind'})
     properties: PublishingCredentialsPoliciesProperties = field(metadata={'rest': 'properties'})
 
 
-@dataclass_model
+@dataclass(kw_only=True)
 class AppServiceSite(LocatedResource):
-    kind: str = field(metadata={'rest': 'kind'})
+    kind: BicepStr = field(metadata={'rest': 'kind'})
     extended_location : Optional[ExtendedLocation] = field(default=_UNSET, metadata={'rest': 'extendedLocation'})
     identity: Optional[ManagedServiceIdentity] = field(default=_UNSET, metadata={'rest': 'identity'})
     properties: Optional[SiteProperties] = field(default=_UNSET, metadata={'rest': 'properties'})
@@ -451,10 +450,10 @@ class AppServiceSite(LocatedResource):
     def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)
         for policy in self.policies:
-            policy._parent = self
+            policy.parent = self
             self._outputs.update(policy.write(bicep))
         for config in self.configs:
-            config._parent = self
+            config.parent = self
             self._outputs.update(config.write(bicep))
 
         output_prefix = "AppService"
@@ -468,10 +467,10 @@ class AppServiceSite(LocatedResource):
         return self._outputs
 
 
-@dataclass_model
+@dataclass(kw_only=True)
 class AppServicePlan(LocatedResource):
     sku: SkuDescription = field(metadata={'rest': 'sku'})
-    kind: str = field(metadata={'rest': 'kind'})
+    kind: BicepStr = field(metadata={'rest': 'kind'})
     extended_location : Optional[ExtendedLocation] = field(default=_UNSET, metadata={'rest': 'extendedLocation'})
     properties: Optional[AppServicePlanProperties] = field(default=_UNSET, metadata={'rest': 'properties'})
     site: Optional[AppServiceSite] = field(default=None, metadata={'rest': _SKIP})

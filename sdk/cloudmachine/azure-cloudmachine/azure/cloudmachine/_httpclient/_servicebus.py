@@ -13,8 +13,7 @@ from dataclasses import dataclass, field
 from queue import Empty
 from threading import Thread, Event
 from functools import partial
-import email
-from concurrent.futures import Executor
+from concurrent.futures import Executor, Future
 import xml.etree.ElementTree as ET
 from typing import IO, Any, Dict, Generator, List, Literal, Mapping, Optional, Protocol, Type, Union, overload
 
@@ -103,7 +102,10 @@ class CloudMachineServiceBus(CloudMachineClientlet):
     def qsize(
             self,
             *,
-            queue: str,
+            queue: Optional[str] = None,
+            topic: str = "cm_default_topic",
+            subscription: str = "cm_default_subscription",
+            wait: Literal[True] = True,
             **kwargs
     ) -> int:
         ...
@@ -111,10 +113,12 @@ class CloudMachineServiceBus(CloudMachineClientlet):
     def qsize(
             self,
             *,
+            queue: Optional[str] = None,
             topic: str = "cm_default_topic",
             subscription: str = "cm_default_subscription",
+            wait: Literal[False],
             **kwargs
-    ) -> int:
+    ) -> Future[int]:
         ...
     @distributed_trace
     def qsize(
@@ -123,6 +127,7 @@ class CloudMachineServiceBus(CloudMachineClientlet):
             queue: Optional[str] = None,
             topic: Optional[str] = None,
             subscription: Optional[str] = None,
+            wait: bool = True,  # TODO: implement
             **kwargs
     ) -> int:
         request = build_get_request(
@@ -137,56 +142,7 @@ class CloudMachineServiceBus(CloudMachineClientlet):
             return int(details[5][0][12][0].text)
         return int(details[5][0][12][0].text)
 
-    @overload
-    def get(
-            self,
-            block: bool = True,
-            timeout: Optional[int] = None,
-            *,
-            queue: str,
-            lock: Literal[True] = True,
-            renew_interval: int = 15,
-            **kwargs
-    ) -> LockedMessage:
-        ...
-    @overload
-    def get(
-            self,
-            block: bool = True,
-            timeout: Optional[int] = None,
-            *,
-            queue: str,
-            lock: Literal[False],
-            **kwargs
-    ) -> Message:
-        ...
-    @overload
-    def get(
-            self,
-            block: bool = True,
-            timeout: Optional[int] = None,
-            *,
-            topic: str = "cm_default_topic",
-            subscription: str = "cm_default_subscription",
-            lock: Literal[True] = True,
-            renew_interval: int = 15,
-            **kwargs
-    ) -> LockedMessage:
-        ...
-    @overload
-    def get(
-            self,
-            block: bool = True,
-            timeout: Optional[int] = None,
-            *,
-            topic: str = "cm_default_topic",
-            subscription: str = "cm_default_subscription",
-            lock: Literal[False],
-            **kwargs
-    ) -> Message:
-        ...
-    @distributed_trace
-    def get(
+    def _get(
             self,
             block: bool = True,
             timeout: Optional[int] = None,
@@ -233,89 +189,166 @@ class CloudMachineServiceBus(CloudMachineClientlet):
             message._renew_lock.start()
             return message
         return Message(
-                id=properties['MessageId'],
-                delivery_count=properties['DeliveryCount'],
-                enqueued_sequence_number=properties['EnqueuedSequenceNumber'],
-                sequence_number=properties['SequenceNumber'],
-                enqueued_time_utc=deserialize_rfc(properties['EnqueuedTimeUtc']),
-                state=properties["State"],
-                time_to_live=properties["TimeToLive"],
-                content=content
-            )
-
+            id=properties['MessageId'],
+            delivery_count=properties['DeliveryCount'],
+            enqueued_sequence_number=properties['EnqueuedSequenceNumber'],
+            sequence_number=properties['SequenceNumber'],
+            enqueued_time_utc=deserialize_rfc(properties['EnqueuedTimeUtc']),
+            state=properties["State"],
+            time_to_live=properties["TimeToLive"],
+            content=content
+        )
     @overload
-    def get_nowait(
+    def get(
             self,
+            timeout: Optional[int] = None,
             *,
-            queue: str = "default",
+            queue: Optional[str] = None,
+            topic: str = "cm_default_topic",
+            subscription: str = "cm_default_subscription",
             lock: Literal[True] = True,
+            renew_interval: int = 15,
+            wait: Literal[True] = True,
             **kwargs
     ) -> LockedMessage:
         ...
     @overload
-    def get_nowait(
+    def get(
             self,
+            timeout: Optional[int] = None,
             *,
-            queue: str = "default",
+            queue: Optional[str] = None,
+            topic: str = "cm_default_topic",
+            subscription: str = "cm_default_subscription",
             lock: Literal[False],
+            wait: Literal[True] = True,
             **kwargs
     ) -> Message:
         ...
     @overload
-    def get_nowait(
+    def get(
             self,
+            timeout: Optional[int] = None,
             *,
-            topic: str,
-            subscription: str,
+            queue: Optional[str] = None,
+            topic: str = "cm_default_topic",
+            subscription: str = "cm_default_subscription",
             lock: Literal[True] = True,
+            renew_interval: int = 15,
+            wait: Literal[False],
             **kwargs
-    ) -> LockedMessage:
+    ) -> Future[LockedMessage]:
         ...
     @overload
-    def get_nowait(
+    def get(
             self,
+            timeout: Optional[int] = None,
             *,
-            topic: str,
-            subscription: str,
+            queue: Optional[str] = None,
+            topic: str = "cm_default_topic",
+            subscription: str = "cm_default_subscription",
             lock: Literal[False],
+            wait: Literal[False],
             **kwargs
-    ) -> Message:
+    ) -> Future[Message]:
         ...
     @distributed_trace
-    def get_nowait(
+    def get(
             self,
+            timeout: Optional[int] = None,
             *,
             queue: Optional[str] = None,
             topic: Optional[str] = None,
             subscription: Optional[str] = None,
             lock: bool = True,
+            renew_interval: int = 15,
+            wait: bool = True,
             **kwargs
     ) -> Message:
-        return self.get(False, queue=queue, topic=topic, subscription=subscription, lock=lock, **kwargs)
-
-    @overload
-    def task_done(
-            self,
-            message: LockedMessage,
-            /, *,
-            queue: str,
-            delete: bool = True,
+        if wait:
+            return self._get(
+                timeout=timeout,
+                queue=queue,
+                topic=topic,
+                subscription=subscription,
+                lock=lock,
+                renew_interval=renew_interval,
+                **kwargs
+            )
+        return self._executor.shutdown(
+            self._get,
+            timeout=timeout,
+            queue=queue,
+            topic=topic,
+            subscription=subscription,
+            lock=lock,
+            renew_interval=renew_interval,
             **kwargs
-    ) -> None:
+        )
+
+    def _put(
+            self,
+            message: bytes,
+            /, *,
+            queue: Optional[str] = None,
+            topic: Optional[str] = None,
+            subscription: Optional[str] = None,
+            **kwargs
+    ) -> Message:
+        raise NotImplementedError()
+    @overload
+    def put(
+            self,
+            message: bytes,
+            /, *,
+            queue: Optional[str] = None,
+            topic: Optional[str] = "cm_default_topic",
+            subscription: Optional[str] = "cm_default_subscription",
+            wait: Literal[True] = True,
+            **kwargs
+    ) -> Message:
         ...
     @overload
-    def task_done(
+    def put(
             self,
-            message: LockedMessage,
+            message: bytes,
             /, *,
-            topic: str = "cm_default_topic",
-            subscription: str = "cm_default_subscription",
-            delete: bool = True,
+            queue: Optional[str] = None,
+            topic: Optional[str] = "cm_default_topic",
+            subscription: Optional[str] = "cm_default_subscription",
+            wait: Literal[False],
             **kwargs
-    ) -> None:
+    ) -> Future[None]:
         ...
     @distributed_trace
-    def task_done(
+    def put(
+            self,
+            message: bytes,
+            /, *,
+            queue: Optional[str] = None,
+            topic: Optional[str] = "cm_default_topic",
+            subscription: Optional[str] = "cm_default_subscription",
+            wait: bool = True,
+            **kwargs
+    ) -> Message:
+        if wait:
+            return self._put(
+                message,
+                queue=queue,
+                topic=topic,
+                subscription=subscription,
+                **kwargs
+            )
+        return self._executor.submit(
+            self._put,
+            message,
+            queue=queue,
+            topic=topic,
+            subscription=subscription,
+            **kwargs
+        )
+
+    def _task_done(
             self,
             message: LockedMessage,
             /, *,
@@ -335,6 +368,63 @@ class CloudMachineServiceBus(CloudMachineClientlet):
         )
         self._send_request(request, **kwargs)
         message._stop_renew.set()
+    @overload
+    def task_done(
+            self,
+            message: LockedMessage,
+            /, *,
+            queue: Optional[str] = None,
+            topic: str = "cm_default_topic",
+            subscription: str = "cm_default_subscription",
+            delete: bool = True,
+            wait: Literal[True] = True,
+            **kwargs
+    ) -> None:
+        ...
+    @overload
+    def task_done(
+            self,
+            message: LockedMessage,
+            /, *,
+            queue: Optional[str] = None,
+            topic: str = "cm_default_topic",
+            subscription: str = "cm_default_subscription",
+            delete: bool = True,
+            wait: Literal[False],
+            **kwargs
+    ) -> Future[None]:
+        ...
+    @distributed_trace
+    def task_done(
+            self,
+            message: LockedMessage,
+            /, *,
+            queue: Optional[str] = None,
+            topic: Optional[str] = None,
+            subscription: Optional[str] = None,
+            delete: bool = True,
+            wait: bool = True,
+            **kwargs
+    ) -> None:
+        if wait:
+            return self._task_done(
+                message,
+                queue=queue,
+                topic=topic,
+                subscription=subscription,
+                delete=delete,
+                **kwargs
+            )
+        return self._executor.submit(
+            self._task_done,
+            message,
+            queue=queue,
+            topic=topic,
+            subscription=subscription,
+            delete=delete,
+            **kwargs
+        )
+        
 
 ########## Request Builders ##########
 

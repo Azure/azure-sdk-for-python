@@ -6,15 +6,14 @@
 
 from enum import Enum
 import json
-import os
 import re
 import random
 import string
 import itertools
-from typing import IO, Any, List, Optional, Dict, Literal, Self, ClassVar, Union
+from typing import IO, Any, List, Optional, Dict, Literal, ClassVar, Union
 from dataclasses import InitVar, dataclass, field, fields, is_dataclass
 
-dataclass_model = dataclass(kw_only=True)
+
 split_camelcase = re.compile('.+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)')
 resource_prefix = "antisch"
 
@@ -24,13 +23,13 @@ def resolve_value(value: Any) -> str:
         return value.resolve()
     except AttributeError:
         if isinstance(value, Resource):
-            return f"{value._symbolicname}.id"
+            return f"{value._symbolicname}.id"  # pylint: disable=protected-access
         return json.dumps(value).replace('"', "'")
 
 
 def resolve_key(key: Any) -> str:
     if isinstance(key, Resource):
-        return f"'${{{key._symbolicname}.id}}'"
+        return f"'${{{key._symbolicname}.id}}'"  # pylint: disable=protected-access
     if key.isidentifier():
         return key
     return f"'{key}'"
@@ -63,7 +62,7 @@ class ResourceId(BicepResolver):
         self._resource = resource
 
     def resolve(self) -> str:
-        return f"{self._resource._symbolicname}.id"
+        return f"{self._resource._symbolicname}.id"  # pylint: disable=protected-access
 
 
 class CloudMachineName(BicepResolver):
@@ -77,7 +76,7 @@ class PrincipalId(BicepResolver):
 
     def resolve(self) -> str:
         if self._resource:
-            return f"{self._resource._symbolicname}.properties.principalId"
+            return f"{self._resource._symbolicname}.properties.principalId"  # pylint: disable=protected-access
         return "principalId"
 
 
@@ -87,7 +86,7 @@ class BoolLogic(BicepResolver):
         self._b = b_value
         self._op = operator
 
-    def resolve(self) -> str: 
+    def resolve(self) -> str:
         return f"{resolve_value(self._a)} {self._op} {resolve_value(self._b)}"
 
 
@@ -159,26 +158,27 @@ def generate_name(n=itertools.count()) -> str:
 
 
 def iter_fields(dataclass_value):
-    for field in fields(dataclass_value):
-        client_name = field.name
+    for datafield in fields(dataclass_value):
+        client_name = datafield.name
         if client_name.startswith('_'):
             continue
         value = getattr(dataclass_value, client_name)
         try:
-            rest_name = field.metadata['rest']
+            rest_name = datafield.metadata['rest']
         except KeyError:
             continue
         if value is _UNSET or rest_name is _SKIP:
             continue
         yield rest_name, value
-        
+
 def _serialize_resource(bicep: IO[str], model_val: 'Resource') -> None:
+    # pylint: disable=protected-access
     indent: str = '  '
     bicep.write(f"resource {model_val._symbolicname} '{model_val._resource}@{model_val._version}' = {{\n")
-    if model_val._parent:
-        bicep.write(f"{indent}parent: {model_val._parent._symbolicname}\n")
-    elif model_val._scope:
-        bicep.write(f"{indent}scope: {model_val._scope._symbolicname}\n")
+    if model_val.parent:
+        bicep.write(f"{indent}parent: {model_val.parent._symbolicname}\n")
+    elif model_val.scope:
+        bicep.write(f"{indent}scope: {model_val.scope._symbolicname}\n")
 
     for rest_name, value in iter_fields(model_val):
         if is_dataclass(value):
@@ -209,9 +209,9 @@ def _serialize_resource(bicep: IO[str], model_val: 'Resource') -> None:
             bicep.write(f"{indent}]\n")
         else:
             bicep.write(f"{indent}{rest_name}: {resolve_value(value)}\n")
-    if model_val._dependson:
+    if model_val.dependson:
         bicep.write(f"{indent}dependsOn: [\n")
-        for dependency in model_val._dependson:
+        for dependency in model_val.dependson:
             bicep.write(f"{indent}{indent}{dependency._symbolicname}\n")
         bicep.write(f"{indent}]\n")
     bicep.write("}\n\n")
@@ -275,31 +275,31 @@ def _serialize_list(bicep: IO[str], list_val: List[Any], indent: str) -> None:
             bicep.write(f"{indent}{resolve_value(item)}\n")
 
 
-@dataclass_model
+@dataclass(kw_only=True)
 class Resource:
     _resource: ClassVar[str]
     _version: ClassVar[str]
     _symbolicname: str
     name: str = field(metadata={'rest': 'name'})
-    _parent: Optional['Resource'] = field(init=False, default=None)
-    _scope: Optional['Resource'] = field(init=False, default=None)
-    _dependson: Optional[List['Resource']] = field(default_factory=list)
+    parent: Optional['Resource'] = field(init=False, default=None)
+    scope: Optional['Resource'] = field(init=False, default=None)
+    dependson: Optional[List['Resource']] = field(default_factory=list)
     _outputs: Dict[str, Any] = field(default_factory=dict, init=False)
 
     def write(self, bicep: IO[str]) -> Dict[str, str]:
         _serialize_resource(bicep, self)
         return self._outputs
 
-    @classmethod
-    def existing(self, scope: Optional['ResourceGroup'] = None) -> Self:
-        raise NotImplementedError()
-    
-    @classmethod
-    def from_json(self, resource: Dict[str, Any]) -> Self:
-        raise NotImplementedError()
+    # @classmethod
+    # def existing(self, scope: Optional['ResourceGroup'] = None) -> Self:
+    #     raise NotImplementedError()
+
+    # @classmethod
+    # def from_json(self, resource: Dict[str, Any]) -> Self:
+    #     raise NotImplementedError()
 
 
-@dataclass_model
+@dataclass(kw_only=True)
 class LocatedResource(Resource):
     friendly_name: InitVar[Optional[str]] = None
     name: BicepStr = field(init=False, default_factory=ResourceName, metadata={'rest': 'name'})
@@ -313,18 +313,20 @@ class LocatedResource(Resource):
             self.tags['cloudmachine-friendlyname'] = self._fname
 
 
-@dataclass_model
+@dataclass(kw_only=True)
 class ResourceGroup(LocatedResource):
-    name: BicepStr = field(init=False, default_factory=ResourceName, metadata={'rest': 'name'})
-    resources: Dict[str, 'LocatedResource'] = field(default_factory=dict, init=False, repr=False, metadata={'rest': _SKIP})
     _resource: ClassVar[Literal['Microsoft.Resources/resourceGroups']] = 'Microsoft.Resources/resourceGroups'
     _version: ClassVar[str] = '2021-04-01'
-    _parent: ClassVar[None] = None
-    _scope: ClassVar[None] = None
+    parent: ClassVar[None] = None
+    scope: ClassVar[None] = None
+    name: BicepStr = field(init=False, default_factory=ResourceName, metadata={'rest': 'name'})
+    resources: Dict[str, 'LocatedResource'] = field(
+        default_factory=dict, init=False, repr=False, metadata={'rest': _SKIP}
+    )
     _symbolicname: str = field(default_factory=lambda: generate_symbol("resourceGroup"), init=False, repr=False)
-    
+
     def add(self, resource: 'Resource') -> None:
-        self.resources[resource._resource] = resource
+        self.resources[resource._resource] = resource  # pylint: disable=protected-access
 
     def write(self, bicep: IO[str]) -> Dict[str, str]:
         bicep.write("param location string = resourceGroup().location\n")

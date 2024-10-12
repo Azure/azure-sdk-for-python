@@ -13,14 +13,15 @@ from time import time
 import uuid
 from wsgiref.handlers import format_date_time
 from urllib.parse import urlparse, quote
-from typing import IO, Any, Dict, Generator, Generic, Iterable, Mapping, Optional, Protocol, Self, Tuple, Type, TypeVar, Union, overload, Literal
+from typing import IO, Any, Dict, Generator, Generic, Iterable, List, Mapping, Optional, Protocol, Self, Tuple, Type, TypeVar, Union, overload, Literal
 from threading import Thread
 from concurrent.futures import Executor, Future
+import xml.etree.ElementTree as ET
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.transport import HttpTransport, PipelineRequest
+from azure.core.pipeline.transport import HttpTransport
 from azure.core.rest import HttpRequest, HttpResponse
-from azure.core import PipelineClient, MatchCondition
+from azure.core import PipelineClient, MatchConditions
 from azure.core.utils import case_insensitive_dict
 from azure.core.pipeline.policies import HeadersPolicy
 
@@ -28,6 +29,7 @@ from azure.core.pipeline.policies import HeadersPolicy
 from ._eventlistener import cloudmachine_events
 from ._base import CloudMachineClientlet
 from ._utils import (
+    Pages,
     Stream,
     PartialStream,
     serialize_rfc,
@@ -37,14 +39,10 @@ from ._utils import (
     parse_content_range,
     get_length,
     serialize_tags_header,
+    deserialize_metadata_header
 )
 
-FILE_UPLOADED = cloudmachine_events.signal('Microsoft.Storage.BlobCreated')
-FILE_DELETED = cloudmachine_events.signal('Microsoft.Storage.BlobDeleted')
-FILE_RENAMED = cloudmachine_events.signal('Microsoft.Storage.BlobRenamed')
-
 _ERROR_CODE = "x-ms-error-code"
-_METADATA = "x-ms-meta-"
 _DEFAULT_CHUNK_SIZE = 32 * 1024 * 1024
 _DEFAULT_BLOCK_SIZE = 256 * 1024 * 1024
 
@@ -54,8 +52,18 @@ def _format_url(endpoint: str, container: str) -> str:
     return f"{parsed_url.scheme}://{parsed_url.hostname}/{quote(container)}{parsed_url.query}"
 
 
+def _build_dict(element: ET) -> Union[str, Dict[str, Any]]:
+    if element.text:
+        return element.text
+    children = [(e.tag, _build_dict(e)) for e in element]
+    as_dict = dict(children)
+    if len(as_dict) != len(children):
+        return children
+    return as_dict or None
+
+
 class StorageHeadersPolicy(HeadersPolicy):
-    def on_request(self, request: PipelineRequest) -> None:
+    def on_request(self, request: 'PipelineRequest') -> None:
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
         request.http_request.headers['x-ms-date'] = current_time
@@ -64,33 +72,40 @@ class StorageHeadersPolicy(HeadersPolicy):
 T = TypeVar("T")
 
 class StorageFile(Generic[T]):
-    last_modified: datetime
+    __responsedata__: Dict[str, Any]
     metadata: Dict[str, str]
-    tags: int
-    length: int
+    tags: Dict[str, str]
     etag: str
     content: T
     filename: str
-    headers: Mapping[str, Any]
+    content_length: int
+    content_type: Optional[str]
+    content_encoding: Optional[str]
+    content_language: Optional[str]
+    content_disposition: Optional[str]
+    cache_control: Optional[str]
 
     def __init__(
             self,
             *,
             filename: str,
-            headers: Dict[str, str],
-            length: int,
-            metadata: Optional[Dict[str, str]],
-            tags: Optional[int],
-            content: T
+            content: T,
+            content_length: Union[int, str],
+            etag: str,
+            **kwargs
     ) -> None:
         self.content = content
-        self.length = length
-        self.last_modified = deserialize_rfc(headers['Last-Modified'])
-        self.etag = headers['ETag']
+        self.content_length = int(content_length)
+        self.etag = etag
         self.filename = filename
-        self.metadata = metadata or {k[len(_METADATA):]: v for k, v in headers.items() if k.startswith(_METADATA)}
-        self.tags = tags if tags is not None else headers.get('x-ms-tag-count', 0)
-        self.headers = headers
+        self.metadata = kwargs.get('metadata') or {}
+        self.tags = kwargs.get('tags') or {}
+        self.content_type = kwargs.get('content_type')
+        self.content_encoding = kwargs.get('content_type')
+        self.content_language = kwargs.get('content_type')
+        self.content_disposition = kwargs.get('content_type')
+        self.cache_control = kwargs.get('content_type')
+        self.__responsedata__ = kwargs.get('responsedata', {})
 
 
 class CloudMachineStorage(CloudMachineClientlet):
@@ -129,6 +144,30 @@ class CloudMachineStorage(CloudMachineClientlet):
             self._containers[container] = container_client
             return container_client
 
+
+    def _batch_send(self, endpoint: str, *reqs: HttpRequest, **kwargs) -> None:
+        policies = [StorageHeadersPolicy()]
+        request = HttpRequest(
+            method="POST",
+            url=f"{endpoint}/$batch",
+            headers={
+                "x-ms-version": self._config.api_version,
+                "DataServiceVersion": "3.0",
+                "MaxDataServiceVersion": "3.0;NetFx",
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        request.set_multipart_mixed(
+            *reqs,
+            policies=policies,
+            enforce_https=False,
+            boundary=f"batch_{uuid.uuid4()}",
+        )
+        response = self._client.send_request(request, stream=True, **kwargs)
+        if response.status_code not in [202]:
+            raise HttpResponseError(response=response)
+
     def get_client(self, **kwargs) -> 'azure.storage.blob.BlobServiceClient':
         try:
             from azure.storage.blob import BlobServiceClient
@@ -142,42 +181,137 @@ class CloudMachineStorage(CloudMachineClientlet):
             **kwargs
         )
 
-    # def list(
-    #         self,
-    #         *,
-    #         prefix: Optional[str] = None,
-    #         container: Optional[str] = None
-    # ) -> Generator[str, None, None]:
-    #     client = self._get_container_client(container)
-    #     for blob in client.list_blobs(name_starts_with=prefix):
-    #         yield blob.name
+    def list(
+            self,
+            *,
+            prefix: Optional[str] = None,
+            container: Optional[str] = None,
+            include_metadata: bool = False,
+            include_tags: bool = False,
+            minimal: bool = False,
+            continue_from: Optional[str] = None,
+            pages: Optional[int] = None,
+            pagesize: int = 100,
+            **kwargs
+    ) -> Generator[StorageFile[None], None, Optional[str]]:
+        client = self._get_container_client(container)
+        include = []
+        if include_metadata:
+            include.append('metadata')
+        if include_tags:
+            include.append('tags')
+        kwargs['delimiter'] = kwargs.pop('delimiter', None)
+        kwargs['showonly'] = kwargs.pop('showonly', 'files')
+        kwargs['maxresults'] = pagesize
+        kwargs['prefix'] = prefix
+        kwargs['include'] = include
+        kwargs['version'] = self._config.api_version
+
+        def _request_one_page(marker: Optional[str]) -> Generator[StorageFile[None], None, Optional[str]]:
+            request_params = dict(kwargs)
+            request = build_list_blob_page_request(
+                url=client.endpoint,
+                marker=marker,
+                kwargs=request_params,
+            )
+            response = client.send_request(request, **request_params)
+            page = ET.fromstring(response.read().decode('utf-8'))
+            for xmlblob in page.find('Blobs'):
+                if xmlblob.tag == 'Blob':
+                    if minimal:
+                        properties = xmlblob.find('Properties')
+                        yield StorageFile(
+                            filename=xmlblob[0].text,
+                            content=None,
+                            content_length=properties.find('Content-Length').text,
+                            etag=properties.find('Etag').text,
+                        )
+                    else:
+                        blob = _build_dict(xmlblob)
+                        properties = blob['Properties']
+                        tags = None
+                        if include_tags:
+                            tags = {t['Key']: t['Value'] for t in blob.get('Tags', {}).get('TagSet', [])}
+                        yield StorageFile(
+                            filename=blob['Name'],
+                            content=None,
+                            content_length=properties['Content-Length'],
+                            etag=properties['Etag'],
+                            metadata=blob.get('Metadata', {}),
+                            tags=tags,
+                            content_type = properties['Content-Type'],
+                            content_encoding = properties['Content-Encoding'],
+                            content_language = properties['Content-Language'],
+                            content_disposition = properties['Content-Disposition'],
+                            cache_control = properties['Cache-Control'],
+                            responsedata=blob,
+                        )
+            next_page = page.find('NextMarker')
+            return next_page.text if next_page is not None else None
+            
+        return Pages(
+            _request_one_page,
+            n_pages=pages,
+            continuation=continue_from,
+        )
+            
 
     # TODO: Delete should use a batch request and support multiple files
+    def _delete(self, *files: Union[str, StorageFile], container: Optional[str] = None, **kwargs) -> None:
+        client = self._get_container_client(container)
+        kwargs['version'] = self._config.api_version
+        condition = kwargs.pop('condition', MatchConditions.Unconditionally)
+        requests = []
+        for file in files:
+            try:
+                etag = file.etag
+                filename = file.filename
+            except AttributeError:
+                filename = file
+                etag = kwargs.pop('etag', None)
+            kwargs['if_match'] = prep_if_match(etag, condition)
+            kwargs['if_none_match'] = prep_if_none_match(etag, condition)
+            requests.append(
+                build_delete_container_request(
+                    container.endpoint,
+                    filename,
+                    kwargs
+                )
+            )
+        response = client.send_request(request, **kwargs)
+        if ((response.status_code == 202) or
+            (response.status_code == 404 and response.headers.get(_ERROR_CODE) == 'BlobNotFound') or
+            (response.status_code == 404 and response.headers.get(_ERROR_CODE) == 'ContainerNotFound') or
+            (response.status_code == 409 and response.headers.get(_ERROR_CODE) == 'ContainerBeingDeleted')):
+            self._containers.pop(container, None)
+            return
+        raise HttpResponseError(response=response)
     @overload
     def delete(
             self,
-            file: StorageFile,
-            *,
+            *files: Union[str, StorageFile],
             container: Optional[str] = None,
-            condition: MatchCondition = MatchCondition.IfPresent,
+            condition: MatchConditions = MatchConditions.Unconditionally,
+            etag: Optional[str] = None,
+            wait: Literal[True] = True,
             **kwargs
     ) -> None:
         ...
     @overload
     def delete(
             self,
-            file: str,
-            *,
+            *files: Union[str, StorageFile],
             container: Optional[str] = None,
-            condition: MatchCondition = MatchCondition.IfPresent,
+            condition: MatchConditions = MatchConditions.Unconditionally,
             etag: Optional[str] = None,
+            wait: Literal[False],
             **kwargs
-    ) -> None:
+    ) -> Future[None]:
         ...
     def delete(self, file: Union[StorageFile, str], *, container: Optional[str] = None, **kwargs) -> None:
         client = self._get_container_client(container)
         kwargs['version'] = self._config.api_version
-        condition = kwargs.pop('condition', MatchCondition.IfPresent)
+        condition = kwargs.pop('condition', MatchConditions.IfPresent)
         try:
             kwargs['if_match'] = prep_if_match(file.etag, condition)
             kwargs['if_none_match'] = prep_if_none_match(file.etag, condition)
@@ -196,6 +330,7 @@ class CloudMachineStorage(CloudMachineClientlet):
                 kwargs
             )
         response = client.send_request(request, **kwargs)
+        # TODO: Test these status codes against the different conditional combinations.
         if ((response.status_code == 202) or
             (response.status_code == 404 and response.headers.get(_ERROR_CODE) == 'BlobNotFound') or
             (response.status_code == 404 and response.headers.get(_ERROR_CODE) == 'ContainerNotFound') or
@@ -211,10 +346,15 @@ class CloudMachineStorage(CloudMachineClientlet):
             content_length: Optional[int] = None,
             filename: Optional[str] = None,
             container: Optional[str] = None,
-            condition: MatchCondition = MatchCondition.IfMissing,
+            condition: MatchConditions = MatchConditions.IfMissing,
             metadata: Optional[Dict[str, str]],
             etag: Optional[str] = None,
             tags: Optional[Dict[str, str]] = None,
+            content_type: Optional[str] = None,
+            content_encoding: Optional[str] = None,
+            content_language: Optional[str] = None,
+            content_disposition: Optional[str] = None,
+            cache_control: Optional[str] = None,
             **kwargs
     ) -> StorageFile[None]:
         # TODO: support upload by block list + commit
@@ -225,10 +365,11 @@ class CloudMachineStorage(CloudMachineClientlet):
         kwargs['version'] = self._config.api_version
         kwargs['if_match'] = prep_if_match(etag, condition)
         kwargs['if_none_match'] = prep_if_none_match(etag, condition)
-        kwargs['blob_content_type'] = kwargs.pop('content_type', None)
-        kwargs['blob_content_encoding'] = kwargs.pop('content_encoding', None)
-        kwargs['blob_content_language'] = kwargs.pop('content_language', None)
-        kwargs['blob_content_disposition'] = kwargs.pop('content_disposition', None)
+        kwargs['blob_content_type'] = content_type
+        kwargs['blob_content_encoding'] = content_encoding
+        kwargs['blob_content_language'] = content_language
+        kwargs['blob_content_disposition'] = content_disposition
+        kwargs['blob_cache_control'] = cache_control
         kwargs['blob_tags_string'] = serialize_tags_header(tags)
         expiry = kwargs.pop('expiry', None)
         if isinstance(expiry, timedelta):
@@ -250,11 +391,18 @@ class CloudMachineStorage(CloudMachineClientlet):
         if response.status_code not in [201]:
             raise HttpResponseError(response=response)
         return StorageFile(
-            filename=filename,
-            length=content_length,
-            headers=response.headers,
+            filename = filename,
+            content_length = content_length,
+            last_modified = response.headers['Last-Modified'],
+            etag = response.headers['ETag'],
+            responsedata = response.headers,
+            content_type = content_type,
+            content_encoding = content_encoding,
+            content_language = content_language,
+            content_disposition = content_disposition,
+            cache_control = cache_control,
             metadata=metadata,
-            tags=len(tags),
+            tags=tags,
             content=None,
         )
     @overload
@@ -269,7 +417,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             content_disposition: Optional[str] = None,
             filename: Optional[str] = None,
             container: Optional[str] = None,
-            condition: MatchCondition = MatchCondition.IfMissing,
+            condition: MatchConditions = MatchConditions.IfMissing,
             etag: Optional[str] = None,
             metadata: Optional[Dict[str, str]] = None,
             tags: Optional[Dict[str, str]] = None,
@@ -290,7 +438,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             content_disposition: Optional[str] = None,
             filename: Optional[str] = None,
             container: Optional[str] = None,
-            condition: MatchCondition = MatchCondition.IfMissing,
+            condition: MatchConditions = MatchConditions.IfMissing,
             etag: Optional[str] = None,
             metadata: Optional[Dict[str, str]] = None,
             tags: Optional[Dict[str, str]] = None,
@@ -306,7 +454,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             content_length: Optional[int] = None,
             filename: Optional[str] = None,
             container: Optional[str] = None,
-            condition: MatchCondition = MatchCondition.IfMissing,
+            condition: MatchConditions = MatchConditions.IfMissing,
             etag: Optional[str] = None,
             metadata: Optional[Dict[str, str]] = None,
             tags: Optional[Dict[str, str]] = None,
@@ -344,7 +492,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             *,
             range: Optional[Tuple[int, Optional[int]]] = None,
             container: Optional[str] = None,
-            condition: MatchCondition = MatchCondition.IfPresent,
+            condition: MatchConditions = MatchConditions.IfPresent,
             etag: Optional[str] = None,
             validate: bool = False,
             **kwargs
@@ -414,8 +562,16 @@ class CloudMachineStorage(CloudMachineClientlet):
             )
         return StorageFile(
             filename=filename,
-            length=filelength,
-            headers=response.headers,
+            content_length=filelength,
+            last_modified = response.headers['Last-Modified'],
+            etag = response.headers['ETag'],
+            content_type = response.headers['Content-Type'],
+            content_encoding = response.headers['Content-Encoding'],
+            content_language = response.headers['Content-Language'],
+            content_disposition = response.headers['Content-Disposition'],
+            cache_control = response.headers['Cache-Control'],
+            metadata = deserialize_metadata_header(response.headers),
+            responsedata=response.headers,
             content=stream
         )
     @overload
@@ -425,7 +581,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             *,
             range: Optional[Tuple[int, Optional[int]]] = None,
             container: Optional[str] = None,
-            condition: MatchCondition = MatchCondition.IfPresent,
+            condition: MatchConditions = MatchConditions.IfPresent,
             etag: Optional[str] = None,
             validate: bool = False,
             chunk_size: int = _DEFAULT_CHUNK_SIZE,
@@ -440,7 +596,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             *,
             range: Optional[Tuple[int, Optional[int]]] = None,
             container: Optional[str] = None,
-            condition: MatchCondition = MatchCondition.IfPresent,
+            condition: MatchConditions = MatchConditions.IfPresent,
             etag: Optional[str] = None,
             validate: bool = False,
             chunk_size: int = _DEFAULT_CHUNK_SIZE,
@@ -454,7 +610,7 @@ class CloudMachineStorage(CloudMachineClientlet):
             *,
             range: Optional[Tuple[int, Optional[int]]] = None,
             container: Optional[str] = None,
-            condition: MatchCondition = MatchCondition.IfPresent,
+            condition: MatchConditions = MatchConditions.IfPresent,
             etag: Optional[str] = None,
             validate: bool = False,
             wait: bool = True,
@@ -528,7 +684,7 @@ def build_create_container_request(
     default_encryption_scope: Optional[str] = kwargs.pop('default_encryption_scope', None)
     prevent_encryption_scope_override: Optional[bool] = kwargs.pop('prevent_encryption_scope_override', None)
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: str = kwargs.pop("version")
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -548,14 +704,14 @@ def build_create_container_request(
         for key, value in metadata.items():
             _headers[f'x-ms-meta-{key.strip()}'] = value.strip() if value else value
     if access is not None:
-        _headers["x-ms-blob-public-access"] = access
-    _headers["x-ms-version"] = version
+        _headers["x-ms-blob-public-access"] = str(access)
+    _headers["x-ms-version"] = str(version)
 
     if default_encryption_scope is not None:
-        _headers["x-ms-default-encryption-scope"] = default_encryption_scope
+        _headers["x-ms-default-encryption-scope"] = str(default_encryption_scope)
     if prevent_encryption_scope_override is not None:
         _headers["x-ms-deny-encryption-scope-override"] = json.dumps(prevent_encryption_scope_override)
-    _headers["Accept"] = accept
+    _headers["Accept"] = str(accept)
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -572,7 +728,7 @@ def build_delete_container_request(
     if_modified_since: Optional[datetime] = kwargs.pop("if_modified_since", None)
     if_unmodified_since: Optional[datetime] = kwargs.pop("if_unmodified_since", None)
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: str = kwargs.pop("version")
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -589,13 +745,13 @@ def build_delete_container_request(
 
     # Construct headers
     if lease_id is not None:
-        _headers["x-ms-lease-id"] = lease_id
+        _headers["x-ms-lease-id"] = str(lease_id)
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = serialize_rfc(if_modified_since)
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = serialize_rfc(if_unmodified_since)
-    _headers["x-ms-version"] = version
-    _headers["Accept"] = accept
+    _headers["x-ms-version"] = str(version)
+    _headers["Accept"] = str(accept)
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -619,7 +775,7 @@ def build_delete_blob_request(
     if_none_match: Optional[str] = kwargs.pop("if_none_match", None)
     if_tags: Optional[str] = kwargs.pop("if_tags", None)
     blob_delete_type: Literal["Permanent"] = "Permanent"
-    version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: str = kwargs.pop("version")
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -778,7 +934,7 @@ def build_upload_blob_request(
     expiry_absolute: Optional[datetime] = kwargs.pop("expiry_absolute", None)
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-01-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-01-05"))
+    version: str = kwargs.pop("version")
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -862,3 +1018,53 @@ def build_upload_blob_request(
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
+
+def build_list_blob_page_request(
+    url: str,
+    kwargs: Any,
+    marker: Optional[str] = None,
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    delimiter: Optional[str] = kwargs.pop("delimiter", None)
+    prefix: Optional[str] = kwargs.pop("prefix", None)
+    showonly: Optional[str] = kwargs.pop("showonly", None)
+    maxresults: Optional[int] = kwargs.pop("maxresults", None)
+    include: Optional[List[str]] = kwargs.pop("include", None)
+    timeout: Optional[int] = kwargs.pop("servicetimeout", None)
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
+    version: str = kwargs.pop("version")
+    accept = _headers.pop("Accept", "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": url,
+    }
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["restype"] = quote(restype)
+    _params["comp"] = quote(comp)
+    if prefix is not None:
+        _params["prefix"] = quote(prefix)
+    if showonly is not None:
+        _params["showonly"] = quote(showonly)
+    if delimiter is not None:
+        _params["delimiter"] = quote(delimiter)
+    if marker is not None:
+        _params["marker"] = quote(marker)
+    if maxresults is not None:
+        _params["maxresults"] = quote(str(maxresults))
+    if include is not None:
+        _params["include"] = quote(",".join(include))
+    if timeout is not None:
+        _params["timeout"] = quote(str(timeout))
+
+    # Construct headers
+    _headers["x-ms-version"] = str(version)
+    _headers["Accept"] = str(accept)
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)

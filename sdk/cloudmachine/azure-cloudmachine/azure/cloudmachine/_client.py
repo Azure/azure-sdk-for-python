@@ -5,23 +5,23 @@
 # --------------------------------------------------------------------------
 
 import os
-from typing import IO, Any, Dict, Generator, Mapping, Optional, Protocol, Type, Union, overload
+from typing import IO, Any, Dict, Generator, Literal, Mapping, Optional, Protocol, Self, Type, Union, overload
 from threading import Thread
 from concurrent.futures import Executor, ThreadPoolExecutor
 
 from dotenv import load_dotenv, dotenv_values
-from blinker import Namespace
 
-from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.pipeline.transport import HttpTransport
-from azure.storage.blob import BlobServiceClient, ContainerClient
 from azure.data.tables import TableServiceClient, TableClient
 from azure.identity import DefaultAzureCredential
 
-from .resources import azd_env_name
+from .resources._deployment import azd_env_name
 from ._httpclient._eventlistener import EventListener, cloudmachine_events
 from ._httpclient import TransportWrapper
 from ._httpclient._servicebus import CloudMachineServiceBus
+from ._httpclient._config import CloudMachinePipelineConfig
+from ._httpclient._storage import CloudMachineStorage
+from ._httpclient._base import CloudMachineClientlet
 
 
 def load_dev_environment(name: str) -> Dict[str, str]:
@@ -45,99 +45,6 @@ def load_dev_environment(name: str) -> Dict[str, str]:
     return trimmed_env
 
 
-FILE_UPLOADED = cloudmachine_events.signal('Microsoft.Storage.BlobCreated')
-FILE_DELETED = cloudmachine_events.signal('Microsoft.Storage.BlobDeleted')
-FILE_RENAMED = cloudmachine_events.signal('Microsoft.Storage.BlobRenamed')
-
-
-class StorageFile:
-    content_length: int
-    content_type: str
-    etag: str
-    url: str
-    content: Optional[bytes]
-
-
-class CloudMachineStorage:
-    default_container_name: str = "default"
-    
-    def __init__(
-            self,
-            *,
-            transport: Optional[HttpTransport] = None,
-            name: Optional[str] = None,
-            executor: Optional[Executor] = None,
-            **kwargs
-    ):
-        if name:
-            name = name.upper()
-            endpoint = os.environ[f'AZURE_CLOUDMACHINE_{name}_BLOB_ENDPOINT']
-        else:
-            endpoint = os.environ['AZURE_CLOUDMACHINE_BLOB_ENDPOINT']
-        credential = DefaultAzureCredential()
-        self._client = BlobServiceClient(
-            account_url=endpoint,
-            credential=credential,
-            transport=transport,
-            **kwargs
-        )
-        self._default_container = self._client.get_container_client(self.default_container_name)
-        self._containers: Dict[str, ContainerClient] = {}
-
-    def _get_container_client(self, container: Optional[str]) -> ContainerClient:
-        if container:
-            try:
-                return self._containers[container]
-            except KeyError:
-                container_client = self._client.get_container_client(container)
-                self._containers[container] = container_client
-                return container_client
-        return self._default_container
-
-    def get_client(self) -> BlobServiceClient:
-        return self._client
-
-    def list(
-            self,
-            *,
-            prefix: Optional[str] = None,
-            container: Optional[str] = None
-    ) -> Generator[str, None, None]:
-        client = self._get_container_client(container)
-        for blob in client.list_blobs(name_starts_with=prefix):
-            yield blob.name
-
-    def delete(self, name: str, *, container: Optional[str] = None) -> None:
-        client = self._get_container_client(container)
-        client.delete_blob(name)
-
-    def upload(self, name: str, filedata: IO[bytes], *, container: Optional[str] = None) -> None:
-        client = self._get_container_client(container)
-        client.upload_blob(name, filedata, overwrite=True)
-
-    def download(self, name: str, *, container: Optional[str] = None) -> Generator[bytes, None, None]:
-        client = self._get_container_client(container)
-        download = client.download_blob(name)
-        for data in download.chunks():
-            yield data
-    
-    def create_container(self, name: str) -> None:
-        client = self._client.create_container(name)
-        self._containers[name] = client
-
-    def delete_container(self, name: str) -> None:
-        if name.lower() == "default":
-            raise ValueError("Default container cannot be deleted.")
-        try:
-            container = self._containers.pop(name)
-            container.delete_container()
-        except KeyError:
-            self._client.delete_container(name)
-
-    def close(self) -> None:
-        self._client.close()
-
-
 class DataModel(Protocol):
     def __init__(self, **kwargs) -> None:
         ...
@@ -150,24 +57,33 @@ class DataModel(Protocol):
         ...
     
 
-class CloudMachineTableData:
+class CloudMachineTableData(CloudMachineClientlet):
+    _id: Literal['Table'] = 'Table'
+
     def __init__(
             self,
             *,
             transport: Optional[HttpTransport] = None,
+            executor: Optional[Executor] = None,
             name: Optional[str] = None,
+            config: Optional[CloudMachinePipelineConfig] = None,
+            clients: Optional[Dict[str, Self]] = None,
             **kwargs
     ):
-        if name:
-            name = name.upper()
-            endpoint = os.environ[f'AZURE_CLOUDMACHINE_{name}_TABLE_ENDPOINT']
-        else:
-            endpoint = os.environ['AZURE_CLOUDMACHINE_TABLE_ENDPOINT']
+        super().__init__(
+            transport=transport,
+            executor=executor,
+            name=name,
+            config=config,
+            clients=clients,
+            **kwargs
+        )
         credential = DefaultAzureCredential()
         self._client = TableServiceClient(
-            endpoint=endpoint,
+            endpoint=self._endpoint,
+            api_version=self._config.api_version,
             credential=credential,
-            transport=transport,
+            transport=self._config.transport,
             **kwargs
         )
         self._tables: Dict[str, TableClient] = {}
@@ -213,7 +129,6 @@ class CloudMachineTableData:
         try:
             table_client = self._get_table_client(args[0].__table__)
             batch = [("upsert", e.model_dump(by_alias=True), {'mode': mode}) for e in args]
-            print(batch)
         except AttributeError:
             table_client = self._get_table_client(args[0])
             batch = [("upsert", e, {'mode': mode}) for e in args[1:]]
@@ -261,8 +176,7 @@ class CloudMachineTableData:
                 yield table(**entity)
         except AttributeError:
             table_client = self._get_table_client(table)
-            for entity in table_client.list_entities():
-                yield entity
+            yield from table_client.list_entities()
 
     @overload
     def query(self, table: str, partition: str, row: str, /) -> Generator[Mapping[str, Any], None, None]:
@@ -298,33 +212,36 @@ class CloudMachineTableData:
             else:
                 raise ValueError("Both partition key and row key must be valid strings or '*'.")
         else:
-             query = kwargs.pop('query')
-             parameters = kwargs.pop('parameters', None) 
+            query = kwargs.pop('query')
+            parameters = kwargs.pop('parameters', None) 
         try:
             table_client = self._get_table_client(table.__table__)
             for entity in table_client.query_entities(query, parameters=parameters):
                 yield table(**entity)
         except AttributeError:
             table_client = self._get_table_client(table)
-            for entity in table_client.query_entities(query, parameters=parameters):
-                yield entity
+            yield from table_client.query_entities(query, parameters=parameters)
 
 
 class CloudMachineClient:
-    executor: Executor
 
     def __init__(
             self,
             *,
             http_transport: Optional[HttpTransport] = None,
+            event_listener: bool = True,
             **kwargs
     ):
         self._http_transport = http_transport or self._build_transport(**kwargs)
         self._wrapped_transport = TransportWrapper(self._http_transport)
-        self._listener = EventListener(
-            transport=self._wrapped_transport
-        )
-        self._listener_thread = Thread(target=self._listener, daemon=True)
+        if event_listener:
+            self._listener = EventListener(
+                transport=self._wrapped_transport
+            )
+            self._listener_thread = Thread(target=self._listener, daemon=True)
+        else:
+            self._listener = None
+            self._listener_thread = None
         self._storage: Dict[CloudMachineStorage] = {}
         self._messaging: Dict[CloudMachineServiceBus] = {}
         self._data: Dict[CloudMachineTableData] = {}
@@ -351,10 +268,12 @@ class CloudMachineClient:
     @property
     def storage(self):
         if not self._storage:
-            self._listener_thread.start()
+            if self._listener_thread:
+                self._listener_thread.start()
             self._storage['default'] = CloudMachineStorage(
                 transport=self._http_transport,
-                executor=self._executor
+                executor=self._executor,
+                clients=self._storage,
             )
         return self._storage['default']
 
@@ -363,7 +282,8 @@ class CloudMachineClient:
         if not self._messaging:
             self._messaging['default'] = CloudMachineServiceBus(
                 transport=self._http_transport,
-                executor=self._executor
+                executor=self._executor,
+                clients=self._messaging,
             )
         return self._messaging['default']
 
@@ -372,7 +292,8 @@ class CloudMachineClient:
         if not self._data:
             self._data['default'] = CloudMachineTableData(
                 transport=self._http_transport,
-                executor=self._executor
+                executor=self._executor,
+                clients=self._data,
             )
         return self._data['default']
 

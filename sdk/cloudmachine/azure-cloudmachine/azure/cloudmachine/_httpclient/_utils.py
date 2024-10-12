@@ -8,11 +8,45 @@ from io import SEEK_END, SEEK_SET
 import logging
 import email
 from datetime import datetime, timezone, timedelta
-from typing import IO, Dict, Generator, Literal, Optional, Self, Tuple, Union
+from typing import IO, Any, Callable, Dict, Generator, Generic, Literal, Optional, Self, Tuple, TypeVar, Union
 from urllib.parse import quote
 
 from azure.core import MatchConditions
 from azure.core.rest import HttpResponse
+
+PageType = TypeVar('PageType')
+
+
+class Pages(Generic[PageType]):
+    continuation: Optional[str] = None
+    n_pages: Optional[int] = None
+
+    def __init__(
+            self,
+            page_gen: Callable[[Optional[str]], Generator[PageType, None, Optional[str]]],
+            *,
+            n_pages: Optional[int] = None,
+            continuation: Optional[str] = None,
+    ):
+        self._page_gen = page_gen
+        self.n_pages = n_pages
+        self.continuation = continuation
+
+    def __iter__(self) -> Generator[PageType, None, Optional[str]]:
+        self.continuation = yield from self._request_n_pages()
+        return self.continuation
+
+    def _request_n_pages(self) -> Generator[PageType, None, Optional[str]]:
+        continuation = yield from self._page_gen(self.continuation)
+        if self.n_pages:
+            pages = self.n_pages - 1
+            while pages and continuation:
+                continuation = yield from self._page_gen(continuation)
+                pages -= 1
+        else:
+            while continuation:
+                continuation = yield from self._page_gen(continuation)
+        return continuation
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -113,6 +147,13 @@ def parse_content_range(content_range: str) -> Tuple[int, int, int]:
     return int(start), int(end), int(total)
 
 
+_METADATA = "x-ms-meta-"
+_METADATA_PREFIX_LEN = len(_METADATA)
+
+def deserialize_metadata_header(headers: Dict[str, Any]) -> Dict[str, str]:
+    return {k[_METADATA_PREFIX_LEN:]: v for k, v in headers.items() if k.startswith(_METADATA)}
+
+
 def serialize_tags_header(tags: Optional[Dict[str, str]] = None) -> Optional[str]:
     if not tags:
         return None
@@ -139,12 +180,7 @@ def get_length(data: Union[bytes, IO[bytes]]) -> int:
 
 class Stream:
     content_length: int
-    content_type: str
-    content_encoding: str
-    content_language: str
-    content_disposition: str
     content_range: str
-    cache_control: str
 
     def __init__(
             self, 
@@ -159,11 +195,6 @@ class Stream:
         self._closed = False
         self.content_length = content_length
         self.content_range = content_range
-        self.content_type = self._current_chunk.content_type
-        self.content_encoding = self._current_chunk.content_encoding
-        self.content_language = self._current_chunk.content_language
-        self.content_disposition = self._current_chunk.content_disposition
-        self.cache_control = self._current_chunk.cache_control
 
     def __next__(self) -> bytes:
         if self._current_response:
@@ -191,11 +222,8 @@ class Stream:
 
 class PartialStream:
     validation: Optional[bytes]
-    content_type: str
-    content_encoding: str
-    content_language: str
-    content_disposition: str
-    cache_control: str
+    content_length: int
+    content_range: str
 
     def __init__(self, *, start: int, end: int, response: HttpResponse) -> None:
         self._response = response
@@ -204,11 +232,8 @@ class PartialStream:
         self._start = start
         self._end = end
         self.validation = response.headers.get('x-ms-content-crc64')
-        self.content_type = response.headers['Content-Type']
-        self.content_encoding = response.headers['Content-Encoding']
-        self.content_language = response.headers['Content-Language']
-        self.content_disposition = response.headers['Content-Disposition']
-        self.cache_control = response.headers['Cache-Control']
+        self.content_length = response.headers['Content-Length']
+        self.content_range = response.headers['Content-Range']
 
     def __next__(self) -> bytes:
         if self.validation:
@@ -223,7 +248,7 @@ class PartialStream:
         return self
 
     def _validate(self) -> None:
-        # perform crc64 validation
+        # TODO: perform crc64 validation
         raise NotImplementedError()
 
     def write(self, stream: IO[bytes]) -> int:

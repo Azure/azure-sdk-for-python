@@ -149,7 +149,7 @@ class CloudMachine:
             )
         else:
             if self.deployment.host == 'local':
-                # TODO: rmeove dotenv to use app.config.from_file
+                os.environ.update(self.deployment.app_settings)
                 app.config.update(load_dev_environment(self.deployment.name))
             else:
                 app.config.from_prefixed_env(prefix='AZURE_CLOUDMACHINE_')

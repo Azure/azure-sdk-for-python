@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-DEFAULT_API_VERSIONS = {
-    "Table": "2019-02-02",
-    "Blob": "2020-12-06",
-    "ServiceBus": "2021-05"
-}
+from ._httpclient._eventlistener import cloudmachine_events
+
+FILE_UPLOADED = cloudmachine_events.signal('Microsoft.Storage.BlobCreated')
+FILE_DELETED = cloudmachine_events.signal('Microsoft.Storage.BlobDeleted')
+FILE_RENAMED = cloudmachine_events.signal('Microsoft.Storage.BlobRenamed')

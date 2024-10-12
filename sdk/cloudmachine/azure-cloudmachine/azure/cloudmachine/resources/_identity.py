@@ -4,18 +4,20 @@
 # license information.
 # --------------------------------------------------------------------------
 
+# pylint: disable=line-too-long
+
 from typing import Any, ClassVar, Iterable, Literal, TypedDict, Tuple, Union
-from dataclasses import field
+from dataclasses import field, dataclass
 
 from ._resource import (
     LocatedResource,
-    dataclass_model,
-    generate_symbol
+    generate_symbol,
+    BicepStr
 )
 
 class UserIdentityProperties(TypedDict, total=False):
-    clientId: str
-    principalId: str
+    clientId: BicepStr
+    principalId: BicepStr
 
 
 class UserAssignedIdentities(dict):
@@ -33,7 +35,7 @@ class UserAssignedIdentities(dict):
         return self._identities
 
 
-@dataclass_model
+@dataclass(kw_only=True)
 class ManagedIdentity(LocatedResource):
     _resource: ClassVar[Literal['Microsoft.ManagedIdentity/userAssignedIdentities']] = 'Microsoft.ManagedIdentity/userAssignedIdentities'
     _version: ClassVar[str] = '2023-01-31'
