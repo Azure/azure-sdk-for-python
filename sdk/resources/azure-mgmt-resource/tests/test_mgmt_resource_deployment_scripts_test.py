@@ -14,7 +14,9 @@ import unittest
 import azure.core.exceptions
 import azure.mgmt.resource
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+import pytest
 
+@pytest.mark.live_test_only
 class TestMgmtResourceDeploymentScript(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
@@ -26,7 +28,7 @@ class TestMgmtResourceDeploymentScript(AzureMgmtRecordedTestCase):
         if self.is_live:
             from azure.mgmt.msi import ManagedServiceIdentityClient
             self.msi_client = self.create_mgmt_client(
-                ManagedServiceIdentityClient
+                ManagedServiceIdentityClient,
             )
 
     @RandomNameResourceGroupPreparer()

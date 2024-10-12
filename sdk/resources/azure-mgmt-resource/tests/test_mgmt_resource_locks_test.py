@@ -1,4 +1,4 @@
-﻿# coding: utf-8
+# coding: utf-8
 
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +15,9 @@ import pytest
 
 import azure.mgmt.resource
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+import pytest
 
+@pytest.mark.live_test_only
 class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
@@ -69,7 +71,7 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
         create_result = self.resource_client.resources.begin_create_or_update_by_id(
             resource_id,
             parameters={'location': location},
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
 
         lock = self.locks_client.management_locks.create_or_update_by_scope(
@@ -96,7 +98,7 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
 
         result = self.resource_client.resources.begin_delete_by_id(
             resource_id,
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
         result = result.result()
 
@@ -116,7 +118,7 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
             resource_type="availabilitySets",
             resource_name=resource_name,
             parameters={'location': location},
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
 
         lock = self.locks_client.management_locks.create_or_update_at_resource_level(
@@ -166,7 +168,7 @@ class TestMgmtResourceLocks(AzureMgmtRecordedTestCase):
             parent_resource_path="",
             resource_type="availabilitySets",
             resource_name=resource_name,
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
         delete_result.wait()
 

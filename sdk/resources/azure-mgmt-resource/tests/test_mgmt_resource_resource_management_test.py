@@ -1,4 +1,4 @@
-﻿# coding: utf-8
+# coding: utf-8
 
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -59,7 +59,9 @@ template = {
         }
     }
 }
+import pytest
 
+@pytest.mark.live_test_only
 class TestMgmtResource(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
@@ -234,7 +236,7 @@ class TestMgmtResource(AzureMgmtRecordedTestCase):
             parent_resource_path="",
             resource_type="availabilitySets",
             resource_name=resource_name,
-            api_version="2019-10-01"
+            api_version = "2019-10-01"
         )
         self.assertFalse(resource_exist)
 
@@ -247,13 +249,13 @@ class TestMgmtResource(AzureMgmtRecordedTestCase):
         )
         resource_exist = self.resource_client.resources.check_existence_by_id(
             resource_id,
-            api_version="2019-10-01"
+            api_version = "2019-10-01"
         )
 
         create_result = self.resource_client.resources.begin_create_or_update_by_id(
             resource_id,
             parameters={'location': self.region},
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
         result = create_result.result()
 
@@ -264,7 +266,7 @@ class TestMgmtResource(AzureMgmtRecordedTestCase):
             resource_type="availabilitySets",
             resource_name=resource_name,
             parameters={'location': self.region},
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
         result = create_result.result()
         self.assertEqual(result.name, resource_name)
@@ -275,13 +277,13 @@ class TestMgmtResource(AzureMgmtRecordedTestCase):
             parent_resource_path="",
             resource_type="availabilitySets",
             resource_name=resource_name,
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
         self.assertEqual(get_result.name, resource_name)
 
         get_result = self.resource_client.resources.get_by_id(
             resource_id,
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
 
         resources = list(self.resource_client.resources.list(
@@ -333,7 +335,7 @@ class TestMgmtResource(AzureMgmtRecordedTestCase):
             resource_name=resource_name,
             # parameters={'properties': {"platform_fault_domain_count": 2}},
             parameters={'tags': {"tag1": "value1"}},
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
         result = update_result.result()
 
@@ -341,7 +343,7 @@ class TestMgmtResource(AzureMgmtRecordedTestCase):
             new_resource_id,
             # parameters={'properties': {"platform_fault_domain_count": 2}},
             parameters={'tags': {"tag1": "value1"}},
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
         result = update_result.result()
 
@@ -351,13 +353,13 @@ class TestMgmtResource(AzureMgmtRecordedTestCase):
             parent_resource_path="",
             resource_type="availabilitySets",
             resource_name=resource_name,
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
         delete_result.wait()
 
         result = self.resource_client.resources.begin_delete_by_id(
             new_resource_id,
-            api_version="2019-07-01"
+            api_version = "2019-07-01"
         )
         result = result.result()
 

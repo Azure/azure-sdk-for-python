@@ -1,4 +1,4 @@
-﻿# coding: utf-8
+# coding: utf-8
 
 #-------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +15,9 @@ import unittest
 
 import azure.mgmt.resource
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
+import pytest
 
+@pytest.mark.live_test_only
 class TestMgmtResourceSubscriptions(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
