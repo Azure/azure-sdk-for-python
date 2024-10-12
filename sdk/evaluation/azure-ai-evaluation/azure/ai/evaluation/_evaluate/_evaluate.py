@@ -39,7 +39,7 @@ TClient = TypeVar("TClient", ProxyClient, CodeClient)
 class __EvaluatorInfo(TypedDict):
     result: pd.DataFrame
     metrics: Dict[str, Any]
-    run_summary: Dict
+    run_summary: Dict[str, Any]
 
 
 # pylint: disable=line-too-long
@@ -570,9 +570,9 @@ def evaluate(
 
 def _print_summary(per_evaluator_results: Dict[str, Any]) -> None:
     # Extract evaluators with a non-empty "run_summary"
-    output_dict = {name: result["run_summary"]
-                   for name, result in per_evaluator_results.items()
-                   if result.get("run_summary")}
+    output_dict = {
+        name: result["run_summary"] for name, result in per_evaluator_results.items() if result.get("run_summary")
+    }
 
     if output_dict:
         print("======= Combined Run Summary (Per Evaluator) =======\n")
@@ -609,13 +609,16 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     try:
         pf_client = PFClient(
             config=(
-                {"trace.destination": _trace_destination_from_project_scope(azure_ai_project)} if azure_ai_project else None
+                {"trace.destination": _trace_destination_from_project_scope(azure_ai_project)}
+                if azure_ai_project
+                else None
             ),
             user_agent=USER_AGENT,
         )
+    # pylint: disable=raise-missing-from
     except MissingAzurePackage:
         msg = (
-            'The required packages for remote tracking are missing.\n'
+            "The required packages for remote tracking are missing.\n"
             'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
         )
 

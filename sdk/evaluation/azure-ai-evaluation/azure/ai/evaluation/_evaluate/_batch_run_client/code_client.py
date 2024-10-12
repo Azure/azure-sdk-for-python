@@ -183,6 +183,6 @@ class CodeClient:  # pylint: disable=client-accepts-api-version-keyword
             return {}
         return aggregated_metrics
 
-    def get_run_summary(self, run: CodeRun): # pylint: disable=client-method-missing-type-annotations,unused-argument
+    def get_run_summary(self, run: CodeRun) -> Any:  # pylint: disable=unused-argument
         # Not implemented
         return None
