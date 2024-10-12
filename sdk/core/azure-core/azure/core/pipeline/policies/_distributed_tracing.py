@@ -61,11 +61,10 @@ def _default_network_span_namer(http_request: HTTPRequestType) -> str:
     :returns: The string to use as network span name
     :rtype: str
     """
-    path = urllib.parse.urlparse(http_request.url).path
-    if not path:
-        path = "/"
-    return path
 
+    parsed_url = urllib.parse.urlparse(http_request.url)
+    authority = f"{parsed_url.hostname}:{parsed_url.port}"
+    return f"{http_request.method} {authority}"
 
 class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """The policy to create spans for Azure calls.

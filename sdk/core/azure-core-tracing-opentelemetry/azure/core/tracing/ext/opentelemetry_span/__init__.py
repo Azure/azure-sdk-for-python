@@ -70,6 +70,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         # TODO: Once we have additional supported versions, we should add a way to specify the version.
         self._schema_version = OpenTelemetrySchema.get_latest_version()
         self._attribute_mappings = OpenTelemetrySchema.get_attribute_mappings(self._schema_version)
+        self.name = name
+        self.previous_context = None
 
         if span:
             self._span_instance = span
@@ -228,7 +230,8 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     def __enter__(self) -> "OpenTelemetrySpan":
         # Start the span.
         if not isinstance(self.span_instance, NonRecordingSpan):
-            if self.kind == SpanKind.INTERNAL:
+            if self.kind == SpanKind.INTERNAL or self.kind == SpanKind.CLIENT:
+                self.previous_context = context.get_current()
                 # Suppress INTERNAL spans within this context.
                 self._context_tokens.append(context.attach(context.set_value(_SUPPRESSED_SPAN_FLAG, True)))
 
@@ -250,9 +253,13 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         if self._current_ctxt_manager:
             self._current_ctxt_manager.__exit__(exception_type, exception_value, traceback)
             self._current_ctxt_manager = None
+
         for token in self._context_tokens:
             context.detach(token)
             self._context_tokens.remove(token)
+
+        if self.previous_context:
+            context.attach(self.previous_context)
 
     def start(self) -> None:
         # Spans are automatically started at their creation with OpenTelemetry.

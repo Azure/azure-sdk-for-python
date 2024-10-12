@@ -23,6 +23,7 @@ USAGE:
 
 import os
 from azure.ai.client import AzureAIClient
+from azure.ai.client.models._enums import RunStepType
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.client.models import (
@@ -35,6 +36,8 @@ from azure.ai.client.models import (
 )
 
 from typing import Any
+
+from samples.tracing_helpers import configure_tracing
 
 
 # Create an Azure AI Client from a connection string, copied from your AI Studio project.
@@ -63,6 +66,9 @@ class MyEventHandler(AgentEventHandler):
     def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
 
+    def on_thread_message(self, message: "ThreadMessage") -> None:
+        print(f"Message status: {message.status}, Content: {message.content[0].as_dict()}")
+
     def on_error(self, data: str) -> None:
         print(f"An error occurred. Data: {data}")
 
@@ -72,27 +78,27 @@ class MyEventHandler(AgentEventHandler):
     def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
+scenario = os.path.basename(__file__)
+tracer = configure_tracing("agent-samples").get_tracer(scenario)
 
-with ai_client:
-    # Create an agent and run stream with event handler
-    agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant"
-    )
-    print(f"Created agent, agent ID {agent.id}")
+with tracer.start_as_current_span(scenario):
+    with ai_client:
+        # Create an agent and run stream with event handler
+        agent = ai_client.agents.create_agent(
+            model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant"
+        )
+        print(f"Created agent, agent ID {agent.id}")
 
-    thread = ai_client.agents.create_thread()
-    print(f"Created thread, thread ID {thread.id}")
+        thread = ai_client.agents.create_thread()
+        print(f"Created thread, thread ID {thread.id}")
 
-    message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
-    print(f"Created message, message ID {message.id}")
+        message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, tell me a joke")
+        print(f"Created message, message ID {message.id}")
 
-    with ai_client.agents.create_stream(
-        thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
-    ) as stream:
-        stream.until_done()
+        with ai_client.agents.create_stream(
+            thread_id=thread.id, assistant_id=agent.id, event_handler=MyEventHandler()
+        ) as stream:
+            stream.until_done()
 
-    ai_client.agents.delete_agent(agent.id)
-    print("Deleted agent")
-
-    messages = ai_client.agents.list_messages(thread_id=thread.id)
-    print(f"Messages: {messages}")
+        ai_client.agents.delete_agent(agent.id)
+        print("Deleted agent")
