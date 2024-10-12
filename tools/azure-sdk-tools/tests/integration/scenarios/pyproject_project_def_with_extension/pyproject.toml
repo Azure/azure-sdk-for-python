@@ -32,6 +32,12 @@ dependencies = [
 dynamic = ["version"]
 readme = "README.md"
 
+[tool.setuptools]
+ext-modules = [
+    {name = "crc64", sources = ["crc64/crc64module.c"], py_limited_api=true}
+]
+ext_package = "azure.keyvault.keys"
+
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys"
 

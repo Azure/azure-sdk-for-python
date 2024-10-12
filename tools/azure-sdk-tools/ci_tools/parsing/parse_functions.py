@@ -332,7 +332,7 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
 
     project_config = toml_dict.get("project", None)
 
-    # This stilted dynamic evaluation is necessary because the setuptools.configuration.read_configuration doesn't properly
+    # This stilted file evaluation is necessary because the setuptools.configuration.read_configuration doesn't properly
     # evaluate a valid pyproject.toml...or at least I am unable to get it to do so properly. I just get an empty dict
     # of values. Using read_configuration is preferred because it will handle all of the setuptools dynamic evaluation for us.
     # however, in my experience, I have been unable to make this happen.
@@ -344,7 +344,7 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
     # I really want this to be a straightforward "read from disk" without needing the package to actually be installed to build it, so we're just going to go after
     # the version.py if the `version` attribute isn't set in the project config.
     #
-    # Unfortunately our build phase will need to install _dependencies_ of the package prior to building, that will be taken care of in
+    # As mentioned before build phase will need to install _dependencies_ of the package prior to building, that will be taken care of in
     # build.py create_package()
     # - scbedd 1/26/2024 - 2/2/2024.
     parsed_version = project_config.get("version", None)
@@ -371,9 +371,18 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
     include_package_data = get_value_from_dict(toml_dict, "tool.setuptools.include-package-data", True)
     classifiers = project_config.get("classifiers", [])
     keywords = project_config.get("keywords", [])
-    # TODO we need to evaluate the setup.py and grab ext_package/ext_modules kwarg values
-    # ext_package = project_config.get("ext_package", None) TODO
-    # ext_modules = project_config.get("ext_modules", []) TODO
+
+    setuptools_config = toml_dict.get("tool.setuptools", {})
+    # as of setuptools 74.1 ext_packages and ext_modules are now present in tool.setuptools config namespace
+    ext_package = get_value_from_dict(setuptools_config, "ext_package", None)
+    ext_modules = get_value_from_dict(setuptools_config, "ext_modules", [])
+    ext_modules = [
+        Extension(
+            name=module['name'],
+            sources=module['sources'],
+        )
+        for module in ext_modules
+    ]
 
     # fmt: off
     return (
@@ -388,8 +397,8 @@ def parse_pyproject(pyproject_filename: str) -> Tuple[str, str, str, List[str], 
         include_package_data,   # bool,
         classifiers,            # List[str],
         keywords,               # List[str] ADJUSTED
-        "",                     # str
-        [],                     # List[Extension]
+        ext_package,            # str
+        ext_modules,            # List[Extension]
     )
     # fmt: on
 
@@ -418,13 +427,16 @@ def get_pyproject(folder: str) -> Optional[str]:
 
     return None
 
-def get_setup_py(folder: str) -> str:
+def get_setup_py(folder: str) -> Optional[str]:
     """
     Given a folder, attempts to find a setup.py file and return its location.
     """
     setup_filename = os.path.join(folder, "setup.py")
 
-    return setup_filename
+    if os.path.exists(setup_filename):
+        return setup_filename
+
+    return None
 
 def parse_setup(
     setup_filename_or_folder: str,
@@ -447,14 +459,17 @@ def parse_setup(
         <ext_modules>
     )
     """
-
+    resolved_filename = None
     if not os.path.isfile(setup_filename_or_folder):
-        setup_filename_or_folder = get_pyproject(setup_filename_or_folder) or get_setup_py(setup_filename_or_folder)
+        resolved_filename = get_pyproject(setup_filename_or_folder) or get_setup_py(setup_filename_or_folder)
 
-    if setup_filename_or_folder.endswith(".toml"):
-        return parse_pyproject(setup_filename_or_folder)
+    if not resolved_filename:
+        raise ValueError(f"Unable to find a setup.py or pyproject.toml in {setup_filename_or_folder}")
+
+    if resolved_filename.endswith(".toml"):
+        return parse_pyproject(resolved_filename)
     else:
-        return parse_setup_py(setup_filename_or_folder)
+        return parse_setup_py(resolved_filename)
 
 def get_pyproject_dict(pyproject_file: str) -> Dict[str, Any]:
     """
