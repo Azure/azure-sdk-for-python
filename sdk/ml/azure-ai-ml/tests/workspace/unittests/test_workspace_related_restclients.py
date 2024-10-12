@@ -190,8 +190,6 @@ class TestWorkspaceEntity:
         assert sdk_featurestore.managed_network is not None
         assert sdk_featurestore.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
         rules = sdk_featurestore.managed_network.outbound_rules
-        print("rules here")
-        print(rules[2].address_prefixes)
         assert isinstance(rules[0], FqdnDestination)
         assert rules[0].destination == "google.com"
 

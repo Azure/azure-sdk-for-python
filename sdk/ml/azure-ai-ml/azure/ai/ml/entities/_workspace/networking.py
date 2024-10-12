@@ -259,7 +259,7 @@ class ManagedNetwork:
 
     :param isolation_mode: Isolation of the managed network, defaults to Disabled.
     :type isolation_mode: str
-    :param firewall_sku: Firewall sku for FQDN rules on managed network, defaults to Standard.
+    :param firewall_sku: Firewall sku for FQDN rules on managed network.
     :type firewall_sku: str
     :param outbound_rules: List of outbound rules for the managed network.
     :type outbound_rules: List[~azure.ai.ml.entities.OutboundRule]
@@ -279,13 +279,13 @@ class ManagedNetwork:
         *,
         isolation_mode: str = IsolationMode.DISABLED,
         outbound_rules: Optional[List[OutboundRule]] = None,
-        network_id: Optional[str] = None,
         firewall_sku: Optional[str] = None,
+        network_id: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         self.isolation_mode = isolation_mode
-        self.network_id = network_id
         self.firewall_sku = firewall_sku
+        self.network_id = network_id
         self.outbound_rules = outbound_rules
         self.status = kwargs.pop("status", None)
 

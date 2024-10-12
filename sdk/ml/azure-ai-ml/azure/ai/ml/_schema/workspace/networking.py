@@ -199,7 +199,17 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
     @post_load
     def make(self, data, **kwargs):
         outbound_rules = data.get("outbound_rules", False)
+
+        firewall_sku = data.get("firewall_sku", False)
+        firewall_sku_value = _snake_to_camel(data["firewall_sku"]) if firewall_sku else None
+
         if outbound_rules:
-            return ManagedNetwork(isolation_mode=_snake_to_camel(data["isolation_mode"]), outbound_rules=outbound_rules)
+            return ManagedNetwork(
+                isolation_mode=_snake_to_camel(data["isolation_mode"]),
+                outbound_rules=outbound_rules,
+                firewall_sku=firewall_sku_value,
+            )
         else:
-            return ManagedNetwork(isolation_mode=_snake_to_camel(data["isolation_mode"]))
+            return ManagedNetwork(
+                isolation_mode=_snake_to_camel(data["isolation_mode"]), firewall_sku=firewall_sku_value
+            )
