@@ -3,7 +3,7 @@ import argparse, sys, os, logging, glob, shutil
 from subprocess import run
 
 from typing import List, Optional
-from ci_tools.functions import discover_targeted_packages, process_requires, get_pip_list_output,
+from ci_tools.functions import discover_targeted_packages, process_requires, get_pip_list_output
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.variables import DEFAULT_BUILD_ID, str_to_bool, discover_repo_root, get_artifact_directory
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
