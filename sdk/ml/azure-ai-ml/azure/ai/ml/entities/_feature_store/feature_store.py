@@ -167,8 +167,6 @@ class FeatureStore(Workspace):
             return None
 
         workspace_object = Workspace._from_rest_object(rest_obj)
-        print("featurestore")
-        print(workspace_object.managed_network.isolation_mode)
         if workspace_object is not None:
             return FeatureStore(
                 name=str(workspace_object.name),

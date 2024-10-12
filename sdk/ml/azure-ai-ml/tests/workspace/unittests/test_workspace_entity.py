@@ -89,7 +89,6 @@ class TestWorkspaceEntity:
         assert "contoso.com" in rules[1].fqdns
         assert "contoso2.com" in rules[1].fqdns
 
-        print(rules[2].name)
         assert rules[2].name == "servicetag-w-prefixes"
         assert rules[2].service_tag == "sometag"
         assert rules[2].protocol == "TCP"
