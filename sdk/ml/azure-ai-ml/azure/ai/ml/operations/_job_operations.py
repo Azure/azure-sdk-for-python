@@ -73,6 +73,7 @@ from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.base_job import _BaseJob
+from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
 from azure.ai.ml.entities._job.finetuning.finetuning_job import FineTuningJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
@@ -1124,6 +1125,17 @@ class JobOperations(_ScopeDependentOperations):
             if job.validation_data is not None:
                 self._resolve_job_input(job.validation_data, job._base_path)
 
+    def _resolve_distillation_job_inputs(self, job: DistillationJob) -> None:
+        """This method resolves the inputs for Distillation jobs.
+
+        :param job: the job resource entity
+        :type job: DistillationJob
+        """
+        if isinstance(job, DistillationJob):
+            self._resolve_job_input(job.training_data, job._base_path)
+            if job.validation_data is not None:
+                self._resolve_job_input(job.validation_data, job._base_path)
+
     def _resolve_azureml_id(self, job: Job) -> Job:
         """This method converts ARM id to name or name:version for nested
         entities.
@@ -1347,6 +1359,8 @@ class JobOperations(_ScopeDependentOperations):
         elif isinstance(job, PipelineJob):
             job = self._resolve_arm_id_for_pipeline_job(job, resolver)
         elif isinstance(job, FineTuningJob):
+            pass
+        elif isinstance(job, DistillationJob):
             pass
         else:
             msg = f"Non supported job type: {type(job)}"
