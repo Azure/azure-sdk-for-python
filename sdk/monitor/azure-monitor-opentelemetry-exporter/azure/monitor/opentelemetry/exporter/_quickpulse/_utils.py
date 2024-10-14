@@ -16,17 +16,18 @@ from opentelemetry.trace import SpanKind
 from opentelemetry.util.types import Attributes
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
-    _QuickpulseTelemetryType,
     _QUICKPULSE_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     DerivedMetricInfo,
     DocumentIngress,
+    DocumentType,
     Exception as ExceptionDocument,
     MetricPoint,
     MonitoringDataPoint,
     RemoteDependency as RemoteDependencyDocument,
     Request as RequestDocument,
+    TelemetryType,
     Trace as TraceDocument,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._state import (
@@ -85,7 +86,7 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
     url = _get_url(span_kind, span.attributes)
     if span_kind in (SpanKind.CLIENT, SpanKind.PRODUCER, SpanKind.INTERNAL):
         document = RemoteDependencyDocument(
-            document_type=_QuickpulseTelemetryType.RemoteDependency.value,
+            document_type=DocumentType.REMOTE_DEPENDENCY,
             name=span.name,
             command_name=url,
             result_code=str(status_code),
@@ -97,7 +98,7 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
         else:
             code = str(grpc_status_code)
         document = RequestDocument(
-            document_type=_QuickpulseTelemetryType.Request.value,
+            document_type=DocumentType.REQUEST,
             name=span.name,
             url=url,
             response_code=code,
@@ -111,13 +112,13 @@ def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, Trac
     exc_message = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)  # type: ignore
     if exc_type is not None or exc_message is not None:
         document = ExceptionDocument(
-            document_type=_QuickpulseTelemetryType.Exception.value,
+            document_type=DocumentType.EXCEPTION,
             exception_type=str(exc_type),
             exception_message=str(exc_message),
         )
     else:
         document = TraceDocument(
-            document_type=_QuickpulseTelemetryType.Trace.value,
+            document_type=DocumentType.TRACE,
             message=log_data.log_record.body,
         )
     return document
@@ -157,18 +158,21 @@ def _get_url(span_kind: SpanKind, attributes: Attributes) -> str:
 
 
 def _update_filter_configuration(etag: str, config_bytes: bytes):
+    seen_ids = set()
     # config is a byte string that when decoded is a json
     config = json.loads(config_bytes.decode("utf-8"))
-    # The keys in metric_filters will be of type _constants._QuickpulseTelemetryType
-    metric_filters: Dict[str, List[DerivedMetricInfo]] = {}
+    metric_filters: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
     for metric_filter in config.get("Metrics", []):
-        # TODO: Test instantiating like this works
         metric_info = DerivedMetricInfo.from_dict(metric_filter)
-        telemetry_type: str = metric_info.telemetry_type
+        # Skip duplicate ids
+        if metric_info.id in seen_ids:
+            continue
+        telemetry_type: TelemetryType = TelemetryType(metric_info.telemetry_type)
         # TODO: Filter out invalid configs: telemetry type, operand
         derived_metrics = metric_filters.get(telemetry_type, [])
         derived_metrics.append(metric_info)
         metric_filters[telemetry_type] = derived_metrics
+        seen_ids.add(metric_info.id)
     _set_quickpulse_metric_filters(metric_filters)
     # Update new etag
     _set_quickpulse_etag(etag)

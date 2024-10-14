@@ -12,8 +12,8 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     DerivedMetricInfo,
     DocumentIngress,
+    TelemetryType,
 )
-
 
 class _QuickpulseState(Enum):
     """Current state of quickpulse service.
@@ -118,11 +118,11 @@ def _get_quickpulse_etag() -> str:
     return _QUICKPULSE_ETAG
 
 
-def _set_quickpulse_metric_filters(filters: Dict[str, List[DerivedMetricInfo]]) -> None:
+def _set_quickpulse_metric_filters(filters: Dict[TelemetryType, List[DerivedMetricInfo]]) -> None:
     # pylint: disable=global-statement
     global _QUICKPULSE_METRIC_FILTERS
     _QUICKPULSE_METRIC_FILTERS = filters
 
 
-def _get_quickpulse_metric_filters() -> Dict[str, List[DerivedMetricInfo]]:
+def _get_quickpulse_metric_filters() -> Dict[TelemetryType, List[DerivedMetricInfo]]:
     return _QUICKPULSE_METRIC_FILTERS

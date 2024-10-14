@@ -44,14 +44,6 @@ _POST_INTERVAL_SECONDS = 1
 _LONG_PING_INTERVAL_SECONDS = 60
 _POST_CANCEL_INTERVAL_SECONDS = 20
 
-# Live metrics data types
-class _QuickpulseTelemetryType(Enum):
-    Request = "Request"
-    RemoteDependency = "RemoteDependency"
-    Exception = "Exception"
-    Event = "Event"
-    Trace = "Trace"
-
 # Response Headers
 
 _QUICKPULSE_ETAG_HEADER_NAME = "x-ms-qps-configuration-etag"
