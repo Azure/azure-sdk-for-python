@@ -70,7 +70,8 @@ class VirtualNetworkPreparer(AzureMgmtPreparer):
             'registration_virtual_network': registration_network,
             'resolution_virtual_network': resolution_network
         }
-
+        
+@pytest.mark.live_test_only
 class TestMgmtDns(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
