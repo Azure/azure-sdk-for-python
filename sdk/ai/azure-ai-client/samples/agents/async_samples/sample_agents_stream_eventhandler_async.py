@@ -30,6 +30,7 @@ from azure.identity import DefaultAzureCredential
 
 import os
 
+
 class MyEventHandler(AsyncAgentEventHandler):
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         for content_part in delta.delta.content:

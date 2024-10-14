@@ -31,6 +31,7 @@ import os
 
 from user_async_functions import user_async_functions
 
+
 async def main():
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -62,7 +63,6 @@ async def main():
             model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant", tools=functions.definitions
         )
         print(f"Created agent, agent ID: {agent.id}")
-        print("Created assistant client")
 
         # Create thread for communication
         thread = await ai_client.agents.create_thread()

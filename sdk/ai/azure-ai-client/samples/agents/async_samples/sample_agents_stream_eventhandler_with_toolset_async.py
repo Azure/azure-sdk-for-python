@@ -24,7 +24,6 @@ import asyncio
 from typing import Any
 
 from azure.ai.client.aio import AzureAIClient
-from azure.ai.client.models import _models
 from azure.ai.client.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, SubmitToolOutputsAction, ThreadMessage, ThreadRun
 from azure.ai.client.models import AsyncAgentEventHandler, AsyncFunctionTool, AsyncToolSet
 from azure.ai.client.operations._patch import AgentsOperations
@@ -33,6 +32,7 @@ from azure.identity import DefaultAzureCredential
 import os
 
 from user_async_functions import user_async_functions
+
 
 class MyEventHandler(AsyncAgentEventHandler):
 
@@ -56,9 +56,6 @@ class MyEventHandler(AsyncAgentEventHandler):
 
         if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
             await self._handle_submit_tool_outputs(run)
-
-    async def on_run_step(self, step: "RunStep") -> None:
-        print(f"RunStep type: {step.type}, Status: {step.status}")
 
     async def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
@@ -96,6 +93,7 @@ class MyEventHandler(AsyncAgentEventHandler):
                 event_handler=self
         ) as stream:
                 await stream.until_done()
+
 
 async def main():
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
