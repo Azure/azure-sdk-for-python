@@ -9,6 +9,8 @@ extends:
         - PythonVersion=3.11.*
       MatrixReplace:
         - TestSamples=.*/true
+      UseFederatedAuth: true
+      ServiceConnection: azure-sdk-tests-openai
       SupportedClouds: 'Public'
       EnvVars:
         AZ_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
