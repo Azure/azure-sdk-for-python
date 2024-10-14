@@ -4,6 +4,7 @@
 """This includes enums and classes for exceptions for use in azure-ai-evaluation."""
 
 from enum import Enum
+from typing import Optional
 
 from azure.core.exceptions import AzureError
 
@@ -20,6 +21,7 @@ class ErrorCategory(Enum):
     * RESOURCE_NOT_FOUND -> Resource could not be found
     * FAILED_EXECUTION -> Execution failed
     * SERVICE_UNAVAILABLE -> Service is unavailable
+    * MISSING_PACKAGE -> Required package is missing
     * UNKNOWN -> Undefined placeholder. Avoid using.
     """
 
@@ -30,6 +32,7 @@ class ErrorCategory(Enum):
     RESOURCE_NOT_FOUND = "RESOURCE NOT FOUND"
     FAILED_EXECUTION = "FAILED_EXECUTION"
     SERVICE_UNAVAILABLE = "SERVICE UNAVAILABLE"
+    MISSING_PACKAGE = "MISSING PACKAGE"
     UNKNOWN = "UNKNOWN"
 
 
@@ -74,7 +77,7 @@ class ErrorTarget(Enum):
 
 
 class EvaluationException(AzureError):
-    """The base class for all exceptions raised in pazure-ai-evaluation. If there is a need to define a custom
+    """The base class for all exceptions raised in azure-ai-evaluation. If there is a need to define a custom
     exception type, that custom exception type should extend from this class.
 
     :param message: A message describing the error. This is the error message the user will see.
@@ -83,17 +86,17 @@ class EvaluationException(AzureError):
     :type internal_message: str
     :param target: The name of the element that caused the exception to be thrown.
     :type target: ~azure.ai.evaluation._exceptions.ErrorTarget
-    :param error_category: The error category, defaults to Unknown.
-    :type error_category: ~azure.ai.evaluation._exceptionsErrorCategory
-    :param error: The original exception if any.
-    :type error: Exception
+    :param category: The error category, defaults to Unknown.
+    :type category: ~azure.ai.evaluation._exceptions.ErrorCategory
+    :param blame: The source of blame for the error, defaults to Unknown.
+    :type balance: ~azure.ai.evaluation._exceptions.ErrorBlame
     """
 
     def __init__(
         self,
         message: str,
-        internal_message: str,
         *args,
+        internal_message: Optional[str] = None,
         target: ErrorTarget = ErrorTarget.UNKNOWN,
         category: ErrorCategory = ErrorCategory.UNKNOWN,
         blame: ErrorBlame = ErrorBlame.UNKNOWN,
