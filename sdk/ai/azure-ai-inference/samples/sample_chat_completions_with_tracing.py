@@ -148,7 +148,7 @@ def chat_completion_with_function_call(key, endpoint):
 
 def main():
     # [START instrument_inferencing]
-    from azure.core.tracing.ai.inference import AIInferenceInstrumentor
+    from azure.ai.inference.tracing import AIInferenceInstrumentor
     # Instrument AI Inference API
     AIInferenceInstrumentor().instrument()
     # [END instrument_inferencing]

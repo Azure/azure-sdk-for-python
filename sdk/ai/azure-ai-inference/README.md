@@ -573,7 +573,7 @@ Use the AIInferenceInstrumentor to instrument the Azure AI Inferencing API for L
 <!-- SNIPPET:sample_chat_completions_with_tracing.instrument_inferencing -->
 
 ```python
-from azure.core.tracing.ai.inference import AIInferenceInstrumentor
+from azure.ai.inference.tracing import AIInferenceInstrumentor
 # Instrument AI Inference API
 AIInferenceInstrumentor().instrument()
 ```

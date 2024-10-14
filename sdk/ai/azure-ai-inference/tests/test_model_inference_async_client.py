@@ -6,6 +6,7 @@ import os
 import json
 import azure.ai.inference as sdk
 import azure.ai.inference.aio as async_sdk
+from azure.ai.inference.tracing import AIInferenceInstrumentor
 
 from model_inference_test_base import (
     ModelClientTestBase,
@@ -717,13 +718,13 @@ class TestModelAsyncClient(ModelClientTestBase):
     async def test_chat_completion_async_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_async_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
-        sdk.AIInferenceInstrumentor().instrument()
+        AIInferenceInstrumentor().instrument()
         response = await client.complete(
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
@@ -759,4 +760,4 @@ class TestModelAsyncClient(ModelClientTestBase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
-        sdk.AIInferenceInstrumentor().uninstrument()
+        AIInferenceInstrumentor().uninstrument()

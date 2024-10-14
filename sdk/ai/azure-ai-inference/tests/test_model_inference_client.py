@@ -5,6 +5,7 @@
 import os
 import json
 import azure.ai.inference as sdk
+from azure.ai.inference.tracing import AIInferenceInstrumentor
 
 from model_inference_test_base import (
     ModelClientTestBase,
@@ -836,17 +837,17 @@ class TestModelClient(ModelClientTestBase):
     def test_instrumentation(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         client = self._create_chat_client(**kwargs)
         exception_caught = False
         try:
-            assert sdk.AIInferenceInstrumentor().is_instrumented() == False
-            sdk.AIInferenceInstrumentor().instrument()
-            assert sdk.AIInferenceInstrumentor().is_instrumented() == True
-            sdk.AIInferenceInstrumentor().uninstrument()
-            assert sdk.AIInferenceInstrumentor().is_instrumented() == False
+            assert AIInferenceInstrumentor().is_instrumented() == False
+            AIInferenceInstrumentor().instrument()
+            assert AIInferenceInstrumentor().is_instrumented() == True
+            AIInferenceInstrumentor().uninstrument()
+            assert AIInferenceInstrumentor().is_instrumented() == False
         except RuntimeError as e:
             exception_caught = True
             print(e)
@@ -858,20 +859,20 @@ class TestModelClient(ModelClientTestBase):
     def test_instrumenting_twice_causes_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         client = self._create_chat_client(**kwargs)
         exception_caught = False
         instrumented_once = False
         try:
-            sdk.AIInferenceInstrumentor().instrument()
+            AIInferenceInstrumentor().instrument()
             instrumented_once = True
-            sdk.AIInferenceInstrumentor().instrument()
+            AIInferenceInstrumentor().instrument()
         except RuntimeError as e:
             exception_caught = True
             print(e)
-        sdk.AIInferenceInstrumentor().uninstrument()
+        AIInferenceInstrumentor().uninstrument()
         client.close()
         assert instrumented_once == True
         assert exception_caught == True
@@ -881,13 +882,13 @@ class TestModelClient(ModelClientTestBase):
     def test_uninstrumenting_uninstrumented_causes_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         client = self._create_chat_client(**kwargs)
         exception_caught = False
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             exception_caught = True
             print(e)
@@ -899,17 +900,17 @@ class TestModelClient(ModelClientTestBase):
     def test_uninstrumenting_twice_causes_exception(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         client = self._create_chat_client(**kwargs)
         exception_caught = False
         uninstrumented_once = False
         try:
-            sdk.AIInferenceInstrumentor().instrument()
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().instrument()
+            AIInferenceInstrumentor().uninstrument()
             uninstrumented_once = True
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             exception_caught = True
             print(e)
@@ -922,13 +923,13 @@ class TestModelClient(ModelClientTestBase):
     def test_chat_completion_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
-        sdk.AIInferenceInstrumentor().instrument()
+        AIInferenceInstrumentor().instrument()
         response = client.complete(
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
@@ -964,20 +965,20 @@ class TestModelClient(ModelClientTestBase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
-        sdk.AIInferenceInstrumentor().uninstrument()
+        AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completion_tracing_content_recording_enabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
-        sdk.AIInferenceInstrumentor().instrument()
+        AIInferenceInstrumentor().instrument()
         response = client.complete(
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
@@ -1027,20 +1028,20 @@ class TestModelClient(ModelClientTestBase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
-        sdk.AIInferenceInstrumentor().uninstrument()
+        AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completion_streaming_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
-        sdk.AIInferenceInstrumentor().instrument()
+        AIInferenceInstrumentor().instrument()
         response = client.complete(
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
@@ -1083,20 +1084,20 @@ class TestModelClient(ModelClientTestBase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
-        sdk.AIInferenceInstrumentor().uninstrument()
+        AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completion_streaming_tracing_content_recording_enabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
-        sdk.AIInferenceInstrumentor().instrument()
+        AIInferenceInstrumentor().instrument()
         response = client.complete(
             messages=[
                 sdk.models.SystemMessage(content="You are a helpful assistant."),
@@ -1153,14 +1154,14 @@ class TestModelClient(ModelClientTestBase):
         ]
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
-        sdk.AIInferenceInstrumentor().uninstrument()
+        AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completion_with_function_call_tracing_content_recording_enabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         import json
@@ -1170,7 +1171,7 @@ class TestModelClient(ModelClientTestBase):
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
-        sdk.AIInferenceInstrumentor().instrument()
+        AIInferenceInstrumentor().instrument()
 
         def get_weather(city: str) -> str:
             if city == "Seattle":
@@ -1321,14 +1322,14 @@ class TestModelClient(ModelClientTestBase):
         events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)        
         assert events_match == True
 
-        sdk.AIInferenceInstrumentor().uninstrument()
+        AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completion_with_function_call_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         import json
@@ -1338,7 +1339,7 @@ class TestModelClient(ModelClientTestBase):
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
-        sdk.AIInferenceInstrumentor().instrument()
+        AIInferenceInstrumentor().instrument()
 
         def get_weather(city: str) -> str:
             if city == "Seattle":
@@ -1441,14 +1442,14 @@ class TestModelClient(ModelClientTestBase):
         events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)        
         assert events_match == True
 
-        sdk.AIInferenceInstrumentor().uninstrument()
+        AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completion_with_function_call_streaming_tracing_content_recording_enabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         import json
@@ -1458,7 +1459,7 @@ class TestModelClient(ModelClientTestBase):
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "True")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
-        sdk.AIInferenceInstrumentor().instrument()
+        AIInferenceInstrumentor().instrument()
 
         def get_weather(city: str) -> str:
             if city == "Seattle":
@@ -1647,14 +1648,14 @@ class TestModelClient(ModelClientTestBase):
         events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)        
         assert events_match == True
 
-        sdk.AIInferenceInstrumentor().uninstrument()
+        AIInferenceInstrumentor().uninstrument()
 
     @ServicePreparerChatCompletions()
     @recorded_by_proxy
     def test_chat_completion_with_function_call_streaming_tracing_content_recording_disabled(self, **kwargs):
         # Make sure code is not instrumented due to a previous test exception
         try:
-            sdk.AIInferenceInstrumentor().uninstrument()
+            AIInferenceInstrumentor().uninstrument()
         except RuntimeError as e:
             pass
         import json
@@ -1664,7 +1665,7 @@ class TestModelClient(ModelClientTestBase):
         self.modify_env_var(CONTENT_TRACING_ENV_VARIABLE, "False")
         client = self._create_chat_client(**kwargs)
         processor, exporter = self.setup_memory_trace_exporter()
-        sdk.AIInferenceInstrumentor().instrument()
+        AIInferenceInstrumentor().instrument()
 
         def get_weather(city: str) -> str:
             if city == "Seattle":
@@ -1805,4 +1806,4 @@ class TestModelClient(ModelClientTestBase):
         events_match = GenAiTraceVerifier().check_span_events(spans[1], expected_events)        
         assert events_match == True
 
-        sdk.AIInferenceInstrumentor().uninstrument()
+        AIInferenceInstrumentor().uninstrument()

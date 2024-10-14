@@ -9,7 +9,6 @@
 from ._patch import ChatCompletionsClient
 from ._patch import EmbeddingsClient
 from ._patch import ImageEmbeddingsClient
-from ._patch import AIInferenceInstrumentor
 from ._version import VERSION
 
 __version__ = VERSION
@@ -23,7 +22,6 @@ __all__ = [
     "ChatCompletionsClient",
     "EmbeddingsClient",
     "ImageEmbeddingsClient",
-    "AIInferenceInstrumentor",
 ]
 
 
