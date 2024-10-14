@@ -271,9 +271,16 @@ def _validate_typed_dict(o: object, t: Type[T_TypedDict]) -> T_TypedDict:
 
     return cast(T_TypedDict, o)
 
-def retrieve_content_type(assistant_messages) -> str:
-    if len(assistant_messages) > 0:
-        for item in assistant_messages:
+def retrieve_content_type(messages) -> str:
+    """Get the content type for service payload.
+
+    :param messages: The list of message to be annotation by evaluation service 
+    :type messages: list
+    :return: A text representing a content type. Example text, or images
+    :rtype: str
+    """
+    if len(messages) > 0:
+        for item in messages:
             if "content" in item:
                 for content in item["content"]:
                     if content.get("type") == "image_url":

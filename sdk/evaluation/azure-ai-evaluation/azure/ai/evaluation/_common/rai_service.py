@@ -450,7 +450,7 @@ def generate_payload_multimodal(content_type: str, contents: str, metric: str) -
     """Generate the payload for the annotation request
     :param content_type: The type of the content representing multimodal or images.
     :type content_type: str
-    :param messages: The normalized list of messages (conversation) to be entered as the "Contents" in the payload.
+    :param messages: The normalized list of messages to be entered as the "Contents" in the payload.
     :type messages: str
     :param metric: The evaluation metric to use. This determines the task type, and whether a "MetricList" is needed
         in the payload.
@@ -463,12 +463,7 @@ def generate_payload_multimodal(content_type: str, contents: str, metric: str) -
     if metric == EvaluationMetrics.PROTECTED_MATERIAL:
         task = Tasks.PROTECTED_MATERIAL
         include_metric = False
-    elif metric == _InternalEvaluationMetrics.ECI:
-        task = _InternalAnnotationTasks.ECI
-        include_metric = False
-    elif metric == EvaluationMetrics.XPIA:
-        task = Tasks.XPIA
-        include_metric = False
+    
     return (
         {
             "ContentType": content_type,
@@ -486,8 +481,8 @@ def generate_payload_multimodal(content_type: str, contents: str, metric: str) -
 
 async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, token: str) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
-    :param query: The messages aka converstation to evaluate.
-    :type query: List[Dict]
+    :param messages: The normalized list of messages to be entered as the "Contents" in the payload.
+    :type messages: str
     :param metric: The evaluation metric to use.
     :type metric: str
     :param rai_svc_url: The Responsible AI service URL.
@@ -497,6 +492,7 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
     :return: The operation ID.
     :rtype: str
     """
+    ## handle json payload and payload from inference sdk strongly type messages
     if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
         filtered_messages = [message for message in messages if not isinstance(message, SystemMessage)]
         assistant_messages = [message for message in messages if isinstance(message, AssistantMessage)]
@@ -510,6 +506,8 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
         assistant_messages = [message for message in messages if message["role"] == "assistant"]
         content_type = retrieve_content_type(assistant_messages)
         payload = generate_payload_multimodal(content_type, filtered_messages, metric)
+    
+    ## calling rai service for annotation
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token)
     async with get_async_http_client() as client:
@@ -527,8 +525,8 @@ async def evaluate_with_rai_service_multimodal(
     messages, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
 ):
     """ "Evaluate the content safety of the response using Responsible AI service
-       :param query: The list of messages (conversation) to evaluate.
-       :type query: list
+       :param messages: The normalized list of messages.
+       :type messages: str
        :param metric_name: The evaluation metric to use.
        :type metric_name: str
        :param project_scope: The Azure AI project scope details.

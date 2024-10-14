@@ -115,12 +115,11 @@ class ContentSafetyMultimodalEvaluator:
         """
         Evaluates content-safety metrics for list of messages comprising "chat" conversation.
         :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
-        :paramtype messages: List[Dict]
+        :paramtype messages: dict
         :return: The scores for Chat scenario.
         :rtype: dict
         """
         self._validate_messages(messages)
-        # per_conversation_results = []
         current_conversation_result = {}
         if self._parallel:
             with ThreadPoolExecutor() as executor:
@@ -136,8 +135,7 @@ class ContentSafetyMultimodalEvaluator:
             for evaluator in self._evaluators:
                 result = self._evaluate_messages(messages, evaluator)
                 current_conversation_result.update(result)
-        # per_conversation_results.append(current_conversation_result)
-        # aggregated = self._aggregate_results(per_conversation_results)
+        
         aggregated = self._aggregate_results(current_conversation_result)
         return aggregated
     
