@@ -82,9 +82,6 @@ with ai_client:
     print(f"Created message, ID: {message.id}")
 
     # Create and process assistant run in thread with tools
-    # Note: If vector store has been created just before this, there can be need to poll the status of vector store to be ready for information retrieval
-    #       This can be done by calling `assistant_client.get_vector_store(vector_store_id)` and checking the status of vector store
-    #       We may want to add conveniency around this
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Run finished with status: {run.status}")
 
