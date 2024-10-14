@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed an issue where if a port was specified as a part of the fully qualified namespace, negotation failed ([37547]https://github.com/Azure/azure-sdk-for-python/issues/37547)
 
 ### Other Changes
 
@@ -14,6 +15,7 @@
 
 ### Bugs Fixed
 - Implemented backpressure for  async consumer  to address a memory leak issue. ([#36398](https://github.com/Azure/azure-sdk-for-python/issues/36398))
+
 
 ## 5.12.1 (2024-06-11)
 
