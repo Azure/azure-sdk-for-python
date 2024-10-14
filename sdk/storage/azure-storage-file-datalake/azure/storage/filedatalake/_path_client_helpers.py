@@ -15,10 +15,12 @@ from ._serialize import (
     convert_datetime_to_rfc1123,
     get_access_conditions,
     get_cpk_info,
+    get_lease_id,
     get_mod_conditions,
     get_path_http_headers,
+    get_source_mod_conditions
 )
-from ._shared.response_handlers import return_response_headers
+from ._shared.response_handlers import return_headers_and_deserialized, return_response_headers
 
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
@@ -101,7 +103,8 @@ def _delete_path_options(paginated: Optional[bool], **kwargs) -> Dict[str, Any]:
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
         'cls': return_response_headers,
-        'timeout': kwargs.pop('timeout', None)}
+        'timeout': kwargs.pop('timeout', None)
+    }
     options.update(kwargs)
     return options
 
@@ -124,10 +127,70 @@ def _set_access_control_options(
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,
         'timeout': kwargs.pop('timeout', None),
-        'cls': return_response_headers}
+        'cls': return_response_headers
+    }
     options.update(kwargs)
     return options
 
 
 def _get_access_control_options(upn: Optional[bool] = None, **kwargs: Any) -> Dict[str, Any]:
-    pass
+    access_conditions = get_access_conditions(kwargs.pop('lease', None))
+    mod_conditions = get_mod_conditions(kwargs)
+
+    options = {
+        'action': 'getAccessControl',
+        'upn': upn if upn else False,
+        'lease_access_conditions': access_conditions,
+        'modified_access_conditions': mod_conditions,
+        'timeout': kwargs.pop('timeout', None),
+        'cls': return_response_headers
+    }
+    options.update(kwargs)
+    return options
+
+
+def _set_access_control_recursive_options(mode: str, acl: str, **kwargs: Any) -> Dict[str, Any]:
+    options = {
+        'mode': mode,
+        'force_flag': kwargs.pop('continue_on_failure', None),
+        'timeout': kwargs.pop('timeout', None),
+        'continuation': kwargs.pop('continuation_token', None),
+        'max_records': kwargs.pop('batch_size', None),
+        'acl': acl,
+        'cls': return_headers_and_deserialized
+    }
+    options.update(kwargs)
+    return options
+
+
+def _rename_path_options(
+    rename_source: str,
+    content_settings: Optional[ContentSettings] = None,
+    metadata: Optional[Dict[str, str]] = None,
+    **kwargs: Any
+) -> Dict[str, Any]:
+    if metadata or kwargs.pop('permissions', None) or kwargs.pop('umask', None):
+        raise ValueError("metadata, permissions, umask is not supported for this operation")
+
+    access_conditions = get_access_conditions(kwargs.pop('lease', None))
+    source_lease_id = get_lease_id(kwargs.pop('source_lease', None))
+    mod_conditions = get_mod_conditions(kwargs)
+    source_mod_conditions = get_source_mod_conditions(kwargs)
+
+    path_http_headers = None
+    if content_settings:
+        path_http_headers = get_path_http_headers(content_settings)
+
+    options = {
+        'rename_source': rename_source,
+        'path_http_headers': path_http_headers,
+        'lease_access_conditions': access_conditions,
+        'source_lease_id': source_lease_id,
+        'modified_access_conditions': mod_conditions,
+        'source_modified_access_conditions': source_mod_conditions,
+        'timeout': kwargs.pop('timeout', None),
+        'mode': 'legacy',
+        'cls': return_response_headers
+    }
+    options.update(kwargs)
+    return options

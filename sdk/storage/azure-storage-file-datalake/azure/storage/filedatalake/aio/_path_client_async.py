@@ -5,9 +5,10 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
+import re
 from datetime import datetime
 from typing import (
-    Any, Dict, Optional, Union,
+    Any, Callable, Dict, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 
@@ -34,7 +35,9 @@ from .._path_client_helpers import (
     _format_url,
     _get_access_control_options,
     _parse_url,
-    _set_access_control_options
+    _rename_path_options,
+    _set_access_control_options,
+    _set_access_control_recursive_options
 )
 
 if TYPE_CHECKING:
@@ -447,8 +450,7 @@ class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_access_control_recursive(self, acl, **kwargs):
-        # type: (str, **Any) -> AccessControlChangeResult
+    async def set_access_control_recursive(self, acl: str, **kwargs: Any) -> AccessControlChangeResult:
         """
         Sets the Access Control on a path and sub-paths.
 
@@ -501,8 +503,7 @@ class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
                                                        max_batches=max_batches)
 
     @distributed_trace_async
-    async def update_access_control_recursive(self, acl, **kwargs):
-        # type: (str, **Any) -> AccessControlChangeResult
+    async def update_access_control_recursive(self, acl: str, **kwargs: Any) -> AccessControlChangeResult:
         """
         Modifies the Access Control on a path and sub-paths.
 
@@ -551,15 +552,12 @@ class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
 
         progress_hook = kwargs.pop('progress_hook', None)
         max_batches = kwargs.pop('max_batches', None)
-        options = self._set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
+        options = _set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
         return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                        max_batches=max_batches)
 
     @distributed_trace_async
-    async def remove_access_control_recursive(self,
-                                              acl,
-                                              **kwargs):
-        # type: (str, **Any) -> AccessControlChangeResult
+    async def remove_access_control_recursive(self, acl: str, **kwargs: Any) -> AccessControlChangeResult:
         """
         Removes the Access Control on a path and sub-paths.
 
@@ -606,11 +604,15 @@ class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
 
         progress_hook = kwargs.pop('progress_hook', None)
         max_batches = kwargs.pop('max_batches', None)
-        options = self._set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
+        options = _set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
         return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                        max_batches=max_batches)
 
-    async def _set_access_control_internal(self, options, progress_hook, max_batches=None):
+    async def _set_access_control_internal(
+        self, options: Dict[str, Any],
+        progress_hook: Optional[Callable[[AccessControlChanges], None]],
+        max_batches: Optional[int] = None
+    ) -> AccessControlChangeResult:
         try:
             continue_on_failure = options.get('force_flag')
             total_directories_successful = 0
@@ -672,6 +674,30 @@ class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
             error.continuation_token = last_continuation_token
             raise error
 
+    def _parse_rename_path(self, new_name: str) -> Tuple[str, str, Optional[str]]:
+        new_name = new_name.strip('/')
+        new_file_system = new_name.split('/')[0]
+        new_path = new_name[len(new_file_system):].strip('/')
+
+        new_sas = None
+        sas_split = new_path.split('?')
+        # If there is a ?, there could be a SAS token
+        if len(sas_split) > 0:
+            # Check last element for SAS by looking for sv= and sig=
+            potential_sas = sas_split[-1]
+            if re.search(r'sv=\d{4}-\d{2}-\d{2}', potential_sas) and 'sig=' in potential_sas:
+                new_sas = potential_sas
+                # Remove SAS from new path
+                new_path = new_path[:-(len(new_sas) + 1)]
+
+        if not new_sas:
+            if not self._raw_credential and new_file_system != self.file_system_name:
+                raise ValueError("please provide the sas token for the new file")
+            if not self._raw_credential and new_file_system == self.file_system_name:
+                new_sas = self._query_str.strip('?')
+
+        return new_file_system, new_path, new_sas
+
     async def _rename_path(self, rename_source: str, **kwargs: Any) -> Dict[str, Any]:
         """
         Rename directory or file
@@ -731,9 +757,7 @@ class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
         :returns: response dict containing information about the renamed path.
         :rtype: dict[str, Any]
         """
-        options = self._rename_path_options(
-            rename_source,
-            **kwargs)
+        options = _rename_path_options(rename_source, **kwargs)
         try:
             return await self._client.path.create(**options)
         except HttpResponseError as error:

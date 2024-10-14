@@ -28,22 +28,18 @@ from ._models import (
 from ._serialize import (
     compare_api_versions,
     convert_dfs_url_to_blob_url,
-    get_access_conditions,
     get_api_version,
-    get_lease_id,
-    get_mod_conditions,
-    get_path_http_headers,
-    get_source_mod_conditions,
 )
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
-from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 from ._path_client_helpers import (
     _create_path_options,
     _delete_path_options,
     _format_url,
     _get_access_control_options,
     _parse_url,
-    _set_access_control_options
+    _rename_path_options,
+    _set_access_control_options,
+    _set_access_control_recursive_options
 )
 
 if TYPE_CHECKING:
@@ -400,24 +396,6 @@ class PathClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @staticmethod
-    def _get_access_control_options(upn=None,  # type: Optional[bool]
-                                    **kwargs):
-        # type: (...) -> Dict[str, Any]
-
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        mod_conditions = get_mod_conditions(kwargs)
-
-        options = {
-            'action': 'getAccessControl',
-            'upn': upn if upn else False,
-            'lease_access_conditions': access_conditions,
-            'modified_access_conditions': mod_conditions,
-            'timeout': kwargs.pop('timeout', None),
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
-
     @distributed_trace
     def get_access_control(self, upn: Optional[bool] = None, **kwargs: Any) -> Dict[str, Any]:
         """
@@ -467,24 +445,8 @@ class PathClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    @staticmethod
-    def _set_access_control_recursive_options(mode, acl, **kwargs):
-        # type: (str, str, **Any) -> Dict[str, Any]
-
-        options = {
-            'mode': mode,
-            'force_flag': kwargs.pop('continue_on_failure', None),
-            'timeout': kwargs.pop('timeout', None),
-            'continuation': kwargs.pop('continuation_token', None),
-            'max_records': kwargs.pop('batch_size', None),
-            'acl': acl,
-            'cls': return_headers_and_deserialized}
-        options.update(kwargs)
-        return options
-
     @distributed_trace
-    def set_access_control_recursive(self, acl, **kwargs):
-        # type: (str, **Any) -> AccessControlChangeResult
+    def set_access_control_recursive(self, acl: str, **kwargs: Any) -> AccessControlChangeResult:
         """
         Sets the Access Control on a path and sub-paths.
 
@@ -532,13 +494,12 @@ class PathClient(StorageAccountHostsMixin):
 
         progress_hook = kwargs.pop('progress_hook', None)
         max_batches = kwargs.pop('max_batches', None)
-        options = self._set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
+        options = _set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
         return self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                  max_batches=max_batches)
 
     @distributed_trace
-    def update_access_control_recursive(self, acl, **kwargs):
-        # type: (str, **Any) -> AccessControlChangeResult
+    def update_access_control_recursive(self, acl: str, **kwargs: Any) -> AccessControlChangeResult:
         """
         Modifies the Access Control on a path and sub-paths.
 
@@ -586,13 +547,12 @@ class PathClient(StorageAccountHostsMixin):
 
         progress_hook = kwargs.pop('progress_hook', None)
         max_batches = kwargs.pop('max_batches', None)
-        options = self._set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
+        options = _set_access_control_recursive_options(mode='modify', acl=acl, **kwargs)
         return self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                  max_batches=max_batches)
 
     @distributed_trace
-    def remove_access_control_recursive(self, acl, **kwargs):
-        # type: (str, **Any) -> AccessControlChangeResult
+    def remove_access_control_recursive(self, acl: str, **kwargs: Any) -> AccessControlChangeResult:
         """
         Removes the Access Control on a path and sub-paths.
 
@@ -639,13 +599,13 @@ class PathClient(StorageAccountHostsMixin):
 
         progress_hook = kwargs.pop('progress_hook', None)
         max_batches = kwargs.pop('max_batches', None)
-        options = self._set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
+        options = _set_access_control_recursive_options(mode='remove', acl=acl, **kwargs)
         return self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                  max_batches=max_batches)
 
     def _set_access_control_internal(
         self, options: Dict[str, Any],
-        progress_hook: Optional[Callable[AccessControlChanges]],
+        progress_hook: Optional[Callable[[AccessControlChanges], None]],
         max_batches: Optional[int] = None
     ) -> AccessControlChangeResult:
         try:
@@ -733,37 +693,6 @@ class PathClient(StorageAccountHostsMixin):
 
         return new_file_system, new_path, new_sas
 
-    def _rename_path_options(self,
-                             rename_source,  # type: str
-                             content_settings=None,  # type: Optional[ContentSettings]
-                             metadata=None,  # type: Optional[Dict[str, str]]
-                             **kwargs):
-        # type: (...) -> Dict[str, Any]
-        if metadata or kwargs.pop('permissions', None) or kwargs.pop('umask', None):
-            raise ValueError("metadata, permissions, umask is not supported for this operation")
-
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
-        source_lease_id = get_lease_id(kwargs.pop('source_lease', None))
-        mod_conditions = get_mod_conditions(kwargs)
-        source_mod_conditions = get_source_mod_conditions(kwargs)
-
-        path_http_headers = None
-        if content_settings:
-            path_http_headers = get_path_http_headers(content_settings)
-
-        options = {
-            'rename_source': rename_source,
-            'path_http_headers': path_http_headers,
-            'lease_access_conditions': access_conditions,
-            'source_lease_id': source_lease_id,
-            'modified_access_conditions': mod_conditions,
-            'source_modified_access_conditions': source_mod_conditions,
-            'timeout': kwargs.pop('timeout', None),
-            'mode': 'legacy',
-            'cls': return_response_headers}
-        options.update(kwargs)
-        return options
-
     def _rename_path(self, rename_source: str, **kwargs: Any) -> Dict[str, Any]:
         """
         Rename directory or file
@@ -825,9 +754,7 @@ class PathClient(StorageAccountHostsMixin):
         :returns: response dict containing information about the renamed path.
         :rtype: dict[str, Any]
         """
-        options = self._rename_path_options(
-            rename_source,
-            **kwargs)
+        options = _rename_path_options(rename_source, **kwargs)
         try:
             return self._client.path.create(**options)
         except HttpResponseError as error:
