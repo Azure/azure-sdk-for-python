@@ -73,7 +73,7 @@ class ErrorTarget(Enum):
     CALLBACK_CONVERSATION_BOT = "CallbackConversationBot"
     MODELS = "Models"
     UNKNOWN = "Unknown"
-    CONVERSATION = "Conversation"
+    MESSAGES = "Messages"
 
 
 class EvaluationException(AzureError):
