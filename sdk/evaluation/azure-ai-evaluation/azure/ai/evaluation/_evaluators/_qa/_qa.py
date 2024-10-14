@@ -22,8 +22,7 @@ class QAEvaluator:
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-    :return: A function that evaluates and generates metrics for "question-answering" scenario.
-    :rtype: Callable
+    :return: A callable class that evaluates and generates metrics for "question-answering" scenario.
 
     **Usage**
 
