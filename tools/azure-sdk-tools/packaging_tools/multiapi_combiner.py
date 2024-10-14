@@ -688,5 +688,4 @@ def combine():
 
 
 if __name__ == "__main__":
-    raise ValueError("in dis b")
     combine()
