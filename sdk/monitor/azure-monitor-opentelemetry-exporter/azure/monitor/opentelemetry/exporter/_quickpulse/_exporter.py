@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import json
 import logging
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 import weakref
 
 from opentelemetry.context import (
@@ -24,7 +24,6 @@ from opentelemetry.sdk.metrics.export import (
     MetricReader,
 )
 
-from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
@@ -51,6 +50,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import (
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
     _metric_to_quick_pulse_data_points,
+    _update_filter_configuration,
 )
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._utils import (
@@ -172,22 +172,13 @@ class _QuickpulseExporter(MetricExporter):
                     result = MetricExportResult.FAILURE
                 else:
                     # Check if etag has changed
-                    etag = post_response._response_headers.get(_QUICKPULSE_ETAG_HEADER_NAME)
+                    etag = post_response._response_headers.get(_QUICKPULSE_ETAG_HEADER_NAME)  # pylint: disable=protected-access
                     if etag != _get_quickpulse_etag():
-                        # Update and apply configuration changes
                         config = post_response._pipeline_response.http_response.content
                         # Content will only be populated if configuration has changed (etag is different)
                         if config:
-                            # config is a byte string that when decoded is a json
-                            config = json.loads(config.decode("utf-8"))
-                            metric_filters: List[DerivedMetricInfo] = []
-                            for metric_filter in config.get("Metrics", []):
-                                # TODO: Test if this works
-                                metric_info = DerivedMetricInfo(**metric_filter)
-                                metric_filters.append(metric_info)
-                            _set_quickpulse_metric_filters(metric_filters)
-
-
+                            # Update and apply configuration changes
+                            _update_filter_configuration(etag, config)
         except Exception:  # pylint: disable=broad-except,invalid-name
             _logger.exception("Exception occurred while publishing live metrics.")
             result = MetricExportResult.FAILURE
@@ -275,7 +266,6 @@ class _QuickpulseMetricReader(MetricReader):
     # pylint: disable=protected-access
     def _ticker(self) -> None:
         if _is_ping_state():
-            print("ping")
             # Send a ping if elapsed number of request meets the threshold
             if self._elapsed_num_seconds % _get_global_quickpulse_state().value == 0:
                 ping_response = self._exporter._ping(

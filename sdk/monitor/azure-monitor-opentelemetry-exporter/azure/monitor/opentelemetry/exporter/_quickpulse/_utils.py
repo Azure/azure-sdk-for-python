@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 from datetime import datetime, timedelta, timezone
-from typing import List, Optional, Union
+import json
+from typing import Dict, List, Optional, Union
 
 from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk.metrics._internal.point import (
@@ -15,10 +16,11 @@ from opentelemetry.trace import SpanKind
 from opentelemetry.util.types import Attributes
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
-    _DocumentIngressDocumentType,
+    _QuickpulseTelemetryType,
     _QUICKPULSE_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    DerivedMetricInfo,
     DocumentIngress,
     Exception as ExceptionDocument,
     MetricPoint,
@@ -27,6 +29,12 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     Request as RequestDocument,
     Trace as TraceDocument,
 )
+from azure.monitor.opentelemetry.exporter._quickpulse._state import (
+    _set_quickpulse_etag,
+    _set_quickpulse_metric_filters,
+)
+
+
 def _metric_to_quick_pulse_data_points(  # pylint: disable=too-many-nested-blocks
     metrics_data: OTMetricsData,
     base_monitoring_data_point: MonitoringDataPoint,
@@ -77,7 +85,7 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
     url = _get_url(span_kind, span.attributes)
     if span_kind in (SpanKind.CLIENT, SpanKind.PRODUCER, SpanKind.INTERNAL):
         document = RemoteDependencyDocument(
-            document_type=_DocumentIngressDocumentType.RemoteDependency.value,
+            document_type=_QuickpulseTelemetryType.RemoteDependency.value,
             name=span.name,
             command_name=url,
             result_code=str(status_code),
@@ -89,7 +97,7 @@ def _get_span_document(span: ReadableSpan) -> Union[RemoteDependencyDocument, Re
         else:
             code = str(grpc_status_code)
         document = RequestDocument(
-            document_type=_DocumentIngressDocumentType.Request.value,
+            document_type=_QuickpulseTelemetryType.Request.value,
             name=span.name,
             url=url,
             response_code=code,
@@ -103,13 +111,13 @@ def _get_log_record_document(log_data: LogData) -> Union[ExceptionDocument, Trac
     exc_message = log_data.log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)  # type: ignore
     if exc_type is not None or exc_message is not None:
         document = ExceptionDocument(
-            document_type=_DocumentIngressDocumentType.Exception.value,
+            document_type=_QuickpulseTelemetryType.Exception.value,
             exception_type=str(exc_type),
             exception_message=str(exc_message),
         )
     else:
         document = TraceDocument(
-            document_type=_DocumentIngressDocumentType.Trace.value,
+            document_type=_QuickpulseTelemetryType.Trace.value,
             message=log_data.log_record.body,
         )
     return document
@@ -146,6 +154,24 @@ def _get_url(span_kind: SpanKind, attributes: Attributes) -> str:
                 if http_host:
                     return f"{http_scheme}://{http_host}:{port}{http_target}"
     return ""
+
+
+def _update_filter_configuration(etag: str, config_bytes: bytes):
+    # config is a byte string that when decoded is a json
+    config = json.loads(config_bytes.decode("utf-8"))
+    # The keys in metric_filters will be of type _constants._QuickpulseTelemetryType
+    metric_filters: Dict[str, List[DerivedMetricInfo]] = {}
+    for metric_filter in config.get("Metrics", []):
+        # TODO: Test instantiating like this works
+        metric_info = DerivedMetricInfo.from_dict(metric_filter)
+        telemetry_type: str = metric_info.telemetry_type
+        # TODO: Filter out invalid configs: telemetry type, operand
+        derived_metrics = metric_filters.get(telemetry_type, [])
+        derived_metrics.append(metric_info)
+        metric_filters[telemetry_type] = derived_metrics
+    _set_quickpulse_metric_filters(metric_filters)
+    # Update new etag
+    _set_quickpulse_etag(etag)
 
 
 def _ns_to_iso8601_string(nanoseconds: int) -> str:

@@ -45,7 +45,7 @@ _LONG_PING_INTERVAL_SECONDS = 60
 _POST_CANCEL_INTERVAL_SECONDS = 20
 
 # Live metrics data types
-class _DocumentIngressDocumentType(Enum):
+class _QuickpulseTelemetryType(Enum):
     Request = "Request"
     RemoteDependency = "RemoteDependency"
     Exception = "Exception"

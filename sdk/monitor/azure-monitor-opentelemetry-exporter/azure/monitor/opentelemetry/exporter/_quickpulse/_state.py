@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 from datetime import datetime
 from enum import Enum
-from typing import List
+from typing import Dict, List
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
@@ -31,7 +31,7 @@ _QUICKPULSE_LAST_PROCESS_TIME = 0.0
 _QUICKPULSE_PROCESS_ELAPSED_TIME = datetime.now()
 _QUICKPULSE_LAST_PROCESS_CPU = 0.0
 _QUICKPULSE_ETAG = ""
-_QUICKPULSE_METRIC_FILTERS: List[DerivedMetricInfo] = []
+_QUICKPULSE_METRIC_FILTERS: Dict[str, List[DerivedMetricInfo]] = {}
 
 def _set_global_quickpulse_state(state: _QuickpulseState) -> None:
     # pylint: disable=global-statement
@@ -118,11 +118,11 @@ def _get_quickpulse_etag() -> str:
     return _QUICKPULSE_ETAG
 
 
-def _set_quickpulse_metric_filters(filters: List[DerivedMetricInfo]) -> None:
+def _set_quickpulse_metric_filters(filters: Dict[str, List[DerivedMetricInfo]]) -> None:
     # pylint: disable=global-statement
     global _QUICKPULSE_METRIC_FILTERS
     _QUICKPULSE_METRIC_FILTERS = filters
 
 
-def _get_quickpulse_metric_filters() -> List[DerivedMetricInfo]:
+def _get_quickpulse_metric_filters() -> Dict[str, List[DerivedMetricInfo]]:
     return _QUICKPULSE_METRIC_FILTERS
