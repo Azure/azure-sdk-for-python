@@ -6,6 +6,10 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+- Support for Python 3.13
+
 ## 1.21.0 (2024-09-30)
 
 ### Features Added
