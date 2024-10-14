@@ -4,8 +4,8 @@
 import logging
 import math
 from concurrent.futures import as_completed
-from typing import Dict, List, Union
-from azure.ai.inference.models import ChatRequestMessage, UserMessage, AssistantMessage, SystemMessage, ToolMessage
+from typing import Any, Dict, List, Union
+from azure.ai.inference.models import ChatRequestMessage, UserMessage, AssistantMessage, SystemMessage, ToolMessage, ContentItem, ImageContentItem
 
 from promptflow.tracing import ThreadPoolExecutorWithContext as ThreadPoolExecutor
 
@@ -38,6 +38,7 @@ class ContentSafetyMultimodalEvaluator:
     :type credential: ~azure.core.credentials.TokenCredential
     :return: A function that evaluates multimodal chat messages and generates metrics.
     :rtype: Callable
+    
     **Usage**
     .. code-block:: python
         azure_ai_project = {
@@ -46,21 +47,29 @@ class ContentSafetyMultimodalEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = ContentSafetyMultimodalEvaluator(azure_ai_project)
-        result = eval_fn(messages=[
-            {"role": "user", "content": [
+        result = eval_fn(
+            messages= [
                 {
-                    "type": "text", 
-                    "text": "What's in this image?" 
-                }, 
-                { 
-                    "type": "image_url", 
-                    "image_url": { 
-                        "url": "<image url or base64 encoded image>" 
-                    } 
-                }, 
-            ],
-            {"role": "assistant", "content": "This picture shows an astronaut standing in desert."}
-        ])
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "What's in this image?"
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "<image url or base64 encoded image>"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "role": "assistant",
+                    "content": "This picture shows an astronaut standing in desert."
+                }
+            ]
+        )
     **Output format**
     .. code-block:: python
         {
@@ -101,7 +110,7 @@ class ContentSafetyMultimodalEvaluator:
     def __call__(
             self, 
             *, 
-            messages: Union[List[Dict], List[ChatRequestMessage]], 
+            messages: dict, 
             **kwargs):
         """
         Evaluates content-safety metrics for list of messages comprising "chat" conversation.
@@ -177,7 +186,7 @@ class ContentSafetyMultimodalEvaluator:
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
     
-    def _validate_messages(self, messages: Union[List[Dict], List[ChatRequestMessage]]):
+    def _validate_messages(self, messages):
         if messages is None or not isinstance(messages, list):
             msg = "messages parameter must be a list of JSON representation of chat messages or strong typed child class of ChatRequestMessage"
             raise EvaluationException(
@@ -188,6 +197,7 @@ class ContentSafetyMultimodalEvaluator:
                 blame=ErrorBlame.USER_ERROR,
             )
         expected_roles = [ "user", "assistant", "system", "tool" ]
+        image_found = False
         for num, message in enumerate(messages):
             msg_num = num + 1
             if not isinstance(message, dict) and not isinstance(message, ChatRequestMessage):
@@ -230,7 +240,13 @@ class ContentSafetyMultimodalEvaluator:
                         category=ErrorCategory.INVALID_VALUE,
                         blame=ErrorBlame.USER_ERROR,
                     )
-                
+                if isinstance(message["content"], list):
+                    for content in message["content"]:
+                        if content.get("type") == "image_url":
+                            image_url = content.get("image_url")
+                            if image_url and 'url' in image_url:
+                                image_found = True
+                                
                 if isinstance(message["content"], dict):
                     msg = f"Content in each turn must be a string or array. Message number: {msg_num}"
                     raise EvaluationException(
@@ -239,8 +255,7 @@ class ContentSafetyMultimodalEvaluator:
                         target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
                         category=ErrorCategory.INVALID_VALUE,
                         blame=ErrorBlame.USER_ERROR,
-                    )
-                    
+                    )         
             if isinstance(message, ChatRequestMessage):
                 if not isinstance(message, UserMessage) and not isinstance(message, AssistantMessage) and not isinstance(message, SystemMessage) and not isinstance(message, ToolMessage):
                     msg = f"Messsage in array must be a strongly typed class of ChatRequestMessage [UserMessage, SystemMessage, AssistantMessage, ToolMessage]. Message number: {msg_num}"
@@ -250,7 +265,21 @@ class ContentSafetyMultimodalEvaluator:
                         target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
                         category=ErrorCategory.INVALID_VALUE,
                         blame=ErrorBlame.USER_ERROR,
-                    )     
+                    )  
+                if message.content and isinstance(message.content, list):
+                    image_items = [item for item in message.content if isinstance(item, ImageContentItem)]
+                    if len(image_items) > 0:
+                        image_found = True
+        if image_found is False:    
+            msg = f"Message needs to have multimodal input like images"
+            raise EvaluationException(
+                message=msg,
+                internal_message=msg,
+                target=ErrorTarget.CONTENT_SAFETY_MULTIMODAL_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+                blame=ErrorBlame.USER_ERROR,
+            )
+
         
     def _get_harm_severity_level(self, harm_score: float) -> str:
         HARM_SEVERITY_LEVEL_MAPPING = {

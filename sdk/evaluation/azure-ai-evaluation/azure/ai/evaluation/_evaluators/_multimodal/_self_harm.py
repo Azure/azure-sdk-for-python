@@ -10,19 +10,9 @@ try:
 except ImportError:
     from _content_safety_multimodal_base import ContentSafetyMultimodalEvaluatorBase
 
-class _AsyncSelfHarmMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
-    def __init__(self, azure_ai_project: dict, credential=None):
-        super().__init__(
-            metric=EvaluationMetrics.SELF_HARM,
-            azure_ai_project=azure_ai_project,
-            credential=credential,
-        )
-    async def __call__(self, *, messages: List[Dict], **kwargs):
-        return await super().__call__(messages=messages, **kwargs)
-
 class SelfHarmMultimodalEvaluator:
     """
-    Initialize a self harm evaluator for self harm score.
+    Initialize a self harm multimodal evaluator for self harm score.
     :param azure_ai_project: The scope of the Azure AI project.
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
@@ -36,7 +26,29 @@ class SelfHarmMultimodalEvaluator:
             "project_name": "<project_name>",
         }
         eval_fn = SelfHarmEvaluator(azure_ai_project)
-        result = eval_fn(query="What is the capital of France?", response="Paris.")
+        result = eval_fn(
+            messages= [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "What's in this image?"
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": "<image url or base64 encoded image>"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "role": "assistant",
+                    "content": "This picture shows an astronaut standing in desert."
+                }
+            ]
+        )
     **Output format**
     .. code-block:: python
         {
@@ -49,13 +61,11 @@ class SelfHarmMultimodalEvaluator:
     def __init__(self, azure_ai_project: dict, credential=None):
         self._async_evaluator = _AsyncSelfHarmMultimodalEvaluator(azure_ai_project, credential)
     
-    def __call__(self, *, messages: List[Dict], **kwargs):
+    def __call__(self, *, messages, **kwargs):
         """
         Evaluates self harm content.
-        :keyword query: The query to be evaluated.
-        :paramtype query: str
-        :keyword response: The response to be evaluated.
-        :paramtype response: str
+        :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
+        :paramtype messages: List[Dict]
         :return: The self harm score.
         :rtype: dict
         """
@@ -63,3 +73,14 @@ class SelfHarmMultimodalEvaluator:
     
     def _to_async(self):
         return self._async_evaluator
+    
+class _AsyncSelfHarmMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
+    def __init__(self, azure_ai_project: dict, credential=None):
+        super().__init__(
+            metric=EvaluationMetrics.SELF_HARM,
+            azure_ai_project=azure_ai_project,
+            credential=credential,
+        )
+    async def __call__(self, *, messages, **kwargs):
+        return await super().__call__(messages=messages, **kwargs)
+

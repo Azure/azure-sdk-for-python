@@ -14,7 +14,7 @@ import jwt
 import json
 
 from azure.ai.inference._model_base import SdkJSONEncoder
-from azure.ai.inference.models import ChatRequestMessage
+from azure.ai.inference.models import ChatRequestMessage, SystemMessage, AssistantMessage
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
@@ -29,7 +29,7 @@ from .constants import (
     _InternalAnnotationTasks,
     _InternalEvaluationMetrics,
 )
-from .utils import get_harm_severity_level
+from .utils import get_harm_severity_level, retrieve_content_type
 
 try:
     version = importlib.metadata.version("azure-ai-evaluation")
@@ -169,7 +169,6 @@ async def submit_request(query: str, response: str, metric: str, rai_svc_url: st
     result = response.json()
     operation_id = result["location"].split("/")[-1]
     return operation_id
-
 
 async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCredential, token: str) -> Dict:
     """Fetch the annotation result from Responsible AI service
@@ -462,7 +461,7 @@ def generate_payload_multimodal(content_type: str, contents: str, metric: str) -
     :return: The payload for the annotation request.
     :rtype: Dict
     """
-    include_metric = False
+    include_metric = True
     task = Tasks.CONTENT_HARM
     if metric == EvaluationMetrics.PROTECTED_MATERIAL:
         task = Tasks.PROTECTED_MATERIAL
@@ -488,7 +487,7 @@ def generate_payload_multimodal(content_type: str, contents: str, metric: str) -
         }
     )
 
-async def submit_multimodal_request(messages: List[Dict], metric: str, rai_svc_url: str, token: str) -> str:
+async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, token: str) -> str:
     """Submit request to Responsible AI service for evaluation and return operation ID
     :param query: The messages aka converstation to evaluate.
     :type query: List[Dict]
@@ -502,12 +501,18 @@ async def submit_multimodal_request(messages: List[Dict], metric: str, rai_svc_u
     :rtype: str
     """
     if len(messages) > 0 and isinstance(messages[0], ChatRequestMessage):
-        json_text = generate_payload_multimodal("multimodal", messages, metric)
+        filtered_messages = [message for message in messages if not isinstance(message, SystemMessage)]
+        assistant_messages = [message for message in messages if isinstance(message, AssistantMessage)]
+        content_type = retrieve_content_type(assistant_messages)
+        json_text = generate_payload_multimodal(content_type, messages, metric)
         messages_text = json.dumps(json_text, cls=SdkJSONEncoder, exclude_readonly=True)
         payload = json.loads(messages_text)
     
     else:
-        payload = generate_payload_multimodal("multimodal", messages, metric)
+        filtered_messages = [message for message in messages if message["role"] != "system"]
+        assistant_messages = [message for message in messages if message["role"] == "assistant"]
+        content_type = retrieve_content_type(assistant_messages)
+        payload = generate_payload_multimodal(content_type, filtered_messages, metric)
     url = rai_svc_url + "/submitannotation"
     headers = get_common_headers(token)
     async with get_async_http_client() as client:
@@ -522,7 +527,7 @@ async def submit_multimodal_request(messages: List[Dict], metric: str, rai_svc_u
     return operation_id
     
 async def evaluate_with_rai_service_multimodal(
-    messages: List[Dict], metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
+    messages, metric_name: str, project_scope: AzureAIProject, credential: TokenCredential
 ):
     """ "Evaluate the content safety of the response using Responsible AI service
        :param query: The list of messages (conversation) to evaluate.
@@ -550,4 +555,3 @@ async def evaluate_with_rai_service_multimodal(
     annotation_response = await fetch_result(operation_id, rai_svc_url, credential, token)
     result = parse_response(annotation_response, metric_name)
     return result
-    

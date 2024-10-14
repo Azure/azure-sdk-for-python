@@ -100,3 +100,13 @@ def construct_prompty_model_config(
         prompty_model_config["parameters"]["extra_headers"].update({"x-ms-useragent": user_agent})
 
     return prompty_model_config
+
+def retrieve_content_type(assistant_messages) -> str:
+    if len(assistant_messages) > 0:
+        for item in assistant_messages:
+            if "content" in item:
+                for content in item["content"]:
+                    if content.get("type") == "image_url":
+                        return "image"  
+        return "text"    
+    return "image" 

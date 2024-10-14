@@ -9,6 +9,8 @@ import tempfile
 from collections import namedtuple
 from pathlib import Path
 from typing import Dict
+import uuid
+import base64
 
 import pandas as pd
 
@@ -67,6 +69,32 @@ def _azure_pf_client_and_triad(trace_destination):
 
     return azure_pf_client, ws_triad
 
+def _store_multimodal_content(messages, tmpdir: str):
+    # verify if images folder exists
+    images_folder_path = os.path.join(tmpdir, "images")
+    os.makedirs(images_folder_path, exist_ok=True)
+    
+    # traverse all messages and replace base64 image data with new file name.
+    for item in messages:
+        if "content" in item:
+            for content in item["content"]:
+                if content.get("type") == "image_url":
+                    image_url = content.get("image_url")
+                    if image_url and 'url' in image_url and image_url['url'].startswith("data:image/jpeg;base64,"):
+                        # Extract the base64 string
+                        base64image = image_url['url'].replace("data:image/jpeg;base64,", "")
+                        
+                        # Generate a unique filename
+                        image_file_name = f"{str(uuid.uuid4())}.jpg"
+                        image_url['url'] = f"images/{image_file_name}"  # Replace the base64 URL with the file path
+                        
+                        # Decode the base64 string to binary image data
+                        image_data_binary = base64.b64decode(base64image)
+                        
+                        # Write the binary image data to the file
+                        image_file_path = os.path.join(images_folder_path, image_file_name)
+                        with open(image_file_path, "wb") as f:
+                            f.write(image_data_binary)
 
 def _log_metrics_and_instance_results(
     metrics,
@@ -98,6 +126,12 @@ def _log_metrics_and_instance_results(
         artifact_name = EvalRun.EVALUATION_ARTIFACT if run else EvalRun.EVALUATION_ARTIFACT_DUMMY_RUN
 
         with tempfile.TemporaryDirectory() as tmpdir:
+            # storing multi_modal images if exists
+            col_name = "inputs.messages"
+            if col_name in instance_results.columns:
+                instance_results[col_name].apply(lambda messages: _store_multimodal_content(messages, tmpdir))
+
+            # storing artifact result
             tmp_path = os.path.join(tmpdir, artifact_name)
 
             with open(tmp_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:

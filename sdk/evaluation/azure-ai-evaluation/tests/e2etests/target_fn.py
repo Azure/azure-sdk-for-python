@@ -17,3 +17,17 @@ def target_fn3(query: str) -> str:
     response = target_fn(query)
     response["query"] = f"The query is as follows: {query}"
     return response
+
+def target_multimodal_fn1(messages) -> str:
+    messages.append({
+            "role": "assistant",
+            "content": [
+                {
+                    "type": "image_url", 
+                    "image_url": {
+                        "url": "https://cdn.britannica.com/68/178268-050-5B4E7FB6/Tom-Cruise-2013.jpg"
+                    }
+                }
+            ]
+        })
+    return messages

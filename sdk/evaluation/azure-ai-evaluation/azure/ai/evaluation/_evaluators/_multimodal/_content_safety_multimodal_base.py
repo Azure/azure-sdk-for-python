@@ -24,10 +24,10 @@ class ContentSafetyMultimodalEvaluatorBase(ABC):
         self._azure_ai_project = azure_ai_project
         self._credential = credential
     
-    async def __call__(self, *, messages: List[Dict], **kwargs):
+    async def __call__(self, *, messages, **kwargs):
         """
         Evaluates content according to this evaluator's metric.
-        :keyword messages: List of messages also known as conversation.
+        :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
         :paramtype messages: List[Dict]
         :return: The evaluation score computation based on the Content Safety metric (self.metric).
         :rtype: Any
