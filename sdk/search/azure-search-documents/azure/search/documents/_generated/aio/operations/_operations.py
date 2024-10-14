@@ -3552,14 +3552,14 @@ class DocumentsOperationsOperations:
 
     @distributed_trace_async
     async def get(
-        self, index_name: str, key: str, *, selected_fields: Optional[List[str]] = None, **kwargs: Any
+        self, key: str, index_name: str, *, selected_fields: Optional[List[str]] = None, **kwargs: Any
     ) -> None:
         """Retrieves a document from the index.
 
-        :param index_name: The name of the index. Required.
-        :type index_name: str
         :param key: The key of the document to retrieve. Required.
         :type key: str
+        :param index_name: The name of the index. Required.
+        :type index_name: str
         :keyword selected_fields: List of field names to retrieve for the document; Any field not
          retrieved will
          be missing from the returned document. Default value is None.
@@ -3582,8 +3582,8 @@ class DocumentsOperationsOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_documents_operations_get_request(
-            index_name=index_name,
             key=key,
+            index_name=index_name,
             selected_fields=selected_fields,
             api_version=self._config.api_version,
             headers=_headers,
