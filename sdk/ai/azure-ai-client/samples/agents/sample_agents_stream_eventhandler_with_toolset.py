@@ -84,9 +84,6 @@ class MyEventHandler(AgentEventHandler):
     def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
 
-    def on_run_step(self, step: "RunStep") -> None:
-        print(f"RunStep type: {step.type}, Status: {step.status}")
-
     def on_error(self, data: str) -> None:
         print(f"An error occurred. Data: {data}")
 
@@ -97,34 +94,34 @@ class MyEventHandler(AgentEventHandler):
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
     def _handle_submit_tool_outputs(self, run: "ThreadRun") -> None:
-        tool_calls = run.required_action.submit_tool_outputs.tool_calls
-        if not tool_calls:
-            print("No tool calls to execute.")
-            return
+        if isinstance(run.required_action, SubmitToolOutputsAction):
+            tool_calls = run.required_action.submit_tool_outputs.tool_calls
+            if not tool_calls:
+                print("No tool calls to execute.")
+                return
 
-        toolset = self._agents.get_toolset()
-        if toolset:
-            tool_outputs = toolset.execute_tool_calls(tool_calls)
-        else:
-            raise ValueError("Toolset is not available in the client.")
-        
-        print(f"Tool outputs: {tool_outputs}")
-        if tool_outputs:
-            with self._agents.submit_tool_outputs_to_stream(
-                thread_id=run.thread_id, 
-                run_id=run.id, 
-                tool_outputs=tool_outputs, 
-                event_handler=self
-        ) as stream:
-                stream.until_done()
-
-
-functions = FunctionTool(user_functions)
-toolset = ToolSet()
-toolset.add(functions)
+            toolset = self._agents.get_toolset()
+            if toolset:
+                tool_outputs = toolset.execute_tool_calls(tool_calls)
+            else:
+                raise ValueError("Toolset is not available in the client.")
+            
+            print(f"Tool outputs: {tool_outputs}")
+            if tool_outputs:
+                with self._agents.submit_tool_outputs_to_stream(
+                    thread_id=run.thread_id, 
+                    run_id=run.id, 
+                    tool_outputs=tool_outputs, 
+                    event_handler=self
+            ) as stream:
+                    stream.until_done()
 
 
 with ai_client:
+    functions = FunctionTool(user_functions)
+    toolset = ToolSet()
+    toolset.add(functions)
+
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", toolset=toolset
     )

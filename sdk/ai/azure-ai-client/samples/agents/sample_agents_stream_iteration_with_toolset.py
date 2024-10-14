@@ -24,9 +24,9 @@ USAGE:
 import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import AgentStreamEvent
-from azure.ai.client.models import Agent, MessageDeltaChunk, MessageDeltaTextContent, RunStep, SubmitToolOutputsAction, ThreadMessage, ThreadRun
+from azure.ai.client.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, SubmitToolOutputsAction, ThreadMessage, ThreadRun
 from azure.ai.client.models import FunctionTool, ToolSet
-from azure.ai.client.operations._operations import AgentsOperations
+from azure.ai.client.operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
 from user_functions import user_functions
 
@@ -53,9 +53,9 @@ ai_client = AzureAIClient(
 """
 
 # Function to handle tool stream iteration
-def handle_submit_tool_outputs(operatiions: AgentsOperations, thread_id, run_id, tool_outputs):
+def handle_submit_tool_outputs(operations: AgentsOperations, thread_id, run_id, tool_outputs):
     try:
-        with operatiions.submit_tool_outputs_to_stream(
+        with operations.submit_tool_outputs_to_stream(
             thread_id=thread_id,
             run_id=run_id,
             tool_outputs=tool_outputs,

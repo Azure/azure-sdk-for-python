@@ -23,7 +23,7 @@ USAGE:
 import os, time
 from azure.ai.client import AzureAIClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.client.models import FunctionTool
+from azure.ai.client.models import FunctionTool, SubmitToolOutputsAction, RequiredFunctionToolCall
 from user_functions import user_functions
 
 
@@ -45,7 +45,7 @@ with ai_client:
         model="gpt-4-1106-preview",
         name="my-assistant",
         instructions="You are a helpful assistant",
-        tools=functions.definitions,
+        tools=list(functions.definitions),
     )
     print(f"Created agent, ID: {agent.id}")
 
@@ -66,7 +66,7 @@ with ai_client:
         time.sleep(1)
         run = ai_client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
-        if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
             if not tool_calls:
                 print("No tool calls provided - cancelling run")
@@ -75,12 +75,15 @@ with ai_client:
 
             tool_outputs = []
             for tool_call in tool_calls:
-                output = functions.execute(tool_call)
-                tool_output = {
-                    "tool_call_id": tool_call.id,
-                    "output": output,
-                }
-                tool_outputs.append(tool_output)
+                if isinstance(tool_call, RequiredFunctionToolCall):
+                    try:
+                        output = functions.execute(tool_call)
+                        tool_outputs.append({
+                            "tool_call_id": tool_call.id,
+                            "output": output,
+                        })
+                    except Exception as e:
+                        print(f"Error executing tool_call {tool_call.id}: {e}")
 
             print(f"Tool outputs: {tool_outputs}")
             if tool_outputs:

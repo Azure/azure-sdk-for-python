@@ -11,8 +11,9 @@ import inspect
 import json
 import logging
 import base64
+import asyncio
 
-from typing import List
+from typing import List, Sequence
 from azure.core.credentials import TokenCredential, AccessToken
 
 from ._enums import AgentStreamEvent
@@ -168,7 +169,7 @@ class Tool(ABC):
 
     @property
     @abstractmethod
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> Sequence[ToolDefinition]:
         """Get the tool definitions."""
         pass
 
@@ -258,7 +259,7 @@ class FunctionTool(Tool):
             raise
 
     @property
-    def definitions(self) -> List[FunctionToolDefinition]:
+    def definitions(self) -> Sequence[FunctionToolDefinition]:
         """
         Get the function definitions.
 
@@ -307,7 +308,7 @@ class FileSearchTool(Tool):
         self.vector_store_ids.append(store_id)
 
     @property
-    def definitions(self) -> List[FileSearchToolDefinition]:
+    def definitions(self) -> Sequence[FileSearchToolDefinition]:
         """
         Get the file search tool definitions.
         """
@@ -341,7 +342,7 @@ class CodeInterpreterTool(Tool):
         self.file_ids.append(file_id)
 
     @property
-    def definitions(self) -> List[CodeInterpreterToolDefinition]:
+    def definitions(self) -> Sequence[CodeInterpreterToolDefinition]:
         """
         Get the code interpreter tool definitions.
         """
@@ -406,7 +407,7 @@ class ToolSet:
         raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
     @property
-    def definitions(self) -> List[ToolDefinition]:
+    def definitions(self) -> Sequence[ToolDefinition]:
         """
         Get the definitions for all tools in the tool set.
         """
@@ -416,7 +417,7 @@ class ToolSet:
         return tools
 
     @property
-    def resources(self) -> Dict[str, Any]:
+    def resources(self) -> ToolResources:
         """
         Get the resources for all tools in the tool set.
         """
@@ -429,7 +430,17 @@ class ToolSet:
                         tool_resources[key].update(value)
                 else:
                     tool_resources[key] = value
-        return tool_resources
+        return self._create_tool_resources_from_dict(tool_resources)
+
+    def _create_tool_resources_from_dict(self, resources: Dict[str, Any]) -> ToolResources:
+        """
+        Safely converts a dictionary into a ToolResources instance.
+        """
+        try:
+            return ToolResources(**resources)
+        except TypeError as e:
+            logging.error(f"Error creating ToolResources: {e}")
+            raise ValueError("Invalid resources for ToolResources.") from e
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
         """
@@ -589,11 +600,190 @@ class AsyncAgentEventHandler:
         pass
 
 
-class BaseAgentRunStream:
+class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
+    def __init__(
+        self,
+        response_iterator: AsyncIterator[bytes],
+        event_handler: Optional['AsyncAgentEventHandler'] = None,
+    ):
+        self.response_iterator = response_iterator
+        self.event_handler = event_handler
+        self.done = False
+        self.buffer = ""
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        close_method = getattr(self.response_iterator, "close", None)
+        if callable(close_method):
+            result = close_method()
+            if asyncio.iscoroutine(result):
+                await result
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self) -> Tuple[str, Any]:
+        while True:
+            try:
+                chunk = await self.response_iterator.__anext__()
+                self.buffer += chunk.decode("utf-8")
+            except StopAsyncIteration:
+                if self.buffer:
+                    event_data_str, self.buffer = self.buffer, ""
+                    if event_data_str:
+                        return await self._process_event(event_data_str)
+                raise StopAsyncIteration
+
+            while "\n\n" in self.buffer:
+                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
+                return await self._process_event(event_data_str)
+
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Any]:
+        event_lines = event_data_str.strip().split("\n")
+        event_type = None
+        event_data = ""
+
+        for line in event_lines:
+            if line.startswith("event:"):
+                event_type = line.split(":", 1)[1].strip()
+            elif line.startswith("data:"):
+                event_data = line.split(":", 1)[1].strip()
+
+        if not event_type:
+            raise ValueError("Event type not specified in the event data.")
+
+        try:
+            parsed_data = json.loads(event_data)
+        except json.JSONDecodeError:
+            parsed_data = event_data
+
+        # Workaround for service bug: Rename 'expires_at' to 'expired_at'
+        if (
+            event_type.startswith("thread.run.step")
+            and isinstance(parsed_data, dict)
+            and "expires_at" in parsed_data
+        ):
+            parsed_data["expired_at"] = parsed_data.pop("expires_at")
+
+        # Map to the appropriate class instance
+        if event_type in {
+            AgentStreamEvent.THREAD_RUN_CREATED,
+            AgentStreamEvent.THREAD_RUN_QUEUED,
+            AgentStreamEvent.THREAD_RUN_IN_PROGRESS,
+            AgentStreamEvent.THREAD_RUN_REQUIRES_ACTION,
+            AgentStreamEvent.THREAD_RUN_COMPLETED,
+            AgentStreamEvent.THREAD_RUN_FAILED,
+            AgentStreamEvent.THREAD_RUN_CANCELLING,
+            AgentStreamEvent.THREAD_RUN_CANCELLED,
+            AgentStreamEvent.THREAD_RUN_EXPIRED,
+        }:
+            event_data_obj = ThreadRun(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+        elif event_type in {
+            AgentStreamEvent.THREAD_RUN_STEP_CREATED,
+            AgentStreamEvent.THREAD_RUN_STEP_IN_PROGRESS,
+            AgentStreamEvent.THREAD_RUN_STEP_COMPLETED,
+            AgentStreamEvent.THREAD_RUN_STEP_FAILED,
+            AgentStreamEvent.THREAD_RUN_STEP_CANCELLED,
+            AgentStreamEvent.THREAD_RUN_STEP_EXPIRED,
+        }:
+            event_data_obj = RunStep(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+        elif event_type in {
+            AgentStreamEvent.THREAD_MESSAGE_CREATED,
+            AgentStreamEvent.THREAD_MESSAGE_IN_PROGRESS,
+            AgentStreamEvent.THREAD_MESSAGE_COMPLETED,
+            AgentStreamEvent.THREAD_MESSAGE_INCOMPLETE,
+        }:
+            event_data_obj = ThreadMessage(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+        elif event_type == AgentStreamEvent.THREAD_MESSAGE_DELTA:
+            event_data_obj = MessageDeltaChunk(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+        elif event_type == AgentStreamEvent.THREAD_RUN_STEP_DELTA:
+            event_data_obj = RunStepDeltaChunk(**parsed_data) if isinstance(parsed_data, dict) else parsed_data
+        else:
+            event_data_obj = parsed_data
+
+        return event_type, event_data_obj
+
+    async def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
+        event_type, event_data_obj = self._parse_event_data(event_data_str)
+
+        if self.event_handler:
+            try:
+                if isinstance(event_data_obj, MessageDeltaChunk):
+                    await self.event_handler.on_message_delta(event_data_obj)
+                elif isinstance(event_data_obj, ThreadMessage):
+                    await self.event_handler.on_thread_message(event_data_obj)
+                elif isinstance(event_data_obj, ThreadRun):
+                    await self.event_handler.on_thread_run(event_data_obj)
+                elif isinstance(event_data_obj, RunStep):
+                    await self.event_handler.on_run_step(event_data_obj)
+                elif isinstance(event_data_obj, RunStepDeltaChunk):
+                    await self.event_handler.on_run_step_delta(event_data_obj)
+                elif event_type == AgentStreamEvent.ERROR:
+                    await self.event_handler.on_error(event_data_obj)
+                elif event_type == AgentStreamEvent.DONE:
+                    await self.event_handler.on_done()
+                    self.done = True  # Mark the stream as done
+                else:
+                    await self.event_handler.on_unhandled_event(event_type, event_data_obj)
+            except Exception as e:
+                logging.error(f"Error in event handler for event '{event_type}': {e}")
+
+        return event_type, event_data_obj
+
+    async def until_done(self) -> None:
+        """
+        Iterates through all events until the stream is marked as done.
+        """
+        try:
+            async for _ in self:
+                pass  # The EventHandler handles the events
+        except StopAsyncIteration:
+            pass
+
+
+class AgentRunStream(Iterator[Tuple[str, Any]]):
+    def __init__(
+        self,
+        response_iterator: Iterator[bytes],
+        event_handler: Optional[AgentEventHandler] = None,
+    ):
+        self.response_iterator = response_iterator
+        self.event_handler = event_handler
+        self.done = False
+        self.buffer = ""
+
     def __enter__(self):
         return self
 
-    def process_event(self, event_data_str: str) -> Tuple[str, Any]:
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        close_method = getattr(self.response_iterator, "close", None)
+        if callable(close_method):
+            close_method()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> Tuple[str, Any]:
+        if self.done:
+            raise StopIteration
+        while True:
+            try:
+                chunk = next(self.response_iterator)
+                self.buffer += chunk.decode("utf-8")
+            except StopIteration:
+                if self.buffer:
+                    event_data_str, self.buffer = self.buffer, ""
+                    if event_data_str:
+                        return self._process_event(event_data_str)
+                raise StopIteration
+
+            while "\n\n" in self.buffer:
+                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
+                return self._process_event(event_data_str)
+
+    def _parse_event_data(self, event_data_str: str) -> Tuple[str, Any]:
         event_lines = event_data_str.strip().split("\n")
         event_type = None
         event_data = ""
@@ -654,122 +844,8 @@ class BaseAgentRunStream:
 
         return event_type, event_data_obj
 
-
-class AsyncAgentRunStream(BaseAgentRunStream, AsyncIterator[Tuple[str, Any]]):
-    def __init__(
-        self,
-        response_iterator: AsyncIterator[bytes],
-        event_handler: Optional[AsyncAgentEventHandler] = None,
-    ):
-        self.response_iterator = response_iterator
-        self.event_handler = event_handler
-        self.done = False
-        self.buffer = ""
-
-    async def __aenter__(self):
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        close_method = getattr(self.response_iterator, "close", None)
-        if callable(close_method):
-            await close_method()
-
-    def __aiter__(self):
-        return self
-
-    async def __anext__(self) -> Tuple[str, Any]:
-        while True:
-            try:
-                chunk = await self.response_iterator.__anext__()
-                self.buffer += chunk.decode("utf-8")
-            except StopAsyncIteration:
-                if self.buffer:
-                    event_data_str, self.buffer = self.buffer, ""
-                    if event_data_str:
-                        return await self.process_event(event_data_str)
-                raise StopAsyncIteration
-
-            while "\n\n" in self.buffer:
-                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                return await self.process_event(event_data_str)
-
-    async def process_event(self, event_data_str: str) -> Tuple[str, Any]:
-        event_type, event_data_obj = super().process_event(event_data_str)
-
-        if self.event_handler:
-            try:
-                if isinstance(event_data_obj, MessageDeltaChunk):
-                    await self.event_handler.on_message_delta(event_data_obj)
-                elif isinstance(event_data_obj, ThreadMessage):
-                    await self.event_handler.on_thread_message(event_data_obj)
-                elif isinstance(event_data_obj, ThreadRun):
-                    await self.event_handler.on_thread_run(event_data_obj)
-                elif isinstance(event_data_obj, RunStep):
-                    await self.event_handler.on_run_step(event_data_obj)
-                elif isinstance(event_data_obj, RunStepDeltaChunk):
-                    await self.event_handler.on_run_step_delta(event_data_obj)
-                elif event_type == AgentStreamEvent.ERROR:
-                    await self.event_handler.on_error(event_data_obj)
-                elif event_type == AgentStreamEvent.DONE:
-                    await self.event_handler.on_done()
-                    self.done = True  # Mark the stream as done
-                else:
-                    await self.event_handler.on_unhandled_event(event_type, event_data_obj)
-            except Exception as e:
-                logging.error(f"Error in event handler for event '{event_type}': {e}")
-
-        return event_type, event_data_obj
-
-    async def until_done(self) -> None:
-        """
-        Iterates through all events until the stream is marked as done.
-        """
-        try:
-            async for _ in self:
-                pass  # The EventHandler handles the events
-        except StopAsyncIteration:
-            pass
-
-
-class AgentRunStream(BaseAgentRunStream, Iterator[Tuple[str, Any]]):
-    def __init__(
-        self,
-        response_iterator: Iterator[bytes],
-        event_handler: Optional[AgentEventHandler] = None,
-    ):
-        self.response_iterator = response_iterator
-        self.event_handler = event_handler
-        self.done = False
-        self.buffer = ""
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        close_method = getattr(self.response_iterator, "close", None)
-        if callable(close_method):
-            close_method()
-
-    def __iter__(self):
-        return self
-
-    def __next__(self) -> Tuple[str, Any]:
-        if self.done:
-            raise StopIteration
-        while True:
-            try:
-                chunk = next(self.response_iterator)
-                self.buffer += chunk.decode("utf-8")
-            except StopIteration:
-                if self.buffer:
-                    event_data_str, self.buffer = self.buffer, ""
-                    if event_data_str:
-                        return self.process_event(event_data_str)
-                raise StopIteration
-
-            while "\n\n" in self.buffer:
-                event_data_str, self.buffer = self.buffer.split("\n\n", 1)
-                return self.process_event(event_data_str)
-
-    def process_event(self, event_data_str: str) -> Tuple[str, Any]:
-        event_type, event_data_obj = super().process_event(event_data_str)
+    def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
+        event_type, event_data_obj = self._parse_event_data(event_data_str)
 
         if self.event_handler:
             try:
