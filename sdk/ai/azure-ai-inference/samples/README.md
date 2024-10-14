@@ -24,14 +24,7 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
 
 * Clone or download this sample repository
 * Open a command prompt / terminal window in this samples folder
-* Install the client library for Python with pip:
-  ```bash
-  pip install azure-ai-inference
-  ```
-  or update an existing installation:
-  ```bash
-  pip install --upgrade azure-ai-inference
-  ```
+* Install the client library for Python with pip. See [Install the package](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#install-the-package)
 * If you plan to run the asynchronous client samples, insall the additional package [aiohttp](https://pypi.org/project/aiohttp/):
   ```bash
   pip install aiohttp
@@ -105,6 +98,7 @@ similarly for the other samples.
 |[sample_get_model_info.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_get_model_info.py) | Get AI model information using the chat completions client. Similarly can be done with all other clients. |
 |[sample_chat_completions_with_model_extras.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_model_extras.py) | Chat completions with additional model-specific parameters. |
 |[sample_chat_completions_azure_openai.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_azure_openai.py) | Chat completions against Azure OpenAI endpoint. |
+|[sample_chat_completions_with_tracing.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/samples/sample_chat_completions_with_tracing.py) | Chat completions with traces enabled. Includes streaming and non-streaming chat operations. The non-streaming chat uses function call tool and also demonstrates how to add traces to client code so that they will get included as part of the traces that are emitted. |
 
 ### Text embeddings
 

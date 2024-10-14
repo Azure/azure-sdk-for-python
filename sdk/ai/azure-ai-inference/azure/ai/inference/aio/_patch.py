@@ -87,7 +87,7 @@ async def load_client(
         )
 
     # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
-    if model_info.model_type in (_models.ModelType.CHAT, "completion"):
+    if model_info.model_type in (_models.ModelType.CHAT, "completion", "chat-completion", "chat-completions"):
         chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
         chat_completion_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
             model_info
@@ -630,7 +630,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
 
         return _deserialize(_models._patch.ChatCompletions, response.json())  # pylint: disable=protected-access
 
-    @distributed_trace_async
+    # pylint:disable=client-method-missing-tracing-decorator-async
     async def get_model_info(self, **kwargs: Any) -> _models.ModelInfo:
         # pylint: disable=line-too-long
         """Returns information about the AI model.
