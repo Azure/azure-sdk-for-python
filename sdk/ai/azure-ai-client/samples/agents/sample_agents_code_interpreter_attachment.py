@@ -61,7 +61,7 @@ with ai_client:
     # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to view the file
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant",
-        tools=[code_interpreter]
+        tools=list(code_interpreter.definitions)
     )
     print(f"Created assistant, assistant ID: {agent.id}")
 
