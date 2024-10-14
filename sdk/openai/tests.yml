@@ -10,8 +10,10 @@ extends:
       MatrixReplace:
         - TestSamples=.*/true
       UseFederatedAuth: true
-      ServiceConnection: azure-sdk-tests-openai
       SupportedClouds: 'Public'
+      CloudConfig:
+        Public:
+          ServiceConnection: azure-sdk-tests-openai
       EnvVars:
         AZ_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
         AZURE_OPENAI_KEY: $(AOAI-API-KEY)
