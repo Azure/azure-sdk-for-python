@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.1 (2024-XX-XX)
+
+### Other Changes
+
+- Clean useless warnings in log
+
 ## 1.1.0 (2024-04-24)
 
 ### Features Added
