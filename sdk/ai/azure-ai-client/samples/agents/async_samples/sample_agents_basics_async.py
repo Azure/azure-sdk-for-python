@@ -28,6 +28,7 @@ from azure.identity import DefaultAzureCredential
 
 import os
 
+
 async def main():
     
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.

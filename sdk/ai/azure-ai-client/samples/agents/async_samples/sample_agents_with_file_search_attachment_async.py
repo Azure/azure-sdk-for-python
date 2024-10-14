@@ -29,6 +29,7 @@ from azure.identity import DefaultAzureCredential
 
 import os
 
+
 async def main():
     # Create an Azure AI Client from a connection string, copied from your AI Studio project.
     # At the moment, it should be in the format "<HostName>;<AzureSubscriptionId>;<ResourceGroup>;<HubName>"
@@ -63,7 +64,7 @@ async def main():
         
         # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to search the file
         # also, you do not need to provide tool_resources if you did not create a vector store above
-        agent = ai_client.agents.create_agent(
+        agent = await ai_client.agents.create_agent(
             model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant",
             tools=[file_search_tool],
             tool_resources=ToolResources(file_search=FileSearchToolResource(vector_store_ids=[vector_store.id]))        
@@ -89,7 +90,7 @@ async def main():
         await ai_client.agents.delete_vector_store(vector_store.id)
         print("Deleted vectore store")
 
-        await ai_client.agents.delete_assistant(agent.id)
+        await ai_client.agents.delete_agent(agent.id)
         print("Deleted assistant")
         
         messages = await ai_client.agents.list_messages(thread_id=thread.id)        

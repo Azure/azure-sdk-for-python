@@ -894,7 +894,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
+        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.AsyncAgentRunStream:
         """Creates a new run for an agent thread.
@@ -1012,7 +1012,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
+        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.AsyncAgentRunStream:
         """Creates a new run for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.

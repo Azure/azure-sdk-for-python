@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import sys, io, logging, os, time
 from io import IOBase
-from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING
+from typing import List, Iterable, Union, IO, Any, Dict, Optional, overload, TYPE_CHECKING, Iterator, cast
 
 # from zoneinfo import ZoneInfo
 from ._operations import EndpointsOperations as EndpointsOperationsGenerated
@@ -338,48 +338,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
-    def create_agent(
-        self,
-        model: str = _Unset,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        instructions: Optional[str] = None,
-        toolset: Optional[_models.ToolSet] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any,
-    ) -> _models.Agent:
-        """
-        Creates a new agent with toolset.
-
-        :keyword model: The ID of the model to use. Required if `body` is not provided.
-        :paramtype model: str
-        :keyword name: The name of the new agent. Default value is None.
-        :paramtype name: str
-        :keyword description: A description for the new agent. Default value is None.
-        :paramtype description: str
-        :keyword instructions: System instructions for the agent. Default value is None.
-        :paramtype instructions: str
-        :keyword toolset: Collection of tools (alternative to `tools` and `tool_resources`). Default
-         value is None.
-        :paramtype toolset: ~azure.ai.client.models.ToolSet
-        :keyword temperature: Sampling temperature for generating agent responses. Default value
-         is None.
-        :paramtype temperature: float
-        :keyword top_p: Nucleus sampling parameter. Default value is None.
-        :paramtype top_p: float
-        :keyword response_format: Response format for tool calls. Default value is None.
-        :paramtype response_format: ~azure.ai.client.models.AgentsApiResponseFormatOption
-        :keyword metadata: Key/value pairs for storing additional information. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :return: An Agent object.
-        :rtype: ~azure.ai.client.models.Agent
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-
     @distributed_trace
     def create_agent(
         self,
@@ -426,7 +384,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if toolset is not None:
             self._toolset = toolset
-            tools = toolset.definitions
+            tools = list(toolset.definitions)
             tool_resources = toolset.resources
 
         return super().create_agent(
@@ -492,7 +450,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
@@ -564,9 +521,6 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -610,7 +564,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
@@ -681,9 +634,6 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -743,7 +693,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
         sleep_interval: int = 1,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -815,9 +764,6 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :keyword sleep_interval: The time in seconds to wait between polling the service for run status.
             Default value is 1.
         :paramtype sleep_interval: int
@@ -842,7 +788,6 @@ class AgentsOperations(AgentsOperationsGenerated):
             tool_choice=tool_choice,
             response_format=response_format,
             metadata=metadata,
-            event_handler=event_handler,
             **kwargs,
         )
         
@@ -851,7 +796,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             time.sleep(sleep_interval)
             run = self.get_run(thread_id=thread_id, run_id=run.id)
 
-            if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+            if run.status == "requires_action" and isinstance(run.required_action, _models.SubmitToolOutputsAction):
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
                     logging.warning("No tool calls provided - cancelling run")
@@ -1139,8 +1084,10 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
+        
+        response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
 
-        return _models.AgentRunStream(response, event_handler)
+        return _models.AgentRunStream(response_iterator, event_handler)
 
 
     @overload
@@ -1390,7 +1337,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        return _models.AgentRunStream(response, event_handler)
+        # Cast the response to Iterator[bytes] for type correctness
+        response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
+
+        return _models.AgentRunStream(response_iterator, event_handler)
 
     @overload
     def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
@@ -1572,13 +1522,23 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
         """
-        file = self.upload_file(body=body, file=file, file_path=file_path, purpose=purpose, filename=filename, **kwargs)
-    
-        while file.status in ["uploaded", "pending", "running"]:
+        if body is not None:
+            uploaded_file = self.upload_file(body=body, **kwargs)
+        elif file is not None and purpose is not None:
+            uploaded_file = self.upload_file(file=file, purpose=purpose, filename=filename, **kwargs)
+        elif file_path is not None and purpose is not None:
+            uploaded_file = self.upload_file(file_path=file_path, purpose=purpose, **kwargs)
+        else:
+            raise ValueError(
+                "Invalid parameters for upload_file_and_poll. Please provide either 'body', "
+                "or both 'file' and 'purpose', or both 'file_path' and 'purpose'."
+            )
+
+        while uploaded_file.status in {"uploaded", "pending", "running"}:
             time.sleep(sleep_interval)
-            file = self.get_file(file.id)
-            
-        return file
+            uploaded_file = self.get_file(uploaded_file.id)
+
+        return uploaded_file
     
     @overload
     def create_vector_store_and_poll(
@@ -1658,17 +1618,19 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.client.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
     @distributed_trace
     def create_vector_store_and_poll(
         self,
-        body: Union[JSON, IO[bytes]] = None,
+        body: Union[JSON, IO[bytes], None] = None,
         *,
+        content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
-        sleep_interval: float = 1, 
+        sleep_interval: float = 1,
         **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store.
@@ -1698,19 +1660,28 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         
-        vector_store = self.create_vector_store(
-            body=body,
-            file_ids=file_ids,
-            name=name,
-            expires_after=expires_after,
-            chunking_strategy=chunking_strategy,
-            metadata=metadata,
-            **kwargs
-        )
+        if body is not None:
+            vector_store = self.create_vector_store(body=body, content_type=content_type, **kwargs)
+        elif file_ids is not None or (name is not None and expires_after is not None):
+            vector_store = self.create_vector_store(
+                content_type=content_type,
+                file_ids=file_ids,
+                name=name,
+                expires_after=expires_after,
+                chunking_strategy=chunking_strategy,
+                metadata=metadata,
+                **kwargs
+            )
+        else:
+            raise ValueError(
+                "Invalid parameters for create_vector_store_and_poll. Please provide either 'body', "
+                "'file_ids', or 'name' and 'expires_after'."
+            )
+
         while vector_store.status == "in_progress":
             time.sleep(sleep_interval)
             vector_store = self.get_vector_store(vector_store.id)
-            
+
         return vector_store
 
 

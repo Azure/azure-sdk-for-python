@@ -56,7 +56,7 @@ ai_client = AzureAIClient(
 with ai_client:
     # Create file search tool
     file_search = FileSearchTool()
-    openai_file = ai_client.agents.upload_file(file_path="product_info_1.md", purpose="assistants")
+    openai_file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
     print(f"Uploaded file, file ID: {openai_file.id}")
     
     openai_vectorstore = ai_client.agents.create_vector_store_and_poll(file_ids=[openai_file.id], name="my_vectorstore")
@@ -82,9 +82,6 @@ with ai_client:
     print(f"Created message, ID: {message.id}")
 
     # Create and process assistant run in thread with tools
-    # Note: If vector store has been created just before this, there can be need to poll the status of vector store to be ready for information retrieval
-    #       This can be done by calling `assistant_client.get_vector_store(vector_store_id)` and checking the status of vector store
-    #       We may want to add conveniency around this
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Run finished with status: {run.status}")
 
