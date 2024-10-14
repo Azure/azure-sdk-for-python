@@ -23,7 +23,7 @@ try:
     from opentelemetry.trace import StatusCode, Span
 
     _tracing_library_available = True
-except ModuleNotFoundError as _:
+except ModuleNotFoundError:
 
     _tracing_library_available = False
 
@@ -63,7 +63,7 @@ class AIInferenceInstrumentor:
         # and have a parameter that specifies the version to use.
         self._impl = _AIInferenceInstrumentorPreview()
 
-    def instrument(self):
+    def instrument(self) -> None:
         """
         Enable trace instrumentation for AI Inference.
 
@@ -73,7 +73,7 @@ class AIInferenceInstrumentor:
         """
         self._impl.instrument()
 
-    def uninstrument(self):
+    def uninstrument(self) -> None:
         """
         Disable trace instrumentation for AI Inference.
 
@@ -85,7 +85,7 @@ class AIInferenceInstrumentor:
         """
         self._impl.uninstrument()
 
-    def is_instrumented(self):
+    def is_instrumented(self) -> bool:
         """
         Check if trace instrumentation for AI Inference is currently enabled.
 
