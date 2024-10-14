@@ -409,7 +409,7 @@ class CodeModel:
         for m in models_and_enums:
             if hasattr(m.generated_class, "from_dict"):
                 self.models[m.name] = m
-            elif (m != TYPE_CHECKING):
+            elif getattr(m, "__class__", None) == "azure.core._enum_meta.CaseInsensitiveEnumMeta":
                 self.enums.append(m)
         self._sort_models()
 
