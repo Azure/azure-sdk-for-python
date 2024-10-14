@@ -4,6 +4,8 @@
 
 ### Features Added
 
+* Support for tracing. Please find more information in the package [README.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md).
+
 ### Breaking Changes
 
 ### Bugs Fixed

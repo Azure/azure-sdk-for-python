@@ -6,7 +6,7 @@
 DESCRIPTION:
     This sample demonstrates how to get a chat completions response from
     the service using a synchronous client. The sample also shows how to 
-    set default chat compoletions configuration in the client constructor,
+    set default chat completions configuration in the client constructor,
     which will be applied to all `complete` calls to the service.
 
     This sample assumes the AI model is hosted on a Serverless API or
