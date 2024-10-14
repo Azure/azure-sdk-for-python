@@ -263,7 +263,7 @@ class PathClient(StorageAccountHostsMixin):
             raise ValueError("Please specify a lease_id and a lease_duration.")
         if lease_duration and not lease_id:
             raise ValueError("Please specify a lease_id and a lease_duration.")
-        options = _create_path_options(resource_type, content_settings, metadata, self.scheme, **kwargs)
+        options = _create_path_options(resource_type, self.scheme, content_settings, metadata, **kwargs)
         try:
             return self._client.path.create(**options)
         except HttpResponseError as error:

@@ -165,7 +165,7 @@ def _set_access_control_recursive_options(mode: str, acl: str, **kwargs: Any) ->
 
 def _rename_path_options(
     rename_source: str,
-    content_settings: Optional[ContentSettings] = None,
+    content_settings: Optional["ContentSettings"] = None,
     metadata: Optional[Dict[str, str]] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
