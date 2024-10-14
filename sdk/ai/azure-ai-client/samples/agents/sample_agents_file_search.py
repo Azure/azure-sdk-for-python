@@ -56,7 +56,7 @@ ai_client = AzureAIClient(
 with ai_client:
     # Create file search tool
     file_search = FileSearchTool()
-    openai_file = ai_client.agents.upload_file(file_path="product_info_1.md", purpose="assistants")
+    openai_file = ai_client.agents.upload_file_and_poll(file_path="product_info_1.md", purpose="assistants")
     print(f"Uploaded file, file ID: {openai_file.id}")
     
     openai_vectorstore = ai_client.agents.create_vector_store_and_poll(file_ids=[openai_file.id], name="my_vectorstore")
