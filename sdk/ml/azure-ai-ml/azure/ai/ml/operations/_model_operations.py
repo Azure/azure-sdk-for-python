@@ -22,11 +22,13 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
+from azure.ai.ml._restclient.v2023_08_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient082023Preview,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType, ModelVersion
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ListViewType,
+    ModelVersion,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -49,12 +51,26 @@ from azure.ai.ml._utils._registry_utils import (
     get_sas_uri_for_registry_asset,
     get_storage_details_for_registry_assets,
 )
-from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
-from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder, _is_evaluator
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, REGISTRY_URI_FORMAT, AzureMLResourceType
+from azure.ai.ml._utils._storage_utils import (
+    get_ds_name_and_path_prefix,
+    get_storage_client,
+)
+from azure.ai.ml._utils.utils import (
+    resolve_short_datastore_url,
+    validate_ml_flow_folder,
+    _is_evaluator,
+)
+from azure.ai.ml.constants._common import (
+    ARM_ID_PREFIX,
+    ASSET_ID_FORMAT,
+    REGISTRY_URI_FORMAT,
+    AzureMLResourceType,
+)
 from azure.ai.ml.entities._assets import Environment, Model, ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
-from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
+from azure.ai.ml.entities._assets.workspace_asset_reference import (
+    WorkspaceAssetReference,
+)
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -84,11 +100,8 @@ class ModelOperations(_ScopeDependentOperations):
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
-        resources (ServiceClient082023Preview or ServiceClient102021Dataplane).
-    :type service_client: typing.Union[
-        azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
-        azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
-        AzureMachineLearningWorkspaces]
+        resources (ServiceClient082023Preview).
+    :type service_client: ~azure.ai.ml._restclient.v2023_08_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     :param all_operations: All operations classes of an MLClient object.
@@ -102,7 +115,7 @@ class ModelOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
+        service_client: ServiceClient082023Preview,
         datastore_operations: DatastoreOperations,
         all_operations: Optional[OperationsContainer] = None,
         **kwargs,
@@ -111,6 +124,8 @@ class ModelOperations(_ScopeDependentOperations):
         ops_logger.update_info(kwargs)
         self._model_versions_operation = service_client.model_versions
         self._model_container_operation = service_client.model_containers
+        self._registry_model_versions_operation = service_client.registry_model_versions
+        self._registry_model_container_operation = service_client.registry_model_containers
         self._service_client = service_client
         self._datastore_operation = datastore_operations
         self._all_operations = all_operations
@@ -197,8 +212,8 @@ class ModelOperations(_ScopeDependentOperations):
                 if isinstance(model, WorkspaceAssetReference):
                     # verify that model is not already in registry
                     try:
-                        self._model_versions_operation.get(
-                            name=model.name,
+                        self._registry_model_versions_operation.get(
+                            model_name=model.name,
                             version=model.version,
                             resource_group_name=self._resource_group_name,
                             registry_name=self._registry_name,
@@ -251,10 +266,11 @@ class ModelOperations(_ScopeDependentOperations):
             auto_increment_version = model._auto_increment_version
             try:
                 result = (
-                    self._model_versions_operation.begin_create_or_update(
-                        name=name,
+                    self._registry_model_versions_operation.begin_create_or_update(
+                        model_name=name,
                         version=version,
                         body=model_version_resource,
+                        resource_group_name=self._resource_group_name,
                         registry_name=self._registry_name,
                         **self._scope_kwargs,
                     ).result()
@@ -297,9 +313,10 @@ class ModelOperations(_ScopeDependentOperations):
     def _get(self, name: str, version: Optional[str] = None) -> ModelVersion:  # name:latest
         if version:
             return (
-                self._model_versions_operation.get(
-                    name=name,
+                self._registry_model_versions_operation.get(
+                    model_name=name,
                     version=version,
+                    resource_group_name=self._resource_group_name,
                     registry_name=self._registry_name,
                     **self._scope_kwargs,
                 )
@@ -313,7 +330,12 @@ class ModelOperations(_ScopeDependentOperations):
             )
 
         return (
-            self._model_container_operation.get(name=name, registry_name=self._registry_name, **self._scope_kwargs)
+            self._registry_model_container_operation.get(
+                model_name=name,
+                registry_name=self._registry_name,
+                resource_group_name=self._resource_group_name,
+                **self._scope_kwargs,
+            )
             if self._registry_name
             else self._model_container_operation.get(
                 name=name, workspace_name=self._workspace_name, **self._scope_kwargs
@@ -460,8 +482,12 @@ class ModelOperations(_ScopeDependentOperations):
         """
         _archive_or_restore(
             asset_operations=self,
-            version_operation=self._model_versions_operation,
-            container_operation=self._model_container_operation,
+            version_operation=(
+                self._registry_model_versions_operation if self._registry_name else self._model_versions_operation
+            ),
+            container_operation=(
+                self._registry_model_container_operation if self._registry_name else self._model_container_operation
+            ),
             is_archived=True,
             name=name,
             version=version,
@@ -496,8 +522,12 @@ class ModelOperations(_ScopeDependentOperations):
         """
         _archive_or_restore(
             asset_operations=self,
-            version_operation=self._model_versions_operation,
-            container_operation=self._model_container_operation,
+            version_operation=(
+                self._registry_model_versions_operation if self._registry_name else self._model_versions_operation
+            ),
+            container_operation=(
+                self._registry_model_container_operation if self._registry_name else self._model_container_operation
+            ),
             is_archived=False,
             name=name,
             version=version,
@@ -528,10 +558,11 @@ class ModelOperations(_ScopeDependentOperations):
             return cast(
                 Iterable[Model],
                 (
-                    self._model_versions_operation.list(
-                        name=name,
+                    self._registry_model_versions_operation.list(
+                        model_name=name,
                         registry_name=self._registry_name,
                         cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
+                        list_view_type=list_view_type,
                         **self._scope_kwargs,
                     )
                     if self._registry_name
@@ -549,7 +580,7 @@ class ModelOperations(_ScopeDependentOperations):
         return cast(
             Iterable[Model],
             (
-                self._model_container_operation.list(
+                self._registry_model_container_operation.list(
                     registry_name=self._registry_name,
                     cls=lambda objs: [Model._from_container_rest_object(obj) for obj in objs],
                     list_view_type=list_view_type,
@@ -568,7 +599,13 @@ class ModelOperations(_ScopeDependentOperations):
     @monitor_with_activity(ops_logger, "Model.Share", ActivityType.PUBLICAPI)
     @experimental
     def share(
-        self, name: str, version: str, *, share_with_name: str, share_with_version: str, registry_name: str
+        self,
+        name: str,
+        version: str,
+        *,
+        share_with_name: str,
+        share_with_version: str,
+        registry_name: str,
     ) -> Model:
         """Share a model asset from workspace to registry.
 
@@ -740,10 +777,11 @@ class ModelOperations(_ScopeDependentOperations):
         if self._registry_reference:
             package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
         package_out = (
-            self._model_versions_operation.begin_package(
-                name=name,
+            self._registry_model_versions_operation.begin_package(
+                model_name=name,
+                resource_group_name=self._resource_group_name,
                 version=version,
-                registry_name=self._registry_name if self._registry_name else self._registry_reference,
+                registry_name=(self._registry_name if self._registry_name else self._registry_reference),
                 body=package_request,
                 **self._scope_kwargs,
             ).result()
