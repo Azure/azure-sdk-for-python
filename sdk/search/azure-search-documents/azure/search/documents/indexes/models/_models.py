@@ -241,28 +241,6 @@ class EntityRecognitionSkill(SearchIndexerSkill):
     :vartype skill_version: ~azure.search.documents.indexes.models.EntityRecognitionSkillVersion
     """
 
-    _validation = {
-        "odata_type": {"required": True},
-        "inputs": {"required": True},
-        "outputs": {"required": True},
-        "minimum_precision": {"maximum": 1, "minimum": 0},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "context": {"key": "context", "type": "str"},
-        "inputs": {"key": "inputs", "type": "[InputFieldMappingEntry]"},
-        "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
-        "categories": {"key": "categories", "type": "[str]"},
-        "default_language_code": {"key": "defaultLanguageCode", "type": "str"},
-        "include_typeless_entities": {"key": "includeTypelessEntities", "type": "bool"},
-        "minimum_precision": {"key": "minimumPrecision", "type": "float"},
-        "model_version": {"key": "modelVersion", "type": "str"},
-        "skill_version": {"key": "skillVersion", "type": "str"},
-    }
-
     def __init__(self, **kwargs):
         # pop skill_version from kwargs to avoid warning in msrest
         skill_version = kwargs.pop("skill_version", EntityRecognitionSkillVersion.V3)
@@ -360,25 +338,6 @@ class SentimentSkill(SearchIndexerSkill):
      It will default to V1 when not specified.
     :vartype skill_version: ~azure.search.documents.indexes.models.SentimentSkillVersion
     """
-
-    _validation = {
-        "odata_type": {"required": True},
-        "inputs": {"required": True},
-        "outputs": {"required": True},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "context": {"key": "context", "type": "str"},
-        "inputs": {"key": "inputs", "type": "[InputFieldMappingEntry]"},
-        "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
-        "default_language_code": {"key": "defaultLanguageCode", "type": "str"},
-        "include_opinion_mining": {"key": "includeOpinionMining", "type": "bool"},
-        "model_version": {"key": "modelVersion", "type": "str"},
-        "skill_version": {"key": "skillVersion", "type": "str"},
-    }
 
     def __init__(self, **kwargs):
         # pop skill_version from kwargs to avoid warning in msrest
@@ -577,26 +536,15 @@ class CustomAnalyzer(LexicalAnalyzer):
     :vartype char_filters: list[str]
     """
 
-    _validation = {
-        "odata_type": {"required": True},
-        "name": {"required": True},
-        "tokenizer_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "tokenizer_name": {"key": "tokenizerName", "type": "str"},
-        "token_filters": {"key": "tokenFilters", "type": "[str]"},
-        "char_filters": {"key": "charFilters", "type": "[str]"},
-    }
-
     def __init__(self, **kwargs):
+        tokenizer_name = kwargs.pop("tokenizer_name", None)
+        token_filters = kwargs.pop("token_filters", None)
+        char_filters = kwargs.pop("char_filters", None)
         super(CustomAnalyzer, self).__init__(**kwargs)
         self.odata_type = "#Microsoft.Azure.Search.CustomAnalyzer"
-        self.tokenizer_name = kwargs["tokenizer_name"]
-        self.token_filters = kwargs.get("token_filters", None)
-        self.char_filters = kwargs.get("char_filters", None)
+        self.tokenizer_name = tokenizer_name
+        self.token_filters = token_filters
+        self.char_filters = char_filters
 
     def _to_generated(self):
         return _CustomAnalyzer(
@@ -644,12 +592,16 @@ class PatternAnalyzer(LexicalAnalyzer):
     """
 
     def __init__(self, **kwargs):
-        self.odata_type = "#Microsoft.Azure.Search.PatternAnalyzer"
-        self.lower_case_terms = kwargs.pop("lower_case_terms", True)
-        self.pattern = kwargs.pop("pattern", r"\W+")
-        self.flags = kwargs.pop("flags", None)
-        self.stopwords = kwargs.pop("stopwords", None)
+        lower_case_terms = kwargs.pop("lower_case_terms", True)
+        pattern = kwargs.pop("pattern", r"\W+")
+        flags = kwargs.pop("flags", None)
+        stopwords = kwargs.pop("stopwords", None)
         super(PatternAnalyzer, self).__init__(**kwargs)
+        self.odata_type="#Microsoft.Azure.Search.PatternAnalyzer"
+        self.lower_case_terms = lower_case_terms
+        self.pattern = pattern
+        self.flags = flags
+        self.stopwords = stopwords
 
     def _to_generated(self):
         if not self.flags:
@@ -704,11 +656,14 @@ class PatternTokenizer(LexicalTokenizer):
     """
 
     def __init__(self, **kwargs):
-        self.odata_type = "#Microsoft.Azure.Search.PatternTokenizer"
-        self.pattern = kwargs.pop("pattern", r"\W+")
-        self.flags = kwargs.pop("flags", None)
-        self.group = kwargs.pop("group", -1)
+        pattern = kwargs.pop("pattern", r"\W+")
+        flags = kwargs.pop("flags", None)
+        group = kwargs.pop("group", -1)
         super(PatternTokenizer, self).__init__(**kwargs)
+        self.odata_type="#Microsoft.Azure.Search.PatternTokenizer"
+        self.pattern = pattern
+        self.flags = flags
+        self.group = group
 
     def _to_generated(self):
         if not self.flags:

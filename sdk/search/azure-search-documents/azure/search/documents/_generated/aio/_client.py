@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
@@ -26,9 +27,7 @@ from .operations import (
 )
 
 
-class SearchClient(
-    SearchClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class SearchClient(SearchClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """Client that can be used to manage and query indexes and documents, as well as
     manage other resources, on a search service.
 
@@ -133,7 +132,7 @@ class SearchClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "SearchClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

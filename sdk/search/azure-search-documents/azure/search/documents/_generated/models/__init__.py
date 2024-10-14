@@ -47,6 +47,9 @@ from ._models import ElisionTokenFilter
 from ._models import EntityLinkingSkill
 from ._models import EntityRecognitionSkill
 from ._models import EntityRecognitionSkillV3
+from ._models import ErrorAdditionalInfo
+from ._models import ErrorDetail
+from ._models import ErrorResponse
 from ._models import ExhaustiveKnnAlgorithmConfiguration
 from ._models import ExhaustiveKnnParameters
 from ._models import FacetResult
@@ -289,6 +292,9 @@ __all__ = [
     "EntityLinkingSkill",
     "EntityRecognitionSkill",
     "EntityRecognitionSkillV3",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "ExhaustiveKnnAlgorithmConfiguration",
     "ExhaustiveKnnParameters",
     "FacetResult",

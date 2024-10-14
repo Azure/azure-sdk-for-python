@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -26,9 +27,7 @@ from .operations import (
 )
 
 
-class SearchClient(
-    SearchClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class SearchClient(SearchClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
     """Client that can be used to manage and query indexes and documents, as well as
     manage other resources, on a search service.
 
@@ -128,7 +127,7 @@ class SearchClient(
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "SearchClient":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 
