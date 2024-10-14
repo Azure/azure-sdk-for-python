@@ -7,7 +7,6 @@ import json
 from typing import Any, Dict, Union, List, Optional, MutableMapping, Callable
 from typing_extensions import Self
 from azure.core.exceptions import DeserializationError
-from ._utils import DictToModel
 from ..._generated._model_base import Model
 from ._edm import Collection, ComplexType, String
 from ..._generated.models import (
@@ -259,8 +258,8 @@ class SearchField(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            dict = json.loads(data)
-            obj = DictToModel(dict)
+            obj_dict = json.loads(data)
+            obj = _SearchField(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -292,7 +291,7 @@ class SearchField(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = DictToModel(data)
+            obj = _SearchField(data)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -710,8 +709,8 @@ class SearchIndex(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            dict = json.loads(data)
-            obj = DictToModel(dict)
+            obj_dict = json.loads(data)
+            obj = _SearchIndex(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -743,8 +742,7 @@ class SearchIndex(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = DictToModel(data)
-            # search_index = _SearchIndex(**data)
+            obj = _SearchIndex(data)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err

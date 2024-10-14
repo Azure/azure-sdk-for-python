@@ -10,7 +10,6 @@ from enum import Enum
 from typing_extensions import Self
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import DeserializationError
-from ._utils import DictToModel
 from ..._generated._model_base import Model
 from ..._generated.models import (
     LexicalAnalyzer,
@@ -144,8 +143,8 @@ class SearchIndexerSkillset(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            dict = json.loads(data)
-            obj = DictToModel(dict)
+            obj_dict = json.loads(data)
+            obj = _SearchIndexerSkillset(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -176,7 +175,7 @@ class SearchIndexerSkillset(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = DictToModel(data)
+            obj = _SearchIndexerSkillset(data)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -466,8 +465,8 @@ class AnalyzeTextOptions(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            dict = json.loads(data)
-            obj = DictToModel(dict)
+            obj_dict = json.loads(data)
+            obj = AnalyzeRequest(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -499,7 +498,7 @@ class AnalyzeTextOptions(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = DictToModel(data)
+            obj = AnalyzeRequest(data)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -773,8 +772,8 @@ class SearchResourceEncryptionKey(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            dict = json.loads(data)
-            obj = DictToModel(dict)
+            obj_dict = json.loads(data)
+            obj = _SearchResourceEncryptionKey(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -806,7 +805,7 @@ class SearchResourceEncryptionKey(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = DictToModel(data)
+            obj = _SearchResourceEncryptionKey(data)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -887,8 +886,8 @@ class SynonymMap(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            dict = json.loads(data)
-            obj = DictToModel(dict)
+            obj_dict = json.loads(data)
+            obj = _SynonymMap(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -920,7 +919,7 @@ class SynonymMap(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = DictToModel(data)
+            obj = _SynonymMap(data)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -1026,8 +1025,8 @@ class SearchIndexerDataSourceConnection(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            dict = json.loads(data)
-            obj = DictToModel(dict)
+            obj_dict = json.loads(data)
+            obj = _SearchIndexerDataSource(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -1059,7 +1058,7 @@ class SearchIndexerDataSourceConnection(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = DictToModel(data)
+            obj = _SearchIndexerDataSource(data)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
