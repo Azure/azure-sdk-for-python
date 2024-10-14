@@ -43,7 +43,7 @@ class SendWhatsAppMessageSample(object):
         video_options = VideoNotificationContent(
             channel_registration_id=self.channel_id,
             to=[self.phone_number],
-            media_uri="https://sample-videos.com/video321/mp4/480/big_buck_bunny_480p_1mb.mp4",
+            media_uri="https://filesamples.com/samples/video/3gp/sample_640x360.3gp"
         )
 
         # calling send() with whatsapp message details
