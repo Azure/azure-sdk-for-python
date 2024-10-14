@@ -139,13 +139,13 @@
   - Added enum `VMGuestPatchRebootStatus`
   - Added model `VolumeLicenseDetails`
   - Added model `WindowsParameters`
-  - Model `MachinesOperations` added method `begin_assess_patches`
-  - Model `MachinesOperations` added method `begin_install_patches`
-  - Added model `ExtensionMetadataOperations`
-  - Added model `LicenseProfilesOperations`
-  - Added model `LicensesOperations`
-  - Added model `NetworkProfileOperations`
-  - Added model `NetworkSecurityPerimeterConfigurationsOperations`
+  - Operation group `MachinesOperations` added method `begin_assess_patches`
+  - Operation group `MachinesOperations` added method `begin_install_patches`
+  - Added Operation group `ExtensionMetadataOperations`
+  - Added Operation group `LicenseProfilesOperations`
+  - Added Operation group `LicensesOperations`
+  - Added Operation group `NetworkProfileOperations`
+  - Added Operation group `NetworkSecurityPerimeterConfigurationsOperations`
 
 ### Breaking Changes
 
