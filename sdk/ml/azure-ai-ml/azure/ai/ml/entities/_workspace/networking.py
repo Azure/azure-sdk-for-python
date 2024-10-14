@@ -259,7 +259,7 @@ class ManagedNetwork:
 
     :param isolation_mode: Isolation of the managed network, defaults to Disabled.
     :type isolation_mode: str
-    :param firewall_sku: Firewall sku for FQDN rules on managed network.
+    :param firewall_sku: Firewall Sku for FQDN rules in AllowOnlyApprovedOutbound..
     :type firewall_sku: str
     :param outbound_rules: List of outbound rules for the managed network.
     :type outbound_rules: List[~azure.ai.ml.entities.OutboundRule]

@@ -56,7 +56,7 @@ class WorkspaceOutboundRuleOperations:
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/ml_samples_workspace.py
-                :start-after: [START outbound_rule_get] ../tests/workspace/unittests/test_workspace_entity.py
+                :start-after: [START outbound_rule_get]
                 :end-before: [END outbound_rule_get]
                 :language: python
                 :dedent: 8

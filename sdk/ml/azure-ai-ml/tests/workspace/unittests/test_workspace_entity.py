@@ -78,9 +78,7 @@ class TestWorkspaceEntity:
 
         assert workspace.managed_network is not None
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
-        print("ppll")
-        print(workspace.managed_network.firewall_sku)
-        print("popp")
+
         rules = workspace.managed_network.outbound_rules
         assert rules[0].name == "microsoft"
         assert rules[0].destination == "microsoft.com"
