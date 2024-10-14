@@ -48,9 +48,9 @@ from ._shared.response_handlers import return_response_headers, process_storage_
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
 
 if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+    from typing import Literal
 else:
-    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
+    from typing_extensions import Literal
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -201,7 +201,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
                                         file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
     @classmethod
     def from_file_url(
@@ -644,6 +644,9 @@ class ShareFileClient(StorageAccountHostsMixin):
 
                 This parameter was introduced in API version '2019-07-07'.
 
+        :keyword file_permission_format:
+            Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :keyword file_attributes:
             This value can be set to "source" to copy file attributes from the source file to the target file,
             or to clear all attributes, it can be set to "None". Otherwise it can be set to a list of attributes
@@ -787,10 +790,11 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def download_file(
-        self, offset: Optional[int] = None,
-        length: Optional[int] = None,
-        **kwargs: Any
-    ) -> StorageStreamDownloader:
+        self, offset=None,  # type: Optional[int]
+        length=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> StorageStreamDownloader
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.

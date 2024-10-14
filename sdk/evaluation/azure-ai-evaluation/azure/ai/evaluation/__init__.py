@@ -34,8 +34,8 @@ from ._evaluators._xpia import IndirectAttackEvaluator
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
-    OpenAIModelConfiguration,
     EvaluatorConfig,
+    OpenAIModelConfiguration,
 )
 
 __all__ = [

@@ -1,10 +1,16 @@
 # Release History
 
-## 1.18.1 (Unreleased)
+## 1.19.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.19.0 (2024-10-08)
 
 ### Bugs Fixed
 

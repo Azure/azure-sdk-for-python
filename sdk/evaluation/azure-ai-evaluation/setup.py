@@ -76,7 +76,7 @@ setup(
         "azure-ai-inference>=1.0.0b4"
     ],
     extras_require={
-        "pf-azure": [
+        "remote": [
             "promptflow-azure<2.0.0,>=1.15.0",
         ],
     },

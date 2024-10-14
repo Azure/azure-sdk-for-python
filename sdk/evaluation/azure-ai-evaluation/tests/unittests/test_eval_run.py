@@ -311,7 +311,7 @@ class TestEvalRun:
         # captured by caplog. Here we will skip this logger to capture logs.
         logger.parent = logging.root
 
-        with caplog.at_level(logging.INFO):
+        with caplog.at_level(logging.DEBUG):
             ev_utils._log_metrics_and_instance_results(
                 metrics=None,
                 instance_results=None,
@@ -320,7 +320,10 @@ class TestEvalRun:
                 evaluation_name=None,
             )
         assert len(caplog.records) == 1
-        assert "Unable to log traces as trace destination was not defined." in caplog.records[0].message
+        assert (
+            "Skip uploading evaluation results to AI Studio since no trace destination was provided."
+            in caplog.records[0].message
+        )
 
     def test_run_broken_if_no_tracking_uri(self, token_mock, caplog):
         """Test that if no tracking URI is provirded, the run is being marked as broken."""
