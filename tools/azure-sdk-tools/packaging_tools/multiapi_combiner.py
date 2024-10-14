@@ -411,6 +411,7 @@ class CodeModel:
                 self.models[m.name] = m
             elif getattr(m, "__class__", None) == "azure.core._enum_meta.CaseInsensitiveEnumMeta":
                 self.enums.append(m)
+                raise ValueError("in dis b")
         self._sort_models()
 
     def _sort_models(self) -> None:
