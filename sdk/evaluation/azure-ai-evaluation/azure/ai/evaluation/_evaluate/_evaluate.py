@@ -233,7 +233,7 @@ def _validate_columns_for_evaluators(
         new_df = _apply_column_mapping(df, mapping_config)
 
         # Validate input data for evaluator
-        is_built_in = evaluator.__module__.startswith('azure.ai.evaluation')
+        is_built_in = evaluator.__module__.startswith("azure.ai.evaluation")
         if is_built_in:
             # Note that for built-in evaluators supporting the "conversation" parameter,
             # all input parameters are now optional.

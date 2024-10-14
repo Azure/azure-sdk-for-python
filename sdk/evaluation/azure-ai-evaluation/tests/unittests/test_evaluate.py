@@ -143,10 +143,7 @@ class TestEvaluate:
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(data=missing_columns_jsonl_file, evaluators={"g": F1ScoreEvaluator()})
 
-        expected_message = (
-            "Some evaluators are missing required inputs:\n"
-            "- g: ['ground_truth']\n"
-        )
+        expected_message = "Some evaluators are missing required inputs:\n" "- g: ['ground_truth']\n"
         assert expected_message in exc_info.value.args[0]
 
     def test_evaluate_missing_required_inputs_target(self, questions_wrong_file):
@@ -159,10 +156,7 @@ class TestEvaluate:
             # target_fn will generate the "response", but not "ground_truth".
             evaluate(data=questions_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
 
-        expected_message = (
-            "Some evaluators are missing required inputs:\n"
-            "- g: ['ground_truth']\n"
-        )
+        expected_message = "Some evaluators are missing required inputs:\n" "- g: ['ground_truth']\n"
 
         expected_message2 = "Verify that the target function is generating the necessary columns for the evaluators."
 
@@ -565,10 +559,7 @@ class TestEvaluate:
                 _use_pf_client=use_pf_client,
             )  # type: ignore
 
-        expected_message = (
-            "Some evaluators are missing required inputs:\n"
-            "- non: ['response']\n"
-        )
+        expected_message = "Some evaluators are missing required inputs:\n" "- non: ['response']\n"
         assert expected_message in exc_info.value.args[0]
 
         # Variants with default answer work when only question is inputted
