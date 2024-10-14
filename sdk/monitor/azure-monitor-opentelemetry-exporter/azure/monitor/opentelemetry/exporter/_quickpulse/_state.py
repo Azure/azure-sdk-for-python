@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List
+from typing import Dict, List, Tuple, Union
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
@@ -10,6 +10,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _SHORT_PING_INTERVAL_SECONDS,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+    AggregationType,
     DerivedMetricInfo,
     DocumentIngress,
     TelemetryType,
@@ -30,8 +31,11 @@ _QUICKPULSE_DOCUMENTS: List[DocumentIngress] = []
 _QUICKPULSE_LAST_PROCESS_TIME = 0.0
 _QUICKPULSE_PROCESS_ELAPSED_TIME = datetime.now()
 _QUICKPULSE_LAST_PROCESS_CPU = 0.0
+# Filtering
 _QUICKPULSE_ETAG = ""
-_QUICKPULSE_METRIC_FILTERS: Dict[str, List[DerivedMetricInfo]] = {}
+_QUICKPULSE_METRIC_FILTER_CONFIG: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
+_QUICKPULSE_DERIVED_METRICS: Dict[str, Tuple[AggregationType, Union[float, int]]] = {}
+
 
 def _set_global_quickpulse_state(state: _QuickpulseState) -> None:
     # pylint: disable=global-statement
@@ -120,9 +124,15 @@ def _get_quickpulse_etag() -> str:
 
 def _set_quickpulse_metric_filters(filters: Dict[TelemetryType, List[DerivedMetricInfo]]) -> None:
     # pylint: disable=global-statement
-    global _QUICKPULSE_METRIC_FILTERS
-    _QUICKPULSE_METRIC_FILTERS = filters
+    global _QUICKPULSE_METRIC_FILTER_CONFIG
+    _QUICKPULSE_METRIC_FILTER_CONFIG = filters
 
 
 def _get_quickpulse_metric_filters() -> Dict[TelemetryType, List[DerivedMetricInfo]]:
-    return _QUICKPULSE_METRIC_FILTERS
+    return _QUICKPULSE_METRIC_FILTER_CONFIG
+
+
+def _set_quickpulse_derived_metric(metric_id: str, aggregation_type: AggregationType, value: Union[float, int]):
+    # pylint: disable=global-statement
+    global _QUICKPULSE_DERIVED_METRICS
+    _QUICKPULSE_DERIVED_METRICS[metric_id] = (aggregation_type, value)
