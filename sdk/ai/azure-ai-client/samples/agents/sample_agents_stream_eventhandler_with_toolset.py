@@ -25,7 +25,7 @@ import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import Agent, MessageDeltaChunk, MessageDeltaTextContent, RunStep, SubmitToolOutputsAction, ThreadMessage, ThreadRun
 from azure.ai.client.models import AgentEventHandler
-from azure.ai.client.operations._patch import AgentsOperations
+from azure.ai.client.operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
 from azure.ai.client.models import FunctionTool, ToolSet
 

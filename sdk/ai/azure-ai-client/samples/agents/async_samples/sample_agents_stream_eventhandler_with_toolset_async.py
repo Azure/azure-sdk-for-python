@@ -26,7 +26,7 @@ from typing import Any
 from azure.ai.client.aio import AzureAIClient
 from azure.ai.client.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, SubmitToolOutputsAction, ThreadMessage, ThreadRun
 from azure.ai.client.models import AsyncAgentEventHandler, AsyncFunctionTool, AsyncToolSet
-from azure.ai.client.operations._patch import AgentsOperations
+from azure.ai.client.aio.operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
 
 import os
@@ -70,29 +70,30 @@ class MyEventHandler(AsyncAgentEventHandler):
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
     async def _handle_submit_tool_outputs(self, run: "ThreadRun") -> None:
-        tool_calls = run.required_action.submit_tool_outputs.tool_calls
-        if not tool_calls:
-            print("No tool calls to execute.")
-            return
-        if not self._agents:
-            print("AssistantClient not set. Cannot execute tool calls using toolset.")
-            return
+        if isinstance(run.required_action, SubmitToolOutputsAction):
+            tool_calls = run.required_action.submit_tool_outputs.tool_calls
+            if not tool_calls:
+                print("No tool calls to execute.")
+                return
+            if not self._agents:
+                print("AssistantClient not set. Cannot execute tool calls using toolset.")
+                return
 
-        toolset = self._agents.get_toolset()
-        if toolset:
-            tool_outputs = await toolset.execute_tool_calls(tool_calls)
-        else:
-            raise ValueError("Toolset is not available in the client.")
-        
-        print(f"Tool outputs: {tool_outputs}")
-        if tool_outputs:
-            async with await self._agents.submit_tool_outputs_to_stream(
-                thread_id=run.thread_id, 
-                run_id=run.id, 
-                tool_outputs=tool_outputs, 
-                event_handler=self
-        ) as stream:
-                await stream.until_done()
+            toolset = self._agents.get_toolset()
+            if toolset:
+                tool_outputs = await toolset.execute_tool_calls(tool_calls)
+            else:
+                raise ValueError("Toolset is not available in the client.")
+            
+            print(f"Tool outputs: {tool_outputs}")
+            if tool_outputs:
+                async with await self._agents.submit_tool_outputs_to_stream(
+                    thread_id=run.thread_id, 
+                    run_id=run.id, 
+                    tool_outputs=tool_outputs, 
+                    event_handler=self
+            ) as stream:
+                    await stream.until_done()
 
 
 async def main():
