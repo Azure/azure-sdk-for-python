@@ -150,12 +150,8 @@
 ### Breaking Changes
 
   - Model `Machine` deleted or renamed its instance variable `properties`
-  - Model `Machine` deleted or renamed its instance variable `system_data`
-  - Model `MachineExtension` deleted or renamed its instance variable `system_data`
   - Model `MachineExtensionUpdate` deleted or renamed its instance variable `properties`
   - Model `MachineUpdate` deleted or renamed its instance variable `properties`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `system_data`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `system_data`
   - Deleted or renamed model `MachineExtensionUpdateProperties`
   - Deleted or renamed model `MachineProperties`
   - Deleted or renamed model `MachineUpdateProperties`
