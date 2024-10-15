@@ -163,3 +163,34 @@ def _get_target_and_path_for_http_dependency(target: Optional[str], url: Optiona
             elif target_from_url:
                 target = target_from_url
     return (target, path)
+
+
+def _get_target_for_db_dependency(target: Optional[str], db_system: Optional[str], attributes: Attributes) -> Optional[str]:
+    if attributes:
+        db_name = attributes.get(SpanAttributes.DB_NAME)
+        if db_name:
+            if target is None:
+                target = str(db_name)
+            else:
+                target = "{}|{}".format(target, db_name)
+        elif target is None:
+            target = db_system
+    return target
+
+
+def _get_target_for_messaging_dependency(target: Optional[str], attributes: Attributes) -> Optional[str]:
+    if attributes:
+        if target is None:
+            if SpanAttributes.MESSAGING_DESTINATION in attributes:
+                target = str(attributes[SpanAttributes.MESSAGING_DESTINATION])
+            elif SpanAttributes.MESSAGING_SYSTEM in attributes:
+                target = str(attributes[SpanAttributes.MESSAGING_SYSTEM])
+    return target
+
+
+def _get_target_for_rpc_dependency(target: Optional[str], attributes: Attributes) -> Optional[str]:
+    if attributes:
+        if target is None:
+            if SpanAttributes.RPC_SYSTEM in attributes:
+                target = str(attributes[SpanAttributes.RPC_SYSTEM])
+    return target

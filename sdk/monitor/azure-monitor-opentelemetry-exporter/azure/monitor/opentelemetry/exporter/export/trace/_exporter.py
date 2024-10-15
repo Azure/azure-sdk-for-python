@@ -366,7 +366,12 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 # data
                 if url:
                     data.data = url
-                target, path = trace_utils._get_target_and_path_for_http_dependency(target, url, scheme, span.attributes)
+                target, path = trace_utils._get_target_and_path_for_http_dependency(
+                    target,
+                    url,
+                    scheme,
+                    span.attributes,
+                )
                 # http specific logic for name
                 if path:
                     data.name = "{} {}".format(
@@ -402,42 +407,39 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 elif SpanAttributes.DB_OPERATION in span.attributes:
                     data.data = span.attributes[SpanAttributes.DB_OPERATION]
                 # db specific logic for target
-                if SpanAttributes.DB_NAME in span.attributes:
-                    db_name = span.attributes[SpanAttributes.DB_NAME]
-                    if target is None:
-                        target = db_name
-                    else:
-                        target = "{}|{}".format(target, db_name)
-                if target is None:
-                    target = db_system
+                target = trace_utils._get_target_for_db_dependency(
+                    target,
+                    db_system,
+                    span.attributes,
+                )
             elif SpanAttributes.MESSAGING_SYSTEM in span.attributes:  # Messaging
                 data.type = span.attributes[SpanAttributes.MESSAGING_SYSTEM]
-                if target is None:
-                    if SpanAttributes.MESSAGING_DESTINATION in span.attributes:
-                        target = span.attributes[SpanAttributes.MESSAGING_DESTINATION]
-                    else:
-                        target = span.attributes[SpanAttributes.MESSAGING_SYSTEM]
+                target = trace_utils._get_target_for_messaging_dependency(
+                    target,
+                    span.attributes,
+                )
             elif SpanAttributes.RPC_SYSTEM in span.attributes:  # Rpc
                 data.type = SpanAttributes.RPC_SYSTEM
-                if target is None:
-                    target = span.attributes[SpanAttributes.RPC_SYSTEM]
+                target = trace_utils._get_target_for_rpc_dependency(
+                    target,
+                    span.attributes,
+                )
             else:
                 data.type = "N/A"
         elif span.kind is SpanKind.PRODUCER:  # Messaging
             # Currently only eventhub and servicebus are supported that produce PRODUCER spans
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
                 data.type = "Queue Message | {}".format(span.attributes[_AZURE_SDK_NAMESPACE_NAME])
-                data.target = trace_utils._get_azure_sdk_target_source(span.attributes)
+                target = trace_utils._get_azure_sdk_target_source(span.attributes)
             else:
                 data.type = "Queue Message"
                 msg_system = span.attributes.get(SpanAttributes.MESSAGING_SYSTEM)
                 if msg_system:
                     data.type += " | {}".format(msg_system)
-                if target is None:
-                    if SpanAttributes.MESSAGING_DESTINATION in span.attributes:
-                        target = span.attributes[SpanAttributes.MESSAGING_DESTINATION]
-                    else:
-                        target = msg_system
+                target = trace_utils._get_target_for_messaging_dependency(
+                    target,
+                    span.attributes,
+                )
         else:  # SpanKind.INTERNAL
             data.type = "InProc"
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
