@@ -4,11 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional
-
 import logging
-from os import fstat
+import re
 import stat
+from typing import Any, Dict, Optional
+from os import fstat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 
 import isodate
@@ -137,13 +137,18 @@ def validate_and_format_range_headers(
     return range_header, range_validation
 
 
-def add_metadata_headers(metadata=None):
-    # type: (Optional[Dict[str, str]]) -> Dict[str, str]
-    headers = {}
-    if metadata:
-        for key, value in metadata.items():
-            headers[f'x-ms-meta-{key.strip()}'] = value.strip() if value else value
-    return headers
+def add_metadata_headers(metadata: Optional[Dict[str, str]] = None, **kwargs: Dict[str, Any]) -> Dict[str, str]:
+    metadata_headers = {}
+    headers = kwargs.pop('headers', {})
+    if not metadata:
+        metadata = {}
+        for key, value in headers.items():
+            if re.search("x-ms-meta-", key, re.IGNORECASE):
+                metadata[f'{key[10:].strip()}'] = value.strip() if value else value
+
+    for key, value in metadata.items():
+        metadata_headers[f'x-ms-meta-{key.strip()}'] = value.strip() if value else value
+    return metadata_headers
 
 
 def serialize_batch_body(requests, batch_id):
