@@ -100,4 +100,3 @@ class QueryIterable(PageIterator):
         if not block:
             raise StopIteration
         return block
-

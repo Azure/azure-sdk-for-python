@@ -104,4 +104,3 @@ class QueryIterable(AsyncPageIterator):
         if not block:
             raise StopAsyncIteration
         return block
-
