@@ -46,13 +46,8 @@ from ._generated.models import (
     MuteParticipantsRequest,
     CancelAddParticipantRequest,
     CustomCallingContext,
-    StartTranscriptionRequest,
-    StopTranscriptionRequest,
-    UpdateTranscriptionRequest,
     HoldRequest,
-    UnholdRequest,
-    StartMediaStreamingRequest,
-    StopMediaStreamingRequest
+    UnholdRequest
 )
 from ._generated.models._enums import RecognizeInputType
 from ._shared.auth_policy_utils import get_authentication_policy
