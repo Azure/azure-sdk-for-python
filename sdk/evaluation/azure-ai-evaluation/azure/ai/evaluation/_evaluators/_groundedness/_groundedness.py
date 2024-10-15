@@ -51,7 +51,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
         *,
         response: Optional[str] = None,
         context: Optional[str] = None,
-        conversation = None,
+        conversation=None,
         **kwargs,
     ):
         """Evaluate groundedless. Accepts either a response and context a single evaluation,

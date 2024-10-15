@@ -622,7 +622,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
         )
 
-        raise EvaluationException( # pylint: disable=raise-missing-from
+        raise EvaluationException(  # pylint: disable=raise-missing-from
             message=msg,
             target=ErrorTarget.EVALUATE,
             category=ErrorCategory.MISSING_PACKAGE,
@@ -758,7 +758,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     )
 
     result_df_dict = result_df.to_dict("records")
-    result: EvaluateResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url} # type: ignore
+    result: EvaluateResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
 
     if output_path:
         _write_output(output_path, result)

@@ -50,7 +50,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation = None,
+        conversation=None,
         **kwargs,
     ):
         """Evaluate coherence. Accepts either a query and response for a single evaluation,

@@ -55,7 +55,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         query: Optional[str] = None,
         response: Optional[str] = None,
         context: Optional[str] = None,
-        conversation = None,
+        conversation=None,
         **kwargs,
     ):
         """Evaluate relevance. Accepts either a response and context a single evaluation,

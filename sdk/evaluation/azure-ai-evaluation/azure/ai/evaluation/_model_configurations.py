@@ -54,6 +54,7 @@ class EvaluatorConfig(TypedDict, total=False):
     column_mapping: Dict[str, str]
     """Dictionary mapping evaluator input name to column in data"""
 
+
 class Message(TypedDict):
     role: str
     content: str

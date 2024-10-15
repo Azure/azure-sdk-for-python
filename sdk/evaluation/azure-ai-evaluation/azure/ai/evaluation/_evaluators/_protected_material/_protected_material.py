@@ -63,7 +63,7 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation = None,
+        conversation=None,
         **kwargs,
     ):
         """
