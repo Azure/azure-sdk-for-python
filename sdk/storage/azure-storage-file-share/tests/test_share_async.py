@@ -1821,3 +1821,82 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
 
         await lease.release()
         await share_client.delete_share()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_create_share_access_tier_premium(self, **kwargs):
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
+
+        try:
+            self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
+
+            share = self._get_share_reference()
+            await share.create_share(access_tier='Premium')
+            props = await share.get_share_properties()
+            assert props.access_tier == 'Premium'
+        finally:
+            await self._delete_shares()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_set_share_properties_access_tier_premium(self, **kwargs):
+        premium_storage_file_account_name = kwargs.pop("premium_storage_file_account_name")
+        premium_storage_file_account_key = kwargs.pop("premium_storage_file_account_key")
+
+        try:
+            self._setup(premium_storage_file_account_name, premium_storage_file_account_key)
+
+            share = self._get_share_reference()
+            await share.create_share()
+            await share.set_share_properties(access_tier='Premium')
+            props = await share.get_share_properties()
+            assert props.access_tier == 'Premium'
+        finally:
+            await self._delete_shares()
+
+    @pytest.mark.playback_test_only
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_provisioned_billing_v2(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        try:
+            self._setup(storage_account_name, storage_account_key)
+
+            share_name = self.get_resource_name(TEST_SHARE_PREFIX)
+            share = self.fsc.get_share_client(share_name)
+            self.test_shares.append(share_name)
+
+            await share.create_share(provisioned_iops=500, provisioned_bandwidth_mibps=150)
+            props = await share.get_share_properties()
+            assert props is not None
+            assert props.provisioned_iops == 500
+            assert props.provisioned_bandwidth == 150
+            assert props.included_burst_iops is not None
+            assert props.max_burst_credits_for_iops is not None
+            assert props.next_provisioned_iops_downgrade is not None
+            assert props.next_provisioned_bandwidth_downgrade is not None
+
+            await share.set_share_properties(
+                access_tier="Hot",
+                provisioned_iops=3000,
+                provisioned_bandwidth_mibps=125
+            )
+
+            shares = []
+            async for share in self.fsc.list_shares():
+                shares.append(share)
+
+            assert shares is not None
+            assert len(shares) >= 1
+            assert shares[0].name == share_name
+            assert shares[0].provisioned_iops == 3000
+            assert shares[0].provisioned_bandwidth == 125
+            assert shares[0].included_burst_iops is not None
+            assert shares[0].max_burst_credits_for_iops is not None
+            assert shares[0].next_provisioned_iops_downgrade is not None
+            assert shares[0].next_provisioned_bandwidth_downgrade is not None
+        finally:
+            await self._delete_shares()
