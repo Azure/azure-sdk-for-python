@@ -708,7 +708,7 @@ class DataLakeDirectoryClient(PathClient):
         :returns: A DataLakeFileClient.
         :rtype: ~azure.storage.filedatalake.DataLakeFileClient
         """
-        if isinstance(file_path, FileProperties):
+        if isinstance(file, FileProperties):
             file_path = file.get('name')
         else:
             file_path = self.path_name + '/' + str(file)
