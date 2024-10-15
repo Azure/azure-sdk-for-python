@@ -30,36 +30,34 @@ import collections
 from typing import Dict
 
 
-class Score(
-    collections.namedtuple("Score", ["precision", "recall", "fmeasure"])):
-  """Tuple containing precision, recall, and f-measure values."""
+class Score(collections.namedtuple("Score", ["precision", "recall", "fmeasure"])):
+    """Tuple containing precision, recall, and f-measure values."""
 
 
 class BaseScorer(object, metaclass=abc.ABCMeta):
-  """Base class for Scorer objects."""
+    """Base class for Scorer objects."""
 
-  @abc.abstractmethod
-  def score(self, target, prediction):
-    """Calculates score between the target and prediction.
+    @abc.abstractmethod
+    def score(self, target, prediction):
+        """Calculates score between the target and prediction.
 
-    Args:
-      target: Text containing the target (ground truth) text.
-      prediction: Text containing the predicted text.
+        Args:
+          target: Text containing the target (ground truth) text.
+          prediction: Text containing the predicted text.
 
-    Returns:
-      A dict mapping each score_type (string) to Score object.
-    """
+        Returns:
+          A dict mapping each score_type (string) to Score object.
+        """
 
 
-class AggregateScore(
-    collections.namedtuple("AggregateScore", ["low", "mid", "high"])):
-  """Tuple containing confidence intervals for scores."""
+class AggregateScore(collections.namedtuple("AggregateScore", ["low", "mid", "high"])):
+    """Tuple containing confidence intervals for scores."""
 
 
 def fmeasure(precision, recall):
-  """Computes f-measure given precision and recall values."""
+    """Computes f-measure given precision and recall values."""
 
-  if precision + recall > 0:
-    return 2 * precision * recall / (precision + recall)
-  else:
-    return 0.0
+    if precision + recall > 0:
+        return 2 * precision * recall / (precision + recall)
+    else:
+        return 0.0

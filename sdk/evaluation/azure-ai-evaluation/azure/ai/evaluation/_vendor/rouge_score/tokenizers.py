@@ -27,27 +27,27 @@ from azure.ai.evaluation._vendor.rouge_score import tokenize
 
 
 class Tokenizer(abc.ABC):
-  """Abstract base class for a tokenizer.
+    """Abstract base class for a tokenizer.
 
-  Subclasses of Tokenizer must implement the tokenize() method.
-  """
+    Subclasses of Tokenizer must implement the tokenize() method.
+    """
 
-  @abc.abstractmethod
-  def tokenize(self, text):
-    raise NotImplementedError("Tokenizer must override tokenize() method")
+    @abc.abstractmethod
+    def tokenize(self, text):
+        raise NotImplementedError("Tokenizer must override tokenize() method")
 
 
 class DefaultTokenizer(Tokenizer):
-  """Default tokenizer which tokenizes on whitespace."""
+    """Default tokenizer which tokenizes on whitespace."""
 
-  def __init__(self, use_stemmer=False):
-    """Constructor for DefaultTokenizer.
+    def __init__(self, use_stemmer=False):
+        """Constructor for DefaultTokenizer.
 
-    Args:
-      use_stemmer: boolean, indicating whether Porter stemmer should be used to
-      strip word suffixes to improve matching.
-    """
-    self._stemmer = porter.PorterStemmer() if use_stemmer else None
+        Args:
+          use_stemmer: boolean, indicating whether Porter stemmer should be used to
+          strip word suffixes to improve matching.
+        """
+        self._stemmer = porter.PorterStemmer() if use_stemmer else None
 
-  def tokenize(self, text):
-    return tokenize.tokenize(text, self._stemmer)
+    def tokenize(self, text):
+        return tokenize.tokenize(text, self._stemmer)
