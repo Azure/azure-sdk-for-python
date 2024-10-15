@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-from typing import Optional
+from typing import Optional, Union
 
 from typing_extensions import override
 
@@ -10,7 +10,6 @@ from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 logger = logging.getLogger(__name__)
-from typing import Union
 
 
 class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
