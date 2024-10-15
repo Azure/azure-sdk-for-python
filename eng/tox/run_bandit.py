@@ -35,12 +35,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
 
-    if in_ci():
-        if not is_check_enabled(args.target_package, "bandit"):
-            logging.info(
-                f"Package {package_name} opts-out of bandit check."
-            )
-            exit(0)
+    # if in_ci():
+    #     if not is_check_enabled(args.target_package, "bandit"):
+    #         logging.info(
+    #             f"Package {package_name} opts-out of bandit check."
+    #         )
+    #         exit(0)
 
     try:
         check_call(
