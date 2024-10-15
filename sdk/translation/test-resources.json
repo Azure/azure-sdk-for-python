@@ -109,7 +109,7 @@
             "properties": {
                 "networkAcls": "[variables('networkAcls')]",
                 "supportsHttpsTrafficOnly": true,
-                "allowSharedKeyAccess": false,
+                "allowSharedKeyAccess": true,
                 "encryption": "[variables('encryption')]",
                 "accessTier": "Hot"
             }
