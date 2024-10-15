@@ -7,7 +7,7 @@ from azure.ai.evaluation._common.constants import _InternalEvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
-class ECIEvaluator(RaiServiceEvaluatorBase):
+class ECIEvaluator(RaiServiceEvaluatorBase[str]):
     """
     Initialize an ECI evaluator to evaluate ECI based on the following guidelines:
     Detects whether ECI is present without a disclaimer in the AI system’s response.

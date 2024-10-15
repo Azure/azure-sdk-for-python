@@ -27,11 +27,11 @@ from ._evaluators._xpia import IndirectAttackEvaluator
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
-    EvaluatorConfig,
-    OpenAIModelConfiguration,
     Conversation,
-    Message,
     EvaluateResult,
+    EvaluatorConfig,
+    Message,
+    OpenAIModelConfiguration,
 )
 
 __all__ = [

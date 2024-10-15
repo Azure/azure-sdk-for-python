@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, TypeVar
 
 from typing_extensions import override
 
@@ -13,8 +13,10 @@ from azure.core.credentials import TokenCredential
 
 from . import EvaluatorBase
 
+T = TypeVar("T")
 
-class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
+
+class RaiServiceEvaluatorBase(EvaluatorBase[T]):
     """Base class for all evaluators that require the use of the Azure AI RAI service for evaluation.
     This includes content safety evaluators, protected material evaluators, and others. These evaluators
     are all assumed to be of the "query and response or conversation" input variety.
@@ -62,11 +64,12 @@ class RaiServiceEvaluatorBase(EvaluatorBase[Union[str, float]]):
             key "messages", and potentially a global context under the key "context". Conversation turns are expected
             to be dictionaries with keys "content", "role", and possibly "context".
         :paramtype conversation: Optional[~azure.ai.evaluation.Conversation]
+        :rtype: Union[Dict[str, T], Dict[str, Union[float, Dict[str, List[T]]]]]
         """
         return super().__call__(query=query, response=response, conversation=conversation, **kwargs)
 
     @override
-    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, T]:
         """Perform the evaluation using the Azure AI RAI service.
         The exact evaluation performed is determined by the evaluation metric supplied
         by the child class initializer.
