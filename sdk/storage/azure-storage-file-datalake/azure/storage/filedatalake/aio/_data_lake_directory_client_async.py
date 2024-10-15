@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 import functools
 from typing import (
@@ -67,7 +67,7 @@ class DataLakeDirectoryClient(PathClient):
         ~azure.core.credentials.AzureNamedKeyCredential or
         ~azure.core.credentials.AzureSasCredential or
         ~azure.core.credentials_async.AsyncTokenCredential or
-        str or dict[str, str] or None
+        str or Dict[str, str] or None
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -92,7 +92,7 @@ class DataLakeDirectoryClient(PathClient):
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
-        super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, path_name=directory_name, # pylint: disable=specify-parameter-names-in-call
+        super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, path_name=directory_name,
                                                       credential=credential, **kwargs)
 
     @distributed_trace_async
@@ -104,7 +104,7 @@ class DataLakeDirectoryClient(PathClient):
 
         :param metadata:
             Name-value pairs associated with the directory as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword lease:
@@ -170,7 +170,7 @@ class DataLakeDirectoryClient(PathClient):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: A dictionary of response headers.
-        :rtype: dict[str, str] or dict[str, ~datetime.datetime]
+        :rtype: Dict[str, Union[str, datetime]]
 
         .. admonition:: Example:
 
@@ -407,7 +407,7 @@ class DataLakeDirectoryClient(PathClient):
         :type sub_directory: str or ~azure.storage.filedatalake.DirectoryProperties
         :param metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword lease:
@@ -539,7 +539,7 @@ class DataLakeDirectoryClient(PathClient):
             ContentSettings object used to set path properties.
         :keyword metadata:
             Name-value pairs associated with the file as metadata.
-        :type metadata: dict(str, str)
+        :type metadata: Dict[str, str]
         :keyword lease:
             Required if the file has an active lease. Value can be a DataLakeLeaseClient object
             or the lease ID as a string.

@@ -498,7 +498,7 @@ class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
 
         progress_hook = kwargs.pop('progress_hook', None)
         max_batches = kwargs.pop('max_batches', None)
-        options = self._set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
+        options = _set_access_control_recursive_options(mode='set', acl=acl, **kwargs)
         return await self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                        max_batches=max_batches)
 
