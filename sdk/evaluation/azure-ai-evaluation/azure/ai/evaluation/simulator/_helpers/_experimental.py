@@ -27,11 +27,13 @@ T = TypeVar("T")
 
 
 @overload
-def experimental(wrapped: Type[T]) -> Type[T]: ...
+def experimental(wrapped: Type[T]) -> Type[T]:
+    ...
 
 
 @overload
-def experimental(wrapped: Callable[P, T]) -> Callable[P, T]: ...
+def experimental(wrapped: Callable[P, T]) -> Callable[P, T]:
+    ...
 
 
 def experimental(wrapped: Union[Type[T], Callable[P, T]]) -> Union[Type[T], Callable[P, T]]:
