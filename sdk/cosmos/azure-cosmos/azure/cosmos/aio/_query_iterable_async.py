@@ -23,13 +23,12 @@
 """
 import asyncio
 from azure.core.async_paging import AsyncPageIterator
-from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._execution_context.aio import execution_dispatcher
 
 # pylint: disable=protected-access
 
 
-class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-attributes
+class QueryIterable(AsyncPageIterator):
     """Represents an iterable object of the query results.
 
     QueryIterable is a wrapper for query execution context.
@@ -77,15 +76,13 @@ class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-att
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
             self._client, self._collection_link, self._query, self._options, self._fetch_function
         )
-        self._last_response_headers = CaseInsensitiveDict()
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     async def _unpack(self, block):
-        try:
-            self._last_response_headers = block.get_response_headers()
-        except AttributeError:
-            self._last_response_headers = self._client.last_response_headers
-        continuation = self._last_response_headers.get("x-ms-continuation") or self._last_response_headers.get('etag')
+        continuation = None
+        if self._client.last_response_headers:
+            continuation = self._client.last_response_headers.get("x-ms-continuation") or \
+                           self._client.last_response_headers.get('etag')
         if block:
             self._did_a_call_already = False
         return continuation, block
@@ -98,7 +95,7 @@ class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-att
 
         :param Any args:
         :return: List of results.
-        :rtype: ~azure.cosmos.CosmosList
+        :rtype: list
         """
 
         if 'partitionKey' in self._options and asyncio.iscoroutine(self._options['partitionKey']):
@@ -108,9 +105,3 @@ class QueryIterable(AsyncPageIterator):  # pylint: disable=too-many-instance-att
             raise StopAsyncIteration
         return block
 
-    def get_response_headers(self) -> CaseInsensitiveDict:
-        """Returns the response headers associated to this result
-        :return: Dict of response headers
-        :rtype: ~azure.core.CaseInsensitiveDict
-        """
-        return self._last_response_headers.copy()

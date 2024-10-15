@@ -13,6 +13,7 @@ from azure.cosmos.http_constants import HttpHeaders
 
 
 # TODO: add more tests in this file once we have response headers in control plane operations
+# TODO: add query tests once those changes are available
 
 @pytest.mark.cosmosEmulator
 class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
@@ -71,37 +72,6 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response.get_response_headers()) > 0
         assert int(lsn) + 1 < int(batch_response.get_response_headers()['lsn'])
-
-    async def test_query_paging_headers_async(self):
-        container = await self.test_database.create_container(id="responses_paging_test" + str(uuid.uuid4()),
-                                                              partition_key=PartitionKey(path="/number"),
-                                                              offer_throughput=11000)
-        for i in range(10):
-            await container.create_item({"id": str(uuid.uuid4()), "number": i % 2})
-        iterable = container.query_items("select * from c", max_item_count=3)
-        item_pages = iterable.by_page()
-        assert len(item_pages.get_response_headers()) == 0
-
-        await item_pages.__anext__()
-        first_page_headers = item_pages.get_response_headers()
-        assert len(first_page_headers) > 0
-        assert int(first_page_headers[HttpHeaders.ItemCount]) == 3
-
-        await item_pages.__anext__()
-        second_page_headers = item_pages.get_response_headers()
-        assert len(second_page_headers) > 0
-        assert int(second_page_headers[HttpHeaders.ItemCount]) == 2
-        assert first_page_headers[HttpHeaders.PartitionKeyRangeID] == second_page_headers[
-            HttpHeaders.PartitionKeyRangeID]
-        assert first_page_headers != second_page_headers
-
-        await item_pages.__anext__()
-        third_page_headers = item_pages.get_response_headers()
-        assert len(third_page_headers) > 0
-        assert int(third_page_headers[HttpHeaders.ItemCount]) == 3
-        assert first_page_headers[HttpHeaders.PartitionKeyRangeID] != third_page_headers[
-            HttpHeaders.PartitionKeyRangeID]
-        assert second_page_headers != third_page_headers
 
 
 if __name__ == '__main__':

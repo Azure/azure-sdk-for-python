@@ -22,13 +22,12 @@
 """Iterable query results in the Azure Cosmos database service.
 """
 from azure.core.paging import PageIterator  # type: ignore
-from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._execution_context import execution_dispatcher
 
 # pylint: disable=protected-access
 
 
-class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attributes
+class QueryIterable(PageIterator):
     """Represents an iterable object of the query results.
 
     QueryIterable is a wrapper for query execution context.
@@ -76,15 +75,13 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
         self._ex_context = execution_dispatcher._ProxyQueryExecutionContext(
             self._client, self._collection_link, self._query, self._options, self._fetch_function
         )
-        self._last_response_headers = CaseInsensitiveDict()
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
     def _unpack(self, block):
-        try:
-            self._last_response_headers = block.get_response_headers()
-        except AttributeError:
-            self._last_response_headers = self._client.last_response_headers
-        continuation = self._last_response_headers.get("x-ms-continuation") or self._last_response_headers.get('etag')
+        continuation = None
+        if self._client.last_response_headers:
+            continuation = self._client.last_response_headers.get("x-ms-continuation") or \
+                           self._client.last_response_headers.get('etag')
         if block:
             self._did_a_call_already = False
         return continuation, block
@@ -97,17 +94,10 @@ class QueryIterable(PageIterator):  # pylint: disable=too-many-instance-attribut
 
         :param Any args:
         :return: List of results.
-        :rtype: ~azure.cosmos.CosmosList
+        :rtype: list
         """
         block = self._ex_context.fetch_next_block()
         if not block:
             raise StopIteration
         return block
 
-    def get_response_headers(self) -> CaseInsensitiveDict:
-        """Returns the response headers associated to this result
-
-        :return: Dict of response headers
-        :rtype: ~azure.core.CaseInsensitiveDict
-        """
-        return self._last_response_headers.copy()
