@@ -33,11 +33,6 @@ from azure.cosmos.partition_key import _Undefined, _Empty
 
 class FeedRangeInternal(ABC):
 
-    def __init__(self, container_link: str) -> None:
-        if container_link is None:
-            raise ValueError("container_link cannot be None")
-        self._container_link = container_link
-
     @abstractmethod
     def get_normalized_range(self) -> Range:
         pass
@@ -56,19 +51,17 @@ class FeedRangeInternal(ABC):
 
 class FeedRangeInternalPartitionKey(FeedRangeInternal):
     type_property_name = "PK"
-    container_link_property_name = "Container"
 
     def __init__(
             self,
             pk_value: Union[str, int, float, bool, List[Union[str, int, float, bool]], _Empty, _Undefined],
-            feed_range: Range,
-            container_link: str) -> None:  # pylint: disable=line-too-long
+            feed_range: Range) -> None:  # pylint: disable=line-too-long
 
         if pk_value is None:
             raise ValueError("PartitionKey cannot be None")
         if feed_range is None:
             raise ValueError("Feed range cannot be None")
-        super().__init__(container_link)
+
         self._pk_value = pk_value
         self._feed_range = feed_range
 
@@ -77,41 +70,36 @@ class FeedRangeInternalPartitionKey(FeedRangeInternal):
 
     def to_dict(self) -> Dict[str, Any]:
         if isinstance(self._pk_value, _Undefined):
-            return { self.type_property_name: [{}], self.container_link_property_name: self._container_link }
+            return { self.type_property_name: [{}] }
         if isinstance(self._pk_value, _Empty):
-            return { self.type_property_name: [], self.container_link_property_name: self._container_link}
+            return { self.type_property_name: [] }
         if isinstance(self._pk_value, list):
-            return { self.type_property_name: list(self._pk_value),
-                     self.container_link_property_name: self._container_link }
+            return { self.type_property_name: list(self._pk_value) }
 
-        return { self.type_property_name: self._pk_value, self.container_link_property_name: self._container_link }
+        return { self.type_property_name: self._pk_value }
 
     @classmethod
     def from_json(cls, data: Dict[str, Any], feed_range: Range) -> 'FeedRangeInternalPartitionKey':
-        if data.get(cls.type_property_name) and data.get(cls.container_link_property_name):
+        if data.get(cls.type_property_name):
             pk_value = data.get(cls.type_property_name)
-            container_link = str(data.get(cls.container_link_property_name))
             if not pk_value:
-                return cls(_Empty(), feed_range, container_link)
+                return cls(_Empty(), feed_range)
             if pk_value == [{}]:
-                return cls(_Undefined(), feed_range, container_link)
+                return cls(_Undefined(), feed_range)
             if isinstance(pk_value, list):
-                return cls(list(pk_value), feed_range, container_link)
-            return cls(data[cls.type_property_name], feed_range, container_link)
+                return cls(list(pk_value), feed_range)
+            return cls(data[cls.type_property_name], feed_range)
 
         raise ValueError(f"Can not parse FeedRangeInternalPartitionKey from the json,"
                          f" there is no property {cls.type_property_name}")
 
 
-
 class FeedRangeInternalEpk(FeedRangeInternal):
     type_property_name = "Range"
-    container_link_property_name = "Container"
 
-    def __init__(self, feed_range: Range, container_link: str) -> None:
+    def __init__(self, feed_range: Range) -> None:
         if feed_range is None:
             raise ValueError("feed_range cannot be None")
-        super().__init__(container_link)
 
         self._range = feed_range
         self._base64_encoded_string: Optional[str] = None
@@ -121,16 +109,14 @@ class FeedRangeInternalEpk(FeedRangeInternal):
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            self.type_property_name: self._range.to_dict(),
-            self.container_link_property_name: self._container_link
+            self.type_property_name: self._range.to_dict()
         }
 
     @classmethod
     def from_json(cls, data: Dict[str, Any]) -> 'FeedRangeInternalEpk':
-        if data.get(cls.type_property_name) and data.get(cls.container_link_property_name):
+        if data.get(cls.type_property_name):
             feed_range = Range.ParseFromDict(data.get(cls.type_property_name))
-            container_link = str(data.get(cls.container_link_property_name))
-            return cls(feed_range, container_link)
+            return cls(feed_range)
         raise ValueError(f"Can not parse FeedRangeInternalEPK from the json,"
                          f" there is no property {cls.type_property_name}")
 

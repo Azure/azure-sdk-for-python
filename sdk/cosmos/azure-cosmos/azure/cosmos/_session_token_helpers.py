@@ -94,6 +94,7 @@ def merge_session_tokens_for_same_partition(session_tokens: List[str]) -> List[s
 # [("AA", "DD"), "1:1#57,2:1#58"]
 # 3. [(("AA", "BB"), "1:1#57"), (("BB", "DD"), "2:1#52"), (("AA", "DD"), "0:1#55")] ->
 # [("AA", "DD"), "1:1#57,2:1#52,0:1#55"]
+# goal here is to detect any obvious merges or splits that happened
 # compound session tokens are not considered will just pass them along
 def merge_ranges_with_subsets(overlapping_ranges: List[Tuple[Range, str]]) -> List[Tuple[Range, str]]:
     processed_ranges = []
@@ -162,17 +163,12 @@ def merge_ranges_with_subsets(overlapping_ranges: List[Tuple[Range, str]]) -> Li
         overlapping_ranges.remove(overlapping_ranges[0])
     return processed_ranges
 
-def get_updated_session_token(feed_ranges_to_session_tokens: List[Tuple[FeedRange, str]], target_feed_range: FeedRange,
-                              container_link: str):
+def get_updated_session_token(feed_ranges_to_session_tokens: List[Tuple[FeedRange, str]], target_feed_range: FeedRange):
 
-    if target_feed_range._feed_range_internal._container_link != container_link:
-        raise ValueError('The target feed range does not belong to the container.')
     target_feed_range_normalized = target_feed_range._feed_range_internal.get_normalized_range()
     # filter out tuples that overlap with target_feed_range and normalizes all the ranges
     overlapping_ranges = []
     for feed_range_to_session_token in feed_ranges_to_session_tokens:
-        if feed_range_to_session_token[0]._feed_range_internal._container_link != container_link:
-            raise ValueError('The feed range does not belong to the container.')
         if Range.overlaps(target_feed_range_normalized,
                           feed_range_to_session_token[0]._feed_range_internal.get_normalized_range()):
             overlapping_ranges.append((feed_range_to_session_token[0]._feed_range_internal.get_normalized_range(),

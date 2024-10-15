@@ -62,7 +62,7 @@ class TestUpdatedSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         target_session_token, previous_session_token = await self.create_items_logical_pk(container, target_feed_range,
                                                                                     previous_session_token,
                                                                                     feed_ranges_and_session_tokens)
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = await container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
         assert session_token == target_session_token
         feed_ranges_and_session_tokens.append((target_feed_range, session_token))
@@ -72,7 +72,7 @@ class TestUpdatedSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         target_session_token, _ = await self.create_items_logical_pk(container, target_feed_range, session_token,
                                                                feed_ranges_and_session_tokens)
         target_feed_range = await container.feed_range_from_partition_key(target_pk)
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = await container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
         assert session_token == target_session_token
         await self.database.delete_container(container.id)
@@ -88,7 +88,7 @@ class TestUpdatedSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
                                                                                                         previous_session_token,
                                                                                                         feed_ranges_and_session_tokens)
 
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = await container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert session_token == target_session_token
 
         await self.trigger_split(container, 11000)
@@ -97,7 +97,7 @@ class TestUpdatedSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
                                                                                      session_token,
                                                                                      feed_ranges_and_session_tokens)
 
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = await container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert is_compound_session_token(session_token)
         session_tokens = session_token.split(",")
         assert len(session_tokens) == 2
@@ -124,7 +124,7 @@ class TestUpdatedSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
                                                                                                         feed_ranges_and_session_tokens,
                                                                                                         True)
 
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = await container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert session_token == target_session_token
         await self.database.delete_container(container.id)
 
@@ -141,7 +141,7 @@ class TestUpdatedSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
                                                                                     previous_session_token,
                                                                                     feed_ranges_and_session_tokens,
                                                                                     True)
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = await container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
         assert session_token == target_session_token
         await self.database.delete_container(container.id)
@@ -191,7 +191,7 @@ class TestUpdatedSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         container_feed_ranges = await container.read_feed_ranges()
         target_feed_range = None
         for feed_range in container_feed_ranges:
-            if container.is_feed_range_subset(feed_range, pk_feed_range):
+            if await container.is_feed_range_subset(feed_range, pk_feed_range):
                 target_feed_range = feed_range
                 break
 
@@ -204,7 +204,7 @@ class TestUpdatedSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
                 curr_feed_range = await container.feed_range_from_partition_key(pk)
             else:
                 curr_feed_range = await container.feed_range_from_partition_key(item['pk'])
-            if container.is_feed_range_subset(target_feed_range, curr_feed_range):
+            if await container.is_feed_range_subset(target_feed_range, curr_feed_range):
                 target_session_token = session_token
             previous_session_token = session_token
             feed_ranges_and_session_tokens.append((curr_feed_range, session_token))

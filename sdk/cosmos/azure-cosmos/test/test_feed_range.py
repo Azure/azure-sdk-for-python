@@ -98,35 +98,18 @@ class TestFeedRange:
 
     @pytest.mark.parametrize("parent_feed_range, child_feed_range, is_subset", test_subset_ranges)
     def test_feed_range_is_subset(self, setup, parent_feed_range, child_feed_range, is_subset):
-        epk_parent_feed_range = FeedRangeEpk(parent_feed_range, setup["created_collection"].container_link)
-        epk_child_feed_range = FeedRangeEpk(child_feed_range, setup["created_collection"].container_link)
+        epk_parent_feed_range = FeedRangeEpk(parent_feed_range)
+        epk_child_feed_range = FeedRangeEpk(child_feed_range)
         assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range) == is_subset
 
     def test_feed_range_is_subset_from_pk(self, setup):
-        epk_parent_feed_range = FeedRangeEpk(Range("", "FF", True, False),
-                                             setup["created_collection"].container_link)
+        epk_parent_feed_range = FeedRangeEpk(Range("", "FF", True, False))
         epk_child_feed_range = setup["created_collection"].feed_range_from_partition_key("1")
         assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
 
     @pytest.mark.parametrize("range1, range2, overlaps", test_overlaps_ranges)
     def test_overlaps(self, setup, range1, range2, overlaps):
         assert Range.overlaps(range1, range2) == overlaps
-
-    def test_is_subset_with_wrong_feed_range(self, setup):
-        wrong_container = "wrong_container_link"
-        epk_parent_feed_range = FeedRangeEpk(Range("", "FF", True, False),
-                                             wrong_container)
-        epk_child_feed_range = FeedRangeEpk(Range("", "FF", True, False),
-                                             setup["created_collection"].container_link)
-        with pytest.raises(ValueError, match="Feed ranges must be from the same container."):
-            setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
-
-        epk_parent_feed_range = FeedRangeEpk(Range("", "FF", True, False),
-                                             setup["created_collection"].container_link)
-        epk_child_feed_range = FeedRangeEpk(Range("", "FF", True, False),
-                                            wrong_container)
-        with pytest.raises(ValueError, match="Feed ranges must be from the same container."):
-            setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
 
 if __name__ == '__main__':
     unittest.main()

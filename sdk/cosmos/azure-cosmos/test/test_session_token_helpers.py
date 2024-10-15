@@ -90,8 +90,7 @@ class TestSessionTokenHelpers:
     TEST_COLLECTION_ID = configs.TEST_SINGLE_PARTITION_CONTAINER_ID
 
     def test_get_session_token_update(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False),
-                                  setup[COLLECTION].container_link)
+        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
         session_token = "0:1#54#3=50"
         feed_ranges_and_session_tokens = [(feed_range, session_token)]
         session_token = "0:1#51#3=52"
@@ -100,8 +99,7 @@ class TestSessionTokenHelpers:
         assert session_token == "0:1#54#3=52"
 
     def test_many_session_tokens_update_same_range(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False),
-                                  setup[COLLECTION].container_link)
+        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
         feed_ranges_and_session_tokens = []
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
@@ -113,18 +111,15 @@ class TestSessionTokenHelpers:
         assert updated_session_token == session_token
 
     def test_many_session_tokens_update(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False),
-                                  setup[COLLECTION].container_link)
+        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
         feed_ranges_and_session_tokens = []
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
             feed_ranges_and_session_tokens.append((feed_range, session_token))
 
         # adding irrelevant feed ranges
-        feed_range1 = FeedRangeEpk(Range("CC", "FF", True, False),
-                                   setup[COLLECTION].container_link)
-        feed_range2 = FeedRangeEpk(Range("00", "55", True, False),
-                                   setup[COLLECTION].container_link)
+        feed_range1 = FeedRangeEpk(Range("CC", "FF", True, False))
+        feed_range2 = FeedRangeEpk(Range("00", "55", True, False))
         for i in range(1000):
             session_token = "0:1#" + str(random.randint(1, 100)) + "#3=" + str(random.randint(1, 100))
             if i % 2 == 0:
@@ -142,27 +137,11 @@ class TestSessionTokenHelpers:
         actual_split_ranges = []
         for feed_range, session_token in split_ranges:
             actual_split_ranges.append((FeedRangeEpk(Range(feed_range[0], feed_range[1],
-                                                True, False),
-                                          setup[COLLECTION].container_link), session_token))
+                                                True, False)), session_token))
         target_feed_range = FeedRangeEpk(Range(target_feed_range[0], target_feed_range[1][1],
-                                               True, False),
-                                         setup[COLLECTION].container_link)
+                                               True, False))
         updated_session_token = setup[COLLECTION].get_updated_session_token(actual_split_ranges, target_feed_range)
         assert updated_session_token == expected_session_token
-
-    def test_invalid_feed_range(self, setup):
-        feed_range = FeedRangeEpk(Range("AA", "BB", True, False),
-                                  setup[COLLECTION].container_link)
-        session_token = "0:1#54#3=50"
-        feed_ranges_and_session_tokens = [(feed_range, session_token)]
-        with pytest.raises(ValueError, match='There were no overlapping feed ranges with the target.'):
-            setup["created_collection"].get_updated_session_token(feed_ranges_and_session_tokens,
-                                                                  FeedRangeEpk(Range(
-                                                                      "CC",
-                                                                      "FF",
-                                                                      True,
-                                                                      False),
-                                                                      setup[COLLECTION].container_link))
 
 if __name__ == '__main__':
     unittest.main()

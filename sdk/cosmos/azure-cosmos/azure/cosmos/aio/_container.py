@@ -1318,10 +1318,10 @@ class ContainerProxy:
                 [Range("", "FF", True, False)],
                 **kwargs)
 
-        return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange), self.container_link)
+        return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange))
                 for partitionKeyRange in partition_key_ranges]
 
-    def get_updated_session_token(self,
+    async def get_updated_session_token(self,
                                   feed_ranges_to_session_tokens: List[Tuple[FeedRange, str]],
                                   target_feed_range: FeedRange
                                   ) -> str:
@@ -1337,7 +1337,7 @@ class ContainerProxy:
         :returns: a session token
         :rtype: str
         """
-        return get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range, self.container_link)
+        return get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range)
 
     async def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> FeedRange:
         """Gets the feed range for a given partition key.
@@ -1346,9 +1346,9 @@ class ContainerProxy:
         :returns: a feed range
         :rtype: FeedRange
         """
-        return FeedRangeEpk(await self._get_epk_range_for_partition_key(partition_key), self.container_link)
+        return FeedRangeEpk(await self._get_epk_range_for_partition_key(partition_key))
 
-    def is_feed_range_subset(self, parent_feed_range: FeedRange, child_feed_range: FeedRange) -> bool:
+    async def is_feed_range_subset(self, parent_feed_range: FeedRange, child_feed_range: FeedRange) -> bool:
         """Checks if child feed range is a subset of parent feed range.
         :param parent_feed_range: left feed range
         :type parent_feed_range: FeedRange
@@ -1357,8 +1357,6 @@ class ContainerProxy:
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
         """
-        if (child_feed_range._feed_range_internal._container_link != self.container_link or
-                parent_feed_range._feed_range_internal._container_link != self.container_link):
-            raise ValueError("Feed ranges must be from the same container.")
+
         return child_feed_range._feed_range_internal.get_normalized_range().is_subset(
             parent_feed_range._feed_range_internal.get_normalized_range())

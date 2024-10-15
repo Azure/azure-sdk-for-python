@@ -53,26 +53,9 @@ class TestFeedRangeAsync:
         await setup["created_db"].delete_container(created_container)
 
     async def test_feed_range_is_subset_from_pk(self, setup):
-        epk_parent_feed_range = FeedRangeEpk(Range("", "FF", True, False),
-                                             setup["created_collection"].container_link)
+        epk_parent_feed_range = FeedRangeEpk(Range("", "FF", True, False))
         epk_child_feed_range = await setup["created_collection"].feed_range_from_partition_key("1")
         assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
-
-    def test_is_subset_with_wrong_feed_range(self, setup):
-        wrong_container = "wrong_container_link"
-        epk_parent_feed_range = FeedRangeEpk(Range("", "FF", True, False),
-                                             wrong_container)
-        epk_child_feed_range = FeedRangeEpk(Range("", "FF", True, False),
-                                            setup["created_collection"].container_link)
-        with pytest.raises(ValueError, match="Feed ranges must be from the same container."):
-            setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
-
-        epk_parent_feed_range = FeedRangeEpk(Range("", "FF", True, False),
-                                             setup["created_collection"].container_link)
-        epk_child_feed_range = FeedRangeEpk(Range("", "FF", True, False),
-                                            wrong_container)
-        with pytest.raises(ValueError, match="Feed ranges must be from the same container."):
-            setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
 
 if __name__ == '__main__':
     unittest.main()
