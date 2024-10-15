@@ -1117,6 +1117,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                     > abs_timeout
                 ):
                     expired = True
+                    break
                     # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
                     # if not sent_drain:
                     #     receiver._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count, drain=True)
@@ -1146,10 +1147,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                     receiver._handler._connection._read_frame()
                 received = amqp_receive_client._received_messages.qsize() - before
 
-                with receiver._handler._link._drain_lock:
-                    if received > 0 or receiver._handler._link._still_receiving:
-                        # If we received messages, reset the drain timeout
-                        time_sent = time.time()
+                # with receiver._handler._link._drain_lock:
+                #     if received > 0 or receiver._handler._link._still_receiving:
+                #         # If we received messages, reset the drain timeout
+                #         time_sent = time.time()
 
                 if (
                     not first_message_received
