@@ -112,9 +112,8 @@ def sample_chat_completions_streaming_with_tools():
         # Create a chat completion client for Azure OpenAI endpoint
         client = ChatCompletionsClient(
             endpoint=endpoint,
-            credential=AzureKeyCredential(""),  # Pass in an empty value
-            headers={"api-key": key},
-            api_version="2024-06-01",  # AOAI api-version. Update as needed.
+            credential=AzureKeyCredential(key),
+            api_version="2024-06-01",  # Azure OpenAI api-version. See https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
         )
     else:
         # Create a chat completions client for Serverless API endpoint or Managed Compute endpoint
