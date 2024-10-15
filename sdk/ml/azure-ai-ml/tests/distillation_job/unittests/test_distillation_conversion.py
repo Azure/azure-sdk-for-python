@@ -17,10 +17,10 @@ class TestDistillationJobConversion:
         "data_generation_task_type",
         [
             DataGenerationTaskType.NLI,
-            # DataGenerationTaskType.NLU_QA,
-            # DataGenerationTaskType.CONVERSATION,
-            # DataGenerationTaskType.MATH,
-            # DataGenerationTaskType.SUMMARIZATION,
+            DataGenerationTaskType.NLU_QA,
+            DataGenerationTaskType.CONVERSATION,
+            DataGenerationTaskType.MATH,
+            DataGenerationTaskType.SUMMARIZATION,
         ],
     )
     def test_distillation_job_conversation(self, data_generation_task_type: str):
@@ -100,10 +100,10 @@ class TestDistillationJobConversion:
         "data_generation_task_type",
         [
             DataGenerationTaskType.NLI,
-            # DataGenerationTaskType.NLU_QA,
-            # DataGenerationTaskType.CONVERSATION,
-            # DataGenerationTaskType.MATH,
-            # DataGenerationTaskType.SUMMARIZATION,
+            DataGenerationTaskType.NLU_QA,
+            DataGenerationTaskType.CONVERSATION,
+            DataGenerationTaskType.MATH,
+            DataGenerationTaskType.SUMMARIZATION,
         ],
     )
     def test_distillation_job_read_from_wire(self, data_generation_task_type: str):

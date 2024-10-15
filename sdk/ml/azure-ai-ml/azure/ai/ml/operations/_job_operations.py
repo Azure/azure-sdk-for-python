@@ -1081,6 +1081,8 @@ class JobOperations(_ScopeDependentOperations):
             self._resolve_automl_job_inputs(job)
         elif isinstance(job, FineTuningJob):
             self._resolve_finetuning_job_inputs(job)
+        elif isinstance(job, DistillationJob):
+            self._resolve_distillation_job_inputs(job)
         elif isinstance(job, Spark):
             self._resolve_job_inputs(job._job_inputs.values(), job._base_path)
         elif isinstance(job, Command):
