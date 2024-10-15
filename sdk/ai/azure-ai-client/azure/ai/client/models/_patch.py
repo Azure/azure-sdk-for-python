@@ -39,6 +39,7 @@ from typing import AsyncIterator, List, Dict, Any, Type, Optional, Iterator, Tup
 
 logger = logging.getLogger(__name__)
 
+
 class EndpointProperties:
 
     def __init__(self, *, connection: ConnectionsListSecretsResponse, token_credential: TokenCredential = None) -> None:
@@ -105,9 +106,10 @@ class SASTokenCredential(TokenCredential):
     def _refresh_token(self) -> None:
         logger.debug("[SASTokenCredential._refresh_token] Enter")
         from azure.ai.client import AzureAIClient
+
         ai_client = AzureAIClient(
             credential=self._credential,
-            endpoint = "not-needed", # Since we are only going to use the "endpoints" operations, we don't need to supply an endpoint. http://management.azure.com is hard coded in the SDK.
+            endpoint="not-needed",  # Since we are only going to use the "endpoints" operations, we don't need to supply an endpoint. http://management.azure.com is hard coded in the SDK.
             subscription_id=self._subscription_id,
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,

@@ -37,6 +37,14 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``code_interpreter``"""
     FILE_SEARCH = "file_search"
     """Tool type ``file_search``"""
+    BING_GROUNDING = "bing_grounding"
+    """Tool type ``bing_grounding``"""
+    MICROSOFT_FABRIC = "microsoft_fabric"
+    """Tool type ``microsoft_fabric``"""
+    SHAREPOINT = "sharepoint"
+    """Tool type ``sharepoint``"""
+    AZURE_AI_SEARCH = "azure_ai_search"
+    """Tool type ``azure_ai_search``"""
 
 
 class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -125,7 +133,7 @@ class ApiResponseFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """to do."""
+    """Authentication type used by Azure AI service to connect to another service."""
 
     API_KEY = "ApiKey"
     """API Key authentication"""
@@ -146,11 +154,9 @@ class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
     AZURE_OPEN_AI = "AzureOpenAI"
-    """Azure OpenAI"""
+    """Azure OpenAI service"""
     SERVERLESS = "Serverless"
-    """Serverless API"""
-    AGENT = "Agent"
-    """Agent"""
+    """Serverless API service"""
 
 
 class ErrorEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -205,6 +211,16 @@ class FileState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity has been deleted but may still be referenced by other entities predating the
     deletion. It can be categorized as a
     terminal state."""
+
+
+class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Frequency of the schedule - day, week, month, hour, minute."""
+
+    MONTH = "Month"
+    WEEK = "Week"
+    DAY = "Day"
+    HOUR = "Hour"
+    MINUTE = "Minute"
 
 
 class IncompleteRunDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -479,3 +495,15 @@ class VectorStoreStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """in_progress status indicates that this vector store is still processing files."""
     COMPLETED = "completed"
     """completed status indicates that this vector store is ready for use."""
+
+
+class WeekDays(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """WeekDay of the schedule - Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday."""
+
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"

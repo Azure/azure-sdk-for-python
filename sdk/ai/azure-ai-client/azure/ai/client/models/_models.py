@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -20,7 +20,6 @@ from ._enums import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import _types, models as _models
 
 
@@ -222,7 +221,8 @@ class AgentsNamedToolChoice(_model_base.Model):
 
 
     :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
-     Required. Known values are: "function", "code_interpreter", and "file_search".
+     Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
+     "microsoft_fabric", "sharepoint", and "azure_ai_search".
     :vartype type: str or ~azure.ai.client.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.client.models.FunctionName
@@ -230,7 +230,8 @@ class AgentsNamedToolChoice(_model_base.Model):
 
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field()
     """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
-     values are: \"function\", \"code_interpreter\", and \"file_search\"."""
+     values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
+     \"microsoft_fabric\", \"sharepoint\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field()
     """The name of the function to call."""
 
@@ -368,30 +369,25 @@ class AgentThreadCreationOptions(_model_base.Model):
 
 
 class InputData(_model_base.Model):
-    """Abstract data class.
+    """Abstract data class for input data configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AppInsightsConfiguration, Dataset
 
 
-    :ivar type: Discriminator property for InputData. Required. Default value is None.
+    :ivar type: Type of the data. Required. Default value is None.
     :vartype type: str
-    :ivar id: Evaluation input data. Required.
-    :vartype id: str
     """
 
     __mapping__: Dict[str, _model_base.Model] = {}
     type: str = rest_discriminator(name="type")
-    """Discriminator property for InputData. Required. Default value is None."""
-    id: str = rest_field(name="Uri")
-    """Evaluation input data. Required."""
+    """Type of the data. Required. Default value is None."""
 
     @overload
     def __init__(
         self,
         *,
         type: str,
-        id: str,  # pylint: disable=redefined-builtin
     ): ...
 
     @overload
@@ -408,31 +404,35 @@ class InputData(_model_base.Model):
 class AppInsightsConfiguration(InputData, discriminator="app_insights"):
     """Data Source for Application Insight.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Evaluation input data. Required.
-    :vartype id: str
+
     :ivar type: Required. Default value is "app_insights".
     :vartype type: str
-    :ivar connection_string: Application Insight connection string. Required.
-    :vartype connection_string: str
-    :ivar query: Query to fetch data. Required.
+    :ivar resource_id: LogAnalytic Workspace resourceID associated with AppInsights. Required.
+    :vartype resource_id: str
+    :ivar query: Query to fetch the data. Required.
     :vartype query: str
+    :ivar service_name: Service name. Required.
+    :vartype service_name: str
     """
 
-    type: Literal["app_insights"] = rest_discriminator(name="type")  # type: ignore
+    type: Literal["app_insights"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"app_insights\"."""
-    connection_string: str = rest_field(name="connectionString")
-    """Application Insight connection string. Required."""
+    resource_id: str = rest_field(name="resourceId")
+    """LogAnalytic Workspace resourceID associated with AppInsights. Required."""
     query: str = rest_field()
-    """Query to fetch data. Required."""
+    """Query to fetch the data. Required."""
+    service_name: str = rest_field(name="serviceName")
+    """Service name. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
-        connection_string: str,
+        resource_id: str,
         query: str,
+        service_name: str,
     ): ...
 
     @overload
@@ -446,11 +446,43 @@ class AppInsightsConfiguration(InputData, discriminator="app_insights"):
         super().__init__(*args, type="app_insights", **kwargs)
 
 
+class AzureAISearchResource(_model_base.Model):
+    """A set of index resources used by the ``azure_ai_search`` tool.
+
+    :ivar index_list: The indices attached to this agent. There can be a maximum of 1 index
+     resource attached to the agent.
+    :vartype index_list: list[~azure.ai.client.models.IndexResource]
+    """
+
+    index_list: Optional[List["_models.IndexResource"]] = rest_field(name="indexes")
+    """The indices attached to this agent. There can be a maximum of 1 index
+     resource attached to the agent."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index_list: Optional[List["_models.IndexResource"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class ToolDefinition(_model_base.Model):
     """An abstract representation of an input tool definition that an agent can use.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CodeInterpreterToolDefinition, FileSearchToolDefinition, FunctionToolDefinition
+    AzureAISearchToolDefinition, BingSearchToolDefinition, CodeInterpreterToolDefinition,
+    FileSearchToolDefinition, FunctionToolDefinition, MicrosoftFabricToolDefinition,
+    SharepointToolDefinition
 
 
     :ivar type: The object type. Required. Default value is None.
@@ -477,6 +509,63 @@ class ToolDefinition(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search"):
+    """The input definition information for an Azure AI search tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'azure_ai_search'. Required. Default value is
+     "azure_ai_search".
+    :vartype type: str
+    """
+
+    type: Literal["azure_ai_search"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'azure_ai_search'. Required. Default value is
+     \"azure_ai_search\"."""
+
+    @overload
+    def __init__(
+        self,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="azure_ai_search", **kwargs)
+
+
+class BingSearchToolDefinition(ToolDefinition, discriminator="bing_search"):
+    """The input definition information for a bing search tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'bing_search'. Required. Default value is
+     "bing_search".
+    :vartype type: str
+    """
+
+    type: Literal["bing_search"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'bing_search'. Required. Default value is \"bing_search\"."""
+
+    @overload
+    def __init__(
+        self,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="bing_search", **kwargs)
 
 
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
@@ -540,8 +629,40 @@ class CodeInterpreterToolResource(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class ConnectionListResource(_model_base.Model):
+    """A set of connection resources currently used by either the ``bing_search``\\ ,
+    ``microsoft_fabric``\\ , or ``sharepoint`` tools.
+
+    :ivar connection_list: The connections attached to this agent. There can be a maximum of 1
+     connection
+     resource attached to the agent.
+    :vartype connection_list: list[~azure.ai.client.models.ConnectionResource]
+    """
+
+    connection_list: Optional[List["_models.ConnectionResource"]] = rest_field(name="connections")
+    """The connections attached to this agent. There can be a maximum of 1 connection
+     resource attached to the agent."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_list: Optional[List["_models.ConnectionResource"]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class ConnectionProperties(_model_base.Model):
-    """to do.
+    """Connetion properties.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ConnectionPropertiesAADAuth, ConnectionPropertiesApiKeyAuth, ConnectionPropertiesSASAuth
@@ -566,20 +687,19 @@ class ConnectionPropertiesAADAuth(ConnectionProperties, discriminator="AAD"):
     :ivar auth_type: Authentication type of the connection target. Required. Entra ID
      authentication
     :vartype auth_type: str or ~azure.ai.client.models.AAD
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", and "Agent".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
+     "Serverless".
     :vartype category: str or ~azure.ai.client.models.EndpointType
-    :ivar target: to do. Required.
+    :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
     """
 
     auth_type: Literal[AuthenticationType.AAD] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. Entra ID authentication"""
-    category: Union[str, "_models._enums.EndpointType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\", and
-     \"Agent\"."""
+    category: Union[str, "_models.EndpointType"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
     target: str = rest_field()
-    """to do. Required."""
+    """The connection URL to be used for this service. Required."""
 
 
 class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey"):
@@ -588,24 +708,23 @@ class ConnectionPropertiesApiKeyAuth(ConnectionProperties, discriminator="ApiKey
 
     :ivar auth_type: Authentication type of the connection target. Required. API Key authentication
     :vartype auth_type: str or ~azure.ai.client.models.API_KEY
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", and "Agent".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
+     "Serverless".
     :vartype category: str or ~azure.ai.client.models.EndpointType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
     :vartype credentials: ~azure.ai.client.models._models.CredentialsApiKeyAuth
-    :ivar target: to do. Required.
+    :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
     """
 
     auth_type: Literal[AuthenticationType.API_KEY] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. API Key authentication"""
-    category: Union[str, "_models._enums.EndpointType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\", and
-     \"Agent\"."""
+    category: Union[str, "_models.EndpointType"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
     credentials: "_models._models.CredentialsApiKeyAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
     target: str = rest_field()
-    """to do. Required."""
+    """The connection URL to be used for this service. Required."""
 
 
 class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
@@ -615,41 +734,69 @@ class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
     :ivar auth_type: Authentication type of the connection target. Required. Shared Access
      Signature (SAS) authentication
     :vartype auth_type: str or ~azure.ai.client.models.SAS
-    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI",
-     "Serverless", and "Agent".
+    :ivar category: Category of the connection. Required. Known values are: "AzureOpenAI" and
+     "Serverless".
     :vartype category: str or ~azure.ai.client.models.EndpointType
     :ivar credentials: Credentials will only be present for authType=ApiKey. Required.
     :vartype credentials: ~azure.ai.client.models._models.CredentialsSASAuth
-    :ivar target: to do. Required.
+    :ivar target: The connection URL to be used for this service. Required.
     :vartype target: str
     """
 
     auth_type: Literal[AuthenticationType.SAS] = rest_discriminator(name="authType")  # type: ignore
     """Authentication type of the connection target. Required. Shared Access Signature (SAS)
      authentication"""
-    category: Union[str, "_models._enums.EndpointType"] = rest_field()
-    """Category of the connection. Required. Known values are: \"AzureOpenAI\", \"Serverless\", and
-     \"Agent\"."""
+    category: Union[str, "_models.EndpointType"] = rest_field()
+    """Category of the connection. Required. Known values are: \"AzureOpenAI\" and \"Serverless\"."""
     credentials: "_models._models.CredentialsSASAuth" = rest_field()
     """Credentials will only be present for authType=ApiKey. Required."""
     target: str = rest_field()
-    """to do. Required."""
+    """The connection URL to be used for this service. Required."""
+
+
+class ConnectionResource(_model_base.Model):
+    """A connection resource.
+
+
+    :ivar connection_id: A connection in a ConnectionListResource attached to this agent. Required.
+    :vartype connection_id: str
+    """
+
+    connection_id: str = rest_field()
+    """A connection in a ConnectionListResource attached to this agent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class ConnectionsListResponse(_model_base.Model):
-    """to do.
+    """Response from the list operation.
 
 
-    :ivar value: to do. Required.
+    :ivar value: A list of connection list secrets. Required.
     :vartype value: list[~azure.ai.client.models._models.ConnectionsListSecretsResponse]
     """
 
     value: List["_models._models.ConnectionsListSecretsResponse"] = rest_field()
-    """to do. Required."""
+    """A list of connection list secrets. Required."""
 
 
 class ConnectionsListSecretsResponse(_model_base.Model):
-    """to do.
+    """Response from the listSecrets operation.
 
 
     :ivar name: The name of the resource. Required.
@@ -665,27 +812,95 @@ class ConnectionsListSecretsResponse(_model_base.Model):
 
 
 class CredentialsApiKeyAuth(_model_base.Model):
-    """to do.
+    """The credentials needed for API key authentication.
 
 
-    :ivar key: to do. Required.
+    :ivar key: The API key. Required.
     :vartype key: str
     """
 
     key: str = rest_field()
-    """to do. Required."""
+    """The API key. Required."""
 
 
 class CredentialsSASAuth(_model_base.Model):
-    """to do.
+    """The credentials neede for Shared Access Signatures (SAS) authentication.
 
 
-    :ivar sas: to do. Required.
+    :ivar sas: The Shared Access Signatures (SAS) token. Required.
     :vartype sas: str
     """
 
     sas: str = rest_field(name="SAS")
-    """to do. Required."""
+    """The Shared Access Signatures (SAS) token. Required."""
+
+
+class Trigger(_model_base.Model):
+    """Abstract data class for input data configuration.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CronTrigger, RecurrenceTrigger
+
+
+    :ivar type: Type of the trigger. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """Type of the trigger. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class CronTrigger(Trigger, discriminator="Cron"):
+    """Cron Trigger Definition.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar type: Required. Default value is "Cron".
+    :vartype type: str
+    :ivar expression: Cron expression for the trigger. Required.
+    :vartype expression: str
+    """
+
+    type: Literal["Cron"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    """Required. Default value is \"Cron\"."""
+    expression: str = rest_field()
+    """Cron expression for the trigger. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        expression: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="Cron", **kwargs)
 
 
 class Dataset(InputData, discriminator="dataset"):
@@ -694,14 +909,16 @@ class Dataset(InputData, discriminator="dataset"):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
-    :ivar id: Evaluation input data. Required.
-    :vartype id: str
     :ivar type: Required. Default value is "dataset".
     :vartype type: str
+    :ivar id: Evaluation input data. Required.
+    :vartype id: str
     """
 
     type: Literal["dataset"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """Required. Default value is \"dataset\"."""
+    id: str = rest_field(name="Uri")
+    """Evaluation input data. Required."""
 
     @overload
     def __init__(
@@ -727,12 +944,12 @@ class Evaluation(_model_base.Model):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
-    :ivar id: Identifier of the evaluation.
+    :ivar id: Identifier of the evaluation. Required.
     :vartype id: str
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.client.models.InputData
-    :ivar display_name: Update stage to 'Archive' to archive the asset. Default is Development,
-     which means the asset is under development.
+    :ivar display_name: Display Name for evaluation. It helps to find evaluation easily in AI
+     Studio. It does not need to be unique.
     :vartype display_name: str
     :ivar description: Description of the evaluation. It can be used to store additional
      information about the evaluation and is mutable.
@@ -750,13 +967,13 @@ class Evaluation(_model_base.Model):
     :vartype evaluators: dict[str, ~azure.ai.client.models.EvaluatorConfiguration]
     """
 
-    id: Optional[str] = rest_field()
-    """Identifier of the evaluation."""
-    data: "_models.InputData" = rest_field()
+    id: str = rest_field(visibility=["read"])
+    """Identifier of the evaluation. Required."""
+    data: "_models.InputData" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(name="displayName")
-    """Update stage to 'Archive' to archive the asset. Default is Development, which means the asset
-     is under development."""
+    """Display Name for evaluation. It helps to find evaluation easily in AI Studio. It does not need
+     to be unique."""
     description: Optional[str] = rest_field()
     """Description of the evaluation. It can be used to store additional information about the
      evaluation and is mutable."""
@@ -766,10 +983,10 @@ class Evaluation(_model_base.Model):
     """Status of the evaluation. It is set by service and is read-only."""
     tags: Optional[Dict[str, str]] = rest_field()
     """Evaluation's tags. Unlike properties, tags are fully mutable."""
-    properties: Optional[Dict[str, str]] = rest_field()
+    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create"])
     """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
-    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field()
+    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(visibility=["read", "create"])
     """Evaluators to be used for the evaluation. Required."""
 
     @overload
@@ -778,7 +995,90 @@ class Evaluation(_model_base.Model):
         *,
         data: "_models.InputData",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        properties: Optional[Dict[str, str]] = None,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class EvaluationSchedule(_model_base.Model):  # pylint: disable=too-many-instance-attributes
+    """Evaluation Schedule Definition.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar id: Identifier of the evaluation. Required.
+    :vartype id: str
+    :ivar data: Data for evaluation. Required.
+    :vartype data: ~azure.ai.client.models.InputData
+    :ivar display_name: Display Name for evaluation. It helps to find evaluation easily in AI
+     Studio. It does not need to be unique.
+    :vartype display_name: str
+    :ivar description: Description of the evaluation. It can be used to store additional
+     information about the evaluation and is mutable.
+    :vartype description: str
+    :ivar system_data: Metadata containing createdBy and modifiedBy information.
+    :vartype system_data: ~azure.ai.client.models.SystemData
+    :ivar provisioning_status: Status of the evaluation. It is set by service and is read-only.
+    :vartype provisioning_status: str
+    :ivar tags: Evaluation's tags. Unlike properties, tags are fully mutable.
+    :vartype tags: dict[str, str]
+    :ivar properties: Evaluation's properties. Unlike tags, properties are add-only. Once added, a
+     property cannot be removed.
+    :vartype properties: dict[str, str]
+    :ivar evaluators: Evaluators to be used for the evaluation. Required.
+    :vartype evaluators: dict[str, ~azure.ai.client.models.EvaluatorConfiguration]
+    :ivar trigger: Trigger for the evaluation. Required.
+    :vartype trigger: ~azure.ai.client.models.Trigger
+    :ivar sampling_strategy: Sampling strategy for the evaluation. Required.
+    :vartype sampling_strategy: ~azure.ai.client.models.SamplingStrategy
+    """
+
+    id: str = rest_field(visibility=["read"])
+    """Identifier of the evaluation. Required."""
+    data: "_models.InputData" = rest_field(visibility=["read", "create"])
+    """Data for evaluation. Required."""
+    display_name: Optional[str] = rest_field(name="displayName")
+    """Display Name for evaluation. It helps to find evaluation easily in AI Studio. It does not need
+     to be unique."""
+    description: Optional[str] = rest_field()
+    """Description of the evaluation. It can be used to store additional information about the
+     evaluation and is mutable."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Metadata containing createdBy and modifiedBy information."""
+    provisioning_status: Optional[str] = rest_field(name="provisioningStatus", visibility=["read"])
+    """Status of the evaluation. It is set by service and is read-only."""
+    tags: Optional[Dict[str, str]] = rest_field()
+    """Evaluation's tags. Unlike properties, tags are fully mutable."""
+    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create"])
+    """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
+     removed."""
+    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(visibility=["read", "create"])
+    """Evaluators to be used for the evaluation. Required."""
+    trigger: "_models.Trigger" = rest_field()
+    """Trigger for the evaluation. Required."""
+    sampling_strategy: "_models.SamplingStrategy" = rest_field(name="samplingStrategy")
+    """Sampling strategy for the evaluation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: "_models.InputData",
+        evaluators: Dict[str, "_models.EvaluatorConfiguration"],
+        trigger: "_models.Trigger",
+        sampling_strategy: "_models.SamplingStrategy",
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -1146,6 +1446,41 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, type="function", **kwargs)
+
+
+class IndexResource(_model_base.Model):
+    """A Index resource.
+
+
+    :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
+     Required.
+    :vartype index_connection_id: str
+    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
+    :vartype index_name: str
+    """
+
+    index_connection_id: str = rest_field()
+    """An index connection id in an IndexResource attached to this agent. Required."""
+    index_name: str = rest_field()
+    """The name of an index in an IndexResource attached to this agent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index_connection_id: str,
+        index_name: str,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class MessageAttachment(_model_base.Model):
@@ -2041,6 +2376,35 @@ class MessageTextFilePathDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="microsoft_fabric"):
+    """The input definition information for a Microsoft Fabric tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
+     "microsoft_fabric".
+    :vartype type: str
+    """
+
+    type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'microsoft_fabric'. Required. Default value is
+     \"microsoft_fabric\"."""
+
+    @overload
+    def __init__(
+        self,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="microsoft_fabric", **kwargs)
+
+
 class OpenAIFile(_model_base.Model):
     """Represents an agent that can call the model and use tools.
 
@@ -2434,6 +2798,97 @@ class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
         self.object: Literal["list"] = "list"
 
 
+class RecurrenceSchedule(_model_base.Model):
+    """RecurrenceSchedule Definition.
+
+
+    :ivar hours: List of hours for the schedule. Required.
+    :vartype hours: list[int]
+    :ivar minutes: List of minutes for the schedule. Required.
+    :vartype minutes: list[int]
+    :ivar week_days: List of days for the schedule. Required.
+    :vartype week_days: list[str or ~azure.ai.client.models.WeekDays]
+    :ivar month_days: List of month days for the schedule. Required.
+    :vartype month_days: list[int]
+    """
+
+    hours: List[int] = rest_field()
+    """List of hours for the schedule. Required."""
+    minutes: List[int] = rest_field()
+    """List of minutes for the schedule. Required."""
+    week_days: List[Union[str, "_models.WeekDays"]] = rest_field(name="weekDays")
+    """List of days for the schedule. Required."""
+    month_days: List[int] = rest_field(name="monthDays")
+    """List of month days for the schedule. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        hours: List[int],
+        minutes: List[int],
+        week_days: List[Union[str, "_models.WeekDays"]],
+        month_days: List[int],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
+    """Recurrence Trigger Definition.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar type: Required. Default value is "Recurrence".
+    :vartype type: str
+    :ivar frequency: The frequency to trigger schedule. Required. Known values are: "Month",
+     "Week", "Day", "Hour", and "Minute".
+    :vartype frequency: str or ~azure.ai.client.models.Frequency
+    :ivar interval: Specifies schedule interval in conjunction with frequency. Required.
+    :vartype interval: int
+    :ivar schedule: The recurrence schedule. Required.
+    :vartype schedule: ~azure.ai.client.models.RecurrenceSchedule
+    """
+
+    type: Literal["Recurrence"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    """Required. Default value is \"Recurrence\"."""
+    frequency: Union[str, "_models.Frequency"] = rest_field()
+    """The frequency to trigger schedule. Required. Known values are: \"Month\", \"Week\", \"Day\",
+     \"Hour\", and \"Minute\"."""
+    interval: int = rest_field()
+    """Specifies schedule interval in conjunction with frequency. Required."""
+    schedule: "_models.RecurrenceSchedule" = rest_field()
+    """The recurrence schedule. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        frequency: Union[str, "_models.Frequency"],
+        interval: int,
+        schedule: "_models.RecurrenceSchedule",
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="Recurrence", **kwargs)
+
+
 class RequiredAction(_model_base.Model):
     """An abstract representation of a required action for an agent thread run to continue.
 
@@ -2782,6 +3237,129 @@ class RunStep(_model_base.Model):  # pylint: disable=too-many-instance-attribute
         self.object: Literal["thread.run.step"] = "thread.run.step"
 
 
+class RunStepToolCall(_model_base.Model):
+    """An abstract representation of a detailed tool call as recorded within a run step for an
+    existing run.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    RunStepAzureAISearchToolCall, RunStepBingSearchToolCall, RunStepCodeInterpreterToolCall,
+    RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepMicrosoftFabricToolCall,
+    RunStepSharepointToolCall
+
+
+    :ivar type: The object type. Required. Default value is None.
+    :vartype type: str
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """The object type. Required. Default value is None."""
+    id: str = rest_field()
+    """The ID of the tool call. This ID must be referenced when you submit tool outputs. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        id: str,  # pylint: disable=redefined-builtin
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_search"):
+    """A record of a call to an Azure AI Search tool, issued by the model in evaluation of a defined
+    tool, that represents
+    executed Azure AI search.
+
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'azure_ai_search'. Required. Default value is
+     "azure_ai_search".
+    :vartype type: str
+    :ivar azure_ai_search: Reserved for future use. Required.
+    :vartype azure_ai_search: dict[str, str]
+    """
+
+    type: Literal["azure_ai_search"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'azure_ai_search'. Required. Default value is
+     \"azure_ai_search\"."""
+    azure_ai_search: Dict[str, str] = rest_field()
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        azure_ai_search: Dict[str, str],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="azure_ai_search", **kwargs)
+
+
+class RunStepBingSearchToolCall(RunStepToolCall, discriminator="bing_search"):
+    """A record of a call to a bing search tool, issued by the model in evaluation of a defined tool,
+    that represents
+    executed bing search.
+
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'bing_search'. Required. Default value is
+     "bing_search".
+    :vartype type: str
+    :ivar bing_search: Reserved for future use. Required.
+    :vartype bing_search: dict[str, str]
+    """
+
+    type: Literal["bing_search"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'bing_search'. Required. Default value is \"bing_search\"."""
+    bing_search: Dict[str, str] = rest_field()
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        bing_search: Dict[str, str],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="bing_search", **kwargs)
+
+
 class RunStepCodeInterpreterToolCallOutput(_model_base.Model):
     """An abstract representation of an emitted output from a code interpreter tool.
 
@@ -2910,46 +3488,6 @@ class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, disc
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, type="logs", **kwargs)
-
-
-class RunStepToolCall(_model_base.Model):
-    """An abstract representation of a detailed tool call as recorded within a run step for an
-    existing run.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepCodeInterpreterToolCall, RunStepFileSearchToolCall, RunStepFunctionToolCall
-
-
-    :ivar type: The object type. Required. Default value is None.
-    :vartype type: str
-    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
-     Required.
-    :vartype id: str
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
-    """The object type. Required. Default value is None."""
-    id: str = rest_field()
-    """The ID of the tool call. This ID must be referenced when you submit tool outputs. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-        id: str,  # pylint: disable=redefined-builtin
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interpreter"):
@@ -3918,6 +4456,87 @@ class RunStepMessageCreationReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_fabric"):
+    """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
+    tool, that represents
+    executed Microsoft Fabric operations.
+
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
+     "microsoft_fabric".
+    :vartype type: str
+    :ivar microsoft_fabric: Reserved for future use. Required.
+    :vartype microsoft_fabric: dict[str, str]
+    """
+
+    type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'microsoft_fabric'. Required. Default value is
+     \"microsoft_fabric\"."""
+    microsoft_fabric: Dict[str, str] = rest_field()
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        microsoft_fabric: Dict[str, str],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="microsoft_fabric", **kwargs)
+
+
+class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
+    """A record of a call to a SharePoint tool, issued by the model in evaluation of a defined tool,
+    that represents
+    executed SharePoint actions.
+
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'sharepoint'. Required. Default value is
+     "sharepoint".
+    :vartype type: str
+    :ivar share_point: Reserved for future use. Required.
+    :vartype share_point: dict[str, str]
+    """
+
+    type: Literal["sharepoint"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'sharepoint'. Required. Default value is \"sharepoint\"."""
+    share_point: Dict[str, str] = rest_field(name="sharepoint")
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        share_point: Dict[str, str],
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="sharepoint", **kwargs)
+
+
 class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
     """The detailed information associated with a run step calling tools.
 
@@ -3951,6 +4570,63 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, type=RunStepType.TOOL_CALLS, **kwargs)
+
+
+class SamplingStrategy(_model_base.Model):
+    """SamplingStrategy Definition.
+
+
+    :ivar rate: Sampling rate. Required.
+    :vartype rate: float
+    """
+
+    rate: float = rest_field()
+    """Sampling rate. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rate: float,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint"):
+    """The input definition information for a sharepoint tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'sharepoint'. Required. Default value is
+     "sharepoint".
+    :vartype type: str
+    """
+
+    type: Literal["sharepoint"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'sharepoint'. Required. Default value is \"sharepoint\"."""
+
+    @overload
+    def __init__(
+        self,
+    ): ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="sharepoint", **kwargs)
 
 
 class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):
@@ -4519,12 +5195,32 @@ class ToolResources(_model_base.Model):
     :ivar file_search: Resources to be used by the ``file_search`` tool consisting of vector store
      IDs.
     :vartype file_search: ~azure.ai.client.models.FileSearchToolResource
+    :ivar bing_search: Resources to be used by the ``bing_search`` tool consisting of connection
+     IDs.
+    :vartype bing_search: ~azure.ai.client.models.ConnectionListResource
+    :ivar microsoft_fabric: Resources to be used by the ``microsoft_fabric`` tool consisting of
+     connection IDs.
+    :vartype microsoft_fabric: ~azure.ai.client.models.ConnectionListResource
+    :ivar share_point: Resources to be used by the ``sharepoint`` tool consisting of connection
+     IDs.
+    :vartype share_point: ~azure.ai.client.models.ConnectionListResource
+    :ivar azure_ai_search: Resources to be used by the ``azure_ai_search`` tool consisting of index
+     IDs and names.
+    :vartype azure_ai_search: ~azure.ai.client.models.AzureAISearchResource
     """
 
     code_interpreter: Optional["_models.CodeInterpreterToolResource"] = rest_field()
     """Resources to be used by the ``code_interpreter tool`` consisting of file IDs."""
     file_search: Optional["_models.FileSearchToolResource"] = rest_field()
     """Resources to be used by the ``file_search`` tool consisting of vector store IDs."""
+    bing_search: Optional["_models.ConnectionListResource"] = rest_field()
+    """Resources to be used by the ``bing_search`` tool consisting of connection IDs."""
+    microsoft_fabric: Optional["_models.ConnectionListResource"] = rest_field()
+    """Resources to be used by the ``microsoft_fabric`` tool consisting of connection IDs."""
+    share_point: Optional["_models.ConnectionListResource"] = rest_field(name="sharepoint")
+    """Resources to be used by the ``sharepoint`` tool consisting of connection IDs."""
+    azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
+    """Resources to be used by the ``azure_ai_search`` tool consisting of index IDs and names."""
 
     @overload
     def __init__(
@@ -4532,6 +5228,10 @@ class ToolResources(_model_base.Model):
         *,
         code_interpreter: Optional["_models.CodeInterpreterToolResource"] = None,
         file_search: Optional["_models.FileSearchToolResource"] = None,
+        bing_search: Optional["_models.ConnectionListResource"] = None,
+        microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
+        share_point: Optional["_models.ConnectionListResource"] = None,
+        azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
     ): ...
 
     @overload
@@ -4619,46 +5319,6 @@ class UpdateCodeInterpreterToolResourceOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateEvaluationRequest(_model_base.Model):
-    """Update Evaluation Request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar tags: Tags to be updated. Required.
-    :vartype tags: dict[str, str]
-    :ivar display_name: Display Name. Required.
-    :vartype display_name: str
-    :ivar description: Description. Required.
-    :vartype description: str
-    """
-
-    tags: Dict[str, str] = rest_field()
-    """Tags to be updated. Required."""
-    display_name: str = rest_field(name="displayName")
-    """Display Name. Required."""
-    description: str = rest_field()
-    """Description. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tags: Dict[str, str],
-        display_name: str,
-        description: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
 class UpdateFileSearchToolResourceOptions(_model_base.Model):
     """Request object to update ``file_search`` tool resources.
 
@@ -4701,6 +5361,18 @@ class UpdateToolResourcesOptions(_model_base.Model):
     :ivar file_search: Overrides the vector store attached to this agent. There can be a maximum of
      1 vector store attached to the agent.
     :vartype file_search: ~azure.ai.client.models.UpdateFileSearchToolResourceOptions
+    :ivar bing_search: Overrides the list of connections to be used by the ``bing_search`` tool
+     consisting of connection IDs.
+    :vartype bing_search: ~azure.ai.client.models.ConnectionListResource
+    :ivar microsoft_fabric: Overrides the list of connections to be used by the
+     ``microsoft_fabric`` tool consisting of connection IDs.
+    :vartype microsoft_fabric: ~azure.ai.client.models.ConnectionListResource
+    :ivar share_point: Overrides the list of connections to be used by the ``sharepoint`` tool
+     consisting of connection IDs.
+    :vartype share_point: ~azure.ai.client.models.ConnectionListResource
+    :ivar azure_ai_search: Overrides the resources to be used by the ``azure_ai_search`` tool
+     consisting of index IDs and names.
+    :vartype azure_ai_search: ~azure.ai.client.models.AzureAISearchResource
     """
 
     code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = rest_field()
@@ -4710,6 +5382,18 @@ class UpdateToolResourcesOptions(_model_base.Model):
     file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = rest_field()
     """Overrides the vector store attached to this agent. There can be a maximum of 1 vector store
      attached to the agent."""
+    bing_search: Optional["_models.ConnectionListResource"] = rest_field()
+    """Overrides the list of connections to be used by the ``bing_search`` tool consisting of
+     connection IDs."""
+    microsoft_fabric: Optional["_models.ConnectionListResource"] = rest_field()
+    """Overrides the list of connections to be used by the ``microsoft_fabric`` tool consisting of
+     connection IDs."""
+    share_point: Optional["_models.ConnectionListResource"] = rest_field(name="sharepoint")
+    """Overrides the list of connections to be used by the ``sharepoint`` tool consisting of
+     connection IDs."""
+    azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
+    """Overrides the resources to be used by the ``azure_ai_search`` tool consisting of index IDs and
+     names."""
 
     @overload
     def __init__(
@@ -4717,6 +5401,10 @@ class UpdateToolResourcesOptions(_model_base.Model):
         *,
         code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = None,
         file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = None,
+        bing_search: Optional["_models.ConnectionListResource"] = None,
+        microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
+        share_point: Optional["_models.ConnectionListResource"] = None,
+        azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
     ): ...
 
     @overload

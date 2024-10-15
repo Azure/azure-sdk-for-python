@@ -13,10 +13,17 @@ from ._models import AgentThreadCreationOptions
 from ._models import AgentsApiResponseFormat
 from ._models import AgentsNamedToolChoice
 from ._models import AppInsightsConfiguration
+from ._models import AzureAISearchResource
+from ._models import AzureAISearchToolDefinition
+from ._models import BingSearchToolDefinition
 from ._models import CodeInterpreterToolDefinition
 from ._models import CodeInterpreterToolResource
+from ._models import ConnectionListResource
+from ._models import ConnectionResource
+from ._models import CronTrigger
 from ._models import Dataset
 from ._models import Evaluation
+from ._models import EvaluationSchedule
 from ._models import EvaluatorConfiguration
 from ._models import FileContentResponse
 from ._models import FileDeletionStatus
@@ -27,6 +34,7 @@ from ._models import FileSearchToolResource
 from ._models import FunctionDefinition
 from ._models import FunctionName
 from ._models import FunctionToolDefinition
+from ._models import IndexResource
 from ._models import InputData
 from ._models import MessageAttachment
 from ._models import MessageContent
@@ -52,6 +60,7 @@ from ._models import MessageTextFileCitationAnnotation
 from ._models import MessageTextFileCitationDetails
 from ._models import MessageTextFilePathAnnotation
 from ._models import MessageTextFilePathDetails
+from ._models import MicrosoftFabricToolDefinition
 from ._models import OpenAIFile
 from ._models import OpenAIPageableListOfAgent
 from ._models import OpenAIPageableListOfRunStep
@@ -59,6 +68,8 @@ from ._models import OpenAIPageableListOfThreadMessage
 from ._models import OpenAIPageableListOfThreadRun
 from ._models import OpenAIPageableListOfVectorStore
 from ._models import OpenAIPageableListOfVectorStoreFile
+from ._models import RecurrenceSchedule
+from ._models import RecurrenceTrigger
 from ._models import RequiredAction
 from ._models import RequiredFunctionToolCall
 from ._models import RequiredFunctionToolCallDetails
@@ -66,6 +77,8 @@ from ._models import RequiredToolCall
 from ._models import RunCompletionUsage
 from ._models import RunError
 from ._models import RunStep
+from ._models import RunStepAzureAISearchToolCall
+from ._models import RunStepBingSearchToolCall
 from ._models import RunStepCodeInterpreterImageOutput
 from ._models import RunStepCodeInterpreterImageReference
 from ._models import RunStepCodeInterpreterLogOutput
@@ -96,8 +109,12 @@ from ._models import RunStepFunctionToolCall
 from ._models import RunStepFunctionToolCallDetails
 from ._models import RunStepMessageCreationDetails
 from ._models import RunStepMessageCreationReference
+from ._models import RunStepMicrosoftFabricToolCall
+from ._models import RunStepSharepointToolCall
 from ._models import RunStepToolCall
 from ._models import RunStepToolCallDetails
+from ._models import SamplingStrategy
+from ._models import SharepointToolDefinition
 from ._models import SubmitToolOutputsAction
 from ._models import SubmitToolOutputsDetails
 from ._models import SystemData
@@ -108,9 +125,9 @@ from ._models import ThreadRun
 from ._models import ToolDefinition
 from ._models import ToolOutput
 from ._models import ToolResources
+from ._models import Trigger
 from ._models import TruncationObject
 from ._models import UpdateCodeInterpreterToolResourceOptions
-from ._models import UpdateEvaluationRequest
 from ._models import UpdateFileSearchToolResourceOptions
 from ._models import UpdateToolResourcesOptions
 from ._models import VectorStore
@@ -134,10 +151,13 @@ from ._enums import AgentsApiResponseFormatMode
 from ._enums import AgentsApiToolChoiceOptionMode
 from ._enums import AgentsNamedToolChoiceType
 from ._enums import ApiResponseFormat
+from ._enums import AuthenticationType
 from ._enums import DoneEvent
+from ._enums import EndpointType
 from ._enums import ErrorEvent
 from ._enums import FilePurpose
 from ._enums import FileState
+from ._enums import Frequency
 from ._enums import IncompleteRunDetails
 from ._enums import ListSortOrder
 from ._enums import MessageIncompleteDetailsReason
@@ -160,12 +180,10 @@ from ._enums import VectorStoreFileErrorCode
 from ._enums import VectorStoreFileStatus
 from ._enums import VectorStoreFileStatusFilter
 from ._enums import VectorStoreStatus
+from ._enums import WeekDays
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
-from ._models import CredentialsSASAuth
-from ._enums import AuthenticationType
-from ._enums import EndpointType
 
 __all__ = [
     "Agent",
@@ -175,13 +193,17 @@ __all__ = [
     "AgentsApiResponseFormat",
     "AgentsNamedToolChoice",
     "AppInsightsConfiguration",
-    "AuthenticationType",
+    "AzureAISearchResource",
+    "AzureAISearchToolDefinition",
+    "BingSearchToolDefinition",
     "CodeInterpreterToolDefinition",
     "CodeInterpreterToolResource",
-    "CredentialsSASAuth",
+    "ConnectionListResource",
+    "ConnectionResource",
+    "CronTrigger",
     "Dataset",
-    "EndpointType",
     "Evaluation",
+    "EvaluationSchedule",
     "EvaluatorConfiguration",
     "FileContentResponse",
     "FileDeletionStatus",
@@ -192,6 +214,7 @@ __all__ = [
     "FunctionDefinition",
     "FunctionName",
     "FunctionToolDefinition",
+    "IndexResource",
     "InputData",
     "MessageAttachment",
     "MessageContent",
@@ -217,6 +240,7 @@ __all__ = [
     "MessageTextFileCitationDetails",
     "MessageTextFilePathAnnotation",
     "MessageTextFilePathDetails",
+    "MicrosoftFabricToolDefinition",
     "OpenAIFile",
     "OpenAIPageableListOfAgent",
     "OpenAIPageableListOfRunStep",
@@ -224,6 +248,8 @@ __all__ = [
     "OpenAIPageableListOfThreadRun",
     "OpenAIPageableListOfVectorStore",
     "OpenAIPageableListOfVectorStoreFile",
+    "RecurrenceSchedule",
+    "RecurrenceTrigger",
     "RequiredAction",
     "RequiredFunctionToolCall",
     "RequiredFunctionToolCallDetails",
@@ -231,6 +257,8 @@ __all__ = [
     "RunCompletionUsage",
     "RunError",
     "RunStep",
+    "RunStepAzureAISearchToolCall",
+    "RunStepBingSearchToolCall",
     "RunStepCodeInterpreterImageOutput",
     "RunStepCodeInterpreterImageReference",
     "RunStepCodeInterpreterLogOutput",
@@ -261,8 +289,12 @@ __all__ = [
     "RunStepFunctionToolCallDetails",
     "RunStepMessageCreationDetails",
     "RunStepMessageCreationReference",
+    "RunStepMicrosoftFabricToolCall",
+    "RunStepSharepointToolCall",
     "RunStepToolCall",
     "RunStepToolCallDetails",
+    "SamplingStrategy",
+    "SharepointToolDefinition",
     "SubmitToolOutputsAction",
     "SubmitToolOutputsDetails",
     "SystemData",
@@ -273,9 +305,9 @@ __all__ = [
     "ToolDefinition",
     "ToolOutput",
     "ToolResources",
+    "Trigger",
     "TruncationObject",
     "UpdateCodeInterpreterToolResourceOptions",
-    "UpdateEvaluationRequest",
     "UpdateFileSearchToolResourceOptions",
     "UpdateToolResourcesOptions",
     "VectorStore",
@@ -298,10 +330,13 @@ __all__ = [
     "AgentsApiToolChoiceOptionMode",
     "AgentsNamedToolChoiceType",
     "ApiResponseFormat",
+    "AuthenticationType",
     "DoneEvent",
+    "EndpointType",
     "ErrorEvent",
     "FilePurpose",
     "FileState",
+    "Frequency",
     "IncompleteRunDetails",
     "ListSortOrder",
     "MessageIncompleteDetailsReason",
@@ -324,6 +359,7 @@ __all__ = [
     "VectorStoreFileStatus",
     "VectorStoreFileStatusFilter",
     "VectorStoreStatus",
+    "WeekDays",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

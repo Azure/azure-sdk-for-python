@@ -13,7 +13,6 @@ from azure.core.pipeline import policies
 from ._version import VERSION
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
@@ -33,8 +32,8 @@ class AzureAIClientConfiguration:  # pylint: disable=too-many-instance-attribute
     :type subscription_id: str
     :param resource_group_name: The name of the Azure Resource Group. Required.
     :type resource_group_name: str
-    :param workspace_name: The name of the Azure AI Studio hub. Required.
-    :type workspace_name: str
+    :param project_name: The Azure AI Studio project name. Required.
+    :type project_name: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
@@ -48,7 +47,7 @@ class AzureAIClientConfiguration:  # pylint: disable=too-many-instance-attribute
         endpoint: str,
         subscription_id: str,
         resource_group_name: str,
-        workspace_name: str,
+        project_name: str,
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
@@ -60,15 +59,15 @@ class AzureAIClientConfiguration:  # pylint: disable=too-many-instance-attribute
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if resource_group_name is None:
             raise ValueError("Parameter 'resource_group_name' must not be None.")
-        if workspace_name is None:
-            raise ValueError("Parameter 'workspace_name' must not be None.")
+        if project_name is None:
+            raise ValueError("Parameter 'project_name' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.endpoint = endpoint
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
-        self.workspace_name = workspace_name
+        self.project_name = project_name
         self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])

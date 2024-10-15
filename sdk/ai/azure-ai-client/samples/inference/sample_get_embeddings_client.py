@@ -29,5 +29,3 @@ for item in response.data:
         f"data[{item.index}]: length={length}, [{item.embedding[0]}, {item.embedding[1]}, "
         f"..., {item.embedding[length-2]}, {item.embedding[length-1]}]"
     )
-
-

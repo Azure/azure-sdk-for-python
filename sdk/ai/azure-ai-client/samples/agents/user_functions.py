@@ -8,6 +8,7 @@ import datetime
 
 # These are the user-defined functions that can be called by the agent.
 
+
 def fetch_current_datetime() -> str:
     """
     Get the current time as a JSON string.
@@ -30,11 +31,7 @@ def fetch_weather(location: str) -> str:
     """
     # In a real-world scenario, you'd integrate with a weather API.
     # Here, we'll mock the response.
-    mock_weather_data = {
-        "New York": "Sunny, 25°C",
-        "London": "Cloudy, 18°C",
-        "Tokyo": "Rainy, 22°C"
-    }
+    mock_weather_data = {"New York": "Sunny, 25°C", "London": "Cloudy, 18°C", "Tokyo": "Rainy, 22°C"}
     weather = mock_weather_data.get(location, "Weather data not available for this location.")
     weather_json = json.dumps({"weather": weather})
     return weather_json
@@ -62,7 +59,7 @@ def send_email(recipient: str, subject: str, body: str) -> str:
 
 # Statically defined user functions for fast reference
 user_functions = {
-    "fetch_current_datetime": fetch_current_datetime, 
-    "fetch_weather": fetch_weather, 
-    "send_email": send_email
+    "fetch_current_datetime": fetch_current_datetime,
+    "fetch_weather": fetch_weather,
+    "send_email": send_email,
 }

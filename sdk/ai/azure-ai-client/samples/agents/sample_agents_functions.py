@@ -37,14 +37,21 @@ functions = FunctionTool(functions=user_functions)
 
 # Create an agent and run user's request with function calls
 agent = ai_client.agents.create_agent(
-    model="gpt-4-1106-preview", name="my-assistant", instructions="You are a helpful assistant", tools=functions.definitions
+    model="gpt-4-1106-preview",
+    name="my-assistant",
+    instructions="You are a helpful assistant",
+    tools=functions.definitions,
 )
 print(f"Created agent, ID: {agent.id}")
 
 thread = ai_client.agents.create_thread()
 print(f"Created thread, ID: {thread.id}")
 
-message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, send an email with the datetime and weather information in New York?")
+message = ai_client.agents.create_message(
+    thread_id=thread.id,
+    role="user",
+    content="Hello, send an email with the datetime and weather information in New York?",
+)
 print(f"Created message, ID: {message.id}")
 
 run = ai_client.agents.create_run(thread_id=thread.id, assistant_id=agent.id)
@@ -65,16 +72,14 @@ while run.status in ["queued", "in_progress", "requires_action"]:
         for tool_call in tool_calls:
             output = functions.execute(tool_call)
             tool_output = {
-                    "tool_call_id": tool_call.id,
-                    "output": output,
-                }
+                "tool_call_id": tool_call.id,
+                "output": output,
+            }
             tool_outputs.append(tool_output)
 
         print(f"Tool outputs: {tool_outputs}")
         if tool_outputs:
-            ai_client.agents.submit_tool_outputs_to_run(
-                thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs
-            )
+            ai_client.agents.submit_tool_outputs_to_run(thread_id=thread.id, run_id=run.id, tool_outputs=tool_outputs)
 
     print(f"Current run status: {run.status}")
 

@@ -47,14 +47,14 @@ evaluation = Evaluation(
 )
 
 # Create evaluation
-evaluation_response = ai_client.evaluations.create(
-    evaluation=evaluation,
-)
-
-pprint(evaluation_response.as_dict())
+# evaluation_response = ai_client.evaluations.create(
+#     evaluation=evaluation,  logging_enable=True,
+# )
+#
+# pprint(evaluation_response.as_dict())
 
 # Get evaluation
-get_evaluation_response = ai_client.evaluations.get(evaluation_response.id)
+get_evaluation_response = ai_client.evaluations.get("7ab91850-c2d1-43ab-94e8-ba12431b8af9")
 
 pprint(get_evaluation_response.as_dict())
 
