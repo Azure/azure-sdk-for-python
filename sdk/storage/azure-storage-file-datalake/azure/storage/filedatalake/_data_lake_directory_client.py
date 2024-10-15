@@ -11,7 +11,6 @@ from typing import (
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
-
 from typing_extensions import Self
 
 from azure.core.paging import ItemPaged
@@ -23,7 +22,7 @@ from ._deserialize import deserialize_dir_properties
 from ._list_paths_helper import PathPropertiesPaged
 from ._models import DirectoryProperties, FileProperties
 from ._path_client import PathClient
-from ._shared.base_client import TransportWrapper, parse_connection_str
+from ._shared.base_client import parse_connection_str, TransportWrapper
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -37,12 +36,6 @@ class DataLakeDirectoryClient(PathClient):
     For operations relating to a specific subdirectory or file under the directory, a directory client or file client
     can be retrieved using the :func:`~get_sub_directory_client` or :func:`~get_file_client` functions.
 
-    :ivar str url:
-        The full endpoint URL to the file system, including SAS token if used.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
     :param str account_url:
         The URI to the storage account.
     :param file_system_name:
@@ -81,6 +74,14 @@ class DataLakeDirectoryClient(PathClient):
             :dedent: 4
             :caption: Creating the DataLakeServiceClient from connection string.
     """
+
+    url: str
+    """The full endpoint URL to the file system, including SAS token if used."""
+    primary_endpoint: str
+    """The full primary endpoint URL."""
+    primary_hostname: str
+    """The hostname of the primary endpoint."""
+
     def __init__(
         self, account_url: str,
         file_system_name: str,
@@ -335,8 +336,7 @@ class DataLakeDirectoryClient(PathClient):
         return self._get_path_properties(cls=deserialize_dir_properties, **kwargs)
 
     @distributed_trace
-    def exists(self, **kwargs):
-        # type: (**Any) -> bool
+    def exists(self, **kwargs: Any) -> bool:
         """
         Returns True if a directory exists and returns False otherwise.
 
@@ -352,8 +352,7 @@ class DataLakeDirectoryClient(PathClient):
         return self._exists(**kwargs)
 
     @distributed_trace
-    def rename_directory(self, new_name, **kwargs):
-        # type: (str, **Any) -> DataLakeDirectoryClient
+    def rename_directory(self, new_name: str, **kwargs: Any) -> Self:
         """
         Rename the source directory.
 
@@ -432,10 +431,11 @@ class DataLakeDirectoryClient(PathClient):
         return new_directory_client
 
     @distributed_trace
-    def create_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
-                             metadata=None,  # type: Optional[Dict[str, str]]
-                             **kwargs):
-        # type: (...) -> DataLakeDirectoryClient
+    def create_sub_directory(
+        self, sub_directory: Union[DirectoryProperties, str],
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Self:
         """
         Create a subdirectory and return the subdirectory client to be interacted with.
 
@@ -518,9 +518,7 @@ class DataLakeDirectoryClient(PathClient):
         return subdir
 
     @distributed_trace
-    def delete_sub_directory(self, sub_directory,  # type: Union[DirectoryProperties, str]
-                             **kwargs):
-        # type: (...) -> DataLakeDirectoryClient
+    def delete_sub_directory(self, sub_directory: Union[DirectoryProperties, str], **kwargs: Any) -> Self:  # pylint: disable=delete-operation-wrong-return-type
         """
         Marks the specified subdirectory for deletion.
 
@@ -563,9 +561,7 @@ class DataLakeDirectoryClient(PathClient):
         return subdir
 
     @distributed_trace
-    def create_file(self, file,  # type: Union[FileProperties, str]
-                    **kwargs):
-        # type: (...) -> DataLakeFileClient
+    def create_file(self, file: Union[FileProperties, str], **kwargs: Any) -> DataLakeFileClient:
         """
         Create a new file and return the file client to be interacted with.
 
@@ -687,7 +683,6 @@ class DataLakeDirectoryClient(PathClient):
         :returns: An iterable (auto-paging) response of PathProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.PathProperties]
         """
-        timeout = kwargs.pop('timeout', None)
         hostname = self._hosts[self._location_mode]
         url = f"{self.scheme}://{hostname}/{quote(self.file_system_name)}"
         client = self._build_generated_client(url)
