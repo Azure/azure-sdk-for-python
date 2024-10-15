@@ -769,7 +769,7 @@ def test_send_with_port(
         auth_credential_receivers
     )
     client = EventHubProducerClient(
-        fully_qualified_namespace=fully_qualified_namespace+":443/",
+        fully_qualified_namespace=fully_qualified_namespace+":443",
         eventhub_name=eventhub_name,
         credential=credential(),
         uamqp_transport=uamqp_transport,
