@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     except ImportError:
         uamqp_types = None
 
+
 class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     """
     Abstract class that defines a set of common methods needed by sender and receiver.
@@ -238,7 +239,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     async def reset_link_credit_async(
-        handler, link_credit
+        handler, link_credit, *, drain=False
     ):
         """
         Resets the link credit on the link.
@@ -254,6 +255,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         handler,
         message,
         settle_operation,
+        logger,
         dead_letter_reason=None,
         dead_letter_error_description=None,
     ) -> None:
@@ -265,6 +267,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :param str settle_operation: The settle operation.
         :param str or None dead_letter_reason: Optional. The dead letter reason.
         :param str or None dead_letter_error_description: Optional. The dead letter error description.
+        :param Logger or None logger: Logger.
         """
 
     @staticmethod
@@ -318,4 +321,60 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :keyword bytes node: Mgmt target.
         :keyword int timeout: Timeout.
         :keyword Callable callback: Callback to process request response.
+        """
+
+    @staticmethod
+    @abstractmethod
+    async def receive_loop_async(
+        receiver,
+        amqp_receive_client,
+        max_message_count,
+        batch,
+        abs_timeout,
+        timeout,
+        **kwargs
+    ):
+        """
+        Receive messages.
+        :param ServiceBusReceiver receiver: Receiver.
+        :param ~uamqp.ReceiveClientAsync or ~pyamqp.aio.ReceiveClientAsync amqp_receive_client: Receive client.
+        :param int max_message_count: Max message count.
+        :param bool batch: Batch.
+        :param float abs_timeout: Abs timeout.
+        :param float or None timeout: Timeout.
+        """
+
+    @staticmethod
+    @abstractmethod
+    async def _settle_message_with_retry_async(
+        receiver,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+    ):
+        """
+        Settle message with retry.
+        :param ServiceBusReceiver receiver: Receiver.
+        :param ServiceBusReceivedMessage message: Message.
+        :param str settle_operation: Settle operation.
+        :param str or None dead_letter_reason: Optional. Dead letter reason.
+        :param str or None dead_letter_error_description: Optional. Dead letter error description.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def check_live(receiver):
+        """
+        Check if receiver is live.
+        :param ServiceBusReceiver receiver: Receiver.
+        """
+
+    @staticmethod
+    @abstractmethod
+    async def check_if_exception_is_retriable_async(receiver, error):
+        """
+        Check if exception is retriable.
+        :param ServiceBusReceiver receiver: The receiver.
+        :param Exception error: The error.
         """

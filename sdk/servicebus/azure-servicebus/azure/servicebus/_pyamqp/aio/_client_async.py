@@ -759,7 +759,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :rtype: bool
         """
         try:
-            if self._link.total_link_credit <= 0:
+            flow = kwargs.pop("flow", True)
+            if self._link.total_link_credit <= 0 and flow:
                 await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
@@ -930,6 +931,49 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             if self._shutdown:
                 await self.close_async()
 
+    async def _on_disposition_received_async(self, message_delivery, reason, state):
+        if reason == LinkDeliverySettleReason.DISPOSITION_RECEIVED:
+            state_error = list(state.values())[0]
+            message_delivery.reason = reason
+            if state and (len(state_error) == 0 or state_error[0] is None):
+                message_delivery.state = MessageDeliveryState.Ok
+            else:
+                try:
+                    error_info = state[SEND_DISPOSITION_REJECT]
+                    self._process_receive_error(
+                        message_delivery,
+                        condition=error_info[0][0],
+                        description=error_info[0][1],
+                        info=error_info[0][2]
+                    )
+                except TypeError:
+                    self._process_receive_error(
+                        message_delivery,
+                        condition=ErrorCondition.UnknownError
+                    )
+        elif reason == LinkDeliverySettleReason.TIMEOUT:
+            message_delivery.state = MessageDeliveryState.Timeout
+            message_delivery.error = TimeoutError("The service did not respond in time,"
+                " message may or may not have been settled")
+        else:
+            # We receive a Detach frame while waiting for disposition.
+            message_delivery.reason = reason
+            try:
+                self._process_receive_error(
+                message_delivery,
+                condition=state[0],
+                description=state[1],
+                info=state[2]
+            )
+            except: # pylint: disable=bare-except
+                # Other unknown errors, no state available
+                self._process_receive_error(
+                    message_delivery,
+                    condition=ErrorCondition.UnknownError
+            )
+
+
+
     @overload
     async def settle_messages_async(
         self,
@@ -999,6 +1043,9 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             **kwargs
     ):
         batchable = kwargs.pop('batchable', None)
+        timeout = kwargs.pop("timeout", 60)
+        expire_time = (time.time() + timeout) if timeout else None
+
         if outcome.lower() == 'accepted':
             state: Outcomes = Accepted()
         elif outcome.lower() == 'released':
@@ -1016,12 +1063,47 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         except TypeError:
             first = delivery_id
             last = None
+
+        # Create a Message Delivery object for the Disposition
+        message_delivery = _MessageDelivery(
+            None,
+            MessageDeliveryState.WaitingToBeSent,
+            expire_time
+        )
+        on_disposition_received = partial(self._on_disposition_received_async, message_delivery)
+
         await self._link.send_disposition(
             first_delivery_id=first,
             last_delivery_id=last,
             delivery_tag=delivery_tag,
-            settled=True,
+            settled=False,
             delivery_state=state,
             batchable=batchable,
-            wait=True
+            wait=True,
+            on_disposition = on_disposition_received,
+            timeout=timeout
         )
+
+        # Wait for the message to be settled without adding more link credit
+        running = True
+        while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            running = await self.do_work_async(flow=False)
+
+        if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            raise MessageException(
+                condition=ErrorCondition.ClientError,
+                description="Settlement failed - connection not running."
+            )
+
+        if message_delivery.state in (
+            MessageDeliveryState.Error,
+            MessageDeliveryState.Cancelled,
+            MessageDeliveryState.Timeout
+        ):
+            try:
+                raise message_delivery.error  # pylint: disable=raising-bad-type
+            except TypeError:
+                # This is a default handler
+                raise MessageException(
+                    condition=ErrorCondition.UnknownError,
+                    description="Settlement failed.") from None

@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from asyncio import Lock
 from typing import Any, Optional, TYPE_CHECKING
 import uuid
 import logging
@@ -102,6 +103,10 @@ class Link:  # pylint: disable=too-many-instance-attributes
         self._on_attach = kwargs.get("on_attach")
         self._error: Optional[AMQPLinkError] = None
         self.total_link_credit = self.link_credit
+        self._sent_drain = False
+        self._drain_state = False
+        self._received_drain_response = False
+        self._drain_lock = Lock()
 
     async def __aenter__(self) -> "Link":
         await self.attach()
@@ -212,7 +217,13 @@ class Link:  # pylint: disable=too-many-instance-attributes
             "echo": kwargs.get("echo"),
             "properties": kwargs.get("properties"),
         }
-        await self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
+
+        async with self._drain_lock:
+            self._received_drain_response = False
+            # If we have sent an outgoing flow frame with drain, wait for the response
+            if not self._drain_state:
+                await self._session._outgoing_flow(flow_frame) # pylint: disable=protected-access
+                self._drain_state = kwargs.get("drain", False)
 
     async def _incoming_flow(self, frame):
         pass
@@ -221,10 +232,11 @@ class Link:  # pylint: disable=too-many-instance-attributes
         pass
 
     async def _outgoing_detach(self, close: bool = False, error: Optional[AMQPError] = None) -> None:
+        # pylint: disable=protected-access
         detach_frame = DetachFrame(handle=self.handle, closed=close, error=error)
         if self.network_trace:
             _LOGGER.debug("-> %r", detach_frame, extra=self.network_trace_params)
-        await self._session._outgoing_detach(detach_frame) # pylint: disable=protected-access
+        await self._session._outgoing_detach(detach_frame)
         if close:
             self._is_closed = True
 
