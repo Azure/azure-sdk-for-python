@@ -109,6 +109,28 @@ def _get_url_for_http_dependency(scheme: Optional[str], attributes: Attributes) 
     return str(url)
 
 
+def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str]:
+    target = ""
+    if attributes:
+        if SpanAttributes.PEER_SERVICE in attributes:
+            target = attributes[SpanAttributes.PEER_SERVICE]
+        else:
+            if SpanAttributes.NET_PEER_NAME in attributes:
+                target = attributes[SpanAttributes.NET_PEER_NAME]
+            elif SpanAttributes.NET_PEER_IP in attributes:
+                target = attributes[SpanAttributes.NET_PEER_IP]
+            if SpanAttributes.NET_PEER_PORT in attributes:
+                port = attributes[SpanAttributes.NET_PEER_PORT]
+                # TODO: check default port for rpc
+                # This logic assumes default ports never conflict across dependency types
+                # type: ignore
+                if port != _get_default_port_http(
+                    str(attributes.get(SpanAttributes.HTTP_SCHEME))) and \
+                    port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
+                    target = "{}:{}".format(target, port)
+    return str(target)
+
+
 def _get_target_and_path_for_http_dependency(
     target: Optional[str],
     url: Optional[str],
@@ -143,7 +165,7 @@ def _get_target_and_path_for_http_dependency(
                         target = str(host)
                 except Exception:  # pylint: disable=broad-except
                     pass
-            elif target_from_url:
+            elif target_from_url and not target:
                 target = target_from_url
     return (target, path)
 
@@ -156,28 +178,29 @@ def _get_target_for_db_dependency(
     if attributes:
         db_name = attributes.get(SpanAttributes.DB_NAME)
         if db_name:
-            if target is None:
+            if not target:
                 target = str(db_name)
             else:
                 target = "{}|{}".format(target, db_name)
-        elif target is None:
+        elif not target:
             target = db_system
     return target
 
 
 def _get_target_for_messaging_dependency(target: Optional[str], attributes: Attributes) -> Optional[str]:
     if attributes:
-        if target is None:
+        if not target:
             if SpanAttributes.MESSAGING_DESTINATION in attributes:
                 target = str(attributes[SpanAttributes.MESSAGING_DESTINATION])
             elif SpanAttributes.MESSAGING_SYSTEM in attributes:
                 target = str(attributes[SpanAttributes.MESSAGING_SYSTEM])
+    
     return target
 
 
 def _get_target_for_rpc_dependency(target: Optional[str], attributes: Attributes) -> Optional[str]:
     if attributes:
-        if target is None:
+        if not target:
             if SpanAttributes.RPC_SYSTEM in attributes:
                 target = str(attributes[SpanAttributes.RPC_SYSTEM])
     return target
