@@ -2,16 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import inspect
+import json
 import os
 import re
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Union
-import json
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
+from promptflow._sdk._errors import MissingAzurePackage
 from promptflow.client import PFClient
 from promptflow.entities import Run
-from promptflow._sdk._errors import MissingAzurePackage
 
 from azure.ai.evaluation._common.math import list_sum
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -23,7 +23,7 @@ from .._constants import (
     Prefixes,
     _InternalEvaluationMetrics,
 )
-from .._model_configurations import AzureAIProject, EvaluatorConfig, EvaluateResult
+from .._model_configurations import AzureAIProject, EvaluateResult, EvaluatorConfig
 from .._user_agent import USER_AGENT
 from ._batch_run_client import BatchRunContext, CodeClient, ProxyClient
 from ._utils import (
