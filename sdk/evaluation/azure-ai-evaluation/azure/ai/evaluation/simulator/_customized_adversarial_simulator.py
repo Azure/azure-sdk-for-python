@@ -33,8 +33,6 @@ from ._utils import JsonLineList
 logger = logging.getLogger(__name__)
 
 def _setup_logger():
-
-    # TODO: remove this before merging
     log_filename = datetime.now().strftime("%Y_%m_%d__%H_%M.log")
     logger = logging.getLogger("CustomAdversarialSimulatorLogger")
     logger.setLevel(logging.DEBUG)  
@@ -49,8 +47,6 @@ def _setup_logger():
 
 class CustomAdversarialSimulator:
     def __init__(self, *, azure_ai_project: AzureAIProject, credential=None):
-        """Constructor."""
-        # check if azure_ai_project has the keys: subscription_id, resource_group_name and project_name
         self._validate_azure_ai_project(azure_ai_project=azure_ai_project)
         credential = self._get_credential(azure_ai_project=azure_ai_project, credential=credential)
         self.azure_ai_project = azure_ai_project
@@ -101,7 +97,6 @@ class CustomAdversarialSimulator:
         return parameters
 
     def _validate_inputs(self, scenario, max_conversation_turns, max_simulation_results):
-        """Validate the inputs for the __call__ method."""
         if not isinstance(scenario, (AdversarialScenario, _UnstableAdversarialScenario)):
             raise EvaluationException(message=f"Invalid scenario: {scenario}", target="CUSTOM_ADVERSARIAL_SIMULATOR")
         if not isinstance(max_conversation_turns, int) or max_conversation_turns <= 0:
@@ -114,7 +109,6 @@ class CustomAdversarialSimulator:
             )
 
     def _shuffle_pairs(self, pairs, randomize_order, seed=None):
-        """Helper function to shuffle template-parameter pairs if needed."""
         if randomize_order:
             if seed is not None:
                 random.seed(seed)
@@ -122,7 +116,6 @@ class CustomAdversarialSimulator:
         return pairs
 
     def _get_template_parameter_pairs(self, templates, randomize_order, randomization_seed):
-        """Get and optionally shuffle template-parameter pairs."""
         template_parameter_pairs = [
             (template, parameter.copy()) for template in templates for parameter in template.template_parameters
         ]
@@ -158,15 +151,13 @@ class CustomAdversarialSimulator:
     async def __call__(
         self,
         *,
-        # Note: the scenario input also accepts inputs from _PrivateAdversarialScenario, but that's
-        # not stated since those values are nominally for internal use only.
         scenario: AdversarialScenario,
         target: Callable,
         max_conversation_turns: int = 1,
         max_simulation_results: int = 3,
         api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,
-        api_call_delay_sec: int = 5,
+        api_call_delay_sec: int = 15,
         concurrent_async_task: int = 3,
         _jailbreak_type: Optional[str] = None,
         language: SupportedLanguages = SupportedLanguages.English,
@@ -183,7 +174,6 @@ class CustomAdversarialSimulator:
                      f"personality={personality}, application_scenario={application_scenario}")
 
         self._ensure_service_dependencies()
-        # validate the inputs
         self._validate_inputs(
             scenario=scenario,
             max_conversation_turns=max_conversation_turns,
@@ -223,17 +213,15 @@ class CustomAdversarialSimulator:
 
         all_conversation_histories = []
         if personality is None:
-            # TODO: setting default personality
             personality = ""
         if application_scenario is None:
-            # TODO: setting default application_scenario
             application_scenario = ""
         tasks = [
             self._create_simulation_task(
                 template=template,
                 parameter=parameter,
                 target=target,
-                semaphore=asyncio.Semaphore(concurrent_async_task),
+                semaphore=semaphore,
                 max_conversation_turns=max_conversation_turns,
                 personality=personality,
                 application_scenario=application_scenario,
@@ -243,21 +231,15 @@ class CustomAdversarialSimulator:
                 api_call_delay_sec=api_call_delay_sec,
                 progress_bar=progress_bar,
                 jailbreak_dataset=jailbreak_dataset,
-                _jailbreak_type=_jailbreak_type,  # Pass jailbreak info
+                _jailbreak_type=_jailbreak_type,
             )
             for template, parameter in template_parameter_pairs[:max_simulation_results]
         ]
-        # Await the completion of all tasks and collect their results
         all_conversation_histories = await asyncio.gather(*tasks)
-
-        # Close the progress bar
         progress_bar.close()
-
-        # Return the list of conversation histories
         return all_conversation_histories
 
     def _setup_bots(self, *, template, parameter, target):
-        # Set up both the user and assistant bots
         user_bot = self._setup_bot(role=ConversationRole.USER, template=template, parameters=parameter)
         system_bot = self._setup_bot(
             role=ConversationRole.ASSISTANT, template=template, parameters=parameter, target=target
@@ -266,9 +248,8 @@ class CustomAdversarialSimulator:
 
     def _setup_bot(self, *, role, template, parameters, target: Callable = None):
         if role == ConversationRole.USER:
-            # For the user bot, we use a ProxyChatCompletionsModel as before
             model = ProxyChatCompletionsModel(
-                name="user_bot_model",  # Name for the model
+                name="user_bot_model",
                 template_key=template.template_name,
                 template_parameters=parameters,
                 token_manager=self.token_manager,
@@ -285,11 +266,10 @@ class CustomAdversarialSimulator:
             )
 
         elif role == ConversationRole.ASSISTANT:
-            # The assistant bot will always be a CallbackConversationBot
             return CallbackConversationBot(
                 callback=target,
                 role=role,
-                model=None,  # No model needed, we use the callback function instead
+                model=None,
                 user_template=str(template),
                 user_template_parameters=parameters,
                 conversation_template="",
@@ -323,8 +303,6 @@ class CustomAdversarialSimulator:
                 )
             )
             progress_bar.update(1)
-
-            # Delay between API calls if specified
             if api_call_delay_sec > 0:
                 await asyncio.sleep(api_call_delay_sec)
         return conversation_history
@@ -347,11 +325,9 @@ class CustomAdversarialSimulator:
         jailbreak_dataset=None,
         _jailbreak_type=None,
     ):
-        # Modify the template parameters with jailbreak starters if applicable
         if _jailbreak_type == "upia" and jailbreak_dataset:
             parameter = self._join_conversation_starter(parameters=parameter, to_join=random.choice(jailbreak_dataset))
 
-        # Create and return the async task
         return asyncio.create_task(
             self._simulate_conversation(
                 template=template,
@@ -385,29 +361,27 @@ class CustomAdversarialSimulator:
         api_call_delay_sec,
         progress_bar,
     ):
-        user_bot, system_bot = self._setup_bots(template=template, parameter=parameter, target=target)
-        session = self._create_retry_session(
-            api_call_retry_limit=api_call_retry_limit, api_call_retry_sleep_sec=api_call_retry_sleep_sec
-        )
-        extra_kwargs = {key: value for key, value in parameter.items() if isinstance(value, str)}
-        asyncio.sleep(api_call_delay_sec)
-        self.logger.info(f"Customizing this: template_key={template.template_name}, extra_kwargs={extra_kwargs}, ")
-        start_time = time.time()
-        first_turn, first_turn_full_response = await self.rai_client.customize_first_turn(
-            template_key=template.template_name,
-            personality=personality,
-            application_scenario=application_scenario,
-            other_template_kwargs=extra_kwargs,
-            logger=self.logger,
-        )
-        end_time = time.time()
-        time_taken = end_time - start_time
-        self.logger.info(f"Generated response for customizing first turn. Time taken: {time_taken:.4f} seconds")
-        self.logger.info(f"Response: {first_turn}")
-
-
-
         async with semaphore:
+            user_bot, system_bot = self._setup_bots(template=template, parameter=parameter, target=target)
+            session = self._create_retry_session(
+                api_call_retry_limit=api_call_retry_limit, api_call_retry_sleep_sec=api_call_retry_sleep_sec
+            )
+            extra_kwargs = {key: value for key, value in parameter.items() if isinstance(value, str)}
+            await asyncio.sleep(api_call_delay_sec)
+            self.logger.info(f"Customizing this: template_key={template.template_name}, extra_kwargs={extra_kwargs}, ")
+            start_time = time.time()
+            first_turn, first_turn_full_response = await self.rai_client.customize_first_turn(
+                template_key=template.template_name,
+                personality=personality,
+                application_scenario=application_scenario,
+                other_template_kwargs=extra_kwargs,
+                logger=self.logger,
+            )
+            end_time = time.time()
+            time_taken = end_time - start_time
+            self.logger.info(f"Generated response for customizing first turn. Time taken: {time_taken:.4f} seconds")
+            self.logger.info(f"Response: {first_turn}")
+
             try:
                 first_prompt = first_turn
                 if language != SupportedLanguages.English:
@@ -426,11 +400,9 @@ class CustomAdversarialSimulator:
                         full_response=first_turn_full_response,
                     )
                 ]
-                # Simulate the remaining conversation turns
                 for current_turn in range(2, max_conversation_turns + 1):
                     current_bot = user_bot if current_turn % 2 == 1 else system_bot
                     start_time = time.time()
-                    # Get response from the current bot
                     response, request, _, full_response = await current_bot.generate_response(
                         session=session,
                         conversation_history=conversation_history,
@@ -441,7 +413,6 @@ class CustomAdversarialSimulator:
                     time_taken = end_time - start_time
                     self.logger.info(f"Generated response for turn {current_turn}. Time taken: {time_taken:.4f} seconds")
                     self.logger.info(f"Response: {response}")
-                    # Append the turn to the conversation history
                     conversation_history.append(
                         ConversationTurn(
                             role=current_bot.role,
@@ -450,19 +421,13 @@ class CustomAdversarialSimulator:
                             full_response=full_response,
                         )
                     )
-
-                    # Update the progress bar
                     progress_bar.update(1)
-
-                    # Delay between API calls if specified
                     if api_call_delay_sec > 0:
                         await asyncio.sleep(api_call_delay_sec)
 
-                # return conversation_history
                 chat_protocol_output = self._to_chat_protocol(
                     conversation_history=conversation_history, template_parameters=parameter
                 )
-                # TODO: remove the metadata from the output
                 json_line_list = JsonLineList([chat_protocol_output])
                 return json_line_list
 
