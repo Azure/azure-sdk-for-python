@@ -65,6 +65,7 @@ class FeedRangeEpk(FeedRange):
            The returned json string can be used to create a new feed range from it.
 
         :return: A json representation of the feed range.
+        :rtype: str
         """
         return self._feed_range_internal.__str__()
 

@@ -29,10 +29,18 @@ from ._feed_range import FeedRange
 
 # pylint: disable=protected-access
 
+
+# ex inputs:
+# 1. "1:1#51", "1:1#55" -> "1:1#55"
+# 2. "0:1#57", "1:1#52" -> "0:1#57"
 def merge_session_tokens_with_same_range(session_token1: str, session_token2: str) -> str:
     pk_range_id1, vector_session_token1 = parse_session_token(session_token1)
     pk_range_id2, vector_session_token2 = parse_session_token(session_token2)
     pk_range_id = pk_range_id1
+    # The pkrangeid could be different in this scenario
+    # Ex. get_updated_session_token([("AA", "BB"), "1:1#51"], ("AA", "DD")) -> "1:1#51"
+    # Then we input this back into get_updated_session_token after a merge happened
+    # get_updated_session_token([("AA", "DD"), "1:1#51", ("AA", "DD"), "0:1#55"], ("AA", "DD")) -> "0:1#55"
     if pk_range_id1 != pk_range_id2:
         pk_range_id = pk_range_id1 \
             if vector_session_token1.global_lsn > vector_session_token2.global_lsn else pk_range_id2
@@ -57,6 +65,8 @@ def split_compound_session_tokens(compound_session_tokens: List[Tuple[Range, str
             session_tokens.append(session_token)
     return session_tokens
 
+# ex inputs:
+# ["1:1#51", "1:1#55", "1:1#57"] -> ["1:1#57"]
 def merge_session_tokens_for_same_partition(session_tokens: List[str]) -> List[str]:
     i = 0
     while i < len(session_tokens):
@@ -77,6 +87,14 @@ def merge_session_tokens_for_same_partition(session_tokens: List[str]) -> List[s
 
     return session_tokens
 
+# ex inputs:
+# 1. [(("AA", "BB"), "1:1#51"), (("BB", "DD"), "2:1#51"), (("AA", "DD"), "0:1#55")] ->
+# [("AA", "DD"), "0:1#55"]
+# 2. [(("AA", "BB"), "1:1#57"), (("BB", "DD"), "2:1#58"), (("AA", "DD"), "0:1#55")] ->
+# [("AA", "DD"), "1:1#57,2:1#58"]
+# 3. [(("AA", "BB"), "1:1#57"), (("BB", "DD"), "2:1#52"), (("AA", "DD"), "0:1#55")] ->
+# [("AA", "DD"), "1:1#57,2:1#52,0:1#55"]
+# compound session tokens are not considered will just pass them along
 def merge_ranges_with_subsets(overlapping_ranges: List[Tuple[Range, str]]) -> List[Tuple[Range, str]]:
     processed_ranges = []
     while len(overlapping_ranges) != 0: # pylint: disable=too-many-nested-blocks
@@ -146,6 +164,7 @@ def merge_ranges_with_subsets(overlapping_ranges: List[Tuple[Range, str]]) -> Li
 
 def get_updated_session_token(feed_ranges_to_session_tokens: List[Tuple[FeedRange, str]], target_feed_range: FeedRange,
                               container_link: str):
+
     if target_feed_range._feed_range_internal._container_link != container_link:
         raise ValueError('The target feed range does not belong to the container.')
     target_feed_range_normalized = target_feed_range._feed_range_internal.get_normalized_range()

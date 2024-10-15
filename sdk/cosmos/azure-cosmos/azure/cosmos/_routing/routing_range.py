@@ -224,6 +224,5 @@ class Range(object):
     def is_subset(self, parent_range: 'Range') -> bool:
         normalized_parent_range = parent_range.to_normalized_range()
         normalized_child_range = self.to_normalized_range()
-        return normalized_parent_range.contains(normalized_child_range.min) and \
-            (normalized_parent_range.contains(normalized_child_range.max)
-             or normalized_parent_range.max == normalized_child_range.max)
+        return (normalized_parent_range.min <= normalized_child_range.min and
+                normalized_parent_range.max >= normalized_child_range.max)
