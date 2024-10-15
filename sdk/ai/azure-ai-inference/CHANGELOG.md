@@ -4,7 +4,8 @@
 
 ### Features Added
 
-* Support for tracing. Please find more information in the package [README.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md).
+* Support for OpenTelemetry tracing. Please find more information in the package [README.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md).
+* When constructing clients using input `credential` of type `AzureKeyCredential`, two HTTP request headers are sent simultaneously for authentication: `Authentication: Beater <key>` and `api-key: <key>` (previously only the first one was sent). This is to support different inference services, removing the need for the application to explicitly specify an additional HTTP request header.
 
 ### Breaking Changes
 
