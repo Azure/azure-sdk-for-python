@@ -24,7 +24,7 @@ class TestContainerAppsAPIManagedEnvironmentsDiagnosticsOperations(AzureMgmtReco
         response = self.client.managed_environments_diagnostics.get_root(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2024-03-01",
+            api_version="2024-08-02-preview",
         )
 
         # please add some check logic here by yourself
