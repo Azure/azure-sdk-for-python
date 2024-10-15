@@ -247,10 +247,7 @@ def _validate_columns_for_evaluators(
                 # Ignore the missing fields if "conversation" presents in the input data
                 missing_inputs = []
             else:
-                missing_inputs = [col for col in evaluator_params if col not in new_df.columns]
-                # If "conversation" is the only missing field, keep it in the missing_inputs list, otherwise remove it
-                if "conversation" in missing_inputs and len(missing_inputs) > 1:
-                    missing_inputs.remove("conversation")
+                missing_inputs = [col for col in evaluator_params if col not in new_df.columns and col != "conversation"]
         else:
             evaluator_params = [
                 param.name
