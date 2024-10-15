@@ -54,6 +54,7 @@ from ._models_py3 import Resource
 from ._models_py3 import ResourceLimits
 from ._models_py3 import ResourceRequests
 from ._models_py3 import ResourceRequirements
+from ._models_py3 import SecretReference
 from ._models_py3 import SecurityContextCapabilitiesDefinition
 from ._models_py3 import SecurityContextDefinition
 from ._models_py3 import Usage
@@ -129,6 +130,7 @@ __all__ = [
     "ResourceLimits",
     "ResourceRequests",
     "ResourceRequirements",
+    "SecretReference",
     "SecurityContextCapabilitiesDefinition",
     "SecurityContextDefinition",
     "Usage",

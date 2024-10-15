@@ -1,5 +1,17 @@
 # Release History
 
+## 10.2.0b1 (2024-10-21)
+
+### Features Added
+
+  - Model `AzureFileVolume` added property `storage_account_key_reference`
+  - Model `ContainerGroup` added property `secret_references`
+  - Model `ContainerGroupProperties` added property `secret_references`
+  - Model `EnvironmentVariable` added property `secure_value_reference`
+  - Model `ImageRegistryCredential` added property `password_reference`
+  - Model `Volume` added property `secret_reference`
+  - Added model `SecretReference`
+
 ## 10.1.0 (2023-04-21)
 
 ### Features Added
