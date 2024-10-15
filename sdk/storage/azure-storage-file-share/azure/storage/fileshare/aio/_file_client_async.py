@@ -210,10 +210,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @classmethod
     def from_file_url(
-            cls, file_url: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
+        cls, file_url: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
     ) -> Self:
         """A client to interact with a specific file, although that file may not yet exist.
 
@@ -249,12 +249,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            share_name: str,
-            file_path: str,
-            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
+        cls, conn_str: str,
+        share_name: str,
+        file_path: str,
+        snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
     ) -> Self:
         """Create ShareFileClient from a Connection String.
 
@@ -352,13 +352,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def create_file(
-            self, size: int,
-            file_attributes: Optional[Union[str, "NTFSAttributes"]] = "none",
-            file_creation_time: Optional[Union[str, datetime]] = "now",
-            file_last_write_time: Optional[Union[str, datetime]] = "now",
-            file_permission: Optional[str] = None,
-            permission_key: Optional[str] = None,
-            **kwargs: Any
+        self, size: int,
+        file_attributes: Optional[Union[str, "NTFSAttributes"]] = "none",
+        file_creation_time: Optional[Union[str, datetime]] = "now",
+        file_last_write_time: Optional[Union[str, datetime]] = "now",
+        file_permission: Optional[str] = None,
+        permission_key: Optional[str] = None,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Creates a new file.
 
@@ -471,14 +471,14 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def upload_file(
-            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
-            length: Optional[int] = None,
-            file_attributes: Union[str, "NTFSAttributes"] = "none",
-            file_creation_time: Optional[Union[str, datetime]] = "now",
-            file_last_write_time: Optional[Union[str, datetime]] = "now",
-            file_permission: Optional[str] = None,
-            permission_key: Optional[str] = None,
-            **kwargs
+        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+        length: Optional[int] = None,
+        file_attributes: Union[str, "NTFSAttributes"] = "none",
+        file_creation_time: Optional[Union[str, datetime]] = "now",
+        file_last_write_time: Optional[Union[str, datetime]] = "now",
+        file_permission: Optional[str] = None,
+        permission_key: Optional[str] = None,
+        **kwargs
     ) -> Dict[str, Any]:
         """Uploads a new file.
 
@@ -643,6 +643,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
                 This parameter was introduced in API version '2019-07-07'.
 
+        :keyword file_permission_format:
+            Specifies the format in which the permission is returned. If not specified, SDDL will be the default.
+        :paramtype file_permission_format: Literal['sddl', 'binary']
         :keyword file_attributes:
             This value can be set to "source" to copy file attributes from the source file to the target file,
             or to clear all attributes, it can be set to "None". Otherwise it can be set to a list of attributes
@@ -786,9 +789,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def download_file(
-            self, offset: Optional[int] = None,
-            length: Optional[int] = None,
-            **kwargs: Any
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs: Any
     ) -> StorageStreamDownloader:
         """Downloads a file to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the file into
@@ -841,6 +844,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Download a file.
         """
+        if length is not None and offset is None:
+            raise ValueError("Offset value must not be None if length is set.")
+
         range_end = None
         if length is not None:
             if offset is None:
@@ -1065,13 +1071,13 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def set_http_headers(
-            self, content_settings: "ContentSettings",
-            file_attributes: Union[str, "NTFSAttributes"] = "preserve",
-            file_creation_time: Optional[Union[str, datetime]] = "preserve",
-            file_last_write_time: Optional[Union[str, datetime]] = "preserve",
-            file_permission: Optional[str] = None,
-            permission_key: Optional[str] = None,
-            **kwargs: Any
+        self, content_settings: "ContentSettings",
+        file_attributes: Union[str, "NTFSAttributes"] = "preserve",
+        file_creation_time: Optional[Union[str, datetime]] = "preserve",
+        file_last_write_time: Optional[Union[str, datetime]] = "preserve",
+        file_permission: Optional[str] = None,
+        permission_key: Optional[str] = None,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Sets HTTP headers on the file.
 
@@ -1200,10 +1206,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def upload_range(
-            self, data: bytes,
-            offset: int,
-            length: int,
-            **kwargs: Any
+        self, data: bytes,
+        offset: int,
+        length: int,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """Upload a range of bytes to a file.
 
@@ -1276,11 +1282,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def upload_range_from_url(
-            self, source_url: str,
-            offset: int,
-            length: int,
-            source_offset: int,
-            **kwargs: Any
+        self, source_url: str,
+        offset: int,
+        length: int,
+        source_offset: int,
+        **kwargs: Any
     ) -> Dict[str, Any]:
         """
         Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
@@ -1363,9 +1369,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def get_ranges(
-            self, offset: Optional[int] = None,
-            length: Optional[int] = None,
-            **kwargs: Any
+        self, offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs: Any
     ) -> List[Dict[str, int]]:
         """Returns the list of valid page ranges for a file or snapshot
         of a file.
@@ -1404,12 +1410,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
     @distributed_trace_async
     async def get_ranges_diff(
-            self, previous_sharesnapshot: Union[str, Dict[str, Any]],
-            offset: Optional[int] = None,
-            length: Optional[int] = None,
-            *,
-            include_renames: Optional[bool] = None,
-            **kwargs: Any
+        self, previous_sharesnapshot: Union[str, Dict[str, Any]],
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        include_renames: Optional[bool] = None,
+        **kwargs: Any
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a file or snapshot
         of a file.

@@ -156,8 +156,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             properties = await file_client.get_file_properties()
         assert properties.copy.status == 'success'
 
-    async def assertFileEqual(self, file_client, expected_data):
-        content = await file_client.download_file()
+    async def assertFileEqual(self, file_client, expected_data, **kwargs):
+        content = await file_client.download_file(**kwargs)
         actual_data = await content.readall()
         assert actual_data == expected_data
 
@@ -3942,4 +3942,21 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         )
         assert server_returned_permission == user_given_permission_sddl
 
+        # Copy file
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path='filecopy',
+            credential=storage_account_key
+        )
+        copy = await file_client.start_copy_from_url(
+            new_file.url,
+            file_permission=user_given_permission_binary,
+            file_permission_format="binary"
+        )
+        assert copy is not None
+        assert copy['copy_status'] == 'success'
+        assert copy['copy_id'] is not None
+
         await new_file.delete_file()
+        await file_client.delete_file()

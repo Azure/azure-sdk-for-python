@@ -55,7 +55,6 @@ from ._models_py3 import MigrationSecretParameters
 from ._models_py3 import MigrationStatus
 from ._models_py3 import MigrationSubStateDetails
 from ._models_py3 import NameAvailability
-from ._models_py3 import NameProperty
 from ._models_py3 import Network
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
@@ -67,8 +66,6 @@ from ._models_py3 import PrivateLinkResource
 from ._models_py3 import PrivateLinkResourceListResult
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
-from ._models_py3 import QuotaUsage
-from ._models_py3 import QuotaUsagesListResult
 from ._models_py3 import Replica
 from ._models_py3 import Resource
 from ._models_py3 import RestartParameter
@@ -214,7 +211,6 @@ __all__ = [
     "MigrationStatus",
     "MigrationSubStateDetails",
     "NameAvailability",
-    "NameProperty",
     "Network",
     "Operation",
     "OperationDisplay",
@@ -226,8 +222,6 @@ __all__ = [
     "PrivateLinkResourceListResult",
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
-    "QuotaUsage",
-    "QuotaUsagesListResult",
     "Replica",
     "Resource",
     "RestartParameter",
