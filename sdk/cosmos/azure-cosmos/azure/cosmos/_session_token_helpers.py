@@ -37,7 +37,7 @@ def merge_session_tokens_with_same_range(session_token1: str, session_token2: st
     pk_range_id1, vector_session_token1 = parse_session_token(session_token1)
     pk_range_id2, vector_session_token2 = parse_session_token(session_token2)
     pk_range_id = pk_range_id1
-    # The pkrangeid could be different in this scenario
+    # The partition key range id could be different in this scenario
     # Ex. get_updated_session_token([("AA", "BB"), "1:1#51"], ("AA", "DD")) -> "1:1#51"
     # Then we input this back into get_updated_session_token after a merge happened
     # get_updated_session_token([("AA", "DD"), "1:1#51", ("AA", "DD"), "0:1#55"], ("AA", "DD")) -> "0:1#55"

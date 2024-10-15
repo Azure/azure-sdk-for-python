@@ -33,7 +33,7 @@ def create_split_ranges():
     return [        # split with two children
                    ([(("AA", "DD"), "0:1#51#3=52"), (("AA", "BB"),"1:1#55#3=52"), (("BB", "DD"),"2:1#54#3=52")],
                     ("AA", "DD"), "1:1#55#3=52,2:1#54#3=52"),
-                    # same range different pkrangeid
+                    # same range different partition key range ids
                    ([(("AA", "DD"), "1:1#51#3=52"), (("AA", "DD"),"0:1#55#3=52")],
                     ("AA", "DD"), "0:1#55#3=52"),
                     # split with one child
