@@ -1241,21 +1241,21 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._connection._transport._receive_event.clear()
 
 
-        if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-            raise MessageException(
-                condition=ErrorCondition.ClientError,
-                description="Settlement failed - connection not running."
-            )
+        # if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+        #     raise MessageException(
+        #         condition=ErrorCondition.ClientError,
+        #         description="Settlement failed - connection not running."
+        #     )
 
-        if message_delivery.state in (
-            MessageDeliveryState.Error,
-            MessageDeliveryState.Cancelled,
-            MessageDeliveryState.Timeout
-        ):
-            try:
-                raise message_delivery.error  # pylint: disable=raising-bad-type
-            except TypeError:
-                # This is a default handler
-                raise MessageException(
-                    condition=ErrorCondition.UnknownError,
-                    description="Settlement failed.") from None
+        # if message_delivery.state in (
+        #     MessageDeliveryState.Error,
+        #     MessageDeliveryState.Cancelled,
+        #     MessageDeliveryState.Timeout
+        # ):
+        #     try:
+        #         raise message_delivery.error  # pylint: disable=raising-bad-type
+        #     except TypeError:
+        #         # This is a default handler
+        #         raise MessageException(
+        #             condition=ErrorCondition.UnknownError,
+        #             description="Settlement failed.") from None
