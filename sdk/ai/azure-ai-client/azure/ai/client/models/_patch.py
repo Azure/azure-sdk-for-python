@@ -604,7 +604,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
     def __init__(
         self,
         response_iterator: AsyncIterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, AsyncAgentEventHandler], Awaitable[None]],
+        submit_tool_outputs: Callable[[ThreadRun, Optional[AsyncAgentEventHandler]], Awaitable[None]],
         event_handler: Optional['AsyncAgentEventHandler'] = None,
     ):
         self.response_iterator = response_iterator
@@ -751,7 +751,7 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
     def __init__(
         self,
         response_iterator: Iterator[bytes],
-        submit_tool_outputs: Callable[[ThreadRun, AgentEventHandler], None],
+        submit_tool_outputs: Callable[[ThreadRun, Optional[AgentEventHandler]], None],
         event_handler: Optional[AgentEventHandler] = None,
     ):
         self.response_iterator = response_iterator
