@@ -15,6 +15,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_oauth_response_sanitizer,
     remove_batch_sanitizers,
+    set_custom_default_matcher,
 )
 from azure.storage.blob import BlobServiceClient
 
@@ -27,12 +28,13 @@ def add_sanitizers(test_proxy):
         regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.core\\.windows\\.net)",
         value="fakeendpoint",
     )
+    set_custom_default_matcher(ignored_headers="Accept-Encoding")  
     add_oauth_response_sanitizer()
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3430: $..id
     #  - AZSDK3424: $..to
-    remove_batch_sanitizers(["AZSDK3430", "AZSDK3424"])
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3424", "AZSDK4001"])
 
     # run tests
     yield
@@ -41,8 +43,8 @@ def add_sanitizers(test_proxy):
     # This is unnecessary for AzureCloud where each storage account is deleted at the end of testing
     if is_live() and os.getenv("TRANSLATION_ENVIRONMENT") == "Dogfood":
         client = BlobServiceClient(
-            "https://" + os.getenv("TRANSLATION_DOCUMENT_STORAGE_NAME") + ".blob.core.windows.net/",
-            os.getenv("TRANSLATION_DOCUMENT_STORAGE_KEY"),
+            "https://" + os.getenv("DOCUMENT_TRANSLATION_STORAGE_NAME") + ".blob.core.windows.net/",
+            os.getenv("DOCUMENT_TRANSLATION_STORAGE_KEY"),
         )
         for container in client.list_containers():
             client.delete_container(container)
