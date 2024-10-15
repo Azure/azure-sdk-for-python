@@ -3553,5 +3553,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         props = blob.get_blob_properties()
         assert props is not None
+        assert props.metadata['Example'] == 'v1'
 
     # ------------------------------------------------------------------------------
