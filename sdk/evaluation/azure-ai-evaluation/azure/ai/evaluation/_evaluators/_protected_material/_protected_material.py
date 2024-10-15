@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional
+from typing import Optional, Union
 
 from typing_extensions import override
 
@@ -10,7 +10,7 @@ from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 
-class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
+class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """
     Initialize a protected material evaluator to detect whether protected material
     is present in your AI system's response. Outputs True or False with AI-generated reasoning.
@@ -63,7 +63,7 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation = None,
+        conversation=None,
         **kwargs,
     ):
         """

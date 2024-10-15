@@ -10,9 +10,10 @@ from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._evaluators._common import RaiServiceEvaluatorBase
 
 logger = logging.getLogger(__name__)
+from typing import Union
 
 
-class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
+class IndirectAttackEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
     """A Cross-Domain Prompt Injection Attack (XPIA) jailbreak evaluator.
 
     Detect whether cross domain injected attacks are present in your AI system's response.
@@ -69,7 +70,7 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
         *,
         query: Optional[str] = None,
         response: Optional[str] = None,
-        conversation = None,
+        conversation=None,
         **kwargs,
     ):
         """
