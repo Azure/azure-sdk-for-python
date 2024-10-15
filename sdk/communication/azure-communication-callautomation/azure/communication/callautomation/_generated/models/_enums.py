@@ -25,6 +25,7 @@ class CallConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class CallLocatorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The call locator kind."""
 
+    UNKNOWN = "unknown"
     GROUP_CALL_LOCATOR = "groupCallLocator"
     SERVER_CALL_LOCATOR = "serverCallLocator"
     ROOM_CALL_LOCATOR = "roomCallLocator"

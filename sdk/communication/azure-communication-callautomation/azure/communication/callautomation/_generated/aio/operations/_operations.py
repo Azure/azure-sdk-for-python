@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, Type, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -67,7 +67,7 @@ from .._vendor import AzureCommunicationCallAutomationServiceMixinABC
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -128,7 +128,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         :rtype: ~azure.communication.callautomation.models.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -234,7 +234,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         :rtype: ~azure.communication.callautomation.models.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -289,7 +289,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         return deserialized  # type: ignore
 
     @overload
-    async def redirect_call(  # pylint: disable=inconsistent-return-statements
+    async def redirect_call(
         self,
         redirect_call_request: _models.RedirectCallRequest,
         *,
@@ -311,7 +311,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         """
 
     @overload
-    async def redirect_call(  # pylint: disable=inconsistent-return-statements
+    async def redirect_call(
         self, redirect_call_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Redirect a call.
@@ -329,7 +329,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         """
 
     @distributed_trace_async
-    async def redirect_call(  # pylint: disable=inconsistent-return-statements
+    async def redirect_call(
         self, redirect_call_request: Union[_models.RedirectCallRequest, IO[bytes]], **kwargs: Any
     ) -> None:
         """Redirect a call.
@@ -344,7 +344,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -395,7 +395,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def reject_call(  # pylint: disable=inconsistent-return-statements
+    async def reject_call(
         self, reject_call_request: _models.RejectCallRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reject the call.
@@ -413,7 +413,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         """
 
     @overload
-    async def reject_call(  # pylint: disable=inconsistent-return-statements
+    async def reject_call(
         self, reject_call_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reject the call.
@@ -431,7 +431,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         """
 
     @distributed_trace_async
-    async def reject_call(  # pylint: disable=inconsistent-return-statements
+    async def reject_call(
         self, reject_call_request: Union[_models.RejectCallRequest, IO[bytes]], **kwargs: Any
     ) -> None:
         """Reject the call.
@@ -446,7 +446,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -547,7 +547,7 @@ class AzureCommunicationCallAutomationServiceOperationsMixin(  # pylint: disable
         :rtype: ~azure.communication.callautomation.models.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -633,7 +633,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -677,9 +677,7 @@ class CallConnectionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def hangup_call(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, **kwargs: Any
-    ) -> None:
+    async def hangup_call(self, call_connection_id: str, **kwargs: Any) -> None:
         """Hang up call automation service from the call. This will make call automation service leave the
         call, but does not terminate if there are more than 1 caller in the call.
 
@@ -692,7 +690,7 @@ class CallConnectionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -732,9 +730,7 @@ class CallConnectionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def terminate_call(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, **kwargs: Any
-    ) -> None:
+    async def terminate_call(self, call_connection_id: str, **kwargs: Any) -> None:
         """Terminate a call using CallConnectionId.
 
         Terminate a call using CallConnectionId.
@@ -745,7 +741,7 @@ class CallConnectionOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -856,7 +852,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.TransferCallResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -927,11 +923,9 @@ class CallConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.GetParticipantsResponse] = kwargs.pop(  # pylint: disable=protected-access
-            "cls", None
-        )
+        cls: ClsType[_models._models.GetParticipantsResponse] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1019,7 +1013,7 @@ class CallConnectionOperations:
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param add_participant_request: Required.
+        :param add_participant_request: The add participants request. Required.
         :type add_participant_request: ~azure.communication.callautomation.models.AddParticipantRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1044,7 +1038,7 @@ class CallConnectionOperations:
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param add_participant_request: Required.
+        :param add_participant_request: The add participants request. Required.
         :type add_participant_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1067,15 +1061,15 @@ class CallConnectionOperations:
 
         :param call_connection_id: The call connection Id. Required.
         :type call_connection_id: str
-        :param add_participant_request: Is either a AddParticipantRequest type or a IO[bytes] type.
-         Required.
+        :param add_participant_request: The add participants request. Is either a AddParticipantRequest
+         type or a IO[bytes] type. Required.
         :type add_participant_request: ~azure.communication.callautomation.models.AddParticipantRequest
          or IO[bytes]
         :return: AddParticipantResponse
         :rtype: ~azure.communication.callautomation.models.AddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1202,7 +1196,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.RemoveParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1329,7 +1323,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.MuteParticipantsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1456,7 +1450,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.CancelAddParticipantResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1527,7 +1521,7 @@ class CallConnectionOperations:
         :rtype: ~azure.communication.callautomation.models.CallParticipant
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1592,7 +1586,7 @@ class CallMediaOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def play(  # pylint: disable=inconsistent-return-statements
+    async def play(
         self,
         call_connection_id: str,
         play_request: _models.PlayRequest,
@@ -1617,7 +1611,7 @@ class CallMediaOperations:
         """
 
     @overload
-    async def play(  # pylint: disable=inconsistent-return-statements
+    async def play(
         self, call_connection_id: str, play_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Plays audio to participants in the call.
@@ -1637,7 +1631,7 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def play(  # pylint: disable=inconsistent-return-statements
+    async def play(
         self, call_connection_id: str, play_request: Union[_models.PlayRequest, IO[bytes]], **kwargs: Any
     ) -> None:
         """Plays audio to participants in the call.
@@ -1653,7 +1647,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1705,7 +1699,7 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def start_transcription(  # pylint: disable=inconsistent-return-statements
+    async def start_transcription(
         self,
         call_connection_id: str,
         start_transcription_request: _models.StartTranscriptionRequest,
@@ -1731,7 +1725,7 @@ class CallMediaOperations:
         """
 
     @overload
-    async def start_transcription(  # pylint: disable=inconsistent-return-statements
+    async def start_transcription(
         self,
         call_connection_id: str,
         start_transcription_request: IO[bytes],
@@ -1756,7 +1750,7 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def start_transcription(  # pylint: disable=inconsistent-return-statements
+    async def start_transcription(
         self,
         call_connection_id: str,
         start_transcription_request: Union[_models.StartTranscriptionRequest, IO[bytes]],
@@ -1776,7 +1770,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1828,7 +1822,7 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def stop_transcription(  # pylint: disable=inconsistent-return-statements
+    async def stop_transcription(
         self,
         call_connection_id: str,
         stop_transcription_request: _models.StopTranscriptionRequest,
@@ -1854,7 +1848,7 @@ class CallMediaOperations:
         """
 
     @overload
-    async def stop_transcription(  # pylint: disable=inconsistent-return-statements
+    async def stop_transcription(
         self,
         call_connection_id: str,
         stop_transcription_request: IO[bytes],
@@ -1879,7 +1873,7 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def stop_transcription(  # pylint: disable=inconsistent-return-statements
+    async def stop_transcription(
         self,
         call_connection_id: str,
         stop_transcription_request: Union[_models.StopTranscriptionRequest, IO[bytes]],
@@ -1899,7 +1893,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1951,7 +1945,7 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def update_transcription(  # pylint: disable=inconsistent-return-statements
+    async def update_transcription(
         self,
         call_connection_id: str,
         update_transcription_request: _models.UpdateTranscriptionRequest,
@@ -1977,7 +1971,7 @@ class CallMediaOperations:
         """
 
     @overload
-    async def update_transcription(  # pylint: disable=inconsistent-return-statements
+    async def update_transcription(
         self,
         call_connection_id: str,
         update_transcription_request: IO[bytes],
@@ -2002,7 +1996,7 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def update_transcription(  # pylint: disable=inconsistent-return-statements
+    async def update_transcription(
         self,
         call_connection_id: str,
         update_transcription_request: Union[_models.UpdateTranscriptionRequest, IO[bytes]],
@@ -2022,7 +2016,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2074,9 +2068,7 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def cancel_all_media_operations(  # pylint: disable=inconsistent-return-statements
-        self, call_connection_id: str, **kwargs: Any
-    ) -> None:
+    async def cancel_all_media_operations(self, call_connection_id: str, **kwargs: Any) -> None:
         """Cancel all media operations in a call.
 
         Cancel all media operations in a call.
@@ -2087,7 +2079,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2127,7 +2119,7 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def recognize(  # pylint: disable=inconsistent-return-statements
+    async def recognize(
         self,
         call_connection_id: str,
         recognize_request: _models.RecognizeRequest,
@@ -2152,7 +2144,7 @@ class CallMediaOperations:
         """
 
     @overload
-    async def recognize(  # pylint: disable=inconsistent-return-statements
+    async def recognize(
         self,
         call_connection_id: str,
         recognize_request: IO[bytes],
@@ -2177,7 +2169,7 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def recognize(  # pylint: disable=inconsistent-return-statements
+    async def recognize(
         self, call_connection_id: str, recognize_request: Union[_models.RecognizeRequest, IO[bytes]], **kwargs: Any
     ) -> None:
         """Recognize media from call.
@@ -2194,7 +2186,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2246,7 +2238,7 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def start_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+    async def start_continuous_dtmf_recognition(
         self,
         call_connection_id: str,
         continuous_dtmf_recognition_request: _models.ContinuousDtmfRecognitionRequest,
@@ -2272,7 +2264,7 @@ class CallMediaOperations:
         """
 
     @overload
-    async def start_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+    async def start_continuous_dtmf_recognition(
         self,
         call_connection_id: str,
         continuous_dtmf_recognition_request: IO[bytes],
@@ -2297,7 +2289,7 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def start_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+    async def start_continuous_dtmf_recognition(
         self,
         call_connection_id: str,
         continuous_dtmf_recognition_request: Union[_models.ContinuousDtmfRecognitionRequest, IO[bytes]],
@@ -2317,7 +2309,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2369,7 +2361,7 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def stop_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+    async def stop_continuous_dtmf_recognition(
         self,
         call_connection_id: str,
         continuous_dtmf_recognition_request: _models.ContinuousDtmfRecognitionRequest,
@@ -2395,7 +2387,7 @@ class CallMediaOperations:
         """
 
     @overload
-    async def stop_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+    async def stop_continuous_dtmf_recognition(
         self,
         call_connection_id: str,
         continuous_dtmf_recognition_request: IO[bytes],
@@ -2420,7 +2412,7 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def stop_continuous_dtmf_recognition(  # pylint: disable=inconsistent-return-statements
+    async def stop_continuous_dtmf_recognition(
         self,
         call_connection_id: str,
         continuous_dtmf_recognition_request: Union[_models.ContinuousDtmfRecognitionRequest, IO[bytes]],
@@ -2440,7 +2432,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2562,7 +2554,7 @@ class CallMediaOperations:
         :rtype: ~azure.communication.callautomation.models.SendDtmfTonesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2618,7 +2610,7 @@ class CallMediaOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def hold(  # pylint: disable=inconsistent-return-statements
+    async def hold(
         self,
         call_connection_id: str,
         hold_request: _models.HoldRequest,
@@ -2643,7 +2635,7 @@ class CallMediaOperations:
         """
 
     @overload
-    async def hold(  # pylint: disable=inconsistent-return-statements
+    async def hold(
         self, call_connection_id: str, hold_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Hold participant from the call using identifier.
@@ -2663,7 +2655,7 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def hold(  # pylint: disable=inconsistent-return-statements
+    async def hold(
         self, call_connection_id: str, hold_request: Union[_models.HoldRequest, IO[bytes]], **kwargs: Any
     ) -> None:
         """Hold participant from the call using identifier.
@@ -2679,7 +2671,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2731,7 +2723,7 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def unhold(  # pylint: disable=inconsistent-return-statements
+    async def unhold(
         self,
         call_connection_id: str,
         unhold_request: _models.UnholdRequest,
@@ -2756,7 +2748,7 @@ class CallMediaOperations:
         """
 
     @overload
-    async def unhold(  # pylint: disable=inconsistent-return-statements
+    async def unhold(
         self,
         call_connection_id: str,
         unhold_request: IO[bytes],
@@ -2781,7 +2773,7 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def unhold(  # pylint: disable=inconsistent-return-statements
+    async def unhold(
         self, call_connection_id: str, unhold_request: Union[_models.UnholdRequest, IO[bytes]], **kwargs: Any
     ) -> None:
         """Unhold participants from the call using identifier.
@@ -2797,7 +2789,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2849,7 +2841,7 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def start_media_streaming(  # pylint: disable=inconsistent-return-statements
+    async def start_media_streaming(
         self,
         call_connection_id: str,
         start_media_streaming_request: _models.StartMediaStreamingRequest,
@@ -2875,7 +2867,7 @@ class CallMediaOperations:
         """
 
     @overload
-    async def start_media_streaming(  # pylint: disable=inconsistent-return-statements
+    async def start_media_streaming(
         self,
         call_connection_id: str,
         start_media_streaming_request: IO[bytes],
@@ -2900,7 +2892,7 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def start_media_streaming(  # pylint: disable=inconsistent-return-statements
+    async def start_media_streaming(
         self,
         call_connection_id: str,
         start_media_streaming_request: Union[_models.StartMediaStreamingRequest, IO[bytes]],
@@ -2920,7 +2912,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2972,7 +2964,7 @@ class CallMediaOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
-    async def stop_media_streaming(  # pylint: disable=inconsistent-return-statements
+    async def stop_media_streaming(
         self,
         call_connection_id: str,
         stop_media_streaming_request: _models.StopMediaStreamingRequest,
@@ -2998,7 +2990,7 @@ class CallMediaOperations:
         """
 
     @overload
-    async def stop_media_streaming(  # pylint: disable=inconsistent-return-statements
+    async def stop_media_streaming(
         self,
         call_connection_id: str,
         stop_media_streaming_request: IO[bytes],
@@ -3023,7 +3015,7 @@ class CallMediaOperations:
         """
 
     @distributed_trace_async
-    async def stop_media_streaming(  # pylint: disable=inconsistent-return-statements
+    async def stop_media_streaming(
         self,
         call_connection_id: str,
         stop_media_streaming_request: Union[_models.StopMediaStreamingRequest, IO[bytes]],
@@ -3043,7 +3035,7 @@ class CallMediaOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3171,7 +3163,7 @@ class CallRecordingOperations:
         :rtype: ~azure.communication.callautomation.models.RecordingStateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3237,7 +3229,7 @@ class CallRecordingOperations:
         :rtype: ~azure.communication.callautomation.models.RecordingStateResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3281,9 +3273,7 @@ class CallRecordingOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def stop_recording(  # pylint: disable=inconsistent-return-statements
-        self, recording_id: str, **kwargs: Any
-    ) -> None:
+    async def stop_recording(self, recording_id: str, **kwargs: Any) -> None:
         """Stop recording the call.
 
         Stop recording the call.
@@ -3294,7 +3284,7 @@ class CallRecordingOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3334,9 +3324,7 @@ class CallRecordingOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def pause_recording(  # pylint: disable=inconsistent-return-statements
-        self, recording_id: str, **kwargs: Any
-    ) -> None:
+    async def pause_recording(self, recording_id: str, **kwargs: Any) -> None:
         """Pause recording the call.
 
         Pause recording the call.
@@ -3347,7 +3335,7 @@ class CallRecordingOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3387,9 +3375,7 @@ class CallRecordingOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def resume_recording(  # pylint: disable=inconsistent-return-statements
-        self, recording_id: str, **kwargs: Any
-    ) -> None:
+    async def resume_recording(self, recording_id: str, **kwargs: Any) -> None:
         """Resume recording the call.
 
         Resume recording the call.
@@ -3400,7 +3386,7 @@ class CallRecordingOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

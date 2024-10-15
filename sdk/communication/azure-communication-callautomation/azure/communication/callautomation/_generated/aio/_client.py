@@ -26,9 +26,7 @@ from .operations import (
 )
 
 
-class AzureCommunicationCallAutomationService(
-    AzureCommunicationCallAutomationServiceOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class AzureCommunicationCallAutomationService(AzureCommunicationCallAutomationServiceOperationsMixin):
     """Azure Communication Service Call Automation APIs.
 
     :ivar call_connection: CallConnectionOperations operations
@@ -43,8 +41,8 @@ class AzureCommunicationCallAutomationService(
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2024-06-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2024-09-15". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
