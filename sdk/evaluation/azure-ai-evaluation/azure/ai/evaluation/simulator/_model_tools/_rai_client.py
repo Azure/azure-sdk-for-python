@@ -190,7 +190,7 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             "headers": {
                 "Content-Type": "application/json",
             },
-            "json": '{"messages": [{"role": "system", "content": "{{ch_template_placeholder}}"}], "temperature": 0.0, "max_tokens": 7400, "n": 1, "frequency_penalty": 0, "presence_penalty": 0, "stop": ["<|im_end|>", "<|endoftext|>"]}',
+            "json": '{"messages": [{"role": "system", "content": "{{ch_template_placeholder}}"}], "temperature": 0.0, "max_tokens": 4096, "n": 1, "frequency_penalty": 0, "presence_penalty": 0, "stop": ["<|im_end|>", "<|endoftext|>"]}',
             "params": {"api-version": "2023-07-01-preview"},
             "templatekey": str(template_key),
             "templateParameters": {
@@ -235,9 +235,14 @@ class RAIClient:  # pylint: disable=client-accepts-api-version-keyword
             logger.info(f"Retrying.... {result_url}")
         response.raise_for_status()
         try:
+            logger.info(f"Parsing response from {result_url}")
             response_data = response.json()
-            return response_data["choices"][0]["message"]["content"], response_data
+            response_content = response_data["choices"][0]["message"]["content"]
+            logger.info(f"Response from {result_url} is {response_content}")
+            logger.info(f"full response: {json.dumps(response_data)}")
+            return response_content, response_data
         except Exception as e:
+            logger.error(f"Error: {str(e)}")
             import pdb
 
             pdb.set_trace()

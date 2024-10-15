@@ -166,7 +166,7 @@ class CustomAdversarialSimulator:
         max_simulation_results: int = 3,
         api_call_retry_limit: int = 3,
         api_call_retry_sleep_sec: int = 1,
-        api_call_delay_sec: int = 0,
+        api_call_delay_sec: int = 5,
         concurrent_async_task: int = 3,
         _jailbreak_type: Optional[str] = None,
         language: SupportedLanguages = SupportedLanguages.English,
@@ -390,6 +390,7 @@ class CustomAdversarialSimulator:
             api_call_retry_limit=api_call_retry_limit, api_call_retry_sleep_sec=api_call_retry_sleep_sec
         )
         extra_kwargs = {key: value for key, value in parameter.items() if isinstance(value, str)}
+        asyncio.sleep(api_call_delay_sec)
         self.logger.info(f"Customizing this: template_key={template.template_name}, extra_kwargs={extra_kwargs}, ")
         start_time = time.time()
         first_turn, first_turn_full_response = await self.rai_client.customize_first_turn(
