@@ -110,9 +110,9 @@ async def main():
 
         print(f"Run completed with status: {run.status}")
 
-        # Delete the assistant when done
+        # Delete the agent when done
         await ai_client.agents.delete_agent(agent.id)
-        print("Deleted assistant")
+        print("Deleted agent")
 
         # Fetch and log all messages
         messages = await ai_client.agents.list_messages(thread_id=thread.id)

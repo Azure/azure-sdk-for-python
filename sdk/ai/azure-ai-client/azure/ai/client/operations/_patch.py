@@ -384,7 +384,7 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         if toolset is not None:
             self._toolset = toolset
-            tools = list(toolset.definitions)
+            tools = toolset.definitions
             tool_resources = toolset.resources
 
         return super().create_agent(
@@ -858,7 +858,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.AgentRunStream:
-        """Creates a new run for an agent thread.
+        """Creates a new stream for an agent thread.
 
         :param thread_id: Required.
         :type thread_id: str
@@ -1087,7 +1087,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         
         response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
 
-        return _models.AgentRunStream(response_iterator, event_handler)
+        return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
 
     @overload
@@ -1219,7 +1219,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     def submit_tool_outputs_to_stream(
         self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentRunStream:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
@@ -1248,7 +1248,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.AgentRunStream:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
@@ -1273,7 +1273,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     def submit_tool_outputs_to_stream(
         self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentRunStream:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
@@ -1302,7 +1302,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.AgentRunStream:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
@@ -1340,7 +1340,30 @@ class AgentsOperations(AgentsOperationsGenerated):
         # Cast the response to Iterator[bytes] for type correctness
         response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
 
-        return _models.AgentRunStream(response_iterator, event_handler)
+        return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
+    
+    def _handle_submit_tool_outputs(self, run: _models.ThreadRun, event_handler: Optional[_models.AgentEventHandler] = None) -> None:
+        if isinstance(run.required_action, _models.SubmitToolOutputsAction):
+            tool_calls = run.required_action.submit_tool_outputs.tool_calls
+            if not tool_calls:
+                logger.debug("No tool calls to execute.")
+                return
+
+            toolset = self.get_toolset()
+            if toolset:
+                tool_outputs = toolset.execute_tool_calls(tool_calls)
+            else:
+                raise ValueError("Toolset is not available in the client.")
+            
+            logger.info(f"Tool outputs: {tool_outputs}")
+            if tool_outputs:
+                with self.submit_tool_outputs_to_stream(
+                    thread_id=run.thread_id, 
+                    run_id=run.id, 
+                    tool_outputs=tool_outputs, 
+                    event_handler=event_handler
+            ) as stream:
+                    stream.until_done()    
 
     @overload
     def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:

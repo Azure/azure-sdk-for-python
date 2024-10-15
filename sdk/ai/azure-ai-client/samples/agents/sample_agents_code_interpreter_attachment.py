@@ -80,7 +80,7 @@ with ai_client:
     print("Deleted file")
 
     ai_client.agents.delete_agent(agent.id)
-    print("Deleted assistant")
+    print("Deleted agent")
 
     messages = ai_client.agents.list_messages(thread_id=thread.id)
     print(f"Messages: {messages}")

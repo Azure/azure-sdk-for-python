@@ -93,9 +93,9 @@ with ai_client:
     ai_client.agents.delete_vector_store(openai_vectorstore.id)
     print("Deleted vector store")
 
-    # Delete the assistant when done
+    # Delete the agent when done
     ai_client.agents.delete_agent(agent.id)
-    print("Deleted assistant")
+    print("Deleted agent")
 
     # Fetch and log all messages
     messages = ai_client.agents.list_messages(thread_id=thread.id)
