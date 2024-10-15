@@ -7,7 +7,7 @@ import os
 import time
 import datetime
 import uuid
-from azure.ai.translation.document.models._models import BatchRequest, SourceInput, StartTranslationDetails
+from azure.ai.translation.document.models import BatchRequest, SourceInput, StartTranslationDetails
 from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 from azure.storage.blob import generate_container_sas, ContainerClient
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget

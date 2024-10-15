@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.ai.translation.document.models._models import BatchRequest, SourceInput, StartTranslationDetails
+from azure.ai.translation.document.models import BatchRequest, SourceInput, StartTranslationDetails
 from devtools_testutils import AzureRecordedTestCase
 from testcase import DocumentTranslationTest, Document
 from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget

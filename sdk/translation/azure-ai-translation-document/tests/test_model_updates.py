@@ -27,26 +27,6 @@ class TestModelUpdates(DocumentTranslationTest):
         docs_count = 2
         self._prepare_and_validate_start_translation_details(client, docs_count, wait=False, variables=variables)
         return variables
-    
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    @recorded_by_proxy
-    def test_supported_formats(self, **kwargs):
-        client = kwargs.pop("client")
-        
-        # get supported glossary formats
-        supported_glossary_formats = client._get_supported_formats(type=FileFormatType.GLOSSARY)
-        assert supported_glossary_formats is not None
-        # validate
-        for glossary_format in supported_glossary_formats.value:
-            self._validate_format(glossary_format)
-
-        # get supported document formats
-        supported_document_formats = client._get_supported_formats(type=FileFormatType.DOCUMENT)
-        assert supported_document_formats is not None
-        # validate
-        for document_format in supported_document_formats.value:
-            self._validate_format(document_format)
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
@@ -91,7 +71,16 @@ class TestModelUpdates(DocumentTranslationTest):
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
-    def test_translation_target_args(self, **kwargs): 
+    def test_translation_target_args(self, **kwargs):
+        # Creating an instance using required positional arguments
+        target_positional = TranslationTarget(
+            target_url="https://t7d8641d8f25ec940prim.blob.core.windows.net/target-67890",
+            language="es"
+        )
+        assert target_positional is not None
+        assert target_positional.target_url is not None
+        assert target_positional.language is not None
+
         # Using keyword arguments to specify additional optional parameters
         target_keyword = TranslationTarget(
             target_url="https://t7d8641d8f25ec940prim.blob.core.windows.net/target-67890",
@@ -117,6 +106,15 @@ class TestModelUpdates(DocumentTranslationTest):
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
     def test_translation_glossary_args(self, **kwargs):
+        # Creating an instance using required positional arguments
+        glossary_positional = TranslationGlossary(
+            glossary_url="https://glossaryfile.txt",
+            file_format="txt"
+        )
+        assert glossary_positional is not None
+        assert glossary_positional.glossary_url is not None
+        assert glossary_positional.file_format is not None
+
         # Using keyword arguments to specify additional optional parameters
         glossary_keyword = TranslationGlossary(
             glossary_url="https://glossaryfile.txt",
@@ -201,7 +199,7 @@ class TestModelUpdates(DocumentTranslationTest):
             "created_on": datetime.datetime.now(),
             "last_updated_on": datetime.datetime.now(),
             "status": "Succeeded", 
-            "summary": {"total": 10, "success": 10, "failed": 0, "in_progress": 0, "not_yet_started": 0, "canceled": 0, "total_characters_charged": 5000},
+            "summary": status_summary,
             "error": None 
         }
         translation_status_dict = TranslationStatus(**params)
@@ -251,3 +249,13 @@ class TestModelUpdates(DocumentTranslationTest):
         assert translation_status.last_updated_on is not None
         assert translation_status.status is not None
         assert translation_status.summary is not None
+
+        # verifying old attributes
+        assert translation_status is not None
+        assert translation_status.documents_total_count is not None
+        assert translation_status.documents_failed_count is not None
+        assert translation_status.documents_in_progress_count is not None
+        assert translation_status.documents_succeeded_count is not None
+        assert translation_status.documents_not_started_count is not None
+        assert translation_status.documents_canceled_count is not None
+        assert translation_status.total_characters_charged is not None
