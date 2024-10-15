@@ -1,5 +1,14 @@
 # Release History
 
+## 1.1.0 (2024-10-25)
+This is feature addition release.
+
+### Features Added
+- Using `NotificationMessagesClient`
+  - Send Video messages
+  - Send Audio messages
+  - Send Document messages
+
 ## 1.0.0 (2024-03-25)
 
 This is the GA release of Azure Communication Messages Python SDK. For more information, please see the [README][read_me].
@@ -8,18 +17,9 @@ This is the GA release of Azure Communication Messages Python SDK. For more info
 - Using `NotificationMessagesClient`
   - Send Text messages
   - Send Template messages
-  - Send Media messages
+  - Send Image messages
 - Using `MessageTemplateClient`
   - Get list of all WhatsApp templates.
 
-## 1.0.1 (2024-10-10)
-This is feature addition release.
-
-### Features Added
-- Using `NotificationMessagesClient`
-  - Send Video messages
-  - Send Audio messages
-  - Send Document messages
-  
 <!-- LINKS -->
 [read_me]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-messages/README.md
