@@ -20,7 +20,6 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from .._data_lake_directory_client import DataLakeDirectoryClient as DataLakeDirectoryClientBase
 from .._deserialize import deserialize_dir_properties
 from .._models import DirectoryProperties, FileProperties
 from .._shared.base_client_async import AsyncTransportWrapper
@@ -35,7 +34,7 @@ if TYPE_CHECKING:
     from .._models import PathProperties
 
 
-class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
+class DataLakeDirectoryClient(PathClient):
     """A client to interact with the DataLake directory, even if the directory may not yet exist.
 
     For operations relating to a specific subdirectory or file under the directory, a directory client or file client
@@ -93,7 +92,7 @@ class DataLakeDirectoryClient(PathClient, DataLakeDirectoryClientBase):
         credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
-        super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, directory_name, # pylint: disable=specify-parameter-names-in-call
+        super(DataLakeDirectoryClient, self).__init__(account_url, file_system_name, path_name=directory_name, # pylint: disable=specify-parameter-names-in-call
                                                       credential=credential, **kwargs)
 
     @distributed_trace_async

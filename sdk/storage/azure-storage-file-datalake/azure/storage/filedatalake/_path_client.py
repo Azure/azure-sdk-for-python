@@ -25,12 +25,6 @@ from ._models import (
     AccessControlChanges,
     LocationMode,
 )
-from ._serialize import (
-    compare_api_versions,
-    convert_dfs_url_to_blob_url,
-    get_api_version,
-)
-from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._path_client_helpers import (
     _create_path_options,
     _delete_path_options,
@@ -40,6 +34,12 @@ from ._path_client_helpers import (
     _rename_path_options,
     _set_access_control_options,
     _set_access_control_recursive_options
+)
+from ._shared.base_client import StorageAccountHostsMixin, parse_query
+from ._serialize import (
+    compare_api_versions,
+    convert_dfs_url_to_blob_url,
+    get_api_version,
 )
 
 if TYPE_CHECKING:

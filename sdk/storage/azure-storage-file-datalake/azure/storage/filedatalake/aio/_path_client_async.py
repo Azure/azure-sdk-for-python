@@ -15,9 +15,7 @@ from typing import (
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobClient
-from .._serialize import compare_api_versions, convert_dfs_url_to_blob_url, get_api_version
-from .._shared.base_client import parse_query, StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._deserialize import process_storage_error
 from .._generated.aio import AzureDataLakeStorageRESTAPI
 from .._models import (
     AccessControlChangeCounters,
@@ -26,9 +24,6 @@ from .._models import (
     AccessControlChanges,
     LocationMode,
 )
-from ._data_lake_lease_async import DataLakeLeaseClient
-from .._deserialize import process_storage_error
-from .._shared.policies_async import ExponentialRetry
 from .._path_client_helpers import (
     _create_path_options,
     _delete_path_options,
@@ -39,11 +34,16 @@ from .._path_client_helpers import (
     _set_access_control_options,
     _set_access_control_recursive_options
 )
+from .._serialize import compare_api_versions, convert_dfs_url_to_blob_url, get_api_version
+from .._shared.base_client import parse_query, StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.policies_async import ExponentialRetry
+from ._data_lake_lease_async import DataLakeLeaseClient
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import ContentSettings, FileProperties, DirectoryProperties
+    from .._models import ContentSettings, DirectoryProperties, FileProperties
 
 
 class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
