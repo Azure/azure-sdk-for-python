@@ -21,11 +21,11 @@
 
 """Internal Helper functions for manipulating session tokens.
 """
-from typing import Tuple, List
+from typing import Tuple, List, cast
 
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._vector_session_token import VectorSessionToken
-from ._feed_range import FeedRange
+from ._feed_range import FeedRange, FeedRangeEpk
 
 # pylint: disable=protected-access
 
@@ -164,14 +164,15 @@ def merge_ranges_with_subsets(overlapping_ranges: List[Tuple[Range, str]]) -> Li
     return processed_ranges
 
 def get_updated_session_token(feed_ranges_to_session_tokens: List[Tuple[FeedRange, str]], target_feed_range: FeedRange):
-
-    target_feed_range_normalized = target_feed_range._feed_range_internal.get_normalized_range()
+    target_feed_range_epk = cast(FeedRangeEpk, target_feed_range)
+    target_feed_range_normalized = target_feed_range_epk._feed_range_internal.get_normalized_range()
     # filter out tuples that overlap with target_feed_range and normalizes all the ranges
     overlapping_ranges = []
     for feed_range_to_session_token in feed_ranges_to_session_tokens:
+        feed_range_epk = cast(FeedRangeEpk, feed_range_to_session_token[0])
         if Range.overlaps(target_feed_range_normalized,
-                          feed_range_to_session_token[0]._feed_range_internal.get_normalized_range()):
-            overlapping_ranges.append((feed_range_to_session_token[0]._feed_range_internal.get_normalized_range(),
+                          feed_range_epk._feed_range_internal.get_normalized_range()):
+            overlapping_ranges.append((feed_range_epk._feed_range_internal.get_normalized_range(),
                                        feed_range_to_session_token[1]))
 
     if len(overlapping_ranges) == 0:

@@ -1427,5 +1427,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: a boolean indicating if child feed range is a subset of parent feed range
         :rtype: bool
         """
-        return child_feed_range._feed_range_internal.get_normalized_range().is_subset(
-            parent_feed_range._feed_range_internal.get_normalized_range())
+        child_feed_range_epk = cast(FeedRangeEpk, child_feed_range)
+        parent_feed_range_epk = cast(FeedRangeEpk, parent_feed_range)
+
+        return child_feed_range_epk._feed_range_internal.get_normalized_range().is_subset(
+            parent_feed_range_epk._feed_range_internal.get_normalized_range())

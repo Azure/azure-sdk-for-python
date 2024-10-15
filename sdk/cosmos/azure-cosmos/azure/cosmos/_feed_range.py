@@ -24,7 +24,7 @@ import json
 from abc import ABC
 from typing import Any, Dict
 
-from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk, FeedRangeInternal
+from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 
 # pylint: disable=protected-access
@@ -32,10 +32,6 @@ class FeedRange(ABC):
     """Represents a single feed range in an Azure Cosmos DB SQL API container.
 
     """
-
-    def __init__(self, feed_range_internal: FeedRangeInternal) -> None:
-        self._feed_range_internal = feed_range_internal
-
     @staticmethod
     def from_string(json_str: str) -> 'FeedRange':
         """
@@ -58,14 +54,14 @@ class FeedRangeEpk(FeedRange):
     def __init__(self, feed_range: Range) -> None:
         if feed_range is None:
             raise ValueError("feed_range cannot be None")
-        super().__init__(FeedRangeInternalEpk(feed_range))
+
+        self._feed_range_internal = FeedRangeInternalEpk(feed_range)
 
     def __str__(self) -> str:
         """Get a json representation of the feed range.
            The returned json string can be used to create a new feed range from it.
 
         :return: A json representation of the feed range.
-        :rtype: str
         """
         return self._feed_range_internal.__str__()
 

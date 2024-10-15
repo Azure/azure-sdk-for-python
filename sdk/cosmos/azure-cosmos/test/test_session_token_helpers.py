@@ -143,5 +143,17 @@ class TestSessionTokenHelpers:
         updated_session_token = setup[COLLECTION].get_updated_session_token(actual_split_ranges, target_feed_range)
         assert updated_session_token == expected_session_token
 
+    def test_invalid_feed_range(self, setup):
+        feed_range = FeedRangeEpk(Range("AA", "BB", True, False))
+        session_token = "0:1#54#3=50"
+        feed_ranges_and_session_tokens = [(feed_range, session_token)]
+        with pytest.raises(ValueError, match='There were no overlapping feed ranges with the target.'):
+            setup["created_collection"].get_updated_session_token(feed_ranges_and_session_tokens,
+                                                                  FeedRangeEpk(Range(
+                                                                      "CC",
+                                                                      "FF",
+                                                                      True,
+                                                                      False)))
+
 if __name__ == '__main__':
     unittest.main()
