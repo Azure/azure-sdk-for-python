@@ -26,6 +26,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _EXCEPTION_ENVELOPE_NAME,
     _REMOTE_DEPENDENCY_ENVELOPE_NAME,
 )
+from . import _utils as trace_utils
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
     ContextTagKeys,
@@ -211,7 +212,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             envelope.tags[ContextTagKeys.AI_LOCATION_IP] = span.attributes[SpanAttributes.NET_PEER_IP]
         if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
             # Currently only eventhub and servicebus are supported (kind CONSUMER)
-            data.source = _get_azure_sdk_target_source(span.attributes)
+            data.source = trace_utils._get_azure_sdk_target_source(span.attributes)
             if span.links:
                 total = 0
                 for link in span.links:
@@ -346,15 +347,15 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 # TODO: check default port for rpc
                 # This logic assumes default ports never conflict across dependency types
                  # type: ignore
-                if port != _get_default_port_http(str(span.attributes.get(SpanAttributes.HTTP_SCHEME))) and \
-                    port != _get_default_port_db(str(span.attributes.get(SpanAttributes.DB_SYSTEM))):
+                if port != trace_utils._get_default_port_http(str(span.attributes.get(SpanAttributes.HTTP_SCHEME))) and \
+                    port != trace_utils._get_default_port_db(str(span.attributes.get(SpanAttributes.DB_SYSTEM))):
                     target = "{}:{}".format(target, port)
         if span.kind is SpanKind.CLIENT:
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
                 # Currently only eventhub and servicebus are supported
                 # https://github.com/Azure/azure-sdk-for-python/issues/9256
                 data.type = span.attributes[_AZURE_SDK_NAMESPACE_NAME]
-                data.target = _get_azure_sdk_target_source(span.attributes)
+                data.target = trace_utils._get_azure_sdk_target_source(span.attributes)
             elif SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
                 data.type = "HTTP"
                 if SpanAttributes.HTTP_USER_AGENT in span.attributes:
@@ -399,7 +400,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                         path = parse_url.path
                         if not path:
                             path = "/"
-                        if parse_url.port and parse_url.port == _get_default_port_http(str(scheme)):
+                        if parse_url.port and parse_url.port == trace_utils._get_default_port_http(str(scheme)):
                             target_from_url = parse_url.hostname
                         else:
                             target_from_url = parse_url.netloc
@@ -419,7 +420,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                             # urlparse insists on absolute URLs starting with "//"
                             # This logic assumes host does not include a "//"
                             host_name = urlparse("//" + str(host))
-                            if host_name.port == _get_default_port_http(str(scheme)):
+                            if host_name.port == trace_utils._get_default_port_http(str(scheme)):
                                 target = host_name.hostname
                             else:
                                 target = host
@@ -449,7 +450,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     data.type = "mongodb"
                 elif db_system == DbSystemValues.REDIS.value:
                     data.type = "redis"
-                elif _is_sql_db(str(db_system)):
+                elif trace_utils._is_sql_db(str(db_system)):
                     data.type = "SQL"
                 else:
                     data.type = db_system
@@ -484,7 +485,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             # Currently only eventhub and servicebus are supported that produce PRODUCER spans
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
                 data.type = "Queue Message | {}".format(span.attributes[_AZURE_SDK_NAMESPACE_NAME])
-                data.target = _get_azure_sdk_target_source(span.attributes)
+                data.target = trace_utils._get_azure_sdk_target_source(span.attributes)
             else:
                 data.type = "Queue Message"
                 msg_system = span.attributes.get(SpanAttributes.MESSAGING_SYSTEM)
@@ -596,54 +597,6 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
 
     return envelopes
 
-# pylint:disable=too-many-return-statements
-def _get_default_port_db(db_system: str) -> int:
-    if db_system == DbSystemValues.POSTGRESQL.value:
-        return 5432
-    if db_system == DbSystemValues.CASSANDRA.value:
-        return 9042
-    if db_system in (DbSystemValues.MARIADB.value, DbSystemValues.MYSQL.value):
-        return 3306
-    if db_system == DbSystemValues.MSSQL.value:
-        return 1433
-    # TODO: Add in memcached
-    if db_system == "memcached":
-        return 11211
-    if db_system == DbSystemValues.DB2.value:
-        return 50000
-    if db_system == DbSystemValues.ORACLE.value:
-        return 1521
-    if db_system == DbSystemValues.H2.value:
-        return 8082
-    if db_system == DbSystemValues.DERBY.value:
-        return 1527
-    if db_system == DbSystemValues.REDIS.value:
-        return 6379
-    return 0
-
-
-def _get_default_port_http(scheme: str) -> int:
-    if scheme == "http":
-        return 80
-    if scheme == "https":
-        return 443
-    return 0
-
-
-def _is_sql_db(db_system: str) -> bool:
-    return db_system in (
-        DbSystemValues.DB2.value,
-        DbSystemValues.DERBY.value,
-        DbSystemValues.MARIADB.value,
-        DbSystemValues.MSSQL.value,
-        DbSystemValues.ORACLE.value,
-        DbSystemValues.SQLITE.value,
-        DbSystemValues.OTHER_SQL.value,
-        # spell-checker:ignore HSQLDB
-        DbSystemValues.HSQLDB.value,
-        DbSystemValues.H2.value,
-      )
-
 
 def _check_instrumentation_span(span: ReadableSpan) -> None:
     # Special use-case for spans generated from azure-sdk services
@@ -667,16 +620,6 @@ def _is_standard_attribute(key: str) -> bool:
         if key.startswith(prefix):
             return True
     return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES
-
-
-def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
-    # Currently logic only works for ServiceBus and EventHub
-    if attributes:
-        peer_address = attributes.get("peer.address")
-        destination = attributes.get("message_bus.destination")
-        if peer_address and destination:
-            return str(peer_address) + "/" + str(destination)
-    return None
 
 
 def _get_trace_export_result(result: ExportResult) -> SpanExportResult:
