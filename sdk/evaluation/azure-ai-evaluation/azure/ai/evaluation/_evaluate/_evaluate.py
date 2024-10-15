@@ -236,12 +236,21 @@ def _validate_columns_for_evaluators(
         is_built_in = evaluator.__module__.startswith("azure.ai.evaluation")
         if is_built_in:
             # Note that for built-in evaluators supporting the "conversation" parameter,
-            # all input parameters are now optional.
+            # input parameters are now optional.
             evaluator_params = [
                 param.name
                 for param in inspect.signature(evaluator).parameters.values()
                 if param.name not in ["kwargs", "args", "self"]
             ]
+
+            if "conversation" in evaluator_params and "conversation" in new_df.columns:
+                # Ignore the missing fields if "conversation" presents in the input data
+                missing_inputs = []
+            else:
+                missing_inputs = [col for col in evaluator_params if col not in new_df.columns]
+                # If "conversation" is the only missing field, keep it in the missing_inputs list, otherwise remove it
+                if "conversation" in missing_inputs and len(missing_inputs) > 1:
+                    missing_inputs.remove("conversation")
         else:
             evaluator_params = [
                 param.name
@@ -249,11 +258,7 @@ def _validate_columns_for_evaluators(
                 if param.default == inspect.Parameter.empty and param.name not in ["kwargs", "args", "self"]
             ]
 
-        # Ignore the missing fields if "conversation" presents in the input data
-        if "conversation" in evaluator_params and "conversation" in new_df.columns:
-            missing_inputs = []
-        else:
-            missing_inputs = [col for col in evaluator_params if col not in new_df.columns and col != "conversation"]
+            missing_inputs = [col for col in evaluator_params if col not in new_df.columns]
 
         if missing_inputs:
             missing_inputs_per_evaluator[evaluator_name] = missing_inputs
