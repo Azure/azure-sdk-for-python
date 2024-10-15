@@ -14,10 +14,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
 from ..._generated.aio import SearchClient as _SearchServiceClient
 from ...aio._search_client_async import SearchClient
-from .._utils import (
-    get_access_conditions,
-    normalize_endpoint,
-)
+from .._utils import normalize_endpoint
 from ..._api_versions import DEFAULT_VERSION
 from ..._headers_mixin import HeadersMixin
 from ..._utils import get_authentication_policy
@@ -195,13 +192,13 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Delete an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(index, match_condition)
-        kwargs.update(access_condition)
+        etag = None
         try:
             index_name = index.name  # type: ignore
+            etag = index.e_tag  # type: ignore
         except AttributeError:
             index_name = index
-        await self._client.indexes_operations.delete(index_name=index_name, error_map=error_map, **kwargs)
+        await self._client.indexes_operations.delete(index_name=index_name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace_async
     async def create_index(self, index: SearchIndex, **kwargs: Any) -> SearchIndex:
@@ -266,15 +263,14 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
                 :caption: Update an index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(index, match_condition)
-        kwargs.update(access_condition)
         patched_index = index._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexes_operations.create_or_update(
             index_name=index.name,
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
             prefer="return=representation",
-            error_map=error_map,
+            etag=index.e_tag,
+            match_condition=match_condition,
             **kwargs
         )
         return cast(SearchIndex, SearchIndex._from_generated(result))  # pylint:disable=protected-access
@@ -404,13 +400,13 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(synonym_map, match_condition)
-        kwargs.update(access_condition)
+        etag = None
         try:
             name = synonym_map.name  # type: ignore
+            etag = synonym_map.e_tag  # type: ignore
         except AttributeError:
             name = synonym_map
-        await self._client.synonym_maps_operations.delete(synonym_map_name=name, error_map=error_map, **kwargs)
+        await self._client.synonym_maps_operations.delete(synonym_map_name=name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace_async
     async def create_synonym_map(self, synonym_map: SynonymMap, **kwargs: Any) -> SynonymMap:
@@ -455,14 +451,14 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(synonym_map, match_condition)
         kwargs.update(access_condition)
         patched_synonym_map = synonym_map._to_generated()  # pylint:disable=protected-access
         result = await self._client.synonym_maps_operations.create_or_update(
             synonym_map_name=synonym_map.name,
             synonym_map=patched_synonym_map,
             prefer="return=representation",
-            error_map=error_map,
+            etag=synonym_map.e_tag,
+            match_condition=match_condition,
             **kwargs
         )
         return cast(SynonymMap, SynonymMap._from_generated(result))  # pylint:disable=protected-access

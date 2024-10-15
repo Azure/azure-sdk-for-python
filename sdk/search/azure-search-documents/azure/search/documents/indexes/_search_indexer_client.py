@@ -14,10 +14,7 @@ from .._generated.models import (
     SearchIndexer,
     SearchIndexerStatus,
 )
-from ._utils import (
-    get_access_conditions,
-    normalize_endpoint,
-)
+from ._utils import normalize_endpoint
 from .models import (
     SearchIndexerSkillset,
     EntityRecognitionSkillVersion,
@@ -121,11 +118,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(indexer, match_condition)
-        kwargs.update(access_condition)
         name = indexer.name
         result = self._client.indexers_operations.create_or_update(
-            indexer_name=name, indexer=indexer, prefer="return=representation", error_map=error_map, **kwargs
+            indexer_name=name, indexer=indexer, prefer="return=representation", etag=indexer.e_tag, match_condition=match_condition, **kwargs
         )
         return result
 
@@ -226,13 +221,13 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Delete a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(indexer, match_condition)
-        kwargs.update(access_condition)
+        etag = None
         try:
             name = indexer.name  # type: ignore
+            etag = indexer.e_tag
         except AttributeError:
             name = indexer
-        self._client.indexers_operations.delete(name, error_map=error_map, **kwargs)
+        self._client.indexers_operations.delete(name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def run_indexer(self, name: str, **kwargs: Any) -> None:
@@ -338,15 +333,14 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(data_source_connection, match_condition)
-        kwargs.update(access_condition)
         name = data_source_connection.name
         packed_data_source = data_source_connection._to_generated()  # pylint:disable=protected-access
         result = self._client.data_sources_operations.create_or_update(
             data_source_name=name,
             data_source=packed_data_source,
             prefer="return=representation",
-            error_map=error_map,
+            etag=data_source_connection.e_tag,
+            match_condition=match_condition,
             **kwargs
         )
         # pylint:disable=protected-access
@@ -445,13 +439,13 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Delete a SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(data_source_connection, match_condition)
-        kwargs.update(access_condition)
+        etag = None
         try:
             name = data_source_connection.name  # type: ignore
+            etag = data_source_connection.e_tag # type: ignore
         except AttributeError:
             name = data_source_connection
-        self._client.data_sources_operations.delete(data_source_name=name, error_map=error_map, **kwargs)
+        self._client.data_sources_operations.delete(data_source_name=name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def get_skillsets(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> List[SearchIndexerSkillset]:
@@ -470,7 +464,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         if select:
             kwargs["select"] = ",".join(select)
-        result = self._client.skillsets.list(**kwargs)
+        result = self._client.skillsets_operations.list(**kwargs)
         assert result.skillsets is not None  # Hint for mypy
         return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets]
 
@@ -484,7 +478,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.skillsets.list(**kwargs)
+        result = self._client.skillsets_operations.list(**kwargs)
         assert result.skillsets is not None  # Hint for mypy
         return [x.name for x in result.skillsets]
 
@@ -499,7 +493,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.skillsets.get(name, **kwargs)
+        result = self._client.skillsets_operations.get(name, **kwargs)
         # pylint:disable=protected-access
         return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))
 
@@ -521,13 +515,13 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :paramtype match_condition: ~azure.core.MatchConditions
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(skillset, match_condition)
-        kwargs.update(access_condition)
+        etag = None
         try:
             name = skillset.name  # type: ignore
+            etag = skillset.e_tag  # type: ignore
         except AttributeError:
             name = skillset
-        self._client.skillsets.delete(name, error_map=error_map, **kwargs)
+        self._client.skillsets_operations.delete(name, etag=etag, match_condition=match_condition, **kwargs)
 
     @distributed_trace
     def create_skillset(self, skillset: SearchIndexerSkillset, **kwargs: Any) -> SearchIndexerSkillset:
@@ -543,7 +537,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         _validate_skillset(skillset)
         skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
 
-        result = self._client.skillsets.create(skillset_gen, **kwargs)
+        result = self._client.skillsets_operations.create(skillset_gen, **kwargs)
         return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))
 
     @distributed_trace
@@ -567,16 +561,15 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        error_map, access_condition = get_access_conditions(skillset, match_condition)
-        kwargs.update(access_condition)
         _validate_skillset(skillset)
         skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
 
-        result = self._client.skillsets.create_or_update(
+        result = self._client.skillsets_operations.create_or_update(
             skillset_name=skillset.name,
             skillset=skillset_gen,
             prefer="return=representation",
-            error_map=error_map,
+            etag=skillset.e_tag,
+            match_condition=match_condition,
             **kwargs
         )
         return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))
