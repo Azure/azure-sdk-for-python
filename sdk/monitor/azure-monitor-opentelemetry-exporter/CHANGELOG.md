@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-- Refactor trace mapping logic into trace utils
+- Refactor trace mapping logic for target and data into trace utils
     ([#37897](https://github.com/Azure/azure-sdk-for-python/pull/37897))
 
 ## 1.0.0b31 (2024-10-08)

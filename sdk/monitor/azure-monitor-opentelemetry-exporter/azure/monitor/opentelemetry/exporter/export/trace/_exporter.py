@@ -4,10 +4,9 @@ from os import environ
 import json
 import logging
 from time import time_ns
-from typing import Dict, List, Optional, Sequence, Any
+from typing import Any, Dict, List, Sequence
 from urllib.parse import urlparse
 
-from opentelemetry.util.types import Attributes
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
@@ -26,7 +25,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _EXCEPTION_ENVELOPE_NAME,
     _REMOTE_DEPENDENCY_ENVELOPE_NAME,
 )
-from . import _utils as trace_utils
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
     ContextTagKeys,
@@ -44,6 +42,8 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     BaseExporter,
     ExportResult,
 )
+from . import _utils as trace_utils
+
 
 _logger = logging.getLogger(__name__)
 
@@ -346,8 +346,9 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 port = span.attributes[SpanAttributes.NET_PEER_PORT]
                 # TODO: check default port for rpc
                 # This logic assumes default ports never conflict across dependency types
-                 # type: ignore
-                if port != trace_utils._get_default_port_http(str(span.attributes.get(SpanAttributes.HTTP_SCHEME))) and \
+                # type: ignore
+                if port != trace_utils._get_default_port_http(
+                    str(span.attributes.get(SpanAttributes.HTTP_SCHEME))) and \
                     port != trace_utils._get_default_port_db(str(span.attributes.get(SpanAttributes.DB_SYSTEM))):
                     target = "{}:{}".format(target, port)
         if span.kind is SpanKind.CLIENT:
@@ -367,7 +368,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 if url:
                     data.data = url
                 target, path = trace_utils._get_target_and_path_for_http_dependency(
-                    target,
+                    target,  # type: ignore
                     url,
                     scheme,
                     span.attributes,
@@ -408,20 +409,20 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     data.data = span.attributes[SpanAttributes.DB_OPERATION]
                 # db specific logic for target
                 target = trace_utils._get_target_for_db_dependency(
-                    target,
-                    db_system,
+                    target,  # type: ignore
+                    db_system,  # type: ignore
                     span.attributes,
                 )
             elif SpanAttributes.MESSAGING_SYSTEM in span.attributes:  # Messaging
                 data.type = span.attributes[SpanAttributes.MESSAGING_SYSTEM]
                 target = trace_utils._get_target_for_messaging_dependency(
-                    target,
+                    target,  # type: ignore
                     span.attributes,
                 )
             elif SpanAttributes.RPC_SYSTEM in span.attributes:  # Rpc
                 data.type = SpanAttributes.RPC_SYSTEM
                 target = trace_utils._get_target_for_rpc_dependency(
-                    target,
+                    target,  # type: ignore
                     span.attributes,
                 )
             else:
@@ -437,7 +438,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 if msg_system:
                     data.type += " | {}".format(msg_system)
                 target = trace_utils._get_target_for_messaging_dependency(
-                    target,
+                    target,  # type: ignore
                     span.attributes,
                 )
         else:  # SpanKind.INTERNAL

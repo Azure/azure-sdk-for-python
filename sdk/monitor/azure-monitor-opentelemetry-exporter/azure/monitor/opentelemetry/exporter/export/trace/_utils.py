@@ -1,35 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import datetime
-import locale
-from os import environ
-from os.path import isdir
-import platform
-import threading
-import time
-import warnings
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Optional, Tuple
 from urllib.parse import urlparse
 
-from opentelemetry.semconv.attributes.service_attributes import SERVICE_NAME
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
-from opentelemetry.semconv.resource import ResourceAttributes
-from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.util import ns_to_iso_str
-from opentelemetry.util.types import Attributes, AttributeValue
+from opentelemetry.util.types import Attributes
 
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys, TelemetryItem
-from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
-from azure.monitor.opentelemetry.exporter._constants import (
-    _AKS_ARM_NAMESPACE_ID,
-    _APPLICATION_INSIGHTS_RESOURCE_SCOPE,
-    _PYTHON_ENABLE_OPENTELEMETRY,
-    _INSTRUMENTATIONS_BIT_MAP,
-    _FUNCTIONS_WORKER_RUNTIME,
-    _WEBSITE_SITE_NAME,
-)
 
 # pylint:disable=too-many-return-statements
 def _get_default_port_db(db_system: str) -> int:
@@ -95,6 +72,7 @@ def _get_scheme_for_http_dependency(attributes: Attributes) -> Optional[str]:
         scheme = attributes.get(SpanAttributes.HTTP_SCHEME)
         if scheme:
             return str(scheme)
+    return None
 
 
 def _get_url_for_http_dependency(scheme: Optional[str], attributes: Attributes) -> Optional[str]:
@@ -131,7 +109,12 @@ def _get_url_for_http_dependency(scheme: Optional[str], attributes: Attributes) 
     return str(url)
 
 
-def _get_target_and_path_for_http_dependency(target: Optional[str], url: Optional[str], scheme: Optional[str], attributes: Attributes) -> Tuple[Optional[str], str]:
+def _get_target_and_path_for_http_dependency(
+    target: Optional[str],
+    url: Optional[str],
+    scheme: Optional[str],
+    attributes: Attributes,
+) -> Tuple[Optional[str], str]:
     target_from_url = None
     path = ""
     if attributes:
@@ -165,7 +148,11 @@ def _get_target_and_path_for_http_dependency(target: Optional[str], url: Optiona
     return (target, path)
 
 
-def _get_target_for_db_dependency(target: Optional[str], db_system: Optional[str], attributes: Attributes) -> Optional[str]:
+def _get_target_for_db_dependency(
+    target: Optional[str],
+    db_system: Optional[str],
+    attributes: Attributes,
+) -> Optional[str]:
     if attributes:
         db_name = attributes.get(SpanAttributes.DB_NAME)
         if db_name:
