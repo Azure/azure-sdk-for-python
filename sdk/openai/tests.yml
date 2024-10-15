@@ -11,6 +11,9 @@ extends:
         - TestSamples=.*/true
       UseFederatedAuth: true
       SupportedClouds: 'Public'
+      CloudConfig:
+        Public:
+          ServiceConnection: azure-sdk-tests-openai
       EnvVars:
         AZ_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
         AZURE_OPENAI_KEY: $(AOAI-API-KEY)

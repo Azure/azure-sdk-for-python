@@ -75,7 +75,7 @@ setup(
         "rouge-score>=0.1.2",
     ],
     extras_require={
-        "pf-azure": [
+        "remote": [
             "promptflow-azure<2.0.0,>=1.15.0",
         ],
     },
