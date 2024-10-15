@@ -45,7 +45,7 @@ with ai_client:
         model="gpt-4-1106-preview",
         name="my-assistant",
         instructions="You are a helpful assistant",
-        tools=list(functions.definitions),
+        tools=functions.definitions,
     )
     print(f"Created agent, ID: {agent.id}")
 
