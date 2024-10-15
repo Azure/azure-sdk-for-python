@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.hybridcompute import HybridComputeManagementClient
@@ -17,7 +15,7 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
     pip install azure-identity
     pip install azure-mgmt-hybridcompute
 # USAGE
-    python gateway_update.py
+    python license_validate_license.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,17 +27,27 @@ from azure.mgmt.hybridcompute import HybridComputeManagementClient
 def main():
     client = HybridComputeManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="ffd506c8-3415-42d3-9612-fdb423fb17df",
+        subscription_id="{subscriptionId}",
     )
 
-    response = client.gateways.update(
-        resource_group_name="myResourceGroup",
-        gateway_name="{gatewayName}",
-        parameters={"properties": {"allowedFeatures": ["*"]}},
-    )
+    response = client.licenses.begin_validate_license(
+        parameters={
+            "location": "eastus2euap",
+            "properties": {
+                "licenseDetails": {
+                    "edition": "Datacenter",
+                    "processors": 6,
+                    "state": "Activated",
+                    "target": "Windows Server 2012",
+                    "type": "pCore",
+                },
+                "licenseType": "ESU",
+            },
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2024-05-20-preview/examples/gateway/Gateway_Update.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/stable/2024-07-10/examples/license/License_ValidateLicense.json
 if __name__ == "__main__":
     main()
