@@ -12,6 +12,10 @@ from ._outbound_endpoints_operations import OutboundEndpointsOperations
 from ._dns_forwarding_rulesets_operations import DnsForwardingRulesetsOperations
 from ._forwarding_rules_operations import ForwardingRulesOperations
 from ._virtual_network_links_operations import VirtualNetworkLinksOperations
+from ._dns_resolver_policies_operations import DnsResolverPoliciesOperations
+from ._dns_security_rules_operations import DnsSecurityRulesOperations
+from ._dns_resolver_policy_virtual_network_links_operations import DnsResolverPolicyVirtualNetworkLinksOperations
+from ._dns_resolver_domain_lists_operations import DnsResolverDomainListsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -24,6 +28,10 @@ __all__ = [
     "DnsForwardingRulesetsOperations",
     "ForwardingRulesOperations",
     "VirtualNetworkLinksOperations",
+    "DnsResolverPoliciesOperations",
+    "DnsSecurityRulesOperations",
+    "DnsResolverPolicyVirtualNetworkLinksOperations",
+    "DnsResolverDomainListsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
