@@ -92,7 +92,7 @@ async def main():
                 for tool_call in tool_calls:
                     if isinstance(tool_call, RequiredFunctionToolCall):
                         try:
-                            output = functions.execute(tool_call)
+                            output = await functions.execute(tool_call)
                             tool_outputs.append({
                                 "tool_call_id": tool_call.id,
                                 "output": output,

@@ -68,7 +68,6 @@ with ai_client:
     # also, you do not need to provide tool_resources if you did not create a vector store above
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant",
-        tools=[file_search_tool],
         tool_resources=ToolResources(file_search=FileSearchToolResource(vector_store_ids=[vector_store.id]))
     )
     print(f"Created agent, agent ID: {agent.id}")
@@ -77,7 +76,7 @@ with ai_client:
     print(f"Created thread, thread ID: {thread.id}")    
 
     # create a message with the attachment
-    attachment = MessageAttachment(file_id=file.id, tools=[file_search_tool.definitions])
+    attachment = MessageAttachment(file_id=file.id, tools=file_search_tool.definitions)
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="What feature does Smart Eyewear offer?", attachments=[attachment])
     print(f"Created message, message ID: {message.id}")
 

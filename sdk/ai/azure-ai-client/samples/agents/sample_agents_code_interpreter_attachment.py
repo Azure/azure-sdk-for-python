@@ -60,16 +60,15 @@ with ai_client:
     
     # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to view the file
     agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant",
-        tools=list(code_interpreter.definitions)
+        model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
     )
-    print(f"Created assistant, assistant ID: {agent.id}")
+    print(f"Created agent, agent ID: {agent.id}")
 
     thread = ai_client.agents.create_thread()
     print(f"Created thread, thread ID: {thread.id}")    
 
     # create a message with the attachment
-    attachment = MessageAttachment(file_id=file.id, tools=[code_interpreter])
+    attachment = MessageAttachment(file_id=file.id, tools=code_interpreter.definitions)
     message = ai_client.agents.create_message(thread_id=thread.id, role="user", content="What does the attachment say?", attachments=[attachment])
     print(f"Created message, message ID: {message.id}")
 

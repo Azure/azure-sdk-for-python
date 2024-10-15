@@ -13,7 +13,6 @@ import logging
 import base64
 import asyncio
 
-from typing import List, Sequence
 from azure.core.credentials import TokenCredential, AccessToken
 
 from ._enums import AgentStreamEvent
@@ -169,7 +168,7 @@ class Tool(ABC):
 
     @property
     @abstractmethod
-    def definitions(self) -> Sequence[ToolDefinition]:
+    def definitions(self) -> List[ToolDefinition]:
         """Get the tool definitions."""
         pass
 
@@ -204,7 +203,7 @@ class FunctionTool(Tool):
         self._functions = functions
         self._definitions = self._build_function_definitions(functions)
 
-    def _build_function_definitions(self, functions: Dict[str, Any]) -> List[FunctionToolDefinition]:
+    def _build_function_definitions(self, functions: Dict[str, Any]) -> List[ToolDefinition]:
         specs = []
         for name, func in functions.items():
             sig = inspect.signature(func)
@@ -259,7 +258,7 @@ class FunctionTool(Tool):
             raise
 
     @property
-    def definitions(self) -> Sequence[FunctionToolDefinition]:
+    def definitions(self) -> List[ToolDefinition]:
         """
         Get the function definitions.
 
@@ -308,7 +307,7 @@ class FileSearchTool(Tool):
         self.vector_store_ids.append(store_id)
 
     @property
-    def definitions(self) -> Sequence[FileSearchToolDefinition]:
+    def definitions(self) -> List[ToolDefinition]:
         """
         Get the file search tool definitions.
         """
@@ -342,7 +341,7 @@ class CodeInterpreterTool(Tool):
         self.file_ids.append(file_id)
 
     @property
-    def definitions(self) -> Sequence[CodeInterpreterToolDefinition]:
+    def definitions(self) -> List[ToolDefinition]:
         """
         Get the code interpreter tool definitions.
         """
@@ -365,7 +364,7 @@ class ToolSet:
     """
 
     def __init__(self):
-        self._tools = []
+        self._tools: List[Tool] = []
 
     def validate_tool_type(self, tool_type: Type[Tool]) -> None:
         """
@@ -407,7 +406,7 @@ class ToolSet:
         raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
     @property
-    def definitions(self) -> Sequence[ToolDefinition]:
+    def definitions(self) -> List[ToolDefinition]:
         """
         Get the definitions for all tools in the tool set.
         """
