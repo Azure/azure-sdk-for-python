@@ -741,6 +741,61 @@ async def use_vector_embedding_policy(db):
         print("Entity doesn't exist")
 
 
+async def use_full_text_policy(db):
+    try:
+        await delete_container_if_exists(db, CONTAINER_ID)
+
+        # Create a container with full text policy and full text indexes
+        indexing_policy = {
+            "automatic": True,
+            "fullTextIndexes": [
+                {"path": "/text1"}
+            ]
+        }
+        full_text_policy = {
+            "defaultLanguage": "en-US",
+            "fullTextPaths": [
+                {
+                    "path": "/text1",
+                    "language": "en-US"
+                },
+                {
+                    "path": "/text2",
+                    "language": "en-US"
+                }
+            ]
+        }
+
+        created_container = await db.create_container(
+            id=CONTAINER_ID,
+            partition_key=PARTITION_KEY,
+            indexing_policy=indexing_policy,
+            full_text_policy=full_text_policy
+        )
+        properties = await created_container.read()
+        print(created_container)
+
+        print("\n" + "-" * 25 + "\n11. Container created with full text policy and full text indexes")
+        print_dictionary_items(properties["indexingPolicy"])
+        print_dictionary_items(properties["fullTextPolicy"])
+
+        # Create some items to use with full text search
+        for i in range(10):
+            created_container.create_item({"id": "full_text_item" + str(i), "text1": "some-text"})
+
+        # Run full text search queries using ranking
+        query = "select * from c"
+        await query_documents_with_custom_query(created_container, query)
+
+        # Cleanup
+        db.delete_container(created_container)
+        print("\n")
+    except exceptions.CosmosResourceExistsError:
+        print("Entity already exists")
+    except exceptions.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
+
 async def run_sample():
     try:
         async with obtain_client() as client:
@@ -776,6 +831,9 @@ async def run_sample():
 
             # 10. Create and use a vector embedding policy
             await use_vector_embedding_policy(created_db)
+
+            # 11. Create and use a full text policy
+            await use_full_text_policy(created_db)
 
     except exceptions.AzureError as e:
         raise e

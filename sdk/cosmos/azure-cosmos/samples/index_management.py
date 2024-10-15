@@ -637,7 +637,7 @@ def use_geospatial_indexing_policy(db):
     try:
         delete_container_if_exists(db, CONTAINER_ID)
 
-        # Create a container with vector embedding policy and vector indexes
+        # Create a container with geospatial indexes
         indexing_policy = {
             'includedPaths': [
                 {'path': '/"Location"/?',
@@ -746,6 +746,61 @@ def use_vector_embedding_policy(db):
         print("Entity doesn't exist")
 
 
+def use_full_text_policy(db):
+    try:
+        delete_container_if_exists(db, CONTAINER_ID)
+
+        # Create a container with full text policy and full text indexes
+        indexing_policy = {
+            "automatic": True,
+            "fullTextIndexes": [
+                {"path": "/text1"}
+            ]
+        }
+        full_text_policy = {
+            "defaultLanguage": "en-US",
+            "fullTextPaths": [
+                {
+                    "path": "/text1",
+                    "language": "en-US"
+                },
+                {
+                    "path": "/text2",
+                    "language": "en-US"
+                }
+            ]
+        }
+
+        created_container = db.create_container(
+            id=CONTAINER_ID,
+            partition_key=PARTITION_KEY,
+            indexing_policy=indexing_policy,
+            full_text_policy=full_text_policy
+        )
+        properties = created_container.read()
+        print(created_container)
+
+        print("\n" + "-" * 25 + "\n11. Container created with full text policy and full text indexes")
+        print_dictionary_items(properties["indexingPolicy"])
+        print_dictionary_items(properties["fullTextPolicy"])
+
+        # Create some items to use with full text search
+        for i in range(10):
+            created_container.create_item({"id": "full_text_item" + str(i), "text1": "some-text"})
+
+        # Run full text search queries using ranking
+        query = "select * from c"
+        query_documents_with_custom_query(created_container, query)
+
+        # Cleanup
+        db.delete_container(created_container)
+        print("\n")
+    except exceptions.CosmosResourceExistsError:
+        print("Entity already exists")
+    except exceptions.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
+
 def run_sample():
     try:
         client = obtain_client()
@@ -781,6 +836,9 @@ def run_sample():
 
         # 10. Create and use a vector embedding policy
         use_vector_embedding_policy(created_db)
+
+        # 11. Create and use a full text policy
+        use_full_text_policy(created_db)
 
     except exceptions.AzureError as e:
         raise e
