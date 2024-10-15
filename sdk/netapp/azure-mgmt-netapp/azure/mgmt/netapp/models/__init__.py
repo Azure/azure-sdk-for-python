@@ -28,6 +28,7 @@ from ._models_py3 import CapacityPoolList
 from ._models_py3 import CapacityPoolPatch
 from ._models_py3 import CheckAvailabilityResponse
 from ._models_py3 import CloudErrorBody
+from ._models_py3 import ClusterPeerCommandResponse
 from ._models_py3 import DailySchedule
 from ._models_py3 import Dimension
 from ._models_py3 import EncryptionIdentity
@@ -56,6 +57,7 @@ from ._models_py3 import NicInfo
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import PeerClusterForVolumeMigrationRequest
 from ._models_py3 import PlacementKeyValuePairs
 from ._models_py3 import PoolChangeRequest
 from ._models_py3 import ProxyResource
@@ -67,6 +69,7 @@ from ._models_py3 import RegionInfoAvailabilityZoneMappingsItem
 from ._models_py3 import RegionInfoResource
 from ._models_py3 import RegionInfosList
 from ._models_py3 import RelocateVolumeRequest
+from ._models_py3 import RemotePath
 from ._models_py3 import Replication
 from ._models_py3 import ReplicationObject
 from ._models_py3 import ReplicationStatus
@@ -89,6 +92,7 @@ from ._models_py3 import SubvolumeInfo
 from ._models_py3 import SubvolumeModel
 from ._models_py3 import SubvolumePatchRequest
 from ._models_py3 import SubvolumesList
+from ._models_py3 import SvmPeerCommandResponse
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import UpdateNetworkSiblingSetRequest
@@ -175,6 +179,7 @@ __all__ = [
     "CapacityPoolPatch",
     "CheckAvailabilityResponse",
     "CloudErrorBody",
+    "ClusterPeerCommandResponse",
     "DailySchedule",
     "Dimension",
     "EncryptionIdentity",
@@ -203,6 +208,7 @@ __all__ = [
     "Operation",
     "OperationDisplay",
     "OperationListResult",
+    "PeerClusterForVolumeMigrationRequest",
     "PlacementKeyValuePairs",
     "PoolChangeRequest",
     "ProxyResource",
@@ -214,6 +220,7 @@ __all__ = [
     "RegionInfoResource",
     "RegionInfosList",
     "RelocateVolumeRequest",
+    "RemotePath",
     "Replication",
     "ReplicationObject",
     "ReplicationStatus",
@@ -236,6 +243,7 @@ __all__ = [
     "SubvolumeModel",
     "SubvolumePatchRequest",
     "SubvolumesList",
+    "SvmPeerCommandResponse",
     "SystemData",
     "TrackedResource",
     "UpdateNetworkSiblingSetRequest",

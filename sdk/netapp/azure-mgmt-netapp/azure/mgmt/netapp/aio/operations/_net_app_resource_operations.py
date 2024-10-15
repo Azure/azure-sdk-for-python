@@ -142,7 +142,7 @@ class NetAppResourceOperations:
 
     @distributed_trace_async
     async def check_file_path_availability(
-        self, location: str, name: str, subnet_id: str, **kwargs: Any
+        self, location: str, name: str, subnet_id: str, availability_zone: Optional[str] = None, **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check file path availability.
 
@@ -155,6 +155,10 @@ class NetAppResourceOperations:
         :param subnet_id: The Azure Resource URI for a delegated subnet. Must have the delegation
          Microsoft.NetApp/volumes. Required.
         :type subnet_id: str
+        :param availability_zone: The Azure Resource logical availability zone which is used within
+         zone mapping lookup for the subscription and region. The lookup will retrieve the physical zone
+         where volume is placed. Default value is None.
+        :type availability_zone: str
         :return: CheckAvailabilityResponse or the result of cls(response)
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -174,7 +178,7 @@ class NetAppResourceOperations:
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[_models.CheckAvailabilityResponse] = kwargs.pop("cls", None)
 
-        _body = _models.FilePathAvailabilityRequest(name=name, subnet_id=subnet_id)
+        _body = _models.FilePathAvailabilityRequest(availability_zone=availability_zone, name=name, subnet_id=subnet_id)
         _json = self._serialize.body(_body, "FilePathAvailabilityRequest")
 
         _request = build_check_file_path_availability_request(
