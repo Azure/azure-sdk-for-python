@@ -361,76 +361,18 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 if SpanAttributes.HTTP_USER_AGENT in span.attributes:
                     # TODO: Not exposed in Swagger, need to update def
                     envelope.tags["ai.user.userAgent"] = span.attributes[SpanAttributes.HTTP_USER_AGENT]
-                scheme = span.attributes.get(SpanAttributes.HTTP_SCHEME)
-                # url
-                url = None
-                if SpanAttributes.HTTP_URL in span.attributes:
-                    url = span.attributes[SpanAttributes.HTTP_URL]
-                elif scheme and SpanAttributes.HTTP_TARGET in span.attributes:
-                    http_target = span.attributes[SpanAttributes.HTTP_TARGET]
-                    if SpanAttributes.HTTP_HOST in span.attributes:
-                        url = "{}://{}{}".format(
-                            str(scheme),
-                            span.attributes[SpanAttributes.HTTP_HOST],
-                            http_target,
-                        )
-                    elif SpanAttributes.NET_PEER_PORT in span.attributes:
-                        peer_port = span.attributes[SpanAttributes.NET_PEER_PORT]
-                        if SpanAttributes.NET_PEER_NAME in span.attributes:
-                            peer_name = span.attributes[SpanAttributes.NET_PEER_NAME]
-                            url = "{}://{}:{}{}".format(
-                                scheme,
-                                peer_name,
-                                peer_port,
-                                http_target,
-                            )
-                        elif SpanAttributes.NET_PEER_IP in span.attributes:
-                            peer_ip = span.attributes[SpanAttributes.NET_PEER_IP]
-                            url = "{}://{}:{}{}".format(
-                                scheme,
-                                peer_ip,
-                                peer_port,
-                                http_target,
-                            )
-                target_from_url = None
-                path = ""
+                scheme = trace_utils._get_scheme_for_http_dependency(span.attributes)
+                url = trace_utils._get_url_for_http_dependency(scheme, span.attributes)
+                # data
                 if url:
-                    try:
-                        parse_url = urlparse(url)
-                        path = parse_url.path
-                        if not path:
-                            path = "/"
-                        if parse_url.port and parse_url.port == trace_utils._get_default_port_http(str(scheme)):
-                            target_from_url = parse_url.hostname
-                        else:
-                            target_from_url = parse_url.netloc
-                    except Exception:  # pylint: disable=broad-except
-                        pass
+                    data.data = url
+                target, path = trace_utils._get_target_and_path_for_http_dependency(target, url, scheme, span.attributes)
                 # http specific logic for name
                 if path:
                     data.name = "{} {}".format(
                         span.attributes[SpanAttributes.HTTP_METHOD],
                         path,
                     )
-                # http specific logic for target
-                if SpanAttributes.PEER_SERVICE not in span.attributes:
-                    if SpanAttributes.HTTP_HOST in span.attributes:
-                        host = span.attributes[SpanAttributes.HTTP_HOST]
-                        try:
-                            # urlparse insists on absolute URLs starting with "//"
-                            # This logic assumes host does not include a "//"
-                            host_name = urlparse("//" + str(host))
-                            if host_name.port == trace_utils._get_default_port_http(str(scheme)):
-                                target = host_name.hostname
-                            else:
-                                target = host
-                        except Exception:  # pylint: disable=broad-except
-                            _logger.warning("Error while parsing hostname.")
-                    elif target_from_url:
-                        target = target_from_url
-                # data is url
-                if url:
-                    data.data = url
                 status_code = span.attributes.get(SpanAttributes.HTTP_STATUS_CODE)
                 if status_code:
                     try:
