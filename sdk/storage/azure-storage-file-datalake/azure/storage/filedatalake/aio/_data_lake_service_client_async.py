@@ -72,7 +72,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
-        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
@@ -170,10 +170,10 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMi
         :type credential:
             ~azure.core.credentials.AzureNamedKeyCredential or
             ~azure.core.credentials.AzureSasCredential or
-            ~azure.core.credentials.TokenCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or
             str or Dict[str, str] or None
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
-            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :returns: A DataLakeServiceClient.
         :rtype: ~azure.storage.filedatalake.DataLakeServiceClient
