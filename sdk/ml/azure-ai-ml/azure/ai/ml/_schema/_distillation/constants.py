@@ -4,5 +4,6 @@
 
 
 class DistillationSchemaKeys:
+    StudentModel = "student_model"
     PromptSettings = "prompt_settings"
     EndpointRequestSettings = "endpoint_request_settings"

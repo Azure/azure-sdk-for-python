@@ -15,8 +15,9 @@ from azure.ai.ml._schema.job.input_output_entry import DataInputSchema, ModelInp
 from azure.ai.ml._schema.job.input_output_fields_provider import OutputsField
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants import DataGenerationTaskType, DataGenerationType, JobType
+from azure.ai.ml.constants import AssetTypes, DataGenerationTaskType, DataGenerationType, JobType
 from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.distillation.distillation_types import (
     DistillationPromptSettings,
     EndpointRequestSettings,
@@ -41,7 +42,6 @@ class DistillationJobSchema(FineTuningVerticalSchema, BaseJobSchema):
         casing_transform=str.upper,
         required=True,
     )
-    # TODO: Change to Serverless Connection
     teacher_model_endpoint = fields.Str()
     student_model = UnionField(
         [
@@ -73,9 +73,12 @@ class DistillationJobSchema(FineTuningVerticalSchema, BaseJobSchema):
         :return Dictionary of parsed values from the yaml.
         :rtype Dict[str, Any]
         """
-        print(f"post loaded data is {data}")
+        student_model = data.pop(DistillationSchemaKeys.StudentModel, None)
         prompt_settings = data.pop(DistillationSchemaKeys.PromptSettings, {})
         endpoint_request_settings = data.pop(DistillationSchemaKeys.EndpointRequestSettings, {})
+
+        if student_model and isinstance(student_model, str):
+            data[DistillationSchemaKeys.StudentModel] = Input(type=AssetTypes.MLFLOW_MODEL, path=student_model)
 
         if prompt_settings and not isinstance(prompt_settings, DistillationPromptSettings):
             data[DistillationSchemaKeys.PromptSettings] = DistillationPromptSettings(**prompt_settings)

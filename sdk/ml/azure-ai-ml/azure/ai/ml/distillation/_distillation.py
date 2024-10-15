@@ -3,8 +3,10 @@
 # ---------------------------------------------------------
 
 """Entrypoint for creating Distillation task."""
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
+from azure.ai.ml.constants import DataGenerationType
+from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.distillation.distillation_job import DistillationJob
 from azure.ai.ml.entities._job.distillation.distillation_types import (
@@ -19,16 +21,25 @@ def distillation(
     data_generation_type: str,
     data_generation_task_type: str,
     teacher_model_endpoint: str,
-    student_model: Input,
-    training_data: Input,
+    student_model: Union[Input, str],
+    training_data: Optional[Input] = None,
     validation_data: Optional[Input] = None,
     inference_parameters: Optional[Dict] = None,
     endpoint_request_settings: Optional[EndpointRequestSettings] = None,
     prompt_settings: Optional[DistillationPromptSettings] = None,
     hyperparameters: Optional[Dict] = None,
     resources: Optional[ResourceConfiguration] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> "DistillationJob":
+    if isinstance(student_model, str):
+        student_model = Input(type=AssetTypes.URI_FILE, path=student_model)
+
+    if training_data is None and data_generation_type == DataGenerationType.LabelGeneration:
+        raise ValueError(
+            f"Training data can only be None when data generation type is set to "
+            f"{DataGenerationType.DataGeneration}."
+        )
+
     return DistillationJob(
         data_generation_type=data_generation_type,
         data_generation_task_type=data_generation_task_type,
@@ -42,5 +53,5 @@ def distillation(
         hyperparameters=hyperparameters,
         resources=resources,
         experiment_name=experiment_name,
-        **kwargs
+        **kwargs,
     )
