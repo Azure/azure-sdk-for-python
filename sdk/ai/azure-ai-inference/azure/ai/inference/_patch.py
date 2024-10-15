@@ -254,10 +254,10 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         # The first header will be taken care of by auto-generated code.
         # The second one is added here.
         if isinstance(credential, AzureKeyCredential):
-                headers = kwargs.pop("headers", {})
-                if "api-key" not in headers:
-                    headers["api-key"] = credential.key
-                kwargs["headers"] = headers
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 
@@ -747,10 +747,10 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         # The first header will be taken care of by auto-generated code.
         # The second one is added here.
         if isinstance(credential, AzureKeyCredential):
-                headers = kwargs.pop("headers", {})
-                if "api-key" not in headers:
-                    headers["api-key"] = credential.key
-                kwargs["headers"] = headers
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 
@@ -1043,10 +1043,10 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         # The first header will be taken care of by auto-generated code.
         # The second one is added here.
         if isinstance(credential, AzureKeyCredential):
-                headers = kwargs.pop("headers", {})
-                if "api-key" not in headers:
-                    headers["api-key"] = credential.key
-                kwargs["headers"] = headers
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 

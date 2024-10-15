@@ -60,10 +60,8 @@ pip install --upgrade azure-ai-inference
 If you want to install Azure AI Inferencing package with support for OpenTelemetry based tracing, use the following command:
 
 ```bash
-pip install azure-ai-inference[trace]
+pip install azure-ai-inference[opentelemetry]
 ```
-
-
 
 ## Key concepts
 
