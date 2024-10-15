@@ -22,6 +22,14 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class AutoScalePolicyEnforcement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enable or Disable scale up setting on Elastic San Appliance."""
+
+    NONE = "None"
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 

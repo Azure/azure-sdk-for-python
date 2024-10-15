@@ -1,5 +1,15 @@
 # Release History
 
+## 1.2.0b1 (2024-10-20)
+
+### Features Added
+
+  - Model `ElasticSanProperties` added property `auto_scale_properties`
+  - Model `ElasticSanUpdateProperties` added property `auto_scale_properties`
+  - Added enum `AutoScalePolicyEnforcement`
+  - Added model `AutoScaleProperties`
+  - Added model `ScaleUpProperties`
+
 ## 1.1.0 (2024-09-23)
 
 ### Features Added

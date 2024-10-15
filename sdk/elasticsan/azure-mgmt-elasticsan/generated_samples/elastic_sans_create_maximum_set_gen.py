@@ -6,8 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, IO, Union
-
 from azure.identity import DefaultAzureCredential
 
 from azure.mgmt.elasticsan import ElasticSanMgmtClient
@@ -38,18 +36,26 @@ def main():
         parameters={
             "location": "France Central",
             "properties": {
-                "availabilityZones": ["1"],
-                "baseSizeTiB": 5,
-                "extendedCapacitySizeTiB": 25,
+                "autoScaleProperties": {
+                    "scaleUpProperties": {
+                        "autoScalePolicyEnforcement": "None",
+                        "capacityUnitScaleUpLimitTiB": 17,
+                        "increaseCapacityUnitByTiB": 4,
+                        "unusedSizeTiB": 24,
+                    }
+                },
+                "availabilityZones": ["xoz"],
+                "baseSizeTiB": 1,
+                "extendedCapacitySizeTiB": 3,
                 "publicNetworkAccess": "Enabled",
                 "sku": {"name": "Premium_LRS", "tier": "Premium"},
             },
-            "tags": {"key9316": "ihndtieqibtob"},
+            "tags": {"key9706": "haitqqakcntcpalkzqmjmcnifnhd"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/examples/ElasticSans_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2024-06-01-preview/examples/ElasticSans_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

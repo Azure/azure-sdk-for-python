@@ -22,7 +22,7 @@ class TestElasticSanMgmtElasticSansOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_list_by_subscription(self, resource_group):
         response = self.client.elastic_sans.list_by_subscription(
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestElasticSanMgmtElasticSansOperations(AzureMgmtRecordedTestCase):
     def test_list_by_resource_group(self, resource_group):
         response = self.client.elastic_sans.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -51,6 +51,14 @@ class TestElasticSanMgmtElasticSansOperations(AzureMgmtRecordedTestCase):
                     "baseSizeTiB": 0,
                     "extendedCapacitySizeTiB": 0,
                     "sku": {"name": "str", "tier": "str"},
+                    "autoScaleProperties": {
+                        "scaleUpProperties": {
+                            "autoScalePolicyEnforcement": "str",
+                            "capacityUnitScaleUpLimitTiB": 0,
+                            "increaseCapacityUnitByTiB": 0,
+                            "unusedSizeTiB": 0,
+                        }
+                    },
                     "availabilityZones": ["str"],
                     "privateEndpointConnections": [
                         {
@@ -98,7 +106,7 @@ class TestElasticSanMgmtElasticSansOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -111,10 +119,22 @@ class TestElasticSanMgmtElasticSansOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             elastic_san_name="str",
             parameters={
-                "properties": {"baseSizeTiB": 0, "extendedCapacitySizeTiB": 0, "publicNetworkAccess": "str"},
+                "properties": {
+                    "autoScaleProperties": {
+                        "scaleUpProperties": {
+                            "autoScalePolicyEnforcement": "str",
+                            "capacityUnitScaleUpLimitTiB": 0,
+                            "increaseCapacityUnitByTiB": 0,
+                            "unusedSizeTiB": 0,
+                        }
+                    },
+                    "baseSizeTiB": 0,
+                    "extendedCapacitySizeTiB": 0,
+                    "publicNetworkAccess": "str",
+                },
                 "tags": {"str": "str"},
             },
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -126,7 +146,7 @@ class TestElasticSanMgmtElasticSansOperations(AzureMgmtRecordedTestCase):
         response = self.client.elastic_sans.begin_delete(
             resource_group_name=resource_group.name,
             elastic_san_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -138,7 +158,7 @@ class TestElasticSanMgmtElasticSansOperations(AzureMgmtRecordedTestCase):
         response = self.client.elastic_sans.get(
             resource_group_name=resource_group.name,
             elastic_san_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         )
 
         # please add some check logic here by yourself

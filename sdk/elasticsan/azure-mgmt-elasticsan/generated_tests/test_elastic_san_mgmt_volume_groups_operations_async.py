@@ -25,7 +25,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.volume_groups.list_by_elastic_san(
             resource_group_name=resource_group.name,
             elastic_san_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -101,7 +101,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-06-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -141,7 +141,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                         "protocolType": "str",
                     },
                 },
-                api_version="2024-05-01",
+                api_version="2024-06-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -156,7 +156,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 elastic_san_name="str",
                 volume_group_name="str",
-                api_version="2024-05-01",
+                api_version="2024-06-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -170,7 +170,7 @@ class TestElasticSanMgmtVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             elastic_san_name="str",
             volume_group_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01-preview",
         )
 
         # please add some check logic here by yourself
