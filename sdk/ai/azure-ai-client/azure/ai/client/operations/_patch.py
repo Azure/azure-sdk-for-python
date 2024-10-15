@@ -820,7 +820,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     @overload
     def create_stream(
         self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> Union[_models.ThreadRun, _models.AgentRunStream]:
+    ) -> _models.AgentRunStream:
         """Creates a new stream for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
         :param thread_id: Required.
