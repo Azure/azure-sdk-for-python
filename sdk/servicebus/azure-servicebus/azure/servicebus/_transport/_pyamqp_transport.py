@@ -1102,7 +1102,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
         # pylint: disable=protected-access
-        receive_drain_timeout = 2 # 200 ms
+        receive_drain_timeout = .2 # 200 ms
         first_message_received = expired = False
         sent_drain = False
         time_sent = time.time()
@@ -1116,29 +1116,30 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                     and receiver._amqp_transport.get_current_time(amqp_receive_client)
                     > abs_timeout
                 ):
+                    expired = True
                     # If we reach our expired point, send Drain=True and wait for receiving flow to stop.
-                    if not sent_drain:
-                        receiver._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count, drain=True)
-                        sent_drain = True
-                        time_sent = time.time()
-                        break
+                    # if not sent_drain:
+                    #     receiver._amqp_transport.reset_link_credit(amqp_receive_client, max_message_count, drain=True)
+                    #     sent_drain = True
+                    #     time_sent = time.time()
+                    #     break
 
                     # If we have sent a drain and we havent received messages in X time
                     # or gotten back the responding flow, lets close the link
-                    with receiver._handler._link._drain_lock:
-                        if (not receiver._handler._link._received_drain_response and sent_drain) \
-                            and (time.time() - time_sent > receive_drain_timeout):
-                            expired = True
-                            receiver._handler._close_link()
-                            # receiver._handler._link.detach(close=True,
-                            # error=AMQPError(ErrorCondition.InternalError,
-                            # "Drain response not received", None))
-                            break
+                    # with receiver._handler._link._drain_lock:
+                    #     if (not receiver._handler._link._received_drain_response and sent_drain) \
+                    #         and (time.time() - time_sent > receive_drain_timeout):
+                    #         expired = True
+                    #         receiver._handler._close_link()
+                    #         # receiver._handler._link.detach(close=True,
+                    #         # error=AMQPError(ErrorCondition.InternalError,
+                    #         # "Drain response not received", None))
+                    #         break
 
                         # if you have received the drain -> break out of the loop
-                        if receiver._handler._link._received_drain_response:
-                            expired = True
-                            break
+                        # if receiver._handler._link._received_drain_response:
+                        #     expired = True
+                        #     break
 
                 before = amqp_receive_client._received_messages.qsize()
                 if not receiver._handler._connection._transport._incoming_queue.empty():
