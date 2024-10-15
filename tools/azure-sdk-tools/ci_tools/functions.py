@@ -41,7 +41,9 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
 ]
 
-TEST_COMPATIBILITY_MAP = {}
+TEST_COMPATIBILITY_MAP = {
+    "azure-ai-ml": ">=3.7, !=3.13.*"
+}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
     "azure-storage-blob": "pypy",
     "azure-storage-queue": "pypy",
