@@ -169,6 +169,8 @@ def check_base_classes(cls_node: ast.ClassDef) -> bool:
                                 should_look = True
     else:
         should_look = True  # no init node so it is using init from base class
+    if cls_node.bases:
+        should_look = True
     return should_look
 
 
@@ -264,6 +266,8 @@ def get_parameter_type(annotation) -> str:
             # TODO handle multiple types in the subscript
             return get_parameter_type(annotation.value)
         return f"{get_parameter_type(annotation.value)}[{get_parameter_type(annotation.slice)}]"
+    if isinstance(annotation, ast.Tuple):
+        return ", ".join([get_parameter_type(el) for el in annotation.elts])
     return annotation
 
 
