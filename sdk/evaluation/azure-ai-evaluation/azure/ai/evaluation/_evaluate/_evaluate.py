@@ -690,7 +690,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     column_mapping.setdefault("default", {})
 
     # If target is set, apply 1-1 column mapping from target outputs to evaluator inputs
-    target_generated_columns = set()
+    target_generated_columns: Set[str] = set()
     if data is not None and target is not None:
         input_data_df, target_generated_columns, target_run = _apply_target_to_data(
             target, data, pf_client, input_data_df, evaluation_name, _run_name=kwargs.get("_run_name")
