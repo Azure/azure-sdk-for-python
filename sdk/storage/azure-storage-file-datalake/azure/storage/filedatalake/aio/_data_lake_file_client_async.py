@@ -11,15 +11,16 @@ from typing import (
 )
 from urllib.parse import quote, unquote
 
+from typing_extensions import Self
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
+from .._deserialize import deserialize_file_properties, process_storage_error
+from .._models import FileProperties
+from .._serialize import convert_datetime_to_rfc1123
+from ..aio._upload_helper import upload_datalake_file
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
-from .._data_lake_file_client import DataLakeFileClient as DataLakeFileClientBase
-from .._serialize import convert_datetime_to_rfc1123
-from .._deserialize import process_storage_error, deserialize_file_properties
-from .._models import FileProperties
-from ..aio._upload_helper import upload_datalake_file
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -28,7 +29,7 @@ if TYPE_CHECKING:
     from .._models import ContentSettings
 
 
-class DataLakeFileClient(PathClient, DataLakeFileClientBase):
+class DataLakeFileClient(PathClient):
     """A client to interact with the DataLake file, even if the file may not yet exist.
 
     :ivar str url:
