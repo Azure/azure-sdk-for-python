@@ -24,8 +24,8 @@ USAGE:
 import os, time
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import CodeInterpreterTool
-from azure.ai.client.models._enums import FilePurpose
-from azure.ai.client.models._models import MessageAttachment
+from azure.ai.client.models import FilePurpose
+from azure.ai.client.models import CodeInterpreterToolDefinition, MessageAttachment
 from azure.identity import DefaultAzureCredential
 
 
@@ -60,7 +60,10 @@ with ai_client:
     
     # notices that CodeInterpreterToolDefinition as tool must be added or the assistant unable to view the file
     agent = ai_client.agents.create_agent(
-        model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant"
+        model="gpt-4-1106-preview", 
+        name="my-assistant", 
+        instructions="You are helpful assistant", 
+        tools=[CodeInterpreterToolDefinition()]
     )
     print(f"Created agent, agent ID: {agent.id}")
 
