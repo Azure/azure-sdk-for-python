@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -125,16 +126,14 @@ class InferenceOperations:
 
         # Pick latest GA version from the "Data plane - Inference" row in the table
         # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#api-specs
-        AZURE_OPENAI_API_VERSION = "2024-06-01" 
+        AZURE_OPENAI_API_VERSION = "2024-06-01"
 
         if endpoint.authentication_type == AuthenticationType.API_KEY:
             logger.debug(
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
             )
             client = AsyncAzureOpenAI(
-                api_key=endpoint.key,
-                azure_endpoint=endpoint.endpoint_url,
-                api_version=AZURE_OPENAI_API_VERSION
+                api_key=endpoint.key, azure_endpoint=endpoint.endpoint_url, api_version=AZURE_OPENAI_API_VERSION
             )
         elif endpoint.authentication_type == AuthenticationType.AAD:
             logger.debug(
@@ -161,7 +160,7 @@ class InferenceOperations:
                     endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
                 azure_endpoint=endpoint.endpoint_url,
-                api_version=AZURE_OPENAI_API_VERSION
+                api_version=AZURE_OPENAI_API_VERSION,
             )
         else:
             raise ValueError("Unknown authentication type")
@@ -229,8 +228,9 @@ class EndpointsOperations(EndpointsOperationsGenerated):
                 else:
                     yield await self.get(endpoint_name=connection.name, populate_secrets=True)
 
+
 class AgentsOperations(AgentsOperationsGenerated):
-    
+
     @overload
     async def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
         """Creates a new agent.
@@ -309,7 +309,9 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def create_agent(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
+    async def create_agent(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Agent:
         """Creates a new agent.
 
         :param body: Required.
@@ -774,7 +776,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
-        
+
         # Monitor and process the run status
         while run.status in ["queued", "in_progress", "requires_action"]:
             time.sleep(sleep_interval)
@@ -1378,9 +1380,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
 
     @overload
-    async def upload_file(
-        self, file_path: str, *, purpose: str, **kwargs: Any
-    ) -> _models.OpenAIFile:
+    async def upload_file(self, file_path: str, *, purpose: str, **kwargs: Any) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
         :param file_path: Required.
@@ -1391,7 +1391,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
-        """        
+        """
 
     @distributed_trace_async
     async def upload_file(
@@ -1402,7 +1402,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         file_path: Optional[str] = None,
         purpose: Optional[Union[str, _models.FilePurpose]] = None,
         filename: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.OpenAIFile:
         """
         Uploads a file for use by other operations, delegating to the generated operations.
@@ -1421,7 +1421,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         """
         if body is not None:
             return await super().upload_file(body=body, **kwargs)
-        
+
         if isinstance(purpose, FilePurpose):
             purpose = purpose.value
 
@@ -1462,7 +1462,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     async def upload_file_and_poll(
-        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, sleep_interval: float = 1, **kwargs: Any
+        self,
+        *,
+        file: FileType,
+        purpose: Union[str, _models.FilePurpose],
+        filename: Optional[str] = None,
+        sleep_interval: float = 1,
+        **kwargs: Any,
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -1498,7 +1504,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
-        """        
+        """
 
     @distributed_trace_async
     async def upload_file_and_poll(
@@ -1510,7 +1516,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         purpose: Optional[Union[str, _models.FilePurpose]] = None,
         filename: Optional[str] = None,
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.OpenAIFile:
         """
         Uploads a file for use by other operations, delegating to the generated operations.
@@ -1547,7 +1553,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             uploaded_file = await self.get_file(uploaded_file.id)
 
         return uploaded_file
-    
+   
     @overload
     async def create_vector_store_and_poll(
         self, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
@@ -1577,8 +1583,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
-        sleep_interval: float = 1, 
-        **kwargs: Any
+        sleep_interval: float = 1,
+        **kwargs: Any,
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 

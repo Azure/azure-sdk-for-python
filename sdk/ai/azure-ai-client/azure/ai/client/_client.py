@@ -60,7 +60,7 @@ class AzureAIClient:
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}/{subscriptionId}/{resourceGroupName}/{projectName}"
+        _endpoint = "{endpoint}/agents/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{projectName}"  # pylint: disable=line-too-long
         self._config = AzureAIClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,

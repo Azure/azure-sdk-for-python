@@ -1,4 +1,5 @@
 # pylint: disable=too-many-lines
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -143,9 +144,7 @@ class InferenceOperations:
                 "[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using API key authentication"
             )
             client = AzureOpenAI(
-                api_key=endpoint.key,
-                azure_endpoint=endpoint.endpoint_url,
-                api_version=AZURE_OPENAI_API_VERSION
+                api_key=endpoint.key, azure_endpoint=endpoint.endpoint_url, api_version=AZURE_OPENAI_API_VERSION
             )
         elif endpoint.authentication_type == AuthenticationType.AAD:
             logger.debug(
@@ -163,7 +162,7 @@ class InferenceOperations:
                     endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
                 azure_endpoint=endpoint.endpoint_url,
-                api_version=AZURE_OPENAI_API_VERSION
+                api_version=AZURE_OPENAI_API_VERSION,
             )
         elif endpoint.authentication_type == AuthenticationType.SAS:
             logger.debug("[InferenceOperations.get_azure_openai_client] Creating AzureOpenAI using SAS authentication")
@@ -172,7 +171,7 @@ class InferenceOperations:
                     endpoint.token_credential, "https://cognitiveservices.azure.com/.default"
                 ),
                 azure_endpoint=endpoint.endpoint_url,
-                api_version=AZURE_OPENAI_API_VERSION
+                api_version=AZURE_OPENAI_API_VERSION,
             )
         else:
             raise ValueError("Unknown authentication type")
@@ -790,7 +789,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             metadata=metadata,
             **kwargs,
         )
-        
+
         # Monitor and process the run status
         while run.status in ["queued", "in_progress", "requires_action"]:
             time.sleep(sleep_interval)
@@ -1084,11 +1083,10 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
-        
+
         response_iterator: Iterator[bytes] = cast(Iterator[bytes], response)
 
         return _models.AgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
-
 
     @overload
     def submit_tool_outputs_to_run(
@@ -1477,7 +1475,13 @@ class AgentsOperations(AgentsOperationsGenerated):
 
     @overload
     def upload_file_and_poll(
-        self, *, file: FileType, purpose: Union[str, _models.FilePurpose], filename: Optional[str] = None, sleep_interval: float = 1, **kwargs: Any
+        self,
+        *,
+        file: FileType,
+        purpose: Union[str, _models.FilePurpose],
+        filename: Optional[str] = None,
+        sleep_interval: float = 1,
+        **kwargs: Any,
     ) -> _models.OpenAIFile:
         """Uploads a file for use by other operations.
 
@@ -1513,7 +1517,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :return: OpenAIFile. The OpenAIFile is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.OpenAIFile
         :raises ~azure.core.exceptions.HttpResponseError:
-        """        
+        """
 
     @distributed_trace
     def upload_file_and_poll(
@@ -1525,7 +1529,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         purpose: Optional[Union[str, _models.FilePurpose]] = None,
         filename: Optional[str] = None,
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.OpenAIFile:
         """
         Uploads a file for use by other operations, delegating to the generated operations.
@@ -1562,7 +1566,7 @@ class AgentsOperations(AgentsOperationsGenerated):
             uploaded_file = self.get_file(uploaded_file.id)
 
         return uploaded_file
-    
+
     @overload
     def create_vector_store_and_poll(
         self, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
@@ -1592,8 +1596,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
-        sleep_interval: float = 1, 
-        **kwargs: Any
+        sleep_interval: float = 1,
+        **kwargs: Any,
     ) -> _models.VectorStore:
         """Creates a vector store and poll.
 
@@ -1654,7 +1658,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
         sleep_interval: float = 1,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.VectorStore:
         """Creates a vector store.
 
@@ -1682,7 +1686,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.client.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        
+
         if body is not None:
             vector_store = self.create_vector_store(body=body, content_type=content_type, **kwargs)
         elif file_ids is not None or (name is not None and expires_after is not None):
@@ -1693,7 +1697,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 expires_after=expires_after,
                 chunking_strategy=chunking_strategy,
                 metadata=metadata,
-                **kwargs
+                **kwargs,
             )
         else:
             raise ValueError(

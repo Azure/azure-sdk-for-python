@@ -662,11 +662,7 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
             parsed_data = event_data
 
         # Workaround for service bug: Rename 'expires_at' to 'expired_at'
-        if (
-            event_type.startswith("thread.run.step")
-            and isinstance(parsed_data, dict)
-            and "expires_at" in parsed_data
-        ):
+        if event_type.startswith("thread.run.step") and isinstance(parsed_data, dict) and "expires_at" in parsed_data:
             parsed_data["expired_at"] = parsed_data.pop("expires_at")
 
         # Map to the appropriate class instance
