@@ -18,6 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._deserialize import deserialize_file_properties, process_storage_error
 from .._models import FileProperties
 from .._serialize import convert_datetime_to_rfc1123
+from .._shared.base_client import parse_connection_str
 from ..aio._upload_helper import upload_datalake_file
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
@@ -88,6 +89,49 @@ class DataLakeFileClient(PathClient):
     ) -> None:
         super(DataLakeFileClient, self).__init__(account_url, file_system_name, path_name=file_path,
                                                  credential=credential, **kwargs)
+
+    @classmethod
+    def from_connection_string(
+        cls, conn_str: str,
+        file_system_name: str,
+        file_path: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
+        """
+        Create DataLakeFileClient from a Connection String.
+
+        :param str conn_str:
+            A connection string to an Azure Storage account.
+        :param file_system_name: The name of file system to interact with.
+        :type file_system_name: str
+        :param str file_path:
+            The whole file path, so that to interact with a specific file.
+            eg. "{directory}/{subdirectory}/{file}"
+        :param credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token, or the connection string already has shared
+            access key values. The value can be a SAS token string,
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
+            Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
+        :type credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or
+            str or Dict[str, str] or None
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+        :returns: A DataLakeFileClient.
+        :rtype: ~azure.storage.filedatalake.aio.DataLakeFileClient
+        """
+        account_url, _, credential = parse_connection_str(conn_str, credential, 'dfs')
+        return cls(
+            account_url, file_system_name=file_system_name, file_path=file_path,
+            credential=credential, **kwargs)
 
     @distributed_trace_async
     async def create_file(self, content_settings=None,  # type: Optional[ContentSettings]

@@ -105,12 +105,12 @@ class DataLakeFileClient(PathClient):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str: str,
-            file_system_name: str,
-            file_path: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> Self:
+        cls, conn_str: str,
+        file_system_name: str,
+        file_path: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> Self:
         """
         Create DataLakeFileClient from a Connection String.
 
