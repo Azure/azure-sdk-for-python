@@ -367,7 +367,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             timeout=config.auth_timeout,
             custom_endpoint_hostname=config.custom_endpoint_hostname,
             port=config.connection_port,
-            verify=config.connection_verify,
         )
         # if update_token:
         #    token_auth.update_token()  # TODO: why don't we need to update in pyamqp?
