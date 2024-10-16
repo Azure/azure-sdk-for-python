@@ -120,11 +120,12 @@ class TestSearchClient(AzureRecordedTestCase):
 
     def _test_autocomplete(self, client):
         results = client.autocomplete(search_text="mot", suggester_name="sg")
-        assert results == [{"text": "motel", "queryPlusText": "motel"}]
+        assert results[0].text == "motel"
+        assert results[0].query_plus_text == "motel"
 
     def _test_suggest(self, client):
         results = client.suggest(search_text="mot", suggester_name="sg")
-        assert results == [
-            {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."},
-            {"hotelId": "9", "text": "Secret Point Motel"},
-        ]
+        assert results[0].text == "Cheapest hotel in town. Infact, a motel."
+        assert results[0]["hotelId"] == "2"
+        assert results[1].text == "Secret Point Motel"
+        assert results[1]["hotelId"] == "9"

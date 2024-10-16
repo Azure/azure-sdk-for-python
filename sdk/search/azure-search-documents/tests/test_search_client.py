@@ -144,7 +144,7 @@ class TestSearchClient:
         assert isinstance(result, ItemPaged)
         assert result._page_iterator_class is SearchPageIterator
         search_result = SearchDocumentsResult()
-        # search_result.results = [SearchResult(additional_properties={"key": "val"})]
+        search_result.results = [SearchResult({"key": "val"})]
         mock_search_post.return_value = search_result
         assert not mock_search_post.called
         next(result)
@@ -174,7 +174,7 @@ class TestSearchClient:
         assert isinstance(result, ItemPaged)
         assert result._page_iterator_class is SearchPageIterator
         search_result = SearchDocumentsResult()
-        # search_result.results = [SearchResult(additional_properties={"key": "val"})]
+        search_result.results = [SearchResult({"key": "val"})]
         mock_search_post.return_value = search_result
         result.__next__()
         result._first_page_iterator_instance.continuation_token = "fake token"
@@ -226,7 +226,7 @@ class TestSearchClient:
         assert isinstance(result, ItemPaged)
         assert result._page_iterator_class is SearchPageIterator
         search_result = SearchDocumentsResult()
-        # search_result.results = [SearchResult(additional_properties={"key": "val"})]
+        search_result.results = [SearchResult({"key": "val"})]
         mock_search_post.return_value = search_result
         assert not mock_search_post.called
         next(result)

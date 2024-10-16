@@ -166,7 +166,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             for result in results:
                 try:
                     assert self._index_key is not None  # Hint for mypy
-                    action = next(x for x in actions if x.get(self._index_key) == result.key)
+                    action = next(x for x in actions if str(x.get(self._index_key)) == result.key)
                     if result.succeeded:
                         self._callback_succeed(action)
                     elif is_retryable_status_code(result.status_code):

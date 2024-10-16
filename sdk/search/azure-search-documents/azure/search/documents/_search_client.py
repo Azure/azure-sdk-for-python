@@ -437,7 +437,7 @@ class SearchClient(HeadersMixin):
         request = cast(SuggestRequest, query.request)
         response = self._client.documents_operations.suggest_post(index_name=self._index_name, suggest_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
-        results = [r.as_dict() for r in response.results]
+        results = response.results
         return results
 
     @distributed_trace
@@ -516,7 +516,7 @@ class SearchClient(HeadersMixin):
         request = cast(AutocompleteRequest, query.request)
         response = self._client.documents_operations.autocomplete_post(index_name=self._index_name, autocomplete_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
-        results = [r.as_dict() for r in response.results]
+        results = response.results
         return results
 
     # pylint:disable=client-method-missing-tracing-decorator

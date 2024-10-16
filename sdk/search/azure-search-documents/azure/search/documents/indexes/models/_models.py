@@ -143,7 +143,8 @@ class SearchIndexerSkillset(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = _SearchIndexerSkillset(data)
+            obj_dict = json.loads(data)
+            obj = _SearchIndexerSkillset(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -464,7 +465,8 @@ class AnalyzeTextOptions(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = AnalyzeRequest(data)
+            obj_dict = json.loads(data)
+            obj = AnalyzeRequest(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -770,7 +772,8 @@ class SearchResourceEncryptionKey(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = _SearchResourceEncryptionKey(data)
+            obj_dict = json.loads(data)
+            obj = _SearchResourceEncryptionKey(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -883,7 +886,8 @@ class SynonymMap(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = _SynonymMap(data)
+            obj_dict = json.loads(data)
+            obj = _SynonymMap(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
@@ -1021,7 +1025,8 @@ class SearchIndexerDataSourceConnection(Model):
         :raises: DeserializationError if something went wrong
         """
         try:
-            obj = _SearchIndexerDataSource(data)
+            obj_dict = json.loads(data)
+            obj = _SearchIndexerDataSource(obj_dict)
             return cls._from_generated(obj)
         except json.JSONDecodeError as err:
             raise DeserializationError("Failed to deserialize data.") from err
