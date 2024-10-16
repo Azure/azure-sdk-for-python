@@ -16,6 +16,7 @@ import datetime
 import subprocess
 from typing import Any
 
+from azure.core.serialization import AzureJSONEncoder
 from azure.data.tables import TableClient
 from azure.identity import DefaultAzureCredential
 from ci_tools.parsing import ParsedSetup
@@ -78,6 +79,7 @@ RESOLUTION_IMPOSSIBLE_LIBRARIES = {
     "azure-core": ["azure-core-experimental", "azure-core-tracing-opencensus", "azure-core-tracing-opentelemetry"],
     "azure-monitor-opentelemetry": ["azure-core-tracing-opentelemetry"],
     "azure-ai-evaluation": ["azure-monitor-opentelemetry-exporter", "azure-monitor-opentelemetry"],
+    "azure-ai-generative": ["azure-ai-resources"],
 }
 
 
@@ -248,8 +250,12 @@ def update_main_typescores() -> None:
         install(second_round[package])
         score_package(package, packages_to_score, entities)
 
+    # write to file (just in case)
+    with open("scores.json", "w+") as fd:
+        fd.write(json.dumps(entities, cls=AzureJSONEncoder))
+
     client.submit_transaction(entities)
-    
+
 
 if __name__ == "__main__":
     update_main_typescores()
