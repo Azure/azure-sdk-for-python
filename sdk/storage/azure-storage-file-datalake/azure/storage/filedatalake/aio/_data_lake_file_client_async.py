@@ -6,7 +6,7 @@
 # pylint: disable=invalid-overridden-method, docstring-keyword-should-match-keyword-only
 
 from typing import (
-    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
@@ -296,8 +296,7 @@ class DataLakeFileClient(PathClient):
         return await self._delete(**kwargs)
 
     @distributed_trace_async
-    async def get_file_properties(self, **kwargs):
-        # type: (**Any) -> FileProperties
+    async def get_file_properties(self, **kwargs: Any) -> FileProperties:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file. It does not return the content of the file.
 
@@ -351,7 +350,13 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Getting the properties for a file.
         """
-        return await self._get_path_properties(cls=deserialize_file_properties, **kwargs)
+        upn = kwargs.pop('upn', None)
+        if upn:
+            headers = kwargs.pop('headers', {})
+            headers['x-ms-upn'] = str(upn)
+            kwargs['headers'] = headers
+        props = await self._get_path_properties(cls=deserialize_file_properties, **kwargs)
+        return cast(FileProperties, props)
 
     @distributed_trace_async
     async def set_file_expiry(self, expiry_options,  # type: str

@@ -7,7 +7,7 @@
 
 import functools
 from typing import (
-    Any, Dict, Optional, Union,
+    Any, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
@@ -333,7 +333,7 @@ class DataLakeDirectoryClient(PathClient):
             headers = kwargs.pop('headers', {})
             headers['x-ms-upn'] = str(upn)
             kwargs['headers'] = headers
-        return self._get_path_properties(cls=deserialize_dir_properties, **kwargs)
+        return cast(DirectoryProperties, self._get_path_properties(cls=deserialize_dir_properties, **kwargs))
 
     @distributed_trace
     def exists(self, **kwargs: Any) -> bool:

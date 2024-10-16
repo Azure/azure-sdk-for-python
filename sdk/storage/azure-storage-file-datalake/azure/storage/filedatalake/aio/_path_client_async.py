@@ -14,6 +14,7 @@ from typing import (
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.storage.blob import BlobProperties
 from azure.storage.blob.aio import BlobClient
 from .._deserialize import process_storage_error
 from .._generated.aio import AzureDataLakeStorageRESTAPI
@@ -765,7 +766,7 @@ class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    async def _get_path_properties(self, **kwargs: Any) -> Union["FileProperties", "DirectoryProperties"]:
+    async def _get_path_properties(self, **kwargs: Any) -> BlobProperties:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file or directory. It does not return the content of the directory or file.
 
@@ -810,7 +811,7 @@ class PathClient(StorageAccountHostsMixin, AsyncStorageAccountHostsMixin):
         :returns:
             Information including user-defined metadata, standard HTTP properties,
             and system properties for the file or directory.
-        :rtype: DirectoryProperties or FileProperties
+        :rtype: BlobProperties
         """
         upn = kwargs.pop('upn', None)
         if upn:

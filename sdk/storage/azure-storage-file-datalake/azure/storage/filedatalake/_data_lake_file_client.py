@@ -7,7 +7,7 @@
 
 from io import BytesIO
 from typing import (
-    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
@@ -293,8 +293,7 @@ class DataLakeFileClient(PathClient):
         return self._delete(**kwargs)
 
     @distributed_trace
-    def get_file_properties(self, **kwargs):
-        # type: (**Any) -> FileProperties
+    def get_file_properties(self, **kwargs: Any) -> FileProperties:
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the file. It does not return the content of the file.
 
@@ -353,7 +352,7 @@ class DataLakeFileClient(PathClient):
             headers = kwargs.pop('headers', {})
             headers['x-ms-upn'] = str(upn)
             kwargs['headers'] = headers
-        return self._get_path_properties(cls=deserialize_file_properties, **kwargs)
+        return cast(FileProperties, self._get_path_properties(cls=deserialize_file_properties, **kwargs))
 
     @distributed_trace
     def set_file_expiry(self, expiry_options,  # type: str

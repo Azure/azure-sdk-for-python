@@ -7,7 +7,7 @@
 
 import functools
 from typing import (
-    Any, Dict, Optional, Union,
+    Any, cast, Dict, Optional, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -355,7 +355,8 @@ class DataLakeDirectoryClient(PathClient):
             headers = kwargs.pop('headers', {})
             headers['x-ms-upn'] = str(upn)
             kwargs['headers'] = headers
-        return await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)
+        props = await self._get_path_properties(cls=deserialize_dir_properties, **kwargs)
+        return cast(DirectoryProperties, props)
 
     @distributed_trace_async
     async def rename_directory(self, new_name: str, **kwargs: Any) -> Self:
