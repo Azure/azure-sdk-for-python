@@ -26,13 +26,10 @@ from ._operations import (
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DocumentIntelligenceClient(
-    DocumentIntelligenceClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class DocumentIntelligenceClient(DocumentIntelligenceClientOperationsMixin):
     """DocumentIntelligenceClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.
@@ -116,9 +113,7 @@ class DocumentIntelligenceClient(
         await self._client.__aexit__(*exc_details)
 
 
-class DocumentIntelligenceAdministrationClient(
-    DocumentIntelligenceAdministrationClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class DocumentIntelligenceAdministrationClient(DocumentIntelligenceAdministrationClientOperationsMixin):
     """DocumentIntelligenceAdministrationClient.
 
     :param endpoint: The Document Intelligence service endpoint. Required.

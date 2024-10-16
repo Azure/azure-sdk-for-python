@@ -6,8 +6,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._patch import JobRouterAdministrationClient
-from ._patch import JobRouterClient
+from ._client import JobRouterAdministrationClient
+from ._client import JobRouterClient
 from ._version import VERSION
 
 __version__ = VERSION
@@ -23,6 +23,6 @@ __all__ = [
     "JobRouterAdministrationClient",
     "JobRouterClient",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
+__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 
 _patch_sdk()

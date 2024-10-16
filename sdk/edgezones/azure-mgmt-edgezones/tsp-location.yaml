@@ -1,4 +1,4 @@
 directory: specification/edgezones/EdgeZones.Management
-commit: ab064e0047ec560a700d6b501097d99471ad817b
+commit: c70915c5016ca848277650fff63c0ce7370fb997
 repo: Azure/azure-rest-api-specs
 additionalDirectories:

@@ -87,14 +87,14 @@ class FaceAttributeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class FaceDetectionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The detection model for the face."""
 
-    DETECTION_01 = "detection_01"
+    DETECTION01 = "detection_01"
     """The default detection model. Recommend for near frontal face detection. For scenarios with
     exceptionally large angle (head-pose) faces, occluded faces or wrong image orientation, the
     faces in such cases may not be detected."""
-    DETECTION_02 = "detection_02"
+    DETECTION02 = "detection_02"
     """Detection model released in 2019 May with improved accuracy especially on small, side and
     blurry faces."""
-    DETECTION_03 = "detection_03"
+    DETECTION03 = "detection_03"
     """Detection model released in 2021 February with improved accuracy especially on small faces."""
 
 
@@ -120,17 +120,30 @@ class FaceLivenessDecision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The algorithm has classified the target face as a spoof."""
 
 
+class FaceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of long running operation."""
+
+    NOT_STARTED = "notStarted"
+    """The operation is not started."""
+    RUNNING = "running"
+    """The operation is still running."""
+    SUCCEEDED = "succeeded"
+    """The operation is succeeded."""
+    FAILED = "failed"
+    """The operation is failed."""
+
+
 class FaceRecognitionModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The recognition model for the face."""
 
-    RECOGNITION_01 = "recognition_01"
+    RECOGNITION01 = "recognition_01"
     """The default recognition model for "Detect". All those faceIds created before 2019 March are
     bonded with this recognition model."""
-    RECOGNITION_02 = "recognition_02"
+    RECOGNITION02 = "recognition_02"
     """Recognition model released in 2019 March."""
-    RECOGNITION_03 = "recognition_03"
+    RECOGNITION03 = "recognition_03"
     """Recognition model released in 2020 May."""
-    RECOGNITION_04 = "recognition_04"
+    RECOGNITION04 = "recognition_04"
     """Recognition model released in 2021 February. It's recommended to use this recognition model for
     better recognition accuracy."""
 
@@ -192,27 +205,25 @@ class HairColorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class LivenessModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The model version used for liveness classification."""
 
-    V2020_02_15_PREVIEW_01 = "2020-02-15-preview.01"
-    V2021_11_12_PREVIEW_03 = "2021-11-12-preview.03"
-    V2022_10_15_PREVIEW_04 = "2022-10-15-preview.04"
-    V2023_03_02_PREVIEW_05 = "2023-03-02-preview.05"
+    V2022_10_15_PREVIEW04 = "2022-10-15-preview.04"
+    V2023_12_20_PREVIEW06 = "2023-12-20-preview.06"
 
 
 class LivenessOperationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The liveness operation mode to drive the client’s end-user experience."""
+    """The liveness operation mode to drive the client's end-user experience."""
 
     PASSIVE = "Passive"
     """Utilizes a passive liveness technique that requires no additional actions from the user.
     Requires normal indoor lighting and high screen brightness for optimal performance. And thus,
     this mode has a narrow operational envelope and will not be suitable for scenarios that
-    requires the end-user’s to be in bright lighting conditions. Note: this is the only supported
+    requires the end-user's to be in bright lighting conditions. Note: this is the only supported
     mode for the Mobile (iOS and Android) solution."""
     PASSIVE_ACTIVE = "PassiveActive"
     """This mode utilizes a hybrid passive or active liveness technique that necessitates user
     cooperation. It is optimized to require active motion only under suboptimal lighting
     conditions. Unlike the passive mode, this mode has no lighting restrictions, and thus offering
     a broader operational envelope. This mode is preferable on Web based solutions due to the lack
-    of automatic screen brightness control available on browsers which hinders the Passive mode’s
+    of automatic screen brightness control available on browsers which hinders the Passive mode's
     operational envelope on Web based solutions."""
 
 
@@ -254,5 +265,7 @@ class QualityForRecognition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Versions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """API versions for Azure AI Face API."""
 
-    V1_1_PREVIEW_1 = "v1.1-preview.1"
+    V1_1_PREVIEW1 = "v1.1-preview.1"
     """v1.1-preview.1"""
+    V1_2_PREVIEW1 = "v1.2-preview.1"
+    """v1.2-preview.1"""

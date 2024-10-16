@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,7 +12,6 @@ from .. import _model_base
 from .._model_base import rest_field
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -42,10 +40,10 @@ class CaptionResult(_model_base.Model):
         *,
         confidence: float,
         text: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -88,10 +86,10 @@ class CropRegion(_model_base.Model):
         *,
         aspect_ratio: float,
         bounding_box: "_models.ImageBoundingBox",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -132,10 +130,10 @@ class DenseCaption(_model_base.Model):
         confidence: float,
         text: str,
         bounding_box: "_models.ImageBoundingBox",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -162,10 +160,10 @@ class DenseCaptionsResult(_model_base.Model):
         self,
         *,
         list: List["_models.DenseCaption"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -196,10 +194,10 @@ class DetectedObject(_model_base.Model):
         *,
         bounding_box: "_models.ImageBoundingBox",
         tags: List["_models.DetectedTag"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -258,10 +256,10 @@ class DetectedTag(_model_base.Model):
         *,
         confidence: float,
         name: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -287,10 +285,10 @@ class DetectedTextBlock(_model_base.Model):
         self,
         *,
         lines: List["_models.DetectedTextLine"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -328,10 +326,10 @@ class DetectedTextLine(_model_base.Model):
         text: str,
         bounding_polygon: List["_models.ImagePoint"],
         words: List["_models.DetectedTextWord"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -374,10 +372,10 @@ class DetectedTextWord(_model_base.Model):
         text: str,
         bounding_polygon: List["_models.ImagePoint"],
         confidence: float,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -453,10 +451,10 @@ class ImageAnalysisResult(_model_base.Model):
         read: Optional["_models.ReadResult"] = None,
         smart_crops: Optional["_models.SmartCropsResult"] = None,
         tags: Optional["_models.TagsResult"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -497,10 +495,10 @@ class ImageBoundingBox(_model_base.Model):
         y: int,
         width: int,
         height: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -531,10 +529,10 @@ class ImageMetadata(_model_base.Model):
         *,
         height: int,
         width: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -569,10 +567,10 @@ class ImagePoint(_model_base.Model):
         *,
         x: int,
         y: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -611,10 +609,10 @@ class ObjectsResult(_model_base.Model):
         self,
         *,
         list: List["_models.DetectedObject"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -640,10 +638,10 @@ class PeopleResult(_model_base.Model):
         self,
         *,
         list: List["_models.DetectedPerson"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -671,10 +669,10 @@ class ReadResult(_model_base.Model):
         self,
         *,
         blocks: List["_models.DetectedTextBlock"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -703,10 +701,10 @@ class SmartCropsResult(_model_base.Model):
         self,
         *,
         list: List["_models.CropRegion"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -734,10 +732,10 @@ class TagsResult(_model_base.Model):
         self,
         *,
         list: List["_models.DetectedTag"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]

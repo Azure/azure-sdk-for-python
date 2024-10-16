@@ -40,6 +40,7 @@ USAGE:
     1) DEVCENTER_ENDPOINT - the endpoint for your devcenter
 """
 
+
 def dev_box_create_connect_delete():
     # [START dev_box_create_connect_delete]
     import os
@@ -101,6 +102,7 @@ def dev_box_create_connect_delete():
     delete_result = delete_poller.result()
     print(f"Completed deletion for the dev box with status {delete_result.status}")
     # [END dev_box_create_connect_delete]
+
 
 if __name__ == "__main__":
     dev_box_create_connect_delete()

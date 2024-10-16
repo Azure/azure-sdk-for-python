@@ -12,13 +12,20 @@ from ._models import AnalyzeImageOptions
 from ._models import AnalyzeImageResult
 from ._models import AnalyzeTextOptions
 from ._models import AnalyzeTextResult
+from ._models import DetectTextProtectedMaterialOptions
+from ._models import DetectTextProtectedMaterialResult
+from ._models import DocumentInjectionAnalysisResult
 from ._models import ImageCategoriesAnalysis
 from ._models import ImageData
 from ._models import RemoveTextBlocklistItemsOptions
+from ._models import ShieldPromptOptions
+from ._models import ShieldPromptResult
 from ._models import TextBlocklist
 from ._models import TextBlocklistItem
 from ._models import TextBlocklistMatch
 from ._models import TextCategoriesAnalysis
+from ._models import TextProtectedMaterialAnalysisResult
+from ._models import UserPromptInjectionAnalysisResult
 
 from ._enums import AnalyzeImageOutputType
 from ._enums import AnalyzeTextOutputType
@@ -35,17 +42,24 @@ __all__ = [
     "AnalyzeImageResult",
     "AnalyzeTextOptions",
     "AnalyzeTextResult",
+    "DetectTextProtectedMaterialOptions",
+    "DetectTextProtectedMaterialResult",
+    "DocumentInjectionAnalysisResult",
     "ImageCategoriesAnalysis",
     "ImageData",
     "RemoveTextBlocklistItemsOptions",
+    "ShieldPromptOptions",
+    "ShieldPromptResult",
     "TextBlocklist",
     "TextBlocklistItem",
     "TextBlocklistMatch",
     "TextCategoriesAnalysis",
+    "TextProtectedMaterialAnalysisResult",
+    "UserPromptInjectionAnalysisResult",
     "AnalyzeImageOutputType",
     "AnalyzeTextOutputType",
     "ImageCategory",
     "TextCategory",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
+__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -28,12 +28,13 @@ import sys
 
 sys.path.append("..")
 
+
 class SendWhatsAppTemplateMessageSample(object):
 
     connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
     phone_number = os.getenv("RECIPIENT_PHONE_NUMBER")
     channel_id = os.getenv("WHATSAPP_CHANNEL_ID")
-    
+
     def send_template_send_message(self):
 
         from azure.communication.messages import NotificationMessagesClient
@@ -43,19 +44,18 @@ class SendWhatsAppTemplateMessageSample(object):
 
         # Setting template options
         input_template: MessageTemplate = MessageTemplate(
-            name="gathering_invitation", # Name of the WhatsApp Template
-            language="ca") # Language of the WhatsApp Template
+            name="gathering_invitation", language="ca"  # Name of the WhatsApp Template
+        )  # Language of the WhatsApp Template
         template_options = TemplateNotificationContent(
-            channel_registration_id= self.channel_id,
-            to=[self.phone_number],
-            template=input_template)
-        
+            channel_registration_id=self.channel_id, to=[self.phone_number], template=input_template
+        )
+
         # calling send() with whatsapp message details
         message_responses = messaging_client.send(template_options)
         response = message_responses.receipts[0]
-        print("Message with message id {} was successful sent to {}"
-            .format(response.message_id, response.to))
+        print("Message with message id {} was successful sent to {}".format(response.message_id, response.to))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     sample = SendWhatsAppTemplateMessageSample()
     sample.send_template_send_message()

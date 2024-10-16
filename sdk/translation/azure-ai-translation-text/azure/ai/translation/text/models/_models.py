@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -13,14 +13,12 @@ from .. import _model_base
 from .._model_base import rest_field
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
 class BackTranslation(_model_base.Model):
     """Back Translation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar normalized_text: A string giving the normalized form of the source term that is a
      back-translation of the target.
@@ -78,10 +76,10 @@ class BackTranslation(_model_base.Model):
         display_text: str,
         num_examples: int,
         frequency_count: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -94,7 +92,6 @@ class BackTranslation(_model_base.Model):
 class BreakSentenceItem(_model_base.Model):
     """Item containing break sentence result.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar detected_language: The detectedLanguage property is only present in the result object
      when language auto-detection is requested.
@@ -119,10 +116,10 @@ class BreakSentenceItem(_model_base.Model):
         *,
         sent_len: List[int],
         detected_language: Optional["_models.DetectedLanguage"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -135,7 +132,6 @@ class BreakSentenceItem(_model_base.Model):
 class DetectedLanguage(_model_base.Model):
     """An object describing the detected language.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar language: A string representing the code of the detected language. Required.
     :vartype language: str
@@ -156,10 +152,10 @@ class DetectedLanguage(_model_base.Model):
         *,
         language: str,
         score: float,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -172,7 +168,6 @@ class DetectedLanguage(_model_base.Model):
 class DictionaryExample(_model_base.Model):
     """Dictionary Example.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar source_prefix: The string to concatenate before the value of sourceTerm to form a
      complete example.
@@ -226,10 +221,10 @@ class DictionaryExample(_model_base.Model):
         target_prefix: str,
         target_term: str,
         target_suffix: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -242,7 +237,6 @@ class DictionaryExample(_model_base.Model):
 class DictionaryExampleItem(_model_base.Model):
     """Dictionary Example element.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar normalized_source: A string giving the normalized form of the source term. Generally,
      this should be identical
@@ -275,10 +269,10 @@ class DictionaryExampleItem(_model_base.Model):
         normalized_source: str,
         normalized_target: str,
         examples: List["_models.DictionaryExample"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -305,10 +299,10 @@ class InputTextItem(_model_base.Model):
         self,
         *,
         text: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -347,10 +341,10 @@ class DictionaryExampleTextItem(InputTextItem):
         *,
         text: str,
         translation: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -363,7 +357,6 @@ class DictionaryExampleTextItem(InputTextItem):
 class DictionaryLookupItem(_model_base.Model):
     """Dictionary Lookup Element.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar normalized_source: A string giving the normalized form of the source term.
      For example, if the request is "JOHN", the normalized form will be "john".
@@ -396,10 +389,10 @@ class DictionaryLookupItem(_model_base.Model):
         normalized_source: str,
         display_source: str,
         translations: List["_models.DictionaryTranslation"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -412,7 +405,6 @@ class DictionaryLookupItem(_model_base.Model):
 class DictionaryTranslation(_model_base.Model):
     """Translation source term.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar normalized_target: A string giving the normalized form of this term in the target
      language.
@@ -485,10 +477,10 @@ class DictionaryTranslation(_model_base.Model):
         confidence: float,
         prefix_word: str,
         back_translations: List["_models.BackTranslation"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -501,7 +493,6 @@ class DictionaryTranslation(_model_base.Model):
 class ErrorDetails(_model_base.Model):
     """Error details as returned by Translator Service.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar code: Number identifier of the error. Required.
     :vartype code: int
@@ -520,10 +511,10 @@ class ErrorDetails(_model_base.Model):
         *,
         code: int,
         message: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -536,7 +527,6 @@ class ErrorDetails(_model_base.Model):
 class ErrorResponse(_model_base.Model):
     """Representation of the Error Response from Translator Service.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar error: Error details. Required.
     :vartype error: ~azure.ai.translation.text.models.ErrorDetails
@@ -550,10 +540,10 @@ class ErrorResponse(_model_base.Model):
         self,
         *,
         error: "_models.ErrorDetails",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -588,10 +578,10 @@ class GetSupportedLanguagesResult(_model_base.Model):
         translation: Optional[Dict[str, "_models.TranslationLanguage"]] = None,
         transliteration: Optional[Dict[str, "_models.TransliterationLanguage"]] = None,
         dictionary: Optional[Dict[str, "_models.SourceDictionaryLanguage"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -604,7 +594,6 @@ class GetSupportedLanguagesResult(_model_base.Model):
 class LanguageScript(_model_base.Model):
     """Common properties of language script.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar code: Code identifying the script. Required.
     :vartype code: str
@@ -637,10 +626,10 @@ class LanguageScript(_model_base.Model):
         name: str,
         native_name: str,
         dir: Union[str, "_models.LanguageDirectionality"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -653,7 +642,6 @@ class LanguageScript(_model_base.Model):
 class SentenceBoundaries(_model_base.Model):
     """An object returning sentence boundaries in the input and output texts.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar src_sent_len: An integer array representing the lengths of the sentences in the input
      text.
@@ -682,10 +670,10 @@ class SentenceBoundaries(_model_base.Model):
         *,
         src_sent_len: List[int],
         trans_sent_len: List[int],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -698,7 +686,6 @@ class SentenceBoundaries(_model_base.Model):
 class SourceDictionaryLanguage(_model_base.Model):
     """Properties ot the source dictionary language.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -733,10 +720,10 @@ class SourceDictionaryLanguage(_model_base.Model):
         native_name: str,
         dir: Union[str, "_models.LanguageDirectionality"],
         translations: List["_models.TargetDictionaryLanguage"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -749,7 +736,6 @@ class SourceDictionaryLanguage(_model_base.Model):
 class SourceText(_model_base.Model):
     """Input text in the default script of the source language.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar text: Input text in the default script of the source language. Required.
     :vartype text: str
@@ -763,10 +749,10 @@ class SourceText(_model_base.Model):
         self,
         *,
         text: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -779,7 +765,6 @@ class SourceText(_model_base.Model):
 class TargetDictionaryLanguage(_model_base.Model):
     """Properties of the target dictionary language.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -812,10 +797,10 @@ class TargetDictionaryLanguage(_model_base.Model):
         native_name: str,
         dir: Union[str, "_models.LanguageDirectionality"],
         code: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -828,7 +813,6 @@ class TargetDictionaryLanguage(_model_base.Model):
 class TranslatedTextAlignment(_model_base.Model):
     """Alignment information object.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar proj: Maps input text to translated text. The alignment information is only provided when
      the request
@@ -859,10 +843,10 @@ class TranslatedTextAlignment(_model_base.Model):
         self,
         *,
         proj: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -875,7 +859,6 @@ class TranslatedTextAlignment(_model_base.Model):
 class TranslatedTextItem(_model_base.Model):
     """Element containing the translated text.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar detected_language: The detectedLanguage property is only present in the result object
      when language auto-detection is requested.
@@ -914,10 +897,10 @@ class TranslatedTextItem(_model_base.Model):
         translations: List["_models.TranslationText"],
         detected_language: Optional["_models.DetectedLanguage"] = None,
         source_text: Optional["_models.SourceText"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -932,7 +915,6 @@ class TranslationLanguage(_model_base.Model):
     47 language tag.
     A key identifies a language for which text can be translated to or translated from.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -960,10 +942,10 @@ class TranslationLanguage(_model_base.Model):
         name: str,
         native_name: str,
         dir: Union[str, "_models.LanguageDirectionality"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -976,7 +958,6 @@ class TranslationLanguage(_model_base.Model):
 class TranslationText(_model_base.Model):
     """Translation result.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar to: A string representing the language code of the target language. Required.
     :vartype to: str
@@ -1011,10 +992,10 @@ class TranslationText(_model_base.Model):
         transliteration: Optional["_models.TransliteratedText"] = None,
         alignment: Optional["_models.TranslatedTextAlignment"] = None,
         sent_len: Optional["_models.SentenceBoundaries"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1027,7 +1008,6 @@ class TranslationText(_model_base.Model):
 class TransliterableScript(LanguageScript):
     """Script definition with list of script into which given script can be translitered.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar code: Code identifying the script. Required.
     :vartype code: str
@@ -1056,10 +1036,10 @@ class TransliterableScript(LanguageScript):
         native_name: str,
         dir: Union[str, "_models.LanguageDirectionality"],
         to_scripts: List["_models.LanguageScript"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1072,7 +1052,6 @@ class TransliterableScript(LanguageScript):
 class TransliteratedText(_model_base.Model):
     """Transliterated text element.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar text: A string which is the result of converting the input string to the output script.
      Required.
@@ -1092,10 +1071,10 @@ class TransliteratedText(_model_base.Model):
         *,
         text: str,
         script: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1111,7 +1090,6 @@ class TransliterationLanguage(_model_base.Model):
     from one script
     to another script.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar name: Display name of the language in the locale requested via Accept-Language header.
      Required.
@@ -1137,10 +1115,10 @@ class TransliterationLanguage(_model_base.Model):
         name: str,
         native_name: str,
         scripts: List["_models.TransliterableScript"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]

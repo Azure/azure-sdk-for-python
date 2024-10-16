@@ -53,5 +53,5 @@ __all__ = [
     "TagsResult",
     "VisualFeatures",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
+__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

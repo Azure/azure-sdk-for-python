@@ -21,7 +21,7 @@ class TestFabricMgmtFabricCapacitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_fabric_capacities_get(self, resource_group):
         response = await self.client.fabric_capacities.get(
             resource_group_name=resource_group.name,
             capacity_name="str",
@@ -32,7 +32,7 @@ class TestFabricMgmtFabricCapacitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_fabric_capacities_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.fabric_capacities.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -62,7 +62,7 @@ class TestFabricMgmtFabricCapacitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_fabric_capacities_begin_update(self, resource_group):
         response = await (
             await self.client.fabric_capacities.begin_update(
                 resource_group_name=resource_group.name,
@@ -80,7 +80,7 @@ class TestFabricMgmtFabricCapacitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_fabric_capacities_begin_delete(self, resource_group):
         response = await (
             await self.client.fabric_capacities.begin_delete(
                 resource_group_name=resource_group.name,
@@ -93,7 +93,7 @@ class TestFabricMgmtFabricCapacitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_fabric_capacities_list_by_resource_group(self, resource_group):
         response = self.client.fabric_capacities.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
@@ -103,7 +103,7 @@ class TestFabricMgmtFabricCapacitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_fabric_capacities_list_by_subscription(self, resource_group):
         response = self.client.fabric_capacities.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -111,7 +111,7 @@ class TestFabricMgmtFabricCapacitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_resume(self, resource_group):
+    async def test_fabric_capacities_begin_resume(self, resource_group):
         response = await (
             await self.client.fabric_capacities.begin_resume(
                 resource_group_name=resource_group.name,
@@ -124,7 +124,7 @@ class TestFabricMgmtFabricCapacitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_suspend(self, resource_group):
+    async def test_fabric_capacities_begin_suspend(self, resource_group):
         response = await (
             await self.client.fabric_capacities.begin_suspend(
                 resource_group_name=resource_group.name,
@@ -137,7 +137,7 @@ class TestFabricMgmtFabricCapacitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_name_availability(self, resource_group):
+    async def test_fabric_capacities_check_name_availability(self, resource_group):
         response = await self.client.fabric_capacities.check_name_availability(
             location="str",
             body={"name": "str", "type": "str"},
@@ -148,7 +148,7 @@ class TestFabricMgmtFabricCapacitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_skus_for_capacity(self, resource_group):
+    async def test_fabric_capacities_list_skus_for_capacity(self, resource_group):
         response = self.client.fabric_capacities.list_skus_for_capacity(
             resource_group_name=resource_group.name,
             capacity_name="str",
@@ -159,7 +159,7 @@ class TestFabricMgmtFabricCapacitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_skus(self, resource_group):
+    async def test_fabric_capacities_list_skus(self, resource_group):
         response = self.client.fabric_capacities.list_skus()
         result = [r async for r in response]
         # please add some check logic here by yourself

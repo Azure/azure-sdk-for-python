@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,too-many-statements
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,21 +9,7 @@
 from io import IOBase
 import json
 import sys
-from typing import (
-    Any,
-    AsyncIterable,
-    AsyncIterator,
-    Callable,
-    Dict,
-    IO,
-    List,
-    Optional,
-    Type,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -67,7 +53,7 @@ from ...operations._operations import (
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
@@ -103,7 +89,7 @@ class Operations:
 
         cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -204,7 +190,7 @@ class CodeSigningAccountsOperations:
         :rtype: ~azure.mgmt.trustedsigning.models.CodeSigningAccount
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -264,7 +250,7 @@ class CodeSigningAccountsOperations:
         resource: Union[_models.CodeSigningAccount, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -497,7 +483,7 @@ class CodeSigningAccountsOperations:
         properties: Union[_models.CodeSigningAccountPatch, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -726,7 +712,7 @@ class CodeSigningAccountsOperations:
         )
 
     async def _delete_initial(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -856,7 +842,7 @@ class CodeSigningAccountsOperations:
 
         cls: ClsType[List[_models.CodeSigningAccount]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -942,7 +928,7 @@ class CodeSigningAccountsOperations:
 
         cls: ClsType[List[_models.CodeSigningAccount]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1078,7 +1064,7 @@ class CodeSigningAccountsOperations:
         :rtype: ~azure.mgmt.trustedsigning.models.CheckNameAvailabilityResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1174,7 +1160,7 @@ class CertificateProfilesOperations:
         :rtype: ~azure.mgmt.trustedsigning.models.CertificateProfile
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1236,7 +1222,7 @@ class CertificateProfilesOperations:
         resource: Union[_models.CertificateProfile, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1479,7 +1465,7 @@ class CertificateProfilesOperations:
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, profile_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1617,7 +1603,7 @@ class CertificateProfilesOperations:
 
         cls: ClsType[List[_models.CertificateProfile]] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1691,7 +1677,7 @@ class CertificateProfilesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def revoke_certificate(  # pylint: disable=inconsistent-return-statements
+    async def revoke_certificate(
         self,
         resource_group_name: str,
         account_name: str,
@@ -1721,7 +1707,7 @@ class CertificateProfilesOperations:
         """
 
     @overload
-    async def revoke_certificate(  # pylint: disable=inconsistent-return-statements
+    async def revoke_certificate(
         self,
         resource_group_name: str,
         account_name: str,
@@ -1751,7 +1737,7 @@ class CertificateProfilesOperations:
         """
 
     @overload
-    async def revoke_certificate(  # pylint: disable=inconsistent-return-statements
+    async def revoke_certificate(
         self,
         resource_group_name: str,
         account_name: str,
@@ -1781,7 +1767,7 @@ class CertificateProfilesOperations:
         """
 
     @distributed_trace_async
-    async def revoke_certificate(  # pylint: disable=inconsistent-return-statements
+    async def revoke_certificate(
         self,
         resource_group_name: str,
         account_name: str,
@@ -1805,7 +1791,7 @@ class CertificateProfilesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping[int, Type[HttpResponseError]] = {  # pylint: disable=unsubscriptable-object
+        error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,

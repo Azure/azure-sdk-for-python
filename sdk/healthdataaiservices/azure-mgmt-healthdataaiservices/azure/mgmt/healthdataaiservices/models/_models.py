@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -14,7 +13,6 @@ from .. import _model_base
 from .._model_base import rest_field
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -36,10 +34,10 @@ class DeidPropertiesUpdate(_model_base.Model):
         self,
         *,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -114,10 +112,10 @@ class TrackedResource(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -167,10 +165,10 @@ class DeidService(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.DeidServiceProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -219,10 +217,10 @@ class DeidServiceProperties(_model_base.Model):
         self,
         *,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -257,10 +255,10 @@ class DeidUpdate(_model_base.Model):
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentityUpdate"] = None,
         properties: Optional["_models.DeidPropertiesUpdate"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -334,10 +332,10 @@ class ErrorResponse(_model_base.Model):
         self,
         *,
         error: Optional["_models.ErrorDetail"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -387,10 +385,10 @@ class ManagedServiceIdentity(_model_base.Model):
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -425,10 +423,10 @@ class ManagedServiceIdentityUpdate(_model_base.Model):
         *,
         type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -482,10 +480,10 @@ class Operation(_model_base.Model):
         self,
         *,
         action_type: Optional[Union[str, "_models.ActionType"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -570,10 +568,10 @@ class PrivateEndpointConnection(Resource):
         self,
         *,
         properties: Optional["_models.PrivateEndpointConnectionProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -624,10 +622,10 @@ class PrivateEndpointConnectionProperties(_model_base.Model):
         *,
         private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState",
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -686,10 +684,10 @@ class PrivateEndpointConnectionResource(ProxyResource):
         self,
         *,
         properties: Optional["_models.PrivateEndpointConnectionProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -727,10 +725,10 @@ class PrivateLinkResource(ProxyResource):
         self,
         *,
         properties: Optional["_models.PrivateLinkResourceProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -765,10 +763,10 @@ class PrivateLinkResourceProperties(_model_base.Model):
         self,
         *,
         required_zone_names: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -808,10 +806,10 @@ class PrivateLinkServiceConnectionState(_model_base.Model):
         status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -865,10 +863,10 @@ class SystemData(_model_base.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]

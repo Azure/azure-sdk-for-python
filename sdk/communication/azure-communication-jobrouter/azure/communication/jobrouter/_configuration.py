@@ -51,7 +51,7 @@ class JobRouterAdministrationClientConfiguration:  # pylint: disable=too-many-in
         self.authentication_policy = kwargs.get("authentication_policy")
 
 
-class JobRouterClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class JobRouterClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for JobRouterClient.
 
     Note that all parameters used to create this instance are saved as instance

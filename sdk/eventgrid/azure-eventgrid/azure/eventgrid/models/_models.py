@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,27 +7,20 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
 from typing import Any, List, Mapping, Optional, TYPE_CHECKING, overload
+
+from azure.core.exceptions import ODataV4Format
 
 from .. import _model_base
 from .._model_base import rest_field
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class AcknowledgeResult(_model_base.Model):
     """The result of the Acknowledge operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -51,10 +43,10 @@ class AcknowledgeResult(_model_base.Model):
         *,
         failed_lock_tokens: List["_models.FailedLockToken"],
         succeeded_lock_tokens: List[str],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -67,7 +59,6 @@ class AcknowledgeResult(_model_base.Model):
 class BrokerProperties(_model_base.Model):
     """Properties of the Event Broker operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar lock_token: The token of the lock on the event. Required.
     :vartype lock_token: str
@@ -85,7 +76,6 @@ class CloudEvent(_model_base.Model):
     """Properties of an event published to an Azure Messaging EventGrid Namespace topic using the
     CloudEvent 1.0 Schema.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar id: An identifier for the event. The combination of id and source must be unique for each
      distinct event. Required.
@@ -137,51 +127,20 @@ class CloudEvent(_model_base.Model):
      source)."""
 
 
-class Error(_model_base.Model):
-    """The error object.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar code: One of a server-defined set of error codes. Required.
-    :vartype code: str
-    :ivar message: A human-readable representation of the error. Required.
-    :vartype message: str
-    :ivar target: The target of the error.
-    :vartype target: str
-    :ivar details: An array of details about specific errors that led to this reported error.
-    :vartype details: list[~azure.eventgrid.models._models.Error]
-    :ivar innererror: An object containing more specific information than the current object about
-     the error.
-    :vartype innererror: ~azure.eventgrid.models._models.InnerError
-    """
-
-    code: str = rest_field()
-    """One of a server-defined set of error codes. Required."""
-    message: str = rest_field()
-    """A human-readable representation of the error. Required."""
-    target: Optional[str] = rest_field()
-    """The target of the error."""
-    details: Optional[List["_models._models.Error"]] = rest_field()
-    """An array of details about specific errors that led to this reported error."""
-    innererror: Optional["_models._models.InnerError"] = rest_field()
-    """An object containing more specific information than the current object about the error."""
-
-
 class FailedLockToken(_model_base.Model):
     """Failed LockToken information.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar lock_token: The lock token of an entry in the request. Required.
     :vartype lock_token: str
     :ivar error: Error information of the failed operation result for the lock token in the
      request. Required.
-    :vartype error: ~azure.eventgrid.models._models.Error
+    :vartype error: ~azure.core.ODataV4Format
     """
 
     lock_token: str = rest_field(name="lockToken")
     """The lock token of an entry in the request. Required."""
-    error: "_models._models.Error" = rest_field()
+    error: ODataV4Format = rest_field()
     """Error information of the failed operation result for the lock token in the request. Required."""
 
     @overload
@@ -189,11 +148,11 @@ class FailedLockToken(_model_base.Model):
         self,
         *,
         lock_token: str,
-        error: "_models._models.Error",
-    ): ...
+        error: ODataV4Format,
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -203,23 +162,6 @@ class FailedLockToken(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InnerError(_model_base.Model):
-    """An object containing more specific information about the error. As per Microsoft One API
-    guidelines -
-    https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
-
-    :ivar code: One of a server-defined set of error codes.
-    :vartype code: str
-    :ivar innererror: Inner error.
-    :vartype innererror: ~azure.eventgrid.models._models.InnerError
-    """
-
-    code: Optional[str] = rest_field()
-    """One of a server-defined set of error codes."""
-    innererror: Optional["_models._models.InnerError"] = rest_field()
-    """Inner error."""
-
-
 class PublishResult(_model_base.Model):
     """The result of the Publish operation."""
 
@@ -227,7 +169,6 @@ class PublishResult(_model_base.Model):
 class ReceiveDetails(_model_base.Model):
     """Receive operation details per Cloud Event.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar broker_properties: The Event Broker details. Required.
     :vartype broker_properties: ~azure.eventgrid.models._models.BrokerProperties
@@ -244,7 +185,6 @@ class ReceiveDetails(_model_base.Model):
 class ReceiveResult(_model_base.Model):
     """Details of the Receive operation response.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar details: Array of receive responses, one per cloud event. Required.
     :vartype details: list[~azure.eventgrid.models._models.ReceiveDetails]
@@ -257,7 +197,6 @@ class ReceiveResult(_model_base.Model):
 class RejectResult(_model_base.Model):
     """The result of the Reject operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -280,10 +219,10 @@ class RejectResult(_model_base.Model):
         *,
         failed_lock_tokens: List["_models.FailedLockToken"],
         succeeded_lock_tokens: List[str],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -296,7 +235,6 @@ class RejectResult(_model_base.Model):
 class ReleaseResult(_model_base.Model):
     """The result of the Release operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -319,10 +257,10 @@ class ReleaseResult(_model_base.Model):
         *,
         failed_lock_tokens: List["_models.FailedLockToken"],
         succeeded_lock_tokens: List[str],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -335,7 +273,6 @@ class ReleaseResult(_model_base.Model):
 class RenewLocksResult(_model_base.Model):
     """The result of the RenewLock operation.
 
-    All required parameters must be populated in order to send to server.
 
     :ivar failed_lock_tokens: Array of FailedLockToken for failed cloud events. Each
      FailedLockToken includes the lock token along with the related error information (namely, the
@@ -357,10 +294,10 @@ class RenewLocksResult(_model_base.Model):
         *,
         failed_lock_tokens: List["_models.FailedLockToken"],
         succeeded_lock_tokens: List[str],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
