@@ -359,10 +359,11 @@ class DataLakeFileClient(PathClient):
         return cast(FileProperties, props)
 
     @distributed_trace_async
-    async def set_file_expiry(self, expiry_options,  # type: str
-                              expires_on=None,  # type: Optional[Union[datetime, int]]
-                              **kwargs):
-        # type: (...) -> None
+    async def set_file_expiry(
+        self, expiry_options: str,
+        expires_on: Optional[Union["datetime", int]] = None,
+        **kwargs: Any
+    ) -> None:
         """Sets the time a file will expire and be deleted.
 
         :param str expiry_options:
@@ -383,8 +384,7 @@ class DataLakeFileClient(PathClient):
             expires_on = convert_datetime_to_rfc1123(expires_on)
         except AttributeError:
             expires_on = str(expires_on)
-        await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on,
-                                                                       **kwargs)
+        await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on, **kwargs)
 
     @distributed_trace_async
     async def upload_data(
