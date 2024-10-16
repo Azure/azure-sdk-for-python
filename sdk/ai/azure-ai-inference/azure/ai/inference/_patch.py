@@ -14,7 +14,8 @@ Why do we patch auto-generated code?
 4. Add support for get_model_info, while caching the result (all clients)
 5. Add support for chat completion streaming (ChatCompletionsClient client only)
 6. Add support for friendly print of result objects (__str__ method) (all clients)
-7. Add support for load() method in ImageUrl class (see /models/_patch.py).
+7. Add support for load() method in ImageUrl class (see /models/_patch.py)
+8. Add support for sending two auth headers for api-key auth (all clients)
 
 """
 import json
@@ -102,8 +103,8 @@ def load_client(
             "The AI model information is missing a value for `model type`. Cannot create an appropriate client."
         )
 
-    # TODO: Remove "completions" and "embedding" once Mistral Large and Cohere fixes their model type
-    if model_info.model_type in (_models.ModelType.CHAT, "completion"):
+    # TODO: Remove "completions", "chat-comletions" and "embedding" once Mistral Large and Cohere fixes their model type
+    if model_info.model_type in (_models.ModelType.CHAT, "completion", "chat-completion", "chat-completions"):
         chat_completion_client = ChatCompletionsClient(endpoint, credential, **kwargs)
         chat_completion_client._model_info = (  # pylint: disable=protected-access,attribute-defined-outside-init
             model_info
@@ -245,7 +246,21 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         self._model = model
         self._model_extras = model_extras
 
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
+
         super().__init__(endpoint, credential, **kwargs)
+
 
     @overload
     def complete(
@@ -454,7 +469,7 @@ class ChatCompletionsClient(ChatCompletionsClientGenerated):  # pylint: disable=
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
+    # pylint:disable=client-method-missing-tracing-decorator
     def complete(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -723,6 +738,19 @@ class EmbeddingsClient(EmbeddingsClientGenerated):
         self._input_type = input_type
         self._model = model
         self._model_extras = model_extras
+
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 
@@ -1006,6 +1034,19 @@ class ImageEmbeddingsClient(ImageEmbeddingsClientGenerated):
         self._input_type = input_type
         self._model = model
         self._model_extras = model_extras
+
+        # For Key auth, we need to send these two auth HTTP request headers simultaneously:
+        # 1. "Authorization: Bearer <key>"
+        # 2. "api-key: <key>"
+        # This is because Serverless API, Managed Compute and GitHub endpoints support the first header,
+        # and Azure OpenAI and the new Unified Inference endpoints support the second header.
+        # The first header will be taken care of by auto-generated code.
+        # The second one is added here.
+        if isinstance(credential, AzureKeyCredential):
+            headers = kwargs.pop("headers", {})
+            if "api-key" not in headers:
+                headers["api-key"] = credential.key
+            kwargs["headers"] = headers
 
         super().__init__(endpoint, credential, **kwargs)
 

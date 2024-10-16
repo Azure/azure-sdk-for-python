@@ -6,6 +6,7 @@
 import os
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.maps.route import MapsRouteClient
+from azure.maps.route.models import RouteMatrixQuery, GeoJsonMultiPoint
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
 from route_preparer import MapsRoutePreparer
 
@@ -40,36 +41,12 @@ class TestMapsRouteClient(AzureRecordedTestCase):
 
     @MapsRoutePreparer()
     @recorded_by_proxy
-    def get_route_matrix(self):
-        request_obj = {
-            "origins": {
-                "type": "MultiPoint",
-                "coordinates": [
-                [
-                    4.85106,
-                    52.36006
-                ],
-                [
-                    4.85056,
-                    52.36187
-                ]
-                ]
-            },
-            "destinations": {
-                "type": "MultiPoint",
-                "coordinates": [
-                [
-                    4.85003,
-                    52.36241
-                ],
-                [
-                    13.42937,
-                    52.50931
-                ]
-                ]
-            }
-        }
-        result = self.client.get_route_matrix(request_obj)
+    def test_get_route_matrix(self):
+        route_matrix_query = RouteMatrixQuery(
+            origins=GeoJsonMultiPoint(coordinates=[[4.85106, 52.36006], [4.85056, 52.36187]]),
+            destinations=GeoJsonMultiPoint(coordinates=[[4.85003, 52.36241], [13.42937, 52.50931]])
+        )
+        result = self.client.get_route_matrix(route_matrix_query)
         assert len(result.matrix) > 0
         top_answer = result.matrix[0][0]
-        assert top_answer.response.summary.length_in_meters == 495
+        assert top_answer.response.summary.length_in_meters == 494

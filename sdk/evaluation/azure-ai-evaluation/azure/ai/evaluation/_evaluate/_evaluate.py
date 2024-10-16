@@ -4,14 +4,17 @@
 import inspect
 import os
 import re
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Type
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, TypeVar, Union
+import json
 
 import pandas as pd
 from promptflow._sdk._constants import LINE_NUMBER
 from promptflow.client import PFClient
+from promptflow.entities import Run
+from promptflow._sdk._errors import MissingAzurePackage
 
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._common.math import list_sum
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
@@ -24,16 +27,25 @@ from .._model_configurations import AzureAIProject, EvaluatorConfig
 from .._user_agent import USER_AGENT
 from ._batch_run_client import BatchRunContext, CodeClient, ProxyClient
 from ._utils import (
+    EvaluateResult,
     _apply_column_mapping,
     _log_metrics_and_instance_results,
     _trace_destination_from_project_scope,
     _write_output,
 )
 
+TClient = TypeVar("TClient", ProxyClient, CodeClient)
+
+
+class __EvaluatorInfo(TypedDict):
+    result: pd.DataFrame
+    metrics: Dict[str, Any]
+    run_summary: Dict[str, Any]
+
 
 # pylint: disable=line-too-long
 def _aggregate_content_safety_metrics(
-    df: pd.DataFrame, evaluators: Dict[str, Type]
+    df: pd.DataFrame, evaluators: Dict[str, Callable]
 ) -> Tuple[List[str], Dict[str, float]]:
     """Find and aggregate defect rates for content safety metrics. Returns both a list
     of columns that were used to calculate defect rates and the defect rates themselves.
@@ -114,7 +126,7 @@ def _aggregate_label_defect_metrics(df: pd.DataFrame) -> Tuple[List[str], Dict[s
     return label_cols, defect_rates
 
 
-def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Type]) -> Dict[str, float]:
+def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
     On top of naively calculating the mean of most metrics, this function also identifies certain columns
     that represent defect rates and renames them accordingly. Other columns in the dataframe are dropped.
@@ -123,7 +135,7 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Type]) -> Dict[st
     :param df: The dataframe of evaluation results.
     :type df: ~pandas.DataFrame
     :param evaluators:  A dictionary mapping of strings to evaluator classes.
-    :type evaluators: Dict[str, Type]
+    :type evaluators: Dict[str, Callable]
     :return: The aggregated metrics.
     :rtype: Dict[str, float]
     """
@@ -278,7 +290,7 @@ def _validate_and_load_data(target, data, evaluators, output_path, azure_ai_proj
 
 def _validate_columns(
     df: pd.DataFrame,
-    evaluators: Dict[str, Any],
+    evaluators: Dict[str, Callable],
     target: Optional[Callable],
     column_mapping: Dict[str, Dict[str, str]],
 ) -> None:
@@ -288,7 +300,7 @@ def _validate_columns(
     :param df: The data frame to be validated.
     :type df: pd.DataFrame
     :param evaluators: The dictionary of evaluators.
-    :type evaluators: Dict[str, Any]
+    :type evaluators: Dict[str, Callable]
     :param target: The callable to be applied to data set.
     :type target: Optional[Callable]
     :param column_mapping: Dictionary mapping evaluator name to evaluator column mapping
@@ -327,7 +339,7 @@ def _apply_target_to_data(
     initial_data: pd.DataFrame,
     evaluation_name: Optional[str] = None,
     _run_name: Optional[str] = None,
-) -> Tuple[pd.DataFrame, Set[str]]:
+) -> Tuple[pd.DataFrame, Set[str], Run]:
     """
     Apply the target function to the data set and return updated data and generated columns.
 
@@ -349,7 +361,7 @@ def _apply_target_to_data(
     # We are manually creating the temporary directory for the flow
     # because the way tempdir remove temporary directories will
     # hang the debugger, because promptflow will keep flow directory.
-    run = pf_client.run(
+    run: Run = pf_client.run(
         flow=target,
         display_name=evaluation_name,
         data=data,
@@ -357,7 +369,7 @@ def _apply_target_to_data(
         stream=True,
         name=_run_name,
     )
-    target_output = pf_client.runs.get_details(run, all_results=True)
+    target_output: pd.DataFrame = pf_client.runs.get_details(run, all_results=True)
     # Remove input and output prefix
     generated_columns = {
         col[len(Prefixes.OUTPUTS) :] for col in target_output.columns if col.startswith(Prefixes.OUTPUTS)
@@ -379,16 +391,18 @@ def _apply_target_to_data(
     return target_output, generated_columns, run
 
 
-def _process_column_mappings(column_mapping: Dict[str, Dict[str, str]]) -> Dict[str, Dict[str, str]]:
+def _process_column_mappings(
+    column_mapping: Dict[str, Optional[Dict[str, str]]],
+) -> Dict[str, Dict[str, str]]:
     """Process column_mapping to replace ${target.} with ${data.}
 
     :param column_mapping: The configuration for evaluators.
-    :type column_mapping: Dict[str, Dict[str, str]]
+    :type column_mapping: Dict[str, Optional[Dict[str, str]]]
     :return: The processed configuration.
     :rtype: Dict[str, Dict[str, str]]
     """
 
-    processed_config = {}
+    processed_config: Dict[str, Dict[str, str]] = {}
 
     unexpected_references = re.compile(r"\${(?!target\.|data\.).+?}")
 
@@ -555,41 +569,69 @@ def evaluate(
         raise e
 
 
+def _print_summary(per_evaluator_results: Dict[str, Any]) -> None:
+    # Extract evaluators with a non-empty "run_summary"
+    output_dict = {
+        name: result["run_summary"] for name, result in per_evaluator_results.items() if result.get("run_summary")
+    }
+
+    if output_dict:
+        print("======= Combined Run Summary (Per Evaluator) =======\n")
+        print(json.dumps(output_dict, indent=4))
+        print("\n====================================================")
+
+
 def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     *,
+    evaluators: Dict[str, Callable],
     evaluation_name: Optional[str] = None,
     target: Optional[Callable] = None,
-    data: Optional[str] = None,
-    evaluators: Optional[Dict[str, Callable]] = None,
+    data: str,
     evaluator_config: Optional[Dict[str, EvaluatorConfig]] = None,
     azure_ai_project: Optional[AzureAIProject] = None,
     output_path: Optional[str] = None,
     **kwargs,
-):
+) -> EvaluateResult:
     input_data_df = _validate_and_load_data(target, data, evaluators, output_path, azure_ai_project, evaluation_name)
 
     # Process evaluator config to replace ${target.} with ${data.}
     if evaluator_config is None:
         evaluator_config = {}
     # extract column mapping dicts into dictionary mapping evaluator name to column mapping
-    column_mapping = {
-        evaluator_name: evaluator_configuration.get("column_mapping", None)
-        for evaluator_name, evaluator_configuration in evaluator_config.items()
-    }
-    column_mapping = _process_column_mappings(column_mapping)
+    column_mapping = _process_column_mappings(
+        {
+            evaluator_name: evaluator_configuration.get("column_mapping", None)
+            for evaluator_name, evaluator_configuration in evaluator_config.items()
+        }
+    )
     _validate_columns(input_data_df, evaluators, target, column_mapping)
 
     # Target Run
-    pf_client = PFClient(
-        config=(
-            {"trace.destination": _trace_destination_from_project_scope(azure_ai_project)} if azure_ai_project else None
-        ),
-        user_agent=USER_AGENT,
-    )
+    try:
+        pf_client = PFClient(
+            config=(
+                {"trace.destination": _trace_destination_from_project_scope(azure_ai_project)}
+                if azure_ai_project
+                else None
+            ),
+            user_agent=USER_AGENT,
+        )
+    # pylint: disable=raise-missing-from
+    except MissingAzurePackage:
+        msg = (
+            "The required packages for remote tracking are missing.\n"
+            'To resolve this, please install them by running "pip install azure-ai-evaluation[remote]".'
+        )
 
-    trace_destination = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
-    target_run = None
-    target_generated_columns = set()
+        raise EvaluationException(
+            message=msg,
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.MISSING_PACKAGE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    trace_destination: Optional[str] = pf_client._config.get_trace_destination()  # pylint: disable=protected-access
+    target_run: Optional[Run] = None
 
     # Create default configuration for evaluators that directly maps
     # input data names to keyword inputs of the same name in the evaluators.
@@ -628,45 +670,54 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             # Also ignore columns that are already in config, since they've been covered by target mapping.
             if not col.startswith(Prefixes.TSG_OUTPUTS) and col not in column_mapping["default"].keys():
                 column_mapping["default"][col] = f"${{data.{col}}}"
+
+    def eval_batch_run(
+        batch_run_client: TClient, *, data=Union[str, os.PathLike, pd.DataFrame]
+    ) -> Dict[str, __EvaluatorInfo]:
+        with BatchRunContext(batch_run_client):
+            runs = {
+                evaluator_name: batch_run_client.run(
+                    flow=evaluator,
+                    run=target_run,
+                    evaluator_name=evaluator_name,
+                    column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
+                    data=data,
+                    stream=True,
+                    name=kwargs.get("_run_name"),
+                )
+                for evaluator_name, evaluator in evaluators.items()
+            }
+
+            # get_details needs to be called within BatchRunContext scope in order to have user agent populated
+            return {
+                evaluator_name: {
+                    "result": batch_run_client.get_details(run, all_results=True),
+                    "metrics": batch_run_client.get_metrics(run),
+                    "run_summary": batch_run_client.get_run_summary(run),
+                }
+                for evaluator_name, run in runs.items()
+            }
+
     # Batch Run
-    evaluators_info = {}
     use_pf_client = kwargs.get("_use_pf_client", True)
     if use_pf_client:
-        # A user reported intermittent errors when PFClient uploads evaluation runs to the cloud.
-        # The root cause is still unclear, but it seems related to a conflict between the async run uploader
-        # and the async batch run. As a quick mitigation, use a PFClient without a trace destination for batch runs.
-        batch_run_client = ProxyClient(PFClient(user_agent=USER_AGENT))
-
         # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
         # multiple evaluators. If the path is already absolute, abspath will return the original path.
         data = os.path.abspath(data)
+
+        # A user reported intermittent errors when PFClient uploads evaluation runs to the cloud.
+        # The root cause is still unclear, but it seems related to a conflict between the async run uploader
+        # and the async batch run. As a quick mitigation, use a PFClient without a trace destination for batch runs.
+        per_evaluator_results = eval_batch_run(ProxyClient(PFClient(user_agent=USER_AGENT)), data=data)
     else:
-        batch_run_client = CodeClient()
         data = input_data_df
-
-    with BatchRunContext(batch_run_client):
-        for evaluator_name, evaluator in evaluators.items():
-            evaluators_info[evaluator_name] = {}
-            evaluators_info[evaluator_name]["run"] = batch_run_client.run(
-                flow=evaluator,
-                run=target_run,
-                evaluator_name=evaluator_name,
-                column_mapping=column_mapping.get(evaluator_name, column_mapping.get("default", None)),
-                data=data,
-                stream=True,
-                name=kwargs.get("_run_name"),
-            )
-
-        # get_details needs to be called within BatchRunContext scope in order to have user agent populated
-        for evaluator_name, evaluator_info in evaluators_info.items():
-            evaluator_info["result"] = batch_run_client.get_details(evaluator_info["run"], all_results=True)
-            evaluator_info["metrics"] = batch_run_client.get_metrics(evaluator_info["run"])
+        per_evaluator_results = eval_batch_run(CodeClient(), data=input_data_df)
 
     # Concatenate all results
     evaluators_result_df = None
     evaluators_metric = {}
-    for evaluator_name, evaluator_info in evaluators_info.items():
-        evaluator_result_df = evaluator_info["result"]
+    for evaluator_name, evaluator_result in per_evaluator_results.items():
+        evaluator_result_df = evaluator_result["result"]
 
         # drop input columns
         evaluator_result_df = evaluator_result_df.drop(
@@ -689,7 +740,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             else evaluator_result_df
         )
 
-        evaluators_metric.update({f"{evaluator_name}.{k}": v for k, v in evaluator_info["metrics"].items()})
+        evaluators_metric.update({f"{evaluator_name}.{k}": v for k, v in evaluator_result["metrics"].items()})
 
     # Rename columns, generated by target function to outputs instead of inputs.
     # If target generates columns, already present in the input data, these columns
@@ -707,9 +758,11 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         evaluation_name,
     )
 
-    result = {"rows": result_df.to_dict("records"), "metrics": metrics, "studio_url": studio_url}
+    result: EvaluateResult = {"rows": result_df.to_dict("records"), "metrics": metrics, "studio_url": studio_url}
 
     if output_path:
         _write_output(output_path, result)
+
+    _print_summary(per_evaluator_results)
 
     return result

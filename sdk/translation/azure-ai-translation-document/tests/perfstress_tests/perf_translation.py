@@ -43,9 +43,7 @@ class TranslationPerfStressTest(PerfStressTest):
         self.target_container_name = "target-perf-" + str(uuid.uuid4())
 
         self.service_client = DocumentTranslationClient(endpoint, get_credential(), **self._client_kwargs)
-        self.async_service_client = AsyncDocumentTranslationClient(
-            endpoint, get_credential(), **self._client_kwargs
-        )
+        self.async_service_client = AsyncDocumentTranslationClient(endpoint, get_credential(), **self._client_kwargs)
 
     async def create_source_container(self):
         container_client = ContainerClient(self.storage_endpoint, self.source_container_name, self.storage_key)

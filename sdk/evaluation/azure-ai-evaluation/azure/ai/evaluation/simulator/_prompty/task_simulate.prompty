@@ -3,10 +3,6 @@ name: TaskSimulatorWithPersona
 description: Simulates a user to complete a conversation
 model:
   api: chat
-  configuration:
-    type: azure_openai
-    azure_deployment: ${env:AZURE_DEPLOYMENT}
-    azure_endpoint: ${env:AZURE_OPENAI_ENDPOINT}
   parameters:
     temperature: 0.0
     top_p: 1.0

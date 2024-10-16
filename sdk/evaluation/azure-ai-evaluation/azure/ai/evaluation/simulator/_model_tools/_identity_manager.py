@@ -3,13 +3,15 @@
 # ---------------------------------------------------------
 
 import asyncio
+import inspect
 import logging
 import os
 import time
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Dict, Optional, Union
+from typing import Optional, Union
 
+from azure.core.credentials import TokenCredential, AccessToken
 from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 
 AZURE_TOKEN_REFRESH_INTERVAL = 600  # seconds
@@ -29,24 +31,24 @@ class APITokenManager(ABC):
     :param auth_header: Authorization header prefix. Defaults to "Bearer"
     :type auth_header: str
     :param credential: Azure credential object
-    :type credential: Optional[Union[azure.identity.DefaultAzureCredential, azure.identity.ManagedIdentityCredential]
+    :type credential: Optional[TokenCredential]
     """
 
     def __init__(
         self,
         logger: logging.Logger,
         auth_header: str = "Bearer",
-        credential: Optional[Union[DefaultAzureCredential, ManagedIdentityCredential]] = None,
+        credential: Optional[TokenCredential] = None,
     ) -> None:
         self.logger = logger
         self.auth_header = auth_header
-        self._lock = None
+        self._lock: Optional[asyncio.Lock] = None
         if credential is not None:
             self.credential = credential
         else:
             self.credential = self.get_aad_credential()
-        self.token = None
-        self.last_refresh_time = None
+        self.token: Optional[str] = None
+        self.last_refresh_time: Optional[float] = None
 
     @property
     def lock(self) -> asyncio.Lock:
@@ -73,20 +75,26 @@ class APITokenManager(ABC):
         identity_client_id = os.environ.get("DEFAULT_IDENTITY_CLIENT_ID", None)
         if identity_client_id is not None:
             self.logger.info(f"Using DEFAULT_IDENTITY_CLIENT_ID: {identity_client_id}")
-            credential = ManagedIdentityCredential(client_id=identity_client_id)
-        else:
-            self.logger.info("Environment variable DEFAULT_IDENTITY_CLIENT_ID is not set, using DefaultAzureCredential")
-            credential = DefaultAzureCredential()
-        return credential
+            return ManagedIdentityCredential(client_id=identity_client_id)
+
+        self.logger.info("Environment variable DEFAULT_IDENTITY_CLIENT_ID is not set, using DefaultAzureCredential")
+        return DefaultAzureCredential()
 
     @abstractmethod
-    async def get_token(self) -> str:
+    def get_token(self) -> str:
         """Async method to get the API token. Subclasses should implement this method.
 
         :return: API token
         :rtype: str
         """
-        pass  # pylint: disable=unnecessary-pass
+
+    @abstractmethod
+    async def get_token_async(self) -> str:
+        """Async method to get the API token. Subclasses should implement this method.
+
+        :return: API token
+        :rtype: str
+        """
 
 
 class ManagedIdentityAPITokenManager(APITokenManager):
@@ -100,12 +108,18 @@ class ManagedIdentityAPITokenManager(APITokenManager):
     :paramtype kwargs: Dict
     """
 
-    def __init__(self, token_scope: TokenScope, logger: logging.Logger, **kwargs: Dict):
-        super().__init__(logger, **kwargs)
+    def __init__(
+        self,
+        token_scope: TokenScope,
+        logger: logging.Logger,
+        *,
+        auth_header: str = "Bearer",
+        credential: Optional[TokenCredential] = None,
+    ):
+        super().__init__(logger, auth_header=auth_header, credential=credential)
         self.token_scope = token_scope
 
-    # Bug 3353724: This get_token is sync method, but it is defined as async method in the base class
-    def get_token(self) -> str:  # pylint: disable=invalid-overridden-method
+    def get_token(self) -> str:
         """Get the API token. If the token is not available or has expired, refresh the token.
 
         :return: API token
@@ -122,6 +136,31 @@ class ManagedIdentityAPITokenManager(APITokenManager):
 
         return self.token
 
+    async def get_token_async(self) -> str:
+        """Get the API token synchronously. If the token is not available or has expired, refresh it.
+
+        :return: API token
+        :rtype: str
+        """
+        if (
+            self.token is None
+            or self.last_refresh_time is None
+            or time.time() - self.last_refresh_time > AZURE_TOKEN_REFRESH_INTERVAL
+        ):
+            self.last_refresh_time = time.time()
+            get_token_method = self.credential.get_token(self.token_scope.value)
+            if inspect.isawaitable(get_token_method):
+                # If it's awaitable, await it
+                token_response: AccessToken = await get_token_method
+            else:
+                # Otherwise, call it synchronously
+                token_response = get_token_method
+
+            self.token = token_response.token
+            self.logger.info("Refreshed Azure endpoint token.")
+
+        return self.token
+
 
 class PlainTokenManager(APITokenManager):
     """Plain API Token Manager
@@ -134,11 +173,18 @@ class PlainTokenManager(APITokenManager):
     :paramtype kwargs: Dict
     """
 
-    def __init__(self, openapi_key: str, logger: logging.Logger, **kwargs: Dict):
-        super().__init__(logger, **kwargs)
-        self.token = openapi_key
+    def __init__(
+        self,
+        openapi_key: str,
+        logger: logging.Logger,
+        *,
+        auth_header: str = "Bearer",
+        credential: Optional[TokenCredential] = None,
+    ) -> None:
+        super().__init__(logger, auth_header=auth_header, credential=credential)
+        self.token: str = openapi_key
 
-    async def get_token(self) -> str:
+    def get_token(self) -> str:
         """Get the API token
 
         :return: API token

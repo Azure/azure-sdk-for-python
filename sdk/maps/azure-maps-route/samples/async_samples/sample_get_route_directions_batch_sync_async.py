@@ -20,7 +20,7 @@ import asyncio
 import os
 from re import M
 
-subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
+subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY", "your subscription key")
 
 async def get_route_directions_batch_sync_async():
     # [START get_route_directions_batch_sync_async]
@@ -36,9 +36,11 @@ async def get_route_directions_batch_sync_async():
             ]
         )
 
-    print("Get route directions batch sync")
-    print(result.summary.total_requests)
-    print(result.items[0].response.routes[0].sections[0])
+    if result.batch_summary is not None and result.batch_items is not None:
+        print("Get route directions batch sync")
+        print(result.batch_summary.total_requests)
+        print(result.batch_items[0].response.routes[0].summary.departure_time)
+        print(result.batch_items[0].response.routes[0].summary.arrival_time)
     # [END get_route_directions_batch_sync]
 
 if __name__ == '__main__':
