@@ -23,7 +23,7 @@ from .models import (
 )
 from .._api_versions import DEFAULT_VERSION
 from .._headers_mixin import HeadersMixin
-from .._utils import get_authentication_policy
+from .._utils import DEFAULT_AUDIENCE
 from .._version import SDK_MONIKER
 
 
@@ -48,21 +48,20 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         self._endpoint = normalize_endpoint(endpoint)
         self._credential = credential
         audience = kwargs.pop("audience", None)
+        if not audience:
+            audience = DEFAULT_AUDIENCE
+        scope = audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
-            self._client = _SearchServiceClient(
-                endpoint=endpoint, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
-            )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience)
-            self._client = _SearchServiceClient(
-                endpoint=endpoint,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        self._client = _SearchServiceClient(
+            endpoint=endpoint, credential=credential,
+            sdk_moniker=SDK_MONIKER, api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
 
     def __enter__(self) -> "SearchIndexerClient":
         self._client.__enter__()

@@ -34,16 +34,6 @@ def is_retryable_status_code(status_code: Optional[int]) -> bool:
     return status_code in [422, 409, 503]
 
 
-def get_authentication_policy(credential, *, is_async: bool = False, **kwargs):
-    audience = kwargs.get("audience", None)
-    if not audience:
-        audience = DEFAULT_AUDIENCE
-    scope = audience.rstrip("/") + "/.default"
-    _policy = BearerTokenCredentialPolicy if not is_async else AsyncBearerTokenCredentialPolicy
-    authentication_policy = _policy(credential, scope)
-    return authentication_policy
-
-
 def odata(statement: str, **kwargs: Any) -> str:
     """Escape an OData query string.
 

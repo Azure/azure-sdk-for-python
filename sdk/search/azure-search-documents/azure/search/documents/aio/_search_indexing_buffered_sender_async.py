@@ -11,7 +11,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import ServiceResponseTimeoutError
 from ._timer import Timer
-from .._utils import is_retryable_status_code, get_authentication_policy
+from .._utils import is_retryable_status_code, DEFAULT_AUDIENCE
 from .._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
 from .._generated.aio import SearchClient as SearchIndexClient
 from .._generated.models import IndexingResult, IndexBatch, IndexAction
@@ -61,26 +61,23 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         )
         self._index_documents_batch = IndexDocumentsBatch()
         audience = kwargs.pop("audience", None)
+        if not audience:
+            audience = DEFAULT_AUDIENCE
+        scope = audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        self._client = SearchIndexClient(
+            endpoint=endpoint,
+            credential=credential,
+            index_name=index_name,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
         self._reset_timer()
 
     async def _cleanup(self, flush: bool = True) -> None:

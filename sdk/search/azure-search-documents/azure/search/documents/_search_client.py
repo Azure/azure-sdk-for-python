@@ -31,7 +31,7 @@ from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from ._headers_mixin import HeadersMixin
-from ._utils import get_authentication_policy, get_answer_query
+from ._utils import get_answer_query, DEFAULT_AUDIENCE
 from ._version import SDK_MONIKER
 
 
@@ -70,26 +70,23 @@ class SearchClient(HeadersMixin):
         self._index_name = index_name
         self._credential = credential
         audience = kwargs.pop("audience", None)
+        if not audience:
+            audience = DEFAULT_AUDIENCE
+        scope = audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience)
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        self._client = SearchIndexClient(
+            endpoint=endpoint,
+            credential=credential,
+            index_name=index_name,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
 
     def __repr__(self) -> str:
         return "<SearchClient [endpoint={}, index={}]>".format(repr(self._endpoint), repr(self._index_name))[:1024]

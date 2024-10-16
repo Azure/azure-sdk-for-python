@@ -10,7 +10,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
-from .._utils import get_authentication_policy, get_answer_query
+from .._utils import get_answer_query, DEFAULT_AUDIENCE
 from .._generated.aio import SearchClient as SearchIndexClient
 from .._generated.models import (
     AutocompleteMode,
@@ -72,26 +72,23 @@ class SearchClient(HeadersMixin):
         self._index_name: str = index_name
         self._credential = credential
         audience = kwargs.pop("audience", None)
+        if not audience:
+            audience = DEFAULT_AUDIENCE
+        scope = audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                index_name=index_name,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        self._client = SearchIndexClient(
+            endpoint=endpoint,
+            credential=credential,
+            index_name=index_name,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
 
     def __repr__(self) -> str:
         return "<SearchClient [endpoint={}, index={}]>".format(repr(self._endpoint), repr(self._index_name))[:1024]
