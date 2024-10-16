@@ -247,8 +247,7 @@ class DataLakeFileClient(PathClient):
         return self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
     @distributed_trace
-    def delete_file(self, **kwargs):
-        # type: (...) -> None
+    def delete_file(self, **kwargs: Any) -> Dict[str, Any]:
         """
         Marks the specified file for deletion.
 
@@ -279,8 +278,8 @@ class DataLakeFileClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: None.
-        :rtype: None
+        :returns: A response dict.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
