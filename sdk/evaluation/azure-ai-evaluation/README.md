@@ -327,7 +327,7 @@ if __name__ == "__main__":
 #### Adversarial Simulator
 
 ```python
-from from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
+from azure.ai.evaluation.simulator import AdversarialSimulator, AdversarialScenario
 from azure.identity import DefaultAzureCredential
 from typing import Any, Dict, List, Optional
 import asyncio
