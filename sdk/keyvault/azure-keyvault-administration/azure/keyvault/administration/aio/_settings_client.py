@@ -40,7 +40,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = await self._client.get_setting(vault_base_url=self._vault_url, setting_name=name, **kwargs)
+        result = await self._client.get_setting(setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
 
     @distributed_trace
@@ -51,7 +51,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.administration.KeyVaultSetting]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = self._client.get_settings(vault_base_url=self._vault_url, *kwargs)
+        result = self._client.get_settings(*kwargs)
 
         # We don't actually get a paged response from the generated method, so we mock the typical iteration methods
         async def get_next(_=None):
@@ -79,7 +79,6 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         """
         parameters = UpdateSettingRequest(value=setting.value)
         result = await self._client.update_setting(
-            vault_base_url=self._vault_url,
             setting_name=setting.name,
             parameters=parameters,
             **kwargs
