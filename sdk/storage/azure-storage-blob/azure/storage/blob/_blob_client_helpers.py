@@ -143,7 +143,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     kwargs['cpk_info'] = cpk_info
 
     headers = kwargs.pop('headers', {})
-    headers.update(add_metadata_headers(metadata, headers=headers))
+    headers.update(add_metadata_headers(metadata))
     kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
     kwargs['modified_access_conditions'] = get_modify_conditions(kwargs)
     kwargs['cpk_scope_info'] = get_cpk_scope_info(kwargs)

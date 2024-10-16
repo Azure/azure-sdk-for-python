@@ -3531,28 +3531,4 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         result = blob.download_blob().readall()
         assert result == data[:length]
 
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_case_sensitive_metadata(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Arrange
-        self._setup(storage_account_name, storage_account_key)
-        blob = self.bsc.get_container_client(self.container_name).get_blob_client(self._get_blob_reference())
-        data = b'abcde' * 100
-        stream = BytesIO(data)
-        length = 207
-        headers = {
-            'X-MS-Meta-Example': 'v1',
-        }
-
-        # Act
-        blob.upload_blob(stream, length=length, overwrite=True, headers=headers)
-
-        # Assert
-        props = blob.get_blob_properties()
-        assert props is not None
-        assert props.metadata['Example'] == 'v1'
-
     # ------------------------------------------------------------------------------
