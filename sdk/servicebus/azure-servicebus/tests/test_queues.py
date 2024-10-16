@@ -3417,7 +3417,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_fully_qualified_port(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
-        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}:443/"
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}:443"
         credential = get_credential()
         with ServiceBusClient(
             fully_qualified_namespace, credential, uamqp_transport=uamqp_transport) as sb_client:
