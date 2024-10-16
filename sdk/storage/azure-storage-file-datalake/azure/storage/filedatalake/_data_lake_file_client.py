@@ -46,12 +46,6 @@ if TYPE_CHECKING:
 class DataLakeFileClient(PathClient):
     """A client to interact with the DataLake file, even if the file may not yet exist.
 
-    :ivar str url:
-        The full endpoint URL to the file system, including SAS token if used.
-    :ivar str primary_endpoint:
-        The full primary endpoint URL.
-    :ivar str primary_hostname:
-        The hostname of the primary endpoint.
     :param str account_url:
         The URI to the storage account.
     :param file_system_name:
@@ -91,6 +85,14 @@ class DataLakeFileClient(PathClient):
             :dedent: 4
             :caption: Creating the DataLakeServiceClient from connection string.
     """
+
+    url: str
+    """The full endpoint URL to the file system, including SAS token if used."""
+    primary_endpoint: str
+    """The full primary endpoint URL."""
+    primary_hostname: str
+    """The hostname of the primary endpoint."""
+
     def __init__(
         self, account_url: str,
         file_system_name: str,
