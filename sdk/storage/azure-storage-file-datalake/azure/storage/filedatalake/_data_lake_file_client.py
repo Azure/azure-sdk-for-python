@@ -809,8 +809,7 @@ class DataLakeFileClient(PathClient):
         return StorageStreamDownloader(downloader)
 
     @distributed_trace
-    def exists(self, **kwargs):
-        # type: (**Any) -> bool
+    def exists(self, **kwargs: Any) -> bool:
         """
         Returns True if a file exists and returns False otherwise.
 
@@ -820,7 +819,7 @@ class DataLakeFileClient(PathClient):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: True if a file exists, otherwise returns False.
+        :returns: True if a file exists, False otherwise.
         :rtype: bool
         """
         return self._exists(**kwargs)

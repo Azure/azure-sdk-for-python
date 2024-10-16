@@ -234,8 +234,7 @@ class DataLakeFileClient(PathClient):
         return await self._create('file', content_settings=content_settings, metadata=metadata, **kwargs)
 
     @distributed_trace_async
-    async def exists(self, **kwargs):
-        # type: (**Any) -> bool
+    async def exists(self, **kwargs: Any) -> bool:
         """
         Returns True if a file exists and returns False otherwise.
 
