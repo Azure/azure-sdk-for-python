@@ -95,7 +95,7 @@ class TestSessionTokenHelpers:
         feed_ranges_and_session_tokens = [(feed_range, session_token)]
         session_token = "0:1#51#3=52"
         feed_ranges_and_session_tokens.append((feed_range, session_token))
-        session_token = setup[COLLECTION].get_updated_session_token(feed_ranges_and_session_tokens, feed_range)
+        session_token = setup[COLLECTION].get_latest_session_token(feed_ranges_and_session_tokens, feed_range)
         assert session_token == "0:1#54#3=52"
 
     def test_many_session_tokens_update_same_range(self, setup):
@@ -106,8 +106,8 @@ class TestSessionTokenHelpers:
             feed_ranges_and_session_tokens.append((feed_range, session_token))
         session_token = "0:1#101#3=101"
         feed_ranges_and_session_tokens.append((feed_range, session_token))
-        updated_session_token = setup["created_collection"].get_updated_session_token(feed_ranges_and_session_tokens,
-                                                                                      feed_range)
+        updated_session_token = setup["created_collection"].get_latest_session_token(feed_ranges_and_session_tokens,
+                                                                                     feed_range)
         assert updated_session_token == session_token
 
     def test_many_session_tokens_update(self, setup):
@@ -128,8 +128,8 @@ class TestSessionTokenHelpers:
                 feed_ranges_and_session_tokens.append((feed_range2, session_token))
         session_token = "0:1#101#3=101"
         feed_ranges_and_session_tokens.append((feed_range, session_token))
-        updated_session_token = setup["created_collection"].get_updated_session_token(feed_ranges_and_session_tokens,
-                                                                                      feed_range)
+        updated_session_token = setup["created_collection"].get_latest_session_token(feed_ranges_and_session_tokens,
+                                                                                     feed_range)
         assert updated_session_token == session_token
 
     @pytest.mark.parametrize("split_ranges, target_feed_range, expected_session_token", create_split_ranges())
@@ -140,7 +140,7 @@ class TestSessionTokenHelpers:
                                                 True, False)), session_token))
         target_feed_range = FeedRangeEpk(Range(target_feed_range[0], target_feed_range[1][1],
                                                True, False))
-        updated_session_token = setup[COLLECTION].get_updated_session_token(actual_split_ranges, target_feed_range)
+        updated_session_token = setup[COLLECTION].get_latest_session_token(actual_split_ranges, target_feed_range)
         assert updated_session_token == expected_session_token
 
     def test_invalid_feed_range(self, setup):
@@ -148,8 +148,8 @@ class TestSessionTokenHelpers:
         session_token = "0:1#54#3=50"
         feed_ranges_and_session_tokens = [(feed_range, session_token)]
         with pytest.raises(ValueError, match='There were no overlapping feed ranges with the target.'):
-            setup["created_collection"].get_updated_session_token(feed_ranges_and_session_tokens,
-                                                                  FeedRangeEpk(Range(
+            setup["created_collection"].get_latest_session_token(feed_ranges_and_session_tokens,
+                                                                 FeedRangeEpk(Range(
                                                                       "CC",
                                                                       "FF",
                                                                       True,

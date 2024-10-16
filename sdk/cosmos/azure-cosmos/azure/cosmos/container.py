@@ -41,7 +41,7 @@ from ._base import (
 from ._cosmos_client_connection import CosmosClientConnection
 from ._feed_range import FeedRange, FeedRangeEpk
 from ._routing.routing_range import Range
-from ._session_token_helpers import get_updated_session_token
+from ._session_token_helpers import get_latest_session_token
 from .offer import Offer, ThroughputProperties
 from .partition_key import (
     NonePartitionKeyValue,
@@ -1391,15 +1391,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return [FeedRangeEpk(Range.PartitionKeyRangeToRange(partitionKeyRange))
                 for partitionKeyRange in partition_key_ranges]
 
-    def get_updated_session_token(
+    def get_latest_session_token(
             self,
             feed_ranges_to_session_tokens: List[Tuple[FeedRange, str]],
             target_feed_range: FeedRange) -> str:
         """Gets the the most up to date session token from the list of session token and feed range tuples
-        for a specific target feed range. The feed range can be obtained from a response from any crud operation.
-        This should only be used if maintaining own session token or else the sdk will keep track of
-        session token. Session tokens and feed ranges are scoped to a container. Only input session tokens
-        and feed ranges obtained from the same container.
+        for a specific target feed range. The feed range can be obtained from a logical partition or by reading the
+        container feed ranges. This should only be used if maintaining own session token or else the sdk will
+        keep track of session token. Session tokens and feed ranges are scoped to a container. Only input session
+        tokens and feed ranges obtained from the same container.
         :param feed_ranges_to_session_tokens: List of partition key and session token tuples.
         :type feed_ranges_to_session_tokens: List[Tuple[FeedRange, str]]
         :param target_feed_range: feed range to get most up to date session token.
@@ -1407,7 +1407,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: a session token
         :rtype: str
         """
-        return get_updated_session_token(feed_ranges_to_session_tokens, target_feed_range)
+        return get_latest_session_token(feed_ranges_to_session_tokens, target_feed_range)
 
     def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> FeedRange:
         """Gets the feed range for a given partition key.

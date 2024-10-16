@@ -32,7 +32,7 @@ def create_item(hpk):
     return item
 
 
-class TestUpdatedSessionToken(unittest.TestCase):
+class TestLatestSessionToken(unittest.TestCase):
     """Test for session token helpers"""
 
     created_db: DatabaseProxy = None
@@ -48,7 +48,7 @@ class TestUpdatedSessionToken(unittest.TestCase):
         cls.database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
 
-    def test_updated_session_token_from_logical_pk(self):
+    def test_latest_session_token_from_logical_pk(self):
         container = self.database.create_container("test_updated_session_token_from_logical_pk" + str(uuid.uuid4()),
                                                    PartitionKey(path="/pk"),
                                                    offer_throughput=400)
@@ -59,7 +59,7 @@ class TestUpdatedSessionToken(unittest.TestCase):
         target_session_token, previous_session_token = self.create_items_logical_pk(container, target_feed_range,
                                                                                     previous_session_token,
                                                                                     feed_ranges_and_session_tokens)
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
         assert session_token == target_session_token
         feed_ranges_and_session_tokens.append((target_feed_range, session_token))
@@ -69,12 +69,12 @@ class TestUpdatedSessionToken(unittest.TestCase):
         target_session_token, _ = self.create_items_logical_pk(container, target_feed_range, session_token,
                                                                feed_ranges_and_session_tokens)
         target_feed_range = container.feed_range_from_partition_key(target_pk)
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
         assert session_token == target_session_token
         self.database.delete_container(container.id)
 
-    def test_updated_session_token_from_physical_pk(self):
+    def test_latest_session_token_from_physical_pk(self):
         container = self.database.create_container("test_updated_session_token_from_physical_pk" + str(uuid.uuid4()),
                                                    PartitionKey(path="/pk"),
                                                     offer_throughput=400)
@@ -85,7 +85,7 @@ class TestUpdatedSessionToken(unittest.TestCase):
                                                                                                    previous_session_token,
                                                                                                    feed_ranges_and_session_tokens)
 
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert session_token == target_session_token
 
         self.trigger_split(container, 11000)
@@ -94,7 +94,7 @@ class TestUpdatedSessionToken(unittest.TestCase):
                                                                                 session_token,
                                                                                 feed_ranges_and_session_tokens)
 
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert is_compound_session_token(session_token)
         session_tokens = session_token.split(",")
         assert len(session_tokens) == 2
@@ -107,7 +107,7 @@ class TestUpdatedSessionToken(unittest.TestCase):
         assert '2' in pk_range_ids
         self.database.delete_container(container.id)
 
-    def test_updated_session_token_hpk(self):
+    def test_latest_session_token_hpk(self):
         container = self.database.create_container("test_updated_session_token_hpk" + str(uuid.uuid4()),
                                                    PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"),
                                                    offer_throughput=400)
@@ -121,12 +121,12 @@ class TestUpdatedSessionToken(unittest.TestCase):
                                                                                                         feed_ranges_and_session_tokens,
                                                                                                         True)
 
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
         assert session_token == target_session_token
         self.database.delete_container(container.id)
 
 
-    def test_updated_session_token_logical_hpk(self):
+    def test_latest_session_token_logical_hpk(self):
         container = self.database.create_container("test_updated_session_token_from_logical_hpk" + str(uuid.uuid4()),
                                                    PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"),
                                                    offer_throughput=400)
@@ -138,7 +138,7 @@ class TestUpdatedSessionToken(unittest.TestCase):
                                                                                     previous_session_token,
                                                                                     feed_ranges_and_session_tokens,
                                                                                     True)
-        session_token = container.get_updated_session_token(feed_ranges_and_session_tokens, target_feed_range)
+        session_token = container.get_latest_session_token(feed_ranges_and_session_tokens, target_feed_range)
 
         assert session_token == target_session_token
         self.database.delete_container(container.id)

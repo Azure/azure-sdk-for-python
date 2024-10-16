@@ -163,7 +163,7 @@ def merge_ranges_with_subsets(overlapping_ranges: List[Tuple[Range, str]]) -> Li
         overlapping_ranges.remove(overlapping_ranges[0])
     return processed_ranges
 
-def get_updated_session_token(feed_ranges_to_session_tokens: List[Tuple[FeedRange, str]], target_feed_range: FeedRange):
+def get_latest_session_token(feed_ranges_to_session_tokens: List[Tuple[FeedRange, str]], target_feed_range: FeedRange):
     target_feed_range_epk = cast(FeedRangeEpk, target_feed_range)
     target_feed_range_normalized = target_feed_range_epk._feed_range_internal.get_normalized_range()
     # filter out tuples that overlap with target_feed_range and normalizes all the ranges
