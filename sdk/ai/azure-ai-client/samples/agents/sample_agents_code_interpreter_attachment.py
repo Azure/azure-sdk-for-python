@@ -21,7 +21,7 @@ USAGE:
     AI_CLIENT_CONNECTION_STRING - the Azure AI Project connection string, as found in your AI Studio Project.
 """
 
-import os, time
+import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import CodeInterpreterTool
 from azure.ai.client.models._enums import FilePurpose
@@ -74,7 +74,6 @@ with ai_client:
 
     run = ai_client.agents.create_and_process_run(thread_id=thread.id, assistant_id=agent.id)
     print(f"Created run, run ID: {run.id}")
-    
     
     ai_client.agents.delete_file(file.id)
     print("Deleted file")

@@ -67,7 +67,7 @@ with ai_client:
     toolset = ToolSet()
     toolset.add(file_search)
 
-    #Create agent with toolset and process assistant run
+    # Create agent with toolset and process assistant run
     agent = ai_client.agents.create_agent(
         model="gpt-4-1106-preview", name="my-assistant", instructions="Hello, you are helpful assistant and can search information from uploaded files", toolset=toolset
     )
