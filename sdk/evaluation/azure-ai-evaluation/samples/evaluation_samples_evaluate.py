@@ -11,12 +11,15 @@ DESCRIPTION:
     These samples demonstrate usage of various classes and methods used to perform evaluation in the azure-ai-evaluation library.
     
 USAGE:
-    python evaluation_samples_evaluate_methods.py
+    python evaluation_samples_evaluate.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_OPENAI_ENDPOINT.
+    1) AZURE_OPENAI_ENDPOINT
     2) AZURE_OPENAI_KEY
     3) AZURE_OPENAI_DEPLOYMENT
+    4) AZURE_SUBSCRIPTION_ID
+    5) AZURE_RESOURCE_GROUP_NAME
+    6) AZURE_PROJECT_NAME
 
 """
 
@@ -346,10 +349,6 @@ class EvaluationEvaluateSamples(object):
             response="Paris",
         )
         # [END indirect_attack_evaluator]
-
-
-
-
 
 
 if __name__ == "__main__":

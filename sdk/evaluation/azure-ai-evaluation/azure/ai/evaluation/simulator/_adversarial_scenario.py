@@ -6,7 +6,17 @@ from enum import Enum
 
 
 class AdversarialScenario(Enum):
-    """Adversarial scenario types"""
+    """Adversarial scenario types
+
+    .. admonition:: Example:
+
+    .. literalinclude:: ../samples/evaluation_samples_simulate.py
+        :start-after: [START adversarial_scenario]
+        :end-before: [END adversarial_scenario]
+        :language: python
+        :dedent: 8
+        :caption: Configure an AdversarialSimulator with an AdversarialConversation scenario.
+    """
 
     ADVERSARIAL_QA = "adv_qa"
     ADVERSARIAL_CONVERSATION = "adv_conversation"

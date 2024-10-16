@@ -496,7 +496,6 @@ def evaluate(
         :language: python
         :dedent: 8
         :caption: Run an evaluation on local data with Coherence and Relevance evaluators.
-    
     """
     try:
         return _evaluate(
