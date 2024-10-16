@@ -4,14 +4,14 @@
 # ------------------------------------
 
 """
-FILE: sample_agents_stream_iteration_with_toolset.py
+FILE: sample_agents_stream_iteration.py
 
 DESCRIPTION:
-    This sample demonstrates how to use agent operations with toolset in streaming from
+    This sample demonstrates how to use agent operations in streaming from
     the Azure Agents service using a synchronous client.
 
 USAGE:
-    python sample_agents_stream_iteration_with_toolset.py
+    python sample_agents_stream_iteration.py
 
     Before running the sample:
 
