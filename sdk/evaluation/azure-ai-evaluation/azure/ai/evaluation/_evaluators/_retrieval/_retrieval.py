@@ -107,34 +107,14 @@ class RetrievalEvaluator:
     :return: A function that evaluates and generates metrics for "chat" scenario.
     :rtype: Callable
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        chat_eval = RetrievalScoreEvaluator(model_config)
-        conversation = [
-            {"role": "user", "content": "What is the value of 2 + 2?"},
-            {"role": "assistant", "content": "2 + 2 = 4", "context": {
-                "citations": [
-                        {"id": "math_doc.md", "content": "Information about additions: 1 + 2 = 3, 2 + 2 = 4"}
-                        ]
-                }
-            }
-        ]
-        result = chat_eval(conversation=conversation)
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gpt_retrieval": 3.0
-            "evaluation_per_turn": {
-                "gpt_retrieval": {
-                    "score": [1.0, 2.0, 3.0]
-                }
-            }
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START retrieval_evaluator]
+        :end-before: [END retrieval_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a RetrievalEvaluator.
     """
 
     def __init__(self, model_config: dict):

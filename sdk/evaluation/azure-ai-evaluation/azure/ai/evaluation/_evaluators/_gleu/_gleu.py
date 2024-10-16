@@ -31,22 +31,14 @@ class GleuScoreEvaluator:
     sentence-level assessment, makes it ideal for detailed analysis of translation quality. GLEU is well-suited for
     use cases such as machine translation, text summarization, and text generation.
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        eval_fn = GleuScoreEvaluator()
-        result = eval_fn(
-            response="Tokyo is the capital of Japan.",
-            ground_truth="The capital of Japan is Tokyo.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gleu_score": 0.41
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START gleu_score_evaluator]
+        :end-before: [END gleu_score_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a GleuScoreEvaluator.
     """
 
     def __init__(self):

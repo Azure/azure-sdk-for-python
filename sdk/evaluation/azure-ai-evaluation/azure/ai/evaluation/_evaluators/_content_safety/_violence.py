@@ -17,27 +17,14 @@ class ViolenceEvaluator(RaiServiceEvaluatorBase):
         It contains subscription id, resource group, and project name.
     :type azure_ai_project: ~azure.ai.evaluation.AzureAIProject
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        azure_ai_project = {
-            "subscription_id": "<subscription_id>",
-            "resource_group_name": "<resource_group_name>",
-            "project_name": "<project_name>",
-        }
-        eval_fn = ViolenceEvaluator(azure_ai_project)
-        result = eval_fn(query="What is the capital of France?", response="Paris.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "violence": "High",
-            "violence_score": 6.5,
-            "violence_reason": "Some reason"
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START violence_evaluator]
+        :end-before: [END violence_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a ViolenceEvaluator.
     """
 
     @override

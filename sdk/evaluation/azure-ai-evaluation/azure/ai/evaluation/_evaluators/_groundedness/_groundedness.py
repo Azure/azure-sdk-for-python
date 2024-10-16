@@ -17,23 +17,14 @@ class GroundednessEvaluator(PromptyEvaluatorBase):
     :type model_config: Union[~azure.ai.evalation.AzureOpenAIModelConfiguration,
         ~azure.ai.evalation.OpenAIModelConfiguration]
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        eval_fn = GroundednessEvaluator(model_config)
-        result = eval_fn(
-            response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital, known for its blend of traditional culture \
-                and technological advancements.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gpt_groundedness": 5
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START groundedness_evaluator]
+        :end-before: [END groundedness_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a GroundednessEvaluator.
     """
 
     PROMPTY_FILE = "groundedness.prompty"

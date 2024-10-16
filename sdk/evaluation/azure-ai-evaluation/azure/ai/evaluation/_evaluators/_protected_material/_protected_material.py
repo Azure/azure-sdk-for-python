@@ -20,26 +20,14 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase):
     :return: Whether or not protected material was found in the response, with AI-generated reasoning.
     :rtype: Dict[str, str]
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        azure_ai_project = {
-            "subscription_id": "<subscription_id>",
-            "resource_group_name": "<resource_group_name>",
-            "project_name": "<project_name>",
-        }
-        eval_fn = ProtectedMaterialEvaluator(azure_ai_project)
-        result = eval_fn(query="What is the capital of France?", response="Paris.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "protected_material_label": "False",
-            "protected_material_reason": "This query does not contain any protected material."
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START protected_material_evaluator]
+        :end-before: [END protected_material_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a ProtectedMaterialEvaluator.
     """
 
     @override

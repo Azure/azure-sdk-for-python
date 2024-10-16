@@ -18,22 +18,14 @@ class FluencyEvaluator(PromptyEvaluatorBase):
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        eval_fn = FluencyEvaluator(model_config)
-        result = eval_fn(
-            query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gpt_fluency": 4.0
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START fluency_evaluator]
+        :end-before: [END fluency_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a FluencyEvaluator.
     """
 
     PROMPTY_FILE = "fluency.prompty"

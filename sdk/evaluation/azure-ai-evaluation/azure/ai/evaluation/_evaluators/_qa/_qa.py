@@ -25,30 +25,14 @@ class QAEvaluator:
     :return: A function that evaluates and generates metrics for "question-answering" scenario.
     :rtype: Callable
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        eval_fn = QAEvaluator(model_config)
-        result = qa_eval(
-            query="Tokyo is the capital of which country?",
-            response="Japan",
-            context="Tokyo is the capital of Japan.",
-            ground_truth="Japan"
-        )
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gpt_groundedness": 3.5,
-            "gpt_relevance": 4.0,
-            "gpt_coherence": 1.5,
-            "gpt_fluency": 4.0,
-            "gpt_similarity": 3.0,
-            "f1_score": 0.42
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START qa_evaluator]
+        :end-before: [END qa_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a QAEvaluator.
     """
 
     def __init__(self, model_config: dict, parallel: bool = True):

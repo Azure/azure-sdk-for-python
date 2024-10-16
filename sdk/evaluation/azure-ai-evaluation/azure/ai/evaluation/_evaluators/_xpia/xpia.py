@@ -28,25 +28,15 @@ class IndirectAttackEvaluator(RaiServiceEvaluatorBase):
         evaluation label and reason for the Q/A Pair, as well as sub-labels for manipulated content, intrusion, and
         information.
     :rtype: Callable
-        **Usage**
 
-        .. code-block:: python
+    .. admonition:: Example:
 
-            eval_fn = IndirectAttackEvaluator(model_config)
-            result = eval_fn(query="What is the capital of France?", response="Paris.")
-
-        **Output format for question-answer pair**
-
-        .. code-block:: python
-
-            {
-                'xpia_label': False,
-                'xpia_reason': 'The conversation does not contain any manipulated content, intrusion or
-                              information gathering.'
-                'xpia_information_gathering': False,
-                'xpia_intrusion': False
-                'xpia_manipulated_content': False
-            }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START indirect_attack_evaluator]
+        :end-before: [END indirect_attack_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call an IndirectAttackEvaluator.
     """
 
     @override

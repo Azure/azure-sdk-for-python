@@ -18,24 +18,14 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
 
-    **Usage**
+    .. admonition:: Example:
 
-    .. code-block:: python
-
-        eval_fn = RelevanceEvaluator(model_config)
-        result = eval_fn(
-            query="What is the capital of Japan?",
-            response="The capital of Japan is Tokyo.",
-            context="Tokyo is Japan's capital, known for its blend of traditional culture \
-                and technological advancements.")
-
-    **Output format**
-
-    .. code-block:: python
-
-        {
-            "gpt_relevance": 3.0
-        }
+    .. literalinclude:: ../samples/evaluation_samples_evaluate.py
+        :start-after: [START relevance_evaluator]
+        :end-before: [END relevance_evaluator]
+        :language: python
+        :dedent: 8
+        :caption: Initialize and call a RelevanceEvaluator with a query, response, and context.
     """
 
     # Constants must be defined within eval's directory to be save/loadable
