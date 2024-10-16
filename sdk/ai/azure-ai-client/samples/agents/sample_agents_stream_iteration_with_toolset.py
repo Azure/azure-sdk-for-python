@@ -24,7 +24,7 @@ USAGE:
 import os
 from azure.ai.client import AzureAIClient
 from azure.ai.client.models import AgentStreamEvent
-from azure.ai.client.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, SubmitToolOutputsAction, ThreadMessage, ThreadRun
+from azure.ai.client.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, ThreadMessage, ThreadRun
 from azure.ai.client.models import FunctionTool, ToolSet
 from azure.ai.client.operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
@@ -113,21 +113,6 @@ with ai_client:
                 
                 if event_data.status == "failed":
                     print(f"Run failed. Error: {event_data.last_error}")
-
-                if event_data.status == "requires_action" and isinstance(event_data.required_action, SubmitToolOutputsAction):
-                    tool_calls = event_data.required_action.submit_tool_outputs.tool_calls
-                    if not tool_calls:
-                        print("No tool calls to execute.")
-                        break
-
-                    toolset = ai_client.agents.get_toolset()
-                    if toolset:
-                        tool_outputs = toolset.execute_tool_calls(tool_calls)
-                    else:
-                        raise ValueError("Toolset is not available in the client.")
-
-                    if tool_outputs:
-                        handle_submit_tool_outputs(ai_client.agents, event_data.thread_id, event_data.id, tool_outputs)
                            
             elif isinstance(event_data, RunStep):
                 print(f"RunStep type: {event_data.type}, Status: {event_data.status}")
@@ -143,7 +128,7 @@ with ai_client:
                 print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
     ai_client.agents.delete_agent(agent.id)
-    print("Deleted assistant")
+    print("Deleted agent")
 
     messages = ai_client.agents.list_messages(thread_id=thread.id)
     print(f"Messages: {messages}")

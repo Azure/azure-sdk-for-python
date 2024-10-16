@@ -78,7 +78,7 @@ async def main():
         print(f"Run completed with status: {run.status}")
 
         await ai_client.agents.delete_agent(agent.id)
-        print("Deleted assistant")
+        print("Deleted agent")
 
         messages = await ai_client.agents.list_messages(thread_id=thread.id)
         print(f"Messages: {messages}")

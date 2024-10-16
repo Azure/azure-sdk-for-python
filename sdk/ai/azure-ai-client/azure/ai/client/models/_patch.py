@@ -19,6 +19,7 @@ from ._enums import AgentStreamEvent
 from ._models import (
     ConnectionsListSecretsResponse,
     MessageDeltaChunk,
+    SubmitToolOutputsAction,
     ThreadRun,
     RunStep,
     ThreadMessage,
@@ -35,7 +36,7 @@ from ._models import (
 )
 
 from abc import ABC, abstractmethod
-from typing import AsyncIterator, List, Dict, Any, Type, Optional, Iterator, Tuple, get_origin
+from typing import AsyncIterator, Awaitable, Callable, List, Dict, Any, Type, Optional, Iterator, Tuple, get_origin
 
 logger = logging.getLogger(__name__)
 
@@ -603,12 +604,14 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
     def __init__(
         self,
         response_iterator: AsyncIterator[bytes],
-        event_handler: Optional["AsyncAgentEventHandler"] = None,
+        submit_tool_outputs: Callable[[ThreadRun, Optional[AsyncAgentEventHandler]], Awaitable[None]],
+        event_handler: Optional['AsyncAgentEventHandler'] = None,
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.done = False
         self.buffer = ""
+        self.submit_tool_outputs = submit_tool_outputs        
 
     async def __aenter__(self):
         return self
@@ -703,6 +706,8 @@ class AsyncAgentRunStream(AsyncIterator[Tuple[str, Any]]):
     async def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
         event_type, event_data_obj = self._parse_event_data(event_data_str)
 
+        if isinstance(event_data_obj, ThreadRun) and event_data_obj.status == "requires_action" and isinstance(event_data_obj.required_action, SubmitToolOutputsAction):
+            await self.submit_tool_outputs(event_data_obj, self.event_handler)  
         if self.event_handler:
             try:
                 if isinstance(event_data_obj, MessageDeltaChunk):
@@ -742,12 +747,14 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
     def __init__(
         self,
         response_iterator: Iterator[bytes],
+        submit_tool_outputs: Callable[[ThreadRun, Optional[AgentEventHandler]], None],
         event_handler: Optional[AgentEventHandler] = None,
     ):
         self.response_iterator = response_iterator
         self.event_handler = event_handler
         self.done = False
         self.buffer = ""
+        self.submit_tool_outputs = submit_tool_outputs
 
     def __enter__(self):
         return self
@@ -842,6 +849,8 @@ class AgentRunStream(Iterator[Tuple[str, Any]]):
     def _process_event(self, event_data_str: str) -> Tuple[str, Any]:
         event_type, event_data_obj = self._parse_event_data(event_data_str)
 
+        if isinstance(event_data_obj, ThreadRun) and event_data_obj.status == "requires_action" and isinstance(event_data_obj.required_action, SubmitToolOutputsAction):
+            self.submit_tool_outputs(event_data_obj, self.event_handler)  
         if self.event_handler:
             try:
                 if isinstance(event_data_obj, MessageDeltaChunk):

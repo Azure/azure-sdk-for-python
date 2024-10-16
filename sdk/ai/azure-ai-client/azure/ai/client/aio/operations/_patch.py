@@ -7,12 +7,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from argparse import FileType
+from ..._vendor import FileType
 import io
 import logging
 import os
 import time
-from typing import IO, Any, Dict, List, AsyncIterable, MutableMapping, Optional, Union, overload
+from typing import IO, Any, AsyncIterator, Dict, List, AsyncIterable, MutableMapping, Optional, Union, cast, overload
 
 from azure.ai.client import _types
 from ._operations import EndpointsOperations as EndpointsOperationsGenerated
@@ -324,48 +324,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @overload
-    async def create_agent(
-        self,
-        model: str = _Unset,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        instructions: Optional[str] = None,
-        toolset: Optional[_models.ToolSet] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-        metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any,
-    ) -> _models.Agent:
-        """
-        Creates a new agent with toolset.
-
-        :keyword model: The ID of the model to use. Required if `body` is not provided.
-        :paramtype model: str
-        :keyword name: The name of the new agent. Default value is None.
-        :paramtype name: str
-        :keyword description: A description for the new agent. Default value is None.
-        :paramtype description: str
-        :keyword instructions: System instructions for the agent. Default value is None.
-        :paramtype instructions: str
-        :keyword toolset: Collection of tools (alternative to `tools` and `tool_resources`). Default
-         value is None.
-        :paramtype toolset: ~azure.ai.client.models.ToolSet
-        :keyword temperature: Sampling temperature for generating agent responses. Default value
-         is None.
-        :paramtype temperature: float
-        :keyword top_p: Nucleus sampling parameter. Default value is None.
-        :paramtype top_p: float
-        :keyword response_format: Response format for tool calls. Default value is None.
-        :paramtype response_format: ~azure.ai.client.models.AgentsApiResponseFormatOption
-        :keyword metadata: Key/value pairs for storing additional information. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :return: An Agent object.
-        :rtype: ~azure.ai.client.models.Agent
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-
     @distributed_trace_async
     async def create_agent(
         self,
@@ -377,7 +335,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         instructions: Optional[str] = None,
         tools: Optional[List[_models.ToolDefinition]] = None,
         tool_resources: Optional[_models.ToolResources] = None,
-        toolset: Optional[_models.ToolSet] = None,
+        toolset: Optional[_models.AsyncToolSet] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
@@ -429,12 +387,12 @@ class AgentsOperations(AgentsOperationsGenerated):
             **kwargs,
         )
 
-    def get_toolset(self) -> Optional[_models.ToolSet]:
+    def get_toolset(self) -> Optional[_models.AsyncToolSet]:
         """
         Get the toolset for the agent.
 
         :return: The toolset for the agent. If not set, returns None.
-        :rtype: ~azure.ai.client.models.ToolSet
+        :rtype: ~azure.ai.client.models.AsyncToolSet
         """
         if hasattr(self, "_toolset"):
             return self._toolset
@@ -478,7 +436,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
@@ -550,9 +507,6 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -596,7 +550,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.ThreadRun:
         """Creates a new run for an agent thread.
@@ -667,9 +620,6 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -729,7 +679,6 @@ class AgentsOperations(AgentsOperationsGenerated):
         tool_choice: Optional["_types.AgentsApiToolChoiceOption"] = None,
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
         metadata: Optional[Dict[str, str]] = None,
-        event_handler: Optional[_models.AgentEventHandler] = None,
         sleep_interval: int = 1,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -801,13 +750,10 @@ class AgentsOperations(AgentsOperationsGenerated):
          64 characters in length and values may be up to 512 characters in length. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :keyword event_handler: The event handler to use for processing events during the run. Default
-            value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
         :keyword sleep_interval: The time in seconds to wait between polling the service for run status.
             Default value is 1.
         :paramtype sleep_interval: int
-        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.client.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -828,7 +774,6 @@ class AgentsOperations(AgentsOperationsGenerated):
             tool_choice=tool_choice,
             response_format=response_format,
             metadata=metadata,
-            event_handler=event_handler,
             **kwargs,
         )
 
@@ -837,11 +782,11 @@ class AgentsOperations(AgentsOperationsGenerated):
             time.sleep(sleep_interval)
             run = await self.get_run(thread_id=thread_id, run_id=run.id)
 
-            if run.status == "requires_action" and run.required_action.submit_tool_outputs:
+            if run.status == "requires_action" and isinstance(run.required_action, _models.SubmitToolOutputsAction):
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
                     logging.warning("No tool calls provided - cancelling run")
-                    self.cancel_run(thread_id=thread_id, run_id=run.id)
+                    await self.cancel_run(thread_id=thread_id, run_id=run.id)
                     break
 
                 toolset = self.get_toolset()
@@ -852,14 +797,14 @@ class AgentsOperations(AgentsOperationsGenerated):
 
                 logging.info("Tool outputs: %s", tool_outputs)
                 if tool_outputs:
-                    self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
+                    await self.submit_tool_outputs_to_run(thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs)
 
             logging.info("Current run status: %s", run.status)
 
         return run
 
     @overload
-    async def create_stream(
+    def create_stream(
         self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AsyncAgentRunStream:
         """Creates a new stream for an agent thread.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
@@ -871,7 +816,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.client.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -899,7 +844,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         event_handler: Optional[_models.AsyncAgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.AsyncAgentRunStream:
-        """Creates a new run for an agent thread.
+        """Creates a new stream for an agent thread.
 
         :param thread_id: Required.
         :type thread_id: str
@@ -970,8 +915,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
-        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :paramtype event_handler: ~azure.ai.client.models.AsyncAgentEventHandler
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.client.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -989,7 +934,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.client.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1087,8 +1032,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype metadata: dict[str, str]
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
-        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :paramtype event_handler: ~azure.ai.client.models.AsyncAgentEventHandler
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.client.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1125,8 +1070,10 @@ class AgentsOperations(AgentsOperationsGenerated):
 
         else:
             raise ValueError("Invalid combination of arguments provided.")
+        
+        response_iterator: AsyncIterator[bytes] = cast(AsyncIterator[bytes], await response)
 
-        return _models.AsyncAgentRunStream(await response, event_handler)
+        return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
 
     @overload
     async def submit_tool_outputs_to_run(
@@ -1176,7 +1123,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype content_type: str
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
+        :paramtype event_handler: ~azure.ai.client.models.AsyncAgentEventHandler
         :return: ThreadRun. The ThreadRun is compatible with MutableMapping
         :rtype: ~azure.ai.client.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1257,7 +1204,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     async def submit_tool_outputs_to_stream(
         self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AsyncAgentRunStream:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
@@ -1270,7 +1217,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.client.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1286,7 +1233,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         event_handler: Optional[_models.AsyncAgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.AsyncAgentRunStream:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
@@ -1301,8 +1248,8 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype content_type: str
         :keyword event_handler: The event handler to use for processing events during the run. Default
             value is None.
-        :paramtype event_handler: ~azure.ai.client.models.AgentEventHandler
-        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :paramtype event_handler: ~azure.ai.client.models.AsyncAgentEventHandler
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.client.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1311,7 +1258,7 @@ class AgentsOperations(AgentsOperationsGenerated):
     async def submit_tool_outputs_to_stream(
         self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AsyncAgentRunStream:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.
 
@@ -1324,7 +1271,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.client.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1337,10 +1284,10 @@ class AgentsOperations(AgentsOperationsGenerated):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tool_outputs: List[_models.ToolOutput] = _Unset,
-        event_handler: Optional[_models.AgentEventHandler] = None,
+        event_handler: Optional[_models.AsyncAgentEventHandler] = None,
         **kwargs: Any,
     ) -> _models.AsyncAgentRunStream:
-        """Submits outputs from tools as requested by tool calls in a run. Runs that need submitted tool
+        """Submits outputs from tools as requested by tool calls in a stream. Runs that need submitted tool
         outputs will have a status of 'requires_action' with a required_action.type of
         'submit_tool_outputs'.  terminating when the Run enters a terminal state with a ``data: [DONE]`` message.
 
@@ -1354,7 +1301,7 @@ class AgentsOperations(AgentsOperationsGenerated):
         :paramtype tool_outputs: list[~azure.ai.client.models.ToolOutput]
         :param event_handler: The event handler to use for processing events during the run.
         :param kwargs: Additional parameters.
-        :return: AsyncAgentRunStream.  AsyncAgentRunStream is compatible with Iterable and supports streaming.
+        :return: AgentRunStream.  AgentRunStream is compatible with Iterable and supports streaming.
         :rtype: ~azure.ai.client.models.AsyncAgentRunStream
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -1375,7 +1322,33 @@ class AgentsOperations(AgentsOperationsGenerated):
         else:
             raise ValueError("Invalid combination of arguments provided.")
 
-        return _models.AsyncAgentRunStream(await response, event_handler)
+        # Cast the response to Iterator[bytes] for type correctness
+        response_iterator: AsyncIterator[bytes] = cast(AsyncIterator[bytes], await response)
+
+        return _models.AsyncAgentRunStream(response_iterator, self._handle_submit_tool_outputs, event_handler)
+    
+    async def _handle_submit_tool_outputs(self, run: _models.ThreadRun, event_handler: Optional[_models.AsyncAgentEventHandler] = None) -> None:
+        if isinstance(run.required_action, _models.SubmitToolOutputsAction):
+            tool_calls = run.required_action.submit_tool_outputs.tool_calls
+            if not tool_calls:
+                logger.debug("No tool calls to execute.")
+                return
+
+            toolset = self.get_toolset()
+            if toolset:
+                tool_outputs = await toolset.execute_tool_calls(tool_calls)
+            else:
+                raise ValueError("Toolset is not available in the client.")
+            
+            logger.info(f"Tool outputs: {tool_outputs}")
+            if tool_outputs:
+                async with await self.submit_tool_outputs_to_stream(
+                    thread_id=run.thread_id, 
+                    run_id=run.id, 
+                    tool_outputs=tool_outputs, 
+                    event_handler=event_handler
+            ) as stream:
+                    await stream.until_done()    
 
     @overload
     async def upload_file(self, body: JSON, **kwargs: Any) -> _models.OpenAIFile:
@@ -1563,16 +1536,24 @@ class AgentsOperations(AgentsOperationsGenerated):
         :raises IOError: If there are issues with reading the file.
         :raises: HttpResponseError for HTTP errors.
         """
-        file = await self.upload_file(
-            body=body, file=file, file_path=file_path, purpose=purpose, filename=filename, **kwargs
-        )
+        if body is not None:
+            uploaded_file = await self.upload_file(body=body, **kwargs)
+        elif file is not None and purpose is not None:
+            uploaded_file = await self.upload_file(file=file, purpose=purpose, filename=filename, **kwargs)
+        elif file_path is not None and purpose is not None:
+            uploaded_file = await self.upload_file(file_path=file_path, purpose=purpose, **kwargs)
+        else:
+            raise ValueError(
+                "Invalid parameters for upload_file_and_poll. Please provide either 'body', "
+                "or both 'file' and 'purpose', or both 'file_path' and 'purpose'."
+            )
 
-        while file.status in ["uploaded", "pending", "running"]:
+        while uploaded_file.status in {"uploaded", "pending", "running"}:
             time.sleep(sleep_interval)
-            file = await self.get_file(file.id)
+            uploaded_file = await self.get_file(uploaded_file.id)
 
-        return file
-
+        return uploaded_file
+   
     @overload
     async def create_vector_store_and_poll(
         self, body: JSON, *, content_type: str = "application/json", sleep_interval: float = 1, **kwargs: Any
@@ -1655,15 +1636,16 @@ class AgentsOperations(AgentsOperationsGenerated):
     @distributed_trace_async
     async def create_vector_store_and_poll(
         self,
-        body: Union[JSON, IO[bytes]] = None,
+        body: Union[JSON, IO[bytes], None] = None,
         *,
+        content_type: str = "application/json",
         file_ids: Optional[List[str]] = None,
         name: Optional[str] = None,
         expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
         chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
         metadata: Optional[Dict[str, str]] = None,
         sleep_interval: float = 1,
-        **kwargs: Any,
+        **kwargs: Any
     ) -> _models.VectorStore:
         """Creates a vector store.
 
@@ -1691,16 +1673,25 @@ class AgentsOperations(AgentsOperationsGenerated):
         :rtype: ~azure.ai.client.models.VectorStore
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        
+        if body is not None:
+            vector_store = await self.create_vector_store(body=body, content_type=content_type, **kwargs)
+        elif file_ids is not None or (name is not None and expires_after is not None):
+            vector_store = await self.create_vector_store(
+                content_type=content_type,
+                file_ids=file_ids,
+                name=name,
+                expires_after=expires_after,
+                chunking_strategy=chunking_strategy,
+                metadata=metadata,
+                **kwargs
+            )
+        else:
+            raise ValueError(
+                "Invalid parameters for create_vector_store_and_poll. Please provide either 'body', "
+                "'file_ids', or 'name' and 'expires_after'."
+            )
 
-        vector_store = await self.create_vector_store(
-            body=body,
-            file_ids=file_ids,
-            name=name,
-            expires_after=expires_after,
-            chunking_strategy=chunking_strategy,
-            metadata=metadata,
-            **kwargs,
-        )
         while vector_store.status == "in_progress":
             time.sleep(sleep_interval)
             vector_store = await self.get_vector_store(vector_store.id)

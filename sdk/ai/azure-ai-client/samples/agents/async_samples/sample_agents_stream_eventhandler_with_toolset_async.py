@@ -24,7 +24,7 @@ import asyncio
 from typing import Any
 
 from azure.ai.client.aio import AzureAIClient
-from azure.ai.client.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, SubmitToolOutputsAction, ThreadMessage, ThreadRun
+from azure.ai.client.models import MessageDeltaChunk, MessageDeltaTextContent, RunStep, ThreadMessage, ThreadRun
 from azure.ai.client.models import AsyncAgentEventHandler, AsyncFunctionTool, AsyncToolSet
 from azure.ai.client.aio.operations import AgentsOperations
 from azure.identity import DefaultAzureCredential
@@ -35,9 +35,6 @@ from user_async_functions import user_async_functions
 
 
 class MyEventHandler(AsyncAgentEventHandler):
-
-    def __init__(self, agents: AgentsOperations) -> None:
-        self._agents = agents
 
     async def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
         for content_part in delta.delta.content:
@@ -54,9 +51,6 @@ class MyEventHandler(AsyncAgentEventHandler):
         if run.status == "failed":
             print(f"Run failed. Error: {run.last_error}")
 
-        if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
-            await self._handle_submit_tool_outputs(run)
-
     async def on_run_step(self, step: "RunStep") -> None:
         print(f"RunStep type: {step.type}, Status: {step.status}")
 
@@ -68,32 +62,6 @@ class MyEventHandler(AsyncAgentEventHandler):
 
     async def on_unhandled_event(self, event_type: str, event_data: Any) -> None:
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
-
-    async def _handle_submit_tool_outputs(self, run: "ThreadRun") -> None:
-        if isinstance(run.required_action, SubmitToolOutputsAction):
-            tool_calls = run.required_action.submit_tool_outputs.tool_calls
-            if not tool_calls:
-                print("No tool calls to execute.")
-                return
-            if not self._agents:
-                print("AssistantClient not set. Cannot execute tool calls using toolset.")
-                return
-
-            toolset = self._agents.get_toolset()
-            if toolset:
-                tool_outputs = await toolset.execute_tool_calls(tool_calls)
-            else:
-                raise ValueError("Toolset is not available in the client.")
-            
-            print(f"Tool outputs: {tool_outputs}")
-            if tool_outputs:
-                async with await self._agents.submit_tool_outputs_to_stream(
-                    thread_id=run.thread_id, 
-                    run_id=run.id, 
-                    tool_outputs=tool_outputs, 
-                    event_handler=self
-            ) as stream:
-                    await stream.until_done()
 
 
 async def main():
@@ -140,12 +108,12 @@ async def main():
         async with await ai_client.agents.create_stream(
             thread_id=thread.id, 
             assistant_id=agent.id,
-            event_handler=MyEventHandler(ai_client.agents)
+            event_handler=MyEventHandler()
         ) as stream:
             await stream.until_done()
 
         await ai_client.agents.delete_agent(agent.id)
-        print("Deleted assistant")
+        print("Deleted agent")
 
         messages = await ai_client.agents.list_messages(thread_id=thread.id)
         print(f"Messages: {messages}")
