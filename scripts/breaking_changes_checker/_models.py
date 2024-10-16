@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 import re
+from enum import Enum
 from typing import List, Optional, NamedTuple, Protocol, runtime_checkable, Union
 
 class BreakingChange(NamedTuple):
@@ -23,7 +24,7 @@ class Suppression(NamedTuple):
     function_name: Optional[str] = None
     parameter_or_property_name: Optional[str] = None
 
-class CheckerType:
+class CheckerType(str, Enum):
     MODULE = "module"
     CLASS = "class"
     FUNCTION_OR_METHOD = "function_or_method"
