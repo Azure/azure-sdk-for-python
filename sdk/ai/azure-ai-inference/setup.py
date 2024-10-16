@@ -61,6 +61,7 @@ setup(
     include_package_data=True,
     package_data={
         "azure.ai.inference": ["py.typed"],
+        "azure.ai.prompty": ["py.typed"],
     },
     install_requires=[
         "isodate>=0.6.1",
