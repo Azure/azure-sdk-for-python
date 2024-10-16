@@ -375,6 +375,18 @@ class DistillationJob(Job, JobIOMixin):
 
         return result
 
+    @classmethod
+    def _load_from_rest(cls, obj: RestJobBase) -> "DistillationJob":
+        """Loads the rest object to a dict containing items to init the AutoMLJob objects.
+
+        :param obj: Azure Resource Manager resource envelope.
+        :type obj: JobBase
+        :raises ValidationException: task type validation error
+        :return: A DistillationJob
+        :rtype: DistillationJob
+        """
+        return DistillationJob._from_rest_object(obj)
+
     # TODO: Remove once Distillation is added to MFE
     def _add_distillation_properties(self, properties: Dict) -> None:
         properties[AzureMLDistillationProperties.EnableDistillation] = True

@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from typing import Optional
 
 from azure.ai.ml._utils._experimental import experimental
 
@@ -11,7 +12,7 @@ class DistillationPromptSettings:
         self,
         enable_chain_of_thought: bool = False,
         enable_chain_of_density: bool = False,
-        max_len_summary: int = 80,
+        max_len_summary: Optional[int] = None,
         # custom_prompt: Optional[str] = None
     ):
         self._enable_chain_of_thought = enable_chain_of_thought
@@ -55,7 +56,7 @@ class DistillationPromptSettings:
         self._enable_chain_of_density = value
 
     @property
-    def max_len_summary(self) -> int:
+    def max_len_summary(self) -> Optional[int]:
         """The number of tokens to use for summarization.
 
         :return: The number of tokens to use for summarization
@@ -64,7 +65,7 @@ class DistillationPromptSettings:
         return self._max_len_summary
 
     @max_len_summary.setter
-    def max_len_summary(self, length: int) -> None:
+    def max_len_summary(self, length: Optional[int]) -> None:
         """Set the number of tokens to use for summarization.
 
         :param length: The number of tokens to use for summarization.

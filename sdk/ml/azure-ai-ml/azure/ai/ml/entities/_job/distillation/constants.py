@@ -8,9 +8,6 @@ class AzureMLDistillationProperties:
     DataGenerationType = "azureml.data_generation_type"
     DataGenerationTaskType = "azureml.data_generation_task_type"
     TeacherModel = "azureml.teacher_model"
-    PromptSettings = "azureml.prompt_settings"
-    InferenceParameters = "azureml.inference_parameters"
-    EndpointRequestSettings = "azureml.endpoint_request_settings"
     InstanceType = "azureml.instance_type"
 
 
