@@ -15,6 +15,19 @@ class DistillationPromptSettings:
         max_len_summary: Optional[int] = None,
         # custom_prompt: Optional[str] = None
     ):
+        """Initialize DistillationPromptSettings.
+
+        param enable_chain_of_thought: Whether or not to enable chain of thought which modifies the system prompt
+                                       used. Can be used for all `data_generation_task_type` values except
+                                       `SUMMARIZATION`.
+        type enable_chain_of_thought: bool
+        param enable_chain_of_density: Whether or not to enable chain of density which modifies the system prompt
+                                       used. Can only be used for `data_generation_task_type` of `SUMMARIZATION`.
+        type enable_chain_of_density: bool
+        param max_len_summary: The maximum length of the summary generated for data_generation_task_type` of
+                               `SUMMARIZATION`.
+        type max_len_summary: Optional[int]
+        """
         self._enable_chain_of_thought = enable_chain_of_thought
         self._enable_chain_of_density = enable_chain_of_density
         self._max_len_summary = max_len_summary
@@ -127,6 +140,15 @@ class DistillationPromptSettings:
 @experimental
 class EndpointRequestSettings:
     def __init__(self, request_batch_size: Optional[int] = None, min_endpoint_success_ratio: Optional[float] = None):
+        """Initialize EndpointRequestSettings.
+
+        param request_batch_size: The number of requests to send to the teacher model endpoint as a batch.
+        type request_batch_size: Optional[int]
+        param min_endpoint_success_ratio: The ratio of (successful requests / total requests) needed for the
+                                          data generation step to be considered successful. Must be a value between
+                                          0 and 1 inclusive.
+        type min_endpoint_success_ratio: Optional[float]
+        """
         self._request_batch_size = request_batch_size
         self._min_endpoint_success_ratio = min_endpoint_success_ratio
 

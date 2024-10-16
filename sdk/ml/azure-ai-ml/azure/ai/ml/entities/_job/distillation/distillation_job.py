@@ -233,6 +233,13 @@ class DistillationJob(Job, JobIOMixin):
         inference_parameters: Optional[Dict] = None,
         endpoint_request_settings: Optional[EndpointRequestSettings] = None,
     ):
+        """Set settings related to the teacher model.
+
+        :param inference_parameters: Settings the teacher model uses during inferencing.
+        :type inference_parameters: Optional[Dict]
+        :param endpoint_request_settings: Settings for inference requests to the endpoint
+        :type endpoint_request_settings: Optional[EndpointRequestSettings]
+        """
         self._inference_parameters = (
             inference_parameters if inference_parameters is not None else self._inference_parameters
         )
@@ -241,9 +248,19 @@ class DistillationJob(Job, JobIOMixin):
         )
 
     def set_prompt_settings(self, prompt_settings: Optional[DistillationPromptSettings]):
+        """Set settings related to the system prompt used for generating data.
+
+        :param prompt_settings: Settings related to the system prompt used for generating data.
+        :type prompt_settings: Optional[DistillationPromptSettings]
+        """
         self._prompt_settings = prompt_settings if prompt_settings is not None else self._prompt_settings
 
     def set_finetuning_settings(self, hyperparameters: Optional[Dict]):
+        """Set the hyperparamters for finetuning.
+
+        :param hyperparameters: The hyperparameters for finetuning.
+        :type hyperparameters: Optional[Dict]
+        """
         self._hyperparameters = hyperparameters if hyperparameters is not None else self._hyperparameters
 
     def _to_dict(self) -> Dict:  # pylint: disable=arguments-differ
@@ -357,7 +374,6 @@ class DistillationJob(Job, JobIOMixin):
         if isinstance(distillation.model, str):
             distillation.model = MLFlowModelJobInput(uri=distillation.model)
 
-        print(f"properties are {self.properties}")
         self._add_distillation_properties(self.properties)
 
         finetuning_job = RestFineTuningJob(
