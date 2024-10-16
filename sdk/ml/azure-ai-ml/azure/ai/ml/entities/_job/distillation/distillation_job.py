@@ -397,18 +397,21 @@ class DistillationJob(Job, JobIOMixin):
         properties[f"{AzureMLDistillationProperties.TeacherModel}.endpoint_name"] = self._teacher_model_endpoint
 
         if self._prompt_settings:
-            for setting, val in self._prompt_settings.items():
-                properties[f"azureml.{setting.strip('_')}"] = val
+            for setting, value in self._prompt_settings.items():
+                if value is not None:
+                    properties[f"azureml.{setting.strip('_')}"] = value
 
         if self._inference_parameters:
             for inference_key, value in self._inference_parameters.items():
-                properties[f"{AzureMLDistillationProperties.TeacherModel}.{inference_key}"] = value
+                if value is not None:
+                    properties[f"{AzureMLDistillationProperties.TeacherModel}.{inference_key}"] = value
 
         if self._endpoint_request_settings:
             for setting, value in self._endpoint_request_settings.items():
-                properties[f"azureml.{setting.strip('_')}"] = value
+                if value is not None:
+                    properties[f"azureml.{setting.strip('_')}"] = value
 
-        if self._resources:
+        if self._resources and self._resources.instance_type:
             properties[f"{AzureMLDistillationProperties.InstanceType}.data_generation"] = self._resources.instance_type
 
     # TODO: Remove once Distillation is added to MFE
@@ -420,16 +423,15 @@ class DistillationJob(Job, JobIOMixin):
         resources = {}
         teacher_model = ""
         for key, val in properties.items():
+            param = key.split(".")[-1]
             if AzureMLDistillationProperties.TeacherModel in key:
-                param = key.split(".")[-1]
                 if param == "endpoint_name":
                     teacher_model = val
                 else:
                     inference_parameters[param] = val
             elif AzureMLDistillationProperties.InstanceType in key:
-                resources[key.split(".")[-1]] = val
+                resources[key.split(".")[1]] = val
             else:
-                param = key.split(".")[-1]
                 if param in EndpointSettings.valid_settings:
                     endpoint_settings[param] = val
                 elif param in PromptSettings.valid_settings:

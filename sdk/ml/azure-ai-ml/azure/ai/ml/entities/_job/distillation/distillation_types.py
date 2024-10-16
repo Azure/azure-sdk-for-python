@@ -126,12 +126,12 @@ class DistillationPromptSettings:
 
 @experimental
 class EndpointRequestSettings:
-    def __init__(self, request_batch_size: int = 10, min_endpoint_success_ratio: float = 0.7):
+    def __init__(self, request_batch_size: Optional[int] = None, min_endpoint_success_ratio: Optional[float] = None):
         self._request_batch_size = request_batch_size
         self._min_endpoint_success_ratio = min_endpoint_success_ratio
 
     @property
-    def request_batch_size(self) -> int:
+    def request_batch_size(self) -> Optional[int]:
         """Get the number of inference requests to send to the teacher model as a batch.
 
         :return: The number of inference requests to send to the teacher model as a batch.
@@ -140,7 +140,7 @@ class EndpointRequestSettings:
         return self._request_batch_size
 
     @request_batch_size.setter
-    def request_batch_size(self, value: int) -> None:
+    def request_batch_size(self, value: Optional[int]) -> None:
         """Set the number of inference requests to send to the teacher model as a batch.
 
         :param value: The number of inference requests to send to the teacher model as a batch.
@@ -149,7 +149,7 @@ class EndpointRequestSettings:
         self._request_batch_size = value
 
     @property
-    def min_endpoint_success_ratio(self) -> float:
+    def min_endpoint_success_ratio(self) -> Optional[float]:
         """Get the minimum ratio of successful inferencing requests.
         :return: The minimum ratio of successful inferencing requests.
         :rtype: float
@@ -157,7 +157,7 @@ class EndpointRequestSettings:
         return self._min_endpoint_success_ratio
 
     @min_endpoint_success_ratio.setter
-    def min_endpoint_success_ratio(self, ratio: float) -> None:
+    def min_endpoint_success_ratio(self, ratio: Optional[float]) -> None:
         """Set the minimum ratio of successful inferencing requests.
 
         :param ratio: The minimum ratio of successful inferencing requests.
