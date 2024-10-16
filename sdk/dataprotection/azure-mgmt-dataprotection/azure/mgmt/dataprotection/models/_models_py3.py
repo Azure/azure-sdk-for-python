@@ -23,7 +23,7 @@ class DeleteOption(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AbsoluteDeleteOption
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar duration: Duration of deletion after given timespan. Required.
     :vartype duration: str
@@ -56,7 +56,7 @@ class DeleteOption(_serialization.Model):
 class AbsoluteDeleteOption(DeleteOption):
     """Delete option with duration.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar duration: Duration of deletion after given timespan. Required.
     :vartype duration: str
@@ -86,7 +86,7 @@ class AbsoluteDeleteOption(DeleteOption):
 class AdHocBackupRuleOptions(_serialization.Model):
     """Adhoc backup rules.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar rule_name: Required.
     :vartype rule_name: str
@@ -162,7 +162,7 @@ class TriggerContext(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AdhocBasedTriggerContext, ScheduleBasedTriggerContext
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -192,7 +192,7 @@ class TriggerContext(_serialization.Model):
 class AdhocBasedTriggerContext(TriggerContext):
     """Adhoc trigger context.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -227,7 +227,7 @@ class AuthCredentials(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     SecretStoreBasedAuthCredentials
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -255,7 +255,7 @@ class AzureBackupRecoveryPoint(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureBackupDiscreteRecoveryPoint
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Required.
     :vartype object_type: str
@@ -282,7 +282,7 @@ class AzureBackupDiscreteRecoveryPoint(AzureBackupRecoveryPoint):  # pylint: dis
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Required.
     :vartype object_type: str
@@ -394,10 +394,10 @@ class AzureBackupDiscreteRecoveryPoint(AzureBackupRecoveryPoint):  # pylint: dis
         self.recovery_point_state = recovery_point_state
 
 
-class AzureBackupFindRestorableTimeRangesRequest(_serialization.Model):
+class AzureBackupFindRestorableTimeRangesRequest(_serialization.Model):  # pylint: disable=name-too-long
     """List Restore Ranges Request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_data_store_type: Gets or sets the type of the source data store. Required. Known
      values are: "OperationalStore", "VaultStore", and "ArchiveStore".
@@ -512,7 +512,7 @@ class DppWorkerRequest(_serialization.Model):
         self.http_method = http_method
 
 
-class AzureBackupFindRestorableTimeRangesRequestResource(DppWorkerRequest):
+class AzureBackupFindRestorableTimeRangesRequestResource(DppWorkerRequest):  # pylint: disable=name-too-long
     """List Restore Ranges Request.
 
     :ivar subscription_id:
@@ -591,7 +591,7 @@ class AzureBackupFindRestorableTimeRangesRequestResource(DppWorkerRequest):
         self.content = content
 
 
-class AzureBackupFindRestorableTimeRangesResponse(_serialization.Model):
+class AzureBackupFindRestorableTimeRangesResponse(_serialization.Model):  # pylint: disable=name-too-long
     """List Restore Ranges Response.
 
     :ivar restorable_time_ranges: Returns the Restore Ranges available on the Backup Instance.
@@ -662,7 +662,7 @@ class DppResource(_serialization.Model):
         self.system_data = None
 
 
-class AzureBackupFindRestorableTimeRangesResponseResource(DppResource):
+class AzureBackupFindRestorableTimeRangesResponseResource(DppResource):  # pylint: disable=name-too-long
     """List Restore Ranges Response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -713,7 +713,7 @@ class AzureBackupJob(_serialization.Model):  # pylint: disable=too-many-instance
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar activity_id: Job Activity Id. Required.
     :vartype activity_id: str
@@ -1061,7 +1061,7 @@ class BackupParameters(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureBackupParams
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -1086,7 +1086,7 @@ class BackupParameters(_serialization.Model):
 class AzureBackupParams(BackupParameters):
     """Azure backup parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -1120,7 +1120,7 @@ class AzureBackupRestoreRequest(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureBackupRecoveryPointBasedRestoreRequest, AzureBackupRecoveryTimeBasedRestoreRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Required.
     :vartype object_type: str
@@ -1132,6 +1132,9 @@ class AzureBackupRestoreRequest(_serialization.Model):
     :ivar source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which is
      being recovered.
     :vartype source_resource_id: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar identity_details: Contains information of the Identity Details for the BI.
      If it is null, default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
@@ -1148,6 +1151,7 @@ class AzureBackupRestoreRequest(_serialization.Model):
         "restore_target_info": {"key": "restoreTargetInfo", "type": "RestoreTargetInfoBase"},
         "source_data_store_type": {"key": "sourceDataStoreType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "identity_details": {"key": "identityDetails", "type": "IdentityDetails"},
     }
 
@@ -1164,6 +1168,7 @@ class AzureBackupRestoreRequest(_serialization.Model):
         restore_target_info: "_models.RestoreTargetInfoBase",
         source_data_store_type: Union[str, "_models.SourceDataStoreType"],
         source_resource_id: Optional[str] = None,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         identity_details: Optional["_models.IdentityDetails"] = None,
         **kwargs: Any
     ) -> None:
@@ -1176,6 +1181,9 @@ class AzureBackupRestoreRequest(_serialization.Model):
         :keyword source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which
          is being recovered.
         :paramtype source_resource_id: str
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword identity_details: Contains information of the Identity Details for the BI.
          If it is null, default will be considered as System Assigned.
         :paramtype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
@@ -1185,16 +1193,17 @@ class AzureBackupRestoreRequest(_serialization.Model):
         self.restore_target_info = restore_target_info
         self.source_data_store_type = source_data_store_type
         self.source_resource_id = source_resource_id
+        self.resource_guard_operation_requests = resource_guard_operation_requests
         self.identity_details = identity_details
 
 
-class AzureBackupRecoveryPointBasedRestoreRequest(AzureBackupRestoreRequest):
+class AzureBackupRecoveryPointBasedRestoreRequest(AzureBackupRestoreRequest):  # pylint: disable=name-too-long
     """Azure backup recoveryPoint based restore request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureBackupRestoreWithRehydrationRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Required.
     :vartype object_type: str
@@ -1206,6 +1215,9 @@ class AzureBackupRecoveryPointBasedRestoreRequest(AzureBackupRestoreRequest):
     :ivar source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which is
      being recovered.
     :vartype source_resource_id: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar identity_details: Contains information of the Identity Details for the BI.
      If it is null, default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
@@ -1225,6 +1237,7 @@ class AzureBackupRecoveryPointBasedRestoreRequest(AzureBackupRestoreRequest):
         "restore_target_info": {"key": "restoreTargetInfo", "type": "RestoreTargetInfoBase"},
         "source_data_store_type": {"key": "sourceDataStoreType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "identity_details": {"key": "identityDetails", "type": "IdentityDetails"},
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
     }
@@ -1240,6 +1253,7 @@ class AzureBackupRecoveryPointBasedRestoreRequest(AzureBackupRestoreRequest):
         source_data_store_type: Union[str, "_models.SourceDataStoreType"],
         recovery_point_id: str,
         source_resource_id: Optional[str] = None,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         identity_details: Optional["_models.IdentityDetails"] = None,
         **kwargs: Any
     ) -> None:
@@ -1252,6 +1266,9 @@ class AzureBackupRecoveryPointBasedRestoreRequest(AzureBackupRestoreRequest):
         :keyword source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which
          is being recovered.
         :paramtype source_resource_id: str
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword identity_details: Contains information of the Identity Details for the BI.
          If it is null, default will be considered as System Assigned.
         :paramtype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
@@ -1262,6 +1279,7 @@ class AzureBackupRecoveryPointBasedRestoreRequest(AzureBackupRestoreRequest):
             restore_target_info=restore_target_info,
             source_data_store_type=source_data_store_type,
             source_resource_id=source_resource_id,
+            resource_guard_operation_requests=resource_guard_operation_requests,
             identity_details=identity_details,
             **kwargs
         )
@@ -1344,10 +1362,10 @@ class AzureBackupRecoveryPointResourceList(DppResourceList):
         self.value = value
 
 
-class AzureBackupRecoveryTimeBasedRestoreRequest(AzureBackupRestoreRequest):
+class AzureBackupRecoveryTimeBasedRestoreRequest(AzureBackupRestoreRequest):  # pylint: disable=name-too-long
     """AzureBackup RecoveryPointTime Based Restore Request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Required.
     :vartype object_type: str
@@ -1359,6 +1377,9 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(AzureBackupRestoreRequest):
     :ivar source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which is
      being recovered.
     :vartype source_resource_id: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar identity_details: Contains information of the Identity Details for the BI.
      If it is null, default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
@@ -1379,6 +1400,7 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(AzureBackupRestoreRequest):
         "restore_target_info": {"key": "restoreTargetInfo", "type": "RestoreTargetInfoBase"},
         "source_data_store_type": {"key": "sourceDataStoreType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "identity_details": {"key": "identityDetails", "type": "IdentityDetails"},
         "recovery_point_time": {"key": "recoveryPointTime", "type": "str"},
     }
@@ -1390,6 +1412,7 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(AzureBackupRestoreRequest):
         source_data_store_type: Union[str, "_models.SourceDataStoreType"],
         recovery_point_time: str,
         source_resource_id: Optional[str] = None,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         identity_details: Optional["_models.IdentityDetails"] = None,
         **kwargs: Any
     ) -> None:
@@ -1402,6 +1425,9 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(AzureBackupRestoreRequest):
         :keyword source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which
          is being recovered.
         :paramtype source_resource_id: str
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword identity_details: Contains information of the Identity Details for the BI.
          If it is null, default will be considered as System Assigned.
         :paramtype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
@@ -1413,6 +1439,7 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(AzureBackupRestoreRequest):
             restore_target_info=restore_target_info,
             source_data_store_type=source_data_store_type,
             source_resource_id=source_resource_id,
+            resource_guard_operation_requests=resource_guard_operation_requests,
             identity_details=identity_details,
             **kwargs
         )
@@ -1423,7 +1450,7 @@ class AzureBackupRecoveryTimeBasedRestoreRequest(AzureBackupRestoreRequest):
 class AzureBackupRehydrationRequest(_serialization.Model):
     """Azure Backup Rehydrate Request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar recovery_point_id: Id of the recovery point to be recovered. Required.
     :vartype recovery_point_id: str
@@ -1473,7 +1500,7 @@ class AzureBackupRehydrationRequest(_serialization.Model):
 class AzureBackupRestoreWithRehydrationRequest(AzureBackupRecoveryPointBasedRestoreRequest):
     """AzureBackup Restore with Rehydration Request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Required.
     :vartype object_type: str
@@ -1485,6 +1512,9 @@ class AzureBackupRestoreWithRehydrationRequest(AzureBackupRecoveryPointBasedRest
     :ivar source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which is
      being recovered.
     :vartype source_resource_id: str
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar identity_details: Contains information of the Identity Details for the BI.
      If it is null, default will be considered as System Assigned.
     :vartype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
@@ -1512,6 +1542,7 @@ class AzureBackupRestoreWithRehydrationRequest(AzureBackupRecoveryPointBasedRest
         "restore_target_info": {"key": "restoreTargetInfo", "type": "RestoreTargetInfoBase"},
         "source_data_store_type": {"key": "sourceDataStoreType", "type": "str"},
         "source_resource_id": {"key": "sourceResourceId", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "identity_details": {"key": "identityDetails", "type": "IdentityDetails"},
         "recovery_point_id": {"key": "recoveryPointId", "type": "str"},
         "rehydration_priority": {"key": "rehydrationPriority", "type": "str"},
@@ -1527,6 +1558,7 @@ class AzureBackupRestoreWithRehydrationRequest(AzureBackupRecoveryPointBasedRest
         rehydration_priority: Union[str, "_models.RehydrationPriority"],
         rehydration_retention_duration: str,
         source_resource_id: Optional[str] = None,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         identity_details: Optional["_models.IdentityDetails"] = None,
         **kwargs: Any
     ) -> None:
@@ -1539,6 +1571,9 @@ class AzureBackupRestoreWithRehydrationRequest(AzureBackupRecoveryPointBasedRest
         :keyword source_resource_id: Fully qualified Azure Resource Manager ID of the datasource which
          is being recovered.
         :paramtype source_resource_id: str
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword identity_details: Contains information of the Identity Details for the BI.
          If it is null, default will be considered as System Assigned.
         :paramtype identity_details: ~azure.mgmt.dataprotection.models.IdentityDetails
@@ -1555,6 +1590,7 @@ class AzureBackupRestoreWithRehydrationRequest(AzureBackupRecoveryPointBasedRest
             restore_target_info=restore_target_info,
             source_data_store_type=source_data_store_type,
             source_resource_id=source_resource_id,
+            resource_guard_operation_requests=resource_guard_operation_requests,
             identity_details=identity_details,
             recovery_point_id=recovery_point_id,
             **kwargs
@@ -1570,7 +1606,7 @@ class BasePolicyRule(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureBackupRule, AzureRetentionRule
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: str
@@ -1603,7 +1639,7 @@ class BasePolicyRule(_serialization.Model):
 class AzureBackupRule(BasePolicyRule):
     """Azure backup rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: str
@@ -1686,7 +1722,7 @@ class DataStoreParameters(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureOperationalStoreParameters
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -1721,7 +1757,7 @@ class DataStoreParameters(_serialization.Model):
 class AzureOperationalStoreParameters(DataStoreParameters):
     """Parameters for Operational-Tier DataStore.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -1765,7 +1801,7 @@ class AzureOperationalStoreParameters(DataStoreParameters):
 class AzureRetentionRule(BasePolicyRule):
     """Azure retention rule.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: Required.
     :vartype name: str
@@ -1818,7 +1854,7 @@ class BackupCriteria(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ScheduleBasedBackupCriteria
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -1846,7 +1882,7 @@ class BackupDatasourceParameters(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     BlobBackupDatasourceParameters, KubernetesClusterBackupDatasourceParameters
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -1878,7 +1914,7 @@ class BackupInstance(_serialization.Model):  # pylint: disable=too-many-instance
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Gets or sets the Backup Instance friendly name.
     :vartype friendly_name: str
@@ -1888,6 +1924,9 @@ class BackupInstance(_serialization.Model):  # pylint: disable=too-many-instance
     :vartype data_source_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
     :ivar policy_info: Gets or sets the policy information. Required.
     :vartype policy_info: ~azure.mgmt.dataprotection.models.PolicyInfo
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar protection_status: Specifies the protection status of the resource.
     :vartype protection_status: ~azure.mgmt.dataprotection.models.ProtectionStatusDetails
     :ivar current_protection_state: Specifies the current protection state of the resource. Known
@@ -1931,6 +1970,7 @@ class BackupInstance(_serialization.Model):  # pylint: disable=too-many-instance
         "data_source_info": {"key": "dataSourceInfo", "type": "Datasource"},
         "data_source_set_info": {"key": "dataSourceSetInfo", "type": "DatasourceSet"},
         "policy_info": {"key": "policyInfo", "type": "PolicyInfo"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "protection_status": {"key": "protectionStatus", "type": "ProtectionStatusDetails"},
         "current_protection_state": {"key": "currentProtectionState", "type": "str"},
         "protection_error_details": {"key": "protectionErrorDetails", "type": "UserFacingError"},
@@ -1949,6 +1989,7 @@ class BackupInstance(_serialization.Model):  # pylint: disable=too-many-instance
         object_type: str,
         friendly_name: Optional[str] = None,
         data_source_set_info: Optional["_models.DatasourceSet"] = None,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         datasource_auth_credentials: Optional["_models.AuthCredentials"] = None,
         validation_type: Optional[Union[str, "_models.ValidationType"]] = None,
         identity_details: Optional["_models.IdentityDetails"] = None,
@@ -1963,6 +2004,9 @@ class BackupInstance(_serialization.Model):  # pylint: disable=too-many-instance
         :paramtype data_source_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
         :keyword policy_info: Gets or sets the policy information. Required.
         :paramtype policy_info: ~azure.mgmt.dataprotection.models.PolicyInfo
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword datasource_auth_credentials: Credentials to use to authenticate with data source
          provider.
         :paramtype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
@@ -1981,6 +2025,7 @@ class BackupInstance(_serialization.Model):  # pylint: disable=too-many-instance
         self.data_source_info = data_source_info
         self.data_source_set_info = data_source_set_info
         self.policy_info = policy_info
+        self.resource_guard_operation_requests = resource_guard_operation_requests
         self.protection_status = None
         self.current_protection_state = None
         self.protection_error_details = None
@@ -2129,7 +2174,7 @@ class BaseBackupPolicy(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     BackupPolicy
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar datasource_types: Type of datasource for the backup management. Required.
     :vartype datasource_types: list[str]
@@ -2162,7 +2207,7 @@ class BaseBackupPolicy(_serialization.Model):
 class BackupPolicy(BaseBackupPolicy):
     """Rule based backup policy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar datasource_types: Type of datasource for the backup management. Required.
     :vartype datasource_types: list[str]
@@ -2203,7 +2248,7 @@ class BackupPolicy(BaseBackupPolicy):
 class BackupSchedule(_serialization.Model):
     """Schedule for backup.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar repeating_time_intervals: ISO 8601 repeating time interval format. Required.
     :vartype repeating_time_intervals: list[str]
@@ -2232,12 +2277,12 @@ class BackupSchedule(_serialization.Model):
         self.time_zone = time_zone
 
 
-class BackupVault(_serialization.Model):
+class BackupVault(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Backup Vault.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar monitoring_settings: Monitoring Settings.
     :vartype monitoring_settings: ~azure.mgmt.dataprotection.models.MonitoringSettings
@@ -2261,6 +2306,12 @@ class BackupVault(_serialization.Model):
     :ivar secure_score: Secure Score of Backup Vault. Known values are: "None", "Minimum",
      "Adequate", "Maximum", and "NotSupported".
     :vartype secure_score: str or ~azure.mgmt.dataprotection.models.SecureScoreLevel
+    :ivar bcdr_security_level: Security Level of Backup Vault. Known values are: "Poor", "Fair",
+     "Good", "Excellent", and "NotSupported".
+    :vartype bcdr_security_level: str or ~azure.mgmt.dataprotection.models.BCDRSecurityLevel
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar replicated_regions: List of replicated regions for Backup Vault.
     :vartype replicated_regions: list[str]
     """
@@ -2272,6 +2323,7 @@ class BackupVault(_serialization.Model):
         "storage_settings": {"required": True},
         "is_vault_protected_by_resource_guard": {"readonly": True},
         "secure_score": {"readonly": True},
+        "bcdr_security_level": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2284,6 +2336,8 @@ class BackupVault(_serialization.Model):
         "is_vault_protected_by_resource_guard": {"key": "isVaultProtectedByResourceGuard", "type": "bool"},
         "feature_settings": {"key": "featureSettings", "type": "FeatureSettings"},
         "secure_score": {"key": "secureScore", "type": "str"},
+        "bcdr_security_level": {"key": "bcdrSecurityLevel", "type": "str"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "replicated_regions": {"key": "replicatedRegions", "type": "[str]"},
     }
 
@@ -2294,6 +2348,7 @@ class BackupVault(_serialization.Model):
         monitoring_settings: Optional["_models.MonitoringSettings"] = None,
         security_settings: Optional["_models.SecuritySettings"] = None,
         feature_settings: Optional["_models.FeatureSettings"] = None,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         replicated_regions: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
@@ -2306,6 +2361,9 @@ class BackupVault(_serialization.Model):
         :paramtype storage_settings: list[~azure.mgmt.dataprotection.models.StorageSetting]
         :keyword feature_settings: Feature Settings.
         :paramtype feature_settings: ~azure.mgmt.dataprotection.models.FeatureSettings
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword replicated_regions: List of replicated regions for Backup Vault.
         :paramtype replicated_regions: list[str]
         """
@@ -2319,6 +2377,8 @@ class BackupVault(_serialization.Model):
         self.is_vault_protected_by_resource_guard = None
         self.feature_settings = feature_settings
         self.secure_score = None
+        self.bcdr_security_level = None
+        self.resource_guard_operation_requests = resource_guard_operation_requests
         self.replicated_regions = replicated_regions
 
 
@@ -2457,7 +2517,7 @@ class BackupVaultResource(DppTrackedResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar e_tag: Optional ETag.
     :vartype e_tag: str
@@ -2640,7 +2700,7 @@ class BaseResourceProperties(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     DefaultResourceProperties
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
      "DefaultResourceProperties"
@@ -2666,7 +2726,7 @@ class BaseResourceProperties(_serialization.Model):
 class BlobBackupDatasourceParameters(BackupDatasourceParameters):
     """Parameters to be used during configuration of backup of blobs.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -2981,13 +3041,71 @@ class ClientDiscoveryValueForSingleApi(_serialization.Model):
         self.properties = properties
 
 
+class CmkKekIdentity(_serialization.Model):
+    """The details of the managed identity used for CMK.
+
+    :ivar identity_type: The identity type. 'SystemAssigned' and 'UserAssigned' are mutually
+     exclusive. 'SystemAssigned' will use implicitly created managed identity. Known values are:
+     "SystemAssigned" and "UserAssigned".
+    :vartype identity_type: str or ~azure.mgmt.dataprotection.models.IdentityType
+    :ivar identity_id: The managed identity to be used which has access permissions to the Key
+     Vault. Provide a value here in case identity types: 'UserAssigned' only.
+    :vartype identity_id: str
+    """
+
+    _attribute_map = {
+        "identity_type": {"key": "identityType", "type": "str"},
+        "identity_id": {"key": "identityId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        identity_type: Optional[Union[str, "_models.IdentityType"]] = None,
+        identity_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword identity_type: The identity type. 'SystemAssigned' and 'UserAssigned' are mutually
+         exclusive. 'SystemAssigned' will use implicitly created managed identity. Known values are:
+         "SystemAssigned" and "UserAssigned".
+        :paramtype identity_type: str or ~azure.mgmt.dataprotection.models.IdentityType
+        :keyword identity_id: The managed identity to be used which has access permissions to the Key
+         Vault. Provide a value here in case identity types: 'UserAssigned' only.
+        :paramtype identity_id: str
+        """
+        super().__init__(**kwargs)
+        self.identity_type = identity_type
+        self.identity_id = identity_id
+
+
+class CmkKeyVaultProperties(_serialization.Model):
+    """The properties of the Key Vault which hosts CMK.
+
+    :ivar key_uri: The key uri of the Customer Managed Key.
+    :vartype key_uri: str
+    """
+
+    _attribute_map = {
+        "key_uri": {"key": "keyUri", "type": "str"},
+    }
+
+    def __init__(self, *, key_uri: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword key_uri: The key uri of the Customer Managed Key.
+        :paramtype key_uri: str
+        """
+        super().__init__(**kwargs)
+        self.key_uri = key_uri
+
+
 class CopyOption(_serialization.Model):
     """Options to copy.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     CopyOnExpiryOption, CustomCopyOption, ImmediateCopyOption
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -3018,7 +3136,7 @@ class CopyOption(_serialization.Model):
 class CopyOnExpiryOption(CopyOption):
     """Copy on Expiry Option.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -3041,7 +3159,7 @@ class CopyOnExpiryOption(CopyOption):
 class CrossRegionRestoreDetails(_serialization.Model):
     """Cross Region Restore details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_region: Required.
     :vartype source_region: str
@@ -3074,7 +3192,7 @@ class CrossRegionRestoreDetails(_serialization.Model):
 class CrossRegionRestoreJobRequest(_serialization.Model):
     """Details of CRR Job to be fetched.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_region: Required.
     :vartype source_region: str
@@ -3114,7 +3232,7 @@ class CrossRegionRestoreJobRequest(_serialization.Model):
 class CrossRegionRestoreJobsRequest(_serialization.Model):
     """Details of Backup Vault for which CRR Jobs are to be fetched.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar source_region: Required.
     :vartype source_region: str
@@ -3147,7 +3265,7 @@ class CrossRegionRestoreJobsRequest(_serialization.Model):
 class CrossRegionRestoreRequestObject(_serialization.Model):
     """Cross Region Restore Request Object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar restore_request_object: Gets or sets the restore request object. Required.
     :vartype restore_request_object: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest
@@ -3232,7 +3350,7 @@ class CrossSubscriptionRestoreSettings(_serialization.Model):
 class CustomCopyOption(CopyOption):
     """Duration based custom options to copy.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -3262,7 +3380,7 @@ class CustomCopyOption(CopyOption):
 class Datasource(_serialization.Model):
     """Datasource to be backed up.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar datasource_type: DatasourceType of the resource.
     :vartype datasource_type: str
@@ -3344,7 +3462,7 @@ class Datasource(_serialization.Model):
 class DatasourceSet(_serialization.Model):
     """DatasourceSet details of datasource to be backed up.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar datasource_type: DatasourceType of the resource.
     :vartype datasource_type: str
@@ -3426,7 +3544,7 @@ class DatasourceSet(_serialization.Model):
 class DataStoreInfoBase(_serialization.Model):
     """DataStoreInfo base.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar data_store_type: type of datastore; Operational/Vault/Archive. Required. Known values
      are: "OperationalStore", "VaultStore", and "ArchiveStore".
@@ -3491,7 +3609,7 @@ class Day(_serialization.Model):
 class DefaultResourceProperties(BaseResourceProperties):
     """Default source properties.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
      "DefaultResourceProperties"
@@ -3517,7 +3635,7 @@ class DeletedBackupInstance(BackupInstance):  # pylint: disable=too-many-instanc
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar friendly_name: Gets or sets the Backup Instance friendly name.
     :vartype friendly_name: str
@@ -3527,6 +3645,9 @@ class DeletedBackupInstance(BackupInstance):  # pylint: disable=too-many-instanc
     :vartype data_source_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
     :ivar policy_info: Gets or sets the policy information. Required.
     :vartype policy_info: ~azure.mgmt.dataprotection.models.PolicyInfo
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     :ivar protection_status: Specifies the protection status of the resource.
     :vartype protection_status: ~azure.mgmt.dataprotection.models.ProtectionStatusDetails
     :ivar current_protection_state: Specifies the current protection state of the resource. Known
@@ -3573,6 +3694,7 @@ class DeletedBackupInstance(BackupInstance):  # pylint: disable=too-many-instanc
         "data_source_info": {"key": "dataSourceInfo", "type": "Datasource"},
         "data_source_set_info": {"key": "dataSourceSetInfo", "type": "DatasourceSet"},
         "policy_info": {"key": "policyInfo", "type": "PolicyInfo"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "protection_status": {"key": "protectionStatus", "type": "ProtectionStatusDetails"},
         "current_protection_state": {"key": "currentProtectionState", "type": "str"},
         "protection_error_details": {"key": "protectionErrorDetails", "type": "UserFacingError"},
@@ -3592,6 +3714,7 @@ class DeletedBackupInstance(BackupInstance):  # pylint: disable=too-many-instanc
         object_type: str,
         friendly_name: Optional[str] = None,
         data_source_set_info: Optional["_models.DatasourceSet"] = None,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         datasource_auth_credentials: Optional["_models.AuthCredentials"] = None,
         validation_type: Optional[Union[str, "_models.ValidationType"]] = None,
         identity_details: Optional["_models.IdentityDetails"] = None,
@@ -3606,6 +3729,9 @@ class DeletedBackupInstance(BackupInstance):  # pylint: disable=too-many-instanc
         :paramtype data_source_set_info: ~azure.mgmt.dataprotection.models.DatasourceSet
         :keyword policy_info: Gets or sets the policy information. Required.
         :paramtype policy_info: ~azure.mgmt.dataprotection.models.PolicyInfo
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         :keyword datasource_auth_credentials: Credentials to use to authenticate with data source
          provider.
         :paramtype datasource_auth_credentials: ~azure.mgmt.dataprotection.models.AuthCredentials
@@ -3624,6 +3750,7 @@ class DeletedBackupInstance(BackupInstance):  # pylint: disable=too-many-instanc
             data_source_info=data_source_info,
             data_source_set_info=data_source_set_info,
             policy_info=policy_info,
+            resource_guard_operation_requests=resource_guard_operation_requests,
             datasource_auth_credentials=datasource_auth_credentials,
             validation_type=validation_type,
             identity_details=identity_details,
@@ -3885,6 +4012,58 @@ class DppTrackedResourceList(_serialization.Model):
         self.next_link = next_link
 
 
+class EncryptionSettings(_serialization.Model):
+    """Customer Managed Key details of the resource.
+
+    :ivar state: Encryption state of the Backup Vault. Known values are: "Enabled", "Disabled", and
+     "Inconsistent".
+    :vartype state: str or ~azure.mgmt.dataprotection.models.EncryptionState
+    :ivar key_vault_properties: The properties of the Key Vault which hosts CMK.
+    :vartype key_vault_properties: ~azure.mgmt.dataprotection.models.CmkKeyVaultProperties
+    :ivar kek_identity: The details of the managed identity used for CMK.
+    :vartype kek_identity: ~azure.mgmt.dataprotection.models.CmkKekIdentity
+    :ivar infrastructure_encryption: Enabling/Disabling the Double Encryption state. Known values
+     are: "Enabled" and "Disabled".
+    :vartype infrastructure_encryption: str or
+     ~azure.mgmt.dataprotection.models.InfrastructureEncryptionState
+    """
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+        "key_vault_properties": {"key": "keyVaultProperties", "type": "CmkKeyVaultProperties"},
+        "kek_identity": {"key": "kekIdentity", "type": "CmkKekIdentity"},
+        "infrastructure_encryption": {"key": "infrastructureEncryption", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: Optional[Union[str, "_models.EncryptionState"]] = None,
+        key_vault_properties: Optional["_models.CmkKeyVaultProperties"] = None,
+        kek_identity: Optional["_models.CmkKekIdentity"] = None,
+        infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryptionState"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Encryption state of the Backup Vault. Known values are: "Enabled", "Disabled",
+         and "Inconsistent".
+        :paramtype state: str or ~azure.mgmt.dataprotection.models.EncryptionState
+        :keyword key_vault_properties: The properties of the Key Vault which hosts CMK.
+        :paramtype key_vault_properties: ~azure.mgmt.dataprotection.models.CmkKeyVaultProperties
+        :keyword kek_identity: The details of the managed identity used for CMK.
+        :paramtype kek_identity: ~azure.mgmt.dataprotection.models.CmkKekIdentity
+        :keyword infrastructure_encryption: Enabling/Disabling the Double Encryption state. Known
+         values are: "Enabled" and "Disabled".
+        :paramtype infrastructure_encryption: str or
+         ~azure.mgmt.dataprotection.models.InfrastructureEncryptionState
+        """
+        super().__init__(**kwargs)
+        self.state = state
+        self.key_vault_properties = key_vault_properties
+        self.kek_identity = kek_identity
+        self.infrastructure_encryption = infrastructure_encryption
+
+
 class Error(_serialization.Model):
     """The resource management error response.
 
@@ -4103,7 +4282,7 @@ class FeatureValidationRequestBase(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FeatureValidationRequest
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -4128,7 +4307,7 @@ class FeatureValidationRequestBase(_serialization.Model):
 class FeatureValidationRequest(FeatureValidationRequestBase):
     """Base class for feature object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -4175,7 +4354,7 @@ class FeatureValidationResponseBase(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     FeatureValidationResponse
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -4200,7 +4379,7 @@ class FeatureValidationResponseBase(_serialization.Model):
 class FeatureValidationResponse(FeatureValidationResponseBase):
     """Feature Validation Response.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -4306,7 +4485,7 @@ class IdentityDetails(_serialization.Model):
 class ImmediateCopyOption(CopyOption):
     """Immediate copy Option.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -4395,7 +4574,7 @@ class ItemLevelRestoreCriteria(_serialization.Model):
     KubernetesClusterVaultTierRestoreCriteria, KubernetesPVRestoreCriteria,
     KubernetesStorageClassRestoreCriteria, RangeBasedItemLevelRestoreCriteria
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -4432,7 +4611,7 @@ class RestoreTargetInfoBase(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ItemLevelRestoreTargetInfo, RestoreFilesTargetInfo, RestoreTargetInfo
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
      Required.
@@ -4484,7 +4663,7 @@ class RestoreTargetInfoBase(_serialization.Model):
 class ItemLevelRestoreTargetInfo(RestoreTargetInfoBase):
     """Restore target info for Item level restore operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
      Required.
@@ -4558,7 +4737,7 @@ class ItemLevelRestoreTargetInfo(RestoreTargetInfoBase):
 class ItemPathBasedRestoreCriteria(ItemLevelRestoreCriteria):
     """Prefix criteria to be used to during restore.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -4677,7 +4856,7 @@ class JobSubTask(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar additional_details: Additional details of Sub Tasks.
     :vartype additional_details: dict[str, str]
@@ -4733,10 +4912,10 @@ class JobSubTask(_serialization.Model):
         self.task_status = task_status
 
 
-class KubernetesClusterBackupDatasourceParameters(BackupDatasourceParameters):
+class KubernetesClusterBackupDatasourceParameters(BackupDatasourceParameters):  # pylint: disable=name-too-long
     """Parameters for Kubernetes Cluster Backup Datasource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -4839,7 +5018,7 @@ class KubernetesClusterBackupDatasourceParameters(BackupDatasourceParameters):
 class KubernetesClusterRestoreCriteria(ItemLevelRestoreCriteria):  # pylint: disable=too-many-instance-attributes
     """kubernetes Cluster Backup target info for restore operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -4876,6 +5055,9 @@ class KubernetesClusterRestoreCriteria(ItemLevelRestoreCriteria):  # pylint: dis
      hook reference to be executed during restore.
     :vartype restore_hook_references:
      list[~azure.mgmt.dataprotection.models.NamespacedNameResource]
+    :ivar resource_modifier_reference: Gets or sets the resource modifier reference. This property
+     sets the reference for resource modifier during restore.
+    :vartype resource_modifier_reference: ~azure.mgmt.dataprotection.models.NamespacedNameResource
     """
 
     _validation = {
@@ -4895,6 +5077,7 @@ class KubernetesClusterRestoreCriteria(ItemLevelRestoreCriteria):  # pylint: dis
         "conflict_policy": {"key": "conflictPolicy", "type": "str"},
         "namespace_mappings": {"key": "namespaceMappings", "type": "{str}"},
         "restore_hook_references": {"key": "restoreHookReferences", "type": "[NamespacedNameResource]"},
+        "resource_modifier_reference": {"key": "resourceModifierReference", "type": "NamespacedNameResource"},
     }
 
     def __init__(
@@ -4910,6 +5093,7 @@ class KubernetesClusterRestoreCriteria(ItemLevelRestoreCriteria):  # pylint: dis
         conflict_policy: Optional[Union[str, "_models.ExistingResourcePolicy"]] = None,
         namespace_mappings: Optional[Dict[str, str]] = None,
         restore_hook_references: Optional[List["_models.NamespacedNameResource"]] = None,
+        resource_modifier_reference: Optional["_models.NamespacedNameResource"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4946,6 +5130,10 @@ class KubernetesClusterRestoreCriteria(ItemLevelRestoreCriteria):  # pylint: dis
          the hook reference to be executed during restore.
         :paramtype restore_hook_references:
          list[~azure.mgmt.dataprotection.models.NamespacedNameResource]
+        :keyword resource_modifier_reference: Gets or sets the resource modifier reference. This
+         property sets the reference for resource modifier during restore.
+        :paramtype resource_modifier_reference:
+         ~azure.mgmt.dataprotection.models.NamespacedNameResource
         """
         super().__init__(**kwargs)
         self.object_type: str = "KubernetesClusterRestoreCriteria"
@@ -4959,14 +5147,15 @@ class KubernetesClusterRestoreCriteria(ItemLevelRestoreCriteria):  # pylint: dis
         self.conflict_policy = conflict_policy
         self.namespace_mappings = namespace_mappings
         self.restore_hook_references = restore_hook_references
+        self.resource_modifier_reference = resource_modifier_reference
 
 
 class KubernetesClusterVaultTierRestoreCriteria(
     ItemLevelRestoreCriteria
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes,name-too-long
     """kubernetes Cluster Backup target info for restore operation from vault.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -5010,6 +5199,9 @@ class KubernetesClusterVaultTierRestoreCriteria(
     :ivar staging_storage_account_id: Gets or sets the staging Storage Account Id for creating
      backup extension object store data during restore from vault.
     :vartype staging_storage_account_id: str
+    :ivar resource_modifier_reference: Gets or sets the resource modifier reference. This property
+     sets the reference for resource modifier during restore.
+    :vartype resource_modifier_reference: ~azure.mgmt.dataprotection.models.NamespacedNameResource
     """
 
     _validation = {
@@ -5031,6 +5223,7 @@ class KubernetesClusterVaultTierRestoreCriteria(
         "restore_hook_references": {"key": "restoreHookReferences", "type": "[NamespacedNameResource]"},
         "staging_resource_group_id": {"key": "stagingResourceGroupId", "type": "str"},
         "staging_storage_account_id": {"key": "stagingStorageAccountId", "type": "str"},
+        "resource_modifier_reference": {"key": "resourceModifierReference", "type": "NamespacedNameResource"},
     }
 
     def __init__(
@@ -5048,6 +5241,7 @@ class KubernetesClusterVaultTierRestoreCriteria(
         restore_hook_references: Optional[List["_models.NamespacedNameResource"]] = None,
         staging_resource_group_id: Optional[str] = None,
         staging_storage_account_id: Optional[str] = None,
+        resource_modifier_reference: Optional["_models.NamespacedNameResource"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5091,6 +5285,10 @@ class KubernetesClusterVaultTierRestoreCriteria(
         :keyword staging_storage_account_id: Gets or sets the staging Storage Account Id for creating
          backup extension object store data during restore from vault.
         :paramtype staging_storage_account_id: str
+        :keyword resource_modifier_reference: Gets or sets the resource modifier reference. This
+         property sets the reference for resource modifier during restore.
+        :paramtype resource_modifier_reference:
+         ~azure.mgmt.dataprotection.models.NamespacedNameResource
         """
         super().__init__(**kwargs)
         self.object_type: str = "KubernetesClusterVaultTierRestoreCriteria"
@@ -5106,12 +5304,13 @@ class KubernetesClusterVaultTierRestoreCriteria(
         self.restore_hook_references = restore_hook_references
         self.staging_resource_group_id = staging_resource_group_id
         self.staging_storage_account_id = staging_storage_account_id
+        self.resource_modifier_reference = resource_modifier_reference
 
 
 class KubernetesPVRestoreCriteria(ItemLevelRestoreCriteria):
     """Item Level kubernetes persistent volume target info for restore operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -5147,7 +5346,7 @@ class KubernetesPVRestoreCriteria(ItemLevelRestoreCriteria):
 class KubernetesStorageClassRestoreCriteria(ItemLevelRestoreCriteria):
     """Item Level kubernetes storage class target info for restore operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -5238,7 +5437,7 @@ class OperationExtendedInfo(_serialization.Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     OperationJobExtendedInfo
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -5264,7 +5463,7 @@ class OperationExtendedInfo(_serialization.Model):
 class OperationJobExtendedInfo(OperationExtendedInfo):
     """Operation Job Extended Info.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: This property will be used as the discriminator for deciding the specific
      types in the polymorphic chain of types. Required.
@@ -5376,12 +5575,16 @@ class PatchBackupVaultInput(_serialization.Model):
     :vartype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
     :ivar feature_settings: Feature Settings.
     :vartype feature_settings: ~azure.mgmt.dataprotection.models.FeatureSettings
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
     """
 
     _attribute_map = {
         "monitoring_settings": {"key": "monitoringSettings", "type": "MonitoringSettings"},
         "security_settings": {"key": "securitySettings", "type": "SecuritySettings"},
         "feature_settings": {"key": "featureSettings", "type": "FeatureSettings"},
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
     }
 
     def __init__(
@@ -5390,6 +5593,7 @@ class PatchBackupVaultInput(_serialization.Model):
         monitoring_settings: Optional["_models.MonitoringSettings"] = None,
         security_settings: Optional["_models.SecuritySettings"] = None,
         feature_settings: Optional["_models.FeatureSettings"] = None,
+        resource_guard_operation_requests: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5399,11 +5603,15 @@ class PatchBackupVaultInput(_serialization.Model):
         :paramtype security_settings: ~azure.mgmt.dataprotection.models.SecuritySettings
         :keyword feature_settings: Feature Settings.
         :paramtype feature_settings: ~azure.mgmt.dataprotection.models.FeatureSettings
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
         """
         super().__init__(**kwargs)
         self.monitoring_settings = monitoring_settings
         self.security_settings = security_settings
         self.feature_settings = feature_settings
+        self.resource_guard_operation_requests = resource_guard_operation_requests
 
 
 class PatchResourceGuardInput(_serialization.Model):
@@ -5470,7 +5678,7 @@ class PolicyInfo(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar policy_id: Required.
     :vartype policy_id: str
@@ -5584,7 +5792,7 @@ class ProtectionStatusDetails(_serialization.Model):
 class RangeBasedItemLevelRestoreCriteria(ItemLevelRestoreCriteria):
     """Item Level target info for restore operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -6159,7 +6367,7 @@ class ResourceMoveDetails(_serialization.Model):
 class RestorableTimeRange(_serialization.Model):
     """RestorableTimeRange.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar start_time: Start time for the available restore range. Required.
     :vartype start_time: str
@@ -6198,7 +6406,7 @@ class RestorableTimeRange(_serialization.Model):
 class RestoreFilesTargetInfo(RestoreTargetInfoBase):
     """Class encapsulating restore as files target parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
      Required.
@@ -6282,7 +6490,7 @@ class RestoreJobRecoveryPointDetails(_serialization.Model):
 class RestoreTargetInfo(RestoreTargetInfoBase):
     """Class encapsulating restore target parameters.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of Datasource object, used to initialize the right inherited type.
      Required.
@@ -6350,7 +6558,7 @@ class RetentionTag(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar e_tag: Retention Tag version.
     :vartype e_tag: str
@@ -6386,7 +6594,7 @@ class RetentionTag(_serialization.Model):
 class ScheduleBasedBackupCriteria(BackupCriteria):
     """Schedule based backup criteria.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -6460,7 +6668,7 @@ class ScheduleBasedBackupCriteria(BackupCriteria):
 class ScheduleBasedTriggerContext(TriggerContext):
     """Schedule based trigger context.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -6500,7 +6708,7 @@ class ScheduleBasedTriggerContext(TriggerContext):
 class SecretStoreBasedAuthCredentials(AuthCredentials):
     """Secret store based authentication credentials.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
     :vartype object_type: str
@@ -6530,7 +6738,7 @@ class SecretStoreBasedAuthCredentials(AuthCredentials):
 class SecretStoreResource(_serialization.Model):
     """Class representing a secret store resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar uri: Uri to get to the resource.
     :vartype uri: str
@@ -6581,11 +6789,14 @@ class SecuritySettings(_serialization.Model):
     :vartype soft_delete_settings: ~azure.mgmt.dataprotection.models.SoftDeleteSettings
     :ivar immutability_settings: Immutability Settings at vault level.
     :vartype immutability_settings: ~azure.mgmt.dataprotection.models.ImmutabilitySettings
+    :ivar encryption_settings: Customer Managed Key details of the resource.
+    :vartype encryption_settings: ~azure.mgmt.dataprotection.models.EncryptionSettings
     """
 
     _attribute_map = {
         "soft_delete_settings": {"key": "softDeleteSettings", "type": "SoftDeleteSettings"},
         "immutability_settings": {"key": "immutabilitySettings", "type": "ImmutabilitySettings"},
+        "encryption_settings": {"key": "encryptionSettings", "type": "EncryptionSettings"},
     }
 
     def __init__(
@@ -6593,6 +6804,7 @@ class SecuritySettings(_serialization.Model):
         *,
         soft_delete_settings: Optional["_models.SoftDeleteSettings"] = None,
         immutability_settings: Optional["_models.ImmutabilitySettings"] = None,
+        encryption_settings: Optional["_models.EncryptionSettings"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6600,10 +6812,13 @@ class SecuritySettings(_serialization.Model):
         :paramtype soft_delete_settings: ~azure.mgmt.dataprotection.models.SoftDeleteSettings
         :keyword immutability_settings: Immutability Settings at vault level.
         :paramtype immutability_settings: ~azure.mgmt.dataprotection.models.ImmutabilitySettings
+        :keyword encryption_settings: Customer Managed Key details of the resource.
+        :paramtype encryption_settings: ~azure.mgmt.dataprotection.models.EncryptionSettings
         """
         super().__init__(**kwargs)
         self.soft_delete_settings = soft_delete_settings
         self.immutability_settings = immutability_settings
+        self.encryption_settings = encryption_settings
 
 
 class SoftDeleteSettings(_serialization.Model):
@@ -6641,7 +6856,7 @@ class SoftDeleteSettings(_serialization.Model):
 class SourceLifeCycle(_serialization.Model):
     """Source LifeCycle.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar delete_after: Delete Option. Required.
     :vartype delete_after: ~azure.mgmt.dataprotection.models.DeleteOption
@@ -6684,6 +6899,28 @@ class SourceLifeCycle(_serialization.Model):
         self.delete_after = delete_after
         self.source_data_store = source_data_store
         self.target_data_store_copy_settings = target_data_store_copy_settings
+
+
+class StopProtectionRequest(_serialization.Model):
+    """Request body of Stop protection when MUA is Enabled.
+
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
+    """
+
+    _attribute_map = {
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+    }
+
+    def __init__(self, *, resource_guard_operation_requests: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
+        """
+        super().__init__(**kwargs)
+        self.resource_guard_operation_requests = resource_guard_operation_requests
 
 
 class StorageSetting(_serialization.Model):
@@ -6761,6 +6998,28 @@ class SupportedFeature(_serialization.Model):
         self.feature_name = feature_name
         self.support_status = support_status
         self.exposure_controlled_features = exposure_controlled_features
+
+
+class SuspendBackupRequest(_serialization.Model):
+    """Request body of Suspend backup when MUA is Enabled.
+
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
+    :vartype resource_guard_operation_requests: list[str]
+    """
+
+    _attribute_map = {
+        "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
+    }
+
+    def __init__(self, *, resource_guard_operation_requests: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
+        :paramtype resource_guard_operation_requests: list[str]
+        """
+        super().__init__(**kwargs)
+        self.resource_guard_operation_requests = resource_guard_operation_requests
 
 
 class SyncBackupInstanceRequest(_serialization.Model):
@@ -6852,7 +7111,7 @@ class SystemData(_serialization.Model):
 class TaggingCriteria(_serialization.Model):
     """Tagging criteria.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar criteria: Criteria which decides whether the tag can be applied to a triggered backup.
     :vartype criteria: list[~azure.mgmt.dataprotection.models.BackupCriteria]
@@ -6906,7 +7165,7 @@ class TaggingCriteria(_serialization.Model):
 class TargetCopySetting(_serialization.Model):
     """Target copy settings.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar copy_after: It can be CustomCopyOption or ImmediateCopyOption. Required.
     :vartype copy_after: ~azure.mgmt.dataprotection.models.CopyOption
@@ -6941,7 +7200,7 @@ class TargetCopySetting(_serialization.Model):
 class TargetDetails(_serialization.Model):
     """Class encapsulating target details, used where the destination is not a datasource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar file_prefix: Restore operation may create multiple files inside location pointed by Url
      Below will be the common prefix for all of them. Required.
@@ -7018,7 +7277,7 @@ class TargetDetails(_serialization.Model):
 class TriggerBackupRequest(_serialization.Model):
     """Trigger backup request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_rule_options: Name for the Rule of the Policy which needs to be applied for this
      backup. Required.
@@ -7046,7 +7305,8 @@ class TriggerBackupRequest(_serialization.Model):
 class UnlockDeleteRequest(_serialization.Model):
     """Request body of unlock delete API.
 
-    :ivar resource_guard_operation_requests:
+    :ivar resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check will
+     be performed.
     :vartype resource_guard_operation_requests: list[str]
     :ivar resource_to_be_deleted:
     :vartype resource_to_be_deleted: str
@@ -7065,7 +7325,8 @@ class UnlockDeleteRequest(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword resource_guard_operation_requests:
+        :keyword resource_guard_operation_requests: ResourceGuardOperationRequests on which LAC check
+         will be performed.
         :paramtype resource_guard_operation_requests: list[str]
         :keyword resource_to_be_deleted:
         :paramtype resource_to_be_deleted: str
@@ -7210,7 +7471,7 @@ class UserFacingWarningDetail(_serialization.Model):
     """Warning object used by layers that have access to localized content, and propagate that to
     user.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar resource_name: Name of resource for which warning is raised.
     :vartype resource_name: str
@@ -7244,7 +7505,7 @@ class UserFacingWarningDetail(_serialization.Model):
 class ValidateCrossRegionRestoreRequestObject(_serialization.Model):
     """Cross Region Restore Request Object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar restore_request_object: Gets or sets the restore request object. Required.
     :vartype restore_request_object: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest
@@ -7285,7 +7546,7 @@ class ValidateCrossRegionRestoreRequestObject(_serialization.Model):
 class ValidateForBackupRequest(_serialization.Model):
     """Validate for backup request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar backup_instance: Backup Instance. Required.
     :vartype backup_instance: ~azure.mgmt.dataprotection.models.BackupInstance
@@ -7311,7 +7572,7 @@ class ValidateForBackupRequest(_serialization.Model):
 class ValidateRestoreRequestObject(_serialization.Model):
     """Validate restore request object.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar restore_request_object: Gets or sets the restore request object. Required.
     :vartype restore_request_object: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest

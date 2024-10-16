@@ -15,6 +15,7 @@ from ._certificate_operations import CertificateOperations
 from ._private_link_resource_operations import PrivateLinkResourceOperations
 from ._private_endpoint_connection_operations import PrivateEndpointConnectionOperations
 from ._pool_operations import PoolOperations
+from ._network_security_perimeter_operations import NetworkSecurityPerimeterOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -30,6 +31,7 @@ __all__ = [
     "PrivateLinkResourceOperations",
     "PrivateEndpointConnectionOperations",
     "PoolOperations",
+    "NetworkSecurityPerimeterOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

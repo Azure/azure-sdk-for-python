@@ -22,9 +22,10 @@ from azure.servicebus.management import (
 )
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import ServiceBusMessage
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
 TOPIC_NAME = os.environ['SERVICEBUS_TOPIC_NAME']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 ALL_MSGS_SUBSCRIPTION_NAME = 'sb-allmsgs-sub'
 SQL_FILTER_ONLY_SUBSCRIPTION_NAME = 'sb-sqlfilteronly-sub'
 SQL_FILTER_WITH_ACTION_SUBSCRIPTION_NAME = 'sb-sqlfilteraction-sub'
@@ -90,7 +91,8 @@ async def create_rule_with_filter(servicebus_mgmt_client, subscription_name, fil
         pass
 
 async def send_messages():
-    servicebus_client = ServiceBusClient.from_connection_string(CONNECTION_STR)
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
     print("====================== Sending messages to topic ======================")
     msgs_to_send = []
     async with servicebus_client.get_topic_sender(topic_name=TOPIC_NAME) as sender:
@@ -141,8 +143,9 @@ async def delete_subscription(servicebus_mgmt_client, subscription_name):
     print("Subscription {} is deleted.".format(subscription_name))
 
 async def main():
-    servicebus_mgmt_client = ServiceBusAdministrationClient.from_connection_string(CONNECTION_STR)
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+    credential = DefaultAzureCredential()
+    servicebus_mgmt_client = ServiceBusAdministrationClient(FULLY_QUALIFIED_NAMESPACE, credential)
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 
     # Create subscriptions.
     await create_subscription(servicebus_mgmt_client, ALL_MSGS_SUBSCRIPTION_NAME)

@@ -14,12 +14,12 @@ from unittest import mock
 import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobServiceClient, BlobType
-from azure.storage.blob._blob_client import _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
     _generate_AES_CBC_cipher,
     _ERROR_OBJECT_INVALID,
+    _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION,
 )
 from cryptography.hazmat.primitives.padding import PKCS7
 
@@ -34,8 +34,6 @@ TEST_CONTAINER_PREFIX = 'encryption_container'
 TEST_BLOB_PREFIXES = {'BlockBlob': 'encryption_block_blob',
                       'PageBlob': 'encryption_page_blob',
                       'AppendBlob': 'foo'}
-_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = 'The require_encryption flag is set, but encryption is not supported' + \
-                                           ' for this method.'
 # ------------------------------------------------------------------------------
 
 
@@ -175,7 +173,7 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = self._create_small_blob(BlobType.BlockBlob)
+        blob = self._create_small_blob(BlobType.BLOCKBLOB)
 
         # Act
         blob.key_encryption_key = KeyWrapper('key1')
@@ -251,7 +249,7 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = self._create_small_blob(BlobType.BlockBlob)
+        blob = self._create_small_blob(BlobType.BLOCKBLOB)
 
         # Act
         self.bsc.key_encryption_key.kid = 'Invalid'

@@ -122,7 +122,7 @@ class StreamDownloadGenerator:
         self.response = response
 
         # TODO: determine if block size should be public on RestTransportResponse.
-        self.block_size = response._block_size  # pylint: disable=protected-access
+        self.block_size = response._block_size
         decompress = kwargs.pop("decompress", True)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))

@@ -8,6 +8,7 @@
 
 from copy import deepcopy
 from typing import Any, Optional
+from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -30,7 +31,7 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
     :param sync_token: Used to guarantee real-time consistency between requests. Default value is
      None.
     :type sync_token: str
-    :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -68,7 +69,7 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -92,12 +93,12 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)  # type: ignore
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "AzureAppConfiguration":
+    def __enter__(self) -> Self:
         self._client.__enter__()
         return self
 

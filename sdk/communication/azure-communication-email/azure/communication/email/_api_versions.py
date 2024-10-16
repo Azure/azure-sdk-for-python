@@ -8,9 +8,8 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    V2021_10_01_PREVIEW = "2021-10-01-preview"
-    V2023_01_15_PREVIEW = "2023-01-15-preview"
     V2023_03_31 = "2023-03-31"
+    V2024_07_01_PREVIEW = "2024-07-01-preview"
 
 
-DEFAULT_VERSION = ApiVersion.V2023_03_31
+DEFAULT_VERSION = ApiVersion.V2024_07_01_PREVIEW

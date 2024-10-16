@@ -12,13 +12,15 @@ Example to show receiving batch messages from a Service Bus Queue asynchronously
 import os
 import asyncio
 from azure.servicebus.aio import ServiceBusClient
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['SERVICEBUS_FULLY_QUALIFIED_NAMESPACE']
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 
 async def main():
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 
     async with servicebus_client:
         receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)

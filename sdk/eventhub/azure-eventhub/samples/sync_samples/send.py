@@ -13,8 +13,9 @@ import time
 import os
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.eventhub.exceptions import EventHubError
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ["EVENT_HUB_HOSTNAME"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
@@ -84,9 +85,10 @@ def send_event_data_list(producer):
         print("Sending error: ", eh_err)
 
 
-producer = EventHubProducerClient.from_connection_string(
-    conn_str=CONNECTION_STR,
-    eventhub_name=EVENTHUB_NAME
+producer = EventHubProducerClient(
+    fully_qualified_namespace=FULLY_QUALIFIED_NAMESPACE,
+    eventhub_name=EVENTHUB_NAME,
+    credential=DefaultAzureCredential(),
 )
 
 start_time = time.time()

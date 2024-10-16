@@ -16,4 +16,4 @@ class KeyVaultClientPreparer(_KeyVaultClientPreparer):
         if self.is_live:
             return EnvironmentCredential()
 
-        return Mock(get_token=lambda *_: get_completed_future(AccessToken("fake-token", 0)))
+        return Mock(spec_set=["get_token"], get_token=lambda *_: get_completed_future(AccessToken("fake-token", 0)))

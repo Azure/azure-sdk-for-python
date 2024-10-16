@@ -1,5 +1,27 @@
 # Release History
 
+## 32.1.0 (2024-10-11)
+
+### Features Added
+
+  - Model AgentPoolGPUProfile has a new parameter driver_type
+  - Operation AgentPoolsOperations.begin_delete has a new optional parameter ignore_pod_disruption_budget
+
+## 32.0.0 (2024-09-12)
+
+### Features Added
+
+  - Added operation AgentPoolsOperations.begin_delete_machines
+  - Model AdvancedNetworking has a new parameter security
+  - Model AdvancedNetworkingObservability has a new parameter tls_management
+  - Model AgentPool has a new parameter security_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter security_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter security_profile
+
+### Breaking Changes
+
+  - Model AgentPoolSecurityProfile no longer has parameter ssh_access
+
 ## 31.0.0 (2024-07-18)
 
 ### Features Added

@@ -43,6 +43,7 @@ from ._azure_file_storage_enums import AccessRight
 from ._azure_file_storage_enums import CopyStatusType
 from ._azure_file_storage_enums import DeleteSnapshotsOptionType
 from ._azure_file_storage_enums import FileLastWrittenMode
+from ._azure_file_storage_enums import FilePermissionFormat
 from ._azure_file_storage_enums import FileRangeWriteType
 from ._azure_file_storage_enums import LeaseDurationType
 from ._azure_file_storage_enums import LeaseStateType
@@ -95,6 +96,7 @@ __all__ = [
     "CopyStatusType",
     "DeleteSnapshotsOptionType",
     "FileLastWrittenMode",
+    "FilePermissionFormat",
     "FileRangeWriteType",
     "LeaseDurationType",
     "LeaseStateType",

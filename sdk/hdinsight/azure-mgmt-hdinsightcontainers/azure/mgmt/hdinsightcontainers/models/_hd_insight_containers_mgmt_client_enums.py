@@ -42,11 +42,19 @@ class AutoscaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LOAD_BASED = "LoadBased"
 
 
+class Category(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category."""
+
+    CUSTOM = "custom"
+    PREDEFINED = "predefined"
+
+
 class ClusterAvailableUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of upgrade."""
 
     AKS_PATCH_UPGRADE = "AKSPatchUpgrade"
     HOTFIX_UPGRADE = "HotfixUpgrade"
+    PATCH_VERSION_UPGRADE = "PatchVersionUpgrade"
 
 
 class ClusterPoolAvailableUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -56,6 +64,20 @@ class ClusterPoolAvailableUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMe
     NODE_OS_UPGRADE = "NodeOsUpgrade"
 
 
+class ClusterPoolUpgradeHistoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of upgrade."""
+
+    AKS_PATCH_UPGRADE = "AKSPatchUpgrade"
+    NODE_OS_UPGRADE = "NodeOsUpgrade"
+
+
+class ClusterPoolUpgradeHistoryUpgradeResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Result of this upgrade."""
+
+    SUCCEED = "Succeed"
+    FAILED = "Failed"
+
+
 class ClusterPoolUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of upgrade."""
 
@@ -63,11 +85,38 @@ class ClusterPoolUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NODE_OS_UPGRADE = "NodeOsUpgrade"
 
 
+class ClusterUpgradeHistorySeverityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of this upgrade."""
+
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
+
+
+class ClusterUpgradeHistoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of upgrade."""
+
+    AKS_PATCH_UPGRADE = "AKSPatchUpgrade"
+    HOTFIX_UPGRADE = "HotfixUpgrade"
+    HOTFIX_UPGRADE_ROLLBACK = "HotfixUpgradeRollback"
+    PATCH_VERSION_UPGRADE = "PatchVersionUpgrade"
+    PATCH_VERSION_UPGRADE_ROLLBACK = "PatchVersionUpgradeRollback"
+
+
+class ClusterUpgradeHistoryUpgradeResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Result of this upgrade."""
+
+    SUCCEED = "Succeed"
+    FAILED = "Failed"
+
+
 class ClusterUpgradeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of upgrade."""
 
     AKS_PATCH_UPGRADE = "AKSPatchUpgrade"
     HOTFIX_UPGRADE = "HotfixUpgrade"
+    PATCH_VERSION_UPGRADE = "PatchVersionUpgrade"
 
 
 class ComparisonOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -157,6 +206,21 @@ class KeyVaultObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CERTIFICATE = "Certificate"
 
 
+class LibraryManagementAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The library management action."""
+
+    INSTALL = "Install"
+    UNINSTALL = "Uninstall"
+
+
+class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of managed identity."""
+
+    CLUSTER = "cluster"
+    USER = "user"
+    INTERNAL = "internal"
+
+
 class MetastoreDbConnectionAuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication mode to connect to your Hive metastore database. More details:
     https://learn.microsoft.com/en-us/azure/azure-sql/database/logins-create-manage?view=azuresql#authentication-and-authorization.
@@ -231,6 +295,23 @@ class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
+
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the library."""
+
+    INSTALLING = "INSTALLING"
+    INSTALLED = "INSTALLED"
+    INSTALL_FAILED = "INSTALL_FAILED"
+    UNINSTALLING = "UNINSTALLING"
+    UNINSTALL_FAILED = "UNINSTALL_FAILED"
+
+
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the library."""
+
+    PYPI = "pypi"
+    MAVEN = "maven"
 
 
 class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

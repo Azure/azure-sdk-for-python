@@ -274,6 +274,7 @@ class DynamicsAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OFFICE365 = "Office365"
     IFD = "Ifd"
     AAD_SERVICE_PRINCIPAL = "AADServicePrincipal"
+    ACTIVE_DIRECTORY = "Active Directory"
 
 
 class DynamicsDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -343,10 +344,11 @@ class GlobalParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     OBJECT = "Object"
     STRING = "String"
-    INT_ENUM = "Int"
+    INT = "Int"
     FLOAT = "Float"
     BOOL = "Bool"
     ARRAY = "Array"
+    INT_ENUM = "Int"
 
 
 class GoogleAdWordsAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -588,9 +590,10 @@ class NotebookParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Notebook parameter type."""
 
     STRING = "string"
-    INT_ENUM = "int"
+    INT = "int"
     FLOAT = "float"
     BOOL = "bool"
+    INT_ENUM = "int"
 
 
 class NotebookReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -638,11 +641,12 @@ class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     OBJECT = "Object"
     STRING = "String"
-    INT_ENUM = "Int"
+    INT = "Int"
     FLOAT = "Float"
     BOOL = "Bool"
     ARRAY = "Array"
     SECURE_STRING = "SecureString"
+    INT_ENUM = "Int"
 
 
 class PhoenixAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -728,8 +732,9 @@ class RunQueryFilterOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     EQUALS = "Equals"
     NOT_EQUALS = "NotEquals"
-    IN_ENUM = "In"
+    IN = "In"
     NOT_IN = "NotIn"
+    IN_ENUM = "In"
 
 
 class RunQueryOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -964,6 +969,7 @@ class SqlServerAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SQL = "SQL"
     WINDOWS = "Windows"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
 
 
 class SqlWriteBehaviorEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1002,12 +1008,13 @@ class StoredProcedureParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """Stored procedure parameter type."""
 
     STRING = "String"
-    INT_ENUM = "Int"
+    INT = "Int"
     INT64 = "Int64"
     DECIMAL = "Decimal"
     GUID = "Guid"
     BOOLEAN = "Boolean"
     DATE = "Date"
+    INT_ENUM = "Int"
 
 
 class SybaseAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

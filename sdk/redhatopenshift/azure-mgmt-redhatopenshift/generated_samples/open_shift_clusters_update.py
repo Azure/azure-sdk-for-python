@@ -6,7 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from typing import Any, IO, Union
+
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.redhatopenshift import AzureRedHatOpenShiftClient
 
 """
@@ -49,6 +52,7 @@ def main():
                     "vmSize": "Standard_D8s_v3",
                 },
                 "networkProfile": {
+                    "loadBalancerProfile": {"managedOutboundIps": {"count": 1}},
                     "podCidr": "10.128.0.0/14",
                     "preconfiguredNSG": "Disabled",
                     "serviceCidr": "172.30.0.0/16",
@@ -70,6 +74,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/stable/2023-09-04/examples/OpenShiftClusters_Update.json
+# x-ms-original-file: specification/redhatopenshift/resource-manager/Microsoft.RedHatOpenShift/openshiftclusters/stable/2023-11-22/examples/OpenShiftClusters_Update.json
 if __name__ == "__main__":
     main()

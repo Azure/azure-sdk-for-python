@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,too-many-statements
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, Type, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -32,6 +33,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -43,7 +48,7 @@ def build_list_request(resource_group_name: str, vault_name: str, subscription_i
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -76,7 +81,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -105,12 +110,18 @@ def build_get_request(
 
 
 def build_create_or_update_request(
-    resource_group_name: str, vault_name: str, backup_instance_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    vault_name: str,
+    backup_instance_name: str,
+    subscription_id: str,
+    *,
+    x_ms_authorization_auxiliary: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -134,6 +145,10 @@ def build_create_or_update_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if x_ms_authorization_auxiliary is not None:
+        _headers["x-ms-authorization-auxiliary"] = _SERIALIZER.header(
+            "x_ms_authorization_auxiliary", x_ms_authorization_auxiliary, "str"
+        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -142,12 +157,18 @@ def build_create_or_update_request(
 
 
 def build_delete_request(
-    resource_group_name: str, vault_name: str, backup_instance_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    vault_name: str,
+    backup_instance_name: str,
+    subscription_id: str,
+    *,
+    x_ms_authorization_auxiliary: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -170,6 +191,10 @@ def build_delete_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if x_ms_authorization_auxiliary is not None:
+        _headers["x-ms-authorization-auxiliary"] = _SERIALIZER.header(
+            "x_ms_authorization_auxiliary", x_ms_authorization_auxiliary, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
@@ -181,7 +206,7 @@ def build_adhoc_backup_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -218,7 +243,7 @@ def build_validate_for_backup_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -248,7 +273,7 @@ def build_validate_for_backup_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_backup_instance_operation_result_request(
+def build_get_backup_instance_operation_result_request(  # pylint: disable=name-too-long
     resource_group_name: str,
     vault_name: str,
     backup_instance_name: str,
@@ -259,7 +284,7 @@ def build_get_backup_instance_operation_result_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -288,13 +313,13 @@ def build_get_backup_instance_operation_result_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_trigger_cross_region_restore_request(
+def build_trigger_cross_region_restore_request(  # pylint: disable=name-too-long
     resource_group_name: str, location: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -324,13 +349,13 @@ def build_trigger_cross_region_restore_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_validate_cross_region_restore_request(
+def build_validate_cross_region_restore_request(  # pylint: disable=name-too-long
     resource_group_name: str, location: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -366,7 +391,7 @@ def build_trigger_rehydrate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -398,12 +423,18 @@ def build_trigger_rehydrate_request(
 
 
 def build_trigger_restore_request(
-    resource_group_name: str, vault_name: str, backup_instance_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    vault_name: str,
+    backup_instance_name: str,
+    subscription_id: str,
+    *,
+    x_ms_authorization_auxiliary: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -427,6 +458,10 @@ def build_trigger_restore_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if x_ms_authorization_auxiliary is not None:
+        _headers["x-ms-authorization-auxiliary"] = _SERIALIZER.header(
+            "x_ms_authorization_auxiliary", x_ms_authorization_auxiliary, "str"
+        )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -440,7 +475,7 @@ def build_resume_backups_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -474,7 +509,7 @@ def build_resume_protection_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -503,12 +538,19 @@ def build_resume_protection_request(
 
 
 def build_stop_protection_request(
-    resource_group_name: str, vault_name: str, backup_instance_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    vault_name: str,
+    backup_instance_name: str,
+    subscription_id: str,
+    *,
+    x_ms_authorization_auxiliary: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -531,18 +573,31 @@ def build_stop_protection_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if x_ms_authorization_auxiliary is not None:
+        _headers["x-ms-authorization-auxiliary"] = _SERIALIZER.header(
+            "x_ms_authorization_auxiliary", x_ms_authorization_auxiliary, "str"
+        )
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_suspend_backups_request(
-    resource_group_name: str, vault_name: str, backup_instance_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    vault_name: str,
+    backup_instance_name: str,
+    subscription_id: str,
+    *,
+    x_ms_authorization_auxiliary: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -565,6 +620,12 @@ def build_suspend_backups_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if x_ms_authorization_auxiliary is not None:
+        _headers["x-ms-authorization-auxiliary"] = _SERIALIZER.header(
+            "x_ms_authorization_auxiliary", x_ms_authorization_auxiliary, "str"
+        )
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -576,7 +637,7 @@ def build_sync_backup_instance_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -613,7 +674,7 @@ def build_validate_for_restore_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-04-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -674,7 +735,6 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BackupInstanceResource or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.dataprotection.models.BackupInstanceResource]
@@ -686,7 +746,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.BackupInstanceResourceList] = kwargs.pop("cls", None)
 
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -697,17 +757,16 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                _request = build_list_request(
                     resource_group_name=resource_group_name,
                     vault_name=vault_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -719,13 +778,13 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
+                _request = _convert_request(_request)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("BackupInstanceResourceList", pipeline_response)
@@ -735,11 +794,11 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -750,10 +809,6 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
-
-    list.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances"
-    }
 
     @distributed_trace
     def get(
@@ -768,12 +823,11 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupInstanceResource or the result of cls(response)
         :rtype: ~azure.mgmt.dataprotection.models.BackupInstanceResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -787,22 +841,21 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.BackupInstanceResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        _request = build_get_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -814,23 +867,20 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         deserialized = self._deserialize("BackupInstanceResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}"
-    }
+        return deserialized  # type: ignore
 
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.BackupInstanceResource, IO],
+        parameters: Union[_models.BackupInstanceResource, IO[bytes]],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.BackupInstanceResource]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -853,25 +903,25 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "BackupInstanceResource")
 
-        request = build_create_or_update_request(
+        _request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
             subscription_id=self._config.subscription_id,
+            x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -895,13 +945,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             )
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _create_or_update_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_create_or_update(
@@ -910,6 +956,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         vault_name: str,
         backup_instance_name: str,
         parameters: _models.BackupInstanceResource,
+        x_ms_authorization_auxiliary: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -925,17 +972,11 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.BackupInstanceResource
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either BackupInstanceResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.dataprotection.models.BackupInstanceResource]
@@ -948,7 +989,8 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -963,18 +1005,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either BackupInstanceResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.dataprotection.models.BackupInstanceResource]
@@ -987,7 +1023,8 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.BackupInstanceResource, IO],
+        parameters: Union[_models.BackupInstanceResource, IO[bytes]],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
     ) -> LROPoller[_models.BackupInstanceResource]:
         """Create or update a backup instance in a backup vault.
@@ -999,20 +1036,11 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is either a BackupInstanceResource type or a IO
-         type. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.BackupInstanceResource or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param parameters: Request body for operation. Is either a BackupInstanceResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.BackupInstanceResource or IO[bytes]
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns either BackupInstanceResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.dataprotection.models.BackupInstanceResource]
@@ -1033,6 +1061,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
                 vault_name=vault_name,
                 backup_instance_name=backup_instance_name,
                 parameters=parameters,
+                x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -1045,7 +1074,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("BackupInstanceResource", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1055,22 +1084,25 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.BackupInstanceResource].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_or_update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}"
-    }
+        return LROPoller[_models.BackupInstanceResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        backup_instance_name: str,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1084,22 +1116,22 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_request(
+        _request = build_delete_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
             subscription_id=self._config.subscription_id,
+            x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
             api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1117,15 +1149,16 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _delete_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_delete(
-        self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        backup_instance_name: str,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Delete a backup instance in a backup vault.
 
@@ -1136,14 +1169,8 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1161,6 +1188,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
                 resource_group_name=resource_group_name,
                 vault_name=vault_name,
                 backup_instance_name=backup_instance_name,
+                x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -1171,7 +1199,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -1180,27 +1208,23 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _adhoc_backup_initial(
         self,
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.TriggerBackupRequest, IO],
+        parameters: Union[_models.TriggerBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.OperationJobExtendedInfo]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1223,7 +1247,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "TriggerBackupRequest")
 
-        request = build_adhoc_backup_request(
+        _request = build_adhoc_backup_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
@@ -1232,16 +1256,15 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._adhoc_backup_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1263,13 +1286,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _adhoc_backup_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/backup"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_adhoc_backup(
@@ -1296,14 +1315,6 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -1317,7 +1328,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1332,18 +1343,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -1357,7 +1360,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.TriggerBackupRequest, IO],
+        parameters: Union[_models.TriggerBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationJobExtendedInfo]:
         """Trigger adhoc backup.
@@ -1369,20 +1372,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is either a TriggerBackupRequest type or a IO
-         type. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.TriggerBackupRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param parameters: Request body for operation. Is either a TriggerBackupRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.TriggerBackupRequest or IO[bytes]
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -1416,7 +1408,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("OperationJobExtendedInfo", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1428,26 +1420,24 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.OperationJobExtendedInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_adhoc_backup.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/backup"
-    }
+        return LROPoller[_models.OperationJobExtendedInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _validate_for_backup_initial(
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.ValidateForBackupRequest, IO],
+        parameters: Union[_models.ValidateForBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.OperationJobExtendedInfo]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1470,7 +1460,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "ValidateForBackupRequest")
 
-        request = build_validate_for_backup_request(
+        _request = build_validate_for_backup_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             subscription_id=self._config.subscription_id,
@@ -1478,16 +1468,15 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._validate_for_backup_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1509,13 +1498,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _validate_for_backup_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/validateForBackup"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_validate_for_backup(
@@ -1539,14 +1524,6 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -1559,7 +1536,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1572,18 +1549,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -1596,7 +1565,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.ValidateForBackupRequest, IO],
+        parameters: Union[_models.ValidateForBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationJobExtendedInfo]:
         """Validate whether adhoc backup will be successful or not.
@@ -1607,19 +1576,8 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
         :param parameters: Request body for operation. Is either a ValidateForBackupRequest type or a
-         IO type. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ValidateForBackupRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ValidateForBackupRequest or IO[bytes]
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -1652,7 +1610,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("OperationJobExtendedInfo", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1664,17 +1622,15 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.OperationJobExtendedInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_validate_for_backup.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/validateForBackup"
-    }
+        return LROPoller[_models.OperationJobExtendedInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace
     def get_backup_instance_operation_result(
@@ -1691,12 +1647,11 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type backup_instance_name: str
         :param operation_id: Required.
         :type operation_id: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: BackupInstanceResource or None or the result of cls(response)
         :rtype: ~azure.mgmt.dataprotection.models.BackupInstanceResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1710,23 +1665,22 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[Optional[_models.BackupInstanceResource]] = kwargs.pop("cls", None)
 
-        request = build_get_backup_instance_operation_result_request(
+        _request = build_get_backup_instance_operation_result_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
             operation_id=operation_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.get_backup_instance_operation_result.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1740,22 +1694,18 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             deserialized = self._deserialize("BackupInstanceResource", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
-
-    get_backup_instance_operation_result.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/operationResults/{operationId}"
-    }
+        return deserialized  # type: ignore
 
     def _trigger_cross_region_restore_initial(
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CrossRegionRestoreRequestObject, IO],
+        parameters: Union[_models.CrossRegionRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.OperationJobExtendedInfo]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -1778,7 +1728,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "CrossRegionRestoreRequestObject")
 
-        request = build_trigger_cross_region_restore_request(
+        _request = build_trigger_cross_region_restore_request(
             resource_group_name=resource_group_name,
             location=location,
             subscription_id=self._config.subscription_id,
@@ -1786,16 +1736,15 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._trigger_cross_region_restore_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1818,13 +1767,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _trigger_cross_region_restore_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/locations/{location}/crossRegionRestore"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_trigger_cross_region_restore(
@@ -1848,14 +1793,6 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -1868,7 +1805,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1881,18 +1818,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for trigger CRR operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -1905,7 +1834,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CrossRegionRestoreRequestObject, IO],
+        parameters: Union[_models.CrossRegionRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationJobExtendedInfo]:
         """Triggers Cross Region Restore for BackupInstance.
@@ -1916,19 +1845,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for trigger CRR operation. Is either a
-         CrossRegionRestoreRequestObject type or a IO type. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreRequestObject or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         CrossRegionRestoreRequestObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreRequestObject or
+         IO[bytes]
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -1961,7 +1880,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("OperationJobExtendedInfo", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -1973,26 +1892,24 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.OperationJobExtendedInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_trigger_cross_region_restore.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/locations/{location}/crossRegionRestore"
-    }
+        return LROPoller[_models.OperationJobExtendedInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _validate_cross_region_restore_initial(
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.ValidateCrossRegionRestoreRequestObject, IO],
+        parameters: Union[_models.ValidateCrossRegionRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.OperationJobExtendedInfo]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2015,7 +1932,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "ValidateCrossRegionRestoreRequestObject")
 
-        request = build_validate_cross_region_restore_request(
+        _request = build_validate_cross_region_restore_request(
             resource_group_name=resource_group_name,
             location=location,
             subscription_id=self._config.subscription_id,
@@ -2023,16 +1940,15 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._validate_cross_region_restore_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2055,13 +1971,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _validate_cross_region_restore_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/locations/{location}/validateCrossRegionRestore"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_validate_cross_region_restore(
@@ -2085,14 +1997,6 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -2105,7 +2009,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2118,18 +2022,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -2142,7 +2038,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.ValidateCrossRegionRestoreRequestObject, IO],
+        parameters: Union[_models.ValidateCrossRegionRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationJobExtendedInfo]:
         """Validates whether Cross Region Restore can be triggered for DataSource.
@@ -2153,20 +2049,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Is either a
-         ValidateCrossRegionRestoreRequestObject type or a IO type. Required.
+         ValidateCrossRegionRestoreRequestObject type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.ValidateCrossRegionRestoreRequestObject or
-         IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes]
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -2199,7 +2084,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("OperationJobExtendedInfo", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -2211,27 +2096,25 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.OperationJobExtendedInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_validate_cross_region_restore.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/locations/{location}/validateCrossRegionRestore"
-    }
+        return LROPoller[_models.OperationJobExtendedInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _trigger_rehydrate_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRehydrationRequest, IO],
+        parameters: Union[_models.AzureBackupRehydrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2254,7 +2137,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "AzureBackupRehydrationRequest")
 
-        request = build_trigger_rehydrate_request(
+        _request = build_trigger_rehydrate_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
@@ -2263,16 +2146,15 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._trigger_rehydrate_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2290,11 +2172,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _trigger_rehydrate_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/rehydrate"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     def begin_trigger_rehydrate(
@@ -2321,14 +2199,6 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2340,7 +2210,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2355,18 +2225,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2378,7 +2240,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRehydrationRequest, IO],
+        parameters: Union[_models.AzureBackupRehydrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """rehydrate recovery point for restore for a BackupInstance.
@@ -2391,19 +2253,8 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Is either a AzureBackupRehydrationRequest type
-         or a IO type. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRehydrationRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRehydrationRequest or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2434,7 +2285,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -2443,27 +2294,24 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_trigger_rehydrate.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/rehydrate"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _trigger_restore_initial(
         self,
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRestoreRequest, IO],
+        parameters: Union[_models.AzureBackupRestoreRequest, IO[bytes]],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.OperationJobExtendedInfo]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2486,25 +2334,25 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "AzureBackupRestoreRequest")
 
-        request = build_trigger_restore_request(
+        _request = build_trigger_restore_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
             subscription_id=self._config.subscription_id,
+            x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._trigger_restore_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2526,13 +2374,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _trigger_restore_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/restore"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_trigger_restore(
@@ -2541,6 +2385,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         vault_name: str,
         backup_instance_name: str,
         parameters: _models.AzureBackupRestoreRequest,
+        x_ms_authorization_auxiliary: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2556,17 +2401,11 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -2580,7 +2419,8 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2595,18 +2435,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -2620,7 +2454,8 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRestoreRequest, IO],
+        parameters: Union[_models.AzureBackupRestoreRequest, IO[bytes]],
+        x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
     ) -> LROPoller[_models.OperationJobExtendedInfo]:
         """Triggers restore for a BackupInstance.
@@ -2633,19 +2468,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Is either a AzureBackupRestoreRequest type or a
-         IO type. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest or IO[bytes]
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -2667,6 +2493,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
                 vault_name=vault_name,
                 backup_instance_name=backup_instance_name,
                 parameters=parameters,
+                x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -2679,7 +2506,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("OperationJobExtendedInfo", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -2691,22 +2518,20 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.OperationJobExtendedInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_trigger_restore.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/restore"
-    }
+        return LROPoller[_models.OperationJobExtendedInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     def _resume_backups_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2720,22 +2545,21 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_resume_backups_request(
+        _request = build_resume_backups_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._resume_backups_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2753,11 +2577,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _resume_backups_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/resumeBackups"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_resume_backups(
@@ -2772,14 +2592,6 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2807,7 +2619,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -2816,22 +2628,18 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_resume_backups.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/resumeBackups"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _resume_protection_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2845,22 +2653,21 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_resume_protection_request(
+        _request = build_resume_protection_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self._resume_protection_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2878,11 +2685,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _resume_protection_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/resumeProtection"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
     def begin_resume_protection(
@@ -2897,14 +2700,6 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2932,7 +2727,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -2941,22 +2736,24 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_resume_protection.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/resumeProtection"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _stop_protection_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        backup_instance_name: str,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        parameters: Optional[Union[_models.StopProtectionRequest, IO[bytes]]] = None,
+        **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -2964,28 +2761,43 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_stop_protection_request(
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            if parameters is not None:
+                _json = self._serialize.body(parameters, "StopProtectionRequest")
+            else:
+                _json = None
+
+        _request = build_stop_protection_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
             subscription_id=self._config.subscription_id,
+            x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
             api_version=api_version,
-            template_url=self._stop_protection_initial.metadata["url"],
+            content_type=content_type,
+            json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3003,15 +2815,19 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    _stop_protection_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/stopProtection"
-    }
-
-    @distributed_trace
+    @overload
     def begin_stop_protection(
-        self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        backup_instance_name: str,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        parameters: Optional[_models.StopProtectionRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[None]:
         """This operation will stop protection of a backup instance and data will be held forever.
 
@@ -3022,22 +2838,84 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
+        :param parameters: Request body for operation. Default value is None.
+        :type parameters: ~azure.mgmt.dataprotection.models.StopProtectionRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+
+    @overload
+    def begin_stop_protection(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        backup_instance_name: str,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        parameters: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """This operation will stop protection of a backup instance and data will be held forever.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param backup_instance_name: The name of the backup instance. Required.
+        :type backup_instance_name: str
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
+        :param parameters: Request body for operation. Default value is None.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_stop_protection(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        backup_instance_name: str,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        parameters: Optional[Union[_models.StopProtectionRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """This operation will stop protection of a backup instance and data will be held forever.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param backup_instance_name: The name of the backup instance. Required.
+        :type backup_instance_name: str
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
+        :param parameters: Request body for operation. Is either a StopProtectionRequest type or a
+         IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.dataprotection.models.StopProtectionRequest or IO[bytes]
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3047,7 +2925,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
                 resource_group_name=resource_group_name,
                 vault_name=vault_name,
                 backup_instance_name=backup_instance_name,
+                x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
+                parameters=parameters,
                 api_version=api_version,
+                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -3057,7 +2938,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -3066,22 +2947,24 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_stop_protection.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/stopProtection"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _suspend_backups_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        backup_instance_name: str,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        parameters: Optional[Union[_models.SuspendBackupRequest, IO[bytes]]] = None,
+        **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3089,28 +2972,43 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_suspend_backups_request(
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            if parameters is not None:
+                _json = self._serialize.body(parameters, "SuspendBackupRequest")
+            else:
+                _json = None
+
+        _request = build_suspend_backups_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
             subscription_id=self._config.subscription_id,
+            x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
             api_version=api_version,
-            template_url=self._suspend_backups_initial.metadata["url"],
+            content_type=content_type,
+            json=_json,
+            content=_content,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3128,15 +3026,19 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
-    _suspend_backups_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/suspendBackups"
-    }
-
-    @distributed_trace
+    @overload
     def begin_suspend_backups(
-        self, resource_group_name: str, vault_name: str, backup_instance_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        backup_instance_name: str,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        parameters: Optional[_models.SuspendBackupRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[None]:
         """This operation will stop backup for a backup instance and retains the backup data as per the
         policy (except latest Recovery point, which will be retained forever).
@@ -3148,22 +3050,86 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
+        :param parameters: Request body for operation. Default value is None.
+        :type parameters: ~azure.mgmt.dataprotection.models.SuspendBackupRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+
+    @overload
+    def begin_suspend_backups(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        backup_instance_name: str,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        parameters: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """This operation will stop backup for a backup instance and retains the backup data as per the
+        policy (except latest Recovery point, which will be retained forever).
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param backup_instance_name: The name of the backup instance. Required.
+        :type backup_instance_name: str
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
+        :param parameters: Request body for operation. Default value is None.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_suspend_backups(
+        self,
+        resource_group_name: str,
+        vault_name: str,
+        backup_instance_name: str,
+        x_ms_authorization_auxiliary: Optional[str] = None,
+        parameters: Optional[Union[_models.SuspendBackupRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """This operation will stop backup for a backup instance and retains the backup data as per the
+        policy (except latest Recovery point, which will be retained forever).
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vault_name: The name of the backup vault. Required.
+        :type vault_name: str
+        :param backup_instance_name: The name of the backup instance. Required.
+        :type backup_instance_name: str
+        :param x_ms_authorization_auxiliary: Default value is None.
+        :type x_ms_authorization_auxiliary: str
+        :param parameters: Request body for operation. Is either a SuspendBackupRequest type or a
+         IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.dataprotection.models.SuspendBackupRequest or IO[bytes]
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3173,7 +3139,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
                 resource_group_name=resource_group_name,
                 vault_name=vault_name,
                 backup_instance_name=backup_instance_name,
+                x_ms_authorization_auxiliary=x_ms_authorization_auxiliary,
+                parameters=parameters,
                 api_version=api_version,
+                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -3183,7 +3152,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -3192,27 +3161,23 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_suspend_backups.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/suspendBackups"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _sync_backup_instance_initial(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.SyncBackupInstanceRequest, IO],
+        parameters: Union[_models.SyncBackupInstanceRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3235,7 +3200,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "SyncBackupInstanceRequest")
 
-        request = build_sync_backup_instance_request(
+        _request = build_sync_backup_instance_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
@@ -3244,16 +3209,15 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._sync_backup_instance_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3271,11 +3235,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _sync_backup_instance_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/sync"
-    }
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @overload
     def begin_sync_backup_instance(
@@ -3303,14 +3263,6 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3322,7 +3274,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3338,18 +3290,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3361,7 +3305,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.SyncBackupInstanceRequest, IO],
+        parameters: Union[_models.SyncBackupInstanceRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Sync backup instance again in case of failure
@@ -3375,19 +3319,8 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Is either a SyncBackupInstanceRequest type or a
-         IO type. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.SyncBackupInstanceRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.SyncBackupInstanceRequest or IO[bytes]
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3418,7 +3351,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, None, {})  # type: ignore
 
         if polling is True:
             polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
@@ -3427,27 +3360,23 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[None].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_sync_backup_instance.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/sync"
-    }
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _validate_for_restore_initial(
         self,
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.ValidateRestoreRequestObject, IO],
+        parameters: Union[_models.ValidateRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> Optional[_models.OperationJobExtendedInfo]:
-        error_map = {
+        error_map: MutableMapping[int, Type[HttpResponseError]] = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -3470,7 +3399,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             _json = self._serialize.body(parameters, "ValidateRestoreRequestObject")
 
-        request = build_validate_for_restore_request(
+        _request = build_validate_for_restore_request(
             resource_group_name=resource_group_name,
             vault_name=vault_name,
             backup_instance_name=backup_instance_name,
@@ -3479,16 +3408,15 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._validate_for_restore_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        _request = _convert_request(_request)
+        _request.url = self._client.format_url(_request.url)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3510,13 +3438,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
-
-    _validate_for_restore_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/validateRestore"
-    }
+        return deserialized  # type: ignore
 
     @overload
     def begin_validate_for_restore(
@@ -3543,14 +3467,6 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -3564,7 +3480,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: IO,
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3579,18 +3495,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: IO
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -3604,7 +3512,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.ValidateRestoreRequestObject, IO],
+        parameters: Union[_models.ValidateRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationJobExtendedInfo]:
         """Validates if Restore can be triggered for a DataSource.
@@ -3617,19 +3525,8 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Is either a ValidateRestoreRequestObject type or
-         a IO type. Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ValidateRestoreRequestObject or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ValidateRestoreRequestObject or IO[bytes]
         :return: An instance of LROPoller that returns either OperationJobExtendedInfo or the result of
          cls(response)
         :rtype:
@@ -3663,7 +3560,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         def get_long_running_output(pipeline_response):
             deserialized = self._deserialize("OperationJobExtendedInfo", pipeline_response)
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         if polling is True:
@@ -3675,14 +3572,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller.from_continuation_token(
+            return LROPoller[_models.OperationJobExtendedInfo].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_validate_for_restore.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/backupVaults/{vaultName}/backupInstances/{backupInstanceName}/validateRestore"
-    }
+        return LROPoller[_models.OperationJobExtendedInfo](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

@@ -344,7 +344,7 @@ class ComputeInstance(Compute):
         return res
 
     def _set_full_subnet_name(self, subscription_id: str, rg: str) -> None:
-        if self.network_settings:
+        if self.network_settings and (self.network_settings.vnet_name or self.network_settings.subnet):
             self.subnet = get_subnet_str(
                 self.network_settings.vnet_name,
                 self.network_settings.subnet,

@@ -144,6 +144,8 @@ class RawDeserializer:
                 # context otherwise.
                 _LOGGER.critical("Wasn't XML not JSON, failing")
                 raise DeserializationError("XML is invalid") from err
+        elif content_type.startswith("text/"):
+            return data_as_str
         raise DeserializationError("Cannot deserialize content-type: {}".format(content_type))
 
     @classmethod
@@ -1441,7 +1443,7 @@ class Deserializer(object):
         elif isinstance(response, type) and issubclass(response, Enum):
             return self.deserialize_enum(data, response)
 
-        if data is None:
+        if data is None or data is CoreNull:
             return data
         try:
             attributes = response._attribute_map  # type: ignore

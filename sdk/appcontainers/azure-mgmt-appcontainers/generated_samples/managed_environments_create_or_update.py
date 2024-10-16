@@ -36,47 +36,17 @@ def main():
         resource_group_name="examplerg",
         environment_name="testcontainerenv",
         environment_envelope={
-            "identity": {
-                "type": "SystemAssigned, UserAssigned",
-                "userAssignedIdentities": {
-                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/contoso-resources/providers/Microsoft.ManagedIdentity/userAssignedIdentities/contoso-identity": {}
-                },
-            },
             "location": "East US",
             "properties": {
-                "appInsightsConfiguration": {
-                    "connectionString": "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
-                },
-                "appLogsConfiguration": {
-                    "logAnalyticsConfiguration": {
-                        "customerId": "string",
-                        "dynamicJsonColumns": True,
-                        "sharedKey": "string",
-                    }
-                },
+                "appLogsConfiguration": {"logAnalyticsConfiguration": {"customerId": "string", "sharedKey": "string"}},
                 "customDomainConfiguration": {
                     "certificatePassword": "1234",
                     "certificateValue": "Y2VydA==",
                     "dnsSuffix": "www.my-name.com",
                 },
                 "daprAIConnectionString": "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://northcentralus-0.in.applicationinsights.azure.com/",
-                "openTelemetryConfiguration": {
-                    "destinationsConfiguration": {
-                        "dataDogConfiguration": {"key": "000000000000000000000000", "site": "string"},
-                        "otlpConfigurations": [
-                            {
-                                "endpoint": "dashboard.k8s.region.azurecontainerapps.io:80",
-                                "headers": [{"key": "api-key", "value": "xxxxxxxxxxx"}],
-                                "insecure": True,
-                                "name": "dashboard",
-                            }
-                        ],
-                    },
-                    "logsConfiguration": {"destinations": ["appInsights"]},
-                    "metricsConfiguration": {"destinations": ["dataDog"]},
-                    "tracesConfiguration": {"destinations": ["appInsights"]},
-                },
                 "peerAuthentication": {"mtls": {"enabled": True}},
+                "peerTrafficConfiguration": {"encryption": {"enabled": True}},
                 "vnetConfiguration": {
                     "infrastructureSubnetId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/RGName/providers/Microsoft.Network/virtualNetworks/VNetName/subnets/subnetName1"
                 },
@@ -108,6 +78,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2023-11-02-preview/examples/ManagedEnvironments_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2024-03-01/examples/ManagedEnvironments_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

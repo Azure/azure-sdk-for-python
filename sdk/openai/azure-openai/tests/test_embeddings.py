@@ -9,6 +9,7 @@ from devtools_testutils import AzureRecordedTestCase
 from conftest import configure, AZURE, OPENAI, PREVIEW, GA
 
 
+@pytest.mark.live_test_only
 class TestEmbeddings(AzureRecordedTestCase):
 
     @configure
@@ -65,7 +66,7 @@ class TestEmbeddings(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
     )
     def test_embedding_dimensions(self, client, api_type, api_version, **kwargs):
 
@@ -82,7 +83,7 @@ class TestEmbeddings(AzureRecordedTestCase):
     @configure
     @pytest.mark.parametrize(
         "api_type, api_version",
-        [(AZURE, PREVIEW), (OPENAI, "v1")]
+        [(AZURE, PREVIEW), (AZURE, GA), (OPENAI, "v1")]
     )
     def test_embedding_encoding_format(self, client, api_type, api_version, **kwargs):
 

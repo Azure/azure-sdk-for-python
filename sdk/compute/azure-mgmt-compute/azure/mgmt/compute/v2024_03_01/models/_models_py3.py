@@ -2692,7 +2692,7 @@ class DiagnosticsProfile(_serialization.Model):
     """Specifies the boot diagnostic settings state. Minimum api-version: 2015-06-15.
 
     :ivar boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
-     Console Output and Screenshot to diagnose VM status. **NOTE**\ : If storageUri is being
+     Console Output and Screenshot to diagnose VM status. **NOTE**\\ : If storageUri is being
      specified then ensure that the storage account is in the same region and subscription as the
      VM. You can easily view the output of your console log. Azure also enables you to see a
      screenshot of the VM from the hypervisor.
@@ -2706,7 +2706,7 @@ class DiagnosticsProfile(_serialization.Model):
     def __init__(self, *, boot_diagnostics: Optional["_models.BootDiagnostics"] = None, **kwargs: Any) -> None:
         """
         :keyword boot_diagnostics: Boot Diagnostics is a debugging feature which allows you to view
-         Console Output and Screenshot to diagnose VM status. **NOTE**\ : If storageUri is being
+         Console Output and Screenshot to diagnose VM status. **NOTE**\\ : If storageUri is being
          specified then ensure that the storage account is in the same region and subscription as the
          VM. You can easily view the output of your console log. Azure also enables you to see a
          screenshot of the VM from the hypervisor.
@@ -3114,9 +3114,9 @@ class HardwareProfile(_serialization.Model):
      deprecated and will be removed by December 23rd 2023. The recommended way to get the list of
      available sizes is using these APIs: `List all available virtual machine sizes in an
      availability set
-     <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_\ , `List
+     <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_\\ , `List
      all available virtual machine sizes in a region
-     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_\ , `List all available
+     <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_\\ , `List all available
      virtual machine sizes for resizing
      <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
      information about virtual machine sizes, see `Sizes for virtual machines
@@ -3181,9 +3181,9 @@ class HardwareProfile(_serialization.Model):
          deprecated and will be removed by December 23rd 2023. The recommended way to get the list of
          available sizes is using these APIs: `List all available virtual machine sizes in an
          availability set
-         <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_\ , `List
+         <https://docs.microsoft.com/rest/api/compute/availabilitysets/listavailablesizes>`_\\ , `List
          all available virtual machine sizes in a region
-         <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_\ , `List all available
+         <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_\\ , `List all available
          virtual machine sizes for resizing
          <https://docs.microsoft.com/rest/api/compute/virtualmachines/listavailablesizes>`_. For more
          information about virtual machine sizes, see `Sizes for virtual machines
@@ -5108,7 +5108,7 @@ class OSProfile(_serialization.Model):
      characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
      :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
      fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
      "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
      resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -5199,7 +5199,7 @@ class OSProfile(_serialization.Model):
          characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
          :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
          fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
          "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
          resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -5260,7 +5260,7 @@ class OSProfileProvisioningData(_serialization.Model):
      characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
      :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
      fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
      "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
      resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -5295,7 +5295,7 @@ class OSProfileProvisioningData(_serialization.Model):
          characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
          :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
          fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
          "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
          resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -5819,7 +5819,7 @@ class PublicIPAddressSku(_serialization.Model):
 
     :ivar name: Specify public IP sku name. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.compute.v2024_03_01.models.PublicIPAddressSkuName
-    :ivar tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
+    :ivar tier: Specify public IP sku tier. Known values are: "Regional", "Global", and "Global".
     :vartype tier: str or ~azure.mgmt.compute.v2024_03_01.models.PublicIPAddressSkuTier
     """
 
@@ -5838,7 +5838,8 @@ class PublicIPAddressSku(_serialization.Model):
         """
         :keyword name: Specify public IP sku name. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.compute.v2024_03_01.models.PublicIPAddressSkuName
-        :keyword tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
+        :keyword tier: Specify public IP sku tier. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.compute.v2024_03_01.models.PublicIPAddressSkuTier
         """
         super().__init__(**kwargs)
@@ -7658,42 +7659,97 @@ class ScheduledEventsProfile(_serialization.Model):
 
 
 class SecurityPostureReference(_serialization.Model):
-    """Specifies the security posture to be used for all virtual machines in the scale set. Minimum
-    api-version: 2023-03-01.
+    """Specifies the security posture to be used in the scale set. Minimum api-version: 2023-03-01.
+
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The security posture reference id in the form of
-     /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|{major.*}|latest.  # pylint: disable=line-too-long
+     /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
+     Required.
     :vartype id: str
-    :ivar exclude_extensions: List of virtual machine extensions to exclude when applying the
-     Security Posture.
-    :vartype exclude_extensions:
-     list[~azure.mgmt.compute.v2024_03_01.models.VirtualMachineExtension]
+    :ivar exclude_extensions: The list of virtual machine extension names to exclude when applying
+     the security posture.
+    :vartype exclude_extensions: list[str]
+    :ivar is_overridable: Whether the security posture can be overridden by the user.
+    :vartype is_overridable: bool
+    """
+
+    _validation = {
+        "id": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "exclude_extensions": {"key": "excludeExtensions", "type": "[str]"},
+        "is_overridable": {"key": "isOverridable", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        exclude_extensions: Optional[List[str]] = None,
+        is_overridable: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: The security posture reference id in the form of
+         /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
+         Required.
+        :paramtype id: str
+        :keyword exclude_extensions: The list of virtual machine extension names to exclude when
+         applying the security posture.
+        :paramtype exclude_extensions: list[str]
+        :keyword is_overridable: Whether the security posture can be overridden by the user.
+        :paramtype is_overridable: bool
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.exclude_extensions = exclude_extensions
+        self.is_overridable = is_overridable
+
+
+class SecurityPostureReferenceUpdate(_serialization.Model):
+    """Specifies the security posture to be used in the scale set. Minimum api-version: 2023-03-01.
+
+    :ivar id: The security posture reference id in the form of
+     /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar exclude_extensions: The list of virtual machine extension names to exclude when applying
+     the security posture.
+    :vartype exclude_extensions: list[str]
+    :ivar is_overridable: Whether the security posture can be overridden by the user.
+    :vartype is_overridable: bool
     """
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
-        "exclude_extensions": {"key": "excludeExtensions", "type": "[VirtualMachineExtension]"},
+        "exclude_extensions": {"key": "excludeExtensions", "type": "[str]"},
+        "is_overridable": {"key": "isOverridable", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        exclude_extensions: Optional[List["_models.VirtualMachineExtension"]] = None,
+        exclude_extensions: Optional[List[str]] = None,
+        is_overridable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword id: The security posture reference id in the form of
-         /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|{major.*}|latest.  # pylint: disable=line-too-long
+         /CommunityGalleries/{communityGalleryName}/securityPostures/{securityPostureName}/versions/{major.minor.patch}|latest.  # pylint: disable=line-too-long
         :paramtype id: str
-        :keyword exclude_extensions: List of virtual machine extensions to exclude when applying the
-         Security Posture.
-        :paramtype exclude_extensions:
-         list[~azure.mgmt.compute.v2024_03_01.models.VirtualMachineExtension]
+        :keyword exclude_extensions: The list of virtual machine extension names to exclude when
+         applying the security posture.
+        :paramtype exclude_extensions: list[str]
+        :keyword is_overridable: Whether the security posture can be overridden by the user.
+        :paramtype is_overridable: bool
         """
         super().__init__(**kwargs)
         self.id = id
         self.exclude_extensions = exclude_extensions
+        self.is_overridable = is_overridable
 
 
 class SecurityProfile(_serialization.Model):
@@ -7798,7 +7854,7 @@ class Sku(_serialization.Model):
     :ivar name: The sku name.
     :vartype name: str
     :ivar tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br />`
-     Possible Values::code:`<br />`:code:`<br />` **Standard**\ :code:`<br />`:code:`<br />`
+     Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
      **Basic**.
     :vartype tier: str
     :ivar capacity: Specifies the number of virtual machines in the scale set.
@@ -7818,7 +7874,7 @@ class Sku(_serialization.Model):
         :keyword name: The sku name.
         :paramtype name: str
         :keyword tier: Specifies the tier of virtual machines in a scale set.:code:`<br />`:code:`<br
-         />` Possible Values::code:`<br />`:code:`<br />` **Standard**\ :code:`<br />`:code:`<br />`
+         />` Possible Values::code:`<br />`:code:`<br />` **Standard**\\ :code:`<br />`:code:`<br />`
          **Basic**.
         :paramtype tier: str
         :keyword capacity: Specifies the number of virtual machines in the scale set.
@@ -13289,7 +13345,7 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
      characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
      :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
      fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-     digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+     digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
      **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
      "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
      resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -13373,7 +13429,7 @@ class VirtualMachineScaleSetOSProfile(_serialization.Model):
          characters :code:`<br>`:code:`<br>` **Max-length (Linux):** 72 characters
          :code:`<br>`:code:`<br>` **Complexity requirements:** 3 out of 4 conditions below need to be
          fulfilled :code:`<br>` Has lower characters :code:`<br>`Has upper characters :code:`<br>` Has a
-         digit :code:`<br>` Has a special character (Regex match [\W_]) :code:`<br>`:code:`<br>`
+         digit :code:`<br>` Has a special character (Regex match [\\W_]) :code:`<br>`:code:`<br>`
          **Disallowed values:** "abc@123", "P@$$w0rd", "P@ssw0rd", "P@ssword123", "Pa$$word",
          "pass@word1", "Password!", "Password1", "Password22", "iloveyou!" :code:`<br>`:code:`<br>` For
          resetting the password, see `How to reset the Remote Desktop service or its login password in a
@@ -14555,6 +14611,9 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):  # pylint: di
     :ivar network_profile: The virtual machine scale set network profile.
     :vartype network_profile:
      ~azure.mgmt.compute.v2024_03_01.models.VirtualMachineScaleSetUpdateNetworkProfile
+    :ivar security_posture_reference: The virtual machine scale set security posture reference.
+    :vartype security_posture_reference:
+     ~azure.mgmt.compute.v2024_03_01.models.SecurityPostureReferenceUpdate
     :ivar security_profile: The virtual machine scale set Security profile.
     :vartype security_profile: ~azure.mgmt.compute.v2024_03_01.models.SecurityProfile
     :ivar diagnostics_profile: The virtual machine scale set diagnostics profile.
@@ -14583,6 +14642,7 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):  # pylint: di
         "os_profile": {"key": "osProfile", "type": "VirtualMachineScaleSetUpdateOSProfile"},
         "storage_profile": {"key": "storageProfile", "type": "VirtualMachineScaleSetUpdateStorageProfile"},
         "network_profile": {"key": "networkProfile", "type": "VirtualMachineScaleSetUpdateNetworkProfile"},
+        "security_posture_reference": {"key": "securityPostureReference", "type": "SecurityPostureReferenceUpdate"},
         "security_profile": {"key": "securityProfile", "type": "SecurityProfile"},
         "diagnostics_profile": {"key": "diagnosticsProfile", "type": "DiagnosticsProfile"},
         "extension_profile": {"key": "extensionProfile", "type": "VirtualMachineScaleSetExtensionProfile"},
@@ -14599,6 +14659,7 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):  # pylint: di
         os_profile: Optional["_models.VirtualMachineScaleSetUpdateOSProfile"] = None,
         storage_profile: Optional["_models.VirtualMachineScaleSetUpdateStorageProfile"] = None,
         network_profile: Optional["_models.VirtualMachineScaleSetUpdateNetworkProfile"] = None,
+        security_posture_reference: Optional["_models.SecurityPostureReferenceUpdate"] = None,
         security_profile: Optional["_models.SecurityProfile"] = None,
         diagnostics_profile: Optional["_models.DiagnosticsProfile"] = None,
         extension_profile: Optional["_models.VirtualMachineScaleSetExtensionProfile"] = None,
@@ -14619,6 +14680,9 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):  # pylint: di
         :keyword network_profile: The virtual machine scale set network profile.
         :paramtype network_profile:
          ~azure.mgmt.compute.v2024_03_01.models.VirtualMachineScaleSetUpdateNetworkProfile
+        :keyword security_posture_reference: The virtual machine scale set security posture reference.
+        :paramtype security_posture_reference:
+         ~azure.mgmt.compute.v2024_03_01.models.SecurityPostureReferenceUpdate
         :keyword security_profile: The virtual machine scale set Security profile.
         :paramtype security_profile: ~azure.mgmt.compute.v2024_03_01.models.SecurityProfile
         :keyword diagnostics_profile: The virtual machine scale set diagnostics profile.
@@ -14646,6 +14710,7 @@ class VirtualMachineScaleSetUpdateVMProfile(_serialization.Model):  # pylint: di
         self.os_profile = os_profile
         self.storage_profile = storage_profile
         self.network_profile = network_profile
+        self.security_posture_reference = security_posture_reference
         self.security_profile = security_profile
         self.diagnostics_profile = diagnostics_profile
         self.extension_profile = extension_profile
@@ -15610,8 +15675,8 @@ class VirtualMachineScaleSetVMProfile(_serialization.Model):  # pylint: disable=
      Minimum api-version: 2022-11-01.
     :vartype service_artifact_reference:
      ~azure.mgmt.compute.v2024_03_01.models.ServiceArtifactReference
-    :ivar security_posture_reference: Specifies the security posture to be used for all virtual
-     machines in the scale set. Minimum api-version: 2023-03-01.
+    :ivar security_posture_reference: Specifies the security posture to be used in the scale set.
+     Minimum api-version: 2023-03-01.
     :vartype security_posture_reference:
      ~azure.mgmt.compute.v2024_03_01.models.SecurityPostureReference
     :ivar time_created: Specifies the time in which this VM profile for the Virtual Machine Scale
@@ -15735,8 +15800,8 @@ class VirtualMachineScaleSetVMProfile(_serialization.Model):  # pylint: disable=
          Minimum api-version: 2022-11-01.
         :paramtype service_artifact_reference:
          ~azure.mgmt.compute.v2024_03_01.models.ServiceArtifactReference
-        :keyword security_posture_reference: Specifies the security posture to be used for all virtual
-         machines in the scale set. Minimum api-version: 2023-03-01.
+        :keyword security_posture_reference: Specifies the security posture to be used in the scale
+         set. Minimum api-version: 2023-03-01.
         :paramtype security_posture_reference:
          ~azure.mgmt.compute.v2024_03_01.models.SecurityPostureReference
         """

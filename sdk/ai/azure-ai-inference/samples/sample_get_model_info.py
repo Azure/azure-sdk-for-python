@@ -8,12 +8,15 @@ DESCRIPTION:
     synchronous chat completions client. Similarly can be done with the other
     clients.
 
+    The get_model_info() method on the client only works with Serverless API or
+    Managed Compute endpoints.
+
 USAGE:
     python sample_get_model_info.py
 
     Set these two environment variables before running the sample:
     1) AZURE_AI_CHAT_ENDPOINT - Your endpoint URL, in the form 
-        https://<your-deployment-name>.<your-azure-region>.inference.ai.azure.com
+        https://<your-deployment-name>.<your-azure-region>.models.ai.azure.com
         where `your-deployment-name` is your unique AI Model deployment name, and
         `your-azure-region` is the Azure region where your model is deployed.
     2) AZURE_AI_CHAT_KEY - Your model key (a 32-character string). Keep it secret.

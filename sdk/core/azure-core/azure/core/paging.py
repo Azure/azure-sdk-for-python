@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import itertools
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Callable,
     Optional,
     TypeVar,

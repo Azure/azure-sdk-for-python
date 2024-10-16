@@ -3,7 +3,6 @@ from typing import Callable
 from unittest.mock import Mock
 
 import pytest
-from azure.identity import DefaultAzureCredential
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_compute
@@ -17,6 +16,7 @@ from azure.ai.ml.entities import (
 )
 from azure.ai.ml.operations import ComputeOperations
 from azure.ai.ml.operations._local_job_invoker import CommonRuntimeHelper
+from azure.identity import DefaultAzureCredential
 
 
 @pytest.fixture
@@ -24,11 +24,13 @@ def mock_compute_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_10_01_preview: Mock,
+    mock_aml_services_2023_04_01_preview: Mock,
 ) -> ComputeOperations:
     yield ComputeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_10_01_preview,
+        service_client_2024=mock_aml_services_2023_04_01_preview,
     )
 
 

@@ -458,6 +458,9 @@ def add_batch_sanitizers(sanitizers: Dict[str, List[Optional[Dict[str, str]]]], 
             data.append(sanitizer_definition)
 
     headers_to_send = {"Content-Type": "application/json"}
+    x_recording_id = get_recording_id()
+    if x_recording_id:
+        headers_to_send["x-recording-id"] = x_recording_id
     if headers is not None:
         for key in headers:
             if headers[key] is not None:
@@ -487,7 +490,7 @@ def remove_batch_sanitizers(sanitizers: List[str], headers: Optional[Dict] = Non
     if is_live_and_not_recording():
         return
 
-    data = {"Sanitizers" : sanitizers}
+    data = {"Sanitizers": sanitizers}
 
     headers_to_send = {"Content-Type": "application/json"}
     if headers is not None:

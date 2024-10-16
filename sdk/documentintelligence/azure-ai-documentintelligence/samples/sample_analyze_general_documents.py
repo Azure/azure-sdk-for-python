@@ -24,33 +24,6 @@ USAGE:
 import os
 
 
-def get_words(words, line):
-    result = []
-    for word in words:
-        if _in_span(word, line.spans):
-            result.append(word)
-    return result
-
-
-def _in_span(word, spans):
-    for span in spans:
-        if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
-            return True
-    return False
-
-
-def format_bounding_region(bounding_regions):
-    if not bounding_regions:
-        return "N/A"
-    return ", ".join(f"Page #{region.page_number}: {format_polygon(region.polygon)}" for region in bounding_regions)
-
-
-def format_polygon(polygon):
-    if not polygon:
-        return "N/A"
-    return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
-
-
 def analyze_general_documents():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
@@ -64,6 +37,24 @@ def analyze_general_documents():
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.documentintelligence import DocumentIntelligenceClient
     from azure.ai.documentintelligence.models import DocumentAnalysisFeature, AnalyzeResult
+
+    def _in_span(word, spans):
+        for span in spans:
+            if word.span.offset >= span.offset and (word.span.offset + word.span.length) <= (span.offset + span.length):
+                return True
+        return False
+
+    def _format_bounding_region(bounding_regions):
+        if not bounding_regions:
+            return "N/A"
+        return ", ".join(
+            f"Page #{region.page_number}: {_format_polygon(region.polygon)}" for region in bounding_regions
+        )
+
+    def _format_polygon(polygon):
+        if not polygon:
+            return "N/A"
+        return ", ".join([f"[{polygon[i]}, {polygon[i + 1]}]" for i in range(0, len(polygon), 2)])
 
     endpoint = os.environ["DOCUMENTINTELLIGENCE_ENDPOINT"]
     key = os.environ["DOCUMENTINTELLIGENCE_API_KEY"]
@@ -90,12 +81,12 @@ def analyze_general_documents():
             if kv_pair.key:
                 print(
                     f"Key '{kv_pair.key.content}' found within "
-                    f"'{format_bounding_region(kv_pair.key.bounding_regions)}' bounding regions"
+                    f"'{_format_bounding_region(kv_pair.key.bounding_regions)}' bounding regions"
                 )
             if kv_pair.value:
                 print(
                     f"Value '{kv_pair.value.content}' found within "
-                    f"'{format_bounding_region(kv_pair.value.bounding_regions)}' bounding regions\n"
+                    f"'{_format_bounding_region(kv_pair.value.bounding_regions)}' bounding regions\n"
                 )
 
     for page in result.pages:
@@ -104,21 +95,22 @@ def analyze_general_documents():
 
         if page.lines:
             for line_idx, line in enumerate(page.lines):
-                words = get_words(page.words, line)
+                words = []
+                if page.words:
+                    for word in page.words:
+                        print(f"......Word '{word.content}' has a confidence of {word.confidence}")
+                        if _in_span(word, line.spans):
+                            words.append(word)
                 print(
                     f"...Line #{line_idx} has {len(words)} words and text '{line.content}' within "
-                    f"bounding polygon '{format_polygon(line.polygon)}'"
+                    f"bounding polygon '{_format_polygon(line.polygon)}'"
                 )
-
-        if page.words:
-            for word in page.words:
-                print(f"......Word '{word.content}' has a confidence of {word.confidence}")
 
         if page.selection_marks:
             for selection_mark in page.selection_marks:
                 print(
                     f"Selection mark is '{selection_mark.state}' within bounding polygon "
-                    f"'{format_polygon(selection_mark.polygon)}' and has a confidence of "
+                    f"'{_format_polygon(selection_mark.polygon)}' and has a confidence of "
                     f"{selection_mark.confidence}"
                 )
 
@@ -128,14 +120,14 @@ def analyze_general_documents():
             if table.bounding_regions:
                 for region in table.bounding_regions:
                     print(
-                        f"Table # {table_idx} location on page: {region.page_number} is {format_polygon(region.polygon)}"
+                        f"Table # {table_idx} location on page: {region.page_number} is {_format_polygon(region.polygon)}"
                     )
             for cell in table.cells:
                 print(f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'")
                 if cell.bounding_regions:
                     for region in cell.bounding_regions:
                         print(
-                            f"...content on page {region.page_number} is within bounding polygon '{format_polygon(region.polygon)}'\n"
+                            f"...content on page {region.page_number} is within bounding polygon '{_format_polygon(region.polygon)}'\n"
                         )
     print("----------------------------------------")
     # [END analyze_general_documents]

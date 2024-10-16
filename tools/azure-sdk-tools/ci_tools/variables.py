@@ -1,7 +1,21 @@
 import os
+from typing import Optional
+
+def str_to_bool(input_string: str) -> bool:
+    """
+    Takes a boolean string representation and returns a bool type value.
+    """
+    if isinstance(input_string, bool):
+        return input_string
+    elif input_string.lower() in ("true", "t", "1"):
+        return True
+    elif input_string.lower() in ("false", "f", "0"):
+        return False
+    else:
+        return False
 
 
-def discover_repo_root(input_repo: str = None):
+def discover_repo_root(input_repo: Optional[str] = None):
     """
     Resolves the root of the repository given a current working directory. This function should be used if a target repo argument is not provided.
     If the value of input_repo has value, that will supplant the path ascension logic.
@@ -24,7 +38,7 @@ def discover_repo_root(input_repo: str = None):
     )
 
 
-def get_artifact_directory(input_directory: str = None) -> str:
+def get_artifact_directory(input_directory: Optional[str] = None) -> str:
     """
     Resolves the root of an artifact directory that the \"sdk_build\" action will output to!
     """
@@ -35,7 +49,7 @@ def get_artifact_directory(input_directory: str = None) -> str:
     return os.getenv("SDK_ARTIFACT_DIRECTORY", os.path.join(discover_repo_root(), ".artifacts"))
 
 
-def get_log_directory(input_directory: str = None) -> str:
+def get_log_directory(input_directory: Optional[str] = None) -> str:
     """
     Resolves the location of the log directory.
     """
@@ -67,10 +81,14 @@ def in_public() -> int:
 
     return 0
 
+
 def in_analyze_weekly() -> int:
     # Returns 4 if the build originates from the tests-weekly analyze job
     # 0 otherwise
-    if "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "") and os.getenv("SYSTEM_STAGEDISPLAYNAME", "") == "Analyze_Test":
+    if (
+        "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "")
+        and os.getenv("SYSTEM_STAGEDISPLAYNAME", "") == "Analyze_Test"
+    ):
         return 4
     return 0
 

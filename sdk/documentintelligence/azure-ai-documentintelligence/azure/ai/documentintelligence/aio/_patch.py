@@ -15,6 +15,7 @@ from ._client import (
     DocumentIntelligenceClient as DIClientGenerated,
     DocumentIntelligenceAdministrationClient as DIAClientGenerated,
 )
+from ..aio._operations._patch import AsyncAnalyzeDocumentLROPoller
 
 
 class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
@@ -27,7 +28,7 @@ class DocumentIntelligenceClient(DIClientGenerated):  # pylint: disable=client-a
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-02-29-preview". Note that overriding this default value may result in unsupported
+     "2024-07-31-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -60,7 +61,7 @@ class DocumentIntelligenceAdministrationClient(
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-02-29-preview". Note that overriding this default value may result in unsupported
+     "2024-07-31-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -84,6 +85,7 @@ class DocumentIntelligenceAdministrationClient(
 __all__: List[str] = [
     "DocumentIntelligenceClient",
     "DocumentIntelligenceAdministrationClient",
+    "AsyncAnalyzeDocumentLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
 
 

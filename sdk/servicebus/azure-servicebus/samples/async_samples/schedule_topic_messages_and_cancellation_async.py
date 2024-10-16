@@ -14,8 +14,9 @@ import asyncio
 import datetime
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus import ServiceBusMessage
+from azure.identity.aio import DefaultAzureCredential
 
-CONNECTION_STR = os.environ["SERVICEBUS_CONNECTION_STR"]
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 TOPIC_NAME = os.environ["SERVICEBUS_TOPIC_NAME"]
 
 
@@ -39,8 +40,9 @@ async def schedule_multiple_messages(sender):
 
 
 async def main():
-    servicebus_client = ServiceBusClient.from_connection_string(
-        conn_str=CONNECTION_STR, logging_enable=True
+    credential = DefaultAzureCredential()
+    servicebus_client = ServiceBusClient(
+        FULLY_QUALIFIED_NAMESPACE, credential, logging_enable=True
     )
     async with servicebus_client:
         sender = servicebus_client.get_topic_sender(topic_name=TOPIC_NAME)

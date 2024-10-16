@@ -1,3 +1,4 @@
+import sys
 import argparse
 import logging
 from pathlib import Path
@@ -15,6 +16,11 @@ from .swaggertosdk.SwaggerToSdkCore import (
     get_repo_tag_meta,
 )
 
+logging.basicConfig(
+    stream=sys.stdout,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %X",
+)
 _LOGGER = logging.getLogger(__name__)
 
 

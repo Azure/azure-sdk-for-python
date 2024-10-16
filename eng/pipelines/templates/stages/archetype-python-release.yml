@@ -52,12 +52,11 @@ stages:
                         ServiceDirectory: "template"
                         TestPipeline: ${{ parameters.TestPipeline }}
 
-                    - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
-                      - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
-                        parameters:
-                          PackageName: ${{artifact.name}}
-                          ServiceName: ${{parameters.ServiceDirectory}}
-                          ForRelease: true
+                    - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
+                      parameters:
+                        PackageName: ${{artifact.name}}
+                        ServiceName: ${{parameters.ServiceDirectory}}
+                        ForRelease: true
 
                     - template: /eng/common/pipelines/templates/steps/verify-restapi-spec-location.yml
                       parameters:
@@ -106,6 +105,7 @@ stages:
                   deploy:
                     steps:
                       - checkout: self
+
                       - download: current
                         artifact: ${{parameters.ArtifactName}}
                         timeoutInMinutes: 5
@@ -176,7 +176,7 @@ stages:
                           ArtifactName: ${{parameters.ArtifactName}}
                           PackageName: ${{artifact.name}}
 
-          - ${{if ne(artifact.skipPublishDocs, 'true')}}:
+          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - deployment: PublishGitHubIODocs
               displayName: Publish Docs to GitHubIO Blob Storage
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
@@ -195,18 +195,20 @@ stages:
                       - checkout: self
 
                       - pwsh: |
-                          Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}
+                          if (Test-Path "$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}") {
+                            Get-ChildItem -Recurse "$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}"
+                          }
+                          else {
+                            New-Item -ItemType Directory -Force -Path "$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}"
+                          }
                         workingDirectory: $(Pipeline.Workspace)
                         displayName: Output Visible Artifacts
 
                       - template: /eng/common/pipelines/templates/steps/publish-blobs.yml
                         parameters:
                           FolderForUpload: '$(Pipeline.Workspace)/${{parameters.DocArtifact}}/${{artifact.name}}'
-                          BlobName: '$(azure-sdk-docs-prod-blob-name)'
                           TargetLanguage: 'python'
                           ArtifactLocation: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}'
-                          # we override the regular script path because we have cloned the build tools repo as a separate artifact.
-                          ScriptPath: 'eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
           - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
                 - deployment: PublishDocs
@@ -243,37 +245,44 @@ stages:
                                 - metadata/
                               PackageSourceOverride: ${{parameters.PackageSourceOverride}}
                               DocValidationImageId: ${{parameters.DocValidationImageId}}
-          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
-            - deployment: UpdatePackageVersion
-              displayName: "Update Package Version"
-              condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
-              environment: github
-              dependsOn: PublishPackage
 
-              pool:
-                image: azsdk-pool-mms-ubuntu-2004-1espt
-                name: azsdk-pool-mms-ubuntu-2004-general
-                os: linux
+          - deployment: UpdatePackageVersion
+            displayName: "Update Package Version"
+            condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
+            environment: github
+            dependsOn: PublishPackage
 
-              strategy:
-                runOnce:
-                  deploy:
-                    steps:
-                      - checkout: self
-                      - task: UsePythonVersion@0
-                      - script: |
-                          python -m pip install "./tools/azure-sdk-tools[build]"
-                        displayName: Install versioning tool dependencies
-                      - pwsh: |
-                          sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
-                        displayName: Increment package version
-                      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
-                        parameters:
-                          RepoName: azure-sdk-for-python
-                          PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
-                          CommitMsg: "Increment package version after release of ${{ artifact.name }}"
-                          PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
-                          CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+            pool:
+              image: azsdk-pool-mms-ubuntu-2004-1espt
+              name: azsdk-pool-mms-ubuntu-2004-general
+              os: linux
+
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - checkout: self
+                    - task: UsePythonVersion@0
+                    - script: |
+                        python -m pip install "./tools/azure-sdk-tools[build]"
+                      displayName: Install versioning tool dependencies
+
+                    - pwsh: |
+                        sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
+                        if (Test-Path component-detection-pip-report.json) {
+                          Write-Host "Deleting component-detection-pip-report.json"
+                          rm component-detection-pip-report.json
+                        }
+                      displayName: Increment package version
+
+                    - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+                      parameters:
+                        RepoName: azure-sdk-for-python
+                        PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
+                        CommitMsg: "Increment package version after release of ${{ artifact.name }}"
+                        PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
+                        CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+
           - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
             - template: /eng/pipelines/templates/jobs/smoke.tests.yml
               parameters:
@@ -294,7 +303,6 @@ stages:
           name: azsdk-pool-mms-ubuntu-2004-general
           os: linux
         steps:
-        - checkout: none
         - download: current
           artifact: ${{parameters.ArtifactName}}
           timeoutInMinutes: 5
@@ -327,7 +335,7 @@ stages:
 
       - job: PublishDocsToNightlyBranch
         dependsOn: PublishPackages
-        condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
+        condition: and(succeeded(), or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal'))))
         pool:
           image: azsdk-pool-mms-ubuntu-2004-1espt
           name: azsdk-pool-mms-ubuntu-2004-general

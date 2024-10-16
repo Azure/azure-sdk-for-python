@@ -4,8 +4,8 @@
 # ------------------------------------
 import json
 import os
+from unittest.mock import Mock, patch
 
-from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential, TokenCachePersistenceOptions
 from azure.identity._enums import RegionalAuthority
@@ -17,7 +17,6 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from msal import TokenCache
-from msal_extensions import PersistedTokenCache
 import msal
 import pytest
 from urllib.parse import urlparse
@@ -29,15 +28,10 @@ from helpers import (
     get_discovery_response,
     urlsafeb64_decode,
     mock_response,
-    msal_validating_transport,
     new_msal_validating_transport,
     Request,
+    GET_TOKEN_METHODS,
 )
-
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
 
 PEM_CERT_PATH = os.path.join(os.path.dirname(__file__), "certificate.pem")
 PEM_CERT_WITH_PASSWORD_PATH = os.path.join(os.path.dirname(__file__), "certificate-with-password.pem")
@@ -77,15 +71,17 @@ def test_tenant_id_validation():
             CertificateCredential(tenant, "client-id", PEM_CERT_PATH)
 
 
-def test_no_scopes():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_no_scopes(get_token_method):
     """The credential should raise ValueError when get_token is called with no scopes"""
 
     credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH)
     with pytest.raises(ValueError):
-        credential.get_token()
+        getattr(credential, get_token_method)()
 
 
-def test_policies_configurable():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_policies_configurable(get_token_method):
     policy = Mock(spec_set=SansIOHTTPPolicy, on_request=Mock())
 
     transport = new_msal_validating_transport(
@@ -96,12 +92,13 @@ def test_policies_configurable():
         "tenant-id", "client-id", PEM_CERT_PATH, policies=[ContentDecodePolicy(), policy], transport=transport
     )
 
-    credential.get_token("scope")
+    getattr(credential, get_token_method)("scope")
 
     assert policy.on_request.called
 
 
-def test_user_agent():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_user_agent(get_token_method):
     transport = new_msal_validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
@@ -109,10 +106,11 @@ def test_user_agent():
 
     credential = CertificateCredential("tenant-id", "client-id", PEM_CERT_PATH, transport=transport)
 
-    credential.get_token("scope")
+    getattr(credential, get_token_method)("scope")
 
 
-def test_tenant_id():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_tenant_id(get_token_method):
     transport = new_msal_validating_transport(
         requests=[Request(required_headers={"User-Agent": USER_AGENT})],
         responses=[mock_response(json_payload=build_aad_response(access_token="**"))],
@@ -122,11 +120,15 @@ def test_tenant_id():
         "tenant-id", "client-id", PEM_CERT_PATH, transport=transport, additionally_allowed_tenants=["*"]
     )
 
-    credential.get_token("scope", tenant_id="tenant_id")
+    kwargs = {"tenant_id": "tenant_id"}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    getattr(credential, get_token_method)("scope", **kwargs)
 
 
 @pytest.mark.parametrize("authority", ("localhost", "https://localhost"))
-def test_authority(authority):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_authority(authority, get_token_method):
     """the credential should accept an authority, with or without scheme, as an argument or environment variable"""
 
     tenant_id = "expected-tenant"
@@ -141,7 +143,7 @@ def test_authority(authority):
     credential = CertificateCredential(tenant_id, "client-id", PEM_CERT_PATH, authority=authority)
     with patch("msal.ConfidentialClientApplication", mock_ctor):
         # must call get_token because the credential constructs the MSAL application lazily
-        credential.get_token("scope")
+        getattr(credential, get_token_method)("scope")
 
     assert mock_ctor.call_count == 1
     _, kwargs = mock_ctor.call_args
@@ -152,14 +154,15 @@ def test_authority(authority):
     with patch.dict("os.environ", {EnvironmentVariables.AZURE_AUTHORITY_HOST: authority}, clear=True):
         credential = CertificateCredential(tenant_id, "client-id", PEM_CERT_PATH, authority=authority)
     with patch("msal.ConfidentialClientApplication", mock_ctor):
-        credential.get_token("scope")
+        getattr(credential, get_token_method)("scope")
 
     assert mock_ctor.call_count == 1
     _, kwargs = mock_ctor.call_args
     assert kwargs["authority"] == expected_authority
 
 
-def test_regional_authority():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_regional_authority(get_token_method):
     """the credential should configure MSAL with a regional authority specified via kwarg or environment variable"""
 
     mock_confidential_client = Mock(
@@ -173,7 +176,7 @@ def test_regional_authority():
         with patch.dict("os.environ", {EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME: region.value}, clear=True):
             credential = CertificateCredential("tenant", "client-id", PEM_CERT_PATH)
         with patch("msal.ConfidentialClientApplication", mock_confidential_client):
-            credential.get_token("scope")
+            getattr(credential, get_token_method)("scope")
 
         assert mock_confidential_client.call_count == 1
         _, kwargs = mock_confidential_client.call_args
@@ -200,7 +203,8 @@ def test_requires_certificate():
 
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
 @pytest.mark.parametrize("send_certificate_chain", (True, False))
-def test_request_body(cert_path, cert_password, send_certificate_chain):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_request_body(cert_path, cert_password, send_certificate_chain, get_token_method):
     access_token = "***"
     authority = "authority.com"
     client_id = "client-id"
@@ -228,7 +232,7 @@ def test_request_body(cert_path, cert_password, send_certificate_chain):
         authority=authority,
         send_certificate_chain=send_certificate_chain,
     )
-    token = cred.get_token(expected_scope)
+    token = getattr(cred, get_token_method)(expected_scope)
     assert token.token == access_token
 
     # credential should also accept the certificate as bytes
@@ -244,7 +248,7 @@ def test_request_body(cert_path, cert_password, send_certificate_chain):
         authority=authority,
         send_certificate_chain=send_certificate_chain,
     )
-    token = cred.get_token(expected_scope)
+    token = getattr(cred, get_token_method)(expected_scope)
     assert token.token == access_token
 
 
@@ -294,7 +298,8 @@ def validate_jwt(request, client_id, cert_bytes, cert_password, expect_x5c=False
 
 
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
-def test_token_cache_persistent(cert_path, cert_password):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_token_cache_persistent(cert_path, cert_password, get_token_method):
     """the credential should use a persistent cache if cache_persistence_options are configured"""
 
     access_token = "foo token"
@@ -324,19 +329,23 @@ def test_token_cache_persistent(cert_path, cert_password):
         assert credential._cache is None
         assert credential._cae_cache is None
 
-        token = credential.get_token("scope")
+        token = getattr(credential, get_token_method)("scope")
         assert token.token == access_token
         assert load_persistent_cache.call_count == 1
         assert credential._cache is not None
         assert credential._cae_cache is None
 
-        token = credential.get_token("scope", enable_cae=True)
+        kwargs = {"enable_cae": True}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = getattr(credential, get_token_method)("scope", **kwargs)
         assert load_persistent_cache.call_count == 2
         assert credential._cae_cache is not None
 
 
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
-def test_token_cache_memory(cert_path, cert_password):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_token_cache_memory(cert_path, cert_password, get_token_method):
     """The credential should default to in-memory cache if no persistence options are provided."""
     access_token = "foo token"
 
@@ -356,19 +365,23 @@ def test_token_cache_memory(cert_path, cert_password):
         )
 
         assert credential._cache is None
-        token = credential.get_token("scope")
+        token = getattr(credential, get_token_method)("scope")
         assert token.token == access_token
         assert isinstance(credential._cache, TokenCache)
         assert credential._cae_cache is None
         assert not load_persistent_cache.called
 
-        token = credential.get_token("scope", enable_cae=True)
+        kwargs = {"enable_cae": True}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        token = getattr(credential, get_token_method)("scope", **kwargs)
         assert isinstance(credential._cae_cache, TokenCache)
         assert not load_persistent_cache.called
 
 
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
-def test_persistent_cache_multiple_clients(cert_path, cert_password):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_persistent_cache_multiple_clients(cert_path, cert_password, get_token_method):
     """the credential shouldn't use tokens issued to other service principals"""
 
     access_token_a = "token a"
@@ -403,18 +416,18 @@ def test_persistent_cache_multiple_clients(cert_path, cert_password):
 
         # A caches a token
         scope = "scope"
-        token_a = credential_a.get_token(scope)
+        token_a = getattr(credential_a, get_token_method)(scope)
         assert mock_cache_loader.call_count == 1, "credential should use the persistent cache"
         assert token_a.token == access_token_a
         assert transport_a.send.call_count == 2  # one MSAL discovery request, one token request
 
         # B should get a different token for the same scope
-        token_b = credential_b.get_token(scope)
+        token_b = getattr(credential_b, get_token_method)(scope)
         assert mock_cache_loader.call_count == 2, "credential should load the persistent cache"
         assert token_b.token == access_token_b
         assert transport_b.send.call_count == 2
 
-        assert len(cache.find(TokenCache.CredentialType.ACCESS_TOKEN)) == 2
+        assert len(list(cache.search(TokenCache.CredentialType.ACCESS_TOKEN))) == 2
 
 
 def test_certificate_arguments():
@@ -427,7 +440,8 @@ def test_certificate_arguments():
 
 
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
-def test_multitenant_authentication(cert_path, cert_password):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_multitenant_authentication(cert_path, cert_password, get_token_method):
     first_tenant = "first-tenant"
     first_token = "***"
     second_tenant = "second-tenant"
@@ -454,22 +468,29 @@ def test_multitenant_authentication(cert_path, cert_password):
         transport=Mock(send=send),
         additionally_allowed_tenants=["*"],
     )
-    token = credential.get_token("scope")
+    token = getattr(credential, get_token_method)("scope")
     assert token.token == first_token
 
-    token = credential.get_token("scope", tenant_id=first_tenant)
+    kwargs = {"tenant_id": first_tenant}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == first_token
 
-    token = credential.get_token("scope", tenant_id=second_tenant)
+    kwargs = {"tenant_id": second_tenant}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == second_token
 
     # should still default to the first tenant
-    token = credential.get_token("scope")
+    token = getattr(credential, get_token_method)("scope")
     assert token.token == first_token
 
 
 @pytest.mark.parametrize("cert_path,cert_password", ALL_CERTS)
-def test_multitenant_authentication_backcompat(cert_path, cert_password):
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_multitenant_authentication_backcompat(cert_path, cert_password, get_token_method):
     expected_tenant = "expected-tenant"
     expected_token = "***"
 
@@ -494,14 +515,20 @@ def test_multitenant_authentication_backcompat(cert_path, cert_password):
         additionally_allowed_tenants=["*"],
     )
 
-    token = credential.get_token("scope")
+    token = getattr(credential, get_token_method)("scope")
     assert token.token == expected_token
 
+    kwargs = {"tenant_id": expected_tenant}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
     # explicitly specifying the configured tenant is okay
-    token = credential.get_token("scope", tenant_id=expected_tenant)
+    token = getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == expected_token
 
-    token = credential.get_token("scope", tenant_id="un" + expected_tenant)
+    kwargs = {"tenant_id": "un" + expected_tenant}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == expected_token
 
 
@@ -524,7 +551,8 @@ def test_client_capabilities():
         assert kwargs["client_capabilities"] == ["CP1"]
 
 
-def test_claims_challenge():
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_claims_challenge(get_token_method):
     """get_token should pass any claims challenge to MSAL token acquisition APIs"""
 
     msal_acquire_token_result = dict(
@@ -540,7 +568,10 @@ def test_claims_challenge():
         msal_app.acquire_token_silent_with_error.return_value = None
         msal_app.acquire_token_for_client.return_value = msal_acquire_token_result
 
-        credential.get_token("scope", claims=expected_claims)
+        kwargs = {"claims": expected_claims}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        getattr(credential, get_token_method)("scope", **kwargs)
 
         assert msal_app.acquire_token_silent_with_error.call_count == 1
         args, kwargs = msal_app.acquire_token_silent_with_error.call_args

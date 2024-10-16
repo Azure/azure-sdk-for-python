@@ -25,9 +25,9 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
         except ResourceExistsError:
             pass
 
-    async def convert_to_list(self, config_settings: AsyncItemPaged) -> List:
+    async def convert_to_list(self, items: AsyncItemPaged) -> List:
         list = []
-        async for item in config_settings:
+        async for item in items:
             list.append(item)
         return list
 

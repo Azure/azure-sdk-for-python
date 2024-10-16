@@ -67,3 +67,7 @@ uamqp
 yarl
 azure-identity
 openai
+dnspython
+promptflow-core
+promptflow-devkit
+nltk

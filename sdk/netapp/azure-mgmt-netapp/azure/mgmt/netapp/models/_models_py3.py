@@ -1151,7 +1151,7 @@ class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attrib
     :ivar pool_id: UUID v4 used to identify the Pool.
     :vartype pool_id: str
     :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value
-     must be multiply of 1099511627776).
+     must be multiple of 1099511627776).
     :vartype size: int
     :ivar service_level: The service level of the file system. Known values are: "Standard",
      "Premium", "Ultra", and "StandardZRS".
@@ -1229,7 +1229,7 @@ class CapacityPool(TrackedResource):  # pylint: disable=too-many-instance-attrib
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks
-         (value must be multiply of 1099511627776).
+         (value must be multiple of 1099511627776).
         :paramtype size: int
         :keyword service_level: The service level of the file system. Known values are: "Standard",
          "Premium", "Ultra", and "StandardZRS".
@@ -1300,7 +1300,7 @@ class CapacityPoolPatch(_serialization.Model):
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks (value
-     must be multiply of 1099511627776).
+     must be multiple of 1099511627776).
     :vartype size: int
     :ivar qos_type: The qos type of the pool. Known values are: "Auto" and "Manual".
     :vartype qos_type: str or ~azure.mgmt.netapp.models.QosType
@@ -1341,7 +1341,7 @@ class CapacityPoolPatch(_serialization.Model):
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword size: Provisioned size of the pool (in bytes). Allowed values are in 1TiB chunks
-         (value must be multiply of 1099511627776).
+         (value must be multiple of 1099511627776).
         :paramtype size: int
         :keyword qos_type: The qos type of the pool. Known values are: "Auto" and "Manual".
         :paramtype qos_type: str or ~azure.mgmt.netapp.models.QosType
@@ -1914,7 +1914,7 @@ class KeyVaultProperties(_serialization.Model):
     :vartype key_vault_uri: str
     :ivar key_name: The name of KeyVault key. Required.
     :vartype key_name: str
-    :ivar key_vault_resource_id: The resource ID of KeyVault. Required.
+    :ivar key_vault_resource_id: The resource ID of KeyVault.
     :vartype key_vault_resource_id: str
     :ivar status: Status of the KeyVault connection. Known values are: "Created", "InUse",
      "Deleted", "Error", and "Updating".
@@ -1930,7 +1930,6 @@ class KeyVaultProperties(_serialization.Model):
         },
         "key_vault_uri": {"required": True},
         "key_name": {"required": True},
-        "key_vault_resource_id": {"required": True},
         "status": {"readonly": True},
     }
 
@@ -1942,13 +1941,15 @@ class KeyVaultProperties(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, key_vault_uri: str, key_name: str, key_vault_resource_id: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, key_vault_uri: str, key_name: str, key_vault_resource_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword key_vault_uri: The Uri of KeyVault. Required.
         :paramtype key_vault_uri: str
         :keyword key_name: The name of KeyVault key. Required.
         :paramtype key_name: str
-        :keyword key_vault_resource_id: The resource ID of KeyVault. Required.
+        :keyword key_vault_resource_id: The resource ID of KeyVault.
         :paramtype key_vault_resource_id: str
         """
         super().__init__(**kwargs)
@@ -3249,8 +3250,12 @@ class RelocateVolumeRequest(_serialization.Model):
 class Replication(_serialization.Model):
     """Replication properties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to server.
 
+    :ivar replication_id: UUID v4 used to identify the replication.
+    :vartype replication_id: str
     :ivar endpoint_type: Indicates whether the local volume is the source or destination for the
      Volume Replication. Known values are: "src" and "dst".
     :vartype endpoint_type: str or ~azure.mgmt.netapp.models.EndpointType
@@ -3263,10 +3268,17 @@ class Replication(_serialization.Model):
     """
 
     _validation = {
+        "replication_id": {
+            "readonly": True,
+            "max_length": 36,
+            "min_length": 36,
+            "pattern": r"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
+        },
         "remote_volume_resource_id": {"required": True},
     }
 
     _attribute_map = {
+        "replication_id": {"key": "replicationId", "type": "str"},
         "endpoint_type": {"key": "endpointType", "type": "str"},
         "replication_schedule": {"key": "replicationSchedule", "type": "str"},
         "remote_volume_resource_id": {"key": "remoteVolumeResourceId", "type": "str"},
@@ -3295,6 +3307,7 @@ class Replication(_serialization.Model):
         :paramtype remote_volume_region: str
         """
         super().__init__(**kwargs)
+        self.replication_id = None
         self.endpoint_type = endpoint_type
         self.replication_schedule = replication_schedule
         self.remote_volume_resource_id = remote_volume_resource_id
@@ -4526,8 +4539,9 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
      "Premium", "Ultra", and "StandardZRS".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
-     quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB, 500Tib for
-     LargeVolume or 2400Tib for LargeVolume on exceptional basis. Specified in bytes.
+     quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
+     100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
@@ -4703,7 +4717,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
             "min_length": 1,
             "pattern": r"^[a-zA-Z][a-zA-Z0-9\-]{0,79}$",
         },
-        "usage_threshold": {"required": True, "maximum": 2638827906662400, "minimum": 107374182400},
+        "usage_threshold": {"required": True, "maximum": 2638827906662400, "minimum": 53687091200},
         "provisioning_state": {"readonly": True},
         "baremetal_tenant_id": {"readonly": True},
         "subnet_id": {"required": True},
@@ -4716,7 +4730,7 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "storage_to_network_proximity": {"readonly": True},
         "mount_targets": {"readonly": True},
         "actual_throughput_mibps": {"readonly": True},
-        "coolness_period": {"maximum": 183, "minimum": 7},
+        "coolness_period": {"maximum": 183, "minimum": 2},
         "unix_permissions": {"max_length": 4, "min_length": 4},
         "clone_progress": {"readonly": True},
         "file_access_logs": {"readonly": True},
@@ -4857,8 +4871,9 @@ class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes
          "Premium", "Ultra", and "StandardZRS".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
         :keyword usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
-         soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB, 500Tib for
-         LargeVolume or 2400Tib for LargeVolume on exceptional basis. Specified in bytes.
+         soft quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
+         100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+         exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
         :paramtype usage_threshold: int
         :keyword export_policy: Set of export policy rules.
         :paramtype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
@@ -5339,8 +5354,9 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
      "Premium", "Ultra", and "StandardZRS".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
-     quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB, 500Tib for
-     LargeVolume or 2400Tib for LargeVolume on exceptional basis. Specified in bytes.
+     quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
+     100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
@@ -5512,7 +5528,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
             "min_length": 1,
             "pattern": r"^[a-zA-Z][a-zA-Z0-9\-]{0,79}$",
         },
-        "usage_threshold": {"required": True, "maximum": 2638827906662400, "minimum": 107374182400},
+        "usage_threshold": {"required": True, "maximum": 2638827906662400, "minimum": 53687091200},
         "provisioning_state": {"readonly": True},
         "baremetal_tenant_id": {"readonly": True},
         "subnet_id": {"required": True},
@@ -5525,7 +5541,7 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
         "storage_to_network_proximity": {"readonly": True},
         "mount_targets": {"readonly": True},
         "actual_throughput_mibps": {"readonly": True},
-        "coolness_period": {"maximum": 183, "minimum": 7},
+        "coolness_period": {"maximum": 183, "minimum": 2},
         "unix_permissions": {"max_length": 4, "min_length": 4},
         "clone_progress": {"readonly": True},
         "file_access_logs": {"readonly": True},
@@ -5663,8 +5679,9 @@ class VolumeGroupVolumeProperties(_serialization.Model):  # pylint: disable=too-
          "Premium", "Ultra", and "StandardZRS".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
         :keyword usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
-         soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB, 500Tib for
-         LargeVolume or 2400Tib for LargeVolume on exceptional basis. Specified in bytes.
+         soft quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
+         100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+         exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
         :paramtype usage_threshold: int
         :keyword export_policy: Set of export policy rules.
         :paramtype export_policy: ~azure.mgmt.netapp.models.VolumePropertiesExportPolicy
@@ -5887,11 +5904,14 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
      "Premium", "Ultra", and "StandardZRS".
     :vartype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
     :ivar usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a soft
-     quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB, 500Tib for
-     LargeVolume or 2400Tib for LargeVolume on exceptional basis. Specified in bytes.
+     quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
+     100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+     exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
     :vartype usage_threshold: int
     :ivar export_policy: Set of export policy rules.
     :vartype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
+    :ivar protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+    :vartype protocol_types: list[str]
     :ivar throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
      this will be accepted as input only for manual qosType volume.
     :vartype throughput_mibps: float
@@ -5946,7 +5966,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "usage_threshold": {"maximum": 2638827906662400, "minimum": 107374182400},
+        "usage_threshold": {"maximum": 2638827906662400, "minimum": 53687091200},
         "unix_permissions": {"max_length": 4, "min_length": 4},
         "coolness_period": {"maximum": 183, "minimum": 2},
     }
@@ -5960,6 +5980,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         "service_level": {"key": "properties.serviceLevel", "type": "str"},
         "usage_threshold": {"key": "properties.usageThreshold", "type": "int"},
         "export_policy": {"key": "properties.exportPolicy", "type": "VolumePatchPropertiesExportPolicy"},
+        "protocol_types": {"key": "properties.protocolTypes", "type": "[str]"},
         "throughput_mibps": {"key": "properties.throughputMibps", "type": "float"},
         "data_protection": {"key": "properties.dataProtection", "type": "VolumePatchPropertiesDataProtection"},
         "is_default_quota_enabled": {"key": "properties.isDefaultQuotaEnabled", "type": "bool"},
@@ -5982,6 +6003,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         service_level: Union[str, "_models.ServiceLevel"] = "Premium",
         usage_threshold: int = 107374182400,
         export_policy: Optional["_models.VolumePatchPropertiesExportPolicy"] = None,
+        protocol_types: Optional[List[str]] = None,
         throughput_mibps: Optional[float] = None,
         data_protection: Optional["_models.VolumePatchPropertiesDataProtection"] = None,
         is_default_quota_enabled: bool = False,
@@ -6005,11 +6027,14 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
          "Premium", "Ultra", and "StandardZRS".
         :paramtype service_level: str or ~azure.mgmt.netapp.models.ServiceLevel
         :keyword usage_threshold: Maximum storage quota allowed for a file system in bytes. This is a
-         soft quota used for alerting only. Minimum size is 100 GiB. Upper limit is 100TiB, 500Tib for
-         LargeVolume or 2400Tib for LargeVolume on exceptional basis. Specified in bytes.
+         soft quota used for alerting only. For regular volumes, valid values are in the range 50GiB to
+         100TiB. For large volumes, valid values are in the range 100TiB to 500TiB, and on an
+         exceptional basis, from to 2400GiB to 2400TiB. Values expressed in bytes as multiples of 1 GiB.
         :paramtype usage_threshold: int
         :keyword export_policy: Set of export policy rules.
         :paramtype export_policy: ~azure.mgmt.netapp.models.VolumePatchPropertiesExportPolicy
+        :keyword protocol_types: Set of protocol types, default NFSv3, CIFS for SMB protocol.
+        :paramtype protocol_types: list[str]
         :keyword throughput_mibps: Maximum throughput in MiB/s that can be achieved by this volume and
          this will be accepted as input only for manual qosType volume.
         :paramtype throughput_mibps: float
@@ -6068,6 +6093,7 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         self.service_level = service_level
         self.usage_threshold = usage_threshold
         self.export_policy = export_policy
+        self.protocol_types = protocol_types
         self.throughput_mibps = throughput_mibps
         self.data_protection = data_protection
         self.is_default_quota_enabled = is_default_quota_enabled

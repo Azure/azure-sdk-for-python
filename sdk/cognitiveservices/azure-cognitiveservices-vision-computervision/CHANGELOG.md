@@ -2,7 +2,7 @@
 
 ## 0.9.0 (2021-05-31)
 
-**Breaking changes**
+### Breaking Changes
 
   - Operation ComputerVisionClientOperationsMixin.read has a new signature
   - Operation ComputerVisionClientOperationsMixin.read_in_stream has a new signature

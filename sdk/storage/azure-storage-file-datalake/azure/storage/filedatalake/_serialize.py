@@ -6,7 +6,7 @@
 
 from typing import Any, Dict, Optional, Union
 
-from azure.storage.blob._serialize import _get_match_headers  # pylint: disable=protected-access
+from azure.storage.blob._serialize import _get_match_headers
 from ._shared import encode_base64
 from ._generated.models import ModifiedAccessConditions, PathHTTPHeaders, \
     SourceModifiedAccessConditions, LeaseAccessConditions, CpkInfo
@@ -35,6 +35,8 @@ _SUPPORTED_API_VERSIONS = [
     '2023-11-03',
     '2024-05-04',
     '2024-08-04',
+    '2024-11-04',
+    '2025-01-05',
 ]  # This list must be in chronological order!
 
 

@@ -3,6 +3,6 @@ package_name = "azure-mgmt-servicefabricmanagedclusters"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Service Fabric Managed Clusters Management"
 package_doc_id = ""
-is_stable = false
+is_stable = true
 is_arm = true
 title = "ServiceFabricManagedClustersManagementClient"

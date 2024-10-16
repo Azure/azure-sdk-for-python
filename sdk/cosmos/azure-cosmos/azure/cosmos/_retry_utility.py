@@ -21,13 +21,14 @@
 
 """Internal methods for executing functions in the Azure Cosmos database service.
 """
-
+import json
 import time
 from typing import Optional
 
-from azure.core.exceptions import AzureError, ClientAuthenticationError
+from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
+from azure.core.pipeline.transport._base import HttpRequest
 
 from . import exceptions
 from . import _endpoint_discovery_retry_policy
@@ -36,10 +37,11 @@ from . import _default_retry_policy
 from . import _session_retry_policy
 from . import _gone_retry_policy
 from . import _timeout_failover_retry_policy
+from . import _container_recreate_retry_policy
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
 
 
 def Execute(client, global_endpoint_manager, function, *args, **kwargs):
@@ -76,6 +78,16 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     timeout_failover_retry_policy = _timeout_failover_retry_policy._TimeoutFailoverRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
     )
+    # HttpRequest we would need to modify for Container Recreate Retry Policy
+    request: Optional[HttpRequest] = None
+    if args and len(args) > 3:
+        # Reference HttpRequest instance in args
+        request = args[3]
+        container_recreate_retry_policy = _container_recreate_retry_policy.ContainerRecreateRetryPolicy(
+            client, client._container_properties_cache, request, *args)
+    else:
+        container_recreate_retry_policy = _container_recreate_retry_policy.ContainerRecreateRetryPolicy(
+            client, client._container_properties_cache, None, *args)
 
     while True:
         client_timeout = kwargs.get('timeout')
@@ -95,12 +107,25 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryWaitTimeInMs
             ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
-
+            # TODO: It is better to raise Exceptions manually in the method related to the request,
+            #  a rework of retry would be needed to be able to retry exceptions raised that way.
+            #  for now raising a manual exception here should allow it to be retried.
+            # If container does not have throughput, results will return empty list.
+            # We manually raise a 404. We raise it here, so we can handle it in retry utilities.
+            if result and isinstance(result[0], dict) and 'Offers' in result[0] and \
+                    not result[0]['Offers'] and request.method == 'POST':
+                # Grab the link used for getting throughput properties to add to message.
+                link = json.loads(request.body)["parameters"][0]["value"]
+                raise exceptions.CosmosResourceNotFoundError(
+                    status_code=StatusCodes.NOT_FOUND,
+                    message="Could not find ThroughputProperties for container " + link,
+                    sub_status_code=SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND)
             return result
         except exceptions.CosmosHttpResponseError as e:
             retry_policy = defaultRetry_policy
             # Re-assign retry policy based on error code
-            if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
+            if e.status_code == StatusCodes.FORBIDDEN and e.sub_status in\
+                    [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
                 retry_policy = endpointDiscovery_retry_policy
             elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
                 retry_policy = resourceThrottle_retry_policy
@@ -112,7 +137,32 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 retry_policy = sessionRetry_policy
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
-            elif e.status_code in (StatusCodes.REQUEST_TIMEOUT, e.status_code == StatusCodes.SERVICE_UNAVAILABLE):
+            elif exceptions._container_recreate_exception(e):
+                retry_policy = container_recreate_retry_policy
+                # Before we retry if retry policy is container recreate, we need refresh the cache of the
+                # container properties and pass in the new RID in the headers.
+                client._refresh_container_properties_cache(retry_policy.container_link)
+                if e.sub_status != SubStatusCodes.COLLECTION_RID_MISMATCH and retry_policy.check_if_rid_different(
+                        retry_policy.container_link, client._container_properties_cache, retry_policy.container_rid):
+                    retry_policy.refresh_container_properties_cache = False
+                else:
+                    cached_container = client._container_properties_cache[retry_policy.container_link]
+                    # If partition key value was previously extracted from the document definition
+                    # reattempt to extract partition key with updated partition key definition
+                    if retry_policy.should_extract_partition_key(cached_container):
+                        new_partition_key = retry_policy._extract_partition_key(
+                            client, container_cache=cached_container, body=request.body
+                        )
+                        request.headers[HttpHeaders.PartitionKey] = new_partition_key
+                    # If getting throughput, we have to replace the container link received from stale cache
+                    # with refreshed cache
+                    if retry_policy.should_update_throughput_link(request.body, cached_container):
+                        new_body = retry_policy._update_throughput_link(request.body)
+                        request.body = new_body
+
+                    retry_policy.container_rid = cached_container["_rid"]
+                    request.headers[retry_policy._intended_headers] = retry_policy.container_rid
+            elif e.status_code in [StatusCodes.REQUEST_TIMEOUT, StatusCodes.SERVICE_UNAVAILABLE]:
                 retry_policy = timeout_failover_retry_policy
 
             # If none of the retry policies applies or there is no retry needed, set the
@@ -210,6 +260,15 @@ class ConnectionRetryPolicy(RetryPolicy):
                 timeout_error.response = response
                 timeout_error.history = retry_settings['history']
                 raise
+            except ServiceRequestError as err:
+                # the request ran into a socket timeout or failed to establish a new connection
+                # since request wasn't sent, we retry up to however many connection retries are configured (default 3)
+                if retry_settings['connect'] > 0:
+                    retry_active = self.increment(retry_settings, response=request, error=err)
+                    if retry_active:
+                        self.sleep(retry_settings, request.context.transport)
+                        continue
+                raise err
             except AzureError as err:
                 retry_error = err
                 if self._is_method_retryable(retry_settings, request.http_request):

@@ -4,7 +4,7 @@
 
 *Training 3.4-preview*
 
-**Features**
+### Features Added
 
   - Support for `3.4-preview` API version.
 

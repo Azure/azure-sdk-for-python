@@ -25,24 +25,20 @@ def get_map_attribution():
     # [START get_map_attribution]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.render import MapsRenderClient
-    from azure.maps.render.models import TilesetID, BoundingBox
+    from azure.maps.render import TilesetID
 
     maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
     result = maps_render_client.get_map_attribution(
         tileset_id=TilesetID.MICROSOFT_BASE,
         zoom=6,
-        bounds=BoundingBox(
-            south=42.982261,
-            west=24.980233,
-            north=56.526017,
-            east=1.355233
-        )
+        bounds=[42.982261, 24.980233, 56.526017, 1.355233],
     )
 
     print("Get map attribution result:")
-    print(result.copyrights and result.copyrights[0] or "no copyrights")
+    print(result["copyrights"][0] if len(result.get("copyrights", [])) > 0 else "no copyrights")
     # [END get_map_attribution]
+
 
 if __name__ == '__main__':
     get_map_attribution()

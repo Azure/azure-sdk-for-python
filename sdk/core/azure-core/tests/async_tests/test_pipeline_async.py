@@ -239,7 +239,7 @@ async def test_conf_async_trio_auth_policy_concurrent(port, http_request):
         response = await p.run(request, enforce_https=False)
         assert isinstance(response.http_response.status_code, int)
 
-    fake_credential = Mock(get_token=get_token)
+    fake_credential = Mock(spec_set=["get_token"], get_token=get_token)
     policies = [AsyncBearerTokenCredentialPolicy(fake_credential, "scope")]
     async with AsyncPipeline(TrioRequestsTransport(), policies=policies) as pipeline, trio.open_nursery() as nursery:
         nursery.start_soon(run, pipeline)

@@ -12,11 +12,13 @@ Example to show receiving deferred message from a Service Bus Queue.
 import os
 from typing import List
 from azure.servicebus import ServiceBusMessage, ServiceBusClient
+from azure.identity import DefaultAzureCredential
 
-CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ["SERVICEBUS_FULLY_QUALIFIED_NAMESPACE"]
 QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
-servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
+credential = DefaultAzureCredential()
+servicebus_client = ServiceBusClient(FULLY_QUALIFIED_NAMESPACE, credential)
 
 with servicebus_client:
     sender = servicebus_client.get_queue_sender(queue_name=QUEUE_NAME)

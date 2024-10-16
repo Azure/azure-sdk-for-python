@@ -91,7 +91,7 @@ class TestQuickpulse(unittest.TestCase):
             performance_collection_supported=True,
         )
         cls._exporter = _QuickpulseExporter(
-            "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
         )
         cls._reader = _QuickpulseMetricReader(
             cls._exporter,

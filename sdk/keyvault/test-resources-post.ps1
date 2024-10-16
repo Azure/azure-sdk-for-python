@@ -80,7 +80,7 @@ Log 'Creating 3 X509 certificates to activate security domain'
 $wrappingFiles = foreach ($i in 0..2) {
     $certificate = New-X509Certificate2 "CN=$($hsmUrl.Host)"
 
-    $baseName = "$PSScriptRoot\$hsmName-certificate$i"
+    $baseName = Join-Path -Path $PSScriptRoot -ChildPath "$hsmName-certificate$i"
     Export-X509Certificate2 "$baseName.pfx" $certificate
     Export-X509Certificate2PEM "$baseName.cer" $certificate
 
@@ -89,7 +89,7 @@ $wrappingFiles = foreach ($i in 0..2) {
 
 Log "Downloading security domain from '$hsmUrl'"
 
-$sdPath = "$PSScriptRoot\$hsmName-security-domain.key"
+$sdPath = Join-Path -Path $PSScriptRoot -ChildPath "$hsmName-security-domain.key"
 if (Test-Path $sdpath) {
     Log "Deleting old security domain: $sdPath"
     Remove-Item $sdPath -Force
@@ -105,14 +105,9 @@ if ( !$? ) {
 
 Log "Security domain downloaded to '$sdPath'; Managed HSM is now active at '$hsmUrl'"
 
-# Force a sleep to wait for Managed HSM activation to propagate through Cosmos replication. Issue tracked in Azure DevOps.
-Log 'Sleeping for 120 seconds to allow activation to propagate...'
-Start-Sleep -Seconds 120
+$testApplicationOid = $DeploymentOutputs["CLIENT_OBJECTID"]
 
-$testApplicationOid = $DeploymentOutputs['CLIENT_OBJECTID']
-
-Log "Creating additional required role assignments for '$testApplicationOid'"
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto Officer' -ObjectID $testApplicationOid
-$null = New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName 'Managed HSM Crypto User' -ObjectID $testApplicationOid
-
+Log "Creating additional required role assignments for resource access."
+New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName "Managed HSM Crypto Officer" -ObjectID $testApplicationOid
+New-AzKeyVaultRoleAssignment -HsmName $hsmName -RoleDefinitionName "Managed HSM Crypto User" -ObjectID $testApplicationOid
 Log "Role assignments created for '$testApplicationOid'"

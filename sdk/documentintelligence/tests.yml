@@ -8,19 +8,12 @@ extends:
       TestTimeoutInMinutes: 200
       MatrixReplace:
         - TestSamples=.*/true
-      Clouds: 'Prod'
-      # This is a specific request from the formrecognizer service team
-      # their claim is that the full matrix ends up stress-testing their service.
-      # As such, the canary test runs should run on a reduced matrix.
+      Clouds: 'Public'
       CloudConfig:
-        Prod:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
-          Location: 'eastus'
+        Public:
+          Location: eastus
       EnvVars:
         AZURE_SUBSCRIPTION_ID: $(provisioner-subscription)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         TEST_MODE: 'RunLiveNoRecord'
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'

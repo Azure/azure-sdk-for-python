@@ -17,6 +17,7 @@ USAGE: python blob_samples_hello_world_async.py
 """
 
 import os
+import sys
 import asyncio
 
 # set up
@@ -31,6 +32,11 @@ class BlobSamplesAsync(object):
     #--Begin Blob Samples-----------------------------------------------------------------
 
     async def create_container_sample_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: create_container_sample_async")
+            sys.exit(1)
+
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -53,6 +59,11 @@ class BlobSamplesAsync(object):
                 await container_client.delete_container()
 
     async def block_blob_sample_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: block_blob_sample_async")
+            sys.exit(1)
+
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -70,8 +81,8 @@ class BlobSamplesAsync(object):
 
                 # [START upload_a_blob]
                 # Upload content to block blob
-                with open(SOURCE_FILE, "rb") as data:
-                    await blob_client.upload_blob(data, blob_type="BlockBlob")
+                with open(SOURCE_FILE, "rb") as source:
+                    await blob_client.upload_blob(source, blob_type="BlockBlob")
                 # [END upload_a_blob]
 
                 # [START download_a_blob]
@@ -90,6 +101,10 @@ class BlobSamplesAsync(object):
                 await container_client.delete_container()
 
     async def stream_block_blob(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: stream_block_blob_async")
+            sys.exit(1)
 
         import uuid
         # Instantiate a new BlobServiceClient using a connection string - set chunk size to 1MB
@@ -137,6 +152,11 @@ class BlobSamplesAsync(object):
                 await container_client.delete_container()
 
     async def page_blob_sample_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: page_blob_sample_async")
+            sys.exit(1)
+
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -170,6 +190,11 @@ class BlobSamplesAsync(object):
                 await container_client.delete_container()
 
     async def append_blob_sample_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable: AZURE_STORAGE_CONNECTION_STRING." + '\n' +
+                  "Test: append_blob_sample_async")
+            sys.exit(1)
+
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
@@ -186,8 +211,8 @@ class BlobSamplesAsync(object):
                 blob_client = container_client.get_blob_client("myappendblob")
 
                 # Upload content to the append blob
-                with open(SOURCE_FILE, "rb") as data:
-                    await blob_client.upload_blob(data, blob_type="AppendBlob")
+                with open(SOURCE_FILE, "rb") as source:
+                    await blob_client.upload_blob(source, blob_type="AppendBlob")
 
                 # Download append blob
                 with open(DEST_FILE, "wb") as my_blob:

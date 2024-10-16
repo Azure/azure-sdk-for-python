@@ -15,6 +15,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def log_get_token_async(fn):
+
     @functools.wraps(fn)
     async def wrapper(*args, **kwargs):
         try:
@@ -34,8 +35,8 @@ def log_get_token_async(fn):
                         "Object ID (user): {}".format(json_dict["appid"], json_dict["tid"], upn, json_dict["oid"])
                     )
                     _LOGGER.debug(log_string)
-                except Exception:  # pylint: disable=broad-except
-                    _LOGGER.debug("Fail to log the account information")
+                except Exception as ex:  # pylint: disable=broad-except
+                    _LOGGER.debug("Failed to log the account information: %s", ex, exc_info=True)
             return token
         except Exception as ex:  # pylint: disable=broad-except
             _LOGGER.log(

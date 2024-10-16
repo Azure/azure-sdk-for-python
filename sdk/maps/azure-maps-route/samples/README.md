@@ -30,7 +30,7 @@ Then for common Azure Maps Route operations:
 
 ## Prerequisites
 
-* Python 3.6 or later is required to use this package
+* Python 3.8 or later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/)
 * A deployed Maps Services resource. You can create the resource via [Azure Portal][azure_portal] or [Azure CLI][azure_cli].
 

@@ -13,8 +13,6 @@ import time
 from packaging.version import parse
 from pathlib import Path
 
-from util import add_certificate
-
 MAIN_REPO_SWAGGER = 'https://github.com/Azure/azure-rest-api-specs/tree/main'
 PR_URL = 'https://github.com/Azure/azure-rest-api-specs/pull/'
 FAILED_RESULT = []
@@ -52,10 +50,6 @@ def print_check(cmd, path=''):
 def print_call(cmd):
     my_print(cmd)
     sp.call(cmd, shell=True)
-
-
-def start_test_proxy():
-    print_check('pwsh {}/eng/common/testproxy/docker-start-proxy.ps1 \"start\"'.format(os.getenv('SDK_REPO')))
 
 
 def version_sort(versions: List[str]) -> List[str]:
@@ -231,67 +225,8 @@ class PyPIClient:
             self.bot_warning += 'Need to add track2 config.'
 
 
-def sdk_code_path(service_name, sdk_name) -> str:
-    return str(Path(os.getenv('SDK_REPO') + f'/sdk/{service_name}/{sdk_name}'))
-
-
-@return_origin_path
-def install_package_locally(service_name, sdk_name):
-    os.chdir(sdk_code_path(service_name, sdk_name))
-    print_check('pip install -e .')
-    print_exec('pip install -r dev_requirements.txt')
-
-
-@return_origin_path
-def run_test_proc(sdk_name, service_name, sdk_folder):
-    # run test
-    if os.getenv('SKIP_COVERAGE') in ('true', 'yes'):
-        return SKIP_TEXT
-
-    coverage_path = ''.join([os.getenv('SDK_REPO'), '/sdk/', sdk_folder])
-    service_path = coverage_path.split('/azure/mgmt')[0]
-    os.chdir(sdk_code_path(service_name, sdk_name))
-    try:
-        print_check(f'pytest  --collect-only')
-    except:
-        print('live test run done, do not find any test !!!')
-        return '-, -, -, -\n'
-    if os.path.exists(coverage_path + '/operations') and os.path.exists(coverage_path + '/models'):
-        operations_path = coverage_path + '/operations'
-        models_path = coverage_path + '/models'
-        try:
-            start_time = int(time.time())
-            print_check(f'pytest tests -s --cov={operations_path} --cov={models_path} >result.txt', path=service_path)
-            cost_time = int(time.time()) - start_time
-            my_print(f'{service_name} play_back cost {cost_time} seconds({cost_time // 60} minutes)')
-        except Exception as e:
-            print(f'{service_name} test ERROR')
-            return '-, 0, 0, 0\n'
-    else:
-        try:
-            print_check(f'pytest tests -s >result.txt', path=service_path)
-        except Exception as e:
-            return '-, 0, 0, 0\n'
-    if os.path.exists(service_path + '/result.txt'):
-        return get_test_result(service_path + '/result.txt')
-
-
-def run_test(sdk_name, service_name, sdk_folder):
-    install_package_locally(service_name, sdk_name)
-    test_result = run_test_proc(sdk_name, service_name, sdk_folder)
-    return test_result
-
-
-def clean_test_env():
-    for item in ("SSL_CERT_DIR", "REQUESTS_CA_BUNDLE"):
-        if os.getenv(item):
-            os.environ.pop(item)
-
-
 def sdk_info_from_pypi(sdk_info: List[Dict[str, str]], cli_dependency):
     all_sdk_status = []
-    add_certificate()
-    start_test_proxy()
     for package in sdk_info:
         sdk_name = package['package_name']
         if sdk_name in cli_dependency.keys():
@@ -306,39 +241,11 @@ def sdk_info_from_pypi(sdk_info: List[Dict[str, str]], cli_dependency):
                               readme_link=readme_link, rm_link=rm_link, cli_version=cli_version, multi_api=multi_api)
         sdk_folder = package['sdk_folder']
         text_to_write = pypi_ins.write_to_list(sdk_folder)
-        service_name = package['service_name']
         if pypi_ins.pypi_link != 'NA':
-            test_result = SKIP_TEXT
-            try:
-                test_result = run_test(sdk_name, service_name, sdk_folder)
-            except:
-                print(f'[Error] fail to play back test recordings: {sdk_name}')
-            text_to_write += test_result
-            all_sdk_status.append(text_to_write)
+            all_sdk_status.append(text_to_write + SKIP_TEXT)
 
-    clean_test_env()
     my_print(f'total pypi package kinds: {len(all_sdk_status)}')
     return all_sdk_status
-
-
-def get_test_result(txt_path):
-    with open(txt_path, 'r+') as f:
-        coverage = ' - '
-        for line in f.readlines():
-            if 'TOTAL' in line:
-                coverage = line.split()[3]
-            if '=====' in line and ('passed' in line or 'failed' in line or 'skipped' in line):
-                # print(line)
-                passed, failed, skipped = 0, 0, 0
-                if 'passed' in line:
-                    passed = re.findall('(\d{1,2}) passed', line)[0]
-                if 'failed' in line:
-                    failed = re.findall('(\d{1,2}) failed', line)[0]
-                if 'skipped' in line:
-                    skipped = re.findall('(\d{1,2}) skipped', line)[0]
-                # print(f'{passed} {failed} {skipped}')
-
-    return f'{coverage}, {passed}, {failed}, {skipped}\n'
 
 
 def write_to_csv(sdk_status_list, csv_name):

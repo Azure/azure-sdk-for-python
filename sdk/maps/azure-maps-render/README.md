@@ -13,7 +13,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 ### Prerequisites
 
-- Python 3.7 or later is required to use this package.
+- Python 3.8 or later is required to use this package.
 - An [Azure subscription][azure_subscription] and an [Azure Maps account](https://docs.microsoft.com/azure/azure-maps/how-to-manage-account-keys).
 - A deployed Maps Services resource. You can create the resource via [Azure Portal][azure_portal] or [Azure CLI][azure_cli].
 
@@ -92,7 +92,7 @@ Once you initialized a `MapsRenderClient` class, you can explore the methods on 
 
 ### Async Clients
 
-This library includes a complete async API supported on Python 3.5+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
+This library includes a complete async API supported on Python 3.8+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport) for more information.
 
 Async clients and credentials should be closed when they're no longer needed. These
@@ -114,17 +114,16 @@ This request allows users to request map copyright attribution information for a
 section of a tileset.
 
 ```python
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
+from azure.maps.render import TilesetID
+
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_map_attribution(
     tileset_id=TilesetID.MICROSOFT_BASE,
     zoom=6,
-    bounds=BoundingBox(
-        south=42.982261,
-        west=24.980233,
-        north=56.526017,
-        east=1.355233
-    )
+    bounds=[42.982261, 24.980233, 56.526017, 1.355233],
 )
 ```
 
@@ -136,7 +135,11 @@ Maps road tiles, real-time  Weather Radar tiles. By default, Azure Maps uses vec
 control (Web SDK) and Android SDK.
 
 ```python
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
+from azure.maps.render import TilesetID
+
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_map_tile(
     tileset_id=TilesetID.MICROSOFT_BASE,
@@ -152,7 +155,11 @@ result = maps_render_client.get_map_tile(
 This request will give metadata for a tileset.
 
 ```python
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
+from azure.maps.render import TilesetID
+
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
 ```
@@ -168,11 +175,12 @@ And also save the result to file as png.
 ```python
 from azure.maps.render import MapsRenderClient
 
-result = maps_render_client.get_map_static_image(img_format="png", center=(52.41064,4.84228))
-# Save result to file as png
-file = open('result.png', 'wb')
-file.write(next(result))
-file.close()
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
+
+result = maps_render_client.get_map_static_image(
+    zoom=10,
+    bounding_box_private=[13.228, 52.4559, 13.5794, 52.629]
+)
 ```
 
 ### Get Maps Copyright for World
@@ -180,7 +188,10 @@ file.close()
 This request will serve copyright information for Render Tile service.
 
 ```python
+from azure.core.credentials import AzureKeyCredential
 from azure.maps.render import MapsRenderClient
+
+maps_render_client = MapsRenderClient(credential=AzureKeyCredential(subscription_key))
 
 result = maps_render_client.get_copyright_for_world()
 ```
@@ -233,14 +244,14 @@ set AZURE_SUBSCRIPTION_KEY="<RealSubscriptionKey>"
 pip install azure-maps-render --pre
 
 python samples/sample_authentication.py
-python sample/sample_get_copyright_caption.py
-python sample/sample_get_copyright_for_tile.py
-python sample/sample_get_copyright_for_world.py
-python sample/sample_get_copyright_from_bounding_box.py
-python sample/sample_get_map_attribution.py
-python sample/sample_get_map_static_image.py
-python sample/sample_get_map_tile.py
-python sample/sample_get_map_tileset.py
+python samples/sample_get_copyright_caption.py
+python samples/sample_get_copyright_for_tile.py
+python samples/sample_get_copyright_for_world.py
+python samples/sample_get_copyright_from_bounding_box.py
+python samples/sample_get_map_attribution.py
+python samples/sample_get_map_static_image.py
+python samples/sample_get_map_tile.py
+python samples/sample_get_map_tileset.py
 ```
 
 > Notes: `--pre` flag can be optionally added, it is to include pre-release and development versions for `pip install`. By default, `pip` only finds stable versions.
