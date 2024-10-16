@@ -467,7 +467,7 @@ class AMQPClient(
                 self._mgmt_links[node] = mgmt_link
                 mgmt_link.open()
 
-        while not self.client_ready():
+        while not self.do_work():
             time.sleep(0.05)
 
         while not mgmt_link.ready():
