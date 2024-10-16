@@ -9,6 +9,11 @@ from weakref import WeakSet
 from typing_extensions import Literal
 import certifi
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from ._transport._pyamqp_transport_async import PyamqpTransportAsync
@@ -131,7 +136,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._connection = None
         # Optional entity name, can be the name of Queue or Topic.  Intentionally not advertised, typically be needed.
         self._entity_name = kwargs.get("entity_name")
-        self._auth_uri = f"sb://{self.fully_qualified_namespace}"
+        parsed_url = urlparse(self.fully_qualified_namespace)
+        self._auth_uri = f"sb://{parsed_url.scheme}"
         if self._entity_name:
             self._auth_uri = f"{self._auth_uri}/{self._entity_name}"
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library

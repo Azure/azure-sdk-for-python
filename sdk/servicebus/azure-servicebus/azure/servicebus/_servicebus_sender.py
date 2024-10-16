@@ -9,6 +9,11 @@ import datetime
 import warnings
 from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast, Iterable
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
 from ._common.message import (
@@ -74,7 +79,8 @@ _LOGGER = logging.getLogger(__name__)
 
 class SenderMixin:
     def _create_attribute(self, **kwargs):
-        self._auth_uri = f"sb://{self.fully_qualified_namespace}/{self._entity_name}"
+        parsed_url = urlparse(self.fully_qualified_namespace)
+        self._auth_uri = f"sb://{parsed_url.scheme}/{self._entity_name}"
         self._entity_uri = f"amqps://{self.fully_qualified_namespace}/{self._entity_name}"
         # TODO: What's the retry overlap between servicebus and pyamqp?
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)

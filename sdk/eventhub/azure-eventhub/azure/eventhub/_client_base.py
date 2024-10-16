@@ -309,7 +309,8 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         if not eventhub_name:
             raise ValueError("The eventhub name can not be None or empty.")
         path = "/" + eventhub_name if eventhub_name else ""
-        self._address = _Address(hostname=fully_qualified_namespace, path=path)
+        parsed_url = urlparse(fully_qualified_namespace)
+        self._address = _Address(hostname=parsed_url.scheme, path=path)
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredential(credential)

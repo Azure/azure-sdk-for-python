@@ -6,6 +6,11 @@
 import uuid
 from typing import TYPE_CHECKING, Union
 
+try:
+    from urllib.parse import urlparse
+except ImportError:
+    from urlparse import urlparse  # type: ignore
+
 from ..exceptions import MessageAlreadySettled
 from .constants import (
     NEXT_AVAILABLE_SESSION,
@@ -30,8 +35,9 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         else:
             self.entity_path = self._entity_name
 
+        parsed_url = urlparse(self.fully_qualified_namespace)
         self._auth_uri = "sb://{}/{}".format(
-            self.fully_qualified_namespace, self.entity_path
+            parsed_url.scheme, self.entity_path
         )
         self._entity_uri = "amqps://{}/{}".format(
             self.fully_qualified_namespace, self.entity_path
