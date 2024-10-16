@@ -158,7 +158,8 @@ class TestEvaluate:
 
         expected_message = "Some evaluators are missing required inputs:\n" "- g: ['ground_truth']\n"
 
-        expected_message2 = "Verify that the target function is generating the necessary columns for the evaluators."
+        expected_message2 = "Verify that the target is generating the necessary columns for the evaluators. "
+        expected_message2 += "Currently generated columns: {'response'}"
 
         assert expected_message in exc_info.value.args[0]
         assert expected_message2 in exc_info.value.args[0]
