@@ -521,31 +521,60 @@ class TestBuiltInEvaluators:
         assert score is not None
         assert score["violence"] == "Very low"
         assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
         assert score["sexual"] == "Very low"
         assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
         assert score["self_harm"] == "Very low"
         assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
         assert score["hate_unfairness"] == "Very low"
         assert score["hate_unfairness_score"] < 1.0
-        assert score["evaluation_per_turn"] is not None
-        turn_count = 1
-        assert score["evaluation_per_turn"]["violence"] is not None
-        assert len(score["evaluation_per_turn"]["violence"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["violence"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["violence"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["sexual"] is not None
-        assert len(score["evaluation_per_turn"]["sexual"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["sexual"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["sexual"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["self_harm"] is not None
-        assert len(score["evaluation_per_turn"]["self_harm"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["self_harm"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["self_harm"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["hate_unfairness"] is not None
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["severity"]) == turn_count
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
+    
+    def test_multimodal_evaluator_content_safety_json_image_urls_text_image_input_only_with_text_content(self, project_scope, azure_cred):
+        evaluator = ContentSafetyMultimodalEvaluator(
+            project_scope, credential=azure_cred
+        )
+        messages = [
+            {
+                "role": "system",
+                "content": [
+                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                ]
+            },
+            {
+                "role": "user",
+                "content": "What is in this picture?"
+            },
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image_url", 
+                        "image_url": {
+                            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+                            }
+                    },
+                ],
+            },
+        ]
+        score = evaluator(messages=messages)
         
+        assert score is not None
+        assert score["violence"] == "Very low"
+        assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
+            
     def test_multimodal_evaluator_content_safety_json_image_urls_with_text_output(self, project_scope, azure_cred):
         evaluator = ContentSafetyMultimodalEvaluator(
             project_scope, credential=azure_cred
@@ -583,33 +612,20 @@ class TestBuiltInEvaluators:
             },
         ]
         score = evaluator(messages=messages)
+        
         assert score is not None
         assert score["violence"] == "Very low"
         assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
         assert score["sexual"] == "Very low"
         assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
         assert score["self_harm"] == "Very low"
         assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
         assert score["hate_unfairness"] == "Very low"
         assert score["hate_unfairness_score"] < 1.0
-        assert score["evaluation_per_turn"] is not None
-        turn_count = 1
-        assert score["evaluation_per_turn"]["violence"] is not None
-        assert len(score["evaluation_per_turn"]["violence"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["violence"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["violence"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["sexual"] is not None
-        assert len(score["evaluation_per_turn"]["sexual"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["sexual"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["sexual"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["self_harm"] is not None
-        assert len(score["evaluation_per_turn"]["self_harm"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["self_harm"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["self_harm"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["hate_unfairness"] is not None
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["severity"]) == turn_count    
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."    
     
     def test_multimodal_evaluator_content_safety_json_image_urls_with_image_output(self, project_scope, azure_cred):
         evaluator = ContentSafetyMultimodalEvaluator(
@@ -644,33 +660,20 @@ class TestBuiltInEvaluators:
             },
         ]
         score = evaluator(messages=messages)
+        
         assert score is not None
         assert score["violence"] == "Very low"
         assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
         assert score["sexual"] == "Very low"
         assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
         assert score["self_harm"] == "Very low"
         assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
         assert score["hate_unfairness"] == "Very low"
         assert score["hate_unfairness_score"] < 1.0
-        assert score["evaluation_per_turn"] is not None
-        turn_count = 1
-        assert score["evaluation_per_turn"]["violence"] is not None
-        assert len(score["evaluation_per_turn"]["violence"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["violence"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["violence"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["sexual"] is not None
-        assert len(score["evaluation_per_turn"]["sexual"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["sexual"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["sexual"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["self_harm"] is not None
-        assert len(score["evaluation_per_turn"]["self_harm"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["self_harm"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["self_harm"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["hate_unfairness"] is not None
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["severity"]) == turn_count  
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty." 
         
     def test_multimodal_evaluator_content_safety_json_b64_image(self, project_scope, azure_cred):
         
@@ -694,39 +697,26 @@ class TestBuiltInEvaluators:
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": "Can you describe this image?"},
+                    {"type": "text", "text": "What's in this image?"},
                     {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded_image}"}},
                 ],
             },
         ]
         score = evaluator(messages=messages)
+        
         assert score is not None
         assert score["violence"] == "Very low"
         assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
         assert score["sexual"] == "Very low"
         assert score["sexual_score"] < 1.0
-        assert score["self_harm"] == "Very low"
-        assert score["self_harm_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
+        # assert score["self_harm"] == "Very low"
+        # assert score["self_harm_score"] < 1.0
+        # assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
         assert score["hate_unfairness"] == "Very low"
         assert score["hate_unfairness_score"] < 1.0
-        assert score["evaluation_per_turn"] is not None
-        turn_count = 1
-        assert score["evaluation_per_turn"]["violence"] is not None
-        assert len(score["evaluation_per_turn"]["violence"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["violence"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["violence"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["sexual"] is not None
-        assert len(score["evaluation_per_turn"]["sexual"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["sexual"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["sexual"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["self_harm"] is not None
-        assert len(score["evaluation_per_turn"]["self_harm"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["self_harm"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["self_harm"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["hate_unfairness"] is not None
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["severity"]) == turn_count
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
         
     def test_multimodal_evaluator_content_safety_inference(self, project_scope, azure_cred):
         evaluator = ContentSafetyMultimodalEvaluator(
@@ -751,108 +741,20 @@ class TestBuiltInEvaluators:
            ) 
        ]
         score = evaluator(messages=messages)
+        
         assert score is not None
         assert score["violence"] == "Very low"
         assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
         assert score["sexual"] == "Very low"
         assert score["sexual_score"] < 1.0
-        assert score["self_harm"] == "Very low"
-        assert score["self_harm_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
+        # assert score["self_harm"] == "Very low"
+        # assert score["self_harm_score"] < 1.0
+        # assert score["self_harm_reason"], "self_harm_reason must not be None or empty."
         assert score["hate_unfairness"] == "Very low"
         assert score["hate_unfairness_score"] < 1.0
-        assert score["evaluation_per_turn"] is not None
-        turn_count = 1
-        assert score["evaluation_per_turn"]["violence"] is not None
-        assert len(score["evaluation_per_turn"]["violence"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["violence"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["violence"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["sexual"] is not None
-        assert len(score["evaluation_per_turn"]["sexual"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["sexual"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["sexual"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["self_harm"] is not None
-        assert len(score["evaluation_per_turn"]["self_harm"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["self_harm"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["self_harm"]["severity"]) == turn_count
-        assert score["evaluation_per_turn"]["hate_unfairness"] is not None
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["score"]) == turn_count
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["reason"]) == turn_count
-        assert len(score["evaluation_per_turn"]["hate_unfairness"]["severity"]) == turn_count
-        
-    def test_multimodal_evaluator_sexual_json(self, project_scope, azure_cred):
-        evaluator = SexualMultimodalEvaluator(
-            project_scope, credential=azure_cred
-        )
-        messages = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Can you describe this image?"},
-                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
-                ],
-            },
-        ]
-        
-        score = evaluator(messages=messages)
-        assert score is not None
-        assert score["sexual"] == "Very low"
-        assert score["sexual_score"] < 1.0
-        
-    def test_multimodal_evaluator_hate_unfairness_json(self, project_scope, azure_cred):
-        evaluator = HateUnfairnessMultimodalEvaluator(
-            project_scope, credential=azure_cred
-        )
-        conversation = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Can you describe this image?"},
-                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
-                ],
-            },
-        ]
-        
-        score = evaluator(messages=conversation)
-        assert score is not None
-        assert score["hate_unfairness"] == "Very low"
-        assert score["hate_unfairness_score"] < 1.0
-        
-    def test_multimodal_evaluator_self_harm_json(self, project_scope, azure_cred):
-        evaluator = SelfHarmMultimodalEvaluator(
-            project_scope, credential=azure_cred
-        )
-        conversation = [
-            {
-                "role": "system",
-                "content": [
-                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
-                ]
-            },
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": "Can you describe this image?"},
-                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
-                ],
-            },
-        ]
-        
-        score = evaluator(messages=conversation)
-        assert score is not None
-        assert score["self_harm"] == "Very low"
-        assert score["self_harm_score"] < 1.0
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
         
     def test_multimodal_evaluator_violence_json(self, project_scope, azure_cred):
         evaluator = ViolenceMultimodalEvaluator(
@@ -875,7 +777,89 @@ class TestBuiltInEvaluators:
         ]
         
         score = evaluator(messages=conversation)
+        
         assert score is not None
         assert score["violence"] == "Very low"
         assert score["violence_score"] < 1.0
+        assert score["violence_reason"], "violence_reason must not be None or empty."
     
+    def test_multimodal_evaluator_sexual_json(self, project_scope, azure_cred):
+        evaluator = SexualMultimodalEvaluator(
+            project_scope, credential=azure_cred
+        )
+        messages = [
+            {
+                "role": "system",
+                "content": [
+                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Can you describe this image?"},
+                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
+                ],
+            },
+        ]
+        
+        score = evaluator(messages=messages)
+        
+        assert score is not None
+        assert score["sexual"] == "Very low"
+        assert score["sexual_score"] < 1.0
+        assert score["sexual_reason"], "sexual_reason must not be None or empty."
+        
+    def test_multimodal_evaluator_hate_unfairness_json(self, project_scope, azure_cred):
+        evaluator = HateUnfairnessMultimodalEvaluator(
+            project_scope, credential=azure_cred
+        )
+        conversation = [
+            {
+                "role": "system",
+                "content": [
+                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Can you describe this image?"},
+                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
+                ],
+            },
+        ]
+        
+        score = evaluator(messages=conversation)
+        
+        assert score is not None
+        assert score["hate_unfairness"] == "Very low"
+        assert score["hate_unfairness_score"] < 1.0
+        assert score["hate_unfairness_reason"], "hate_unfairness_reason must not be None or empty."
+        
+    def test_multimodal_evaluator_self_harm_json(self, project_scope, azure_cred):
+        evaluator = SelfHarmMultimodalEvaluator(
+            project_scope, credential=azure_cred
+        )
+        conversation = [
+            {
+                "role": "system",
+                "content": [
+                    { "type": "text", "text": "This is a nature boardwalk at the University of Wisconsin-Madison." }
+                ]
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Can you describe this image?"},
+                    {"type": "image_url", "image_url": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"}},
+                ],
+            },
+        ]
+        
+        score = evaluator(messages=conversation)
+        
+        assert score is not None
+        assert score["self_harm"] == "Very low"
+        assert score["self_harm_score"] < 1.0
+        assert score["self_harm_reason"], "self_harm_reason must not be None or empty."

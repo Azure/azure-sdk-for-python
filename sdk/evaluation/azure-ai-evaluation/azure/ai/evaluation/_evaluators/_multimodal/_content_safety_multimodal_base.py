@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
-from typing import Dict, List
+from typing import Dict, List, Union
 from azure.ai.evaluation._common.constants import EvaluationMetrics
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_multimodal
+from azure.ai.evaluation._common.constants import EvaluationMetrics, _InternalEvaluationMetrics
 
 class ContentSafetyMultimodalEvaluatorBase(ABC):
     """
@@ -19,7 +20,12 @@ class ContentSafetyMultimodalEvaluatorBase(ABC):
     :type credential: ~azure.core.credentials.TokenCredential
     """
     
-    def __init__(self, metric: EvaluationMetrics, azure_ai_project: dict, credential=None):
+    def __init__(
+        self, 
+        metric: Union[EvaluationMetrics, _InternalEvaluationMetrics],
+        azure_ai_project: Dict, 
+        credential=None
+    ):
         self._metric = metric
         self._azure_ai_project = azure_ai_project
         self._credential = credential

@@ -268,7 +268,7 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
     if key == EvaluationMetrics.HATE_FAIRNESS:
         key = EvaluationMetrics.HATE_UNFAIRNESS
 
-    result: Dict[str, Union[str, float]] = {key: math.nan, key + "_score": math.nan, key + "_reason": ""}
+    result: Dict[str, Union[str, float]] = {key.value: math.nan, key + "_score": math.nan, key + "_reason": ""}
 
     response = batch_response[0]
     if metric_name not in response:
@@ -317,6 +317,8 @@ def _parse_content_harm_response(batch_response: List[Dict], metric_name: str) -
         reason = ""
 
     harm_score = metric_value
+    if metric_value == 'n/a':
+        return result
     if not math.isnan(metric_value):
         # int(math.nan) causes a value error, and math.nan is already handled
         # by get_harm_severity_level
@@ -497,7 +499,7 @@ async def submit_multimodal_request(messages, metric: str, rai_svc_url: str, tok
         filtered_messages = [message for message in messages if not isinstance(message, SystemMessage)]
         assistant_messages = [message for message in messages if isinstance(message, AssistantMessage)]
         content_type = retrieve_content_type(assistant_messages)
-        json_text = generate_payload_multimodal(content_type, messages, metric)
+        json_text = generate_payload_multimodal(content_type, filtered_messages, metric)
         messages_text = json.dumps(json_text, cls=SdkJSONEncoder, exclude_readonly=True)
         payload = json.loads(messages_text)
     
@@ -547,6 +549,6 @@ async def evaluate_with_rai_service_multimodal(
     await ensure_service_availability(rai_svc_url, token, Tasks.CONTENT_HARM)
     # Submit annotation request and fetch result
     operation_id = await submit_multimodal_request(messages, metric_name, rai_svc_url, token)
-    annotation_response = await fetch_result(operation_id, rai_svc_url, credential, token)
+    annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
     result = parse_response(annotation_response, metric_name)
     return result

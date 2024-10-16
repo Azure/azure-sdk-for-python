@@ -57,7 +57,7 @@ class SexualMultimodalEvaluator:
         }
     """
     
-    def __init__(self, azure_ai_project: dict, credential=None):
+    def __init__(self, azure_ai_project: Dict, credential=None):
         self._async_evaluator = _AsyncSexualMultimodalEvaluator(azure_ai_project, credential)
     
     def __call__(self, *, messages, **kwargs):
@@ -66,7 +66,7 @@ class SexualMultimodalEvaluator:
         :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
         :paramtype messages: List[Dict]
         :return: The sexual score.
-        :rtype: dict
+        :rtype: Dict
         """
         return async_run_allowing_running_loop(self._async_evaluator, messages=messages, **kwargs)
     
@@ -74,7 +74,7 @@ class SexualMultimodalEvaluator:
         return self._async_evaluator
     
 class _AsyncSexualMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
-    def __init__(self, azure_ai_project: dict, credential=None):
+    def __init__(self, azure_ai_project: Dict, credential=None):
         super().__init__(
             metric=EvaluationMetrics.SEXUAL,
             azure_ai_project=azure_ai_project,

@@ -58,7 +58,7 @@ class SelfHarmMultimodalEvaluator:
         }
     """
     
-    def __init__(self, azure_ai_project: dict, credential=None):
+    def __init__(self, azure_ai_project: Dict, credential=None):
         self._async_evaluator = _AsyncSelfHarmMultimodalEvaluator(azure_ai_project, credential)
     
     def __call__(self, *, messages, **kwargs):
@@ -67,7 +67,7 @@ class SelfHarmMultimodalEvaluator:
         :keyword messages: The messages to be evaluated. Each message should have "role" and "content" keys.
         :paramtype messages: List[Dict]
         :return: The self harm score.
-        :rtype: dict
+        :rtype: Dict
         """
         return async_run_allowing_running_loop(self._async_evaluator, messages=messages, **kwargs)
     
@@ -75,7 +75,7 @@ class SelfHarmMultimodalEvaluator:
         return self._async_evaluator
     
 class _AsyncSelfHarmMultimodalEvaluator(ContentSafetyMultimodalEvaluatorBase):
-    def __init__(self, azure_ai_project: dict, credential=None):
+    def __init__(self, azure_ai_project: Dict, credential=None):
         super().__init__(
             metric=EvaluationMetrics.SELF_HARM,
             azure_ai_project=azure_ai_project,
