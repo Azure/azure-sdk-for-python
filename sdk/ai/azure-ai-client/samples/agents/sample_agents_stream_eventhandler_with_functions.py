@@ -76,10 +76,6 @@ class MyEventHandler(AgentEventHandler):
 
         if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
             tool_calls = run.required_action.submit_tool_outputs.tool_calls
-            if not tool_calls:
-                print("No tool calls provided - cancelling run")
-                ai_client.agents.cancel_run(thread_id=thread.id, run_id=run.id)
-                return
 
             tool_outputs = []
             for tool_call in tool_calls:
