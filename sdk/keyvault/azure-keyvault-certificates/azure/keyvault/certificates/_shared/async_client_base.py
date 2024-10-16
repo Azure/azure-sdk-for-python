@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Awaitable
+from collections.abc import Awaitable
+from typing import Any
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy

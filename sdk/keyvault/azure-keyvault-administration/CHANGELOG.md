@@ -1,6 +1,6 @@
 # Release History
 
-## 4.5.0 (Unreleased)
+## 4.5.0 (2024-10-17)
 
 ### Features Added
 - Added support for Continuous Access Evaluation (CAE). `enable_cae=True` is passed to all `get_token` requests.
