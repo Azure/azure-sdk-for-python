@@ -36,7 +36,6 @@ def questions_file():
 @pytest.mark.localtest
 class TestSimAndEval:
     @pytest.mark.azuretest
-    @pytest.mark.skip(reason="Skip as it only failed in CI pipeline. Will re-enable once the CI issue is fixed")
     def test_protected_material_sim_into_eval(self, project_scope, azure_cred):
         azure_ai_project = {
             "subscription_id": project_scope["subscription_id"],
@@ -60,7 +59,7 @@ class TestSimAndEval:
                 "context": context,
             }
 
-        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project)
+        simulator = AdversarialSimulator(azure_ai_project=azure_ai_project, credential=azure_cred)
         # Run simulator to produce 2 results with 2 conversation turns each (4 messages)
         simulator_output = asyncio.run(
             simulator(
