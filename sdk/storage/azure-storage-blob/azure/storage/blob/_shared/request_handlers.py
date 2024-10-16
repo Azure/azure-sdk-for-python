@@ -5,11 +5,10 @@
 # --------------------------------------------------------------------------
 
 import logging
-import re
 import stat
 from io import (SEEK_END, SEEK_SET, UnsupportedOperation)
 from os import fstat
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 
 import isodate
 
