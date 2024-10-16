@@ -201,7 +201,9 @@ class EventHubProducerClient(
             network_tracing=kwargs.get("logging_enable"),
             **kwargs
         )
-        self._auth_uri = f"sb://{self._address.hostname}{self._address.path}"
+        # remove port from auth_uri (if present)
+        auth_uri_hostname = self._address.hostname.split(":")[0]
+        self._auth_uri = f"sb://{auth_uri_hostname}{self._address.path}"
         self._keep_alive = kwargs.get("keep_alive", None)
 
         self._producers: Dict[str, Optional[EventHubProducer]] = {
