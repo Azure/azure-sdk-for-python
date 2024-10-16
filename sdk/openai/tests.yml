@@ -24,3 +24,6 @@ extends:
         AZURE_OPENAI_SEARCH_INDEX: $(COGNITIVE-SEARCH-API-INDEX)
         AZURE_TEST_RUN_LIVE: 'true'
         API_VERSION_GA: '2024-06-01'
+        # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
+        # so "execute samples" step correctly picks up Powershell credential.
+        AZURE_POD_IDENTITY_AUTHORITY_HOST: "FakeAuthorityHost"
