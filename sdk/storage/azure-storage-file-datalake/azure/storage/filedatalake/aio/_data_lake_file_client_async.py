@@ -134,10 +134,11 @@ class DataLakeFileClient(PathClient):
             credential=credential, **kwargs)
 
     @distributed_trace_async
-    async def create_file(self, content_settings=None,  # type: Optional[ContentSettings]
-                          metadata=None,  # type: Optional[Dict[str, str]]
-                          **kwargs):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    async def create_file(
+        self, content_settings: Optional["ContentSettings"] = None,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> Dict[str, Union[str, "datetime"]]:
         """
         Create a new file.
 
