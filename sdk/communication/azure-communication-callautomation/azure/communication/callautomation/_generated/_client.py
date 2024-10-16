@@ -26,9 +26,7 @@ from .operations import (
 )
 
 
-class AzureCommunicationCallAutomationService(
-    AzureCommunicationCallAutomationServiceOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+class AzureCommunicationCallAutomationService(AzureCommunicationCallAutomationServiceOperationsMixin):
     """Azure Communication Service Call Automation APIs.
 
     :ivar call_connection: CallConnectionOperations operations

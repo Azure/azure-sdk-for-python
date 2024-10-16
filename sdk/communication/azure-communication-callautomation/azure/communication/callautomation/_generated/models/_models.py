@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -12,7 +12,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from .. import _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -1678,6 +1677,63 @@ class ContinuousDtmfRecognitionToneReceived(_serialization.Model):
         self.correlation_id = correlation_id
         self.result_information = result_information
         self.operation_context = operation_context
+
+
+class CreateCallFailed(_serialization.Model):
+    """The create call failed event.
+
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    """
+
+    _attribute_map = {
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+    }
+
+    def __init__(
+        self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["_models.ResultInformation"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_connection_id: Call connection ID.
+        :paramtype call_connection_id: str
+        :keyword server_call_id: Server call ID.
+        :paramtype server_call_id: str
+        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+         skype chain ID.
+        :paramtype correlation_id: str
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
+        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        """
+        super().__init__(**kwargs)
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class CreateCallRequest(_serialization.Model):
