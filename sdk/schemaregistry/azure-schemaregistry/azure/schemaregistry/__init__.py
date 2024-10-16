@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._client import SchemaRegistryClient
 from ._version import VERSION
 
 __version__ = VERSION
@@ -20,6 +21,6 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "SchemaRegistryClient",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
+__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 
 _patch_sdk()

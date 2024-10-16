@@ -1,5 +1,5 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines, line-too-long
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,14 +10,13 @@
 import datetime
 from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ODataV4Format
 
 from .. import _model_base
 from .._model_base import rest_discriminator, rest_field
 from ._enums import RadiologyInsightsInferenceType
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -68,10 +67,10 @@ class RadiologyInsightsInference(_model_base.Model):
         *,
         kind: str,
         extension: Optional[List["_models.Extension"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -100,10 +99,10 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
         self,
         *,
         extension: Optional[List["_models.Extension"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -115,7 +114,7 @@ class AgeMismatchInference(RadiologyInsightsInference, discriminator="ageMismatc
 
 class Element(_model_base.Model):
     """The base definition for all elements contained inside a resource.
-    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`__.
+    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
 
     :ivar id: Unique id for inter-element referencing.
     :vartype id: str
@@ -134,10 +133,10 @@ class Element(_model_base.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         extension: Optional[List["_models.Extension"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -180,10 +179,10 @@ class Annotation(Element):
         extension: Optional[List["_models.Extension"]] = None,
         author_string: Optional[str] = None,
         time: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -214,10 +213,10 @@ class CodeableConcept(Element):
         *,
         coding: Optional[List["_models.Coding"]] = None,
         text: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -264,10 +263,10 @@ class Coding(Element):
         version: Optional[str] = None,
         code: Optional[str] = None,
         display: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -319,10 +318,10 @@ class CompleteOrderDiscrepancyInference(RadiologyInsightsInference, discriminato
         extension: Optional[List["_models.Extension"]] = None,
         missing_body_parts: Optional[List["_models.CodeableConcept"]] = None,
         missing_body_part_measurements: Optional[List["_models.CodeableConcept"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -353,10 +352,10 @@ class CriticalResult(_model_base.Model):
         *,
         description: str,
         finding: Optional["_models.Observation"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -392,10 +391,10 @@ class CriticalResultInference(RadiologyInsightsInference, discriminator="critica
         *,
         result: "_models.CriticalResult",
         extension: Optional[List["_models.Extension"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -426,10 +425,10 @@ class DocumentAdministrativeMetadata(_model_base.Model):
         *,
         ordered_procedures: Optional[List["_models.OrderedProcedure"]] = None,
         encounter_id: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -459,10 +458,10 @@ class DocumentAuthor(_model_base.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         full_name: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -502,10 +501,10 @@ class DocumentContent(_model_base.Model):
         *,
         source_type: Union[str, "_models.DocumentContentSourceType"],
         value: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -553,10 +552,10 @@ class Resource(_model_base.Model):
         meta: Optional["_models.Meta"] = None,
         implicit_rules: Optional[str] = None,
         language: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -620,10 +619,10 @@ class DomainResource(Resource):
         contained: Optional[List["_models.Resource"]] = None,
         extension: Optional[List["_models.Extension"]] = None,
         modifier_extension: Optional[List["_models.Extension"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -635,7 +634,7 @@ class DomainResource(Resource):
 
 class Extension(Element):  # pylint: disable=too-many-instance-attributes
     """Base for all elements
-    Based on `FHIR Element <https://www.hl7.org/fhir/datatypes.html#Element>`_.
+    Based on `FHIR Element <https://www.hl7.org/fhir/R4/element.html>`_.
 
 
     :ivar url: Source of the definition for the extension code - a logical name or a URL. Required.
@@ -710,10 +709,10 @@ class Extension(Element):  # pylint: disable=too-many-instance-attributes
         value_date_time: Optional[str] = None,
         value_period: Optional["_models.Period"] = None,
         value_reference: Optional["_models.Reference"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -748,10 +747,10 @@ class FindingInference(RadiologyInsightsInference, discriminator="finding"):
         *,
         finding: "_models.Observation",
         extension: Optional[List["_models.Extension"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -781,10 +780,10 @@ class FindingOptions(_model_base.Model):
         self,
         *,
         provide_focused_sentence_evidence: Optional[bool] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -812,7 +811,7 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
     :vartype was_acknowledged: bool
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_COMMUNICATION] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
     """Inference type. Required. Followup Communication inference type"""
     communicated_at: Optional[List[datetime.datetime]] = rest_field(name="communicatedAt", format="rfc3339")
     """Communication date and time."""
@@ -829,10 +828,10 @@ class FollowupCommunicationInference(RadiologyInsightsInference, discriminator="
         extension: Optional[List["_models.Extension"]] = None,
         communicated_at: Optional[List[datetime.datetime]] = None,
         recipient: Optional[List[Union[str, "_models.MedicalProfessionalType"]]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -879,7 +878,7 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
      ~azure.healthinsights.radiologyinsights.models.ProcedureRecommendation
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.FOLLOWUP_RECOMMENDATION] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
     """Inference type. Required. Recommendation inference type"""
     effective_at: Optional[str] = rest_field(name="effectiveAt")
     """Date and time are displayed when the procedure is recommended to be done at a specific point in
@@ -918,10 +917,10 @@ class FollowupRecommendationInference(RadiologyInsightsInference, discriminator=
         effective_at: Optional[str] = None,
         effective_period: Optional["_models.Period"] = None,
         findings: Optional[List["_models.RecommendationFinding"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -966,10 +965,10 @@ class FollowupRecommendationOptions(_model_base.Model):
         include_recommendations_with_no_specified_modality: Optional[bool] = None,
         include_recommendations_in_references: Optional[bool] = None,
         provide_focused_sentence_evidence: Optional[bool] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1005,10 +1004,10 @@ class ProcedureRecommendation(_model_base.Model):
         *,
         kind: str,
         extension: Optional[List["_models.Extension"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1049,10 +1048,10 @@ class GenericProcedureRecommendation(ProcedureRecommendation, discriminator="gen
         code: "_models.CodeableConcept",
         extension: Optional[List["_models.Extension"]] = None,
         description: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1067,21 +1066,21 @@ class HealthInsightsErrorResponse(_model_base.Model):
 
 
     :ivar error: The error object. Required.
-    :vartype error: ~azure.core.HttpResponseError
+    :vartype error: ~azure.core.ODataV4Format
     """
 
-    error: HttpResponseError = rest_field()
+    error: ODataV4Format = rest_field()
     """The error object. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        error: HttpResponseError,
-    ): ...
+        error: ODataV4Format,
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1132,10 +1131,10 @@ class Identifier(Element):
         value: Optional[str] = None,
         period: Optional["_models.Period"] = None,
         assigner: Optional["_models.Reference"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1181,10 +1180,10 @@ class ImagingProcedure(_model_base.Model):
         laterality: Optional["_models.CodeableConcept"] = None,
         contrast: Optional["_models.RadiologyCodeWithTypes"] = None,
         view: Optional["_models.RadiologyCodeWithTypes"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1224,10 +1223,10 @@ class ImagingProcedureRecommendation(ProcedureRecommendation, discriminator="ima
         imaging_procedures: List["_models.ImagingProcedure"],
         extension: Optional[List["_models.Extension"]] = None,
         procedure_codes: Optional[List["_models.CodeableConcept"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1257,7 +1256,7 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
      ~azure.healthinsights.radiologyinsights.models.LateralityDiscrepancyType
     """
 
-    kind: Literal[RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore
+    kind: Literal[RadiologyInsightsInferenceType.LATERALITY_DISCREPANCY] = rest_discriminator(name="kind")  # type: ignore # pylint: disable=line-too-long
     """Inference type. Required. Laterality discrepancy inference type"""
     laterality_indication: Optional["_models.CodeableConcept"] = rest_field(name="lateralityIndication")
     """Laterality indication : SNOMED CT code for laterality qualifier value."""
@@ -1273,10 +1272,10 @@ class LateralityDiscrepancyInference(RadiologyInsightsInference, discriminator="
         discrepancy_type: Union[str, "_models.LateralityDiscrepancyType"],
         extension: Optional[List["_models.Extension"]] = None,
         laterality_indication: Optional["_models.CodeableConcept"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1327,10 +1326,10 @@ class LimitedOrderDiscrepancyInference(RadiologyInsightsInference, discriminator
         extension: Optional[List["_models.Extension"]] = None,
         present_body_parts: Optional[List["_models.CodeableConcept"]] = None,
         present_body_part_measurements: Optional[List["_models.CodeableConcept"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1400,10 +1399,10 @@ class Meta(_model_base.Model):
         profile: Optional[List[str]] = None,
         security: Optional[List["_models.Coding"]] = None,
         tag: Optional[List["_models.Coding"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1443,10 +1442,10 @@ class Narrative(Element):
         div: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         extension: Optional[List["_models.Extension"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1652,10 +1651,10 @@ class Observation(DomainResource, discriminator="Observation"):  # pylint: disab
         has_member: Optional[List["_models.Reference"]] = None,
         derived_from: Optional[List["_models.Reference"]] = None,
         component: Optional[List["_models.ObservationComponent"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1764,10 +1763,10 @@ class ObservationComponent(Element):  # pylint: disable=too-many-instance-attrib
         data_absent_reason: Optional["_models.CodeableConcept"] = None,
         interpretation: Optional[List["_models.CodeableConcept"]] = None,
         reference_range: Optional[List["_models.ObservationReferenceRange"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1818,10 +1817,10 @@ class ObservationReferenceRange(_model_base.Model):
         applies_to: Optional[List["_models.CodeableConcept"]] = None,
         age: Optional["_models.Range"] = None,
         text: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1856,10 +1855,10 @@ class OrderedProcedure(_model_base.Model):
         code: Optional["_models.CodeableConcept"] = None,
         description: Optional[str] = None,
         extension: Optional[List["_models.Extension"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1895,10 +1894,10 @@ class PatientDetails(_model_base.Model):
         sex: Optional[Union[str, "_models.PatientSex"]] = None,
         birth_date: Optional[datetime.date] = None,
         clinical_info: Optional[List["_models.Resource"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1980,10 +1979,10 @@ class PatientDocument(_model_base.Model):
         authors: Optional[List["_models.DocumentAuthor"]] = None,
         specialty_type: Optional[Union[str, "_models.SpecialtyType"]] = None,
         administrative_metadata: Optional["_models.DocumentAdministrativeMetadata"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2025,10 +2024,10 @@ class PatientEncounter(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         period: Optional["_models.TimePeriod"] = None,
         class_property: Optional[Union[str, "_models.EncounterClass"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2074,10 +2073,10 @@ class PatientRecord(_model_base.Model):
         details: Optional["_models.PatientDetails"] = None,
         encounters: Optional[List["_models.PatientEncounter"]] = None,
         patient_documents: Optional[List["_models.PatientDocument"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2108,10 +2107,10 @@ class Period(Element):
         *,
         start: Optional[str] = None,
         end: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2157,10 +2156,10 @@ class Quantity(Element):
         unit: Optional[str] = None,
         system: Optional[str] = None,
         code: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2197,10 +2196,10 @@ class RadiologyCodeWithTypes(_model_base.Model):
         *,
         code: "_models.CodeableConcept",
         types: List["_models.CodeableConcept"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2232,10 +2231,10 @@ class RadiologyInsightsData(_model_base.Model):
         *,
         patients: List["_models.PatientRecord"],
         configuration: Optional["_models.RadiologyInsightsModelConfiguration"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2268,10 +2267,10 @@ class RadiologyInsightsInferenceOptions(_model_base.Model):
         *,
         followup_recommendation_options: Optional["_models.FollowupRecommendationOptions"] = None,
         finding_options: Optional["_models.FindingOptions"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2305,10 +2304,10 @@ class RadiologyInsightsInferenceResult(_model_base.Model):
         *,
         patient_results: List["_models.RadiologyInsightsPatientResult"],
         model_version: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2341,7 +2340,7 @@ class RadiologyInsightsJob(_model_base.Model):
     :ivar updated_at: The date and time when the processing job was last updated.
     :vartype updated_at: ~datetime.datetime
     :ivar error: Error object that describes the error when status is "Failed".
-    :vartype error: ~azure.core.HttpResponseError
+    :vartype error: ~azure.core.ODataV4Format
     """
 
     job_data: Optional["_models.RadiologyInsightsData"] = rest_field(name="jobData", visibility=["read", "create"])
@@ -2359,7 +2358,7 @@ class RadiologyInsightsJob(_model_base.Model):
     """The date and time when the processing job is set to expire."""
     updated_at: Optional[datetime.datetime] = rest_field(name="updatedAt", visibility=["read"], format="rfc3339")
     """The date and time when the processing job was last updated."""
-    error: Optional[HttpResponseError] = rest_field(visibility=["read"])
+    error: Optional[ODataV4Format] = rest_field(visibility=["read"])
     """Error object that describes the error when status is \"Failed\"."""
 
     @overload
@@ -2367,10 +2366,10 @@ class RadiologyInsightsJob(_model_base.Model):
         self,
         *,
         job_data: Optional["_models.RadiologyInsightsData"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2426,10 +2425,10 @@ class RadiologyInsightsModelConfiguration(_model_base.Model):
         inference_types: Optional[List[Union[str, "_models.RadiologyInsightsInferenceType"]]] = None,
         inference_options: Optional["_models.RadiologyInsightsInferenceOptions"] = None,
         locale: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2461,10 +2460,10 @@ class RadiologyInsightsPatientResult(_model_base.Model):
         *,
         patient_id: str,
         inferences: List["_models.RadiologyInsightsInference"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2510,10 +2509,10 @@ class RadiologyProcedureInference(RadiologyInsightsInference, discriminator="rad
         ordered_procedure: "_models.OrderedProcedure",
         extension: Optional[List["_models.Extension"]] = None,
         procedure_codes: Optional[List["_models.CodeableConcept"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2544,10 +2543,10 @@ class Range(Element):
         *,
         low: Optional["_models.Quantity"] = None,
         high: Optional["_models.Quantity"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2578,10 +2577,10 @@ class Ratio(Element):
         *,
         numerator: Optional["_models.Quantity"] = None,
         denominator: Optional["_models.Quantity"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2627,10 +2626,10 @@ class RecommendationFinding(_model_base.Model):
         finding: Optional["_models.Observation"] = None,
         critical_finding: Optional["_models.CriticalResult"] = None,
         extension: Optional[List["_models.Extension"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2671,10 +2670,10 @@ class Reference(Element):
         type: Optional[str] = None,
         identifier: Optional["_models.Identifier"] = None,
         display: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2731,10 +2730,10 @@ class SampledData(Element):
         lower_limit: Optional[float] = None,
         upper_limit: Optional[float] = None,
         data: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2770,10 +2769,10 @@ class SexMismatchInference(RadiologyInsightsInference, discriminator="sexMismatc
         *,
         sex_indication: "_models.CodeableConcept",
         extension: Optional[List["_models.Extension"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2803,10 +2802,10 @@ class TimePeriod(_model_base.Model):
         *,
         start: Optional[datetime.datetime] = None,
         end: Optional[datetime.datetime] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]

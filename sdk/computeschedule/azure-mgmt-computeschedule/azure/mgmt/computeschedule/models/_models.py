@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -14,7 +14,6 @@ from .. import _model_base
 from .._model_base import rest_field
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -25,14 +24,14 @@ class CancelOperationsRequest(_model_base.Model):
 
     :ivar operation_ids: The list of operation ids to cancel operations on. Required.
     :vartype operation_ids: list[str]
-    :ivar correlationid: Correlationid item. Required.
+    :ivar correlationid: CorrelationId item. Required.
     :vartype correlationid: str
     """
 
     operation_ids: List[str] = rest_field(name="operationIds")
     """The list of operation ids to cancel operations on. Required."""
     correlationid: str = rest_field()
-    """Correlationid item. Required."""
+    """CorrelationId item. Required."""
 
     @overload
     def __init__(
@@ -40,10 +39,10 @@ class CancelOperationsRequest(_model_base.Model):
         *,
         operation_ids: List[str],
         correlationid: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -69,10 +68,10 @@ class CancelOperationsResponse(_model_base.Model):
         self,
         *,
         results: List["_models.ResourceOperation"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -113,10 +112,10 @@ class DeallocateResourceOperationResponse(_model_base.Model):
         type: str,
         location: str,
         results: Optional[List["_models.ResourceOperation"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -190,10 +189,10 @@ class ErrorResponse(_model_base.Model):
         self,
         *,
         error: Optional["_models.ErrorDetail"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -212,7 +211,7 @@ class ExecuteDeallocateRequest(_model_base.Model):
     :vartype execution_parameters: ~azure.mgmt.computeschedule.models.ExecutionParameters
     :ivar resources: The resources for the request. Required.
     :vartype resources: ~azure.mgmt.computeschedule.models.Resources
-    :ivar correlationid: Correlationid item. Required.
+    :ivar correlationid: CorrelationId item. Required.
     :vartype correlationid: str
     """
 
@@ -221,7 +220,7 @@ class ExecuteDeallocateRequest(_model_base.Model):
     resources: "_models.Resources" = rest_field()
     """The resources for the request. Required."""
     correlationid: str = rest_field()
-    """Correlationid item. Required."""
+    """CorrelationId item. Required."""
 
     @overload
     def __init__(
@@ -230,10 +229,10 @@ class ExecuteDeallocateRequest(_model_base.Model):
         execution_parameters: "_models.ExecutionParameters",
         resources: "_models.Resources",
         correlationid: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -252,7 +251,7 @@ class ExecuteHibernateRequest(_model_base.Model):
     :vartype execution_parameters: ~azure.mgmt.computeschedule.models.ExecutionParameters
     :ivar resources: The resources for the request. Required.
     :vartype resources: ~azure.mgmt.computeschedule.models.Resources
-    :ivar correlationid: Correlationid item. Required.
+    :ivar correlationid: CorrelationId item. Required.
     :vartype correlationid: str
     """
 
@@ -261,7 +260,7 @@ class ExecuteHibernateRequest(_model_base.Model):
     resources: "_models.Resources" = rest_field()
     """The resources for the request. Required."""
     correlationid: str = rest_field()
-    """Correlationid item. Required."""
+    """CorrelationId item. Required."""
 
     @overload
     def __init__(
@@ -270,10 +269,10 @@ class ExecuteHibernateRequest(_model_base.Model):
         execution_parameters: "_models.ExecutionParameters",
         resources: "_models.Resources",
         correlationid: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -292,7 +291,7 @@ class ExecuteStartRequest(_model_base.Model):
     :vartype execution_parameters: ~azure.mgmt.computeschedule.models.ExecutionParameters
     :ivar resources: The resources for the request. Required.
     :vartype resources: ~azure.mgmt.computeschedule.models.Resources
-    :ivar correlationid: Correlationid item. Required.
+    :ivar correlationid: CorrelationId item. Required.
     :vartype correlationid: str
     """
 
@@ -301,7 +300,7 @@ class ExecuteStartRequest(_model_base.Model):
     resources: "_models.Resources" = rest_field()
     """The resources for the request. Required."""
     correlationid: str = rest_field()
-    """Correlationid item. Required."""
+    """CorrelationId item. Required."""
 
     @overload
     def __init__(
@@ -310,10 +309,10 @@ class ExecuteStartRequest(_model_base.Model):
         execution_parameters: "_models.ExecutionParameters",
         resources: "_models.Resources",
         correlationid: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -348,10 +347,10 @@ class ExecutionParameters(_model_base.Model):
         *,
         optimization_preference: Optional[Union[str, "_models.OptimizationPreference"]] = None,
         retry_policy: Optional["_models.RetryPolicy"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -378,10 +377,10 @@ class GetOperationErrorsRequest(_model_base.Model):
         self,
         *,
         operation_ids: List[str],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -407,10 +406,10 @@ class GetOperationErrorsResponse(_model_base.Model):
         self,
         *,
         results: List["_models.OperationErrorsResult"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -427,14 +426,14 @@ class GetOperationStatusRequest(_model_base.Model):
 
     :ivar operation_ids: The list of operation ids to get the status of. Required.
     :vartype operation_ids: list[str]
-    :ivar correlationid: Correlationid item. Required.
+    :ivar correlationid: CorrelationId item. Required.
     :vartype correlationid: str
     """
 
     operation_ids: List[str] = rest_field(name="operationIds")
     """The list of operation ids to get the status of. Required."""
     correlationid: str = rest_field()
-    """Correlationid item. Required."""
+    """CorrelationId item. Required."""
 
     @overload
     def __init__(
@@ -442,10 +441,10 @@ class GetOperationStatusRequest(_model_base.Model):
         *,
         operation_ids: List[str],
         correlationid: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -471,10 +470,10 @@ class GetOperationStatusResponse(_model_base.Model):
         self,
         *,
         results: List["_models.ResourceOperation"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -515,10 +514,10 @@ class HibernateResourceOperationResponse(_model_base.Model):
         type: str,
         location: str,
         results: Optional[List["_models.ResourceOperation"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -572,10 +571,10 @@ class Operation(_model_base.Model):
         self,
         *,
         action_type: Optional[Union[str, "_models.ActionType"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -649,10 +648,10 @@ class OperationErrorDetails(_model_base.Model):
         error_details: datetime.datetime,
         time_stamp: datetime.datetime,
         crp_operation_id: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -708,10 +707,10 @@ class OperationErrorsResult(_model_base.Model):
         operation_errors: Optional[List["_models.OperationErrorDetails"]] = None,
         request_error_code: Optional[str] = None,
         request_error_details: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -751,10 +750,10 @@ class ResourceOperation(_model_base.Model):
         error_code: Optional[str] = None,
         error_details: Optional[str] = None,
         operation: Optional["_models.ResourceOperationDetails"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -839,10 +838,10 @@ class ResourceOperationDetails(_model_base.Model):  # pylint: disable=too-many-i
         resource_operation_error: Optional["_models.ResourceOperationError"] = None,
         completed_at: Optional[datetime.datetime] = None,
         retry_policy: Optional["_models.RetryPolicy"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -873,10 +872,10 @@ class ResourceOperationError(_model_base.Model):
         *,
         error_code: str,
         error_details: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -903,10 +902,10 @@ class Resources(_model_base.Model):
         self,
         *,
         ids: List[str],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -936,10 +935,10 @@ class RetryPolicy(_model_base.Model):
         *,
         retry_count: Optional[int] = None,
         retry_window_in_minutes: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -978,10 +977,10 @@ class Schedule(_model_base.Model):
         dead_line: datetime.datetime,
         time_zone: str,
         deadline_type: Union[str, "_models.DeadlineType"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1022,10 +1021,10 @@ class StartResourceOperationResponse(_model_base.Model):
         type: str,
         location: str,
         results: Optional[List["_models.ResourceOperation"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1046,7 +1045,7 @@ class SubmitDeallocateRequest(_model_base.Model):
     :vartype execution_parameters: ~azure.mgmt.computeschedule.models.ExecutionParameters
     :ivar resources: The resources for the request. Required.
     :vartype resources: ~azure.mgmt.computeschedule.models.Resources
-    :ivar correlationid: Correlationid item. Required.
+    :ivar correlationid: CorrelationId item. Required.
     :vartype correlationid: str
     """
 
@@ -1057,7 +1056,7 @@ class SubmitDeallocateRequest(_model_base.Model):
     resources: "_models.Resources" = rest_field()
     """The resources for the request. Required."""
     correlationid: str = rest_field()
-    """Correlationid item. Required."""
+    """CorrelationId item. Required."""
 
     @overload
     def __init__(
@@ -1067,10 +1066,10 @@ class SubmitDeallocateRequest(_model_base.Model):
         execution_parameters: "_models.ExecutionParameters",
         resources: "_models.Resources",
         correlationid: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1091,7 +1090,7 @@ class SubmitHibernateRequest(_model_base.Model):
     :vartype execution_parameters: ~azure.mgmt.computeschedule.models.ExecutionParameters
     :ivar resources: The resources for the request. Required.
     :vartype resources: ~azure.mgmt.computeschedule.models.Resources
-    :ivar correlationid: Correlationid item. Required.
+    :ivar correlationid: CorrelationId item. Required.
     :vartype correlationid: str
     """
 
@@ -1102,7 +1101,7 @@ class SubmitHibernateRequest(_model_base.Model):
     resources: "_models.Resources" = rest_field()
     """The resources for the request. Required."""
     correlationid: str = rest_field()
-    """Correlationid item. Required."""
+    """CorrelationId item. Required."""
 
     @overload
     def __init__(
@@ -1112,10 +1111,10 @@ class SubmitHibernateRequest(_model_base.Model):
         execution_parameters: "_models.ExecutionParameters",
         resources: "_models.Resources",
         correlationid: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1136,7 +1135,7 @@ class SubmitStartRequest(_model_base.Model):
     :vartype execution_parameters: ~azure.mgmt.computeschedule.models.ExecutionParameters
     :ivar resources: The resources for the request. Required.
     :vartype resources: ~azure.mgmt.computeschedule.models.Resources
-    :ivar correlationid: Correlationid item. Required.
+    :ivar correlationid: CorrelationId item. Required.
     :vartype correlationid: str
     """
 
@@ -1147,7 +1146,7 @@ class SubmitStartRequest(_model_base.Model):
     resources: "_models.Resources" = rest_field()
     """The resources for the request. Required."""
     correlationid: str = rest_field()
-    """Correlationid item. Required."""
+    """CorrelationId item. Required."""
 
     @overload
     def __init__(
@@ -1157,10 +1156,10 @@ class SubmitStartRequest(_model_base.Model):
         execution_parameters: "_models.ExecutionParameters",
         resources: "_models.Resources",
         correlationid: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]

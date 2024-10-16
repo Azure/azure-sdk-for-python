@@ -1,5 +1,5 @@
-# coding=utf-8
 # pylint: disable=too-many-lines
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -14,7 +14,6 @@ from .. import _model_base
 from .._model_base import rest_field
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -35,10 +34,10 @@ class ContainerGroupInstanceCountSummary(_model_base.Model):
         self,
         *,
         instance_counts_by_state: List["_models.PoolResourceStateCount"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -69,10 +68,10 @@ class ContainerGroupProfile(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         revision: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -104,10 +103,10 @@ class ContainerGroupProperties(_model_base.Model):
         *,
         container_group_profile: "_models.ContainerGroupProfile",
         subnet_ids: Optional[List["_models.Subnet"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -181,10 +180,10 @@ class ErrorResponse(_model_base.Model):
         self,
         *,
         error: Optional["_models.ErrorDetail"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -238,10 +237,10 @@ class Operation(_model_base.Model):
         self,
         *,
         action_type: Optional[Union[str, "_models.ActionType"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -306,10 +305,10 @@ class PoolResourceStateCount(_model_base.Model):
         *,
         state: str,
         count: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -391,10 +390,10 @@ class StandbyContainerGroupPoolElasticityProfile(_model_base.Model):  # pylint: 
         *,
         max_ready_capacity: int,
         refill_policy: Optional[Union[str, "_models.RefillPolicy"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -439,10 +438,10 @@ class TrackedResource(Resource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -487,10 +486,10 @@ class StandbyContainerGroupPoolResource(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.StandbyContainerGroupPoolResourceProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -534,10 +533,10 @@ class StandbyContainerGroupPoolResourceProperties(_model_base.Model):  # pylint:
         *,
         elasticity_profile: "_models.StandbyContainerGroupPoolElasticityProfile",
         container_group_properties: "_models.ContainerGroupProperties",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -568,10 +567,10 @@ class StandbyContainerGroupPoolResourceUpdate(_model_base.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.StandbyContainerGroupPoolResourceUpdateProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -607,10 +606,10 @@ class StandbyContainerGroupPoolResourceUpdateProperties(_model_base.Model):  # p
         *,
         elasticity_profile: Optional["_models.StandbyContainerGroupPoolElasticityProfile"] = None,
         container_group_properties: Optional["_models.ContainerGroupProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -650,10 +649,10 @@ class StandbyContainerGroupPoolRuntimeViewResource(ProxyResource):  # pylint: di
         self,
         *,
         properties: Optional["_models.StandbyContainerGroupPoolRuntimeViewResourceProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -714,10 +713,10 @@ class StandbyVirtualMachinePoolElasticityProfile(_model_base.Model):  # pylint: 
         *,
         max_ready_capacity: int,
         min_ready_capacity: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -762,10 +761,10 @@ class StandbyVirtualMachinePoolResource(TrackedResource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.StandbyVirtualMachinePoolResourceProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -819,10 +818,10 @@ class StandbyVirtualMachinePoolResourceProperties(_model_base.Model):  # pylint:
         virtual_machine_state: Union[str, "_models.VirtualMachineState"],
         elasticity_profile: Optional["_models.StandbyVirtualMachinePoolElasticityProfile"] = None,
         attached_virtual_machine_scale_set_id: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -853,10 +852,10 @@ class StandbyVirtualMachinePoolResourceUpdate(_model_base.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional["_models.StandbyVirtualMachinePoolResourceUpdateProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -899,10 +898,10 @@ class StandbyVirtualMachinePoolResourceUpdateProperties(_model_base.Model):  # p
         elasticity_profile: Optional["_models.StandbyVirtualMachinePoolElasticityProfile"] = None,
         virtual_machine_state: Optional[Union[str, "_models.VirtualMachineState"]] = None,
         attached_virtual_machine_scale_set_id: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -942,10 +941,10 @@ class StandbyVirtualMachinePoolRuntimeViewResource(ProxyResource):  # pylint: di
         self,
         *,
         properties: Optional["_models.StandbyVirtualMachinePoolRuntimeViewResourceProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1023,10 +1022,10 @@ class StandbyVirtualMachineResource(ProxyResource):
         self,
         *,
         properties: Optional["_models.StandbyVirtualMachineResourceProperties"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1062,10 +1061,10 @@ class StandbyVirtualMachineResourceProperties(_model_base.Model):
         self,
         *,
         virtual_machine_resource_id: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1091,10 +1090,10 @@ class Subnet(_model_base.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1148,10 +1147,10 @@ class SystemData(_model_base.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1190,10 +1189,10 @@ class VirtualMachineInstanceCountSummary(_model_base.Model):
         *,
         instance_counts_by_state: List["_models.PoolResourceStateCount"],
         zone: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]

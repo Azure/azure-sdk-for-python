@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._models import AccountSku
+from ._models import AccountSkuPatch
 from ._models import Certificate
 from ._models import CertificateProfile
 from ._models import CertificateProfileProperties
@@ -44,6 +45,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AccountSku",
+    "AccountSkuPatch",
     "Certificate",
     "CertificateProfile",
     "CertificateProfileProperties",
@@ -75,5 +77,5 @@ __all__ = [
     "RevocationStatus",
     "SkuName",
 ]
-__all__.extend([p for p in _patch_all if p not in __all__])
+__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
