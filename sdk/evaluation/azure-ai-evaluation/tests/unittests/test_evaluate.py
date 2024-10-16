@@ -143,20 +143,26 @@ class TestEvaluate:
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(data=missing_columns_jsonl_file, evaluators={"g": F1ScoreEvaluator()})
 
-        assert "Missing required inputs for evaluator g : ['ground_truth']." in exc_info.value.args[0]
+        expected_message = "Some evaluators are missing required inputs:\n" "- g: ['ground_truth']\n"
+        assert expected_message in exc_info.value.args[0]
 
     def test_evaluate_missing_required_inputs_target(self, questions_wrong_file):
         with pytest.raises(EvaluationException) as exc_info:
             evaluate(data=questions_wrong_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
-        assert "Missing required inputs for target : ['query']." in exc_info.value.args[0]
+        assert "Missing required inputs for target: ['query']." in exc_info.value.args[0]
 
-    def test_wrong_target(self, questions_file):
-        """Test error, when target function does not generate required column."""
+    def test_target_not_generate_required_columns(self, questions_file):
         with pytest.raises(EvaluationException) as exc_info:
-            # target_fn will generate the "response", but not ground truth.
+            # target_fn will generate the "response", but not "ground_truth".
             evaluate(data=questions_file, evaluators={"g": F1ScoreEvaluator()}, target=_target_fn)
 
-        assert "Missing required inputs for evaluator g : ['ground_truth']." in exc_info.value.args[0]
+        expected_message = "Some evaluators are missing required inputs:\n" "- g: ['ground_truth']\n"
+
+        expected_message2 = "Verify that the target is generating the necessary columns for the evaluators. "
+        expected_message2 += "Currently generated columns: {'response'}"
+
+        assert expected_message in exc_info.value.args[0]
+        assert expected_message2 in exc_info.value.args[0]
 
     def test_target_raises_on_outputs(self):
         """Test we are raising exception if the output is column is present in the input."""
@@ -553,7 +559,9 @@ class TestEvaluate:
                 },
                 _use_pf_client=use_pf_client,
             )  # type: ignore
-        assert exc_info._excinfo[1].__str__() == "Missing required inputs for evaluator non : ['response']."  # type: ignore
+
+        expected_message = "Some evaluators are missing required inputs:\n" "- non: ['response']\n"
+        assert expected_message in exc_info.value.args[0]
 
         # Variants with default answer work when only question is inputted
         only_question_results = evaluate(
