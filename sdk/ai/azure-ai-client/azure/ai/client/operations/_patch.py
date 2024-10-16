@@ -1561,7 +1561,7 @@ class AgentsOperations(AgentsOperationsGenerated):
                 "or both 'file' and 'purpose', or both 'file_path' and 'purpose'."
             )
 
-        while uploaded_file.status in {"uploaded", "pending", "running"}:
+        while uploaded_file.status in ["uploaded", "pending", "running"]:
             time.sleep(sleep_interval)
             uploaded_file = self.get_file(uploaded_file.id)
 
