@@ -37,6 +37,14 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``code_interpreter``"""
     FILE_SEARCH = "file_search"
     """Tool type ``file_search``"""
+    BING_GROUNDING = "bing_grounding"
+    """Tool type ``bing_grounding``"""
+    MICROSOFT_FABRIC = "microsoft_fabric"
+    """Tool type ``microsoft_fabric``"""
+    SHAREPOINT = "sharepoint"
+    """Tool type ``sharepoint``"""
+    AZURE_AI_SEARCH = "azure_ai_search"
+    """Tool type ``azure_ai_search``"""
 
 
 class AgentStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):

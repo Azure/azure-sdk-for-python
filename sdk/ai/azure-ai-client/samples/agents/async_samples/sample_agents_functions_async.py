@@ -38,8 +38,7 @@ async def main():
     # Customer needs to login to Azure subscription via Azure CLI and set the environment variables
 
     ai_client = AzureAIClient.from_connection_string(
-        credential=DefaultAzureCredential(),
-        conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
+        credential=DefaultAzureCredential(), conn_str=os.environ["AI_CLIENT_CONNECTION_STRING"]
     )
 
     # Or, you can create the Azure AI Client by giving all required parameters directly
@@ -52,15 +51,18 @@ async def main():
         workspace_name=os.environ["AI_CLIENT_WORKSPACE_NAME"],
         logging_enable=True, # Optional. Remove this line if you don't want to show how to enable logging
     )
-    """    
-    
+    """
+
     async with ai_client:
         # Initialize assistant functions
         functions = AsyncFunctionTool(functions=user_async_functions)
 
         # Create agent
         agent = await ai_client.agents.create_agent(
-            model="gpt-4-1106-preview", name="my-assistant", instructions="You are helpful assistant", tools=functions.definitions
+            model="gpt-4-1106-preview",
+            name="my-assistant",
+            instructions="You are helpful assistant",
+            tools=functions.definitions,
         )
         print(f"Created agent, agent ID: {agent.id}")
 
@@ -69,7 +71,9 @@ async def main():
         print(f"Created thread, ID: {thread.id}")
 
         # Create and send message
-        message = await ai_client.agents.create_message(thread_id=thread.id, role="user", content="Hello, what's the time?")
+        message = await ai_client.agents.create_message(
+            thread_id=thread.id, role="user", content="Hello, what's the time?"
+        )
         print(f"Created message, ID: {message.id}")
 
         # Create and run assistant task
@@ -81,7 +85,7 @@ async def main():
             time.sleep(4)
             run = await ai_client.agents.get_run(thread_id=thread.id, run_id=run.id)
 
-            if run.status == "requires_action" and  isinstance(run.required_action, SubmitToolOutputsAction):
+            if run.status == "requires_action" and isinstance(run.required_action, SubmitToolOutputsAction):
                 tool_calls = run.required_action.submit_tool_outputs.tool_calls
                 if not tool_calls:
                     print("No tool calls provided - cancelling run")
@@ -93,10 +97,12 @@ async def main():
                     if isinstance(tool_call, RequiredFunctionToolCall):
                         try:
                             output = await functions.execute(tool_call)
-                            tool_outputs.append({
-                                "tool_call_id": tool_call.id,
-                                "output": output,
-                            })
+                            tool_outputs.append(
+                                {
+                                    "tool_call_id": tool_call.id,
+                                    "output": output,
+                                }
+                            )
                         except Exception as e:
                             print(f"Error executing tool_call {tool_call.id}: {e}")
 
@@ -120,4 +126,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main());
+    asyncio.run(main())

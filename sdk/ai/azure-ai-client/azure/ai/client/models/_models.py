@@ -128,10 +128,10 @@ class Agent(_model_base.Model):  # pylint: disable=too-many-instance-attributes
         top_p: float,
         metadata: Dict[str, str],
         response_format: Optional["_types.AgentsApiResponseFormatOption"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -171,10 +171,10 @@ class AgentDeletionStatus(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         deleted: bool,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -203,10 +203,10 @@ class AgentsApiResponseFormat(_model_base.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ApiResponseFormat"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -221,7 +221,8 @@ class AgentsNamedToolChoice(_model_base.Model):
 
 
     :ivar type: the type of tool. If type is ``function``\\ , the function name must be set.
-     Required. Known values are: "function", "code_interpreter", and "file_search".
+     Required. Known values are: "function", "code_interpreter", "file_search", "bing_grounding",
+     "microsoft_fabric", "sharepoint", and "azure_ai_search".
     :vartype type: str or ~azure.ai.client.models.AgentsNamedToolChoiceType
     :ivar function: The name of the function to call.
     :vartype function: ~azure.ai.client.models.FunctionName
@@ -229,7 +230,8 @@ class AgentsNamedToolChoice(_model_base.Model):
 
     type: Union[str, "_models.AgentsNamedToolChoiceType"] = rest_field()
     """the type of tool. If type is ``function``\ , the function name must be set. Required. Known
-     values are: \"function\", \"code_interpreter\", and \"file_search\"."""
+     values are: \"function\", \"code_interpreter\", \"file_search\", \"bing_grounding\",
+     \"microsoft_fabric\", \"sharepoint\", and \"azure_ai_search\"."""
     function: Optional["_models.FunctionName"] = rest_field()
     """The name of the function to call."""
 
@@ -239,10 +241,10 @@ class AgentsNamedToolChoice(_model_base.Model):
         *,
         type: Union[str, "_models.AgentsNamedToolChoiceType"],
         function: Optional["_models.FunctionName"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -302,10 +304,10 @@ class AgentThread(_model_base.Model):
         created_at: datetime.datetime,
         tool_resources: "_models.ToolResources",
         metadata: Dict[str, str],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -353,10 +355,10 @@ class AgentThreadCreationOptions(_model_base.Model):
         messages: Optional[List["_models.ThreadMessageOptions"]] = None,
         tool_resources: Optional["_models.ToolResources"] = None,
         metadata: Optional[Dict[str, str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -386,10 +388,10 @@ class InputData(_model_base.Model):
         self,
         *,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -431,10 +433,10 @@ class AppInsightsConfiguration(InputData, discriminator="app_insights"):
         resource_id: str,
         query: str,
         service_name: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -444,11 +446,43 @@ class AppInsightsConfiguration(InputData, discriminator="app_insights"):
         super().__init__(*args, type="app_insights", **kwargs)
 
 
+class AzureAISearchResource(_model_base.Model):
+    """A set of index resources used by the ``azure_ai_search`` tool.
+
+    :ivar index_list: The indices attached to this agent. There can be a maximum of 1 index
+     resource attached to the agent.
+    :vartype index_list: list[~azure.ai.client.models.IndexResource]
+    """
+
+    index_list: Optional[List["_models.IndexResource"]] = rest_field(name="indexes")
+    """The indices attached to this agent. There can be a maximum of 1 index
+     resource attached to the agent."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index_list: Optional[List["_models.IndexResource"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class ToolDefinition(_model_base.Model):
     """An abstract representation of an input tool definition that an agent can use.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CodeInterpreterToolDefinition, FileSearchToolDefinition, FunctionToolDefinition
+    AzureAISearchToolDefinition, BingSearchToolDefinition, CodeInterpreterToolDefinition,
+    FileSearchToolDefinition, FunctionToolDefinition, MicrosoftFabricToolDefinition,
+    SharepointToolDefinition
 
 
     :ivar type: The object type. Required. Default value is None.
@@ -464,10 +498,10 @@ class ToolDefinition(_model_base.Model):
         self,
         *,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -475,6 +509,63 @@ class ToolDefinition(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class AzureAISearchToolDefinition(ToolDefinition, discriminator="azure_ai_search"):
+    """The input definition information for an Azure AI search tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'azure_ai_search'. Required. Default value is
+     "azure_ai_search".
+    :vartype type: str
+    """
+
+    type: Literal["azure_ai_search"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'azure_ai_search'. Required. Default value is
+     \"azure_ai_search\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="azure_ai_search", **kwargs)
+
+
+class BingSearchToolDefinition(ToolDefinition, discriminator="bing_search"):
+    """The input definition information for a bing search tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'bing_search'. Required. Default value is
+     "bing_search".
+    :vartype type: str
+    """
+
+    type: Literal["bing_search"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'bing_search'. Required. Default value is \"bing_search\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="bing_search", **kwargs)
 
 
 class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpreter"):
@@ -493,10 +584,10 @@ class CodeInterpreterToolDefinition(ToolDefinition, discriminator="code_interpre
     @overload
     def __init__(
         self,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -525,10 +616,42 @@ class CodeInterpreterToolResource(_model_base.Model):
         self,
         *,
         file_ids: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class ConnectionListResource(_model_base.Model):
+    """A set of connection resources currently used by either the ``bing_search``\\ ,
+    ``microsoft_fabric``\\ , or ``sharepoint`` tools.
+
+    :ivar connection_list: The connections attached to this agent. There can be a maximum of 1
+     connection
+     resource attached to the agent.
+    :vartype connection_list: list[~azure.ai.client.models.ConnectionResource]
+    """
+
+    connection_list: Optional[List["_models.ConnectionResource"]] = rest_field(name="connections")
+    """The connections attached to this agent. There can be a maximum of 1 connection
+     resource attached to the agent."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_list: Optional[List["_models.ConnectionResource"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -631,6 +754,35 @@ class ConnectionPropertiesSASAuth(ConnectionProperties, discriminator="SAS"):
     """The connection URL to be used for this service. Required."""
 
 
+class ConnectionResource(_model_base.Model):
+    """A connection resource.
+
+
+    :ivar connection_id: A connection in a ConnectionListResource attached to this agent. Required.
+    :vartype connection_id: str
+    """
+
+    connection_id: str = rest_field()
+    """A connection in a ConnectionListResource attached to this agent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class ConnectionsListResponse(_model_base.Model):
     """Response from the list operation.
 
@@ -683,6 +835,74 @@ class CredentialsSASAuth(_model_base.Model):
     """The Shared Access Signatures (SAS) token. Required."""
 
 
+class Trigger(_model_base.Model):
+    """Abstract data class for input data configuration.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CronTrigger, RecurrenceTrigger
+
+
+    :ivar type: Type of the trigger. Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """Type of the trigger. Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class CronTrigger(Trigger, discriminator="Cron"):
+    """Cron Trigger Definition.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar type: Required. Default value is "Cron".
+    :vartype type: str
+    :ivar expression: Cron expression for the trigger. Required.
+    :vartype expression: str
+    """
+
+    type: Literal["Cron"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    """Required. Default value is \"Cron\"."""
+    expression: str = rest_field()
+    """Cron expression for the trigger. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        expression: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="Cron", **kwargs)
+
+
 class Dataset(InputData, discriminator="dataset"):
     """Dataset as source for evaluation.
 
@@ -705,10 +925,10 @@ class Dataset(InputData, discriminator="dataset"):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -724,7 +944,7 @@ class Evaluation(_model_base.Model):
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
-    :ivar id: Identifier of the evaluation.
+    :ivar id: Identifier of the evaluation. Required.
     :vartype id: str
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.client.models.InputData
@@ -747,9 +967,9 @@ class Evaluation(_model_base.Model):
     :vartype evaluators: dict[str, ~azure.ai.client.models.EvaluatorConfiguration]
     """
 
-    id: Optional[str] = rest_field()
-    """Identifier of the evaluation."""
-    data: "_models.InputData" = rest_field()
+    id: str = rest_field(visibility=["read"])
+    """Identifier of the evaluation. Required."""
+    data: "_models.InputData" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(name="displayName")
     """Display Name for evaluation. It helps to find evaluation easily in AI Studio. It does not need
@@ -763,10 +983,10 @@ class Evaluation(_model_base.Model):
     """Status of the evaluation. It is set by service and is read-only."""
     tags: Optional[Dict[str, str]] = rest_field()
     """Evaluation's tags. Unlike properties, tags are fully mutable."""
-    properties: Optional[Dict[str, str]] = rest_field()
+    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create"])
     """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
-    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field()
+    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(visibility=["read", "create"])
     """Evaluators to be used for the evaluation. Required."""
 
     @overload
@@ -775,15 +995,14 @@ class Evaluation(_model_base.Model):
         *,
         data: "_models.InputData",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -799,7 +1018,7 @@ class EvaluationSchedule(_model_base.Model):  # pylint: disable=too-many-instanc
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
 
-    :ivar id: Identifier of the evaluation.
+    :ivar id: Identifier of the evaluation. Required.
     :vartype id: str
     :ivar data: Data for evaluation. Required.
     :vartype data: ~azure.ai.client.models.InputData
@@ -811,8 +1030,8 @@ class EvaluationSchedule(_model_base.Model):  # pylint: disable=too-many-instanc
     :vartype description: str
     :ivar system_data: Metadata containing createdBy and modifiedBy information.
     :vartype system_data: ~azure.ai.client.models.SystemData
-    :ivar status: Status of the evaluation. It is set by service and is read-only.
-    :vartype status: str
+    :ivar provisioning_status: Status of the evaluation. It is set by service and is read-only.
+    :vartype provisioning_status: str
     :ivar tags: Evaluation's tags. Unlike properties, tags are fully mutable.
     :vartype tags: dict[str, str]
     :ivar properties: Evaluation's properties. Unlike tags, properties are add-only. Once added, a
@@ -820,17 +1039,15 @@ class EvaluationSchedule(_model_base.Model):  # pylint: disable=too-many-instanc
     :vartype properties: dict[str, str]
     :ivar evaluators: Evaluators to be used for the evaluation. Required.
     :vartype evaluators: dict[str, ~azure.ai.client.models.EvaluatorConfiguration]
-    :ivar recurrence: Recurrence pattern for the evaluation.
-    :vartype recurrence: ~azure.ai.client.models.Recurrence
-    :ivar cron_expression: Cron expression for the evaluation.
-    :vartype cron_expression: str
+    :ivar trigger: Trigger for the evaluation. Required.
+    :vartype trigger: ~azure.ai.client.models.Trigger
     :ivar sampling_strategy: Sampling strategy for the evaluation. Required.
     :vartype sampling_strategy: ~azure.ai.client.models.SamplingStrategy
     """
 
-    id: Optional[str] = rest_field()
-    """Identifier of the evaluation."""
-    data: "_models.InputData" = rest_field()
+    id: str = rest_field(visibility=["read"])
+    """Identifier of the evaluation. Required."""
+    data: "_models.InputData" = rest_field(visibility=["read", "create"])
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(name="displayName")
     """Display Name for evaluation. It helps to find evaluation easily in AI Studio. It does not need
@@ -840,19 +1057,17 @@ class EvaluationSchedule(_model_base.Model):  # pylint: disable=too-many-instanc
      evaluation and is mutable."""
     system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
     """Metadata containing createdBy and modifiedBy information."""
-    status: Optional[str] = rest_field(visibility=["read"])
+    provisioning_status: Optional[str] = rest_field(name="provisioningStatus", visibility=["read"])
     """Status of the evaluation. It is set by service and is read-only."""
     tags: Optional[Dict[str, str]] = rest_field()
     """Evaluation's tags. Unlike properties, tags are fully mutable."""
-    properties: Optional[Dict[str, str]] = rest_field()
+    properties: Optional[Dict[str, str]] = rest_field(visibility=["read", "create"])
     """Evaluation's properties. Unlike tags, properties are add-only. Once added, a property cannot be
      removed."""
-    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field()
+    evaluators: Dict[str, "_models.EvaluatorConfiguration"] = rest_field(visibility=["read", "create"])
     """Evaluators to be used for the evaluation. Required."""
-    recurrence: Optional["_models.Recurrence"] = rest_field()
-    """Recurrence pattern for the evaluation."""
-    cron_expression: Optional[str] = rest_field(name="cronExpression")
-    """Cron expression for the evaluation."""
+    trigger: "_models.Trigger" = rest_field()
+    """Trigger for the evaluation. Required."""
     sampling_strategy: "_models.SamplingStrategy" = rest_field(name="samplingStrategy")
     """Sampling strategy for the evaluation. Required."""
 
@@ -862,18 +1077,16 @@ class EvaluationSchedule(_model_base.Model):  # pylint: disable=too-many-instanc
         *,
         data: "_models.InputData",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
+        trigger: "_models.Trigger",
         sampling_strategy: "_models.SamplingStrategy",
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
-        recurrence: Optional["_models.Recurrence"] = None,
-        cron_expression: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -909,10 +1122,10 @@ class EvaluatorConfiguration(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         init_params: Optional[Dict[str, Any]] = None,
         data_mapping: Optional[Dict[str, str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -938,10 +1151,10 @@ class FileContentResponse(_model_base.Model):
         self,
         *,
         content: bytes,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -978,10 +1191,10 @@ class FileDeletionStatus(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         deleted: bool,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1014,10 +1227,10 @@ class FileListResponse(_model_base.Model):
         self,
         *,
         data: List["_models.OpenAIFile"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1049,10 +1262,10 @@ class FileSearchToolDefinition(ToolDefinition, discriminator="file_search"):
         self,
         *,
         file_search: Optional["_models.FileSearchToolDefinitionDetails"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1086,10 +1299,10 @@ class FileSearchToolDefinitionDetails(_model_base.Model):
         self,
         *,
         max_num_results: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1117,10 +1330,10 @@ class FileSearchToolResource(_model_base.Model):
         self,
         *,
         vector_store_ids: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1159,10 +1372,10 @@ class FunctionDefinition(_model_base.Model):
         name: str,
         parameters: Any,
         description: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1188,10 +1401,10 @@ class FunctionName(_model_base.Model):
         self,
         *,
         name: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1222,10 +1435,10 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
         self,
         *,
         function: "_models.FunctionDefinition",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1233,6 +1446,41 @@ class FunctionToolDefinition(ToolDefinition, discriminator="function"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, type="function", **kwargs)
+
+
+class IndexResource(_model_base.Model):
+    """A Index resource.
+
+
+    :ivar index_connection_id: An index connection id in an IndexResource attached to this agent.
+     Required.
+    :vartype index_connection_id: str
+    :ivar index_name: The name of an index in an IndexResource attached to this agent. Required.
+    :vartype index_name: str
+    """
+
+    index_connection_id: str = rest_field()
+    """An index connection id in an IndexResource attached to this agent. Required."""
+    index_name: str = rest_field()
+    """The name of an index in an IndexResource attached to this agent. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        index_connection_id: str,
+        index_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class MessageAttachment(_model_base.Model):
@@ -1257,10 +1505,10 @@ class MessageAttachment(_model_base.Model):
         *,
         file_id: str,
         tools: List["_types.MessageAttachmentToolDefinition"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1290,10 +1538,10 @@ class MessageContent(_model_base.Model):
         self,
         *,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1325,10 +1573,10 @@ class MessageDelta(_model_base.Model):
         *,
         role: Union[str, "_models.MessageRole"],
         content: List["_models.MessageDeltaContent"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1367,10 +1615,10 @@ class MessageDeltaChunk(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         delta: "_models.MessageDelta",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1406,10 +1654,10 @@ class MessageDeltaContent(_model_base.Model):
         *,
         index: int,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1444,10 +1692,10 @@ class MessageDeltaImageFileContent(MessageDeltaContent, discriminator="image_fil
         *,
         index: int,
         image_file: Optional["_models.MessageDeltaImageFileContentObject"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1472,10 +1720,10 @@ class MessageDeltaImageFileContentObject(_model_base.Model):
         self,
         *,
         file_id: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1510,10 +1758,10 @@ class MessageDeltaTextAnnotation(_model_base.Model):
         *,
         index: int,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1548,10 +1796,10 @@ class MessageDeltaTextContent(MessageDeltaContent, discriminator="text"):
         *,
         index: int,
         text: Optional["_models.MessageDeltaTextContentObject"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1581,10 +1829,10 @@ class MessageDeltaTextContentObject(_model_base.Model):
         *,
         value: Optional[str] = None,
         annotations: Optional[List["_models.MessageDeltaTextAnnotation"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1634,10 +1882,10 @@ class MessageDeltaTextFileCitationAnnotation(MessageDeltaTextAnnotation, discrim
         text: Optional[str] = None,
         start_index: Optional[int] = None,
         end_index: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1667,10 +1915,10 @@ class MessageDeltaTextFileCitationAnnotationObject(_model_base.Model):  # pylint
         *,
         file_id: Optional[str] = None,
         quote: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1720,10 +1968,10 @@ class MessageDeltaTextFilePathAnnotation(MessageDeltaTextAnnotation, discriminat
         start_index: Optional[int] = None,
         end_index: Optional[int] = None,
         text: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1749,10 +1997,10 @@ class MessageDeltaTextFilePathAnnotationObject(_model_base.Model):
         self,
         *,
         file_id: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1783,10 +2031,10 @@ class MessageImageFileContent(MessageContent, discriminator="image_file"):
         self,
         *,
         image_file: "_models.MessageImageFileDetails",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1812,10 +2060,10 @@ class MessageImageFileDetails(_model_base.Model):
         self,
         *,
         file_id: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1845,10 +2093,10 @@ class MessageIncompleteDetails(_model_base.Model):
         self,
         *,
         reason: Union[str, "_models.MessageIncompleteDetailsReason"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1883,10 +2131,10 @@ class MessageTextAnnotation(_model_base.Model):
         *,
         type: str,
         text: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1916,10 +2164,10 @@ class MessageTextContent(MessageContent, discriminator="text"):
         self,
         *,
         text: "_models.MessageTextDetails",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -1950,10 +2198,10 @@ class MessageTextDetails(_model_base.Model):
         *,
         value: str,
         annotations: List["_models.MessageTextAnnotation"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2002,10 +2250,10 @@ class MessageTextFileCitationAnnotation(MessageTextAnnotation, discriminator="fi
         file_citation: "_models.MessageTextFileCitationDetails",
         start_index: Optional[int] = None,
         end_index: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2037,10 +2285,10 @@ class MessageTextFileCitationDetails(_model_base.Model):
         *,
         file_id: str,
         quote: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2086,10 +2334,10 @@ class MessageTextFilePathAnnotation(MessageTextAnnotation, discriminator="file_p
         file_path: "_models.MessageTextFilePathDetails",
         start_index: Optional[int] = None,
         end_index: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2115,10 +2363,10 @@ class MessageTextFilePathDetails(_model_base.Model):
         self,
         *,
         file_id: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2126,6 +2374,35 @@ class MessageTextFilePathDetails(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class MicrosoftFabricToolDefinition(ToolDefinition, discriminator="microsoft_fabric"):
+    """The input definition information for a Microsoft Fabric tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
+     "microsoft_fabric".
+    :vartype type: str
+    """
+
+    type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'microsoft_fabric'. Required. Default value is
+     \"microsoft_fabric\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="microsoft_fabric", **kwargs)
 
 
 class OpenAIFile(_model_base.Model):
@@ -2189,10 +2466,10 @@ class OpenAIFile(_model_base.Model):
         purpose: Union[str, "_models.FilePurpose"],
         status: Optional[Union[str, "_models.FileState"]] = None,
         status_details: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2242,10 +2519,10 @@ class OpenAIPageableListOfAgent(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2295,10 +2572,10 @@ class OpenAIPageableListOfRunStep(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2348,10 +2625,10 @@ class OpenAIPageableListOfThreadMessage(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2401,10 +2678,10 @@ class OpenAIPageableListOfThreadRun(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2454,10 +2731,10 @@ class OpenAIPageableListOfVectorStore(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2507,10 +2784,10 @@ class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
         first_id: str,
         last_id: str,
         has_more: bool,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2519,47 +2796,6 @@ class OpenAIPageableListOfVectorStoreFile(_model_base.Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.object: Literal["list"] = "list"
-
-
-class Recurrence(_model_base.Model):
-    """Recurrence Definition.
-
-
-    :ivar frequency: The frequency to trigger schedule. Required. Known values are: "Month",
-     "Week", "Day", "Hour", and "Minute".
-    :vartype frequency: str or ~azure.ai.client.models.Frequency
-    :ivar interval: Specifies schedule interval in conjunction with frequency. Required.
-    :vartype interval: int
-    :ivar schedule: The recurrence schedule. Required.
-    :vartype schedule: ~azure.ai.client.models.RecurrenceSchedule
-    """
-
-    frequency: Union[str, "_models.Frequency"] = rest_field()
-    """The frequency to trigger schedule. Required. Known values are: \"Month\", \"Week\", \"Day\",
-     \"Hour\", and \"Minute\"."""
-    interval: int = rest_field()
-    """Specifies schedule interval in conjunction with frequency. Required."""
-    schedule: "_models.RecurrenceSchedule" = rest_field()
-    """The recurrence schedule. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        frequency: Union[str, "_models.Frequency"],
-        interval: int,
-        schedule: "_models.RecurrenceSchedule",
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class RecurrenceSchedule(_model_base.Model):
@@ -2593,10 +2829,10 @@ class RecurrenceSchedule(_model_base.Model):
         minutes: List[int],
         week_days: List[Union[str, "_models.WeekDays"]],
         month_days: List[int],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2604,6 +2840,53 @@ class RecurrenceSchedule(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class RecurrenceTrigger(Trigger, discriminator="Recurrence"):
+    """Recurrence Trigger Definition.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+
+    :ivar type: Required. Default value is "Recurrence".
+    :vartype type: str
+    :ivar frequency: The frequency to trigger schedule. Required. Known values are: "Month",
+     "Week", "Day", "Hour", and "Minute".
+    :vartype frequency: str or ~azure.ai.client.models.Frequency
+    :ivar interval: Specifies schedule interval in conjunction with frequency. Required.
+    :vartype interval: int
+    :ivar schedule: The recurrence schedule. Required.
+    :vartype schedule: ~azure.ai.client.models.RecurrenceSchedule
+    """
+
+    type: Literal["Recurrence"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    """Required. Default value is \"Recurrence\"."""
+    frequency: Union[str, "_models.Frequency"] = rest_field()
+    """The frequency to trigger schedule. Required. Known values are: \"Month\", \"Week\", \"Day\",
+     \"Hour\", and \"Minute\"."""
+    interval: int = rest_field()
+    """Specifies schedule interval in conjunction with frequency. Required."""
+    schedule: "_models.RecurrenceSchedule" = rest_field()
+    """The recurrence schedule. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        frequency: Union[str, "_models.Frequency"],
+        interval: int,
+        schedule: "_models.RecurrenceSchedule",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="Recurrence", **kwargs)
 
 
 class RequiredAction(_model_base.Model):
@@ -2626,10 +2909,10 @@ class RequiredAction(_model_base.Model):
         self,
         *,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2665,10 +2948,10 @@ class RequiredToolCall(_model_base.Model):
         *,
         type: str,
         id: str,  # pylint: disable=redefined-builtin
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2707,10 +2990,10 @@ class RequiredFunctionToolCall(RequiredToolCall, discriminator="function"):
         *,
         id: str,  # pylint: disable=redefined-builtin
         function: "_models.RequiredFunctionToolCallDetails",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2745,10 +3028,10 @@ class RequiredFunctionToolCallDetails(_model_base.Model):
         *,
         name: str,
         arguments: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2785,10 +3068,10 @@ class RunCompletionUsage(_model_base.Model):
         completion_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2819,10 +3102,10 @@ class RunError(_model_base.Model):
         *,
         code: str,
         message: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2940,10 +3223,10 @@ class RunStep(_model_base.Model):  # pylint: disable=too-many-instance-attribute
         failed_at: datetime.datetime,
         metadata: Dict[str, str],
         usage: Optional["_models.RunStepCompletionUsage"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -2952,6 +3235,129 @@ class RunStep(_model_base.Model):  # pylint: disable=too-many-instance-attribute
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.object: Literal["thread.run.step"] = "thread.run.step"
+
+
+class RunStepToolCall(_model_base.Model):
+    """An abstract representation of a detailed tool call as recorded within a run step for an
+    existing run.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    RunStepAzureAISearchToolCall, RunStepBingSearchToolCall, RunStepCodeInterpreterToolCall,
+    RunStepFileSearchToolCall, RunStepFunctionToolCall, RunStepMicrosoftFabricToolCall,
+    RunStepSharepointToolCall
+
+
+    :ivar type: The object type. Required. Default value is None.
+    :vartype type: str
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    """
+
+    __mapping__: Dict[str, _model_base.Model] = {}
+    type: str = rest_discriminator(name="type")
+    """The object type. Required. Default value is None."""
+    id: str = rest_field()
+    """The ID of the tool call. This ID must be referenced when you submit tool outputs. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        id: str,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class RunStepAzureAISearchToolCall(RunStepToolCall, discriminator="azure_ai_search"):
+    """A record of a call to an Azure AI Search tool, issued by the model in evaluation of a defined
+    tool, that represents
+    executed Azure AI search.
+
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'azure_ai_search'. Required. Default value is
+     "azure_ai_search".
+    :vartype type: str
+    :ivar azure_ai_search: Reserved for future use. Required.
+    :vartype azure_ai_search: dict[str, str]
+    """
+
+    type: Literal["azure_ai_search"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'azure_ai_search'. Required. Default value is
+     \"azure_ai_search\"."""
+    azure_ai_search: Dict[str, str] = rest_field()
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        azure_ai_search: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="azure_ai_search", **kwargs)
+
+
+class RunStepBingSearchToolCall(RunStepToolCall, discriminator="bing_search"):
+    """A record of a call to a bing search tool, issued by the model in evaluation of a defined tool,
+    that represents
+    executed bing search.
+
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'bing_search'. Required. Default value is
+     "bing_search".
+    :vartype type: str
+    :ivar bing_search: Reserved for future use. Required.
+    :vartype bing_search: dict[str, str]
+    """
+
+    type: Literal["bing_search"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'bing_search'. Required. Default value is \"bing_search\"."""
+    bing_search: Dict[str, str] = rest_field()
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        bing_search: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="bing_search", **kwargs)
 
 
 class RunStepCodeInterpreterToolCallOutput(_model_base.Model):
@@ -2974,10 +3380,10 @@ class RunStepCodeInterpreterToolCallOutput(_model_base.Model):
         self,
         *,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3008,10 +3414,10 @@ class RunStepCodeInterpreterImageOutput(RunStepCodeInterpreterToolCallOutput, di
         self,
         *,
         image: "_models.RunStepCodeInterpreterImageReference",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3037,10 +3443,10 @@ class RunStepCodeInterpreterImageReference(_model_base.Model):
         self,
         *,
         file_id: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3071,10 +3477,10 @@ class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, disc
         self,
         *,
         logs: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3082,46 +3488,6 @@ class RunStepCodeInterpreterLogOutput(RunStepCodeInterpreterToolCallOutput, disc
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, type="logs", **kwargs)
-
-
-class RunStepToolCall(_model_base.Model):
-    """An abstract representation of a detailed tool call as recorded within a run step for an
-    existing run.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RunStepCodeInterpreterToolCall, RunStepFileSearchToolCall, RunStepFunctionToolCall
-
-
-    :ivar type: The object type. Required. Default value is None.
-    :vartype type: str
-    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
-     Required.
-    :vartype id: str
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
-    """The object type. Required. Default value is None."""
-    id: str = rest_field()
-    """The ID of the tool call. This ID must be referenced when you submit tool outputs. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-        id: str,  # pylint: disable=redefined-builtin
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
 
 
 class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interpreter"):
@@ -3152,10 +3518,10 @@ class RunStepCodeInterpreterToolCall(RunStepToolCall, discriminator="code_interp
         *,
         id: str,  # pylint: disable=redefined-builtin
         code_interpreter: "_models.RunStepCodeInterpreterToolCallDetails",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3188,10 +3554,10 @@ class RunStepCodeInterpreterToolCallDetails(_model_base.Model):
         *,
         input: str,
         outputs: List["_models.RunStepCodeInterpreterToolCallOutput"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3228,10 +3594,10 @@ class RunStepCompletionUsage(_model_base.Model):
         completion_tokens: int,
         prompt_tokens: int,
         total_tokens: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3256,10 +3622,10 @@ class RunStepDelta(_model_base.Model):
         self,
         *,
         step_details: Optional["_models.RunStepDeltaDetail"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3298,10 +3664,10 @@ class RunStepDeltaChunk(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         delta: "_models.RunStepDelta",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3339,10 +3705,10 @@ class RunStepDeltaCodeInterpreterDetailItemObject(_model_base.Model):  # pylint:
         *,
         input: Optional[str] = None,
         outputs: Optional[List["_models.RunStepDeltaCodeInterpreterOutput"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3382,10 +3748,10 @@ class RunStepDeltaCodeInterpreterOutput(_model_base.Model):
         *,
         index: int,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3420,10 +3786,10 @@ class RunStepDeltaCodeInterpreterImageOutput(RunStepDeltaCodeInterpreterOutput, 
         *,
         index: int,
         image: Optional["_models.RunStepDeltaCodeInterpreterImageOutputObject"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3448,10 +3814,10 @@ class RunStepDeltaCodeInterpreterImageOutputObject(_model_base.Model):  # pylint
         self,
         *,
         file_id: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3486,10 +3852,10 @@ class RunStepDeltaCodeInterpreterLogOutput(RunStepDeltaCodeInterpreterOutput, di
         *,
         index: int,
         logs: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3533,10 +3899,10 @@ class RunStepDeltaToolCall(_model_base.Model):
         index: int,
         id: str,  # pylint: disable=redefined-builtin
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3574,10 +3940,10 @@ class RunStepDeltaCodeInterpreterToolCall(RunStepDeltaToolCall, discriminator="c
         index: int,
         id: str,  # pylint: disable=redefined-builtin
         code_interpreter: Optional["_models.RunStepDeltaCodeInterpreterDetailItemObject"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3607,10 +3973,10 @@ class RunStepDeltaDetail(_model_base.Model):
         self,
         *,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3647,10 +4013,10 @@ class RunStepDeltaFileSearchToolCall(RunStepDeltaToolCall, discriminator="file_s
         index: int,
         id: str,  # pylint: disable=redefined-builtin
         file_search: Optional[Dict[str, str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3685,10 +4051,10 @@ class RunStepDeltaFunction(_model_base.Model):
         name: Optional[str] = None,
         arguments: Optional[str] = None,
         output: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3725,10 +4091,10 @@ class RunStepDeltaFunctionToolCall(RunStepDeltaToolCall, discriminator="function
         index: int,
         id: str,  # pylint: disable=redefined-builtin
         function: Optional["_models.RunStepDeltaFunction"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3760,10 +4126,10 @@ class RunStepDeltaMessageCreation(RunStepDeltaDetail, discriminator="message_cre
         self,
         *,
         message_creation: Optional["_models.RunStepDeltaMessageCreationObject"] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3788,10 +4154,10 @@ class RunStepDeltaMessageCreationObject(_model_base.Model):
         self,
         *,
         message_id: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3822,10 +4188,10 @@ class RunStepDeltaToolCallObject(RunStepDeltaDetail, discriminator="tool_calls")
         self,
         *,
         tool_calls: Optional[List["_models.RunStepDeltaToolCall"]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3855,10 +4221,10 @@ class RunStepDetails(_model_base.Model):
         self,
         *,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3891,10 +4257,10 @@ class RunStepError(_model_base.Model):
         *,
         code: Union[str, "_models.RunStepErrorCode"],
         message: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3931,10 +4297,10 @@ class RunStepFileSearchToolCall(RunStepToolCall, discriminator="file_search"):
         *,
         id: str,  # pylint: disable=redefined-builtin
         file_search: Dict[str, str],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -3970,10 +4336,10 @@ class RunStepFunctionToolCall(RunStepToolCall, discriminator="function"):
         *,
         id: str,  # pylint: disable=redefined-builtin
         function: "_models.RunStepFunctionToolCallDetails",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4012,10 +4378,10 @@ class RunStepFunctionToolCallDetails(_model_base.Model):
         name: str,
         arguments: str,
         output: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4048,10 +4414,10 @@ class RunStepMessageCreationDetails(RunStepDetails, discriminator="message_creat
         self,
         *,
         message_creation: "_models.RunStepMessageCreationReference",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4077,10 +4443,10 @@ class RunStepMessageCreationReference(_model_base.Model):
         self,
         *,
         message_id: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4088,6 +4454,87 @@ class RunStepMessageCreationReference(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class RunStepMicrosoftFabricToolCall(RunStepToolCall, discriminator="microsoft_fabric"):
+    """A record of a call to a Microsoft Fabric tool, issued by the model in evaluation of a defined
+    tool, that represents
+    executed Microsoft Fabric operations.
+
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'microsoft_fabric'. Required. Default value is
+     "microsoft_fabric".
+    :vartype type: str
+    :ivar microsoft_fabric: Reserved for future use. Required.
+    :vartype microsoft_fabric: dict[str, str]
+    """
+
+    type: Literal["microsoft_fabric"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'microsoft_fabric'. Required. Default value is
+     \"microsoft_fabric\"."""
+    microsoft_fabric: Dict[str, str] = rest_field()
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        microsoft_fabric: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="microsoft_fabric", **kwargs)
+
+
+class RunStepSharepointToolCall(RunStepToolCall, discriminator="sharepoint"):
+    """A record of a call to a SharePoint tool, issued by the model in evaluation of a defined tool,
+    that represents
+    executed SharePoint actions.
+
+
+    :ivar id: The ID of the tool call. This ID must be referenced when you submit tool outputs.
+     Required.
+    :vartype id: str
+    :ivar type: The object type, which is always 'sharepoint'. Required. Default value is
+     "sharepoint".
+    :vartype type: str
+    :ivar share_point: Reserved for future use. Required.
+    :vartype share_point: dict[str, str]
+    """
+
+    type: Literal["sharepoint"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'sharepoint'. Required. Default value is \"sharepoint\"."""
+    share_point: Dict[str, str] = rest_field(name="sharepoint")
+    """Reserved for future use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        share_point: Dict[str, str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="sharepoint", **kwargs)
 
 
 class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
@@ -4112,10 +4559,10 @@ class RunStepToolCallDetails(RunStepDetails, discriminator="tool_calls"):
         self,
         *,
         tool_calls: List["_models.RunStepToolCall"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4141,10 +4588,10 @@ class SamplingStrategy(_model_base.Model):
         self,
         *,
         rate: float,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4152,6 +4599,34 @@ class SamplingStrategy(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class SharepointToolDefinition(ToolDefinition, discriminator="sharepoint"):
+    """The input definition information for a sharepoint tool as used to configure an agent.
+
+
+    :ivar type: The object type, which is always 'sharepoint'. Required. Default value is
+     "sharepoint".
+    :vartype type: str
+    """
+
+    type: Literal["sharepoint"] = rest_discriminator(name="type")  # type: ignore
+    """The object type, which is always 'sharepoint'. Required. Default value is \"sharepoint\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, type="sharepoint", **kwargs)
 
 
 class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs"):
@@ -4177,10 +4652,10 @@ class SubmitToolOutputsAction(RequiredAction, discriminator="submit_tool_outputs
         self,
         *,
         submit_tool_outputs: "_models.SubmitToolOutputsDetails",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4207,10 +4682,10 @@ class SubmitToolOutputsDetails(_model_base.Model):
         self,
         *,
         tool_calls: List["_models.RequiredToolCall"],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4276,10 +4751,10 @@ class ThreadDeletionStatus(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         deleted: bool,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4388,10 +4863,10 @@ class ThreadMessage(_model_base.Model):  # pylint: disable=too-many-instance-att
         run_id: str,
         attachments: List["_models.MessageAttachment"],
         metadata: Dict[str, str],
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4458,10 +4933,10 @@ class ThreadMessageOptions(_model_base.Model):
         content: str,
         attachments: Optional[List["_models.MessageAttachment"]] = None,
         metadata: Optional[Dict[str, str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4657,10 +5132,10 @@ class ThreadRun(_model_base.Model):  # pylint: disable=too-many-instance-attribu
         top_p: Optional[float] = None,
         tool_resources: Optional["_models.UpdateToolResourcesOptions"] = None,
         parallel_tool_calls: Optional[bool] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4694,10 +5169,10 @@ class ToolOutput(_model_base.Model):
         *,
         tool_call_id: Optional[str] = None,
         output: Optional[str] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4720,12 +5195,32 @@ class ToolResources(_model_base.Model):
     :ivar file_search: Resources to be used by the ``file_search`` tool consisting of vector store
      IDs.
     :vartype file_search: ~azure.ai.client.models.FileSearchToolResource
+    :ivar bing_search: Resources to be used by the ``bing_search`` tool consisting of connection
+     IDs.
+    :vartype bing_search: ~azure.ai.client.models.ConnectionListResource
+    :ivar microsoft_fabric: Resources to be used by the ``microsoft_fabric`` tool consisting of
+     connection IDs.
+    :vartype microsoft_fabric: ~azure.ai.client.models.ConnectionListResource
+    :ivar share_point: Resources to be used by the ``sharepoint`` tool consisting of connection
+     IDs.
+    :vartype share_point: ~azure.ai.client.models.ConnectionListResource
+    :ivar azure_ai_search: Resources to be used by the ``azure_ai_search`` tool consisting of index
+     IDs and names.
+    :vartype azure_ai_search: ~azure.ai.client.models.AzureAISearchResource
     """
 
     code_interpreter: Optional["_models.CodeInterpreterToolResource"] = rest_field()
     """Resources to be used by the ``code_interpreter tool`` consisting of file IDs."""
     file_search: Optional["_models.FileSearchToolResource"] = rest_field()
     """Resources to be used by the ``file_search`` tool consisting of vector store IDs."""
+    bing_search: Optional["_models.ConnectionListResource"] = rest_field()
+    """Resources to be used by the ``bing_search`` tool consisting of connection IDs."""
+    microsoft_fabric: Optional["_models.ConnectionListResource"] = rest_field()
+    """Resources to be used by the ``microsoft_fabric`` tool consisting of connection IDs."""
+    share_point: Optional["_models.ConnectionListResource"] = rest_field(name="sharepoint")
+    """Resources to be used by the ``sharepoint`` tool consisting of connection IDs."""
+    azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
+    """Resources to be used by the ``azure_ai_search`` tool consisting of index IDs and names."""
 
     @overload
     def __init__(
@@ -4733,10 +5228,14 @@ class ToolResources(_model_base.Model):
         *,
         code_interpreter: Optional["_models.CodeInterpreterToolResource"] = None,
         file_search: Optional["_models.FileSearchToolResource"] = None,
-    ): ...
+        bing_search: Optional["_models.ConnectionListResource"] = None,
+        microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
+        share_point: Optional["_models.ConnectionListResource"] = None,
+        azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4779,10 +5278,10 @@ class TruncationObject(_model_base.Model):
         *,
         type: Union[str, "_models.TruncationStrategy"],
         last_messages: Optional[int] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4807,50 +5306,10 @@ class UpdateCodeInterpreterToolResourceOptions(_model_base.Model):
         self,
         *,
         file_ids: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class UpdateEvaluationRequest(_model_base.Model):
-    """Update Evaluation Request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar tags: Tags to be updated. Required.
-    :vartype tags: dict[str, str]
-    :ivar display_name: Display Name. Required.
-    :vartype display_name: str
-    :ivar description: Description. Required.
-    :vartype description: str
-    """
-
-    tags: Dict[str, str] = rest_field()
-    """Tags to be updated. Required."""
-    display_name: str = rest_field(name="displayName")
-    """Display Name. Required."""
-    description: str = rest_field()
-    """Description. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tags: Dict[str, str],
-        display_name: str,
-        description: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4875,10 +5334,10 @@ class UpdateFileSearchToolResourceOptions(_model_base.Model):
         self,
         *,
         vector_store_ids: Optional[List[str]] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -4902,6 +5361,18 @@ class UpdateToolResourcesOptions(_model_base.Model):
     :ivar file_search: Overrides the vector store attached to this agent. There can be a maximum of
      1 vector store attached to the agent.
     :vartype file_search: ~azure.ai.client.models.UpdateFileSearchToolResourceOptions
+    :ivar bing_search: Overrides the list of connections to be used by the ``bing_search`` tool
+     consisting of connection IDs.
+    :vartype bing_search: ~azure.ai.client.models.ConnectionListResource
+    :ivar microsoft_fabric: Overrides the list of connections to be used by the
+     ``microsoft_fabric`` tool consisting of connection IDs.
+    :vartype microsoft_fabric: ~azure.ai.client.models.ConnectionListResource
+    :ivar share_point: Overrides the list of connections to be used by the ``sharepoint`` tool
+     consisting of connection IDs.
+    :vartype share_point: ~azure.ai.client.models.ConnectionListResource
+    :ivar azure_ai_search: Overrides the resources to be used by the ``azure_ai_search`` tool
+     consisting of index IDs and names.
+    :vartype azure_ai_search: ~azure.ai.client.models.AzureAISearchResource
     """
 
     code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = rest_field()
@@ -4911,6 +5382,18 @@ class UpdateToolResourcesOptions(_model_base.Model):
     file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = rest_field()
     """Overrides the vector store attached to this agent. There can be a maximum of 1 vector store
      attached to the agent."""
+    bing_search: Optional["_models.ConnectionListResource"] = rest_field()
+    """Overrides the list of connections to be used by the ``bing_search`` tool consisting of
+     connection IDs."""
+    microsoft_fabric: Optional["_models.ConnectionListResource"] = rest_field()
+    """Overrides the list of connections to be used by the ``microsoft_fabric`` tool consisting of
+     connection IDs."""
+    share_point: Optional["_models.ConnectionListResource"] = rest_field(name="sharepoint")
+    """Overrides the list of connections to be used by the ``sharepoint`` tool consisting of
+     connection IDs."""
+    azure_ai_search: Optional["_models.AzureAISearchResource"] = rest_field()
+    """Overrides the resources to be used by the ``azure_ai_search`` tool consisting of index IDs and
+     names."""
 
     @overload
     def __init__(
@@ -4918,10 +5401,14 @@ class UpdateToolResourcesOptions(_model_base.Model):
         *,
         code_interpreter: Optional["_models.UpdateCodeInterpreterToolResourceOptions"] = None,
         file_search: Optional["_models.UpdateFileSearchToolResourceOptions"] = None,
-    ): ...
+        bing_search: Optional["_models.ConnectionListResource"] = None,
+        microsoft_fabric: Optional["_models.ConnectionListResource"] = None,
+        share_point: Optional["_models.ConnectionListResource"] = None,
+        azure_ai_search: Optional["_models.AzureAISearchResource"] = None,
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5010,10 +5497,10 @@ class VectorStore(_model_base.Model):  # pylint: disable=too-many-instance-attri
         metadata: Dict[str, str],
         expires_after: Optional["_models.VectorStoreExpirationPolicy"] = None,
         expires_at: Optional[datetime.datetime] = None,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5045,10 +5532,10 @@ class VectorStoreChunkingStrategyRequest(_model_base.Model):
         self,
         *,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5074,10 +5561,10 @@ class VectorStoreAutoChunkingStrategyRequest(VectorStoreChunkingStrategyRequest,
     @overload
     def __init__(
         self,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5107,10 +5594,10 @@ class VectorStoreChunkingStrategyResponse(_model_base.Model):
         self,
         *,
         type: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5135,10 +5622,10 @@ class VectorStoreAutoChunkingStrategyResponse(VectorStoreChunkingStrategyRespons
     @overload
     def __init__(
         self,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5177,10 +5664,10 @@ class VectorStoreDeletionStatus(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         deleted: bool,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5214,10 +5701,10 @@ class VectorStoreExpirationPolicy(_model_base.Model):
         *,
         anchor: Union[str, "_models.VectorStoreExpirationPolicyAnchor"],
         days: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5293,10 +5780,10 @@ class VectorStoreFile(_model_base.Model):
         status: Union[str, "_models.VectorStoreFileStatus"],
         last_error: "_models.VectorStoreFileError",
         chunking_strategy: "_models.VectorStoreChunkingStrategyResponse",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5357,10 +5844,10 @@ class VectorStoreFileBatch(_model_base.Model):
         vector_store_id: str,
         status: Union[str, "_models.VectorStoreFileBatchStatus"],
         file_counts: "_models.VectorStoreFileCount",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5407,10 +5894,10 @@ class VectorStoreFileCount(_model_base.Model):
         failed: int,
         cancelled: int,
         total: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5449,10 +5936,10 @@ class VectorStoreFileDeletionStatus(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         deleted: bool,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5486,10 +5973,10 @@ class VectorStoreFileError(_model_base.Model):
         *,
         code: Union[str, "_models.VectorStoreFileErrorCode"],
         message: str,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5525,10 +6012,10 @@ class VectorStoreStaticChunkingStrategyOptions(_model_base.Model):
         *,
         max_chunk_size_tokens: int,
         chunk_overlap_tokens: int,
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5559,10 +6046,10 @@ class VectorStoreStaticChunkingStrategyRequest(VectorStoreChunkingStrategyReques
         self,
         *,
         static: "_models.VectorStoreStaticChunkingStrategyOptions",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
@@ -5594,10 +6081,10 @@ class VectorStoreStaticChunkingStrategyResponse(
         self,
         *,
         static: "_models.VectorStoreStaticChunkingStrategyOptions",
-    ): ...
+    ) -> None: ...
 
     @overload
-    def __init__(self, mapping: Mapping[str, Any]):
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
         """
         :param mapping: raw JSON to initialize the model.
         :type mapping: Mapping[str, Any]
